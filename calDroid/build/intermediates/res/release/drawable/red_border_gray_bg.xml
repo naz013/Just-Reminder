@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:bottom="0dp"
+        android:left="0dp"
+        android:right="0dp"
+        android:top="0dp">
+        <shape android:shape="rectangle" >
+            <stroke
+                android:width="2dp"
+                android:color="#D32F2F" />
+
+            <solid android:color="#ffffff" />
+        </shape>
+    </item>
+
+</layer-list><!-- From: file:/D:/projects/fromLinux/projects/JustReminder/calDroid/src/main/res/drawable/red_border_gray_bg.xml -->

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/windowBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/wrapper"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_above="@+id/emptyLayout"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/currentList"
+                android:layout_width="match_parent"
+                android:overScrollMode="never"
+                android:visibility="visible"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:choiceMode="singleChoice"
+                android:fastScrollEnabled="true"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/emptyItem"
+                android:visibility="gone"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:padding="50dp"
+                    android:id="@+id/emptyImage"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/bell_icon"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+                    android:text="@string/no_notes_text"
+                    android:gravity="center|top"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+        </FrameLayout >
+        <LinearLayout
+            android:id="@+id/emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true">
+
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                xmlns:ads="http://schemas.android.com/apk/res-auto"
+                android:layout_height="50dp"
+                ads:adSize="BANNER"
+                ads:adUnitId="ca-app-pub-5133908997831400/4457351851"
+                android:layout_width="match_parent"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

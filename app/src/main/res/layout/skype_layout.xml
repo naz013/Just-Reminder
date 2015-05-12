@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/skype_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="visible">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/create_margin"
+            android:layout_marginLeft="@dimen/create_margin"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/export_check_title"
+                android:id="@+id/skypeExport" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/add_to_google_tasks"
+                android:id="@+id/skypeTaskExport" />
+
+            <com.cray.software.justreminder.views.FloatingEditText
+                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/skype_user_hint"
+                android:textSize="@dimen/create_text_size_normal"
+                android:gravity="center"
+                android:ems="10"
+                android:singleLine="true"
+                android:layout_gravity="center"
+                android:id="@+id/skypeUser"
+                android:inputType="textAutoComplete" />
+
+            <RadioGroup
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="fill_parent">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reminder_make_call"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:id="@+id/skypeCall" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:layout_marginLeft="15dp"
+                    android:text="@string/skype_video_title"
+                    android:id="@+id/skypeVideo" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:layout_marginLeft="15dp"
+                    android:text="@string/skype_chat_title"
+                    android:id="@+id/skypeChat" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/create_margin"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:id="@+id/skypeDateRing"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:text="23/06"
+                        android:textSize="@dimen/create_text_size_primary"
+                        android:id="@+id/skypeDate" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:text="2014"
+                        android:textSize="@dimen/create_text_size_secondary"
+                        android:id="@+id/skypeYearDate" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:ems="10"
+                    android:text="22:56"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:id="@+id/skypeTime" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/repeatSkypeLabel"
+                android:layout_marginTop="@dimen/create_margin"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_normal"/>
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/create_margin"
+                android:id="@+id/repeatSkype"
+                android:max="4"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>

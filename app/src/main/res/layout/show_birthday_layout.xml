@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="56dp"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/single_container">
+
+    <com.cray.software.justreminder.views.RoundImageView
+        android:layout_width="@dimen/reminder_photo_size"
+        android:layout_height="@dimen/reminder_photo_size"
+        android:layout_gravity="center"
+        app:civ_border="true"
+        app:civ_borderColor="#EEEEEE"
+        app:civ_borderWidth="4dp"
+        app:civ_shadow="true"
+        android:background="@drawable/drawable_grey"
+        android:id="@+id/contactPhoto"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Contact"
+        android:textSize="@dimen/reminder_text_size_normal"
+        android:layout_marginTop="@dimen/reminder_margin_top"
+        android:id="@+id/userName"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/reminder_margin_top"
+        android:gravity="center"
+        android:textSize="@dimen/reminder_text_size_normal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="+31234567890"
+        android:id="@+id/userNumber"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/reminder_margin_top"
+        android:gravity="center"
+        android:textSize="@dimen/reminder_text_size_normal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="26 years"
+        android:id="@+id/userYears"
+        android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/reminder_margin_top"
+        android:gravity="center">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonOk"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonCall"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonSend"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+    </LinearLayout>
+</RelativeLayout>

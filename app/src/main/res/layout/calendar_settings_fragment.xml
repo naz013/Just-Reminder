@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/settings_margin"
+        android:layout_marginRight="@dimen/settings_margin"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/start_day_of_week_title"
+            android:id="@+id/startDay"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <RelativeLayout
+            android:id="@+id/themeColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/themeColorSwitcher"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/current_color_title"
+                    android:textSize="@dimen/settings_text_size_primary"
+                    android:layout_marginBottom="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/settings_text_size_secondary"
+                    android:text="@string/current_colot_explanation"
+                    android:paddingBottom="10dp" />
+            </LinearLayout>
+            <View
+                android:id="@+id/themeColorSwitcher"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="@dimen/settings_view_size"
+                android:layout_height="@dimen/settings_view_size"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorGrey"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:visibility="visible"
+            android:background="@android:color/darker_gray"/>
+
+        <RelativeLayout
+            android:id="@+id/selectedColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/selectedColorSwitcher"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/birthdays_color_title"
+                    android:textSize="@dimen/settings_text_size_primary"
+                    android:layout_marginBottom="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/settings_text_size_secondary"
+                    android:text="@string/birthdays_color_explanation"
+                    android:paddingBottom="10dp" />
+            </LinearLayout>
+            <View
+                android:id="@+id/selectedColorSwitcher"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="@dimen/settings_view_size"
+                android:layout_height="@dimen/settings_view_size"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorGrey"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:visibility="visible"
+            android:background="@android:color/darker_gray"/>
+
+        <RelativeLayout
+            android:id="@+id/reminderInCalendar"
+            android:layout_width="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toLeftOf="@+id/reminderInCalendarCheck">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/settings_reminder_in_calendar_title"
+                    android:textSize="@dimen/settings_text_size_primary"
+                    android:layout_marginBottom="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/settings_text_size_secondary"
+                    android:text="@string/settings_reminder_in_calendar_explanation"
+                    android:paddingBottom="10dp" />
+
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/reminderInCalendarCheck"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:clickable="false"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <RelativeLayout
+            android:id="@+id/reminderColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/reminderColorSwitcher"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/reminders_color_title"
+                    android:textSize="@dimen/settings_text_size_primary"
+                    android:id="@+id/text1"
+                    android:layout_marginBottom="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/settings_text_size_secondary"
+                    android:id="@+id/text2"
+                    android:text="@string/reminders_color_explanation"
+                    android:paddingBottom="10dp" />
+            </LinearLayout>
+            <View
+                android:id="@+id/reminderColorSwitcher"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="@dimen/settings_view_size"
+                android:layout_height="@dimen/settings_view_size"
+                android:layout_marginRight="5dp"
+                android:background="@color/colorGrey"/>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:visibility="visible"
+            android:background="@android:color/darker_gray"/>
+
+        <RelativeLayout
+            android:id="@+id/featureReminders"
+            android:layout_width="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toLeftOf="@+id/featureRemindersCheck">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/settings_feature_reminder_title"
+                    android:textSize="@dimen/settings_text_size_primary"
+                    android:layout_marginBottom="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/settings_text_size_secondary"
+                    android:text="@string/settings_feature_reminder_explanation"
+                    android:paddingBottom="10dp" />
+
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/featureRemindersCheck"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:clickable="false"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+    </LinearLayout>
+</ScrollView>

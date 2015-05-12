@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<RelativeLayout
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|bottom"
+    android:background="@color/colorBlue">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/navButtons"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/navButtons"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:text="@string/skip_button"
+            android:id="@+id/skipButton"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/guide_button_text_size"
+            android:gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_gravity="center|right"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/guide_button_text_size"
+            android:gravity="center"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/next_button"
+            android:clickable="true"
+            android:id="@+id/nextCloseButton"
+            android:layout_gravity="center|right"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+</FrameLayout>

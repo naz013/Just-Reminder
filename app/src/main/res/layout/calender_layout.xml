@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:widget="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/windowBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:id="@+id/monthView"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toLeftOf="@+id/currentEvent"
+                android:src="@drawable/ic_event_white_24dp"/>
+
+            <Button
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:id="@+id/currentEvent"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentRight="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:textColor="@color/colorWhite"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/title"
+                android:textStyle="bold"
+                android:text="@string/calendar_fragment"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                android:gravity="center|left"/>
+
+        </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/wrapper"
+        android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/calendarView" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v4.view.ViewPager>
+
+        <com.cray.software.justreminder.views.CircularProgress
+            android:layout_gravity="center"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            android:id="@+id/progress"
+            widget:circular_progress_color="?attr/colorPrimaryDark"
+            widget:circular_progress_size="Small"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:visibility="visible"
+            fab:fab_addButtonColorNormal="?attr/colorPrimary"
+            fab:fab_addButtonColorPressed="?attr/colorPrimaryDark"
+            fab:fab_addButtonPlusIconColor="@color/colorWhite"
+            fab:fab_addButtonSize="normal"
+            fab:fab_addButtonStrokeVisible="true"
+            android:id="@+id/mainMenu"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            fab:fab_labelStyle="@style/menu_labels_style"
+            fab:fab_labelsPosition="left"/>
+
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:gravity="center"
+    android:layout_height="wrap_content"
+    tools:context=".dialogs.ReminderDialog">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="28dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:id="@+id/single_container">
+
+        <com.cray.software.justreminder.views.RoundImageView
+            android:layout_width="@dimen/reminder_photo_size"
+            android:layout_height="@dimen/reminder_photo_size"
+            android:layout_gravity="center"
+            app:civ_border="true"
+            app:civ_borderColor="#EEEEEE"
+            app:civ_borderWidth="4dp"
+            app:civ_shadow="true"
+            android:background="@drawable/drawable_grey"
+            android:id="@+id/contactPhoto"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/remText"
+            android:gravity="center"
+            android:textSize="@dimen/reminder_text_size_normal"
+            android:layout_marginTop="@dimen/reminder_margin_top"
+            android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_above="@+id/delayContainer"
+        android:id="@+id/actionContainer"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonOk"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonCall"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonCancel"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/reminder_margin_top"
+        android:id="@+id/delayContainer"
+        android:gravity="center"
+        android:layout_above="@+id/notificationContainer"
+        android:layout_height="wrap_content">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonDelay"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonDelayFor"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonNotification"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/reminder_margin_top"
+        android:id="@+id/notificationContainer"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+</RelativeLayout>

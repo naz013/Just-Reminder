@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/call_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="visible">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/create_margin"
+            android:paddingRight="@dimen/create_margin"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/export_check_title"
+                android:id="@+id/callExport" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/add_to_google_tasks"
+                android:id="@+id/callTaskExport" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <ImageButton
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_person_add_grey600_24dp"
+                    android:id="@+id/addNumberButton" />
+
+                <com.cray.software.justreminder.views.FloatingEditText
+                    app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:hint="@string/phone_number_hint"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:gravity="center"
+                    android:ems="10"
+                    android:singleLine="true"
+                    android:layout_gravity="center"
+                    android:id="@+id/phoneNumber"
+                    android:inputType="text|phone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/create_margin"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:id="@+id/callDateRing"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:text="23/06"
+                        android:textSize="@dimen/create_text_size_primary"
+                        android:id="@+id/callDate" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:text="2014"
+                        android:textSize="@dimen/create_text_size_secondary"
+                        android:id="@+id/callYearDate" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:ems="10"
+                    android:text="22:56"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:id="@+id/callTime" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/repeatCallIntLabel"
+                android:layout_marginTop="@dimen/create_margin"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_primary"/>
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/create_margin"
+                android:id="@+id/repeatCallInt"
+                android:max="4"
+                android:layout_marginBottom="@dimen/create_margin"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>

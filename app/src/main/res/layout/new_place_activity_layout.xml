@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:id="@+id/windowBackground">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/wrapper"
+        android:layout_height="match_parent">
+
+        <com.cray.software.justreminder.views.FloatingEditText
+            app:floating_edit_text_highlighted_color="?attr/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeName"
+            android:textSize="@dimen/create_text_size_normal"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:hint="@string/enter_name_hint" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/searchContainer"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_below="@+id/placeName"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_hint"
+                android:textSize="@dimen/create_text_size_normal"
+                android:singleLine="true"
+                android:layout_toLeftOf="@+id/clearButton"
+                android:id="@+id/searchField"/>
+
+            <ImageButton
+                android:layout_width="@dimen/create_imagebutton_size"
+                android:layout_height="@dimen/create_imagebutton_size"
+                android:id="@+id/clearButton"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_clear_grey600_24dp"/>
+
+        </RelativeLayout>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:layout_below="@+id/searchContainer"
+            android:name="com.google.android.gms.maps.MapFragment"/>
+
+    </RelativeLayout>
+</LinearLayout>

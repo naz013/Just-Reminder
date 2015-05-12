@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.cray.software.justreminder.MainActivity">
+
+    <item android:id="@+id/action_voice"
+        android:title="@string/voice_block"
+        android:icon="@drawable/ic_mic_white_24dp"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_refresh"
+        android:title="@string/sync_title"
+        android:icon="@drawable/ic_cached_white_24dp"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_order"
+        android:title="@string/menu_order_by"
+        android:icon="@drawable/ic_sort_white_24dp"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_filter"
+        android:title="@string/simple_filter"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        app:showAsAction="never" />
+</menu>

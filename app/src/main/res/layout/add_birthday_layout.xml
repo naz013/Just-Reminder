@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/windowBackground">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/wrapper"
+        android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/wrapper_padding_right"
+            android:paddingLeft="@dimen/wrapper_padding_left"
+            android:orientation="vertical">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/birthday_name_hint"
+                android:id="@+id/birthName"
+                android:singleLine="true"
+                android:textSize="@dimen/add_birthday_text_size_primary"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:inputType="textPersonName"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:textSize="@dimen/add_birthday_text_size_primary"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="@string/choose_date_title"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/add_birthday_parent_margin_top"
+                android:id="@+id/birthDateWrapper"
+                android:clickable="true"
+                android:padding="3dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:id="@+id/birthDate"
+                    android:textSize="@dimen/add_birthday_text_size_primary"
+                    android:text="25/05/1985"/>
+
+            </RelativeLayout>
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/contactCheck"
+                android:textSize="@dimen/add_birthday_text_size_primary"
+                android:gravity="center"
+                android:clickable="true"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:text="@string/attach_contact_check"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:id="@+id/container"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:ems="10"
+                    android:hint="@string/phone_number_hint"
+                    android:id="@+id/phone"
+                    android:textSize="@dimen/add_birthday_text_size_primary"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:layout_gravity="center_horizontal" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/view_margin_top"
+                    android:id="@+id/contactLayout"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="@dimen/add_birthday_text_size_primary"
+                        android:id="@+id/pickContact"
+                        android:clickable="false"
+                        android:background="@android:color/transparent"
+                        android:drawableLeft="@drawable/ic_person_add_grey600_24dp"
+                        android:text="@string/select_contact_button"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+            </LinearLayout>
+        
+        </ScrollView>
+
+    </RelativeLayout>
+</LinearLayout>

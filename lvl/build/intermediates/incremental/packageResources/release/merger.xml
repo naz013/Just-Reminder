@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="D:\projects\fromLinux\projects\JustReminder\lvl\res"/><source path="D:\projects\fromLinux\projects\JustReminder\lvl\build\generated\res\rs\release"/><source path="D:\projects\fromLinux\projects\JustReminder\lvl\build\generated\res\generated\release"/></dataSet><dataSet config="release"><source path="D:\projects\fromLinux\projects\JustReminder\lvl\build-types\release\res"/></dataSet><mergedItems/></merger>

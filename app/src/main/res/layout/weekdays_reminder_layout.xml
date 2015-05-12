@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weekday_layout"
+    android:visibility="visible"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="10dp">
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:text="@string/export_check_title"
+                android:id="@+id/weekExport" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:text="@string/add_to_google_tasks"
+                android:id="@+id/weekTaskExport" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:text="14:05"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:ems="10"
+                    android:id="@+id/weekTimeField" />
+            </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scrollbars="none"
+                android:overScrollMode="never"
+                android:layout_marginTop="@dimen/create_margin"
+                android:id="@+id/horizontalScrollView" >
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_monday"
+                        android:textOff="@string/short_monday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:background="@drawable/toggle_blue"
+                        android:id="@+id/mondayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_tuesday"
+                        android:textOff="@string/short_tuesday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:background="@drawable/toggle_blue"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:id="@+id/tuesdayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_wednesday"
+                        android:textOff="@string/short_wednesday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:background="@drawable/toggle_blue"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:id="@+id/wednesdayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_thursday"
+                        android:textOff="@string/short_thursday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:id="@+id/thursdayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_friday"
+                        android:textOff="@string/short_friday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:id="@+id/fridayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_saturday"
+                        android:textOff="@string/short_saturday"
+                        android:singleLine="true"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:id="@+id/saturdayCheck" />
+
+                    <ToggleButton
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:textOn="@string/short_sunday"
+                        android:textOff="@string/short_sunday"
+                        android:textSize="@dimen/create_text_size_small"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:id="@+id/sundayCheck" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginTop="@dimen/create_margin"
+                android:text="@string/action_check_text"
+                android:id="@+id/attachAction" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/action_layout"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent">
+
+                <RadioGroup
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="fill_parent">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:text="@string/reminder_make_call"
+                        android:id="@+id/callCheck" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:layout_marginLeft="15dp"
+                        android:text="@string/reminder_send_message"
+                        android:id="@+id/messageCheck" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_width="fill_parent"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_height="fill_parent">
+
+                    <ImageButton
+                        android:layout_width="@dimen/create_imagebutton_size"
+                        android:layout_height="@dimen/create_imagebutton_size"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_person_add_grey600_24dp"
+                        android:id="@+id/weekAddNumberButton" />
+
+                    <com.cray.software.justreminder.views.FloatingEditText
+                        app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:hint="@string/phone_number_hint"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:singleLine="true"
+                        android:layout_gravity="center"
+                        android:id="@+id/weekPhoneNumber"
+                        android:inputType="text|phone" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

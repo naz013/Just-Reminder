@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/windowBackground"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/header_bg_text"
+                    android:id="@+id/textView" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:entries="@array/colors_list"
+                    android:id="@+id/headerBgColor" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/widget_bg_color_title"
+                    android:id="@+id/textView3" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/colors_list"
+                    android:id="@+id/widgetBgSpinner" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/widget_title_color"/>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/colorsTitleGroup"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:text="@string/black_radio_text"
+                        android:id="@+id/radioTitleBlack" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:layout_marginLeft="15dp"
+                        android:text="@string/white_radio_text"
+                        android:id="@+id/radioTitleWhite" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/plus_button_color_title"/>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/colorsButtonGroup"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:text="@string/black_radio_text"
+                        android:id="@+id/radioButtonBlack" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:layout_marginLeft="15dp"
+                        android:text="@string/white_radio_text"
+                        android:id="@+id/radioButtonWhite" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/transparency_settings"/>
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/switcherGroup"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/headerButton"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:text="@string/header_title_tr"/>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/bodyButton"
+                        android:textSize="@dimen/widget_config_text_size"
+                        android:layout_marginLeft="15dp"
+                        android:text="@string/body_settings_tr"/>
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="@dimen/widget_config_margin_top"
+                android:id="@+id/alphaSeek"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:id="@+id/headerBg"
+                    android:gravity="right"
+                    android:background="@color/colorBlue"
+                    android:layout_gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/google_tasks_title"
+                        android:textSize="20sp"
+                        android:gravity="center|left"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:id="@+id/widgetTitle"
+                        android:layout_gravity="left|center"
+                        android:textColor="@color/colorWhite"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="right"
+                        android:layout_weight="5"
+                        android:layout_marginRight="25dp"
+                        android:src="@drawable/ic_add_white_24dp"
+                        android:background="@android:color/transparent"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/tasksCount" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:id="@+id/widgetBg"
+                    android:background="@color/colorSemiTrGrayDark"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/listItemCard">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/note_widget_preview"
+                            android:id="@+id/image"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:text="Widget preview"
+                            android:textColor="@color/grey_dark"
+                            android:id="@+id/note"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/windowBackground">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/clouds_padding"
+            android:layout_gravity="center|top"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.65"
+                    android:gravity="center|left"
+                    android:id="@+id/dropboxTitle"
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@drawable/dropbox_icon_white"
+                    android:text="Dropbox"
+                    android:textSize="@dimen/clouds_text_size"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/linkDropbox"
+                    android:text="@string/login_button"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/clouds_margin_top"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.65"
+                    android:gravity="center|left"
+                    android:id="@+id/gDriveTitle"
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@drawable/gdrive_icon_white"
+                    android:text="@string/google_drive_title"
+                    android:textSize="@dimen/clouds_text_size"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/linkGDrive"
+                    android:text="@string/login_button"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/clouds_margin_top"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.65"
+                    android:gravity="center|left"
+                    android:id="@+id/exchangeTitle"
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@drawable/exchange_white"
+                    android:text="MS Exchange"
+                    android:textSize="@dimen/clouds_text_size"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/linkExchange"
+                    android:text="@string/login_button"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/clouds_text_size_secondary"
+                android:layout_marginTop="@dimen/clouds_margin_top"
+                android:text="@string/google_drive_warming"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingBottom="16dp"
+    android:paddingTop="24dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/dialogTitle"
+        android:layout_weight="0.001"
+        android:text="@string/sounds_dialog_title" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_weight="2"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/musicList">
+        </ListView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:background="?android:attr/selectableItemBackground"
+        android:text="@string/button_ok"
+        style="?android:buttonStyle"
+        android:gravity="center"
+        android:id="@+id/musicDialogOk"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center|right"
+        />
+
+</LinearLayout>

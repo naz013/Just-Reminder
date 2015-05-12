@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:widget="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/windowBackground"
+    android:orientation="vertical"
+    android:gravity="center|bottom"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/string_cloud_connecting"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/string_cloud_connecting_explanation"
+        android:layout_marginTop="35dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal" />
+
+    <com.cray.software.justreminder.views.PaperButton
+        widget:paper_text="@string/string_connect_to_google_drive"
+        android:layout_width="wrap_content"
+        widget:paper_color="@color/colorRed"
+        widget:paper_corner_radius="3dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="35dp"
+        widget:paper_text_size="16sp"
+        android:id="@+id/connectGDrive"
+        android:layout_height="54dp" />
+
+    <com.cray.software.justreminder.views.PaperButton
+        widget:paper_text="@string/string_connect_to_dropbox"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        widget:paper_corner_radius="5dp"
+        widget:paper_color="@color/colorBlue"
+        android:id="@+id/connectDropbox"
+        android:layout_marginTop="10dp"
+        widget:paper_text_size="16sp"
+        android:layout_height="54dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="@string/string_connection_explanation" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_import_contacts"
+        android:id="@+id/checkBox"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/skip_button"
+        android:layout_marginTop="10dp"
+        android:id="@+id/skipButton"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal" />
+
+    <com.cray.software.justreminder.views.CircularProgress
+        android:layout_gravity="center"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
+        android:visibility="visible"
+        android:id="@+id/progress"
+        android:layout_marginTop="20dp"
+        widget:circular_progress_color="?attr/colorPrimaryDark"
+        widget:circular_progress_size="Small"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:id="@+id/progressMesage"/>
+</LinearLayout>

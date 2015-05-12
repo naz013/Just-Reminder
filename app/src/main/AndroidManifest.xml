@@ -1,0 +1,898 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cray.software.justreminder"
+    android:installLocation="internalOnly" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.NETWORK" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
+    <application
+        android:name="android.support.multidex.MultiDexApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_title"
+        android:theme="@style/HomeWhite.Blue" >
+        <activity
+            android:name=".SplashScreen"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.hexrain.design.fragments.LogInActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity android:name=".MainActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ArchiveActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SettingsActivity" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".GeolocationTasks"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CalendarActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NotesActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.hexrain.design.fragments.NotePreviewFragment"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.hexrain.design.fragments.ReminderPreviewFragment"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TasksActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Help"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ThanksDialog"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ReminderManager"
+            android:configChanges="keyboardHidden|orientation|keyboard" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TaskListManager"
+            android:configChanges="keyboardHidden|orientation|keyboard" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TaskManager"
+            android:configChanges="keyboardHidden|orientation|keyboard" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.ExchangeLogIn"
+            android:configChanges="keyboardHidden|orientation|keyboard" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.AddBirthday"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.PlacesList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.CategoriesList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.NewPlace"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.TemplatesList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.QuickSMS"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.NewTemplate"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.CategoryManager"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".NotesManager" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.note" />
+            </intent-filter>
+            <intent-filter> <!-- Intent filter for open files from email -->
+                <data android:scheme="content" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="application/octet-stream" />
+                <data android:pathPattern=".*\\.note" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".BackupManager"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".BackupFileEdit"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.StartHelp"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteFullscreen" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".services.AlarmReceiver" />
+        <receiver android:name=".services.BirthdayCheckAlarm" />
+        <receiver android:name=".services.PositionDelayReceiver" />
+        <receiver android:name=".services.WeekDayReceiver" />
+        <receiver android:name=".services.DelayReceiver" />
+        <receiver android:name=".services.BirthdayAlarm" />
+        <receiver android:name=".services.RepeatNotificationReceiver" />
+        <receiver android:name=".services.JustBootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".services.GeolocationService" />
+        <service android:name=".services.TaskButlerService" />
+        <service android:name=".services.SetBirthdays" />
+        <service android:name=".services.CheckBirthdays" />
+        <service android:name=".services.CheckPosition" />
+
+        <activity
+            android:name=".dialogs.ReminderDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteFullscreen" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VoiceHelp"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.ShowBirthday"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteFullscreen" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.ThemerDialog"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.CalendarStyle"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.AboutDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.ChangeDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.BirthdaysVoiceList"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.TargetRadius"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.NoteReminderTime"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.TextSize"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ColorPicker"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.TrackerOption"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ScreenOrientation"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.DatePick"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.FontStyleDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ImportContacts"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ListSounds"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SoundType"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.MapType"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.FirstDay"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.DaysTo"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.RateDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.VoiceResult"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.DelayTime"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SelectVolume"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ContactsList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.ContactsNameList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.QuickAddReminder"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.FollowReminder"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.WeekDayDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteFullscreen" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.EventDuration"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SelectCalendar"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SelectLocale"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.LedColor"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.MarkerStyle"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.CloudDrives"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.VoiceWidgetDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.RepeatInterval"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.VoiceLanguage"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.TimesOfDay"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SelectMelody"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.utils.SelectApplication"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".HelpOverflow"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/Transparent" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widgets.AddReminderWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/add_reminder_widget_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/add_reminder_widget_metadata" >
+            </meta-data>
+        </receiver>
+        <receiver
+            android:name=".widgets.VoiceWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/voice_widget_title" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/voice_widget_metadata" >
+            </meta-data>
+        </receiver>
+        <receiver
+            android:name=".widgets.AddBirthdayWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/add_birthday_widget_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/add_birthday_widget_metadata" >
+            </meta-data>
+        </receiver>
+        <receiver
+            android:name=".widgets.QuickReminderWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/quick_reminder_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_reminder_widget_metadata" >
+            </meta-data>
+        </receiver>
+
+        <activity
+            android:name=".widgets.CurrentTaskWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.CurrentNotesWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.AddReminderWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.AddBirthdayWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.QuickReminderWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.TasksWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".widgets.VoiceWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widgets.CurrentTaskWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/current_widget_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+                <action android:name="justreminder.LOCATION_CHANGED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/current_widget_metadata" >
+            </meta-data>
+        </receiver>
+
+        <service
+            android:name=".widgets.CurrentTaskService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <receiver
+            android:name=".widgets.CurrentNotesWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/notes_widget_title" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/note_widget_metadata" >
+            </meta-data>
+        </receiver>
+
+        <service
+            android:name=".widgets.CurrentNotesService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <receiver
+            android:name=".widgets.TasksWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/tasks_widget_title" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/tasks_widget_metadata" >
+            </meta-data>
+        </receiver>
+
+        <service
+            android:name=".widgets.TasksService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <activity
+            android:name=".widgets.CalendarWidgetConfig"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widgets.CalendarWidget"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/calendar_widget_name" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" >
+                </action>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_widget_metadata" >
+            </meta-data>
+        </receiver>
+
+        <service
+            android:name=".widgets.CalendarWeekdayService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+        <service
+            android:name=".widgets.CalendarMonthService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
+        </service>
+
+        <receiver android:name=".services.CallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".services.MissedCallAlarm" />
+
+        <activity
+            android:name=".dialogs.MissedCallDialog"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteFullscreen" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCb7levQQ7BwFhqtF0B7rnLDAYz9dJNic4" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name="com.dropbox.client2.android.AuthActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask" >
+            <intent-filter>
+
+                <!-- Change this to be db- followed by your app key -->
+                <data android:scheme="db-4zi1d414h0v8sxe" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".services.WearService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name=".dialogs.ImagePreview"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/HomeWhiteFullscreen" >
+        </activity>
+    </application>
+
+</manifest>

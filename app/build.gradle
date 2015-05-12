@@ -1,0 +1,111 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+    defaultConfig {
+        applicationId 'com.cray.software.justreminder'
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 82
+        versionName '3.1.2'
+        multiDexEnabled true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+
+    signingConfigs {
+        freeApp {
+            storeFile file('justreminder.jks')
+            storePassword 'justreminder140419912014'
+            keyAlias 'com.cray.software.justreminder'
+            keyPassword 'nazar19912014'
+        }
+        proApp {
+            storeFile file('justReminderPro.jks')
+            storePassword 'justreminderpro24072014'
+            keyAlias 'com.cray.software.justreminderpro'
+            keyPassword 'craysoftware2014'
+        }
+    }
+
+    productFlavors {
+        free {
+            applicationId 'com.cray.software.justreminder'
+            buildConfigField "boolean", "IS_PRO", "false"
+            minSdkVersion 15
+        }
+        pro {
+            applicationId 'com.cray.software.justreminderpro'
+            buildConfigField "boolean", "IS_PRO", "true"
+            versionCode 54
+            versionName '3.1.2'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            productFlavors.free.proguardFiles 'proguard-free.txt'
+            productFlavors.pro.proguardFiles 'proguard-rules.txt'
+            debuggable false
+            zipAlignEnabled true
+            jniDebuggable false
+            productFlavors.free.signingConfig signingConfigs.freeApp
+            productFlavors.pro.signingConfig signingConfigs.proApp
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-DEBUG'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+repositories {
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
+    //maven { url "https://oss.sonatype.org/content/groups/public/" }
+}
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.google.apis:google-api-services-calendar:v3-rev88-1.19.0' exclude module: 'httpclient'
+    compile 'com.google.api-client:google-api-client-android:+' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client-gson:+' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-drive:v2-rev149-1.19.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-tasks:v1-rev41-1.19.1' exclude module: 'httpclient'
+    compile project(':lvl')
+    compile project(':calDroid')
+    compile project(':swipe_actions')
+    compile project(':photoPreview')
+    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.android.support:cardview-v7:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:support-v4:22.1.1'
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.getbase:floatingactionbutton:1.9.0'
+    compile 'com.android.support:recyclerview-v7:22.1.1'
+    compile 'com.github.asyl.animation:arcanimator:1.0.0'
+    compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
+    //compile 'com.getpebble:pebblekit:3.0.0'
+}

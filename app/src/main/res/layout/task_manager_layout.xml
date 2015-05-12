@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:id="@+id/windowBackground"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar_note"
+        android:id="@+id/toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/wrapper"
+        android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.cray.software.justreminder.views.FloatingEditText
+                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editField"
+                android:textSize="@dimen/create_text_size_secondary"
+                android:hint="@string/tast_hint"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+
+            <com.cray.software.justreminder.views.FloatingEditText
+                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/noteField"
+                android:textSize="@dimen/create_text_size_secondary"
+                android:hint="@string/quick_note_hint"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dueCheck"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/string_add_due"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/dueContainer">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/simple_date"
+                    android:textStyle="bold"
+                    android:clickable="false"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/create_text_size_normal" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:id="@+id/dateRing"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:ems="10"
+                            android:text="23/06"
+                            android:textSize="@dimen/create_text_size_primary"
+                            android:id="@+id/dateField" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:ems="10"
+                            android:text="2014"
+                            android:textSize="@dimen/create_text_size_secondary"
+                            android:id="@+id/dateYearField" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                </LinearLayout>
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/reminderCheck"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/string_add_reminder"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/reminderContainer">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/simple_time"
+                    android:textStyle="bold"
+                    android:clickable="false"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/create_text_size_normal" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:ems="10"
+                    android:text="19:45"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/timeField" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                android:clickable="false"
+                android:textAllCaps="true"
+                android:id="@+id/listText"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/create_text_size_normal" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    </RelativeLayout>
+
+</LinearLayout>

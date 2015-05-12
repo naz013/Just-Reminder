@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="visible"
+    android:id="@+id/geolocationlayout">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/attackDelay"
+        android:textSize="@dimen/checkbox_text_size"
+        android:text="@string/location_delay_checkbox"
+        android:gravity="center"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:id="@+id/delayLayout"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:id="@+id/locationDateRing">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25/06"
+                android:ems="10"
+                android:clickable="false"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_primary"
+                android:id="@+id/locationDateField" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2014"
+                android:ems="10"
+                android:clickable="false"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_secondary"
+                android:id="@+id/locationDateYearField" />
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="@dimen/create_text_size_primary"
+            android:text="14:05"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_marginLeft="10dp"
+            android:ems="10"
+            android:id="@+id/locationTimeField" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/search_hint"
+            android:singleLine="true"
+            android:textSize="@dimen/create_text_size_normal"
+            android:layout_toLeftOf="@+id/clearButton"
+            android:id="@+id/searchField"/>
+
+        <ImageButton
+            android:layout_width="@dimen/create_imagebutton_size"
+            android:layout_height="@dimen/create_imagebutton_size"
+            android:id="@+id/clearButton"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/ic_clear_grey600_24dp"/>
+
+        </RelativeLayout>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:name="com.google.android.gms.maps.MapFragment"/>
+
+    <Spinner
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_marginTop="-50dp"
+        android:layout_marginRight="60dp"
+        android:id="@+id/placesList"/>
+
+</LinearLayout>

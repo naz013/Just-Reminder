@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/windowBackground"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonContainer"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save_dialog_button"
+            style="?android:buttonStyle"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/follow_button_text_size"
+            android:background="?attr/selectableItemBackground"
+            android:layout_gravity="center"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/buttonSave" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_cancel"
+            style="?android:buttonStyle"
+            android:clickable="true"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/follow_button_text_size"
+            android:background="?attr/selectableItemBackground"
+            android:layout_gravity="center"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/buttonCancel" />
+
+        </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/follow_margin"
+        android:layout_marginRight="@dimen/follow_margin"
+        android:id="@+id/contactInfo"
+        android:gravity="center"
+        android:text="Google"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/follow_margin"
+        android:textSize="@dimen/follow_text_size_primary"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/contactInfo"
+        android:layout_above="@+id/buttonContainer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/follow_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                android:clickable="false"
+                android:textAllCaps="true"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:text="@string/string_type"
+                android:layout_marginTop="5dp"
+                android:textSize="@dimen/follow_text_size_header"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/typeMessage"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:text="SMS"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/typeCall"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:text="@string/reminder_make_call"/>
+
+                </RadioGroup>
+
+            <com.cray.software.justreminder.views.FloatingEditText
+                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textField"
+                android:hint="@string/message_field_hint"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold"
+                android:clickable="false"
+                android:textAllCaps="true"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:text="@string/string_date_and_time"
+                android:textSize="@dimen/follow_text_size_header"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeTomorrow"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/string_tomorrow"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tomorrowTime"
+                    android:text="21 Feb, 15:45"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:gravity="center|right"
+                    android:padding="5dp"
+                    android:layout_toRightOf="@+id/timeTomorrow"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true" />
+
+                </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeNextWorking"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/string_next_working_day"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/nextWorkingTime"
+                    android:text="21 Feb, 15:45"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:gravity="center|right"
+                    android:padding="5dp"
+                    android:layout_toRightOf="@+id/timeNextWorking"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeAfter"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/string_after"/>
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/afterTime"
+                    android:text="21 Feb, 15:45"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:gravity="center|right"
+                    android:layout_toRightOf="@+id/timeAfter"
+                    android:padding="5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeCustom"
+                    android:textSize="@dimen/follow_text_size_normal"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="@string/string_select_time"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|right"
+                    android:layout_toRightOf="@+id/timeCustom"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal"
+                    android:layout_alignParentRight="true" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/customDate"
+                        android:text="21 Feb 2015"
+                        android:textSize="@dimen/follow_text_size_normal"
+                        android:gravity="center"
+                        android:padding="5dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/customTime"
+                        android:text="15:45"
+                        android:textSize="@dimen/follow_text_size_normal"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:padding="5dp"/>
+
+                    </LinearLayout>
+
+            </RelativeLayout>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:id="@+id/exportCheck"
+                android:layout_gravity="center"
+                android:textSize="@dimen/checkbox_text_size"
+                android:text="@string/export_check_title"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginTop="@dimen/follow_margin_top"
+                android:text="@string/add_to_google_tasks"
+                android:id="@+id/taskExport" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+</RelativeLayout>
