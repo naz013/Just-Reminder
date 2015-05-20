@@ -693,6 +693,308 @@ public class RecognizerUtils {
         return res;
     }
 
+    public static int[] getMonthIndexes(String input){
+        int month = 0;
+        int indexStart = input.indexOf(" january");
+        int increment = 8;
+        if (indexStart == -1){
+            month = 0;
+            indexStart = input.indexOf(" січень");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 0;
+            indexStart = input.indexOf(" січня");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 0;
+            indexStart = input.indexOf(" январь");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 0;
+            indexStart = input.indexOf(" января");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 1;
+            indexStart = input.indexOf(" february");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 1;
+            indexStart = input.indexOf(" лютий");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 1;
+            indexStart = input.indexOf(" лютого");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 1;
+            indexStart = input.indexOf(" февраль");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 1;
+            indexStart = input.indexOf(" февраля");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 2;
+            indexStart = input.indexOf(" march");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 2;
+            indexStart = input.indexOf(" березень");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 2;
+            indexStart = input.indexOf(" березня");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 2;
+            indexStart = input.indexOf(" марта");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 2;
+            indexStart = input.indexOf(" март");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 3;
+            indexStart = input.indexOf(" april");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 3;
+            indexStart = input.indexOf(" квітень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 3;
+            indexStart = input.indexOf(" квітня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 3;
+            indexStart = input.indexOf(" апрель");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 3;
+            indexStart = input.indexOf(" апреля");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 4;
+            indexStart = input.indexOf(" may");
+            increment = 4;
+        }
+        if (indexStart == -1){
+            month = 4;
+            indexStart = input.indexOf(" травень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 4;
+            indexStart = input.indexOf(" травня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 4;
+            indexStart = input.indexOf(" май");
+            increment = 4;
+        }
+        if (indexStart == -1){
+            month = 4;
+            indexStart = input.indexOf(" мая");
+            increment = 4;
+        }
+        if (indexStart == -1){
+            month = 5;
+            indexStart = input.indexOf(" june");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 5;
+            indexStart = input.indexOf(" червень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 5;
+            indexStart = input.indexOf(" червня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 5;
+            indexStart = input.indexOf(" июнь");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 5;
+            indexStart = input.indexOf(" июня");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 6;
+            indexStart = input.indexOf(" july");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 6;
+            indexStart = input.indexOf(" липень");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 6;
+            indexStart = input.indexOf(" липня");
+            increment = 6;
+        }
+        if (indexStart == -1){
+            month = 6;
+            indexStart = input.indexOf(" июль");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 6;
+            indexStart = input.indexOf(" июля");
+            increment = 5;
+        }
+        if (indexStart == -1){
+            month = 7;
+            indexStart = input.indexOf(" august");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 7;
+            indexStart = input.indexOf(" серпень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 7;
+            indexStart = input.indexOf(" серпня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 7;
+            indexStart = input.indexOf(" августа");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 7;
+            indexStart = input.indexOf(" август");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 8;
+            indexStart = input.indexOf(" september");
+            increment = 10;
+        }
+        if (indexStart == -1){
+            month = 8;
+            indexStart = input.indexOf(" вересень");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 8;
+            indexStart = input.indexOf(" вересня");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 8;
+            indexStart = input.indexOf(" сентябрь");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 8;
+            indexStart = input.indexOf(" сентября");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 9;
+            indexStart = input.indexOf(" october");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 9;
+            indexStart = input.indexOf(" жовтень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 9;
+            indexStart = input.indexOf(" жовтня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 9;
+            indexStart = input.indexOf(" октябрь");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 9;
+            indexStart = input.indexOf(" октября");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 10;
+            indexStart = input.indexOf(" november");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 10;
+            indexStart = input.indexOf(" листопада");
+            increment = 10;
+        }
+        if (indexStart == -1){
+            month = 10;
+            indexStart = input.indexOf(" листопад");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 10;
+            indexStart = input.indexOf(" ноябрь");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 10;
+            indexStart = input.indexOf(" ноября");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 11;
+            indexStart = input.indexOf(" december");
+            increment = 9;
+        }
+        if (indexStart == -1){
+            month = 11;
+            indexStart = input.indexOf(" грудень");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 11;
+            indexStart = input.indexOf(" грудня");
+            increment = 7;
+        }
+        if (indexStart == -1){
+            month = 11;
+            indexStart = input.indexOf(" декабрь");
+            increment = 8;
+        }
+        if (indexStart == -1){
+            month = 11;
+            indexStart = input.indexOf(" декабря");
+            increment = 8;
+        }
+        return new int[] {indexStart, increment, month};
+    }
+
     public static int getMonthFromString(String input){
         int res = 0;
         input = input.toLowerCase();
@@ -714,7 +1016,7 @@ public class RecognizerUtils {
                 input.contains("август") || input.contains("августа")) res = 7;
         if (input.contains("september") || input.contains("вересень") || input.contains("вересня") ||
                 input.contains("сентябрь") || input.contains("сентября")) res = 8;
-        if (input.contains("october") || input.contains("жовтень") || input.contains("жовтень") ||
+        if (input.contains("october") || input.contains("жовтень") || input.contains("жовтня") ||
                 input.contains("октябрь") || input.contains("октября")) res = 9;
         if (input.contains("november") || input.contains("листопад") || input.contains("листопада") ||
                 input.contains("ноябрь") || input.contains("ноября")) res = 10;
