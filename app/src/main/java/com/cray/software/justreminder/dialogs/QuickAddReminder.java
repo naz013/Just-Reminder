@@ -210,8 +210,8 @@ public class QuickAddReminder extends AppCompatActivity implements
         });
     }
 
-    private String getRepeat(int progress) {
-        return new Interval(QuickAddReminder.this).getRepeat(progress);
+    private int getRepeat(int progress) {
+        return new Interval(QuickAddReminder.this).getRepeatDays(progress);
     }
 
     protected void dateDialog() {

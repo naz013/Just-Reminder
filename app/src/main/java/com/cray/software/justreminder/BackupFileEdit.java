@@ -2219,8 +2219,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         application_layout.setVisibility(View.GONE);
     }
 
-    private String getRepeat(int progress) {
-        return new Interval(BackupFileEdit.this).getRepeat(progress);
+    private int getRepeat(int progress) {
+        return new Interval(BackupFileEdit.this).getRepeatDays(progress);
     }
 
     private  void getTimeRepeat(int progress){
