@@ -500,11 +500,6 @@
     <string name="string_four_days">4T</string>
     <string name="string_five_days">5T</string>
     <string name="string_six_days">6T</string>
-    <string name="interval_two_days">Alle zwei Tage</string>
-    <string name="interval_three_days">Alle drei Tage</string>
-    <string name="interval_four_days">Alle vier Tage</string>
-    <string name="interval_five_days">Alle fünf Tage</string>
-    <string name="interval_six_days">Alle 6 Tage</string>
     <string name="menu_order_by">Sortieren</string>
     <string name="sort_item_by_date_a_z">Nach Datum (A-Z)</string>
     <string name="sort_item_by_date_z_a">Nach Datum (Z-A)</string>
@@ -564,8 +559,6 @@
     <string name="config_text_size">Textgröße</string>
     <string name="repeat_code_two_weeks">2W</string>
     <string name="repeat_code_three_weeks">3W</string>
-    <string name="string_every_two_weeks">Alle 2 Wochen</string>
-    <string name="string_every_three_weeks">Alle 3 Wochen</string>
     <string name="extra_settings_fragment">Zusätzlich</string>
     <string name="settings_quick_sms_title">Schnell SMS</string>
     <string name="settings_quick_sms_explanation">Überprüfen Sie, um schnelle SMS für abgelehnte Anrufe aktivieren</string>
@@ -669,11 +662,6 @@
     <string name="string_four_month">4M</string>
     <string name="string_five_month">5M</string>
     <string name="string_six_month">6M</string>
-    <string name="string_every_two_month">Every 2 month</string>
-    <string name="string_every_three_month">Every 3 month</string>
-    <string name="string_every_four_month">Every 4 month</string>
-    <string name="string_every_five_month">Every 5 month</string>
-    <string name="string_every_six_month">Every 6 month</string>
     <string name="string_delete_reminder">Erinnerung löschen</string>
     <string name="settings_item_preview_title">Artikelvorschau</string>
     <string name="settings_item_preview_explanation">Überprüfen Sie, um Einzelteil-Vorschau für Notizen und Erinnerungen aktivieren</string>
@@ -689,12 +677,13 @@
     <string name="string_connect_to_dropbox">Eine Verbindung mit Dropbox</string>
     <string name="string_connection_explanation">So verwalten Anschlüsse Einstellungen > Export &amp; Synchronization > Externe Dienstleistungen</string>
     <string name="string_import_contacts">Auch importieren Geburtstage von Kontakten</string>
-    <string name="string_try_to_log_in">Versuchen Sie, melden Sie sich an...</string>
+    <string name="string_try_to_log_in">Versuchen Sie, melden Sie sich an…</string>
     <string name="string_successfully_logged">Erfolgreich angemeldet</string>
-    <string name="string_getting_groups">Anreise Gruppen...</string>
-    <string name="string_getting_reminders">Anreise Erinnerungen...</string>
-    <string name="string_getting_notes">Anreise Notizen...</string>
+    <string name="string_getting_groups">Anreise Gruppen…</string>
+    <string name="string_getting_reminders">Anreise Erinnerungen…</string>
+    <string name="string_getting_notes">Anreise Notizen…</string>
     <string name="simple_done">Bereit</string>
-    <string name="string_getting_google_tasks">Anreise Google Tasks...</string>
+    <string name="string_getting_google_tasks">Anreise Google Tasks…</string>
+    <string name="string_repeat_every">Wiederholen Sie alle</string>
 
 </resources>

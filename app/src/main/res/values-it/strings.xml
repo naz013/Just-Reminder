@@ -501,11 +501,6 @@
     <string name="string_four_days">4D</string>
     <string name="string_five_days">5D</string>
     <string name="string_six_days">6D</string>
-    <string name="interval_two_days">Every two days</string>
-    <string name="interval_three_days">Every three days</string>
-    <string name="interval_four_days">Every four days</string>
-    <string name="interval_five_days">Every five days</string>
-    <string name="interval_six_days">Every six days</string>
     <string name="menu_order_by">Order </string>
     <string name="sort_item_by_date_a_z">By date (A-Z)</string>
     <string name="sort_item_by_date_z_a">By date (Z-A)</string>
@@ -565,8 +560,6 @@
     <string name="config_text_size">Text size</string>
     <string name="repeat_code_two_weeks">2W</string>
     <string name="repeat_code_three_weeks">3W</string>
-    <string name="string_every_two_weeks">Every 2 weeks</string>
-    <string name="string_every_three_weeks">Every 3 weeks</string>
     <string name="extra_settings_fragment">Additional</string>
     <string name="settings_quick_sms_title">Quick SMS</string>
     <string name="settings_quick_sms_explanation">Check to enable quick SMS for rejected calls</string>
@@ -670,11 +663,6 @@
     <string name="string_four_month">4M</string>
     <string name="string_five_month">5M</string>
     <string name="string_six_month">6M</string>
-    <string name="string_every_two_month">Every 2 month</string>
-    <string name="string_every_three_month">Every 3 month</string>
-    <string name="string_every_four_month">Every 4 month</string>
-    <string name="string_every_five_month">Every 5 month</string>
-    <string name="string_every_six_month">Every 6 month</string>
     <string name="string_delete_reminder">Delete reminder</string>
     <string name="settings_item_preview_title">Item preview</string>
     <string name="settings_item_preview_explanation">Check to enable item preview for notes and reminders</string>
@@ -690,12 +678,13 @@
     <string name="string_connect_to_dropbox">Connect to Dropbox</string>
     <string name="string_connection_explanation">To manage connections go to Settings > Export &amp; Synchronization > External services</string>
     <string name="string_import_contacts">Also import birthdays from contacts</string>
-    <string name="string_try_to_log_in">Try to log in...</string>
+    <string name="string_try_to_log_in">Try to log in…</string>
     <string name="string_successfully_logged">Successfully logged</string>
-    <string name="string_getting_groups">Getting groups...</string>
-    <string name="string_getting_reminders">Getting reminders...</string>
-    <string name="string_getting_notes">Getting notes...</string>
+    <string name="string_getting_groups">Getting groups…</string>
+    <string name="string_getting_reminders">Getting reminders…</string>
+    <string name="string_getting_notes">Getting notes…</string>
     <string name="simple_done">Ready</string>
-    <string name="string_getting_google_tasks">Getting Google Tasks...</string>
+    <string name="string_getting_google_tasks">Getting Google Tasks…</string>
+    <string name="string_repeat_every">Repeat every</string>
 
 </resources>

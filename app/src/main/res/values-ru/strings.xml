@@ -501,11 +501,6 @@
     <string name="string_four_days">4Д</string>
     <string name="string_five_days">5Д</string>
     <string name="string_six_days">6Д</string>
-    <string name="interval_two_days">Каждые два дня</string>
-    <string name="interval_three_days">Каждые три дня</string>
-    <string name="interval_four_days">Каждые четыре дня</string>
-    <string name="interval_five_days">Каждые пять дней</string>
-    <string name="interval_six_days">Каждые шесть дней</string>
     <string name="menu_order_by">Сортировать</string>
     <string name="sort_item_by_date_a_z">По дате (A-Z)</string>
     <string name="sort_item_by_date_z_a">По дате (Z-A)</string>
@@ -565,8 +560,6 @@
     <string name="config_text_size">Размер текста</string>
     <string name="repeat_code_two_weeks">2Н</string>
     <string name="repeat_code_three_weeks">3Н</string>
-    <string name="string_every_two_weeks">Каждые 2 недели</string>
-    <string name="string_every_three_weeks">Каждые 3 недели</string>
     <string name="extra_settings_fragment">Дополнительные</string>
     <string name="settings_quick_sms_title">Быстрое SMS</string>
     <string name="settings_quick_sms_explanation">Отметьте, чтобы включить быстрые SMS для отклоненных звонков</string>
@@ -670,11 +663,6 @@
     <string name="string_four_month">4M</string>
     <string name="string_five_month">5M</string>
     <string name="string_six_month">6M</string>
-    <string name="string_every_two_month">Каждые 2 месяца</string>
-    <string name="string_every_three_month">Каждые 3 месяца</string>
-    <string name="string_every_four_month">Каждые 4 месяца</string>
-    <string name="string_every_five_month">Каждые 5 месяцев</string>
-    <string name="string_every_six_month">Каждые 6 месяцев</string>
     <string name="string_delete_reminder">Удалить напоминание</string>
     <string name="settings_item_preview_title">Предварительный просмотр</string>
     <string name="simple_disabled">Выполнено</string>
@@ -697,5 +685,6 @@
     <string name="string_getting_notes">Получаю заметки…</string>
     <string name="simple_done">Готово</string>
     <string name="string_getting_google_tasks">Получаю Задания Google…</string>
+    <string name="string_repeat_every">Повторять каждые</string>
 
 </resources>

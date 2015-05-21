@@ -500,11 +500,6 @@
     <string name="string_four_days">4Д</string>
     <string name="string_five_days">5Д</string>
     <string name="string_six_days">6Д</string>
-    <string name="interval_two_days">Кожні два дні</string>
-    <string name="interval_three_days">Кожні три дні</string>
-    <string name="interval_four_days">Кожні чотири дні</string>
-    <string name="interval_five_days">Кожні п\'ять днів</string>
-    <string name="interval_six_days">Кожні шість днів</string>
     <string name="menu_order_by">Сортувати</string>
     <string name="sort_item_by_date_a_z">За датою (А-Z)</string>
     <string name="sort_item_by_date_z_a">За датою (Z-А)</string>
@@ -563,8 +558,6 @@
     <string name="config_text_size">Розмір тексту</string>
     <string name="repeat_code_two_weeks">2Т</string>
     <string name="repeat_code_three_weeks">3Т</string>
-    <string name="string_every_two_weeks">Кожні 2 тижні</string>
-    <string name="string_every_three_weeks">Кожні 3 тижні</string>
     <string name="extra_settings_fragment">Додаткові</string>
     <string name="settings_missed_time_title">Час нагадування про пропущений виклик</string>
     <string name="settings_quick_sms_title">Швидке SMS</string>
@@ -669,11 +662,6 @@
     <string name="string_four_month">4M</string>
     <string name="string_five_month">5M</string>
     <string name="string_six_month">6M</string>
-    <string name="string_every_two_month">Кожні 2 місяці</string>
-    <string name="string_every_three_month">Кожні 3 місяці</string>
-    <string name="string_every_four_month">Кожні 4 місяці</string>
-    <string name="string_every_five_month">Кожні 5 місяців</string>
-    <string name="string_every_six_month">Кожні півроку</string>
     <string name="string_delete_reminder">Видалити нагадування</string>
     <string name="settings_item_preview_title">Попередній перегляд</string>
     <string name="settings_item_preview_explanation">Відмітьте, щоб увімкнути попередній перегляд для нотаток і нагадувань</string>
@@ -696,5 +684,6 @@
     <string name="simple_done">Готово</string>
     <string name="string_getting_google_tasks">Отримую Завдання Google…</string>
     <string name="string_cloud_connecting">Хмарна синхронізація</string>
+    <string name="string_repeat_every">Повторювати кожні</string>
 
 </resources>
