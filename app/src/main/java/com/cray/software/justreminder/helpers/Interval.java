@@ -71,46 +71,6 @@ public class Interval {
         return progress;
     }
 
-    public int getCodeFromProgress(int code){
-        int progress = 0;
-        if (code == 0){
-            progress = Intervals.REPEAT_CODE_ONCE;
-        } else if(code == 1){
-            progress = Intervals.INTERVAL_DAY;
-        } else if(code == 2){
-            progress = Intervals.INTERVAL_TWO_DAYS;
-        } else if(code == 3){
-            progress = Intervals.INTERVAL_TREE_DAYS;
-        } else if(code == 4){
-            progress = Intervals.INTERVAL_FOUR_DAYS;
-        } else if(code == 5){
-            progress = Intervals.INTERVAL_FIVE_DAYS;
-        } else if(code == 6){
-            progress = Intervals.INTERVAL_SIX_DAYS;
-        } else if(code == 7){
-            progress = Intervals.INTERVAL_WEEK;
-        } else if(code == 8){
-            progress = Intervals.INTERVAL_TWO_WEEKS;
-        } else if(code == 9){
-            progress = Intervals.INTERVAL_THREE_WEEKS;
-        } else if(code == 10){
-            progress = Intervals.INTERVAL_MONTH;
-        } else if(code == 11){
-            progress = Intervals.INTERVAL_TWO_MONTH;
-        } else if(code == 12){
-            progress = Intervals.INTERVAL_THREE_MONTH;
-        } else if(code == 13){
-            progress = Intervals.INTERVAL_FOUR_MONTH;
-        } else if(code == 14){
-            progress = Intervals.INTERVAL_FIVE_MONTH;
-        } else if(code == 15){
-            progress = Intervals.INTERVAL_HALF_YEAR;
-        } else if(code == 16){
-            progress = Intervals.INTERVAL_YEAR;
-        }
-        return progress;
-    }
-
     public String getInterval(int code){
         String interval;
         if (code > Intervals.REPEAT_CODE_ONCE && code < Intervals.INTERVAL_WEEK){
@@ -156,41 +116,6 @@ public class Interval {
         } else {
             interval = mContext.getString(R.string.interval_zero);
         }
-        /*if (code == Intervals.REPEAT_CODE_ONCE){
-            interval = mContext.getString(R.string.interval_zero);
-        } else if(code == Intervals.INTERVAL_DAY){
-            interval = mContext.getString(R.string.string_day);
-        } else if(code == Intervals.INTERVAL_TWO_DAYS){
-            interval = mContext.getString(R.string.string_two_days);
-        } else if(code == Intervals.INTERVAL_TREE_DAYS){
-            interval = mContext.getString(R.string.string_tree_days);
-        } else if(code == Intervals.INTERVAL_FOUR_DAYS){
-            interval = mContext.getString(R.string.string_four_days);
-        } else if(code == Intervals.INTERVAL_FIVE_DAYS){
-            interval = mContext.getString(R.string.string_five_days);
-        } else if(code == Intervals.INTERVAL_SIX_DAYS){
-            interval = mContext.getString(R.string.string_six_days);
-        } else if(code == Intervals.INTERVAL_WEEK){
-            interval = mContext.getString(R.string.string_week);
-        } else if(code == Intervals.INTERVAL_TWO_WEEKS){
-            interval = mContext.getString(R.string.repeat_code_two_weeks);
-        } else if(code == Intervals.INTERVAL_THREE_WEEKS){
-            interval = mContext.getString(R.string.repeat_code_three_weeks);
-        } else if(code == Intervals.INTERVAL_MONTH){
-            interval = mContext.getString(R.string.string__month);
-        } else if(code == Intervals.INTERVAL_TWO_MONTH){
-            interval = mContext.getString(R.string.string_two_month);
-        } else if(code == Intervals.INTERVAL_THREE_MONTH){
-            interval = mContext.getString(R.string.string_three_month);
-        } else if(code == Intervals.INTERVAL_FOUR_MONTH){
-            interval = mContext.getString(R.string.string_four_month);
-        } else if(code == Intervals.INTERVAL_FIVE_MONTH){
-            interval = mContext.getString(R.string.string_five_month);
-        } else if(code == Intervals.INTERVAL_HALF_YEAR){
-            interval = mContext.getString(R.string.string_six_month);
-        } else if(code == Intervals.INTERVAL_YEAR){
-            interval = mContext.getString(R.string.string_year);
-        }*/
         return interval;
     }
 
@@ -230,46 +155,6 @@ public class Interval {
             interval = 180;
         } else if (progress == 16){
             interval = 365;
-        }
-        return interval;
-    }
-
-    public String getRepeat(int progress){
-        String interval = null;
-        if (progress == 0){
-            interval = mContext.getString(R.string.interval_once);
-        } else if (progress == 1){
-            interval = mContext.getString(R.string.interval_day);
-        } else if(progress == 2){
-            interval = mContext.getString(R.string.interval_two_days);
-        } else if(progress == 3){
-            interval = mContext.getString(R.string.interval_three_days);
-        } else if(progress == 4){
-            interval = mContext.getString(R.string.interval_four_days);
-        } else if(progress == 5){
-            interval = mContext.getString(R.string.interval_five_days);
-        } else if(progress == 6){
-            interval = mContext.getString(R.string.interval_six_days);
-        } else if (progress == 7){
-            interval = mContext.getString(R.string.interval_week);
-        } else if (progress == 8){
-            interval = mContext.getString(R.string.string_every_two_weeks);
-        } else if (progress == 9){
-            interval = mContext.getString(R.string.string_every_three_weeks);
-        } else if (progress == 10){
-            interval = mContext.getString(R.string.interval_month);
-        } else if (progress == 11){
-            interval = mContext.getString(R.string.string_every_two_month);
-        } else if (progress == 12){
-            interval = mContext.getString(R.string.string_every_three_month);
-        } else if (progress == 13){
-            interval = mContext.getString(R.string.string_every_four_month);
-        } else if (progress == 14){
-            interval = mContext.getString(R.string.string_every_five_month);
-        } else if (progress == 15){
-            interval = mContext.getString(R.string.string_every_six_month);
-        } else if (progress == 16){
-            interval = mContext.getString(R.string.interval_year);
         }
         return interval;
     }
