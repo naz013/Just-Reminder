@@ -1,7 +1,6 @@
 package com.cray.software.justreminder;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -41,7 +40,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -74,6 +72,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -93,7 +92,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener {
+        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener {
 
     LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout,
             message_layout, location_call_layout, location_message_layout, weekday_layout, action_layout,
@@ -319,7 +318,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -684,7 +683,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skypeDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -716,7 +715,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skypeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -844,7 +843,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         appDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -876,7 +875,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         appDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1031,7 +1030,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         callDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1166,7 +1165,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         messageDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1410,7 +1409,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -1697,7 +1696,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationCallDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -1986,7 +1985,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationMessageDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -3076,19 +3075,19 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.callDateRing:
-                dateDialog().show();
+                dateDialog();
                 break;
             case R.id.callTime:
                 timeDialog().show();
                 break;
             case R.id.messageDateRing:
-                dateDialog().show();
+                dateDialog();
                 break;
             case R.id.messageTime:
                 timeDialog().show();
                 break;
             case R.id.dateRing:
-                dateDialog().show();
+                dateDialog();
                 break;
             case R.id.timeField:
                 timeDialog().show();
@@ -3167,73 +3166,73 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    protected Dialog dateDialog() {
-        return new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay);
+    protected void dateDialog() {
+        final DatePickerDialog datePickerDialog =
+                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
+        datePickerDialog.setCloseOnSingleTapDay(false);
+        datePickerDialog.show(getSupportFragmentManager(), "taa");
     }
 
-    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
+    @Override
+    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+        myYear = year;
+        myMonth = monthOfYear;
+        myDay = dayOfMonth;
 
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
+        String dayStr;
+        String monthStr;
 
-            String dayStr;
-            String monthStr;
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
+        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+        else monthStr = String.valueOf(myMonth + 1);
 
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            if (isCallAttached()){
-                callDate.setText(dayStr + "/" + monthStr);
-                callYearDate.setText(String.valueOf(myYear));
-            }
-            if (isSkypeAttached()){
-                skypeDate.setText(dayStr + "/" + monthStr);
-                skypeYearDate.setText(String.valueOf(myYear));
-            }
-            if (isApplicationAttached()){
-                appDate.setText(dayStr + "/" + monthStr);
-                appYearDate.setText(String.valueOf(myYear));
-            }
-            if (isDateReminderAttached()){
-                dateField.setText(dayStr + "/" + monthStr);
-                dateYearField.setText(String.valueOf(myYear));
-            }
-            if (isMessageAttached()){
-                messageDate.setText(dayStr + "/" + monthStr);
-                messageYearDate.setText(String.valueOf(myYear));
-            }
-            if (isLocationAttached()){
-                if (attackDelay.isChecked()){
-                    if (delayLayout.getVisibility() == View.VISIBLE) {
-                        locationDateField.setText(dayStr + "/" + monthStr);
-                        locationDateYearField.setText(String.valueOf(myYear));
-                    }
-                }
-            }
-            if (isLocationCallAttached()){
-                if (attackCallDelay.isChecked()){
-                    if (delayCallLayout.getVisibility() == View.VISIBLE) {
-                        locationCallDateField.setText(dayStr + "/" + monthStr);
-                        locationCallDateYearField.setText(String.valueOf(myYear));
-                    }
-                }
-            }
-            if (isLocationMessageAttached()){
-                if (attackMessageDelay.isChecked()){
-                    if (delayMessageLayout.getVisibility() == View.VISIBLE) {
-                        locationMessageDateField.setText(dayStr + "/" + monthStr);
-                        locationMessageDateYearField.setText(String.valueOf(myYear));
-                    }
+        if (isCallAttached()){
+            callDate.setText(dayStr + "/" + monthStr);
+            callYearDate.setText(String.valueOf(myYear));
+        }
+        if (isSkypeAttached()){
+            skypeDate.setText(dayStr + "/" + monthStr);
+            skypeYearDate.setText(String.valueOf(myYear));
+        }
+        if (isApplicationAttached()){
+            appDate.setText(dayStr + "/" + monthStr);
+            appYearDate.setText(String.valueOf(myYear));
+        }
+        if (isDateReminderAttached()){
+            dateField.setText(dayStr + "/" + monthStr);
+            dateYearField.setText(String.valueOf(myYear));
+        }
+        if (isMessageAttached()){
+            messageDate.setText(dayStr + "/" + monthStr);
+            messageYearDate.setText(String.valueOf(myYear));
+        }
+        if (isLocationAttached()){
+            if (attackDelay.isChecked()){
+                if (delayLayout.getVisibility() == View.VISIBLE) {
+                    locationDateField.setText(dayStr + "/" + monthStr);
+                    locationDateYearField.setText(String.valueOf(myYear));
                 }
             }
         }
-    };
+        if (isLocationCallAttached()){
+            if (attackCallDelay.isChecked()){
+                if (delayCallLayout.getVisibility() == View.VISIBLE) {
+                    locationCallDateField.setText(dayStr + "/" + monthStr);
+                    locationCallDateYearField.setText(String.valueOf(myYear));
+                }
+            }
+        }
+        if (isLocationMessageAttached()){
+            if (attackMessageDelay.isChecked()){
+                if (delayMessageLayout.getVisibility() == View.VISIBLE) {
+                    locationMessageDateField.setText(dayStr + "/" + monthStr);
+                    locationMessageDateYearField.setText(String.valueOf(myYear));
+                }
+            }
+        }
+    }
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));

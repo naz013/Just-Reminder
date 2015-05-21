@@ -1,7 +1,5 @@
 package com.cray.software.justreminder.dialogs;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +28,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
@@ -41,7 +39,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-public class AddBirthday extends AppCompatActivity implements View.OnClickListener {
+public class AddBirthday extends AppCompatActivity implements View.OnClickListener,
+        DatePickerDialog.OnDateSetListener {
 
     EditText birthName, phone;
     Button pickContact;
@@ -180,7 +179,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.birthDateWrapper:
-                dateDialog().show();
+                dateDialog();
                 break;
             case R.id.contactLayout:
                 pd = ProgressDialog.show(AddBirthday.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
@@ -302,28 +301,28 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    protected Dialog dateDialog() {
-        return new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay);
+    protected void dateDialog() {
+        final DatePickerDialog datePickerDialog =
+                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
+        datePickerDialog.setCloseOnSingleTapDay(false);
+        datePickerDialog.show(getSupportFragmentManager(), "taa");
     }
 
-    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
-            String monthStr;
-            if (myMonth < 9){
-                monthStr = "0" + (myMonth + 1);
-            } else monthStr = String.valueOf((myMonth + 1));
-            String dayStr;
-            if (myDay < 10){
-                dayStr = "0" + myDay;
-            } else dayStr = String.valueOf(myDay);
-            birthDate.setText(myYear + "-" + monthStr + "-" + dayStr);
-        }
-    };
+    @Override
+    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+        myYear = year;
+        myMonth = monthOfYear;
+        myDay = dayOfMonth;
+        String monthStr;
+        if (myMonth < 9){
+            monthStr = "0" + (myMonth + 1);
+        } else monthStr = String.valueOf((myMonth + 1));
+        String dayStr;
+        if (myDay < 10){
+            dayStr = "0" + myDay;
+        } else dayStr = String.valueOf(myDay);
+        birthDate.setText(myYear + "-" + monthStr + "-" + dayStr);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

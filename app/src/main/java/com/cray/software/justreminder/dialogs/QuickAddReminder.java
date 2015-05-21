@@ -1,6 +1,5 @@
 package com.cray.software.justreminder.dialogs;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,12 +36,14 @@ import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class QuickAddReminder extends AppCompatActivity {
+public class QuickAddReminder extends AppCompatActivity implements
+        DatePickerDialog.OnDateSetListener{
 
     DataBase DB;
     ColorSetter cs;
@@ -66,7 +66,6 @@ public class QuickAddReminder extends AppCompatActivity {
 
     UpdatesHelper updatesHelper;
     AlarmReceiver alarm = new AlarmReceiver();
-    Interval interval;
     Typeface typeface;
     Toolbar toolbar;
     FloatingActionButton mFab;
@@ -118,7 +117,7 @@ public class QuickAddReminder extends AppCompatActivity {
         dateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -126,7 +125,7 @@ public class QuickAddReminder extends AppCompatActivity {
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
 
@@ -215,31 +214,31 @@ public class QuickAddReminder extends AppCompatActivity {
         return new Interval(QuickAddReminder.this).getRepeat(progress);
     }
 
-    protected Dialog dateDialog() {
-        return new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay);
+    protected void dateDialog() {
+        final DatePickerDialog datePickerDialog =
+                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
+        datePickerDialog.setCloseOnSingleTapDay(false);
+        datePickerDialog.show(getSupportFragmentManager(), "taa");
     }
 
-    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
+    @Override
+    public void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+        myYear = year;
+        myMonth = monthOfYear;
+        myDay = dayOfMonth;
 
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
+        String dayStr;
+        String monthStr;
 
-            String dayStr;
-            String monthStr;
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
+        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+        else monthStr = String.valueOf(myMonth + 1);
 
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            dateField.setText(dayStr + "/" + monthStr);
-            dateYearField.setText(String.valueOf(myYear));
-        }
-    };
+        dateField.setText(dayStr + "/" + monthStr);
+        dateYearField.setText(String.valueOf(myYear));
+    }
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,

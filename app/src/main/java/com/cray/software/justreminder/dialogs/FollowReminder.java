@@ -1,6 +1,5 @@
 package com.cray.software.justreminder.dialogs;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -15,8 +14,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,13 +34,15 @@ import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class FollowReminder extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class FollowReminder extends AppCompatActivity implements
+        CompoundButton.OnCheckedChangeListener, DatePickerDialog.OnDateSetListener {
 
     DataBase DB;
     ColorSetter cs;
@@ -198,7 +197,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         customDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                dateDialog();
             }
         });
         customTime.setOnClickListener(new View.OnClickListener() {
@@ -249,26 +248,26 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         return mins;
     }
 
-    protected Dialog dateDialog() {
-        return new DatePickerDialog(this, myDateCallBack, customYear, customMonth, customDay);
+    protected void dateDialog() {
+        final DatePickerDialog datePickerDialog =
+                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
+        datePickerDialog.setCloseOnSingleTapDay(false);
+        datePickerDialog.show(getSupportFragmentManager(), "taa");
     }
 
-    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
+    @Override
+    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+        customYear = year;
+        customMonth = monthOfYear;
+        customDay = dayOfMonth;
 
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            customYear = year;
-            customMonth = monthOfYear;
-            customDay = dayOfMonth;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, monthOfYear);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.YEAR, year);
-            c.set(Calendar.MONTH, monthOfYear);
-            c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            customDate.setText(dateFormat.format(c.getTime()));
-        }
-    };
+        customDate.setText(dateFormat.format(c.getTime()));
+    }
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, customHour, customMinute, is24Hour);
