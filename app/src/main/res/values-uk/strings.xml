@@ -685,5 +685,7 @@
     <string name="string_getting_google_tasks">Отримую Завдання Google…</string>
     <string name="string_cloud_connecting">Хмарна синхронізація</string>
     <string name="string_repeat_every">Повторювати кожні</string>
+    <string name="string_create_copy"> Створити копію</string>
+    <string name="string_reminder_created">Нагадування створено</string>
 
 </resources>

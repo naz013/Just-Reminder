@@ -686,5 +686,7 @@
     <string name="simple_done">Готово</string>
     <string name="string_getting_google_tasks">Получаю Задания Google…</string>
     <string name="string_repeat_every">Повторять каждые</string>
+    <string name="string_create_copy">Создать копию</string>
+    <string name="string_reminder_created">Напоминание создано</string>
 
 </resources>

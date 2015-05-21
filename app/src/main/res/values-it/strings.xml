@@ -686,5 +686,7 @@
     <string name="simple_done">Ready</string>
     <string name="string_getting_google_tasks">Getting Google Tasks…</string>
     <string name="string_repeat_every">Repeat every</string>
+    <string name="string_create_copy">Create copy</string>
+    <string name="string_reminder_created">Reminder created</string>
 
 </resources>
