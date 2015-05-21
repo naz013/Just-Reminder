@@ -716,8 +716,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             timeField.setText(formattedTime);
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
-            //repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
+            repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDays.setText(String.valueOf(repCode));
         }
     }
 
@@ -1173,8 +1173,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(formattedTime);
-            //repeatSkype.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
+            repeatSkype.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysSkype.setText(String.valueOf(repCode));
         }
     }
 
@@ -1395,8 +1395,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(formattedTime);
-            //repeatApp.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
+            repeatApp.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysApp.setText(String.valueOf(repCode));
         }
     }
 
@@ -1556,8 +1556,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(formattedTime);
-            //repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
+            repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysCall.setText(String.valueOf(repCode));
         }
     }
 
@@ -1717,8 +1717,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(formattedTime);
-            //repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
+            repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysMessage.setText(String.valueOf(repCode));
         }
     }
 
