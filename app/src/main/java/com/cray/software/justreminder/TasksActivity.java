@@ -300,6 +300,51 @@ public class TasksActivity extends AppCompatActivity implements SyncListener, Vi
     }
 
     private void loadList(String id, int i){
+        if (id == null){
+            ArrayList<ListItems> mData = new ArrayList<>();
+            mData.clear();
+            data.open();
+            Cursor c = data.getTasks();
+            if (c != null && c.moveToFirst()){
+                do {
+                    String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
+                    if (title != null && !title.matches("")) {
+                        long date = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
+                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
+                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                        String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
+                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
+                        long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
+                        mData.add(new ListItems(title, mId, checks, taskId, date, listId, note));
+                    }
+                } while (c.moveToNext());
+            }
+            adapter = new TasksRecyclerAdapter(TasksActivity.this, mData, this);
+            mList.setAdapter(adapter);
+            if (i != 0) {
+                if (i > 0) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_right_bounce);
+                            mList.startAnimation(slide);
+                            mList.setVisibility(View.VISIBLE);
+                        }
+                    }, 320);
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left_bounce);
+                            mList.startAnimation(slide);
+                            mList.setVisibility(View.VISIBLE);
+                        }
+                    }, 320);
+                }
+            }
+            if (c != null) c.close();
+            if (data != null) data.close();
+        }
         if (id.matches(Constants.TASKS_ALL)){
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
