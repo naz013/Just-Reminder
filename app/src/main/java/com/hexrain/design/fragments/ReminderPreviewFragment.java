@@ -338,6 +338,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         db.deleteTask(id);
         new DeleteReminder(ReminderPreviewFragment.this, uuID).execute();
         if (db != null) db.close();
+        UpdatesHelper updatesHelper = new UpdatesHelper(this);
+        updatesHelper.updateWidget();
+
+        Toast.makeText(this, getString(R.string.archived_result_message), Toast.LENGTH_SHORT).show();
         new DisableAsync(this).execute();
     }
 
