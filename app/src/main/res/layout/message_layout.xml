@@ -133,7 +133,7 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:text="@string/string_repeat_every"
-                    android:textSize="@dimen/create_text_size_primary"/>
+                    android:textSize="@dimen/create_text_size_normal"/>
 
                 <EditText
                     android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/remaining_days"
                     android:layout_toRightOf="@+id/repeatDaysMessage"
-                    android:textSize="@dimen/create_text_size_primary"/>
+                    android:textSize="@dimen/create_text_size_normal"/>
 
             </RelativeLayout>
 
