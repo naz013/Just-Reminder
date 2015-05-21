@@ -194,6 +194,46 @@ public class Interval {
         return interval;
     }
 
+    public int getRepeatDays(int progress){
+        int interval = 0;
+        if (progress == 0){
+            interval = 0;
+        } else if (progress == 1){
+            interval = 1;
+        } else if(progress == 2){
+            interval = 2;
+        } else if(progress == 3){
+            interval = 3;
+        } else if(progress == 4){
+            interval = 4;
+        } else if(progress == 5){
+            interval = 5;
+        } else if(progress == 6){
+            interval = 6;
+        } else if (progress == 7){
+            interval = 7;
+        } else if (progress == 8){
+            interval = 14;
+        } else if (progress == 9){
+            interval = 21;
+        } else if (progress == 10){
+            interval = 30;
+        } else if (progress == 11){
+            interval = 60;
+        } else if (progress == 12){
+            interval = 90;
+        } else if (progress == 13){
+            interval = 120;
+        } else if (progress == 14){
+            interval = 150;
+        } else if (progress == 15){
+            interval = 180;
+        } else if (progress == 16){
+            interval = 365;
+        }
+        return interval;
+    }
+
     public String getRepeat(int progress){
         String interval = null;
         if (progress == 0){
