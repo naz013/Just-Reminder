@@ -1,8 +1,11 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -35,9 +38,12 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DeleteReminder;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
+import com.cray.software.justreminder.async.TaskAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
@@ -68,6 +74,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -316,8 +323,127 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         if (id == android.R.id.home){
             finish();
         }
+        if (id == R.id.action_make_copy){
+            showDialog();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    ArrayList<Long> list;
+
+    public void showDialog(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        int hour = 0;
+        int minute = 0;
+        list = new ArrayList<>();
+        ArrayList<String> time = new ArrayList<>();
+
+        do {
+            if (hour == 23 && minute == 30){
+                hour = -1;
+            } else {
+                long tmp = calendar.getTimeInMillis();
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+                minute = calendar.get(Calendar.MINUTE);
+                list.add(tmp);
+                String hourStr;
+                if (hour < 10) hourStr = "0" + hour;
+                else hourStr = String.valueOf(hour);
+                String minuteStr;
+                if (minute < 10) minuteStr = "0" + minute;
+                else minuteStr = String.valueOf(minute);
+                time.add(hourStr + ":" + minuteStr);
+                calendar.setTimeInMillis(tmp + AlarmManager.INTERVAL_HALF_HOUR);
+            }
+        } while (hour != -1);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.string_select_time));
+        builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                createCopy(list.get(item));
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void createCopy(long time) {
+        db = new DataBase(this);
+        sPrefs = new SharedPrefs(this);
+        if (!db.isOpen()) db.open();
+        Cursor c = db.getTask(id);
+        if (c != null && c.moveToFirst()){
+            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+            String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+            int myHour;
+            int myMinute;
+            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+            int code = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+            if (!type.matches(Constants.TYPE_TIME)) {
+                String uuID = new SyncHelper().generateID();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(time);
+                myHour = calendar.get(Calendar.HOUR_OF_DAY);
+                myMinute = calendar.get(Calendar.MINUTE);
+                long idN = db.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+                        number, repCode, 0, 0, latitude, longitude, uuID, weekdays, exp, melody, radius, ledColor,
+                        code, categoryId);
+                db.updateDateTime(idN);
+                if (type.startsWith(Constants.TYPE_LOCATION)){
+                    if (myHour > 0 && myMinute > 0){
+                        new PositionDelayReceiver().setDelay(this, idN);
+                    } else {
+                        startService(new Intent(this, GeolocationService.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+                }
+                if (type.startsWith(Constants.TYPE_APPLICATION) || type.matches(Constants.TYPE_CALL) ||
+                        type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_REMINDER) ||
+                        type.startsWith(Constants.TYPE_SKYPE)){
+                    if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
+                        exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                    if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
+                            code == Constants.SYNC_ALL){
+                        exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                    }
+                    new AlarmReceiver().setAlarm(this, idN);
+                }
+                if (type.startsWith(Constants.TYPE_WEEKDAY)){
+                    if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
+                        exportToCalendar(text, getWeekTime(myHour, myMinute, weekdays), idN);
+                    if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
+                            code == Constants.SYNC_ALL){
+                        exportToTasks(text, getWeekTime(myHour, myMinute, weekdays), idN);
+                    }
+                    new WeekDayReceiver().setAlarm(this, idN);
+                }
+            }
+        }
+        if (db != null) db.close();
+        UpdatesHelper updatesHelper = new UpdatesHelper(this);
+        updatesHelper.updateWidget();
+
+        Toast.makeText(this, getString(R.string.string_reminder_created), Toast.LENGTH_SHORT).show();
     }
 
     private void makeArchive() {
@@ -340,6 +466,35 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
         Toast.makeText(this, getString(R.string.archived_result_message), Toast.LENGTH_SHORT).show();
         new DisableAsync(this).execute();
+    }
+
+    private void exportToCalendar(String summary, long startTime, long id){
+        sPrefs = new SharedPrefs(this);
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
+            new CalendarManager(this).addEvent(summary, startTime, id);
+        }
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
+            new CalendarManager(this).addEventToStock(summary, startTime);
+        }
+    }
+
+    private void exportToTasks(String summary, long startTime, long mId){
+        long localId = new TasksData(this).addTask(summary, null, 0, false, startTime,
+                null, null, getString(R.string.string_task_from_just_reminder),
+                null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
+        new TaskAsync(this, summary, null, null,
+                TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
+    }
+
+    private long getWeekTime(int hour, int minute, String weekdays){
+        TimeCount count = new TimeCount(this);
+        return count.getNextWeekdayTime(hour, minute, weekdays, 0);
+    }
+
+    private long getTime(int day, int month, int year, int hour, int minute, int after){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day, hour, minute);
+        return calendar.getTimeInMillis() + (60 * 1000 * after);
     }
 
     public class loadAsync extends AsyncTask<Void, Void, String[]>{
