@@ -297,6 +297,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     CheckBox dateTaskExport;
+    EditText repeatDays;
 
     private void attachDateReminder(){
         by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
@@ -365,14 +366,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         timeField.setTypeface(typeface);
 
-        repeatDateIntLabel = (TextView) findViewById(R.id.repeatDateIntLabel);
+        repeatDays = (EditText) findViewById(R.id.repeatDays);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDateIntLabel.setTypeface(typeface);
+        repeatDays.setTypeface(typeface);
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDateIntLabel.setText(getRepeat(repeatDateInt.getProgress()));
+        repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
 
         if (id != 0) {
             fdb.open();
@@ -412,8 +413,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             timeField.setText(formattedTime);
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
-            repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDateIntLabel.setText(getRepeat(repeatDateInt.getProgress()));
+            //repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
         }
     }
 
@@ -646,7 +647,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     CheckBox skypeTaskExport;
-    EditText skypeUser;
+    EditText skypeUser, repeatDaysSkype;
     RadioButton skypeCall, skypeVideo, skypeChat;
     LinearLayout skypeDateRing;
     TextView skypeDate, skypeYearDate, skypeTime, repeatSkypeLabel;
@@ -737,14 +738,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         skypeTime.setTypeface(typeface);
 
-        repeatSkypeLabel = (TextView) findViewById(R.id.repeatSkypeLabel);
+        repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatSkypeLabel.setTypeface(typeface);
+        repeatDaysSkype.setTypeface(typeface);
 
         repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
         repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatSkypeLabel.setText(getRepeat(repeatSkype.getProgress()));
+        repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
 
         if (id != 0) {
             fdb.open();
@@ -796,13 +797,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(formattedTime);
-            repeatSkype.setProgress(interval.getProgressFromCode(repCode));
-            repeatSkypeLabel.setText(getRepeat(repeatSkype.getProgress()));
+            //repeatSkype.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
         }
     }
 
     CheckBox appTaskExport;
-    EditText browseLink;
+    EditText browseLink, repeatDaysApp;
     RadioButton application, browser;
     LinearLayout appDateRing;
     TextView appDate, appYearDate, appTime, repeatAppLabel, applicationName;
@@ -897,14 +898,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         appTime.setTypeface(typeface);
 
-        repeatAppLabel = (TextView) findViewById(R.id.repeatAppLabel);
+        repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatAppLabel.setTypeface(typeface);
+        repeatDaysApp.setTypeface(typeface);
 
         repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
         repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatAppLabel.setText(getRepeat(repeatApp.getProgress()));
+        repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
 
         if (id != 0) {
             fdb.open();
@@ -966,12 +967,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(formattedTime);
-            repeatApp.setProgress(interval.getProgressFromCode(repCode));
-            repeatAppLabel.setText(getRepeat(repeatApp.getProgress()));
+            //repeatApp.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
         }
     }
 
     CheckBox callTaskExport;
+    EditText repeatDaysCall;
 
     private void attachCall(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
@@ -1051,14 +1053,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         callTime.setTypeface(typeface);
 
-        repeatCallIntLabel = (TextView) findViewById(R.id.repeatCallIntLabel);
+        repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatCallIntLabel.setTypeface(typeface);
+        repeatDaysCall.setTypeface(typeface);
 
         repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
         repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatCallIntLabel.setText(getRepeat(repeatCallInt.getProgress()));
+        repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
 
         if (id != 0) {
             fdb.open();
@@ -1100,12 +1102,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(formattedTime);
-            repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatCallIntLabel.setText(getRepeat(repeatCallInt.getProgress()));
+            //repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
         }
     }
 
     CheckBox messageTaskExport;
+    EditText repeatDaysMessage;
 
     private void attachMessage(){
         message_layout = (LinearLayout) findViewById(R.id.message_layout);
@@ -1185,14 +1188,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         messageTime.setTypeface(typeface);
 
-        repeatMessageIntLabel = (TextView) findViewById(R.id.repeatMessageIntLabel);
+        repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatMessageIntLabel.setTypeface(typeface);
+        repeatDaysMessage.setTypeface(typeface);
 
         repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
         repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatMessageIntLabel.setText(getRepeat(repeatMessageInt.getProgress()));
+        repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
 
         if (id != 0) {
             fdb.open();
@@ -1234,8 +1237,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(formattedTime);
-            repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatMessageIntLabel.setText(getRepeat(repeatMessageInt.getProgress()));
+            //repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
         }
     }
 
@@ -2587,8 +2590,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 number = "http://" + number;
         }
 
-        interval = new Interval(BackupFileEdit.this);
-        int repeat = interval.getCodeFromProgress(repeatApp.getProgress());
+        int repeat = Integer.parseInt(repeatDaysApp.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (!isUID(uuID)) {
@@ -2624,8 +2626,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         String type = getSkypeTaskType();
         String number = skypeUser.getText().toString().trim();
 
-        interval = new Interval(BackupFileEdit.this);
-        int repeat = interval.getCodeFromProgress(repeatSkype.getProgress());
+        int repeat = Integer.parseInt(repeatDaysSkype.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (!isUID(uuID)) {
@@ -2668,7 +2669,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             dialog.show();
             return false;
         } else {
-            Log.d("GooglePlayServicesUtil Check", "Result is: " + resultCode);
+            Log.d("GooglePlayServicesUtil", "Result is: " + resultCode);
             return true;
         }
     }
@@ -2711,8 +2712,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
         String type = getTaskType();
-        interval = new Interval(BackupFileEdit.this);
-        int repeat = interval.getCodeFromProgress(repeatDateInt.getProgress());
+        int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (!isUID(uuID)) {
@@ -2796,8 +2796,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = phoneNumber.getText().toString().trim();
-        interval = new Interval(BackupFileEdit.this);
-        int repeat = interval.getCodeFromProgress(repeatCallInt.getProgress());
+        int repeat = Integer.parseInt(repeatDaysCall.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (!isUID(uuID)) {
@@ -2832,8 +2831,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = messageNumber.getText().toString().trim();
-        interval = new Interval(BackupFileEdit.this);
-        int repeat = interval.getCodeFromProgress(repeatMessageInt.getProgress());
+        int repeat = Integer.parseInt(repeatDaysMessage.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (!isUID(uuID)) {

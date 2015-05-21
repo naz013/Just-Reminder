@@ -51,8 +51,9 @@ public class QuickAddReminder extends AppCompatActivity {
 
     LinearLayout by_date_layout, dateRing;
     FloatingEditText task_text;
+    EditText repeatDays;
     CheckBox taskExport;
-    TextView dateField, timeField, dateYearField, repeatDateIntLabel;
+    TextView dateField, timeField, dateYearField;
     SeekBar repeatDateInt;
 
     int myHour = 0;
@@ -166,16 +167,16 @@ public class QuickAddReminder extends AppCompatActivity {
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         timeField.setTypeface(typeface);
 
-        repeatDateIntLabel = (TextView) findViewById(R.id.repeatDateIntLabel);
+        repeatDays = (EditText) findViewById(R.id.repeatDays);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDateIntLabel.setTypeface(typeface);
+        repeatDays.setTypeface(typeface);
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDateInt.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                repeatDateIntLabel.setText(getRepeat(progress));
+                repeatDays.setText(String.valueOf(getRepeat(progress)));
             }
 
             @Override
@@ -188,7 +189,7 @@ public class QuickAddReminder extends AppCompatActivity {
 
             }
         });
-        repeatDateIntLabel.setText(getRepeat(repeatDateInt.getProgress()));
+        repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
 
         mFab = new FloatingActionButton(QuickAddReminder.this);
         mFab.setColorNormal(cs.colorSetter());
@@ -274,8 +275,7 @@ public class QuickAddReminder extends AppCompatActivity {
             return;
         }
         String type = Constants.TYPE_REMINDER;
-        interval = new Interval(QuickAddReminder.this);
-        int repeat = interval.getCodeFromProgress(repeatDateInt.getProgress());
+        int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
         DB = new DataBase(QuickAddReminder.this);
         DB.open();
         sHelp = new SyncHelper(QuickAddReminder.this);

@@ -124,9 +124,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             message_layout, location_call_layout, location_message_layout, weekday_layout, action_layout,
             skype_layout, application_layout;
     LinearLayout callDateRing, dateRing, messageDateRing;
-    FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber, weekPhoneNumber;
-    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField, repeatCallIntLabel, repeatDateIntLabel,
-            repeatTimeIntLabel, afterTimeIntLabel, messageDate, messageYearDate, messageTime, repeatMessageIntLabel,
+    FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber,
+            weekPhoneNumber;
+    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
+            repeatTimeIntLabel, afterTimeIntLabel, messageDate, messageYearDate, messageTime,
             weekTimeField;
     ImageButton addNumberButton, addMessageNumberButton, locationCallAddNumberButton, locationMessageAddNumberButton,
             weekAddNumberButton;
@@ -573,6 +574,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     CheckBox dateTaskExport;
+    EditText repeatDays;
 
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -603,7 +605,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -656,14 +658,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         timeField.setTypeface(typeface);
 
-        repeatDateIntLabel = (TextView) findViewById(R.id.repeatDateIntLabel);
+        repeatDays = (EditText) findViewById(R.id.repeatDays);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDateIntLabel.setTypeface(typeface);
+        repeatDays.setTypeface(typeface);
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDateIntLabel.setText(getRepeat(repeatDateInt.getProgress()));
+        repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -714,8 +716,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             timeField.setText(formattedTime);
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
-            repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDateIntLabel.setText(getRepeat(repeatDateInt.getProgress()));
+            //repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
         }
     }
 
@@ -994,10 +996,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     CheckBox skypeExport, skypeTaskExport;
-    EditText skypeUser;
+    EditText skypeUser, repeatDaysSkype;
     RadioButton skypeCall, skypeVideo, skypeChat;
     LinearLayout skypeDateRing;
-    TextView skypeDate, skypeYearDate, skypeTime, repeatSkypeLabel;
+    TextView skypeDate, skypeYearDate, skypeTime;
     SeekBar repeatSkype;
 
     private void attachSkype(){
@@ -1040,7 +1042,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         skypeDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -1078,7 +1080,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         skypeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1100,14 +1102,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         skypeTime.setTypeface(typeface);
 
-        repeatSkypeLabel = (TextView) findViewById(R.id.repeatSkypeLabel);
+        repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatSkypeLabel.setTypeface(typeface);
+        repeatDaysSkype.setTypeface(typeface);
 
         repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
         repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatSkypeLabel.setText(getRepeat(repeatSkype.getProgress()));
+        repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -1171,16 +1173,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(formattedTime);
-            repeatSkype.setProgress(interval.getProgressFromCode(repCode));
-            repeatSkypeLabel.setText(getRepeat(repeatSkype.getProgress()));
+            //repeatSkype.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
         }
     }
 
     CheckBox appExport, appTaskExport;
-    EditText browseLink;
+    EditText browseLink, repeatDaysApp;
     RadioButton application, browser;
     LinearLayout appDateRing;
-    TextView appDate, appYearDate, appTime, repeatAppLabel, applicationName;
+    TextView appDate, appYearDate, appTime, applicationName;
     SeekBar repeatApp;
     RelativeLayout applicationLayout;
 
@@ -1255,7 +1257,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         appDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -1293,7 +1295,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         appDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1315,14 +1317,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         appTime.setTypeface(typeface);
 
-        repeatAppLabel = (TextView) findViewById(R.id.repeatAppLabel);
+        repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatAppLabel.setTypeface(typeface);
+        repeatDaysApp.setTypeface(typeface);
 
         repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
         repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatAppLabel.setText(getRepeat(repeatApp.getProgress()));
+        repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -1393,12 +1395,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(formattedTime);
-            repeatApp.setProgress(interval.getProgressFromCode(repCode));
-            repeatAppLabel.setText(getRepeat(repeatApp.getProgress()));
+            //repeatApp.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
         }
     }
 
     CheckBox callTaskExport;
+    EditText repeatDaysCall;
 
     private void attachCall(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1471,7 +1474,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         callDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1493,14 +1496,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         callTime.setTypeface(typeface);
 
-        repeatCallIntLabel = (TextView) findViewById(R.id.repeatCallIntLabel);
+        repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatCallIntLabel.setTypeface(typeface);
+        repeatDaysCall.setTypeface(typeface);
 
         repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
         repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatCallIntLabel.setText(getRepeat(repeatCallInt.getProgress()));
+        repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -1553,12 +1556,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(formattedTime);
-            repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatCallIntLabel.setText(getRepeat(repeatCallInt.getProgress()));
+            //repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
         }
     }
 
     CheckBox messageTaskExport;
+    EditText repeatDaysMessage;
 
     private void attachMessage(){
         taskField.setHint(getString(R.string.message_field_hint));
@@ -1631,7 +1635,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         messageDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
@@ -1653,14 +1657,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         messageTime.setTypeface(typeface);
 
-        repeatMessageIntLabel = (TextView) findViewById(R.id.repeatMessageIntLabel);
+        repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatMessageIntLabel.setTypeface(typeface);
+        repeatDaysMessage.setTypeface(typeface);
 
         repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
         repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatMessageIntLabel.setText(getRepeat(repeatMessageInt.getProgress()));
+        repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -1713,8 +1717,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(formattedTime);
-            repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatMessageIntLabel.setText(getRepeat(repeatMessageInt.getProgress()));
+            //repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
         }
     }
 
@@ -1894,7 +1898,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -2191,7 +2195,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationCallDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -2489,7 +2493,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationMessageDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog();//.show();
+                dateDialog();
             }
         });
 
@@ -3134,8 +3138,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         String type = getSkypeTaskType();
         String number = skypeUser.getText().toString().trim();
 
-        interval = new Interval(ReminderManager.this);
-        int repeat = interval.getCodeFromProgress(repeatSkype.getProgress());
+        int repeat = Integer.parseInt(repeatDaysSkype.getText().toString().trim());
 
         DB.open();
         if (id != 0) {
@@ -3194,8 +3197,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 number = "http://" + number;
         }
 
-        interval = new Interval(ReminderManager.this);
-        int repeat = interval.getCodeFromProgress(repeatApp.getProgress());
+        int repeat = Integer.parseInt(repeatDaysApp.getText().toString().trim());
 
         DB.open();
         if (id != 0) {
@@ -3251,7 +3253,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             dialog.show();
             return false;
         } else {
-            Log.d("GooglePlayServicesUtil Check", "Result is: " + resultCode);
+            Log.d("GooglePlayServices", "Result is: " + resultCode);
             return true;
         }
     }
@@ -3288,8 +3290,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return;
         }
         String type = getTaskType();
-        interval = new Interval(ReminderManager.this);
-        int repeat = interval.getCodeFromProgress(repeatDateInt.getProgress());
+        int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
 
         DB.open();
         if (id != 0) {
@@ -3393,8 +3394,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         String text = taskField.getText().toString().trim();
         String type = getTaskType();
         String number = phoneNumber.getText().toString().trim();
-        interval = new Interval(ReminderManager.this);
-        int repeat = interval.getCodeFromProgress(repeatCallInt.getProgress());
+        int repeat = Integer.parseInt(repeatDaysCall.getText().toString().trim());
 
         DB.open();
         if (id != 0) {
@@ -3444,8 +3444,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
         String type = getTaskType();
         String number = messageNumber.getText().toString().trim();
-        interval = new Interval(ReminderManager.this);
-        int repeat = interval.getCodeFromProgress(repeatMessageInt.getProgress());
+        int repeat = Integer.parseInt(repeatDaysMessage.getText().toString().trim());
 
         DB.open();
         if (id != 0) {
@@ -3690,19 +3689,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.callDateRing:
-                dateDialog();//.show();
+                dateDialog();
                 break;
             case R.id.callTime:
                 timeDialog().show();
                 break;
             case R.id.messageDateRing:
-                dateDialog();//.show();
+                dateDialog();
                 break;
             case R.id.messageTime:
                 timeDialog().show();
                 break;
             case R.id.dateRing:
-                dateDialog();//.show();
+                dateDialog();
                 break;
             case R.id.timeField:
                 timeDialog().show();
@@ -3714,19 +3713,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
             case R.id.repeatSkype:
-                repeatSkypeLabel.setText(getRepeat(progress));
+                repeatDaysSkype.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatApp:
-                repeatAppLabel.setText(getRepeat(progress));
+                repeatDaysApp.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatCallInt:
-                repeatCallIntLabel.setText(getRepeat(progress));
+                repeatDaysCall.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatMessageInt:
-                repeatMessageIntLabel.setText(getRepeat(progress));
+                repeatDaysMessage.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatDateInt:
-                repeatDateIntLabel.setText(getRepeat(progress));
+                repeatDays.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatTimeInt:
                 if (progress == 0){
@@ -3771,8 +3770,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private String getRepeat(int progress) {
-        return new Interval(ReminderManager.this).getRepeat(progress);
+    private int getRepeat(int progress) {
+        return new Interval(ReminderManager.this).getRepeatDays(progress);
     }
 
     @Override
@@ -3885,70 +3884,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
-    /*DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
-
-            String dayStr;
-            String monthStr;
-
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            if (isCallAttached()){
-                callDate.setText(dayStr + "/" + monthStr);
-                callYearDate.setText(String.valueOf(myYear));
-            }
-            if (isSkypeAttached()){
-                skypeDate.setText(dayStr + "/" + monthStr);
-                skypeYearDate.setText(String.valueOf(myYear));
-            }
-            if (isApplicationAttached()){
-                appDate.setText(dayStr + "/" + monthStr);
-                appYearDate.setText(String.valueOf(myYear));
-            }
-            if (isDateReminderAttached()){
-                dateField.setText(dayStr + "/" + monthStr);
-                dateYearField.setText(String.valueOf(myYear));
-            }
-            if (isMessageAttached()){
-                messageDate.setText(dayStr + "/" + monthStr);
-                messageYearDate.setText(String.valueOf(myYear));
-            }
-            if (isLocationAttached()){
-                if (attackDelay.isChecked()){
-                    if (delayLayout.getVisibility() == View.VISIBLE) {
-                        locationDateField.setText(dayStr + "/" + monthStr);
-                        locationDateYearField.setText(String.valueOf(myYear));
-                    }
-                }
-            }
-            if (isLocationCallAttached()){
-                if (attackCallDelay.isChecked()){
-                    if (delayCallLayout.getVisibility() == View.VISIBLE) {
-                        locationCallDateField.setText(dayStr + "/" + monthStr);
-                        locationCallDateYearField.setText(String.valueOf(myYear));
-                    }
-                }
-            }
-            if (isLocationMessageAttached()){
-                if (attackMessageDelay.isChecked()){
-                    if (delayMessageLayout.getVisibility() == View.VISIBLE) {
-                        locationMessageDateField.setText(dayStr + "/" + monthStr);
-                        locationMessageDateYearField.setText(String.valueOf(myYear));
-                    }
-                }
-            }
-        }
-    };*/
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
