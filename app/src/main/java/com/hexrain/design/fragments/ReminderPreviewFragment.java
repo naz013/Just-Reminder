@@ -222,13 +222,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         db.open();
         if (statusSwitch.isChecked()){
             db.setDone(id);
-            AlarmReceiver alarm = new AlarmReceiver();
-            WeekDayReceiver week = new WeekDayReceiver();
-            DelayReceiver delayReceiver = new DelayReceiver();
             Integer i = (int) (long) id;
-            alarm.cancelAlarm(ReminderPreviewFragment.this, i);
-            week.cancelAlarm(ReminderPreviewFragment.this, i);
-            delayReceiver.cancelAlarm(ReminderPreviewFragment.this, id);
+            new AlarmReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
+            new WeekDayReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
+            new DelayReceiver().cancelAlarm(ReminderPreviewFragment.this, id);
             new RepeatNotificationReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
             new PositionDelayReceiver().cancelDelay(ReminderPreviewFragment.this, i);
             NotificationManager mNotifyMgr =
