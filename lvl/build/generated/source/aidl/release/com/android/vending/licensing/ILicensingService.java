@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: D:\\projects\\fromLinux\\projects\\JustReminder\\lvl\\aidl\\com\\android\\vending\\licensing\\ILicensingService.aidl
+ * Original file: /home/nazar/projects/Just Reminder/lvl/aidl/com/android/vending/licensing/ILicensingService.aidl
  */
 package com.android.vending.licensing;
 // Android library projects do not yet support AIDL, so this has been

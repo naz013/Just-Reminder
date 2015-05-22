@@ -4,4 +4,4 @@
     <item android:drawable="@color/caldroid_holo_blue_dark" android:state_pressed="true"/> <!-- pressed -->
     <item android:drawable="@android:color/transparent" android:state_pressed="false"/> <!-- normal -->
 
-</selector><!-- From: file:/D:/projects/fromLinux/projects/JustReminder/calDroid/src/main/res/drawable/cell_bg.xml -->
+</selector><!-- From: file:/home/nazar/projects/Just%20Reminder/calDroid/src/main/res/drawable/cell_bg.xml -->

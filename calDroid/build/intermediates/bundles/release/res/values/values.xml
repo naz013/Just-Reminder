@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/D:/projects/fromLinux/projects/JustReminder/calDroid/src/main/res/values/color.xml -->
+    <!-- From: file:/home/nazar/projects/Just%20Reminder/calDroid/src/main/res/values/color.xml -->
     <eat-comment/>
     <color name="caldroid_black">#000000</color>
     <color name="caldroid_darker_gray">#aaa</color>
@@ -47,10 +47,10 @@
     <color name="grey_x">#555555</color>
     <color name="grey_y">#999999</color>
     <color name="grey_z">#aaaaaa</color>
-    <!-- From: file:/D:/projects/fromLinux/projects/JustReminder/calDroid/src/main/res/values/strings.xml -->
+    <!-- From: file:/home/nazar/projects/Just%20Reminder/calDroid/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">CalendarFragment</string>
-    <!-- From: file:/D:/projects/fromLinux/projects/JustReminder/calDroid/src/main/res/values/styles.xml -->
+    <!-- From: file:/home/nazar/projects/Just%20Reminder/calDroid/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--

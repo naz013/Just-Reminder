@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="D:\projects\fromLinux\projects\JustReminder\photoPreview\src\main\assets"/></dataSet><dataSet config="debug"><source path="D:\projects\fromLinux\projects\JustReminder\photoPreview\src\debug\assets"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="/home/nazar/projects/Just Reminder/photoPreview/src/main/assets"/></dataSet><dataSet config="debug"><source path="/home/nazar/projects/Just Reminder/photoPreview/src/debug/assets"/></dataSet></merger>
