@@ -117,7 +117,13 @@ public class Recognizer {
                 ctx.startActivity(new Intent(ctx, SelectVolume.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
                 break;
-            } else if (keyStr.matches(".*кожн.* ([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*я?у?і?и?в? .*") ||
+            } //else if (keyStr.matches("([0-9][0-9]?) (січ|лют|бер|квіт|трав|черв|лип|серп|вер|жовт|лист|груд).*") ||
+                    //keyStr.matches("([0-9][0-9]?) (янв|февр|мар|апр|ма|июн|июл|авг|сен|окт|ноя|дек).*") ||
+                    //keyStr.matches("(jan|feb|mar|apr|ma|jun|jul|aug|sep|oct|nov|dec).* ([0-9][0-9]?) .*")){
+                //unknownDate(keyStr, isWidget);
+                //break;
+            //}
+            else if (keyStr.matches(".*кожн.* ([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*я?у?і?и?в? .*") ||
                     keyStr.matches(".*кажд.* ([0-9]?[0-9]?) ?(мес|дн|год|нед|лет|ден).*а?ы?т?с?в?й?ь?я?и?ц?д? .*") ||
                     keyStr.matches(".*every.* ([0-9]?[0-9]?) ?(day|month|week|year).*s? .*") ||
                     keyStr.matches("що.* ?([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*я?у?і?и?в? .*")){
@@ -208,6 +214,80 @@ public class Recognizer {
                     keyStr.matches(".* ночью.*")){
                 nightTask(keyStr, isWidget);
                 break;
+            }
+        }
+    }
+
+    private void unknownDate(String keyStr, boolean isWidget) {
+        boolean export = RecognizerUtils.isCalendarExportable(keyStr);
+        if (keyStr.matches("(jan|feb|mar|apr|ma|jun|jul|aug|sep|oct|nov|dec).* ([0-9][0-9]?) .*")){
+            //english version
+            String[] parts = keyStr.split(" \\d\\d?");
+        } else {
+            //ukrainian and russian
+            String[] parts = keyStr.split(" \\d\\d?");
+            int size = parts.length;
+            if (size == 5){
+                String first = parts[0];
+                String second = parts[1];
+                String third = parts[2];
+                String fourth = parts[3];
+                String fifth = parts[4];
+
+                String date = keyStr.substring(keyStr.lastIndexOf(first) + first.length(),
+                        keyStr.lastIndexOf(second)).trim();
+                String hour = keyStr.substring(keyStr.lastIndexOf(second) + second.length(),
+                        keyStr.lastIndexOf(third)).trim();
+                String minutes = keyStr.substring(keyStr.lastIndexOf(third) + third.length(),
+                        keyStr.lastIndexOf(fourth)).trim();
+                String decrement = keyStr.substring(keyStr.lastIndexOf(fourth) + fourth.length(),
+                        keyStr.lastIndexOf(fifth)).trim();
+
+                int[] indexes = RecognizerUtils.getMonthIndexes(second);
+                int indexStart = indexes[0];
+                int increment = indexes[1];
+                int month = indexes[2];
+
+                int indexEnd = fourth.indexOf(" нагада");
+                if (indexEnd == -1) indexEnd = fourth.indexOf(" напомн");
+                if (indexEnd != -1 && indexStart != -1){
+
+                }
+            } else if (size == 4){
+                String first = parts[0];
+                String second = parts[1];
+                String third = parts[2];
+                String fourth = parts[3];
+
+                String date = keyStr.substring(keyStr.lastIndexOf(first) + first.length(),
+                        keyStr.lastIndexOf(second)).trim();
+                String hour = keyStr.substring(keyStr.lastIndexOf(second) + second.length(),
+                        keyStr.lastIndexOf(third)).trim();
+                String minutes = keyStr.substring(keyStr.lastIndexOf(third) + third.length(),
+                        keyStr.lastIndexOf(fourth)).trim();
+
+                int[] indexes = RecognizerUtils.getMonthIndexes(second);
+                int indexStart = indexes[0];
+                int increment = indexes[1];
+                int month = indexes[2];
+
+                int indexEnd = third.indexOf(" нагада");
+                if (indexEnd == -1) indexEnd = third.indexOf(" напомн");
+                if (indexEnd != -1 && indexStart != -1){
+
+                } else {
+
+                }
+            } else if(size == 3){
+                String first = parts[0];
+                String second = parts[1];
+                String third = parts[2];
+
+                int indexEnd = second.indexOf(" нагада");
+                if (indexEnd == -1) indexEnd = second.indexOf(" напомн");
+            } else {
+                String first = parts[0];
+                String second = parts[1];
             }
         }
     }
