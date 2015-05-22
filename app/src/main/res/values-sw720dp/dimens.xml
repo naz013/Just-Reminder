@@ -69,4 +69,20 @@
     <dimen name="create_toggle_margin_left">15dp</dimen>
     <dimen name="reminder_preview_container_padding">15dp</dimen>
     <dimen name="reminder_preview_margin_top">15dp</dimen>
+    <dimen name="dimen_log_in_padding">70dp</dimen>
+    <dimen name="dimen_log_in_progress_margin_top">30dp</dimen>
+    <dimen name="log_in_progress_text_size">31sp</dimen>
+    <dimen name="log_in_circle_margin_top">35dp</dimen>
+    <dimen name="log_in_circle_size">55dp</dimen>
+    <dimen name="log_in_skip_text_size">33sp</dimen>
+    <dimen name="log_in_skip_margin_top">25dp</dimen>
+    <dimen name="log_in_check_margin_top">25dp</dimen>
+    <dimen name="log_in_settings_margin_yop">20dp</dimen>
+    <dimen name="log_in_button_height">69dp</dimen>
+    <dimen name="log_in_button_text_size">31sp</dimen>
+    <dimen name="log_in_button_margin_top">25dp</dimen>
+    <dimen name="log_in_button_corner_radius">20dp</dimen>
+    <dimen name="log_in_first_button_margin_top">50dp</dimen>
+    <dimen name="log_in_explanation_text_size">33sp</dimen>
+    <dimen name="log_in_title_text_size">40sp</dimen>
 </resources>

@@ -5,13 +5,14 @@
     android:orientation="vertical"
     android:gravity="center|bottom"
     android:layout_height="match_parent"
-    android:padding="15dp">
+    android:padding="@dimen/dimen_log_in_padding">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/string_cloud_connecting"
+        android:textSize="@dimen/log_in_title_text_size"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -19,31 +20,32 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/string_cloud_connecting_explanation"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="@dimen/log_in_first_button_margin_top"
         android:gravity="center"
+        android:textSize="@dimen/log_in_explanation_text_size"
         android:layout_gravity="center_horizontal" />
 
     <com.cray.software.justreminder.views.PaperButton
         widget:paper_text="@string/string_connect_to_google_drive"
         android:layout_width="wrap_content"
         widget:paper_color="@color/colorRed"
-        widget:paper_corner_radius="3dp"
+        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         android:layout_gravity="center"
-        android:layout_marginTop="35dp"
-        widget:paper_text_size="16sp"
+        android:layout_marginTop="@dimen/log_in_first_button_margin_top"
+        widget:paper_text_size="@dimen/log_in_button_text_size"
         android:id="@+id/connectGDrive"
-        android:layout_height="54dp" />
+        android:layout_height="@dimen/log_in_button_height" />
 
     <com.cray.software.justreminder.views.PaperButton
         widget:paper_text="@string/string_connect_to_dropbox"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        widget:paper_corner_radius="5dp"
+        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         widget:paper_color="@color/colorBlue"
         android:id="@+id/connectDropbox"
-        android:layout_marginTop="10dp"
-        widget:paper_text_size="16sp"
-        android:layout_height="54dp" />
+        android:layout_marginTop="@dimen/log_in_button_margin_top"
+        widget:paper_text_size="@dimen/log_in_button_text_size"
+        android:layout_height="@dimen/log_in_button_height" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,7 +53,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/log_in_settings_margin_yop"
         android:text="@string/string_connection_explanation" />
 
     <CheckBox
@@ -59,7 +61,7 @@
         android:layout_height="wrap_content"
         android:text="@string/string_import_contacts"
         android:id="@+id/checkBox"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/log_in_check_margin_top"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -67,18 +69,18 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/skip_button"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/log_in_skip_margin_top"
         android:id="@+id/skipButton"
-        android:textSize="18sp"
+        android:textSize="@dimen/log_in_skip_text_size"
         android:layout_gravity="center_horizontal" />
 
     <com.cray.software.justreminder.views.CircularProgress
         android:layout_gravity="center"
-        android:layout_height="40dp"
-        android:layout_width="40dp"
+        android:layout_height="@dimen/log_in_circle_size"
+        android:layout_width="@dimen/log_in_circle_size"
         android:visibility="visible"
         android:id="@+id/progress"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/log_in_circle_margin_top"
         widget:circular_progress_color="?attr/colorPrimaryDark"
         widget:circular_progress_size="Small"/>
 
@@ -86,6 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/dimen_log_in_progress_margin_top"
+        android:text="progress"
+        android:textSize="@dimen/log_in_progress_text_size"
         android:id="@+id/progressMesage"/>
 </LinearLayout>
