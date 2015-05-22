@@ -31,7 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MissedCallDialog extends Activity {
-    FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor, buttonNotification;
+    FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor,
+            buttonNotification, buttonEdit;
     TextView remText;
     RoundImageView contactPhoto;
     LinearLayout single_container;
@@ -80,6 +81,7 @@ public class MissedCallDialog extends Activity {
         single_container.setVisibility(View.VISIBLE);
 
         buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
+        buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
         buttonCancel = (FloatingActionButton) findViewById(R.id.buttonCancel);
         buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
         buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
@@ -88,6 +90,7 @@ public class MissedCallDialog extends Activity {
         buttonDelayFor.setVisibility(View.GONE);
         buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
         buttonNotification.setVisibility(View.GONE);
+        buttonEdit.setVisibility(View.GONE);
         contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 

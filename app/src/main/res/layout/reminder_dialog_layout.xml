@@ -100,6 +100,12 @@
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/buttonEdit"
+            android:layout_width="50dp"
+            android:layout_margin="@dimen/reminder_margin_top"
+            android:layout_height="50dp"/>
+
     </LinearLayout>
 
     <LinearLayout
