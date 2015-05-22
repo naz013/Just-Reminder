@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/placeName"
             android:textSize="@dimen/create_text_size_normal"
+            android:layout_marginTop="15dp"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"

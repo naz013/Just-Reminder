@@ -24,6 +24,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
             android:singleLine="false"
             android:maxLength="120"
             android:textSize="@dimen/create_text_size_primary"
