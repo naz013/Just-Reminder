@@ -97,9 +97,10 @@ public class TemplatesList extends AppCompatActivity {
 
     private void loadTemplates(){
         db.open();
+        boolean isDark = new SharedPrefs(this).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 TemplatesList.this,
-                R.layout.list_item_simple_card,
+                isDark ? R.layout.list_item_simple_card_dark : R.layout.list_item_simple_card,
                 db.queryTemplates(),
                 new String[] {Constants.COLUMN_TEXT},
                 new int[] { R.id.textView }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);

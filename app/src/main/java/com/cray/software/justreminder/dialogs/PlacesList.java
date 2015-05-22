@@ -114,9 +114,10 @@ public class PlacesList extends AppCompatActivity {
 
     private void loadPlaces(){
         db.open();
+        boolean isDark = new SharedPrefs(this).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 PlacesList.this,
-                R.layout.list_item_simple_card,
+                isDark ? R.layout.list_item_simple_card_dark : R.layout.list_item_simple_card,
                 db.queryPlaces(),
                 new String[] {Constants.LocationConstants.COLUMN_LOCATION_NAME},
                 new int[] { R.id.textView }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
