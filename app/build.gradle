@@ -34,6 +34,12 @@ android {
             keyAlias 'com.cray.software.justreminderpro'
             keyPassword 'craysoftware2014'
         }
+        debugApp {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
     }
 
     productFlavors {
@@ -71,6 +77,7 @@ android {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
+            signingConfig signingConfigs.debugApp
         }
     }
     compileOptions {
