@@ -500,6 +500,241 @@ public class RecognizerUtils {
         return new int[] {indexStart, increment, multiplier};
     }
 
+    public static long getLongIndexes(String input){
+        long minute = 1000 * 60;
+        long hour = minute * 60;
+        long day = hour * 24;
+        long multiplier = day;
+        int indexStart = input.indexOf(" днів");
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" дні");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" тижнів");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" тижні");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" місяців");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" місяці");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" роки");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" років");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" дня");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" дней");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" недели");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" недель");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" месяцев");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" месяца");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" года");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" лет");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" days");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" weeks");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" months");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" years");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" дня");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" день");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" тижня");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" тиждень");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" місяця");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" місяць");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" року");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" дня");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" неделю");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" месяца");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" месяц");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" day");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" week");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" month");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" year");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" рік");
+            multiplier = day * 365;
+        }
+
+        // indexes for after time reminder
+
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" minutes");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" minute");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" hours");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" hour");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" хвилину");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" хвилини");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" хвилин");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" минуту");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" минуты");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" минут");
+            multiplier = minute;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" годину");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" години");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" годин");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" часа");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" часов");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" час");
+            multiplier = hour;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf(" год");
+            multiplier = day * 365;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf("щодня");
+            multiplier = day;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf("щотижня");
+            multiplier = day * 7;
+        }
+        if (indexStart == -1) {
+            indexStart = input.indexOf("щомісяця");
+            multiplier = day * 30;
+        }
+        if (indexStart == -1) {
+            multiplier = day * 365;
+        }
+        return multiplier;
+    }
+
     public static boolean isCalendarExportable(String input){
         input = input.toLowerCase();
         return input.matches(".*  calendar.*") ||
