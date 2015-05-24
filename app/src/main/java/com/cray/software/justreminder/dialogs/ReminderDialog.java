@@ -800,7 +800,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         DB = new DataBase(ReminderDialog.this);
         DB.open();
         DB.setDone(id);
-        DB.close();
         stopIt();
     }
 
@@ -820,6 +819,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         removeFlags();
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
+        if (DB != null) DB.close();
         super.onDestroy();
     }
 
