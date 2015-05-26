@@ -1,2 +1,2 @@
-include ':app', ':lvl', ':Wearable', ':swipe_actions', ':photoPreview'
+include ':app', ':lvl', ':swipe_actions', ':photoPreview'
 include ':calDroid'
