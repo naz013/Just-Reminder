@@ -13,7 +13,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.CalendarData;
+import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.text.SimpleDateFormat;

@@ -17,7 +17,7 @@ import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.interfaces.CalendarData;
+import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.util.ArrayList;

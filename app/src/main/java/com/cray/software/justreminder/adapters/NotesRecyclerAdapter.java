@@ -21,7 +21,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.NoteItem;
+import com.cray.software.justreminder.datas.NoteItem;
 import com.hexrain.design.fragments.NotePreviewFragment;
 
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -18,8 +17,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
-import com.cray.software.justreminder.interfaces.WidgetItem;
-import com.cray.software.justreminder.views.StripedDrawable;
+import com.cray.software.justreminder.datas.WidgetItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

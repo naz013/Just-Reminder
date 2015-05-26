@@ -13,7 +13,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.ListItems;
+import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 
 import java.text.SimpleDateFormat;
