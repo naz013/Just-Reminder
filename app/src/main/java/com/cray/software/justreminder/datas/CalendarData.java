@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.interfaces;
+package com.cray.software.justreminder.datas;
 
 import android.os.Parcel;
 import android.os.Parcelable;

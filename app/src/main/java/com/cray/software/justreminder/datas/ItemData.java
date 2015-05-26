@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.interfaces;
+package com.cray.software.justreminder.datas;
 
 /**
  * Created by Nazar on 29.04.2015.
