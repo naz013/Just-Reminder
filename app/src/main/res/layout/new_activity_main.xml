@@ -25,13 +25,13 @@
             android:id="@+id/wrapper"
             android:layout_height="match_parent">
 
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/currentList"
             android:layout_width="match_parent"
             android:overScrollMode="never"
             android:visibility="visible"
             android:divider="@android:color/transparent"
-            android:dividerHeight="1dp"
+            android:dividerHeight="3dp"
             android:layout_height="match_parent"
             android:scrollbars="none"
             android:focusable="false"
