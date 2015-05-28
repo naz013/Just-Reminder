@@ -30,13 +30,21 @@
                 android:layout_toLeftOf="@+id/currentEvent"
                 android:src="@drawable/ic_event_white_24dp"/>
 
+            <ImageButton
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:id="@+id/voiceButton"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_mic_white_24dp"/>
+
             <Button
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="match_parent"
                 android:id="@+id/currentEvent"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_alignParentRight="true"
+                android:layout_toLeftOf="@+id/voiceButton"
                 android:background="?android:attr/selectableItemBackground"
                 android:textColor="@color/colorWhite"/>
 

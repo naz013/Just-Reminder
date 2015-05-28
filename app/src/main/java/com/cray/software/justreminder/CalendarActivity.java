@@ -1,11 +1,13 @@
 package com.cray.software.justreminder;
 
 import android.app.AlarmManager;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,6 +28,7 @@ import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.datas.CalendarData;
@@ -56,12 +59,14 @@ public class CalendarActivity extends AppCompatActivity {
     FloatingActionsMenu mainMenu;
     FloatingActionButton addReminder, addBirthday;
     long dateMills;
-    ImageButton monthView;
+    ImageButton monthView, voiceButton;
     Button currentEvent;
     TextView title;
     ViewPager pager;
     FrameLayout calendarLayout;
     CircularProgress progress;
+
+    public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,7 @@ public class CalendarActivity extends AppCompatActivity {
         title.setText(getString(R.string.calendar_fragment));
 
         monthView = (ImageButton) findViewById(R.id.monthView);
+        voiceButton = (ImageButton) findViewById(R.id.voiceButton);
         monthView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +110,14 @@ public class CalendarActivity extends AppCompatActivity {
                 }
             }
         });
+
+        voiceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startVoiceRecognitionActivity();
+            }
+        });
+
         currentEvent = (Button) findViewById(R.id.currentEvent);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -189,6 +203,33 @@ public class CalendarActivity extends AppCompatActivity {
                 showEvents(cal.getTime());
                 sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
             }
+        }
+    }
+
+    public void startVoiceRecognitionActivity() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        sPrefs = new SharedPrefs(this);
+        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE)) {
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE));
+        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
+        try {
+            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
+        } catch (ActivityNotFoundException e){
+            Toast t = Toast.makeText(getApplicationContext(),
+                    getString(R.string.recognizer_not_found_error_message),
+                    Toast.LENGTH_SHORT);
+            t.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
+            ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            new Recognizer(this).selectTask(matches, false);
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
