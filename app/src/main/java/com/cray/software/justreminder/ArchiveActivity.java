@@ -610,6 +610,11 @@ public class ArchiveActivity extends AppCompatActivity
             public void onItemViewClicked(View v, boolean isPinned) {
 
             }
+
+            @Override
+            public void toggleItem(int position) {
+
+            }
         });
 
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);
