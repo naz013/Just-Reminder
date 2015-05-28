@@ -10,20 +10,16 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
-import com.cray.software.justreminder.interfaces.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 public class CalendarWidget extends AppWidgetProvider {
 
@@ -64,6 +60,7 @@ public class CalendarWidget extends AppWidgetProvider {
         int widgetTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
         int widgetButton = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
         int widgetButtonVoice = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
+        int widgetButtonSettings = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.calendar_widget_layout);
@@ -94,6 +91,12 @@ public class CalendarWidget extends AppWidgetProvider {
         rv.setOnClickPendingIntent(R.id.voiceButton, configPendingIntent);
         rv.setInt(R.id.voiceButton, "setImageResource", widgetButtonVoice);
 
+        configIntent = new Intent(context, CalendarWidgetConfig.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+        rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
+        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
+
         appWidgetManager.updateAppWidget(widgetID, rv);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetID, R.id.weekdayGrid);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetID, R.id.monthGrid);
@@ -108,6 +111,9 @@ public class CalendarWidget extends AppWidgetProvider {
         for (int widgetID : appWidgetIds) {
             editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_COLOR + widgetID);
             editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID);
+            editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID);
+            editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID);
+            editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID);
         }
         editor.commit();
     }
@@ -120,13 +126,6 @@ public class CalendarWidget extends AppWidgetProvider {
                                           Bundle newOptions) {
         RemoteViews updateViews=
                 new RemoteViews(ctxt.getPackageName(), R.layout.calendar_widget_layout);
-        String msg=
-                String.format(Locale.getDefault(),
-                        "[%d-%d] x [%d-%d]",
-                        newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH),
-                        newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH),
-                        newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT),
-                        newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT));
 
         mgr.updateAppWidget(appWidgetId, updateViews);
     }

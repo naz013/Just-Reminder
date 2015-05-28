@@ -44,8 +44,9 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_ITEM_COLOR = "widget_item_color_";
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "widget_button_color_";
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "widget_button_voice_color_";
+    public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "widget_button_settings_color_";
     public final static String CURRENT_WIDGET_TEXT_SIZE = "widget_text_size_";
-    int color, headerColor, textColor, itemColor, itemTextColor, button = 0, buttonVoice;
+    int color, headerColor, textColor, itemColor, itemTextColor, button = 0, buttonVoice, buttonSettings;
     float textMultiply;
     ColorSetter cSetter;
 
@@ -697,11 +698,13 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
                         button = R.drawable.ic_add_grey600_24dp;
                         tasksCount.setImageResource(button);
                         buttonVoice = R.drawable.ic_mic_grey600_24dp;
+                        buttonSettings = R.drawable.ic_settings_grey600_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         button = R.drawable.ic_add_white_24dp;
                         tasksCount.setImageResource(button);
                         buttonVoice = R.drawable.ic_mic_white_24dp;
+                        buttonSettings = R.drawable.ic_settings_white_24dp;
                 }
             }
         });
@@ -879,6 +882,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
                 editor.putInt(CURRENT_WIDGET_ITEM_COLOR + widgetID, itemColor);
                 editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, button);
                 editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, buttonVoice);
+                editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
                 editor.putFloat(CURRENT_WIDGET_TEXT_SIZE + widgetID, textMultiply);
                 editor.commit();
 

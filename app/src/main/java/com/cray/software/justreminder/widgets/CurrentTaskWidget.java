@@ -57,6 +57,7 @@ public class CurrentTaskWidget extends AppWidgetProvider {
         int widgetTextColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_COLOR + widgetID, 0);
         int widgetButton = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
         int widgetButtonVoice = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
+        int widgetButtonSettings = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         rv.setTextColor(R.id.widgetDate, widgetTextColor);
         rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
@@ -71,6 +72,12 @@ public class CurrentTaskWidget extends AppWidgetProvider {
         configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.voiceButton, configPendingIntent);
         rv.setInt(R.id.voiceButton, "setImageResource", widgetButtonVoice);
+
+        configIntent = new Intent(context, CurrentTaskWidgetConfig.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+        rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
+        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
 
         Intent startActivityIntent = new Intent(context, ReminderManager.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,

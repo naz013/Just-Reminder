@@ -32,8 +32,9 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_COLOR = "calendar_color_";
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "calendar_button_color_";
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "calendar_button_voice_color_";
+    public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "calendar_title_color_";
-    int color, title, buttonColor, buttonVoice;
+    int color, title, buttonColor, buttonVoice, buttonSettings;
     ColorSetter cSetter;
 
     Toolbar toolbar;
@@ -41,7 +42,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     TextView note, widgetTitle;
     Spinner widgetBgSpinner;
     RadioGroup colorsTitleGroup, colorsButtonGroup;
-    RadioButton radioTitleBlack, radioButtonBlack;
+    RadioButton radioTitleBlack, radioButtonBlack, radioButtonWhite, radioTitleWhite;
 
 
     @Override
@@ -57,6 +58,13 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         if (widgetID == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
+
+        SharedPreferences sp = getSharedPreferences(CURRENT_WIDGET_PREF, MODE_PRIVATE);
+        color = sp.getInt(CURRENT_WIDGET_COLOR + widgetID, 0);
+        title = sp.getInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
+        buttonColor = sp.getInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+        buttonVoice = sp.getInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
+        buttonSettings = sp.getInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
@@ -88,7 +96,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         widgetBgSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i){
+                switch (i) {
                     case 0:
                         color = getResources().getColor(R.color.colorWhite);
                         break;
@@ -130,19 +138,33 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                     case R.id.radioButtonBlack:
                         buttonColor = R.drawable.ic_add_grey600_24dp;
                         buttonVoice = R.drawable.ic_mic_grey600_24dp;
+                        buttonSettings = R.drawable.ic_settings_grey600_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         buttonColor = R.drawable.ic_add_white_24dp;
                         buttonVoice = R.drawable.ic_mic_white_24dp;
+                        buttonSettings = R.drawable.ic_settings_white_24dp;
                 }
             }
         });
 
 
         radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
+        radioTitleWhite = (RadioButton) findViewById(R.id.radioTitleWhite);
         radioTitleBlack.setChecked(true);
         radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
+        radioButtonWhite = (RadioButton) findViewById(R.id.radioButtonWhite);
         radioButtonBlack.setChecked(true);
+
+        if (buttonColor == R.drawable.ic_add_grey600_24dp) radioButtonBlack.setChecked(true);
+        else radioButtonWhite.setChecked(true);
+
+        if (title == getResources().getColor(R.color.colorBlack)) radioTitleBlack.setChecked(true);
+        else radioTitleWhite.setChecked(true);
+
+        if (color == getResources().getColor(R.color.colorWhite)) widgetBgSpinner.setSelection(0);
+        else if (color == getResources().getColor(android.R.color.transparent)) widgetBgSpinner.setSelection(1);
+        else widgetBgSpinner.setSelection(2);
     }
 
     @Override
@@ -162,6 +184,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                 editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
                 editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, buttonColor);
                 editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, buttonVoice);
+                editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
