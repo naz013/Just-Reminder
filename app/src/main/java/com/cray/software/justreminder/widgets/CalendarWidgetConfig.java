@@ -22,6 +22,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class CalendarWidgetConfig extends AppCompatActivity {
@@ -34,6 +36,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "calendar_button_voice_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "calendar_title_color_";
+    public final static String CURRENT_WIDGET_MONTH = "calendar_month_";
     int color, title, buttonColor, buttonVoice, buttonSettings;
     ColorSetter cSetter;
 
@@ -162,9 +165,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         if (title == getResources().getColor(R.color.colorBlack)) radioTitleBlack.setChecked(true);
         else radioTitleWhite.setChecked(true);
 
-        if (color == getResources().getColor(R.color.colorWhite)) widgetBgSpinner.setSelection(0);
-        else if (color == getResources().getColor(android.R.color.transparent)) widgetBgSpinner.setSelection(1);
-        else widgetBgSpinner.setSelection(2);
+        widgetBgSpinner.setSelection(0);
     }
 
     @Override
@@ -180,11 +181,14 @@ public class CalendarWidgetConfig extends AppCompatActivity {
             case R.id.action_save:
                 SharedPreferences sp = getSharedPreferences(CURRENT_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
+                Calendar cal = new GregorianCalendar();
+                int month = cal.get(Calendar.MONTH);
                 editor.putInt(CURRENT_WIDGET_COLOR + widgetID, color);
                 editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
                 editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, buttonColor);
                 editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, buttonVoice);
                 editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
+                editor.putInt(CURRENT_WIDGET_MONTH + widgetID, month);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
