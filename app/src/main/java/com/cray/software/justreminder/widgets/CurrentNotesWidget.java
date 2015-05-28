@@ -46,6 +46,7 @@ public class CurrentNotesWidget extends AppWidgetProvider {
         int widgetBgColor = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
         int widgetTitleColor = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
         int widgetButton = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+        int widgetButtonSettings = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
         rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
@@ -53,13 +54,18 @@ public class CurrentNotesWidget extends AppWidgetProvider {
         rv.setInt(R.id.tasksCount, "setImageResource", widgetButton);
 
         Intent configIntent = new Intent(context, NotesManager.class);
-
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
-
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
 
+        configIntent = new Intent(context, CurrentNotesWidgetConfig.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+        rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
+        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
+
         Intent startActivityIntent = new Intent(context, NotesManager.class);
-        PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
         Intent adapter = new Intent(context, CurrentNotesService.class);

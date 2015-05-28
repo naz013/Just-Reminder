@@ -47,6 +47,7 @@ public class TasksWidget extends AppWidgetProvider {
         int widgetBgColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
         int widgetTitleColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
         int widgetButton = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+        int widgetButtonSettings = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
         rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
@@ -58,6 +59,12 @@ public class TasksWidget extends AppWidgetProvider {
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
+
+        configIntent = new Intent(context, TasksWidgetConfig.class);
+        configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
+        rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
+        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
 
         Intent startActivityIntent = new Intent(context, TaskManager.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,

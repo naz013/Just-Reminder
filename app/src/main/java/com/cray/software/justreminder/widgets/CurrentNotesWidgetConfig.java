@@ -39,7 +39,8 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_HEADER_COLOR = "notes_header_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "notes_title_color_";
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "notes_button_color_";
-    int color, headerColor, title, button;
+    public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
+    int color, headerColor, title, button, buttonSettings;
     ColorSetter cSetter;
 
     Toolbar toolbar;
@@ -69,6 +70,13 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
         if (widgetID == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
         }
+
+        SharedPreferences sp = getSharedPreferences(CURRENT_WIDGET_PREF, MODE_PRIVATE);
+        color = sp.getInt(CURRENT_WIDGET_COLOR + widgetID, 0);
+        headerColor = sp.getInt(CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
+        title = sp.getInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
+        button = sp.getInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+        buttonSettings = sp.getInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
@@ -490,11 +498,12 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
                     case R.id.radioButtonBlack:
                         button = R.drawable.ic_add_grey600_24dp;
                         tasksCount.setImageResource(button);
-
+                        buttonSettings = R.drawable.ic_settings_grey600_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         button = R.drawable.ic_add_white_24dp;
                         tasksCount.setImageResource(button);
+                        buttonSettings = R.drawable.ic_settings_white_24dp;
                 }
             }
         });
@@ -644,11 +653,11 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
                 editor.putInt(CURRENT_WIDGET_COLOR + widgetID, color);
                 editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
                 editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, button);
+                editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 CurrentNotesWidget.updateWidget(CurrentNotesWidgetConfig.this, appWidgetManager, sp, widgetID);
-                // положительный ответ
                 setResult(RESULT_OK, resultValue);
                 finish();
                 return true;

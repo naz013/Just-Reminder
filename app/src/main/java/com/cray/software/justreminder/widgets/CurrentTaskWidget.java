@@ -57,7 +57,7 @@ public class CurrentTaskWidget extends AppWidgetProvider {
         int widgetTextColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_COLOR + widgetID, 0);
         int widgetButton = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
         int widgetButtonVoice = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
-        int widgetButtonSettings = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
+        int widgetButtonSettings = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
 
         rv.setTextColor(R.id.widgetDate, widgetTextColor);
         rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);

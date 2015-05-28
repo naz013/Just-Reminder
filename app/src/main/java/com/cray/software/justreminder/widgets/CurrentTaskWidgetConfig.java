@@ -78,6 +78,17 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             finish();
         }
 
+        SharedPreferences sp = getSharedPreferences(CURRENT_WIDGET_PREF, MODE_PRIVATE);
+        color = sp.getInt(CURRENT_WIDGET_COLOR + widgetID, 0);
+        headerColor = sp.getInt(CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
+        textColor = sp.getInt(CURRENT_WIDGET_TEXT_COLOR + widgetID, 0);
+        button = sp.getInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+        itemColor = sp.getInt(CURRENT_WIDGET_ITEM_COLOR + widgetID, 0);
+        itemTextColor = sp.getInt(CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
+        buttonSettings = sp.getInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
+        buttonVoice = sp.getInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
+        textMultiply = sp.getFloat(CURRENT_WIDGET_TEXT_SIZE + widgetID, 0);
+
         resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
 
