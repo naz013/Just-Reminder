@@ -89,7 +89,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/dimen_log_in_progress_margin_top"
-        android:text="progress"
         android:textSize="@dimen/log_in_progress_text_size"
         android:id="@+id/progressMesage"/>
 </LinearLayout>
