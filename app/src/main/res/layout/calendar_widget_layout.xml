@@ -50,7 +50,6 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:id="@+id/currentDate"
-            android:text="21 January 2015"
             android:gravity="center|left"
             android:textColor="@color/colorBlack"
             android:textSize="18sp"
