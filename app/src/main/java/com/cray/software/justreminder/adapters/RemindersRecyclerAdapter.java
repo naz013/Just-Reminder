@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,6 +73,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         void onItemClicked(int position);
 
         void onItemLongClicked(int position);
+
+        void toggleItem(int position);
 
         void onItemViewClicked(View v, boolean isPinned);
     }
@@ -140,7 +143,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         DB = new DataBase(mContext);
         mContacts = new Contacts(mContext);
         mInterval = new Interval(mContext);
-        SharedPrefs prefs = new SharedPrefs(mContext);
+        final SharedPrefs prefs = new SharedPrefs(mContext);
         boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
         DB.open();
@@ -356,6 +359,21 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     mEventListener.onItemLongClicked(position);
                 }
                 return true;
+            }
+        });
+
+        holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)){
+                    if (mEventListener != null) {
+                        mEventListener.toggleItem(position);
+                    }
+                } else {
+                    if (mEventListener != null) {
+                        mEventListener.onItemClicked(position);
+                    }
+                }
             }
         });
     }

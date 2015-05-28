@@ -1327,6 +1327,13 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
+            public void toggleItem(int position) {
+                if (mainMenu.isExpanded()) mainMenu.collapse();
+                final long id = arrayList.get(position).getId();
+                toggle(id);
+            }
+
+            @Override
             public void onItemViewClicked(View v, boolean isPinned) {
 
             }
