@@ -52,7 +52,9 @@ public class CalendarWidget extends AppWidgetProvider {
     public static void updateWidget(Context context, AppWidgetManager appWidgetManager,
                                     SharedPreferences sp, int widgetID){
         Calendar cal = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMMM yyyy");
+        int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
+        cal.set(Calendar.MONTH, month);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
         dateFormat.setCalendar(cal);
         String date = dateFormat.format(cal.getTime());
 
@@ -97,6 +99,30 @@ public class CalendarWidget extends AppWidgetProvider {
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
         rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
 
+        Intent serviceIntent = new Intent(context, CalendarUpdateService.class);
+        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        serviceIntent.putExtra("actionPlus", 2);
+        PendingIntent servicePendingIntent =
+                PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        rv.setOnClickPendingIntent(R.id.nextMonth, servicePendingIntent);
+
+        serviceIntent = new Intent(context, CalendarUpdateMinusService.class);
+        serviceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
+        serviceIntent.putExtra("actionMinus", 1);
+        servicePendingIntent =
+                PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        rv.setOnClickPendingIntent(R.id.prevMonth, servicePendingIntent);
+
+        if (widgetButton == R.drawable.ic_add_white_24dp){
+            //white
+            rv.setInt(R.id.nextMonth, "setImageResource", R.drawable.ic_keyboard_arrow_right_white_24dp);
+            rv.setInt(R.id.prevMonth, "setImageResource", R.drawable.ic_keyboard_arrow_left_white_24dp);
+        } else {
+            //black
+            rv.setInt(R.id.nextMonth, "setImageResource", R.drawable.ic_keyboard_arrow_right_grey600_24dp);
+            rv.setInt(R.id.prevMonth, "setImageResource", R.drawable.ic_keyboard_arrow_left_grey600_24dp);
+        }
+
         appWidgetManager.updateAppWidget(widgetID, rv);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetID, R.id.weekdayGrid);
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetID, R.id.monthGrid);
@@ -114,6 +140,7 @@ public class CalendarWidget extends AppWidgetProvider {
             editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID);
             editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID);
             editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID);
+            editor.remove(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID);
         }
         editor.commit();
     }

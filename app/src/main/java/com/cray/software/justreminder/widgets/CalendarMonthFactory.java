@@ -12,12 +12,12 @@ import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
-import com.cray.software.justreminder.datas.WidgetItem;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,7 +35,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
     int widgetID;
     int SUNDAY = 1;
     int startDayOfWeek = SUNDAY;
-    int mDay, mMonth, mYear;
+    int mDay, mMonth, mYear, prefsMonth;
 
     CalendarMonthFactory(Context ctx, Intent intent) {
         context = ctx;
@@ -57,13 +57,16 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 
+        SharedPreferences sp =
+                context.getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+        prefsMonth  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
+
         int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
-        mMonth = month + 1;
+        mMonth = prefsMonth + 1;
         mYear = year;
 
-        DateTime firstDateOfMonth = new DateTime(year, month + 1, 1, 0, 0, 0, 0);
+        DateTime firstDateOfMonth = new DateTime(year, prefsMonth + 1, 1, 0, 0, 0, 0);
         DateTime lastDateOfMonth = firstDateOfMonth.plusDays(firstDateOfMonth
                 .getNumDaysInMonth() - 1);
 
@@ -351,7 +354,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         if (mDay == selDay && mMonth == selMonth && mYear == selYear){
             rView.setInt(R.id.currentMark, "setBackgroundColor",
                     context.getResources().getColor(cs.colorCurrentCalendar()));
-        }
+        } else rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
 
         calendar.setTimeInMillis(System.currentTimeMillis());
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
