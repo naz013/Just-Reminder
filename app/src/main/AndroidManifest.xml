@@ -290,6 +290,7 @@
         <service android:name=".services.SetBirthdays" />
         <service android:name=".services.CheckBirthdays" />
         <service android:name=".widgets.CalendarUpdateService" />
+        <service android:name=".widgets.CalendarUpdateMinusService" />
         <service android:name=".services.CheckPosition" />
 
         <activity
