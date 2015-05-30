@@ -117,6 +117,10 @@ public class Recognizer {
                 ctx.startActivity(new Intent(ctx, SelectVolume.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
                 break;
+            } else if (keyStr.matches("завтра .* [0-9][0-9]? .*") ||
+                    keyStr.matches("tomorrow .* [0-9][0-9]? .*")){
+                unknownTomorrow(keyStr, isWidget);
+                break;
             } else if (keyStr.matches("([0-9][0-9]?) (січ|лют|бер|квіт|трав|черв|лип|серп|вер|жовт|лист|груд).*") ||
                     keyStr.matches("([0-9][0-9]?) (янв|февр|мар|апр|ма|июн|июл|авг|сен|окт|ноя|дек).*") ||
                     keyStr.matches("(jan|feb|mar|apr|ma|jun|jul|aug|sep|oct|nov|dec).* ([0-9][0-9]?) .*")){
@@ -213,6 +217,348 @@ public class Recognizer {
                     keyStr.matches(".* ночью.*")){
                 nightTask(keyStr, isWidget);
                 break;
+            }
+        }
+    }
+
+    private void unknownTomorrow(String keyStr, boolean isWidget) {
+        boolean export = RecognizerUtils.isCalendarExportable(keyStr);
+        if (keyStr.matches("tomorrow .* [0-9][0-9]? .*")) {
+            //english version
+            String[] parts = keyStr.split(" \\d\\d?");
+            int size = parts.length;
+            if (size == 4) {
+                String neilPart = parts[0];
+                String hoursPart = parts[1];
+                String taskPart = parts[2];
+                String decrPart = parts[3];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(hoursPart)).trim();
+                String minute = keyStr.substring(keyStr.lastIndexOf(hoursPart) + hoursPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+                String decr = keyStr.substring(keyStr.lastIndexOf(taskPart) + taskPart.length(),
+                        keyStr.lastIndexOf(decrPart)).trim();
+
+                boolean isDecrement = false;
+                if (taskPart.contains(" remind")) {
+                    isDecrement = true;
+                }
+
+                boolean isMinutes = false;
+                if (taskPart.contains("minute")) isMinutes = true;
+
+                int indexEnd = -1;
+                if (isDecrement) {
+                    indexEnd = taskPart.indexOf(" remind");
+                }
+
+                int indexStart;
+                int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                indexStart = indexes[0] * indexes[1];
+                String task = null;
+                if (indexEnd != -1 && indexStart != -1) {
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
+                    else task = taskPart.substring(indexStart, indexEnd);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = Integer.parseInt(minute);
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long divider = 0;
+                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    long minus = Integer.parseInt(decr) * divider;
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() - minus);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
+            } else if (size == 3) {
+                String neilPart = parts[0];
+                String taskPart = parts[1];
+                String hoursPart = parts[2];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+                String minuteDecr = keyStr.substring(keyStr.lastIndexOf(taskPart) + taskPart.length(),
+                        keyStr.lastIndexOf(hoursPart)).trim();
+
+                boolean isDecrement = false;
+                if (taskPart.contains(" remind") || hoursPart.contains(" remind")) {
+                    isDecrement = true;
+                }
+                boolean isMinutes = false;
+                if (hoursPart.contains("minute")) isMinutes = true;
+
+                int indexEnd = -1;
+                if (isDecrement) {
+                    indexEnd = taskPart.indexOf(" remind");
+                }
+
+                int indexStart;
+                if (isMinutes) {
+                    int[] indexes = RecognizerUtils.getIndexes(hoursPart);
+                    indexStart = indexes[0] * indexes[1];
+                } else {
+                    int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                    indexStart = indexes[0] * indexes[1];
+                }
+                String task = null;
+                if (indexEnd != -1 && indexStart != -1) {
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
+                    else task = taskPart.substring(indexStart, indexEnd);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = 0;
+                if (!isDecrement) minuteOfHour = Integer.parseInt(minuteDecr);
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long divider = 0;
+                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    long minus = Integer.parseInt(minuteDecr) * divider;
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() - minus);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
+            } else if (size == 2) {
+                String neilPart = parts[0];
+                String taskPart = parts[1];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+
+                int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                int indexStart = indexes[0] * indexes[1];
+
+                String task = null;
+                if (indexStart != -1) {
+                    task = taskPart.substring(indexStart);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = 0;
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
+            }
+        } else {
+            //ukrainian and russian
+            String[] parts = keyStr.split(" \\d\\d?");
+            int size = parts.length;
+            if (size == 4) {
+                String neilPart = parts[0];
+                String hoursPart = parts[1];
+                String taskPart = parts[2];
+                String decrPart = parts[3];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(hoursPart)).trim();
+                String minute = keyStr.substring(keyStr.lastIndexOf(hoursPart) + hoursPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+                String decr = keyStr.substring(keyStr.lastIndexOf(taskPart) + taskPart.length(),
+                        keyStr.lastIndexOf(decrPart)).trim();
+
+                boolean isDecrement = false;
+                if (taskPart.contains(" нагада") || taskPart.contains(" напомн") ||
+                        hoursPart.contains(" нагада") || hoursPart.contains(" напомн")) {
+                    isDecrement = true;
+                }
+
+                boolean isMinutes = false;
+                if (taskPart.contains("минут") || taskPart.contains("хвилин")) isMinutes = true;
+
+                int indexEnd = -1;
+                if (isDecrement) {
+                    indexEnd = taskPart.indexOf(" нагада");
+                    if (indexEnd == -1) indexEnd = taskPart.indexOf(" напомн");
+                }
+
+                int indexStart;
+                int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                indexStart = indexes[0] * indexes[1];
+                String task = null;
+                if (indexEnd != -1 && indexStart != -1) {
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
+                    else task = taskPart.substring(indexStart, indexEnd);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = Integer.parseInt(minute);
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long divider = 0;
+                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    long minus = Integer.parseInt(decr) * divider;
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() - minus);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
+            } else if (size == 3) {
+                String neilPart = parts[0];
+                String taskPart = parts[1];
+                String hoursPart = parts[2];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+                String minuteDecr = keyStr.substring(keyStr.lastIndexOf(taskPart) + taskPart.length(),
+                        keyStr.lastIndexOf(hoursPart)).trim();
+
+                boolean isDecrement = false;
+                if (taskPart.contains(" нагада") || taskPart.contains(" напомн")) {
+                    isDecrement = true;
+                }
+                boolean isMinutes = false;
+                if (taskPart.contains("минут") || taskPart.contains("хвилин")) isMinutes = true;
+
+                int indexEnd = -1;
+                if (isDecrement) {
+                    indexEnd = taskPart.indexOf(" нагада");
+                    if (indexEnd == -1) indexEnd = taskPart.indexOf(" напомн");
+                }
+
+                int indexStart;
+                if (isMinutes) {
+                    int[] indexes = RecognizerUtils.getIndexes(hoursPart);
+                    indexStart = indexes[0] * indexes[1];
+                } else {
+                    int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                    indexStart = indexes[0] * indexes[1];
+                }
+                String task = null;
+                if (indexEnd != -1 && indexStart != -1) {
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
+                    else task = taskPart.substring(indexStart, indexEnd);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = 0;
+                if (!isDecrement) minuteOfHour = Integer.parseInt(minuteDecr);
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long divider = 0;
+                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    long minus = Integer.parseInt(minuteDecr) * divider;
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() - minus);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
+            } else if (size == 2) {
+                String neilPart = parts[0];
+                String taskPart = parts[1];
+
+                String hour = keyStr.substring(keyStr.lastIndexOf(neilPart) + neilPart.length(),
+                        keyStr.lastIndexOf(taskPart)).trim();
+
+                int[] indexes = RecognizerUtils.getIndexes(taskPart);
+                int indexStart = indexes[0] * indexes[1];
+
+                String task = null;
+                if (indexStart != -1) {
+                    task = taskPart.substring(indexStart);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+
+                int hourOfDay = Integer.parseInt(hour);
+                int minuteOfHour = 0;
+
+                boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
+
+                if (isTimeValid && task != null) {
+                    long currTime = calendar.getTimeInMillis();
+                    calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minuteOfHour);
+                    long taskDate = calendar.getTimeInMillis();
+                    if (taskDate < currTime)
+                        calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+
+                    saveReminder(task, isWidget, export, calendar.get(Calendar.DAY_OF_MONTH),
+                            calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), 0);
+                }
             }
         }
     }
