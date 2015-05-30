@@ -528,18 +528,30 @@ public class CalendarActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        sPrefs = new SharedPrefs(CalendarActivity.this);
         if (isCalendar) {
             if (calendarView != null) {
                 calendarView.refreshView();
                 calendarView.clearSelectedDates();
             }
-            sPrefs = new SharedPrefs(CalendarActivity.this);
+
             if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR)) {
                 loadReminders();
             }
 
             loadEvents();
             sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            if (dateMills != 0){
+                calendar.setTimeInMillis(dateMills);
+                showEvents(calendar.getTime());
+                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            } else {
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                showEvents(calendar.getTime());
+                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            }
         }
     }
 
