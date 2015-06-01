@@ -5,7 +5,7 @@
     <string name="action_settings">"Настройки"</string>
     <string name="drawer_active_reminder">"Активные напоминания"</string>
     <string name="drawer_archive_reminder">"Архив напоминаний"</string>
-    <string name="copyright">"2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Закрыть"</string>
     <string name="empty_list_text">"Пока у вас нет активных напоминаний, нажмите на эту кнопку, чтобы добавить новое напоминание."</string>
     <string name="menu_send_feedback">"Отправить отзыв"</string>
