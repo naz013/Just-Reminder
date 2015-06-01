@@ -43,6 +43,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.ItemData;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -53,7 +54,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.datas.ItemData;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
@@ -313,18 +313,26 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        int ids = item.getItemId();
 
-        if (id == R.id.action_delete) {
+        if (ids == R.id.action_delete) {
             makeArchive();
             finish();
             return true;
         }
-        if (id == android.R.id.home){
+        if (ids == android.R.id.home){
             finish();
         }
-        if (id == R.id.action_make_copy){
-            showDialog();
+        if (ids == R.id.action_make_copy){
+            db = new DataBase(this);
+            if (!db.isOpen()) db.open();
+            Cursor c = db.getTask(id);
+            if (c != null && c.moveToFirst()){
+                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                if (!type.startsWith(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)){
+                    showDialog();
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item);
