@@ -226,7 +226,6 @@ public class Constants {
 
     // Reminder types
     public static final String TYPE_REMINDER = "reminder";
-    public static final String TYPE_TASK_LIST = "task_list";
     public static final String TYPE_TIME = "time";
     public static final String TYPE_CALL = "call";
     public static final String TYPE_MAIL = "e_mail";
