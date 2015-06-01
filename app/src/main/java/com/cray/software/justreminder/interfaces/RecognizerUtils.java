@@ -448,6 +448,11 @@ public class RecognizerUtils {
             increment = 7;
         }
         if (indexStart == -1) {
+            indexStart = input.indexOf(" годині");
+            multiplier = 60;
+            increment = 7;
+        }
+        if (indexStart == -1) {
             indexStart = input.indexOf(" години");
             multiplier = 60;
             increment = 7;

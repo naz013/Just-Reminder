@@ -11,11 +11,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.TasksConstants;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 9;
     private static final String CURRENT_TABLE_NAME = "current_task_table";
     private static final String CONTACTS_TABLE_NAME = "contacts_task_table";
     private static final String LOCATION_TABLE_NAME = "locations_table";
@@ -24,7 +23,6 @@ public class DataBase {
     private static final String CALLS_TABLE_NAME = "calls_table";
     private static final String MESSAGES_TABLE_NAME = "messages_table";
     private static final String CATEGORIES_TABLE_NAME = "categories_table";
-    private static final String TASK_LIST_TABLE_NAME = "task_list_table";
 
     private DBHelper dbHelper;
     private static Context mContext;
@@ -126,20 +124,6 @@ public class DataBase {
                     Constants.COLUMN_DATE_TIME + " INTEGER " +
                     ");";
 
-    private static final String TASK_LIST_TABLE_CREATE =
-            "create table " + TASK_LIST_TABLE_NAME + "(" +
-                    TasksConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    TasksConstants.COLUMN_TITLE + " VARCHAR(255), " +
-                    TasksConstants.COLUMN_REMINDER_ID + " INTEGER, " +
-                    TasksConstants.COLUMN_TASK_ID + " VARCHAR(255), " +
-                    TasksConstants.COLUMN_DUE + " INTEGER, " +
-                    TasksConstants.COLUMN_COMPLETED + " INTEGER, " +
-                    TasksConstants.COLUMN_TECH_3 + " INTEGER, " +
-                    TasksConstants.COLUMN_TECH_5 + " INTEGER, " +
-                    TasksConstants.COLUMN_TECH_6 + " VARCHAR(255), " +
-                    TasksConstants.COLUMN_TECH_4 + " VARCHAR(255) " +
-                    ");";
-
     public class DBHelper extends SQLiteOpenHelper {
 
 
@@ -156,7 +140,6 @@ public class DataBase {
             sqLiteDatabase.execSQL(CALLS_TABLE_CREATE);
             sqLiteDatabase.execSQL(MESSAGES_TABLE_CREATE);
             sqLiteDatabase.execSQL(CATEGORIES_TABLE_CREATE);
-            sqLiteDatabase.execSQL(TASK_LIST_TABLE_CREATE);
         }
 
         @Override
@@ -169,7 +152,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -195,7 +177,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -220,7 +201,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -245,7 +225,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("DELETE FROM "+ NOTE_TABLE_NAME);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
@@ -271,7 +250,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -296,7 +274,6 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -316,14 +293,9 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     break;
                 case 8:
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
-                    break;
-                case 9:
-                    db.execSQL(TASK_LIST_TABLE_CREATE);
                     break;
             }
         }
@@ -735,7 +707,7 @@ public class DataBase {
 
     public Cursor queryPlaces() throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, new String[] {Constants.LocationConstants.COLUMN_ID,
+        return db.query(LOCATION_TABLE_NAME, new String[]{Constants.LocationConstants.COLUMN_ID,
                 Constants.LocationConstants.COLUMN_LOCATION_NAME,
                 Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE,
                 Constants.LocationConstants.COLUMN_LOCATION_TECH,
@@ -901,52 +873,6 @@ public class DataBase {
     public boolean deleteCategory(long rowId) {
         openGuard();
         return db.delete(CATEGORIES_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    //Working with reminder tasks list table
-
-    public long addItem (String task, long reminderId, String uuID, long due) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(TasksConstants.COLUMN_TITLE, task);
-        cv.put(TasksConstants.COLUMN_REMINDER_ID, reminderId);
-        cv.put(TasksConstants.COLUMN_TASK_ID, uuID);
-        cv.put(TasksConstants.COLUMN_DUE, due);
-        cv.put(TasksConstants.COLUMN_COMPLETED, 0);
-        return db.insert(TASK_LIST_TABLE_NAME, null, cv);
-    }
-
-    public boolean updateItem(long rowId, String task, long reminderId, long due){
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(TasksConstants.COLUMN_TITLE, task);
-        args.put(TasksConstants.COLUMN_REMINDER_ID, reminderId);
-        args.put(TasksConstants.COLUMN_DUE, due);
-        args.put(TasksConstants.COLUMN_COMPLETED, 0);
-        return db.update(TASK_LIST_TABLE_NAME, args, TasksConstants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    public Cursor getItem(long id) throws SQLException {
-        openGuard();
-        return db.query(TASK_LIST_TABLE_NAME, null, TasksConstants.COLUMN_ID  +
-                "=" + id, null, null, null, null, null);
-    }
-
-    public Cursor getItemByReminder(long id) throws SQLException {
-        openGuard();
-        return db.query(TASK_LIST_TABLE_NAME, null,
-                TasksConstants.COLUMN_REMINDER_ID  +
-                        "='" + id + "'", null, null, null, null, null);
-    }
-
-    public Cursor queryItems() throws SQLException {
-        openGuard();
-        return db.query(TASK_LIST_TABLE_NAME, null, null, null, null, null, null);
-    }
-
-    public boolean deleteItem(long rowId) {
-        openGuard();
-        return db.delete(TASK_LIST_TABLE_NAME, TasksConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public void openGuard() throws SQLiteException {

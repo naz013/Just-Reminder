@@ -24,7 +24,6 @@ public class CalendarUpdateMinusService extends IntentService {
                 getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
         int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetId, 0);
         if (action != 0){
-            Log.d(Constants.LOG_TAG, "Minus button pressed");
             SharedPreferences.Editor editor = sp.edit();
             if (month == 0) month = 11;
             else month = month - 1;

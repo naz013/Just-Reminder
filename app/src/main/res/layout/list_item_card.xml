@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/container"
         android:clickable="true"
-        android:padding="6dp"
         tools:ignore="UselessParent">
 
         <CheckBox

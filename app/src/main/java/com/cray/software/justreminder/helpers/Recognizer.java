@@ -255,11 +255,11 @@ public class Recognizer {
 
                 int indexStart;
                 int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                indexStart = indexes[0] * indexes[1];
+                indexStart = indexes[0] + indexes[1];
                 String task = null;
                 if (indexEnd != -1 && indexStart != -1) {
-                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
-                    else task = taskPart.substring(indexStart, indexEnd);
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd).trim();
+                    else task = taskPart.substring(indexStart, indexEnd).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -314,15 +314,15 @@ public class Recognizer {
                 int indexStart;
                 if (isMinutes) {
                     int[] indexes = RecognizerUtils.getIndexes(hoursPart);
-                    indexStart = indexes[0] * indexes[1];
+                    indexStart = indexes[0] + indexes[1];
                 } else {
                     int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                    indexStart = indexes[0] * indexes[1];
+                    indexStart = indexes[0] + indexes[1];
                 }
                 String task = null;
                 if (indexEnd != -1 && indexStart != -1) {
-                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
-                    else task = taskPart.substring(indexStart, indexEnd);
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd).trim();
+                    else task = taskPart.substring(indexStart, indexEnd).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -361,11 +361,11 @@ public class Recognizer {
                         keyStr.lastIndexOf(taskPart)).trim();
 
                 int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                int indexStart = indexes[0] * indexes[1];
+                int indexStart = indexes[0] + indexes[1];
 
                 String task = null;
                 if (indexStart != -1) {
-                    task = taskPart.substring(indexStart);
+                    task = taskPart.substring(indexStart).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -424,11 +424,11 @@ public class Recognizer {
 
                 int indexStart;
                 int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                indexStart = indexes[0] * indexes[1];
+                indexStart = indexes[0] + indexes[1];
                 String task = null;
                 if (indexEnd != -1 && indexStart != -1) {
-                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
-                    else task = taskPart.substring(indexStart, indexEnd);
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd).trim();
+                    else task = taskPart.substring(indexStart, indexEnd).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -484,15 +484,15 @@ public class Recognizer {
                 int indexStart;
                 if (isMinutes) {
                     int[] indexes = RecognizerUtils.getIndexes(hoursPart);
-                    indexStart = indexes[0] * indexes[1];
+                    indexStart = indexes[0] + indexes[1];
                 } else {
                     int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                    indexStart = indexes[0] * indexes[1];
+                    indexStart = indexes[0] + indexes[1];
                 }
                 String task = null;
                 if (indexEnd != -1 && indexStart != -1) {
-                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd);
-                    else task = taskPart.substring(indexStart, indexEnd);
+                    if (isMinutes) task = hoursPart.substring(indexStart, indexEnd).trim();
+                    else task = taskPart.substring(indexStart, indexEnd).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -531,11 +531,11 @@ public class Recognizer {
                         keyStr.lastIndexOf(taskPart)).trim();
 
                 int[] indexes = RecognizerUtils.getIndexes(taskPart);
-                int indexStart = indexes[0] * indexes[1];
+                int indexStart = indexes[0] + indexes[1];
 
                 String task = null;
                 if (indexStart != -1) {
-                    task = taskPart.substring(indexStart);
+                    task = taskPart.substring(indexStart).trim();
                 }
 
                 Calendar calendar = Calendar.getInstance();
@@ -589,8 +589,8 @@ public class Recognizer {
 
                 int indexEnd = taskPart.lastIndexOf(" at ");
                 String task;
-                if (indexEnd != -1) task = taskPart.substring(0, indexEnd);
-                else task = taskPart;
+                if (indexEnd != -1) task = taskPart.substring(0, indexEnd).trim();
+                else task = taskPart.trim();
 
                 int hourOfDay = Integer.parseInt(hour);
                 int minuteOfHour = Integer.parseInt(minutes);
@@ -641,8 +641,8 @@ public class Recognizer {
 
                 int indexEnd = taskPart.lastIndexOf(" at ");
                 String task;
-                if (indexEnd != -1) task = taskPart.substring(0, indexEnd);
-                else task = taskPart;
+                if (indexEnd != -1) task = taskPart.substring(0, indexEnd).trim();
+                else task = taskPart.trim();
 
                 int hourOfDay = Integer.parseInt(hour);
                 int minuteOfHour = 0;
@@ -695,8 +695,8 @@ public class Recognizer {
                     indexEnd = taskPart.indexOf(" remind");
                 }
                 String task;
-                if (indexEnd != -1) task = taskPart.substring(0, indexEnd);
-                else task = taskPart;
+                if (indexEnd != -1) task = taskPart.substring(0, indexEnd).trim();
+                else task = taskPart.trim();
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
@@ -747,8 +747,8 @@ public class Recognizer {
                     indexEnd = taskPart.indexOf(" remind");
                 }
                 String task;
-                if (indexEnd != -1) task = taskPart.substring(0, indexEnd);
-                else task = taskPart;
+                if (indexEnd != -1) task = taskPart.substring(0, indexEnd).trim();
+                else task = taskPart.trim();
 
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
@@ -810,8 +810,8 @@ public class Recognizer {
                 if (indexEnd == -1) indexEnd = taskPart.lastIndexOf(" в ");
                 if (indexStart != -1){
                     String task;
-                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd);
-                    else task = taskPart.substring(indexStart + increment);
+                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd).trim();
+                    else task = taskPart.substring(indexStart + increment).trim();
 
                     int hourOfDay = Integer.parseInt(hour);
                     int minuteOfHour = Integer.parseInt(minutes);
@@ -869,8 +869,8 @@ public class Recognizer {
                 if (indexEnd == -1) indexEnd = taskPart.lastIndexOf(" в ");
                 if (indexStart != -1){
                     String task;
-                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd);
-                    else task = taskPart.substring(indexStart + increment);
+                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd).trim();
+                    else task = taskPart.substring(indexStart + increment).trim();
 
                     int hourOfDay = Integer.parseInt(hour);
                     int minuteOfHour = 0;
@@ -931,8 +931,8 @@ public class Recognizer {
                 }
                 if (indexStart != -1){
                     String task;
-                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd);
-                    else task = taskPart.substring(indexStart + increment);
+                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd).trim();
+                    else task = taskPart.substring(indexStart + increment).trim();
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
@@ -989,8 +989,8 @@ public class Recognizer {
                 }
                 if (indexStart != -1){
                     String task;
-                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd);
-                    else task = taskPart.substring(indexStart + increment);
+                    if (indexEnd != -1) task = taskPart.substring(indexStart + increment, indexEnd).trim();
+                    else task = taskPart.substring(indexStart + increment).trim();
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
