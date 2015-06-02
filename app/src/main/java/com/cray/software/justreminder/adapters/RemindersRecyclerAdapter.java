@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,14 +82,14 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
-        CardView card;
+        //FrameLayout card;
         CheckBox check;
         ImageView taskIcon, leftTimeIcon;
         ViewGroup container;
 
         public ViewHolder(View v) {
             super(v);
-            card = (CardView) v.findViewById(R.id.card);
+            //card = (FrameLayout) v.findViewById(R.id.card);
             leftTime = (TextView) v.findViewById(R.id.remainingTime);
             check = (CheckBox) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
@@ -403,9 +402,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public void onSetSwipeBackground(ViewHolder holder, int position, int type) {
         int bgRes = 0;
         switch (type) {
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
+            /*case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_neutral;
-                break;
+                break;*/
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
                 bgRes = R.drawable.bg_swipe_item_left;
                 break;

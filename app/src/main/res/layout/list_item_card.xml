@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/card"
-    android:paddingBottom="4dp"
-    android:paddingTop="4dp"
-    card_view:cardBackgroundColor="@color/colorGrey"
-    card_view:cardCornerRadius="0dp">
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp"
+    android:id="@+id/card">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -162,4 +160,4 @@
                 android:textSize="16sp"/>
             </LinearLayout>
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</FrameLayout>

@@ -99,9 +99,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             skype_layout, application_layout;
     LinearLayout callDateRing, dateRing, messageDateRing;
     FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber, weekPhoneNumber;
-    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField, repeatCallIntLabel, repeatDateIntLabel,
-            repeatTimeIntLabel, afterTimeIntLabel, messageDate, messageYearDate, messageTime, repeatMessageIntLabel,
-            weekTimeField;
+    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
+            repeatTimeIntLabel, afterTimeIntLabel, messageDate, messageYearDate, messageTime, weekTimeField;
     ImageButton insertVoice, pickApplication;
     ImageButton addNumberButton, addMessageNumberButton, locationCallAddNumberButton, locationMessageAddNumberButton,
             weekAddNumberButton;
@@ -412,8 +411,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             timeField.setText(formattedTime);
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
-            //repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
+            repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDays.setText(String.valueOf(repCode));
         }
     }
 
@@ -649,7 +648,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     EditText skypeUser, repeatDaysSkype;
     RadioButton skypeCall, skypeVideo, skypeChat;
     LinearLayout skypeDateRing;
-    TextView skypeDate, skypeYearDate, skypeTime, repeatSkypeLabel;
+    TextView skypeDate, skypeYearDate, skypeTime;
     SeekBar repeatSkype;
 
     private void attachSkype(){
@@ -796,8 +795,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(formattedTime);
-            //repeatSkype.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysSkype.setText(String.valueOf(getRepeat(repeatSkype.getProgress())));
+            repeatSkype.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysSkype.setText(String.valueOf(repCode));
         }
     }
 
@@ -805,7 +804,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     EditText browseLink, repeatDaysApp;
     RadioButton application, browser;
     LinearLayout appDateRing;
-    TextView appDate, appYearDate, appTime, repeatAppLabel, applicationName;
+    TextView appDate, appYearDate, appTime, applicationName;
     SeekBar repeatApp;
     RelativeLayout applicationLayout;
 
@@ -966,8 +965,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(formattedTime);
-            //repeatApp.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysApp.setText(String.valueOf(getRepeat(repeatApp.getProgress())));
+            repeatApp.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysApp.setText(String.valueOf(repCode));
         }
     }
 
@@ -1101,8 +1100,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(formattedTime);
-            //repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysCall.setText(String.valueOf(getRepeat(repeatCallInt.getProgress())));
+            repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysCall.setText(String.valueOf(repCode));
         }
     }
 
@@ -1236,8 +1235,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(formattedTime);
-            //repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
-            repeatDaysMessage.setText(String.valueOf(getRepeat(repeatMessageInt.getProgress())));
+            repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
+            repeatDaysMessage.setText(String.valueOf(repCode));
         }
     }
 
@@ -3099,19 +3098,19 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
             case R.id.repeatSkype:
-                repeatSkypeLabel.setText(getRepeat(progress));
+                repeatDaysSkype.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatApp:
-                repeatAppLabel.setText(getRepeat(progress));
+                repeatDaysApp.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatCallInt:
-                repeatCallIntLabel.setText(getRepeat(progress));
+                repeatDaysCall.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatMessageInt:
-                repeatMessageIntLabel.setText(getRepeat(progress));
+                repeatDaysMessage.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatDateInt:
-                repeatDateIntLabel.setText(getRepeat(progress));
+                repeatDays.setText(String.valueOf(getRepeat(progress)));
                 break;
             case R.id.repeatTimeInt:
                 if (progress == 0){

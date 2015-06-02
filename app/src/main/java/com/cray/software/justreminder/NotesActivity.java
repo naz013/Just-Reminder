@@ -165,6 +165,7 @@ public class NotesActivity extends AppCompatActivity implements SyncListener {
     public void loaderAdapter(){
         if (!db.isOpen()) db.open();
         data = new ArrayList<>();
+        data.clear();
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()){
             do {
@@ -236,10 +237,11 @@ public class NotesActivity extends AppCompatActivity implements SyncListener {
         builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                deleteAll();
                 dialog.dismiss();
-                loaderAdapter();
-                invalidateOptionsMenu();
+                deleteAll();
+                sPrefs = new SharedPrefs(NotesActivity.this);
+                sPrefs.saveBoolean("isNew", true);
+                recreate();
             }
         });
 

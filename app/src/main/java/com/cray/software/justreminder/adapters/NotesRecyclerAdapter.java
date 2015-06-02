@@ -33,6 +33,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     ColorSetter cs;
     SharedPrefs prefs;
     SyncHelper syncHelper;
+    private EventListener mEventListener;
 
     public NotesRecyclerAdapter(Context context, ArrayList<NoteItem> data) {
         this.cContext = context;
@@ -40,6 +41,10 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
         cs = new ColorSetter(cContext);
         prefs = new SharedPrefs(cContext);
         syncHelper = new SyncHelper(cContext);
+    }
+
+    public interface EventListener {
+        void onItemRemoved(int position);
     }
 
     @Override
@@ -135,5 +140,9 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void setEventListener(EventListener eventListener) {
+        mEventListener = eventListener;
     }
 }

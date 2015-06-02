@@ -1361,7 +1361,13 @@ public class MainActivity extends AppCompatActivity
                 .listener(this)
                 .isSnappable(true)
                 .build();
-        currentList.setOnScrollListener(scrollListener);
+        if (mWrappedAdapter.getItemCount() > 0) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                currentList.addOnScrollListener(scrollListener);
+            } else {
+                currentList.setOnScrollListener(scrollListener);
+            }
+        }
     }
 
     public void onRemovedEdit(int position) {
