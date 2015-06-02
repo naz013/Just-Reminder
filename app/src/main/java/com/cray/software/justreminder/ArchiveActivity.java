@@ -835,6 +835,14 @@ public class ArchiveActivity extends AppCompatActivity
                     }
                 }, 250);
                 break;
+            default:
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDrawerLayout.closeDrawers();
+                    }
+                });
+                break;
         }
     }
 

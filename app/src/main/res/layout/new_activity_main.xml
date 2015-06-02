@@ -31,7 +31,6 @@
             android:overScrollMode="never"
             android:visibility="visible"
             android:divider="@android:color/transparent"
-            android:dividerHeight="3dp"
             android:layout_height="match_parent"
             android:scrollbars="none"
             android:focusable="false"

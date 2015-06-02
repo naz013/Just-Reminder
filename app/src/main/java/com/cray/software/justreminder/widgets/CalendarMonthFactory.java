@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -354,7 +355,11 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         if (mDay == selDay && mMonth == selMonth && mYear == selYear){
             rView.setInt(R.id.currentMark, "setBackgroundColor",
                     context.getResources().getColor(cs.colorCurrentCalendar()));
-        } else rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
+            rView.setViewVisibility(R.id.currentMark, View.VISIBLE);
+        } else {
+            rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
+            rView.setViewVisibility(R.id.currentMark, View.INVISIBLE);
+        }
 
         calendar.setTimeInMillis(System.currentTimeMillis());
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
