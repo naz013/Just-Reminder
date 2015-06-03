@@ -12,9 +12,6 @@ import com.cray.software.justreminder.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by Nazar on 14.11.2014.
- */
 public class NavDrawerListAdapter extends BaseAdapter {
 
     private Context context;
@@ -50,7 +47,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.ivIcon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.tvTitle);
 
-        imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
+        int img = navDrawerItems.get(position).getIcon();
+        if (img != 0) imgIcon.setImageDrawable(context.getResources().getDrawable(img));
+        else imgIcon.setVisibility(View.GONE);
         txtTitle.setText(navDrawerItems.get(position).getTitle());
 
         return convertView;

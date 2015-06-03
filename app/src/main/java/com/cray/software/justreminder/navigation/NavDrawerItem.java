@@ -1,8 +1,5 @@
 package com.cray.software.justreminder.navigation;
 
-/**
- * Created by Nazar on 14.11.2014.
- */
 public class NavDrawerItem {
     private String mTitle;
     private int mIcon;

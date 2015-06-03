@@ -15,6 +15,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.hexrain.design.ScreenManager;
 
 import java.io.File;
 import java.util.Locale;
@@ -146,20 +147,9 @@ public class SplashScreen extends Activity{
         if (isFirstTime() && !sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG)) {
             startActivity(new Intent(SplashScreen.this, StartHelp.class));
         } else {
-            startActivity(new Intent(SplashScreen.this, MainActivity.class));
+            startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         }
         finish();
-    }
-
-    private boolean isFirstTimeInsert() {
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        boolean ranBefore = preferences.getBoolean("categories_inserted", false);
-        if (!ranBefore) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("categories_inserted", true);
-            editor.commit();
-        }
-        return !ranBefore;
     }
 
     private void checkPrefs(){

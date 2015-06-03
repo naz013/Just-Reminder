@@ -1,0 +1,307 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_gravity="start"
+    android:id="@+id/drawerBg"
+    android:background="@color/colorWhite"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:layout_gravity="start"
+        android:layout_above="@+id/pinnedLayout"
+        android:layout_width="match_parent"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="175dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/material"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="25sp"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/appNameBanner"
+                    android:text="@string/app_name"
+                    android:gravity="center"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/activeScreen"
+                android:text="@string/drawer_active_reminder"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="16dp"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/archiveScreen"
+                android:text="@string/drawer_archive_reminder"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_storage_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/categories"
+                android:text="@string/string_categories"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_local_offer_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/notes"
+                android:text="@string/fragment_notes"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_event_note_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/googleTasks"
+                android:text="@string/google_tasks_title"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/google_tasks_grey"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/calendar"
+                android:text="@string/calendar_fragment"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_today_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/geoScreen"
+                android:text="@string/geo_fragment"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_navigation_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/places"
+                android:text="@string/settings_places"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_location_on_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/templates"
+                android:text="@string/settings_sms_templates_title"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_textsms_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/manageBackup"
+                android:text="@string/manage_backup_title"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_history_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/fragmentSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="16dp"
+                android:drawableLeft="@drawable/ic_settings_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:text="@string/action_settings"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/settings_help_point"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <TextView
+                android:id="@+id/helpTranslate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/translation_title"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pinnedLayout"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/moreApps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+            android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+            android:text="@string/string_more_apps"
+            android:textSize="14sp"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:background="?android:attr/selectableItemBackground"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:clickable="true"
+            android:paddingLeft="10dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:id="@+id/ads_container">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/buy_pro_string"
+                android:layout_toLeftOf="@+id/basket"
+                android:layout_centerVertical="true"
+                android:clickable="false"
+                android:gravity="center|left"
+                android:textSize="25sp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/market_icon"
+                android:layout_marginRight="25dp"
+                android:clickable="false"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/basket"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
