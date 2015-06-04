@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -15,12 +16,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -42,13 +45,16 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
+import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -60,17 +66,27 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.hexrain.design.fragments.ActiveFragment;
+import com.hexrain.design.fragments.ArchivedRemindersFragment;
+import com.hexrain.design.fragments.EventsFragment;
+import com.hexrain.design.fragments.GroupsFragment;
+import com.hexrain.design.fragments.NotesFragment;
+import com.hexrain.design.fragments.PlacesFragment;
+import com.hexrain.design.fragments.TemplatesFragment;
+import com.roomorama.caldroid.CaldroidFragment;
+import com.roomorama.caldroid.CaldroidListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class ScreenManager extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
-    private CharSequence mTag;
+    private String mTag;
     Toolbar toolbar;
     FloatingEditText quickNote;
     CardView noteCard, noteStatusCard, noteReminderCard;
@@ -94,6 +110,8 @@ public class ScreenManager extends AppCompatActivity
     public static final String FRAGMENT_TEMPLATES = "fragment_templates";
     public static final String FRAGMENT_SETTINGS = "fragment_settings";
     public static final String FRAGMENT_CALENDAR = "fragment_calendar";
+    public static final String ACTION_CALENDAR = "action_calendar";
+    public static final String FRAGMENT_EVENTS = "fragment_events";
     public static final String HELP = "help";
     public static final String TRANSLATION = "translation";
     public static final String MORE_APPS = "more_apps";
@@ -114,14 +132,13 @@ public class ScreenManager extends AppCompatActivity
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
 
-        getIntent().setAction("JustActivity Created");
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
-        toolbar.inflateMenu(R.menu.main);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.drawer_active_reminder);
+
+        mTitle = getTitle().toString();
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
@@ -342,58 +359,223 @@ public class ScreenManager extends AppCompatActivity
             mainMenu.setVisibility(View.VISIBLE);
         }
 
+        new GetExchangeTasksAsync(this, null).execute();
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
-        new GetExchangeTasksAsync(this, null).execute();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED)) {
+            onNavigationDrawerItemSelected(sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT));
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, false);
+        }
     }
 
     @Override
     public void onNavigationDrawerItemSelected(String tag) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (tag.matches(FRAGMENT_ACTIVE)) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, ActiveFragment.newInstance(), tag)
-                    .commit();
-        } else if (tag.matches(HELP)){
-            startActivity(new Intent(this, Help.class));
-        } else if (tag.matches(TRANSLATION)){
-            translationDialog().show();
-        } else if (tag.matches(MARKET)){
-            marketDialog().show();
-        } else if (tag.matches(MORE_APPS)){
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://search?q=pub:Nazar Suhovich"));
-            try {
-                startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(this, "Couldn't launch market", Toast.LENGTH_LONG).show();
+        if (tag != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (tag.matches(FRAGMENT_ACTIVE)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ActiveFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_ARCHIVE)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ArchivedRemindersFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_NOTE)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, NotesFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_GROUPS)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, GroupsFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_PLACES)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlacesFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_TEMPLATES)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, TemplatesFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_CALENDAR)) {
+                if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW) == 1) {
+                    onNavigationDrawerItemSelected(ACTION_CALENDAR);
+                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+                } else {
+                    onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
+                }
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(ACTION_CALENDAR)) {
+                showMonth();
+                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_EVENTS)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                if (eventsDate != null) {
+                    cal.setTime(eventsDate);
+                }
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, EventsFragment.newInstance(cal.getTimeInMillis()), tag)
+                        .commitAllowingStateLoss();
+                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            } else if (tag.matches(HELP)) {
+                startActivity(new Intent(this, Help.class));
+            } else if (tag.matches(TRANSLATION)) {
+                translationDialog().show();
+            } else if (tag.matches(MARKET)) {
+                marketDialog().show();
+            } else if (tag.matches(MORE_APPS)) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://search?q=pub:Nazar Suhovich"));
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "Couldn't launch market", Toast.LENGTH_LONG).show();
+                }
+            } else if (tag.matches(FRAGMENT_SETTINGS)) {
+                Intent intentS = new Intent(this, SettingsActivity.class);
+                startActivity(intentS);
+            } else if (tag.matches(VOICE_RECOGNIZER)) {
+                startVoiceRecognitionActivity();
+            } else {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, ActiveFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
             }
-        } else if (tag.matches(FRAGMENT_SETTINGS)){
-            Intent intentS = new Intent(this, SettingsActivity.class);
-            startActivity(intentS);
-        } else if (tag.matches(VOICE_RECOGNIZER)){
-            startVoiceRecognitionActivity();
         } else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.container, ActiveFragment.newInstance(), tag)
-                    .commit();
+                    .replace(R.id.container, ActiveFragment.newInstance(), FRAGMENT_ACTIVE)
+                    .commitAllowingStateLoss();
+            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, FRAGMENT_ACTIVE);
         }
     }
 
     public void onSectionAttached(String tag) {
         if (tag.matches(FRAGMENT_ACTIVE)) {
             mTitle = getString(R.string.drawer_active_reminder);
-        } else {
-            mTitle = getString(R.string.title_section1);
+        } else if (tag.matches(FRAGMENT_ARCHIVE)){
+            mTitle = getString(R.string.drawer_archive_reminder);
+        } else if (tag.matches(ACTION_CALENDAR)){
+            mTitle = getString(R.string.calendar_fragment);
+        } else if (tag.matches(FRAGMENT_EVENTS)){
+            mTitle = getString(R.string.birthdays_dialog_title);
+        } else if (tag.matches(FRAGMENT_NOTE)){
+            mTitle = getString(R.string.fragment_notes);
+        } else if (tag.matches(FRAGMENT_GROUPS)){
+            mTitle = getString(R.string.string_manage_categories);
+        } else if (tag.matches(FRAGMENT_PLACES)){
+            mTitle = getString(R.string.settings_places);
+        } else if (tag.matches(FRAGMENT_PLACES)){
+            mTitle = getString(R.string.settings_sms_templates_title);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    Date eventsDate;
+    CaldroidFragment calendarView;
+
+    private void showMonth(){
+        calendarView = new CaldroidFragment();
+        Bundle args = new Bundle();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
+        args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
+        sPrefs = new SharedPrefs(this);
+        if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 0) {
+            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.SUNDAY);
+        } else {
+            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.MONDAY);
+        }
+        args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
+        calendarView.setArguments(args);
+        calendarView.setMinDate(null);
+        calendarView.setMaxDate(null);
+
+        eventsDate = cal.getTime();
+        mTitle = getString(R.string.calendar_fragment);
         toolbar.setTitle(mTitle);
+        invalidateOptionsMenu();
+
+        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+        t.replace(R.id.container, calendarView);
+        t.addToBackStack(mTag);
+        t.commitAllowingStateLoss();
+
+        final CaldroidListener listener = new CaldroidListener() {
+
+            @Override
+            public void onSelectDate(Date date, View view) {
+                eventsDate = date;
+                onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
+            }
+
+            @Override
+            public void onChangeMonth(int month, int year) {
+            }
+
+            @Override
+            public void onLongClickDate(Date date, View view) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                calendar.setTime(date);
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                long dateMills = calendar.getTimeInMillis();
+                startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
+                        .putExtra("date", dateMills));
+            }
+
+            @Override
+            public void onCaldroidViewCreated() {
+            }
+
+        };
+
+        calendarView.setCaldroidListener(listener);
+
+        if (calendarView != null) {
+            calendarView.refreshView();
+            calendarView.clearSelectedDates();
+        }
+
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR)) {
+            loadReminders();
+        }
+
+        loadEvents();
+        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
     }
 
     protected Dialog translationDialog() {
@@ -453,38 +635,59 @@ public class ScreenManager extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            //getMenuInflater().inflate(R.menu.main, menu);
+            if (mTag.matches(FRAGMENT_CALENDAR) || mTag.matches(ACTION_CALENDAR)) {
+                getMenuInflater().inflate(R.menu.calendar_menu, menu);
+                if (mTag.matches(ACTION_CALENDAR)) {
+                    menu.findItem(R.id.action_month).setVisible(false);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    if (eventsDate != null) calendar.setTime(eventsDate);
+                    menu.findItem(R.id.action_day).setTitle(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+                }
+            }
             return true;
         }
+        toolbar.setTitle(mTitle);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_day:
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                eventsDate = calendar.getTime();
+                onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
+                return true;
+            case R.id.action_voice:
+                startVoiceRecognitionActivity();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        String action = getIntent().getAction();
-        if(action == null || !action.equals("JustActivity Created")) {
-            Intent intent = new Intent(this, ScreenManager.class);
-            startActivity(intent);
-            finish();
-        } else {
-            getIntent().setAction(null);
+        SharedPrefs sPrefs = new SharedPrefs(this);
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED)) {
+            recreate();
         }
 
         setRequestedOrientation(cSetter.getRequestOrientation());
-
         showRate();
 
-        SharedPrefs sPrefs = new SharedPrefs(this);
         if (new ManageModule().isPro()){
             if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)) {
                 thanksDialog().show();
             }
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
+
+        if (mTag != null) onNavigationDrawerItemSelected(mTag);
 
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)){
             new Notifier(this).recreatePermanent();
@@ -496,6 +699,179 @@ public class ScreenManager extends AppCompatActivity
         }
 
         new DelayedAsync(this, null).execute();
+    }
+
+    private void loadReminders() {
+        DataBase db = new DataBase(this);
+        if (!db.isOpen()) db.open();
+        sPrefs = new SharedPrefs(this);
+        boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
+        TimeCount mCount = new TimeCount(this);
+        ArrayList<Date> dates = new ArrayList<>();
+        dates.clear();
+        Cursor c = db.queryGroup();
+        if (c != null && c.moveToFirst()){
+            do {
+                int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+                int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+                int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                int afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+                if ((type.startsWith(Constants.TYPE_SKYPE) ||
+                        type.matches(Constants.TYPE_CALL) ||
+                        type.startsWith(Constants.TYPE_APPLICATION) ||
+                        type.matches(Constants.TYPE_MESSAGE) ||
+                        type.matches(Constants.TYPE_REMINDER) ||
+                        type.matches(Constants.TYPE_TIME)) && isDone == 0) {
+                    long time = mCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
+                            afterTime, repCode, remCount, 0);
+                    Calendar calendar = Calendar.getInstance();
+                    if (time > 0) {
+                        calendar.setTimeInMillis(time);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int month = calendar.get(Calendar.MONTH);
+                        Date bdDate = getDate(0, month, day);
+                        dates.add(bdDate);
+                        int days = 0;
+                        if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
+                            do {
+                                calendar.setTimeInMillis(time + (repCode * Intervals.MILLS_INTERVAL_DAY));
+                                time = calendar.getTimeInMillis();
+                                days = days + repCode;
+                                day = calendar.get(Calendar.DAY_OF_MONTH);
+                                month = calendar.get(Calendar.MONTH);
+                                bdDate = getDate(0, month, day);
+                                dates.add(bdDate);
+                            } while (days < 61);
+                        }
+                    }
+                } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
+                    long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
+                    Calendar calendar = Calendar.getInstance();
+                    if (time > 0) {
+                        calendar.setTimeInMillis(time);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int month = calendar.get(Calendar.MONTH);
+                        Date bdDate = getDate(0, month, day);
+                        dates.add(bdDate);
+                    }
+                    int days = 0;
+                    if (isFeature){
+                        ArrayList<Integer> list = getRepeatArray(weekdays);
+                        do {
+                            calendar.setTimeInMillis(time + Intervals.MILLS_INTERVAL_DAY);
+                            time = calendar.getTimeInMillis();
+                            int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
+                            days = days + 1;
+                            if (list.get(weekDay - 1) == 1){
+                                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                                int month = calendar.get(Calendar.MONTH);
+                                Date bdDate = getDate(0, month, day);
+                                dates.add(bdDate);
+                            }
+                        } while (days < 61);
+                    }
+                }
+            } while (c.moveToNext());
+        }
+        if (c != null) {
+            c.close();
+        }
+        if (db != null) db.close();
+
+        for (int i = 0; i < dates.size(); i++) {
+            if (calendarView != null) {
+                calendarView.setBackgroundResourceForDate(cSetter.colorReminderCalendar(), dates.get(i));
+            }
+        }
+    }
+
+    private ArrayList<Integer> getRepeatArray(String weekdays){
+        ArrayList<Integer> res = new ArrayList<>();
+        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))res.add(1);
+        else res.add(0);
+        return res;
+    }
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+    private void loadEvents(){
+        DataBase db = new DataBase(this);
+        if (!db.isOpen()) db.open();
+        ArrayList<Date> dates = new ArrayList<>();
+        Cursor c = db.queryEvents();
+        if (c != null && c.moveToFirst()){
+            do {
+                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
+                Date date = null;
+                try {
+                    date = format.parse(birthday);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Calendar calendar = Calendar.getInstance();
+                if (date != null) {
+                    try {
+                        calendar.setTime(date);
+                    } catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+                    int day = calendar.get(Calendar.DAY_OF_MONTH);
+                    int month = calendar.get(Calendar.MONTH);
+                    Date bdDate = getDate(0, month, day);
+                    Date prevDate = getDate(0 - 1, month, day);
+                    Date nextDate = getDate(1, month, day);
+                    Date nextTwoDate = getDate(2, month, day);
+                    dates.add(bdDate);
+                    dates.add(prevDate);
+                    dates.add(nextDate);
+                    dates.add(nextTwoDate);
+                }
+            } while (c.moveToNext());
+        }
+        if (c != null) {
+            c.close();
+        }
+        db.close();
+
+        for (int i = 0; i < dates.size(); i++) {
+            if (calendarView != null) {
+                calendarView.setBackgroundResourceForDate(cSetter.colorBirthdayCalendar(), dates.get(i));
+            }
+        }
+    }
+
+    public static Date getDate(int index, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.YEAR, year + index);
+        cal1.set(Calendar.MONTH, month);
+        cal1.set(Calendar.DAY_OF_MONTH, day);
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+        return cal1.getTime();
     }
 
     private void showChanges() {

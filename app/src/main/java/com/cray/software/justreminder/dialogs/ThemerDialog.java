@@ -206,6 +206,7 @@ public class ThemerDialog extends AppCompatActivity {
     void saveColor(String string) {
         sPrefs = new SharedPrefs(ThemerDialog.this);
         sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_THEME, string);
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
     }
 
     @Override

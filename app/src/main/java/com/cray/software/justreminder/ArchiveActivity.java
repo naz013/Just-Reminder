@@ -626,9 +626,6 @@ public class ArchiveActivity extends AppCompatActivity
         currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(animator);
 
-        currentList.addItemDecoration(new SimpleListDividerDecorator(getResources()
-                .getDrawable(R.drawable.list_divider), true));
-
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
     }

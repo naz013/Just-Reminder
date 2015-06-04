@@ -17,28 +17,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.BackupManager;
-import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.HelpOverflow;
-import com.cray.software.justreminder.NotesActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TasksActivity;
-import com.cray.software.justreminder.async.GetExchangeTasksAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.CategoriesList;
-import com.cray.software.justreminder.dialogs.PlacesList;
-import com.cray.software.justreminder.dialogs.TemplatesList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -69,26 +59,22 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Indicate that this fragment would like to influence the set of actions in the action bar.
+        setHasOptionsMenu(true);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
         if (savedInstanceState != null) {
             mCurrentSelectedPosition = savedInstanceState.getString(STATE_SELECTED_POSITION);
+            selectItem(mCurrentSelectedPosition, true);
             mFromSavedInstanceState = true;
+        } else {
+            selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
+            mFromSavedInstanceState = false;
         }
-
-        // Select either the default item (0) or the last selected item.
-        selectItem(ScreenManager.FRAGMENT_ACTIVE);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -139,7 +125,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectItem(ScreenManager.HELP);
+                selectItem(ScreenManager.HELP, false);
             }
         });
         help.setTypeface(typeface);
@@ -148,7 +134,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         helpTranslate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectItem(ScreenManager.TRANSLATION);
+                selectItem(ScreenManager.TRANSLATION, false);
             }
         });
         helpTranslate.setTypeface(typeface);
@@ -157,7 +143,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         moreApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectItem(ScreenManager.MORE_APPS);
+                selectItem(ScreenManager.MORE_APPS, false);
             }
         });
         moreApps.setTypeface(typeface);
@@ -166,18 +152,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), CategoriesList.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_GROUPS, true);
+                disableItem(ScreenManager.FRAGMENT_GROUPS);
             }
         });
         categories.setTypeface(typeface);
@@ -186,18 +162,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         places.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), PlacesList.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_PLACES, true);
+                disableItem(ScreenManager.FRAGMENT_PLACES);
             }
         });
         places.setTypeface(typeface);
@@ -206,18 +172,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         templates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), TemplatesList.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
+                disableItem(ScreenManager.FRAGMENT_TEMPLATES);
             }
         });
         templates.setTypeface(typeface);
@@ -258,7 +214,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 ads_container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        selectItem(ScreenManager.MARKET);
+                        selectItem(ScreenManager.MARKET, false);
                     }
                 });
             }
@@ -368,8 +324,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    private void selectItem(final String tag) {
-        mCurrentSelectedPosition = tag;
+    private void selectItem(final String tag, boolean select) {
+        if (select) mCurrentSelectedPosition = tag;
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
@@ -380,6 +336,39 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                     mCallbacks.onNavigationDrawerItemSelected(tag);
                 }
             }, 250);
+        }
+    }
+
+    private void disableItem(String tag) {
+        activeScreen.setEnabled(true);
+        archiveScreen.setEnabled(true);
+        googleTasks.setEnabled(true);
+        calendar.setEnabled(true);
+        notes.setEnabled(true);
+        manageBackup.setEnabled(true);
+        geoScreen.setEnabled(true);
+        places.setEnabled(true);
+        templates.setEnabled(true);
+        categories.setEnabled(true);
+
+        if (tag.matches(ScreenManager.FRAGMENT_ACTIVE)){
+            activeScreen.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_ARCHIVE)){
+            archiveScreen.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_EVENTS) ||
+                tag.matches(ScreenManager.ACTION_CALENDAR)||
+                tag.matches(ScreenManager.FRAGMENT_CALENDAR)){
+            calendar.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_NOTE)){
+            notes.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_GROUPS)){
+            categories.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_PLACES)){
+            places.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_TEMPLATES)){
+            templates.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_TASKS)){
+            googleTasks.setEnabled(false);
         }
     }
 
@@ -401,8 +390,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putString(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -416,10 +405,15 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.archiveScreen:
-                selectItem(ScreenManager.FRAGMENT_ACTIVE);
+                selectItem(ScreenManager.FRAGMENT_ARCHIVE, true);
+                disableItem(ScreenManager.FRAGMENT_ARCHIVE);
+                break;
+            case R.id.activeScreen:
+                selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
+                disableItem(ScreenManager.FRAGMENT_ACTIVE);
                 break;
             case R.id.fragmentSettings:
-                selectItem(ScreenManager.FRAGMENT_SETTINGS);
+                selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
                 break;
             case R.id.geoScreen:
                 new Handler().post(new Runnable() {
@@ -438,18 +432,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 }, 250);
                 break;
             case R.id.notes:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), NotesActivity.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_NOTE, true);
+                disableItem(ScreenManager.FRAGMENT_NOTE);
                 break;
             case R.id.googleTasks:
                 new Handler().post(new Runnable() {
@@ -466,18 +450,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 }, 250);
                 break;
             case R.id.calendar:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), CalendarActivity.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_CALENDAR, true);
+                disableItem(ScreenManager.FRAGMENT_CALENDAR);
                 break;
             case R.id.manageBackup:
                 new Handler().post(new Runnable() {
@@ -512,6 +486,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                         .putExtra(Constants.ITEM_ID_INTENT, 1));
             }
         }
+
+        if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
     }
 
     private boolean isListFirstTime() {

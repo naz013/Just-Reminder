@@ -154,6 +154,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME, true);
             useDarkStyleCheck.setChecked(true);
         }
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
         getActivity().recreate();
     }
 

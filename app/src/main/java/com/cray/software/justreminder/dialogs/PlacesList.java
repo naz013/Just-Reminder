@@ -107,7 +107,7 @@ public class PlacesList extends AppCompatActivity {
             dialog.show();
             return false;
         } else {
-            Log.d("GooglePlayServicesUtil Check", "Result is: " + resultCode);
+            Log.d("GooglePlayServicesUtil", "Result is: " + resultCode);
             return true;
         }
     }

@@ -1,4 +1,4 @@
-package com.hexrain.design.fragments;
+package com.hexrain.design;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

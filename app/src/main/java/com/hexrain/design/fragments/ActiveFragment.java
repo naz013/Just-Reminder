@@ -52,7 +52,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -187,8 +186,34 @@ public class ActiveFragment extends Fragment implements SyncListener {
 
     @Override
     public void onResume() {
-        super.onResume();
+        if (!new ManageModule().isPro()){
+            if (adView != null) {
+                adView.resume();
+            }
+        }
         loaderAdapter(null);
+        super.onResume();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        if (!new ManageModule().isPro()) {
+            if (adView != null) {
+                adView.destroy();
+            }
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        if (!new ManageModule().isPro()) {
+            if (adView != null) {
+                adView.pause();
+            }
+        }
+        super.onPause();
     }
 
     private void makeArchive(long id) {
@@ -332,9 +357,6 @@ public class ActiveFragment extends Fragment implements SyncListener {
         currentList.setLayoutManager(mLayoutManager);
         currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(animator);
-
-        currentList.addItemDecoration(new SimpleListDividerDecorator(getResources()
-                .getDrawable(R.drawable.list_divider), true));
 
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
