@@ -689,4 +689,8 @@
     <string name="string_create_copy">Создать копию</string>
     <string name="string_reminder_created">Напоминание создано</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="string_no_archived">You don\'t nave archived reminder</string>
+    <string name="simple_month">Month</string>
 </resources>

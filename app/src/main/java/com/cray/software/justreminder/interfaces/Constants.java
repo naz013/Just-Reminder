@@ -133,6 +133,8 @@ public class Constants {
     public static final String APP_UI_PREFERENCES_ITEM_PREVIEW = "item_preview";
     public static final String APP_UI_PREFERENCES_THANKS_SHOWN = "thanks_shown";
     public static final String APP_UI_PREFERENCES_LAST_CALENDAR_VIEW = "last_calendar_view";
+    public static final String APP_UI_PREFERENCES_UI_CHANGED = "ui_changed";
+    public static final String APP_UI_PREFERENCES_LAST_FRAGMENT = "last_fragment";
 
     // birthdays reminder notification constants
     public static final String APP_UI_PREFERENCES_USE_GLOBAL = "use_global";

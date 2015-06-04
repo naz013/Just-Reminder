@@ -688,4 +688,8 @@
     <string name="string_create_copy">Kopie erstellen</string>
     <string name="string_reminder_created">Erinnerung erstellt</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="string_no_archived">You don\'t nave archived reminder</string>
+    <string name="simple_month">Month</string>
 </resources>
