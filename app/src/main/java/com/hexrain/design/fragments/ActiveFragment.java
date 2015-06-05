@@ -131,9 +131,9 @@ public class ActiveFragment extends Fragment implements SyncListener {
 
         emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
-            emptyImage.setImageResource(R.drawable.bell_icon);
+            emptyImage.setImageResource(R.drawable.ic_notifications_white_24dp);
         } else {
-            emptyImage.setImageResource(R.drawable.bell_icon_dark);
+            emptyImage.setImageResource(R.drawable.ic_notifications_grey600_24dp);
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

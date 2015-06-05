@@ -157,6 +157,8 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     private void saveTaskList() {
+        sPrefs = new SharedPrefs(this);
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
         String listName = editField.getText().toString();
         if (listName.matches("")) {
             editField.setError(getString(R.string.empty_field_error));

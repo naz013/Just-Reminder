@@ -33,16 +33,16 @@
             android:orientation="vertical" >
 
             <ImageView
-                android:layout_width="70dp"
+                android:layout_width="60dp"
                 android:id="@+id/emptyImage"
-                android:layout_height="70dp"
-                android:layout_marginBottom="50dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="35dp"
                 android:src="@drawable/ic_alarm_white_24dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/emptyText"
-                android:textSize="35sp"
+                android:textSize="30sp"
                 android:text="@string/no_active_text"
                 android:gravity="center|top"
                 android:layout_height="wrap_content" />

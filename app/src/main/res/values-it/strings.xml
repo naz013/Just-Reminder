@@ -3,8 +3,8 @@
     <string name="app_name">"Just Reminder"</string>
     <string name="app_name_pro">"Just Reminder PRO"</string>
     <string name="action_settings">"Impostazioni"</string>
-    <string name="drawer_active_reminder">"Promemoria attivi"</string>
-    <string name="drawer_archive_reminder">"Promemoria archiviati"</string>
+    <string name="drawer_active_reminder">Reminders</string>
+    <string name="drawer_archive_reminder">Trash</string>
     <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Chiudi"</string>
     <string name="empty_list_text">"So far, you have no active reminders, click on this button to add a new reminder."</string>
@@ -364,7 +364,7 @@
     <string name="status_icon_title">Status bar icon</string>
     <string name="permanent_notification_explanation">Check to enable showing permanent notification in status bar</string>
     <string name="permanent_notification_title">Show notification</string>
-    <string name="no_active_text">No active reminders</string>
+    <string name="no_active_text">No reminders</string>
     <string name="delay_for_button">Delay for…</string>
     <string name="time_dialog_title">Select time</string>
     <string name="repeat_5_min">5 minutes</string>
@@ -691,6 +691,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="string_no_archived">You don\'t nave archived reminder</string>
+    <string name="string_no_archived">There is no reminders</string>
     <string name="simple_month">Month</string>
 </resources>

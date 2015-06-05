@@ -1229,6 +1229,7 @@ public class MainActivity extends AppCompatActivity
         SyncHelper helper = new SyncHelper(this);
 
         arrayList = new ArrayList<>();
+        arrayList.clear();
 
         if (c != null && c.moveToFirst()){
             findViewById(R.id.emptyItem).setVisibility(View.GONE);

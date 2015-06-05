@@ -3,8 +3,8 @@
     <string name="app_name">"Just Reminder"</string>
     <string name="app_name_pro">"Just Reminder PRO"</string>
     <string name="action_settings">"Налаштування"</string>
-    <string name="drawer_active_reminder">"Активні нагадування"</string>
-    <string name="drawer_archive_reminder">"Архів нагадувань"</string>
+    <string name="drawer_active_reminder">Нагадування</string>
+    <string name="drawer_archive_reminder">Кошик</string>
     <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Закрити"</string>
     <string name="menu_send_feedback">"Надіслати відгук"</string>
@@ -367,7 +367,7 @@
     <string name="status_icon_title">Іконка в статус барі</string>
     <string name="permanent_notification_explanation">Відмітьте, щоб увімкнути відображення постійного повідомлення в статус барі</string>
     <string name="permanent_notification_title">Постійне повідомлення</string>
-    <string name="no_active_text">Немає активних нагадувань</string>
+    <string name="no_active_text">Немає нагадувань</string>
     <string name="delay_for_button">Відкласти на…</string>
     <string name="time_dialog_title">Вибаріть час</string>
     <string name="repeat_5_min">5 хвилин</string>
@@ -690,6 +690,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="string_no_archived">You don\'t nave archived reminder</string>
-    <string name="simple_month">Month</string>
+    <string name="simple_month">Місяць</string>
+    <string name="string_no_archived">У кошику немає нагадувань</string>
 </resources>

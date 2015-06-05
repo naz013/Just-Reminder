@@ -77,6 +77,7 @@ public class ArchivedRemindersFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
+        if (arrayList.size() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -108,9 +109,9 @@ public class ArchivedRemindersFragment extends Fragment {
 
         emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
-            emptyImage.setImageResource(R.drawable.ic_history_white_24dp);
+            emptyImage.setImageResource(R.drawable.ic_delete_white_24dp);
         } else {
-            emptyImage.setImageResource(R.drawable.ic_history_grey600_24dp);
+            emptyImage.setImageResource(R.drawable.ic_delete_grey600_24dp);
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
@@ -323,6 +324,8 @@ public class ArchivedRemindersFragment extends Fragment {
 
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
+
+        getActivity().invalidateOptionsMenu();
     }
 
     private void removeReminder(long itId){

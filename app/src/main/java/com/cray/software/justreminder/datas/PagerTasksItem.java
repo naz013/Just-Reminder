@@ -2,24 +2,14 @@ package com.cray.software.justreminder.datas;
 
 import java.util.ArrayList;
 
-public class PagerItem {
+public class PagerTasksItem {
     int position, current;
-    ArrayList<CalendarData> datas;
-    int day;
+    ArrayList<TaskListData> datas;
 
-    public PagerItem(ArrayList<CalendarData> datas, int position, int current, int day){
+    public PagerTasksItem(ArrayList<TaskListData> datas, int position, int current){
         this.datas = datas;
         this.current = current;
         this.position = position;
-        this.day = day;
-    }
-
-    public int getDay(){
-        return day;
-    }
-
-    public void setDay(int day){
-        this.day = day;
     }
 
     public int getPosition(){
@@ -38,11 +28,11 @@ public class PagerItem {
         this.current = current;
     }
 
-    public ArrayList<CalendarData> getDatas(){
+    public ArrayList<TaskListData> getDatas(){
         return datas;
     }
 
-    public void setDatas(ArrayList<CalendarData> datas){
+    public void setDatas(ArrayList<TaskListData> datas){
         this.datas = datas;
     }
 }

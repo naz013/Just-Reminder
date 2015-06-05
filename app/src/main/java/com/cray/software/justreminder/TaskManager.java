@@ -290,6 +290,8 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void saveTask() {
+        sPrefs = new SharedPrefs(this);
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
             editField.setError(getString(R.string.empty_field_error));

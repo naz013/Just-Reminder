@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 import com.cray.software.justreminder.BackupManager;
 import com.cray.software.justreminder.HelpOverflow;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.TasksActivity;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -71,9 +69,11 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             mCurrentSelectedPosition = savedInstanceState.getString(STATE_SELECTED_POSITION);
             selectItem(mCurrentSelectedPosition, true);
             mFromSavedInstanceState = true;
+            disableItem(mCurrentSelectedPosition);
         } else {
             selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
             mFromSavedInstanceState = false;
+            disableItem(ScreenManager.FRAGMENT_ACTIVE);
         }
     }
 
@@ -239,8 +239,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     private void loadMenu() {
         SharedPrefs prefs = new SharedPrefs(getActivity());
         if (!prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_grey600_24dp, 0, 0, 0);
-            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_storage_grey600_24dp, 0, 0, 0);
+            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_grey600_24dp, 0, 0, 0);
+            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_grey600_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_grey600_24dp, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_grey600_24dp, 0, 0, 0);
             fragmentSettings.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_grey600_24dp, 0, 0, 0);
@@ -251,8 +251,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_grey600_24dp, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_grey600_24dp, 0, 0, 0);
         } else {
-            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_white_24dp, 0, 0, 0);
-            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_storage_white_24dp, 0, 0, 0);
+            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_white_24dp, 0, 0, 0);
+            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_white_24dp, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
             fragmentSettings.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_white_24dp, 0, 0, 0);
@@ -354,8 +354,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         } else if (tag.matches(ScreenManager.FRAGMENT_ARCHIVE)){
             archiveScreen.setEnabled(false);
         } else if (tag.matches(ScreenManager.FRAGMENT_EVENTS) ||
-                tag.matches(ScreenManager.ACTION_CALENDAR)||
-                tag.matches(ScreenManager.FRAGMENT_CALENDAR)){
+                tag.matches(ScreenManager.ACTION_CALENDAR)){
             calendar.setEnabled(false);
         } else if (tag.matches(ScreenManager.FRAGMENT_NOTE)){
             notes.setEnabled(false);
@@ -367,6 +366,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             templates.setEnabled(false);
         } else if (tag.matches(ScreenManager.FRAGMENT_TASKS)){
             googleTasks.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_LOCATIONS)){
+            geoScreen.setEnabled(false);
         }
     }
 
@@ -414,42 +415,26 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
                 break;
             case R.id.geoScreen:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        /*if (checkGooglePlayServicesAvailability()) {
-                            startActivity(new Intent(MainActivity.this, GeolocationTasks.class));
-                        }*/
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_LOCATIONS, true);
+                disableItem(ScreenManager.FRAGMENT_LOCATIONS);
                 break;
             case R.id.notes:
                 selectItem(ScreenManager.FRAGMENT_NOTE, true);
                 disableItem(ScreenManager.FRAGMENT_NOTE);
                 break;
             case R.id.googleTasks:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), TasksActivity.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_TASKS, true);
+                disableItem(ScreenManager.FRAGMENT_TASKS);
                 break;
             case R.id.calendar:
-                selectItem(ScreenManager.FRAGMENT_CALENDAR, true);
-                disableItem(ScreenManager.FRAGMENT_CALENDAR);
+                SharedPrefs sPrefs = new SharedPrefs(getActivity());
+                if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW) == 1) {
+                    selectItem(ScreenManager.ACTION_CALENDAR, true);
+                    disableItem(ScreenManager.ACTION_CALENDAR);
+                } else {
+                    selectItem(ScreenManager.FRAGMENT_EVENTS, true);
+                    disableItem(ScreenManager.FRAGMENT_EVENTS);
+                }
                 break;
             case R.id.manageBackup:
                 new Handler().post(new Runnable() {
@@ -502,5 +487,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     public interface NavigationDrawerCallbacks {
         void onNavigationDrawerItemSelected(String tag);
+
+        void onTitleChanged(String title);
+
+        void onUiChanged(int colorSetter, int colorStatus, int colorChooser);
     }
 }

@@ -3,8 +3,8 @@
     <string name="app_name">"Just Reminder"</string>
     <string name="app_name_pro">"Just Reminder PRO"</string>
     <string name="action_settings">"Einstellungen"</string>
-    <string name="drawer_active_reminder">"Aktive Mahnungen"</string>
-    <string name="drawer_archive_reminder">"Archivierte Mahnungen"</string>
+    <string name="drawer_active_reminder">Mahnungen</string>
+    <string name="drawer_archive_reminder">Papierkorb</string>
     <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Schließen"</string>
     <string name="empty_list_text">"So weit, keine aktiven Erinnerungen Immer haben Sie, klicken Sie auf diese Schaltfläche, um eine neue Mahnung hinzuzufügen."</string>
@@ -366,7 +366,7 @@
     <string name="status_icon_title">"Statusleiste das Symbol"</string>
     <string name="permanent_notification_explanation">"Überprüfen Sie, welche dauerhafte Benachrichtigung in der Statusleiste aktivieren"</string>
     <string name="permanent_notification_title">"Show Benachrichtigung"</string>
-    <string name="no_active_text">"Keine aktiven Mahnungen"</string>
+    <string name="no_active_text">"Keine Mahnungen"</string>
     <string name="delay_for_button">"Verzögerung für …"</string>
     <string name="time_dialog_title">"Wählen die zeit"</string>
     <string name="repeat_5_min">"5 minuten"</string>
@@ -690,6 +690,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="string_no_archived">You don\'t nave archived reminder</string>
-    <string name="simple_month">Month</string>
+    <string name="string_no_archived">Es gibt noch keine Erinnerungen</string>
+    <string name="simple_month">Monat</string>
 </resources>

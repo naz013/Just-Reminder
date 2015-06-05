@@ -1,16 +1,20 @@
 package com.hexrain.design;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +44,7 @@ import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetExchangeTasksAsync;
+import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
@@ -63,18 +68,28 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.tasks.TasksScopes;
 import com.hexrain.design.fragments.ActiveFragment;
 import com.hexrain.design.fragments.ArchivedRemindersFragment;
 import com.hexrain.design.fragments.EventsFragment;
+import com.hexrain.design.fragments.GeolocationFragment;
 import com.hexrain.design.fragments.GroupsFragment;
 import com.hexrain.design.fragments.NotesFragment;
 import com.hexrain.design.fragments.PlacesFragment;
+import com.hexrain.design.fragments.TasksFragment;
 import com.hexrain.design.fragments.TemplatesFragment;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,7 +124,6 @@ public class ScreenManager extends AppCompatActivity
     public static final String FRAGMENT_BACKUPS = "fragment_backups";
     public static final String FRAGMENT_TEMPLATES = "fragment_templates";
     public static final String FRAGMENT_SETTINGS = "fragment_settings";
-    public static final String FRAGMENT_CALENDAR = "fragment_calendar";
     public static final String ACTION_CALENDAR = "action_calendar";
     public static final String FRAGMENT_EVENTS = "fragment_events";
     public static final String HELP = "help";
@@ -117,9 +131,15 @@ public class ScreenManager extends AppCompatActivity
     public static final String MORE_APPS = "more_apps";
     public static final String MARKET = "market";
     public static final String VOICE_RECOGNIZER = "sync_reminder";
+    public static final String TASKS_AUTHORIZATION = "authorize";
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
 
     private String mTitle;
+    private static final int REQUEST_AUTHORIZATION = 1;
+    private static final int REQUEST_ACCOUNT_PICKER = 3;
+    String accountName;
+    private Context ctx = this;
+    private Activity a = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -376,9 +396,36 @@ public class ScreenManager extends AppCompatActivity
     }
 
     @Override
+    public void onTitleChanged(String title) {
+        if (title != null) {
+            mTitle = title;
+            toolbar.setTitle(mTitle);
+        }
+    }
+
+    @Override
+    public void onUiChanged(int colorSetter, int colorStatus, int colorChooser) {
+        boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+        if (colorSetter != 0){
+            toolbar.setBackgroundColor(colorSetter);
+            if (isExtended) mainMenu.setBackgroundColor(colorSetter);
+            else mFab.setColorNormal(colorSetter);
+        }
+        if (colorStatus != 0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(colorStatus);
+            }
+        }
+        if (colorChooser != 0){
+            if (!isExtended) mFab.setColorPressed(colorChooser);
+        }
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(String tag) {
         // update the main content by replacing fragments
         if (tag != null) {
+            restoreUi();
             FragmentManager fragmentManager = getSupportFragmentManager();
             if (tag.matches(FRAGMENT_ACTIVE)) {
                 fragmentManager.beginTransaction()
@@ -416,15 +463,20 @@ public class ScreenManager extends AppCompatActivity
                         .commitAllowingStateLoss();
                 mTag = tag;
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
-            } else if (tag.matches(FRAGMENT_CALENDAR)) {
-                if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW) == 1) {
-                    onNavigationDrawerItemSelected(ACTION_CALENDAR);
-                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
-                } else {
-                    onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
-                }
+            } else if (tag.matches(FRAGMENT_TASKS)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, TasksFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
                 mTag = tag;
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_LOCATIONS)) {
+                if (checkGooglePlayServicesAvailability()) {
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, GeolocationFragment.newInstance(), tag)
+                            .commitAllowingStateLoss();
+                    mTag = tag;
+                    sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                }
             } else if (tag.matches(ACTION_CALENDAR)) {
                 showMonth();
                 sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
@@ -461,6 +513,12 @@ public class ScreenManager extends AppCompatActivity
                 startActivity(intentS);
             } else if (tag.matches(VOICE_RECOGNIZER)) {
                 startVoiceRecognitionActivity();
+            } else if (tag.matches(TASKS_AUTHORIZATION)) {
+                if (!new GTasksHelper(this).isLinked()) {
+                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                }
             } else {
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, ActiveFragment.newInstance(), tag)
@@ -490,17 +548,27 @@ public class ScreenManager extends AppCompatActivity
             mTitle = getString(R.string.string_manage_categories);
         } else if (tag.matches(FRAGMENT_PLACES)){
             mTitle = getString(R.string.settings_places);
-        } else if (tag.matches(FRAGMENT_PLACES)){
+        } else if (tag.matches(FRAGMENT_TEMPLATES)){
             mTitle = getString(R.string.settings_sms_templates_title);
+        } else if (tag.matches(FRAGMENT_LOCATIONS)){
+            mTitle = getString(R.string.geo_fragment);
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    private void restoreUi(){
+        toolbar.setBackgroundColor(cSetter.colorSetter());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(cSetter.colorStatus());
+        }
+        boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+        if (isExtended) mainMenu.setBackgroundColor(cSetter.colorSetter());
+        else {
+            mFab.setColorNormal(cSetter.colorSetter());
+            mFab.setColorPressed(cSetter.colorChooser());
+        }
     }
 
-    Date eventsDate;
+    Date eventsDate = null;
     CaldroidFragment calendarView;
 
     private void showMonth(){
@@ -522,9 +590,6 @@ public class ScreenManager extends AppCompatActivity
         calendarView.setMaxDate(null);
 
         eventsDate = cal.getTime();
-        mTitle = getString(R.string.calendar_fragment);
-        toolbar.setTitle(mTitle);
-        invalidateOptionsMenu();
 
         FragmentTransaction t = getSupportFragmentManager().beginTransaction();
         t.replace(R.id.container, calendarView);
@@ -576,6 +641,9 @@ public class ScreenManager extends AppCompatActivity
 
         loadEvents();
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+        mTitle = getString(R.string.calendar_fragment);
+        toolbar.setTitle(mTitle);
+        invalidateOptionsMenu();
     }
 
     protected Dialog translationDialog() {
@@ -634,18 +702,13 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            if (mTag.matches(FRAGMENT_CALENDAR) || mTag.matches(ACTION_CALENDAR)) {
-                getMenuInflater().inflate(R.menu.calendar_menu, menu);
-                if (mTag.matches(ACTION_CALENDAR)) {
-                    menu.findItem(R.id.action_month).setVisible(false);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(System.currentTimeMillis());
-                    if (eventsDate != null) calendar.setTime(eventsDate);
-                    menu.findItem(R.id.action_day).setTitle(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-                }
-            }
-            return true;
+        if (mTag.matches(ACTION_CALENDAR)) {
+            getMenuInflater().inflate(R.menu.calendar_menu, menu);
+            menu.findItem(R.id.action_month).setVisible(false);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            if (eventsDate != null) calendar.setTime(eventsDate);
+            menu.findItem(R.id.action_day).setTitle(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         }
         toolbar.setTitle(mTitle);
         return super.onCreateOptionsMenu(menu);
@@ -699,6 +762,12 @@ public class ScreenManager extends AppCompatActivity
         }
 
         new DelayedAsync(this, null).execute();
+    }
+
+    @Override
+    protected void onDestroy() {
+        new UpdatesHelper(this).updateWidget();
+        super.onDestroy();
     }
 
     private void loadReminders() {
@@ -783,7 +852,7 @@ public class ScreenManager extends AppCompatActivity
         if (c != null) {
             c.close();
         }
-        if (db != null) db.close();
+        db.close();
 
         for (int i = 0; i < dates.size(); i++) {
             if (calendarView != null) {
@@ -1169,6 +1238,61 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
+
+    void getAndUseAuthTokenInAsyncTask(Account account) {
+        AsyncTask<Account, String, String> task = new AsyncTask<Account, String, String>() {
+            ProgressDialog progressDlg;
+            AsyncTask<Account, String, String> me = this;
+
+            @Override
+            protected void onPreExecute() {
+                progressDlg = new ProgressDialog(ScreenManager.this, ProgressDialog.STYLE_SPINNER);
+                progressDlg.setMax(100);
+                progressDlg.setTitle(getString(R.string.connecting_dialog_title));
+                progressDlg.setMessage(getString(R.string.application_verifying_text));
+                progressDlg.setCancelable(false);
+                progressDlg.setIndeterminate(false);
+                progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    public void onCancel(DialogInterface d) {
+                        progressDlg.dismiss();
+                        me.cancel(true);
+                    }
+                });
+                progressDlg.show();
+            }
+
+            @Override
+            protected String doInBackground(Account... params) {
+                return getAccessToken(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                if (s != null) {
+                    accountName = s;
+                }
+                progressDlg.dismiss();
+            }
+        };
+        task.execute(account);
+    }
+
+    private String getAccessToken(Account account) {
+        try {
+            return GoogleAuthUtil.getToken(ctx, account.name, "oauth2:" + DriveScopes.DRIVE + " " + TasksScopes.TASKS);
+        } catch (UserRecoverableAuthException e) {
+            a.startActivityForResult(e.getIntent(), REQUEST_ACCOUNT_PICKER);
+            e.printStackTrace();
+            return null;
+        } catch (GoogleAuthException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -1177,6 +1301,18 @@ public class ScreenManager extends AppCompatActivity
 
             new Recognizer(this).selectTask(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        if (requestCode == REQUEST_AUTHORIZATION && resultCode == RESULT_OK) {
+            accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            GoogleAccountManager gam = new GoogleAccountManager(this);
+            getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
+            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            new GetTasksListsAsync(this, null).execute();
+        } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
+            accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            new GetTasksListsAsync(this, null).execute();
         }
     }
 }

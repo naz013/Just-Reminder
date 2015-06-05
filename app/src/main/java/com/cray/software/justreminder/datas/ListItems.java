@@ -1,6 +1,9 @@
 package com.cray.software.justreminder.datas;
 
-public class ListItems {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ListItems implements Parcelable {
     private String title;
     private String status;
     private String taskId;
@@ -73,5 +76,48 @@ public class ListItems {
 
     public void setDate(long date){
         this.date = date;
+    }
+
+    public ListItems(Parcel in) {
+        super();
+        readFromParcel(in);
+    }
+
+    public static final Parcelable.Creator<ListItems> CREATOR = new Parcelable.Creator<ListItems>() {
+        public ListItems createFromParcel(Parcel in) {
+            return new ListItems(in);
+        }
+
+        public ListItems[] newArray(int size) {
+
+            return new ListItems[size];
+        }
+
+    };
+
+    public void readFromParcel(Parcel in) {
+        title = in.readString();
+        status = in.readString();
+        note = in.readString();
+        listId = in.readString();
+        taskId = in.readString();
+        id = in.readLong();
+        date = in.readLong();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(status);
+        dest.writeString(listId);
+        dest.writeString(note);
+        dest.writeString(taskId);
+        dest.writeLong(id);
+        dest.writeLong(date);
     }
 }

@@ -134,6 +134,7 @@ public class Constants {
     public static final String APP_UI_PREFERENCES_THANKS_SHOWN = "thanks_shown";
     public static final String APP_UI_PREFERENCES_LAST_CALENDAR_VIEW = "last_calendar_view";
     public static final String APP_UI_PREFERENCES_UI_CHANGED = "ui_changed";
+    public static final String APP_UI_PREFERENCES_TASK_CHANGED = "task_changed";
     public static final String APP_UI_PREFERENCES_LAST_FRAGMENT = "last_fragment";
 
     // birthdays reminder notification constants
@@ -228,11 +229,14 @@ public class Constants {
 
     // Reminder types
     public static final String TYPE_REMINDER = "reminder";
+    public static final String TYPE_MONTHDAY = "day_of_month";
     public static final String TYPE_TIME = "time";
     public static final String TYPE_CALL = "call";
     public static final String TYPE_MAIL = "e_mail";
     public static final String TYPE_MESSAGE = "message";
     public static final String TYPE_LOCATION = "location";
+    public static final String TYPE_LOCATION_OUT = "location_out";
+    public static final String TYPE_LOCATION_CHAIN = "location_chain";
     public static final String TYPE_LOCATION_CALL = "location_call";
     public static final String TYPE_LOCATION_MESSAGE = "location_message";
     public static final String TYPE_WEEKDAY = "weekday";

@@ -3,8 +3,8 @@
     <string name="app_name">"Just Reminder"</string>
     <string name="app_name_pro">"Just Reminder PRO"</string>
     <string name="action_settings">"Настройки"</string>
-    <string name="drawer_active_reminder">"Активные напоминания"</string>
-    <string name="drawer_archive_reminder">"Архив напоминаний"</string>
+    <string name="drawer_active_reminder">Напоминания</string>
+    <string name="drawer_archive_reminder">Корзина</string>
     <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Закрыть"</string>
     <string name="empty_list_text">"Пока у вас нет активных напоминаний, нажмите на эту кнопку, чтобы добавить новое напоминание."</string>
@@ -368,7 +368,7 @@
     <string name="status_icon_title">Иконка в статус баре</string>
     <string name="permanent_notification_explanation">Отметьте, чтобы включить отображение постоянного уведомления в статус баре</string>
     <string name="permanent_notification_title">Постоянное уведомление</string>
-    <string name="no_active_text">Нет активных напоминаний</string>
+    <string name="no_active_text">Нет напоминаний</string>
     <string name="delay_for_button">Отложить на…</string>
     <string name="time_dialog_title">Выбрать время</string>
     <string name="repeat_5_min">5 минут</string>
@@ -691,6 +691,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="string_no_archived">You don\'t nave archived reminder</string>
-    <string name="simple_month">Month</string>
+    <string name="string_no_archived">В корзине нет напоминаний</string>
+    <string name="simple_month">Месяц</string>
 </resources>
