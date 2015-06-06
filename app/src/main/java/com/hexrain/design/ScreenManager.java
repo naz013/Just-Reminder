@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.TaskManager;
+import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
+import com.cray.software.justreminder.adapters.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetExchangeTasksAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
@@ -49,17 +53,22 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
+import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;
+import com.cray.software.justreminder.dialogs.utils.NewPlace;
+import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
+import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -79,6 +88,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
 import com.hexrain.design.fragments.ActiveFragment;
 import com.hexrain.design.fragments.ArchivedRemindersFragment;
+import com.hexrain.design.fragments.BackupsFragment;
 import com.hexrain.design.fragments.EventsFragment;
 import com.hexrain.design.fragments.GeolocationFragment;
 import com.hexrain.design.fragments.GroupsFragment;
@@ -108,7 +118,8 @@ public class ScreenManager extends AppCompatActivity
     TextView buttonYes, buttonNo, buttonReminderYes, buttonReminderNo, buttonSave;
 
     FloatingActionsMenu mainMenu;
-    FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab;
+    FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
+            addPlace, addGroup;
 
     ColorSetter cSetter = new ColorSetter(this);
     SharedPrefs sPrefs = new SharedPrefs(this);
@@ -140,6 +151,8 @@ public class ScreenManager extends AppCompatActivity
     String accountName;
     private Context ctx = this;
     private Activity a = this;
+    RecyclerView currentList;
+    ListView currentListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +196,25 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderYes = (TextView) findViewById(R.id.buttonReminderYes);
         buttonReminderNo = (TextView) findViewById(R.id.buttonReminderNo);
 
+        initButton();
+
+        new GetExchangeTasksAsync(this, null).execute();
+
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED)) {
+            onNavigationDrawerItemSelected(sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT));
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, false);
+        }
+    }
+
+    private void initButton() {
         mainMenu = (FloatingActionsMenu) findViewById(R.id.mainMenu);
 
         addNote = new FloatingActionButton(getBaseContext());
@@ -230,9 +262,8 @@ public class ScreenManager extends AppCompatActivity
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            long ids = 0;
                             startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                    .putExtra(Constants.ITEM_ID_INTENT, ids)
+                                    .putExtra(Constants.ITEM_ID_INTENT, listId)
                                     .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
                         }
                     }, 150);
@@ -315,23 +346,161 @@ public class ScreenManager extends AppCompatActivity
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                        startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
+                                .putExtra("date", dateMills));
                     }
                 }, 150);
             }
         });
 
-        mainMenu.addButton(addBirthday);
-        mainMenu.addButton(addTask);
-        mainMenu.addButton(addNote);
-        mainMenu.addButton(addQuick);
-        mainMenu.addButton(addReminder);
+        addPlace = new FloatingActionButton(getBaseContext());
+        addPlace.setTitle(getString(R.string.string_new_place));
+        addPlace.setSize(FloatingActionButton.SIZE_MINI);
+        addPlace.setIcon(R.drawable.ic_location_on_grey600_24dp);
+        addPlace.setColorNormal(getResources().getColor(R.color.colorWhite));
+        addPlace.setColorPressed(getResources().getColor(R.color.grey_light));
+        addPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainMenu.isExpanded()) mainMenu.collapse();
+                if (isNoteVisible()) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hide(noteCard);
+                    } else noteCard.setVisibility(View.GONE);
+                }
 
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON)){
-            mFab = new AddFloatingActionButton(this);
-            mFab.setOnClickListener(new View.OnClickListener() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (checkGooglePlayServicesAvailability()) {
+                            startActivity(new Intent(ScreenManager.this, NewPlace.class));
+                        }
+                    }
+                }, 150);
+            }
+        });
+
+        addGroup = new FloatingActionButton(getBaseContext());
+        addGroup.setTitle(getString(R.string.string_new_category));
+        addGroup.setSize(FloatingActionButton.SIZE_MINI);
+        addGroup.setIcon(R.drawable.ic_local_offer_grey600_24dp);
+        addGroup.setColorNormal(getResources().getColor(R.color.colorWhite));
+        addGroup.setColorPressed(getResources().getColor(R.color.grey_light));
+        addGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainMenu.isExpanded()) mainMenu.collapse();
+                if (isNoteVisible()) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hide(noteCard);
+                    } else noteCard.setVisibility(View.GONE);
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                    }
+                }, 150);
+            }
+        });
+
+        addTemplate = new FloatingActionButton(getBaseContext());
+        addTemplate.setTitle(getString(R.string.string_new_template));
+        addTemplate.setSize(FloatingActionButton.SIZE_MINI);
+        addTemplate.setIcon(R.drawable.ic_textsms_grey600_24dp);
+        addTemplate.setColorNormal(getResources().getColor(R.color.colorWhite));
+        addTemplate.setColorPressed(getResources().getColor(R.color.grey_light));
+        addTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mainMenu.isExpanded()) mainMenu.collapse();
+                if (isNoteVisible()) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hide(noteCard);
+                    } else noteCard.setVisibility(View.GONE);
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+                    }
+                }, 150);
+            }
+        });
+
+        mFab = new AddFloatingActionButton(this);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNoteVisible()) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hide(noteCard);
+                    } else noteCard.setVisibility(View.GONE);
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                    }
+                }, 150);
+            }
+        });
+        mFab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!isNoteVisible()) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        show(noteCard);
+                    } else noteCard.setVisibility(View.VISIBLE);
+                } else {
+                    quickNote.setText("");
+                    quickNote.setError(null);
+
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hide(noteCard);
+                    } else noteCard.setVisibility(View.GONE);
+                }
+                return true;
+            }
+        });
+        mFab.setColorNormal(cSetter.colorSetter());
+        mFab.setColorPressed(cSetter.colorChooser());
+        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
+
+        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
+        wrapper.addView(mFab);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+    }
+
+    FloatingActionButton[] prevButtons;
+
+    private void attachButtons(FloatingActionButton... buttons){
+        if (prevButtons != null) {
+            for (FloatingActionButton button : prevButtons) {
+                mainMenu.removeButton(button);
+            }
+        }
+        prevButtons = buttons;
+        for (FloatingActionButton button : buttons){
+            mainMenu.addButton(button);
+        }
+    }
+
+    private void reloadButton(){
+        sPrefs = new SharedPrefs(this);
+        boolean isExtend = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+        if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
+            mFab.setVisibility(View.GONE);
+            addReminder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (mainMenu.isExpanded()) mainMenu.collapse();
                     if (isNoteVisible()) {
                         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
                             hide(noteCard);
@@ -341,58 +510,245 @@ public class ScreenManager extends AppCompatActivity
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                            startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
+                                    .putExtra("date", dateMills));
                         }
                     }, 150);
                 }
             });
-            mFab.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (!isNoteVisible()) {
-                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                            show(noteCard);
-                        } else noteCard.setVisibility(View.VISIBLE);
-                    } else {
-                        quickNote.setText("");
-                        quickNote.setError(null);
-
-                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                            hide(noteCard);
-                        } else noteCard.setVisibility(View.GONE);
-                    }
-                    return true;
-                }
-            });
-            mFab.setColorNormal(cSetter.colorSetter());
-            mFab.setColorPressed(cSetter.colorChooser());
-            mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-
-            RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
-            wrapper.addView(mFab);
-
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            attachButtons(addBirthday, addReminder);
+            mainMenu.setVisibility(View.VISIBLE);
+        } else if (mTag.matches(FRAGMENT_BACKUPS)){
+            mFab.setVisibility(View.GONE);
             mainMenu.setVisibility(View.GONE);
         } else {
-            mainMenu.setVisibility(View.VISIBLE);
+            if (isExtend) {
+                mFab.setVisibility(View.GONE);
+                mainMenu.setVisibility(View.GONE);
+                if (mTag.matches(FRAGMENT_TASKS) || mTag.matches(FRAGMENT_ARCHIVE) ||
+                        mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_NOTE)){
+                    addReminder.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                                }
+                            }, 150);
+                        }
+                    });
+                    attachButtons(addBirthday, addTask, addNote, addQuick, addReminder);
+                    mainMenu.setVisibility(View.VISIBLE);
+                } else {
+                    if (mTag.matches(FRAGMENT_LOCATIONS) || mTag.matches(FRAGMENT_PLACES)){
+                        attachButtons(addPlace, addReminder);
+                        mainMenu.setVisibility(View.VISIBLE);
+                    } else if (mTag.matches(FRAGMENT_GROUPS)){
+                        attachButtons(addGroup, addReminder);
+                        mainMenu.setVisibility(View.VISIBLE);
+                    } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+                        attachButtons(addTemplate, addReminder);
+                        mainMenu.setVisibility(View.VISIBLE);
+                    }
+                }
+            } else {
+                mFab.setVisibility(View.GONE);
+                mainMenu.setVisibility(View.GONE);
+                if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
+                        mTag.matches(FRAGMENT_LOCATIONS)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                                }
+                            }, 150);
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                } else if (mTag.matches(FRAGMENT_TASKS)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (new GTasksHelper(ScreenManager.this).isLinked()) {
+                                if (isNoteVisible()) {
+                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                        hide(noteCard);
+                                    } else noteCard.setVisibility(View.GONE);
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(ScreenManager.this, TaskManager.class)
+                                                .putExtra(Constants.ITEM_ID_INTENT, listId)
+                                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
+                                    }
+                                }, 150);
+
+                            } else
+                                Toast.makeText(ScreenManager.this, getString(R.string.tasks_connection_warming),
+                                        Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                } else if (mTag.matches(FRAGMENT_NOTE)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, NotesManager.class));
+                                }
+                            }, 150);
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                } else if (mTag.matches(FRAGMENT_GROUPS)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                                }
+                            }, 150);
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                } else if (mTag.matches(FRAGMENT_PLACES)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (checkGooglePlayServicesAvailability()) {
+                                        startActivity(new Intent(ScreenManager.this, NewPlace.class));
+                                    }
+                                }
+                            }, 150);
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+                                }
+                            }, 150);
+                        }
+                    });
+                    mFab.setVisibility(View.VISIBLE);
+                }
+            }
         }
+    }
 
-        new GetExchangeTasksAsync(this, null).execute();
+    @Override
+    public void onListChange(RecyclerView list) {
+        this.currentList = list;
+        setScrollListener();
+    }
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+    @Override
+    public void onListChange(ListView list) {
+        this.currentListView = list;
+        setScrollListener();
+    }
 
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
-
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED)) {
-            onNavigationDrawerItemSelected(sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT));
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, false);
+    private void setScrollListener(){
+        if (currentList != null){
+            sPrefs = new SharedPrefs(this);
+            boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+            QuickReturnRecyclerViewOnScrollListener scrollListener = new
+                    QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                    .footer(isExtended ? mainMenu : mFab)
+                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                    .isSnappable(true)
+                    .build();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                currentList.addOnScrollListener(scrollListener);
+            } else {
+                currentList.setOnScrollListener(scrollListener);
+            }
         }
+        if (currentListView != null){
+            sPrefs = new SharedPrefs(this);
+            boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+            QuickReturnListViewOnScrollListener scrollListener = new
+                    QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                    .footer(isExtended ? mainMenu : mFab)
+                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                    .isSnappable(true)
+                    .build();
+            currentListView.setOnScrollListener(scrollListener);
+        }
+    }
+
+    long listId;
+
+    @Override
+    public void onListIdChanged(long listId) {
+        this.listId = listId;
+    }
+
+    private long dateMills;
+
+    @Override
+    public void onDateChanged(long dateMills) {
+        if (dateMills != 0) this.dateMills = dateMills;
+    }
+
+    @Override
+    public void isDrawerOpen(boolean isOpen) {
+        if (isOpen && mainMenu.isExpanded()) mainMenu.collapse();
     }
 
     @Override
@@ -405,11 +761,9 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public void onUiChanged(int colorSetter, int colorStatus, int colorChooser) {
-        boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
         if (colorSetter != 0){
             toolbar.setBackgroundColor(colorSetter);
-            if (isExtended) mainMenu.setBackgroundColor(colorSetter);
-            else mFab.setColorNormal(colorSetter);
+            mFab.setColorNormal(colorSetter);
         }
         if (colorStatus != 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -417,7 +771,7 @@ public class ScreenManager extends AppCompatActivity
             }
         }
         if (colorChooser != 0){
-            if (!isExtended) mFab.setColorPressed(colorChooser);
+            mFab.setColorPressed(colorChooser);
         }
     }
 
@@ -466,6 +820,12 @@ public class ScreenManager extends AppCompatActivity
             } else if (tag.matches(FRAGMENT_TASKS)) {
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, TasksFragment.newInstance(), tag)
+                        .commitAllowingStateLoss();
+                mTag = tag;
+                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+            } else if (tag.matches(FRAGMENT_BACKUPS)) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, BackupsFragment.newInstance(), tag)
                         .commitAllowingStateLoss();
                 mTag = tag;
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
@@ -552,6 +912,8 @@ public class ScreenManager extends AppCompatActivity
             mTitle = getString(R.string.settings_sms_templates_title);
         } else if (tag.matches(FRAGMENT_LOCATIONS)){
             mTitle = getString(R.string.geo_fragment);
+        } else if (tag.matches(FRAGMENT_BACKUPS)){
+            mTitle = getString(R.string.manage_backup_title);
         }
     }
 
@@ -561,8 +923,7 @@ public class ScreenManager extends AppCompatActivity
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
         boolean isExtended = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
-        if (isExtended) mainMenu.setBackgroundColor(cSetter.colorSetter());
-        else {
+        if (!isExtended) {
             mFab.setColorNormal(cSetter.colorSetter());
             mFab.setColorPressed(cSetter.colorChooser());
         }
@@ -711,6 +1072,8 @@ public class ScreenManager extends AppCompatActivity
             menu.findItem(R.id.action_day).setTitle(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         }
         toolbar.setTitle(mTitle);
+        mainMenu.collapse();
+        reloadButton();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1065,7 +1428,8 @@ public class ScreenManager extends AppCompatActivity
             }
         }, 300);
 
-        //loaderAdapter(null);
+        if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE))
+            onNavigationDrawerItemSelected(mTag);
     }
 
     private void askNotification(final String note, final long id){
@@ -1154,7 +1518,8 @@ public class ScreenManager extends AppCompatActivity
                 base.open();
                 base.linkToReminder(noteId, remId);
                 base.close();
-                //loaderAdapter(null);
+                if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE))
+                    onNavigationDrawerItemSelected(mTag);
             }
         });
 

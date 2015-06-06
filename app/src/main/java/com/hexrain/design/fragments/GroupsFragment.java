@@ -70,6 +70,8 @@ public class GroupsFragment extends Fragment {
                         .putExtra(Constants.ITEM_ID_INTENT, id));
             }
         });
+
+        loadTemplates();
         return rootView;
     }
 
@@ -92,7 +94,6 @@ public class GroupsFragment extends Fragment {
 
     @Override
     public void onResume() {
-        loadTemplates();
         super.onResume();
     }
 
@@ -165,13 +166,7 @@ public class GroupsFragment extends Fragment {
             }
         });
         listView.setAdapter(mAdapter);
-        /*QuickReturnListViewOnScrollListener scrollListener = new
-                QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                .footer(mFab)
-                .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                .isSnappable(true)
-                .build();
-        listView.setOnScrollListener(scrollListener);*/
+        if (mCallbacks != null) mCallbacks.onListChange(listView);
         db.close();
     }
 

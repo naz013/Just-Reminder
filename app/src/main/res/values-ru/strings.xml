@@ -5,7 +5,7 @@
     <string name="action_settings">"Настройки"</string>
     <string name="drawer_active_reminder">Напоминания</string>
     <string name="drawer_archive_reminder">Корзина</string>
-    <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2014–2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Закрыть"</string>
     <string name="empty_list_text">"Пока у вас нет активных напоминаний, нажмите на эту кнопку, чтобы добавить новое напоминание."</string>
     <string name="menu_send_feedback">"Отправить отзыв"</string>
@@ -693,4 +693,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="string_no_archived">В корзине нет напоминаний</string>
     <string name="simple_month">Месяц</string>
+    <string name="string_new_place">Новое место</string>
+    <string name="string_new_template">Новый шаблон</string>
 </resources>

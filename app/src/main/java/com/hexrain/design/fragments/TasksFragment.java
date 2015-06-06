@@ -47,6 +47,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
 
     ArrayList<TaskListData> taskListDatum;
     int currentPos;
+    Activity activity;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -62,6 +63,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+        DB = new TasksData(getActivity());
     }
 
     public static final int MENU_ITEM_EDIT = 12;
@@ -71,7 +73,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.tasks_menu, menu);
-        DB = new TasksData(getActivity());
+        DB = new TasksData(activity);
         DB.open();
         if (currentPos != 0) {
             menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, getString(R.string.string_edit_task_list));
@@ -91,14 +93,14 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new DelayedAsync(getActivity(), this).execute();
+                new DelayedAsync(activity, this).execute();
                 return true;
             case R.id.action_add_list:
-                startActivity(new Intent(getActivity(), TaskListManager.class));
+                startActivity(new Intent(activity, TaskListManager.class));
                 return true;
             case MENU_ITEM_EDIT:
                 if (currentPos != 0){
-                    startActivity(new Intent(getActivity(), TaskListManager.class)
+                    startActivity(new Intent(activity, TaskListManager.class)
                             .putExtra(Constants.ITEM_ID_INTENT, taskListDatum.get(currentPos).getId()));
                 }
                 return true;
@@ -129,7 +131,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), TaskManager.class)
+                startActivity(new Intent(activity, TaskManager.class)
                         .putExtra(Constants.ITEM_ID_INTENT, id)
                         .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
             }
@@ -139,7 +141,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
             mCallbacks.onNavigationDrawerItemSelected(ScreenManager.TASKS_AUTHORIZATION);
 
         loadData();
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        SharedPrefs sPrefs = new SharedPrefs(activity);
         sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, false);
 
         return rootView;
@@ -148,6 +150,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        this.activity = activity;
         try {
             mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
         } catch (ClassCastException e) {
@@ -164,7 +167,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
 
     @Override
     public void onResume() {
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        SharedPrefs sPrefs = new SharedPrefs(activity);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED)) {
             if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
@@ -178,11 +181,11 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                 getString(R.string.sort_item_by_date_z_a),
                 getString(R.string.string_active_first),
                 getString(R.string.string_completed_first)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getString(R.string.menu_order_by));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(getActivity());
+                SharedPrefs prefs = new SharedPrefs(activity);
                 if (item == 0) {
                     prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_DEFAULT);
                 } else if (item == 1) {
@@ -203,7 +206,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(true);
         String title = taskListDatum.get(currentPos).getTitle();
         builder.setTitle(getString(R.string.string_delete_task_list) + " " + title);
@@ -219,7 +222,8 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
             public void onClick(DialogInterface dialog, int which) {
                 deleteList();
                 dialog.dismiss();
-                if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+                if (mCallbacks != null)
+                    mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
             }
         });
 
@@ -228,7 +232,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     }
 
     private void deleteList() {
-        DB = new TasksData(getActivity());
+        DB = new TasksData(activity);
         DB.open();
         long id = taskListDatum.get(currentPos).getId();
         Cursor c = DB.getTasksList(id);
@@ -236,7 +240,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
             String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
             int def = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT));
             DB.deleteTasksList(id);
-            new TaskListAsync(getActivity(), null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
+            new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
             Cursor x = DB.getTasks(listId);
             if (x != null && x.moveToFirst()){
                 do {
@@ -256,11 +260,11 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     }
 
     private void loadData() {
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        SharedPrefs sPrefs = new SharedPrefs(activity);
         taskListDatum = new ArrayList<>();
         taskListDatum.clear();
         taskListDatum.add(new TaskListData(getString(R.string.string_all_tasks), 0, Constants.TASKS_ALL, 25));
-        DB = new TasksData(getActivity());
+        DB = new TasksData(activity);
         DB.open();
         Cursor c = DB.getTasksLists();
         if (c != null && c.moveToFirst()){
@@ -281,7 +285,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
 
     private void setList(final int position, final int i){
         if (mCallbacks != null) {
-            ColorSetter cSetter = new ColorSetter(getActivity());
+            ColorSetter cSetter = new ColorSetter(activity);
             if (position == 0) {
                 mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
                 mCallbacks.onUiChanged(cSetter.colorSetter(), cSetter.colorStatus(), cSetter.colorChooser());
@@ -294,17 +298,24 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
         }
 
         currentPos = position;
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        if (currentPos == 0) {
+            long ids = 0;
+            if (mCallbacks != null) mCallbacks.onListIdChanged(ids);
+        } else {
+            long idS = taskListDatum.get(currentPos).getId();
+            if (mCallbacks != null) mCallbacks.onListIdChanged(idS);
+        }
+        SharedPrefs sPrefs = new SharedPrefs(activity);
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_LIST, position);
         getActivity().invalidateOptionsMenu();
 
         if (i != 0) {
             if (i > 0) {
-                Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_right_bounce_out);
+                Animation slide = AnimationUtils.loadAnimation(activity, R.anim.slide_right_bounce_out);
                 mList.startAnimation(slide);
                 mList.setVisibility(View.GONE);
             } else {
-                Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_left_bounce_out);
+                Animation slide = AnimationUtils.loadAnimation(activity, R.anim.slide_left_bounce_out);
                 mList.startAnimation(slide);
                 mList.setVisibility(View.GONE);
             }
@@ -324,7 +335,6 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
         if (id == null){
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
-            DB = new TasksData(getActivity());
             DB.open();
             Cursor c = DB.getTasks();
             if (c != null && c.moveToFirst()){
@@ -341,34 +351,13 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                     }
                 } while (c.moveToNext());
             }
-            adapter = new TasksRecyclerAdapter(getActivity(), mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, this);
             mList.setAdapter(adapter);
-            if (i != 0) {
-                if (i > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_right_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_left_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                }
-            }
+            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else if (id.matches(Constants.TASKS_ALL)){
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
-            DB = new TasksData(getActivity());
             DB.open();
             Cursor c = DB.getTasks();
             if (c != null && c.moveToFirst()){
@@ -385,35 +374,14 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                     }
                 } while (c.moveToNext());
             }
-            adapter = new TasksRecyclerAdapter(getActivity(), mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, this);
             mList.setAdapter(adapter);
-            if (i != 0) {
-                if (i > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_right_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_left_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                }
-            }
+            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else {
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
-            DB = new TasksData(getActivity());
-            if (!DB.isOpen()) DB.open();
+            DB = DB.open();
             Cursor c = DB.getTasks(id);
             if (c != null && c.moveToFirst()){
                 do {
@@ -430,35 +398,36 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                 } while (c.moveToNext());
             }
 
-            adapter = new TasksRecyclerAdapter(getActivity(), mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, this);
             mList.setAdapter(adapter);
+            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
-            if (i != 0) {
-                if (i > 0) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_right_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                } else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation slide = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_left_bounce);
-                            mList.startAnimation(slide);
-                            mList.setVisibility(View.VISIBLE);
-                        }
-                    }, 320);
-                }
+        }
+        if (i != 0) {
+            if (i > 0) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Animation slide = AnimationUtils.loadAnimation(activity, R.anim.slide_right_bounce);
+                        mList.startAnimation(slide);
+                        mList.setVisibility(View.VISIBLE);
+                    }
+                }, 320);
+            } else {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Animation slide = AnimationUtils.loadAnimation(activity, R.anim.slide_left_bounce);
+                        mList.startAnimation(slide);
+                        mList.setVisibility(View.VISIBLE);
+                    }
+                }, 320);
             }
         }
     }
 
     private void clearList() {
-        DB = new TasksData(getActivity());
+        DB = new TasksData(activity);
         DB.open();
         String listId = taskListDatum.get(currentPos).getListId();
         Cursor c = DB.getTasks(listId);
@@ -473,7 +442,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
         }
 
         if (c != null) c.close();
-        new TaskListAsync(getActivity(), null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
+        new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 
         if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
     }

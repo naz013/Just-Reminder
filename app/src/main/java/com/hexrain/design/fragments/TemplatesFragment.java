@@ -15,14 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -78,6 +75,8 @@ public class TemplatesFragment extends Fragment {
                         .putExtra(Constants.ITEM_ID_INTENT, id));
             }
         });
+
+        loadTemplates();
         return rootView;
     }
 
@@ -100,7 +99,6 @@ public class TemplatesFragment extends Fragment {
 
     @Override
     public void onResume() {
-        loadTemplates();
         super.onResume();
     }
 
@@ -115,12 +113,6 @@ public class TemplatesFragment extends Fragment {
                 new String[] {Constants.COLUMN_TEXT},
                 new int[] { R.id.textView }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         listView.setAdapter(simpleCursorAdapter);
-        /*QuickReturnListViewOnScrollListener scrollListener = new
-                QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                .footer(mFab)
-                .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                .isSnappable(true)
-                .build();
-        listView.setOnScrollListener(scrollListener);*/
+        if (mCallbacks != null) mCallbacks.onListChange(listView);
     }
 }

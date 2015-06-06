@@ -5,13 +5,38 @@ import java.util.ArrayList;
 public class PagerItem {
     int position, current;
     ArrayList<CalendarData> datas;
-    int day;
+    int day, month, year;
 
     public PagerItem(ArrayList<CalendarData> datas, int position, int current, int day){
         this.datas = datas;
         this.current = current;
         this.position = position;
         this.day = day;
+    }
+
+    public PagerItem(ArrayList<CalendarData> datas, int position, int current, int day, int month, int year){
+        this.datas = datas;
+        this.current = current;
+        this.position = position;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+    }
+
+    public int getMonth(){
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear(){
+        return year;
+    }
+
+    public void setYear(int year){
+        this.year = year;
     }
 
     public int getDay(){

@@ -2,7 +2,6 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,13 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.datas.PagerItem;
-import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -166,14 +163,6 @@ public class EventsFragment extends Fragment {
             sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         }
         super.onResume();
-    }
-
-    private void addBirthday() {
-        sPrefs = new SharedPrefs(getActivity());
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
-            Toast.makeText(getActivity(), getString(R.string.calendar_birthday_info),
-                    Toast.LENGTH_LONG).show();
-        else startActivity(new Intent(getActivity(), AddBirthday.class));
     }
 
     ArrayList<PagerItem> pagerData = new ArrayList<>();
@@ -331,9 +320,9 @@ public class EventsFragment extends Fragment {
 
             if (currentDay == targetDay && currentMonth == targetMonth && currentYear == targetYear){
                 targetPosition = position;
-                pagerData.add(new PagerItem(datas, position, 1, currentDay));
+                pagerData.add(new PagerItem(datas, position, 1, currentDay, currentMonth, currentYear));
             } else {
-                pagerData.add(new PagerItem(datas, position, 0, currentDay));
+                pagerData.add(new PagerItem(datas, position, 0, currentDay, currentMonth, currentYear));
             }
 
             position++;
@@ -341,7 +330,7 @@ public class EventsFragment extends Fragment {
         } while (position < 60);
 
         progress.setVisibility(View.GONE);
-        MyFragmentPagerAdapter pagerAdapter =
+        final MyFragmentPagerAdapter pagerAdapter =
                 new MyFragmentPagerAdapter(getChildFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -352,9 +341,16 @@ public class EventsFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                updateMenuTitles(String.valueOf(pagerData.get(i).getDay()));
-                ArrayList<CalendarData> data = pagerData.get(i).getDatas();
-                if (data.size() > 0) dateMills = data.get(0).getDate();
+                int day = pagerData.get(i).getDay();
+                int month = pagerData.get(i).getMonth();
+                int year = pagerData.get(i).getYear();
+                updateMenuTitles(String.valueOf(day));
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.set(Calendar.DAY_OF_MONTH, day);
+                calendar1.set(Calendar.MONTH, month);
+                calendar1.set(Calendar.YEAR, year);
+                dateMills = calendar1.getTimeInMillis();
+                if (mCallbacks != null) mCallbacks.onDateChanged(dateMills);
             }
 
             @Override

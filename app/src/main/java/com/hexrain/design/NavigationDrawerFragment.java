@@ -14,15 +14,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.BackupManager;
 import com.cray.software.justreminder.HelpOverflow;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -288,6 +289,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 }
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+
+                if (mCallbacks != null) mCallbacks.isDrawerOpen(false);
             }
 
             @Override
@@ -305,6 +308,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 }
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
+
+                if (mCallbacks != null) mCallbacks.isDrawerOpen(true);
             }
         };
 
@@ -368,6 +373,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             googleTasks.setEnabled(false);
         } else if (tag.matches(ScreenManager.FRAGMENT_LOCATIONS)){
             geoScreen.setEnabled(false);
+        } else if (tag.matches(ScreenManager.FRAGMENT_BACKUPS)){
+            manageBackup.setEnabled(false);
         }
     }
 
@@ -437,18 +444,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 }
                 break;
             case R.id.manageBackup:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDrawerLayout.closeDrawers();
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), BackupManager.class));
-                    }
-                }, 250);
+                selectItem(ScreenManager.FRAGMENT_BACKUPS, true);
+                disableItem(ScreenManager.FRAGMENT_BACKUPS);
                 break;
         }
     }
@@ -470,7 +467,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         }
 
-        if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+        if (mCallbacks != null)
+            mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
     }
 
     private boolean isListFirstTime() {
@@ -489,6 +487,16 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         void onNavigationDrawerItemSelected(String tag);
 
         void onTitleChanged(String title);
+
+        void onListChange(RecyclerView list);
+
+        void onListChange(ListView list);
+
+        void onDateChanged(long dateMills);
+
+        void onListIdChanged(long listId);
+
+        void isDrawerOpen(boolean isOpen);
 
         void onUiChanged(int colorSetter, int colorStatus, int colorChooser);
     }

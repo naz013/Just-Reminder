@@ -58,12 +58,15 @@ public class PlacesFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                db = new DataBase(getActivity());
                 db.open();
                 db.deletePlace(id);
                 Toast.makeText(getActivity(), getString(R.string.delete_place_toast), Toast.LENGTH_SHORT).show();
                 loadPlaces();
             }
         });
+
+        loadPlaces();
         return rootView;
     }
 
@@ -86,11 +89,11 @@ public class PlacesFragment extends Fragment {
 
     @Override
     public void onResume() {
-        loadPlaces();
         super.onResume();
     }
 
     private void loadPlaces(){
+        db = new DataBase(getActivity());
         db.open();
         boolean isDark = new SharedPrefs(getActivity()).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
@@ -100,12 +103,6 @@ public class PlacesFragment extends Fragment {
                 new String[] {Constants.LocationConstants.COLUMN_LOCATION_NAME},
                 new int[] { R.id.textView }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         listView.setAdapter(simpleCursorAdapter);
-        /*QuickReturnListViewOnScrollListener scrollListener = new
-                QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                .footer(mFab)
-                .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                .isSnappable(true)
-                .build();
-        listView.setOnScrollListener(scrollListener);*/
+        if (mCallbacks != null) mCallbacks.onListChange(listView);
     }
 }

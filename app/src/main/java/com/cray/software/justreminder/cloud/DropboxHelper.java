@@ -102,6 +102,7 @@ public class DropboxHelper {
 
     public boolean checkLink(){
         boolean isLogged = false;
+        startSession();
         AndroidAuthSession session = mDBApi.getSession();
         if (session.authenticationSuccessful()) {
             try {

@@ -5,7 +5,7 @@
     <string name="action_settings">"Einstellungen"</string>
     <string name="drawer_active_reminder">Mahnungen</string>
     <string name="drawer_archive_reminder">Papierkorb</string>
-    <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2014–2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Schließen"</string>
     <string name="empty_list_text">"So weit, keine aktiven Erinnerungen Immer haben Sie, klicken Sie auf diese Schaltfläche, um eine neue Mahnung hinzuzufügen."</string>
     <string name="menu_send_feedback">"Feedback senden"</string>
@@ -692,4 +692,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="string_no_archived">Es gibt noch keine Erinnerungen</string>
     <string name="simple_month">Monat</string>
+    <string name="string_new_place">Neuen Ort</string>
+    <string name="string_new_template">Neue SMS Schablone</string>
 </resources>

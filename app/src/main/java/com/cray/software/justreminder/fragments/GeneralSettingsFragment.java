@@ -143,6 +143,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, true);
             extendedButtonCheck.setChecked(true);
         }
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
     }
 
     private void useDarkStyleChange (){

@@ -9,32 +9,29 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
+import com.cray.software.justreminder.adapters.CustomCursorAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -50,19 +47,17 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ActiveFragment extends Fragment implements SyncListener {
 
-    RecyclerView currentList;
+    ListView currentList;
     LinearLayout emptyLayout, emptyItem;
     RelativeLayout ads_container;
     private AdView adView;
@@ -121,7 +116,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_with_listview, container, false);
 
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
@@ -136,7 +131,28 @@ public class ActiveFragment extends Fragment implements SyncListener {
             emptyImage.setImageResource(R.drawable.ic_notifications_grey600_24dp);
         }
 
-        currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        currentList = (ListView) rootView.findViewById(R.id.currentList);
+        currentList.setEmptyView(emptyItem);
+        currentList.setItemsCanFocus(true);
+        currentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                sPrefs = new SharedPrefs(getActivity());
+                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
+                    startActivity(new Intent(getActivity(), ReminderPreviewFragment.class)
+                            .putExtra(Constants.EDIT_ID, id));
+                } else {
+                    toggle(id);
+                }
+            }
+        });
+        currentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                editReminder(id);
+                return true;
+            }
+        });
 
         if (!new ManageModule().isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -216,7 +232,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
         super.onPause();
     }
 
-    private void makeArchive(long id) {
+    private void makeArchive(long id){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         mNotifyMgr =
@@ -227,180 +243,72 @@ public class ActiveFragment extends Fragment implements SyncListener {
         new DisableAsync(getActivity()).execute();
     }
 
-    ArrayList<ReminderItem> arrayList;
+    CustomCursorAdapter customAdapter;
 
-    public void loaderAdapter(String categoryId) {
+    public void loaderAdapter(String categoryId){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        Cursor c;
         if (categoryId != null) {
-            c = DB.queryGroup(categoryId);
+            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(categoryId), this);
         } else {
-            c = DB.queryGroup();
+            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(), this);
         }
+        final SwipeActionAdapter mAdapter = new SwipeActionAdapter(customAdapter);
+        mAdapter.setListView(currentList);
+        currentList.setAdapter(mAdapter);
+        mAdapter.setFixedBackgrounds(true);
+        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
+                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
+                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
+        mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+            @Override
+            public boolean hasActions(int position) {
+                return true;
+            }
 
-        SyncHelper helper = new SyncHelper(getActivity());
+            @Override
+            public boolean shouldDismiss(int position, int direction) {
+                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
+            }
 
-        arrayList = new ArrayList<>();
+            @Override
+            public void onSwipe(int[] positionList, int[] directionList) {
+                for (int ii = 0; ii < positionList.length; ii++) {
+                    int direction = directionList[ii];
+                    int position = positionList[ii];
+                    DB = new DataBase(getActivity());
+                    if (!DB.isOpen()) DB.open();
+                    customAdapter = new CustomCursorAdapter(getActivity(),
+                            DB.queryGroup(), null);
+                    final long id = customAdapter.getItemId(position);
+                    new AlarmReceiver().cancelAlarm(getActivity(), id);
+                    new WeekDayReceiver().cancelAlarm(getActivity(), id);
+                    new DelayReceiver().cancelAlarm(getActivity(), id);
+                    new PositionDelayReceiver().cancelDelay(getActivity(), id);
 
-        if (c != null && c.moveToFirst()) {
-            emptyItem.setVisibility(View.GONE);
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-                long mId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-
-                TimeCount mCount = new TimeCount(getActivity());
-                Interval mInterval = new Interval(getActivity());
-                long due;
-                String repeat = null;
-                if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    due = mCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
-                            repCode, repCount, delay);
-                    if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
-                            type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
-                            type.startsWith(Constants.TYPE_APPLICATION)) {
-                        repeat = mInterval.getInterval(repCode);
-                    } else if (type.matches(Constants.TYPE_TIME)) {
-                        repeat = mInterval.getTimeInterval(repCode);
-                    } else {
-                        repeat = getString(R.string.interval_zero);
-                    }
-                } else {
-                    due = mCount.getNextWeekdayTime(hour, minute, weekdays, delay);
-                    if (weekdays.length() == 7) {
-                        repeat = helper.getRepeatString(weekdays);
+                    switch (direction) {
+                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
+                            disableReminder(id);
+                            break;
+                        case SwipeDirections.DIRECTION_FAR_LEFT:
+                            disableReminder(id);
+                            break;
+                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
+                            editReminder(id);
+                            break;
+                        case SwipeDirections.DIRECTION_FAR_RIGHT:
+                            editReminder(id);
+                            break;
                     }
                 }
-
-                arrayList.add(new ReminderItem(title, type, repeat, catId, uuId, isDone, due, mId,
-                        new double[]{lat, lon}, number));
-            } while (c.moveToNext());
-        } else emptyItem.setVisibility(View.VISIBLE);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-
-        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager =
-                new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-
-        // swipe manager
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        //adapter
-        final RemindersRecyclerAdapter myItemAdapter =
-                new RemindersRecyclerAdapter(getActivity(), arrayList);
-        myItemAdapter.setEventListener(new RemindersRecyclerAdapter.EventListener() {
-            @Override
-            public void onItemRemoved(int position) {
-                onRemovedEdit(position);
-            }
-
-            @Override
-            public void onItemPinned(int position) {
-                onPinnedDelete(position);
-            }
-
-            @Override
-            public void onItemClicked(int position) {
-                final long id = arrayList.get(position).getId();
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
-                    startActivity(new Intent(getActivity(), ReminderPreviewFragment.class)
-                            .putExtra(Constants.EDIT_ID, id));
-                } else {
-                    toggle(id);
-                }
-            }
-
-            @Override
-            public void onItemLongClicked(int position) {
-                final long id = arrayList.get(position).getId();
-                editReminder(id);
-            }
-
-            @Override
-            public void toggleItem(int position) {
-                final long id = arrayList.get(position).getId();
-                toggle(id);
-            }
-
-            @Override
-            public void onItemViewClicked(View v, boolean isPinned) {
-
             }
         });
 
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);
-
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-
-        currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        currentList.setItemAnimator(animator);
-
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
-        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-
-        /*QuickReturnRecyclerViewOnScrollListener scrollListener = new
-                QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                .footer(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON) ? mainMenu : mFab)
-                .minFooterTranslation(QuickReturnUtils.dp2px(getActivity(), 88))
-                .listener(new CollapseListener() {
-                    @Override
-                    public void onStartScroll(boolean result) {
-                        if (mainMenu.isExpanded()) mainMenu.collapse();
-                    }
-                })
-                .isSnappable(true)
-                .build();
-        if (mWrappedAdapter.getItemCount() > 0) {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                currentList.addOnScrollListener(scrollListener);
-            } else {
-                currentList.setOnScrollListener(scrollListener);
-            }
-        }*/
+        if (mCallbacks != null) mCallbacks.onListChange(currentList);
     }
 
-    public void onRemovedEdit(int position) {
-        final long id = arrayList.get(position).getId();
-        new AlarmReceiver().cancelAlarm(getActivity(), id);
-        new WeekDayReceiver().cancelAlarm(getActivity(), id);
-        new DelayReceiver().cancelAlarm(getActivity(), id);
-        new PositionDelayReceiver().cancelDelay(getActivity(), id);
-        editReminder(id);
-    }
-
-    public void onPinnedDelete(int position) {
-        final long id = arrayList.get(position).getId();
-        new AlarmReceiver().cancelAlarm(getActivity(), id);
-        new WeekDayReceiver().cancelAlarm(getActivity(), id);
-        new DelayReceiver().cancelAlarm(getActivity(), id);
-        new PositionDelayReceiver().cancelDelay(getActivity(), id);
-        disableReminder(id);
-    }
-
-    private void editReminder(long id) {
+    private void editReminder(long id){
         Intent intentId = new Intent(getActivity(), ReminderManager.class);
         if (id != 0) {
             intentId.putExtra(Constants.EDIT_ID, id);
@@ -413,7 +321,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
         }
     }
 
-    private void disableReminder(long id) {
+    private void disableReminder(long id){
         if (id != 0) {
             makeArchive(id);
             updatesHelper = new UpdatesHelper(getActivity());
@@ -527,6 +435,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.select_dialog_item);
+        DB = new DataBase(getActivity());
         if (DB != null) DB.open();
         else {
             DB = new DataBase(getActivity());

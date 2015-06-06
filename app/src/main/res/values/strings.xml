@@ -695,5 +695,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="string_no_archived">There is no reminders</string>
     <string name="simple_month">Month</string>
+    <string name="string_new_place">New place</string>
+    <string name="string_new_template">New SMS template</string>
 
 </resources>

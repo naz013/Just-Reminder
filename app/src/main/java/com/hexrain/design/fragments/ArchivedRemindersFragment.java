@@ -5,49 +5,42 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
+import com.cray.software.justreminder.adapters.CustomCursorAdapter;
 import com.cray.software.justreminder.async.DeleteReminder;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-
-import java.util.ArrayList;
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 public class ArchivedRemindersFragment extends Fragment {
 
-    RecyclerView currentList;
+    ListView currentList;
+    private CustomCursorAdapter archiveCursorAdapter;
     LinearLayout emptyLayout, emptyItem;
     RelativeLayout ads_container;
     private AdView adView;
@@ -77,7 +70,10 @@ public class ArchivedRemindersFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
-        if (arrayList.size() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
+        DB = new DataBase(getActivity());
+        DB.open();
+        Cursor c = DB.queryArchived();
+        if (c.getCount() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -95,7 +91,7 @@ public class ArchivedRemindersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_with_listview, container, false);
 
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
@@ -114,7 +110,17 @@ public class ArchivedRemindersFragment extends Fragment {
             emptyImage.setImageResource(R.drawable.ic_delete_grey600_24dp);
         }
 
-        currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        currentList = (ListView) rootView.findViewById(R.id.currentList);
+        currentList.setEmptyView(emptyItem);
+        currentList.setVisibility(View.VISIBLE);
+        currentList.setItemsCanFocus(false);
+        loaderAdapter();
+        currentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editReminder(id);
+            }
+        });
 
         if (!new ManageModule().isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -199,133 +205,54 @@ public class ArchivedRemindersFragment extends Fragment {
         startActivity(intentId);
     }
 
-    ArrayList<ReminderItem> arrayList;
-
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        Cursor c =  DB.queryArchived();
+        archiveCursorAdapter = new CustomCursorAdapter(getActivity(), DB.queryArchived(), null);
+        final SwipeActionAdapter mAdapter = new SwipeActionAdapter(archiveCursorAdapter);
+        mAdapter.setListView(currentList);
+        mAdapter.setFixedBackgrounds(true);
+        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
+                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
+                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
+        mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+            @Override
+            public boolean hasActions(int position) {
+                return true;
+            }
 
-        SyncHelper helper = new SyncHelper(getActivity());
-        arrayList = new ArrayList<>();
+            @Override
+            public boolean shouldDismiss(int position, int direction) {
+                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
+            }
 
-        if (c != null && c.moveToFirst()){
-            emptyItem.setVisibility(View.GONE);
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-                long mId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+            @Override
+            public void onSwipe(int[] positionList, int[] directionList) {
+                for (int ii = 0; ii < positionList.length; ii++) {
+                    int direction = directionList[ii];
+                    int position = positionList[ii];
+                    long itId = archiveCursorAdapter.getItemId(position);
 
-                TimeCount mCount = new TimeCount(getActivity());
-                Interval mInterval = new Interval(getActivity());
-                long due;
-                String repeat = null;
-                if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    due = mCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
-                            repCode, repCount, delay);
-                    if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
-                            type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
-                            type.startsWith(Constants.TYPE_APPLICATION)) {
-                        repeat = mInterval.getInterval(repCode);
-                    } else if (type.matches(Constants.TYPE_TIME)) {
-                        repeat = mInterval.getTimeInterval(repCode);
-                    } else {
-                        repeat = getString(R.string.interval_zero);
-                    }
-                } else {
-                    due = mCount.getNextWeekdayTime(hour, minute, weekdays, delay);
-                    if (weekdays.length() == 7) {
-                        repeat = helper.getRepeatString(weekdays);
+                    switch (direction) {
+                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
+                            removeReminder(itId);
+                            break;
+                        case SwipeDirections.DIRECTION_FAR_LEFT:
+                            removeReminder(itId);
+                            break;
+                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
+                            editReminder(itId);
+                            break;
+                        case SwipeDirections.DIRECTION_FAR_RIGHT:
+                            editReminder(itId);
+                            break;
                     }
                 }
-
-                ReminderItem item = new ReminderItem(title, type, repeat, catId, uuId, isDone, due, mId,
-                        new double[]{lat, lon}, number);
-                item.setArchived(1);
-
-                arrayList.add(item);
-            } while (c.moveToNext());
-        } else emptyItem.setVisibility(View.VISIBLE);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-
-        // touch guard manager  (this class is required to suppress scrolling while swipe-dismiss animation is running)
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager =
-                new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-
-        // swipe manager
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        //adapter
-        final RemindersRecyclerAdapter myItemAdapter = new RemindersRecyclerAdapter(getActivity(), arrayList);
-        myItemAdapter.setEventListener(new RemindersRecyclerAdapter.EventListener() {
-            @Override
-            public void onItemRemoved(int position) {
-                final long id = arrayList.get(position).getId();
-                editReminder(id);
-            }
-
-            @Override
-            public void onItemPinned(int position) {
-                final long id = arrayList.get(position).getId();
-                removeReminder(id);
-            }
-
-            @Override
-            public void onItemClicked(int position) {
-                final long id = arrayList.get(position).getId();
-                editReminder(id);
-            }
-
-            @Override
-            public void onItemLongClicked(int position) {
-                final long id = arrayList.get(position).getId();
-                editReminder(id);
-            }
-
-            @Override
-            public void onItemViewClicked(View v, boolean isPinned) {
-
-            }
-
-            @Override
-            public void toggleItem(int position) {
-
             }
         });
-
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);
-
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
-
-        currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        currentList.setItemAnimator(animator);
-
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
-        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-
-        getActivity().invalidateOptionsMenu();
+        currentList.setAdapter(mAdapter);
+        if (mCallbacks != null) mCallbacks.onListChange(currentList);
     }
 
     private void removeReminder(long itId){

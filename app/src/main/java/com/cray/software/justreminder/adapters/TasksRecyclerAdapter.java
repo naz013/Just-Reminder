@@ -38,7 +38,7 @@ public class TasksRecyclerAdapter extends BaseAdapter {
         this.mDataset = myDataset;
         this.mContext = context;
         this.mListener = listener;
-        inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context.getApplicationContext());
         notifyDataSetChanged();
     }
 

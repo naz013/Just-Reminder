@@ -179,6 +179,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
     @Override
     public void onResume() {
+        super.onResume();
         if (!new ManageModule().isPro()){
             if (adView != null) {
                 adView.resume();
@@ -188,7 +189,6 @@ public class NotesFragment extends Fragment implements SyncListener {
         if (sPrefs.loadBoolean("isNew")) loaderAdapter();
         sPrefs.saveBoolean("isNew", false);
         getActivity().invalidateOptionsMenu();
-        super.onResume();
     }
 
     @Override
@@ -263,19 +263,9 @@ public class NotesFragment extends Fragment implements SyncListener {
                 emptyItem.setVisibility(View.VISIBLE);
                 currentList.setVisibility(View.GONE);
             }
-            /*QuickReturnRecyclerViewOnScrollListener scrollListener = new
-                    QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                    .footer(mFab)
-                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                    .isSnappable(true)
-                    .build();
             if (adapter.getItemCount() > 0) {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    currentList.addOnScrollListener(scrollListener);
-                } else {
-                    currentList.setOnScrollListener(scrollListener);
-                }
-            }*/
+                if (mCallbacks != null) mCallbacks.onListChange(currentList);
+            }
         } else {
             emptyItem.setVisibility(View.VISIBLE);
             currentList.setVisibility(View.GONE);
