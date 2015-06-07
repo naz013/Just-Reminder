@@ -875,7 +875,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             fadeInAnimation(after_time_layout);
         } else after_time_layout.setVisibility(View.VISIBLE);
 
-        repeatTimeIntLabel = (TextView) findViewById(R.id.repeatTimeIntLabel);
+        /*repeatTimeIntLabel = (TextView) findViewById(R.id.repeatTimeIntLabel);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
         repeatTimeIntLabel.setTypeface(typeface);
 
@@ -887,7 +887,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         afterTimeIntLabel.setTypeface(typeface);
 
         afterTimeInt = (SeekBar) findViewById(R.id.afterTimeInt);
-        afterTimeInt.setOnSeekBarChangeListener(this);
+        afterTimeInt.setOnSeekBarChangeListener(this);*/
 
         timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
         if (gtx.isLinked()){
@@ -3468,46 +3468,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.repeatDateInt:
                 repeatDays.setText(String.valueOf(getRepeat(progress)));
-                break;
-            case R.id.repeatTimeInt:
-                if (progress == 0){
-                    repeatTimeIntLabel.setText(getString(R.string.interval_once));
-                } else if (progress == 1){
-                    repeatTimeIntLabel.setText(getString(R.string.every_minute));
-                } else if (progress == 2){
-                    repeatTimeIntLabel.setText(getString(R.string.every_five_minutes));
-                } else if (progress == 3){
-                    repeatTimeIntLabel.setText(getString(R.string.every_ten_minutes));
-                } else if (progress == 4){
-                    repeatTimeIntLabel.setText(getString(R.string.every_half_hour));
-                } else if (progress == 5){
-                    repeatTimeIntLabel.setText(getString(R.string.every_hour));
-                } else if (progress == 6){
-                    repeatTimeIntLabel.setText(getString(R.string.every_two_hours));
-                } else if (progress == 7){
-                    repeatTimeIntLabel.setText(getString(R.string.every_five_hours));
-                }
-                break;
-            case R.id.afterTimeInt:
-                if (progress == 0){
-                    afterTimeIntLabel.setText(getString(R.string.after_one_minute));
-                } else if (progress == 1){
-                    afterTimeIntLabel.setText(getString(R.string.after_two_minutes));
-                } else if (progress == 2){
-                    afterTimeIntLabel.setText(getString(R.string.after_five_minutes));
-                } else if (progress == 3){
-                    afterTimeIntLabel.setText(getString(R.string.after_ten_minutes));
-                } else if (progress == 4){
-                    afterTimeIntLabel.setText(getString(R.string.after_fifteen_minutes));
-                } else if (progress == 5){
-                    afterTimeIntLabel.setText(getString(R.string.after_half_hour));
-                } else if (progress == 6){
-                    afterTimeIntLabel.setText(getString(R.string.after_one_hour));
-                } else if (progress == 7){
-                    afterTimeIntLabel.setText(getString(R.string.after_two_hours));
-                } else if (progress == 8){
-                    afterTimeIntLabel.setText(getString(R.string.after_five_hours));
-                }
                 break;
         }
     }
