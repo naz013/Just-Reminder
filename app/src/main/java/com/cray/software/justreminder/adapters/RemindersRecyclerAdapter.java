@@ -323,7 +323,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             holder.taskDate.setText(repeat);
             if (isDone == 0) {
-                String remaining = mCount.getWeekRemaining(due);
+                String remaining = mCount.getRemaining(due);
                 holder.leftTime.setText(remaining);
             } else {
                 holder.leftTime.setVisibility(View.GONE);

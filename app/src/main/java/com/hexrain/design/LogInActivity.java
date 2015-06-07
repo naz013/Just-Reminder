@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.MainActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
@@ -50,6 +50,9 @@ import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.api.services.tasks.model.TaskLists;
 
+import org.json.JSONException;
+
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,6 +100,8 @@ public class LogInActivity extends Activity {
         checkBox = (CheckBox) findViewById(R.id.checkBox);
         checkBox.setChecked(true);
         skipButton = (TextView) findViewById(R.id.skipButton);
+        String text = skipButton.getText().toString();
+        skipButton.setText(text + " (" + getString(R.string.string_local_sync) + ")");
         progressMesage = (TextView) findViewById(R.id.progressMesage);
         progress = (CircularProgress) findViewById(R.id.progress);
         progress.setVisibility(View.INVISIBLE);
@@ -127,35 +132,7 @@ public class LogInActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DataBase DB = new DataBase(LogInActivity.this);
-                SyncHelper sHelp = new SyncHelper(LogInActivity.this);
-                DB.open();
-                Cursor cat = DB.queryCategories();
-                if (cat == null || cat.getCount() == 0){
-                    long time = System.currentTimeMillis();
-                    String defUiID = sHelp.generateID();
-                    DB.addCategory("General", time, defUiID, 5);
-                    DB.addCategory("Work", time, sHelp.generateID(), 3);
-                    DB.addCategory("Personal", time, sHelp.generateID(), 0);
-                    Cursor c = DB.queryGroup();
-                    if (c != null && c.moveToFirst()){
-                        do {
-                            DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
-                        } while (c.moveToNext());
-                    }
-                    if (c != null) c.close();
-                }
-                DB.close();
-                if (checkBox.isChecked()) {
-                    sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, true);
-                    sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                    new ImportBirthdays(LogInActivity.this).execute();
-                } else {
-                    sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
-                    sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                }
-                startActivity(new Intent(LogInActivity.this, MainActivity.class));
-                finish();
+                new LocalSync(LogInActivity.this, progress, progressMesage).execute();
             }
         });
     }
@@ -290,6 +267,127 @@ public class LogInActivity extends Activity {
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
             new SyncTask(LogInActivity.this, progress, progressMesage).execute();
             progressMesage.setText(getString(R.string.string_successfully_logged));
+        }
+    }
+
+    public class LocalSync extends AsyncTask<Void, String, Void>{
+
+        Context mContext;
+        CircularProgress mProgress;
+        TextView mText;
+
+        public LocalSync(Context context, CircularProgress progress, TextView textView){
+            this.mContext = context;
+            this.mProgress = progress;
+            this.mText = textView;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(final String... values) {
+            super.onProgressUpdate(values);
+            new android.os.Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    mText.setText(values[0]);
+                }
+            });
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Looper.prepare();
+            DataBase DB = new DataBase(mContext);
+            DB.open();
+            SyncHelper sHelp = new SyncHelper(mContext);
+
+            publishProgress(getString(R.string.string_getting_groups));
+            if (sHelp.isSdPresent()){
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
+                if (sdPathDr.exists()){
+                    File[] files = sdPathDr.listFiles();
+                    final int x = files.length;
+                    if (x > 0) {
+                        try {
+                            sHelp.importGroup(null, null);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            Cursor cat = DB.queryCategories();
+            if (cat == null || cat.getCount() == 0){
+                long time = System.currentTimeMillis();
+                String defUiID = sHelp.generateID();
+                DB.addCategory("General", time, defUiID, 5);
+                DB.addCategory("Work", time, sHelp.generateID(), 3);
+                DB.addCategory("Personal", time, sHelp.generateID(), 0);
+                Cursor c = DB.queryGroup();
+                if (c != null && c.moveToFirst()){
+                    do {
+                        DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                    } while (c.moveToNext());
+                }
+                if (c != null) c.close();
+            }
+
+            //export & import reminders
+            publishProgress(getString(R.string.string_getting_reminders));
+
+            if (sHelp.isSdPresent()){
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
+                if (sdPathDr.exists()){
+                    File[] files = sdPathDr.listFiles();
+                    final int x = files.length;
+                    if (x > 0) {
+                        try {
+                            sHelp.importReminderFromJSON(null, null);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            //export & import notes
+            publishProgress(getString(R.string.string_getting_notes));
+            try {
+                sHelp.importNotes(null, null);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+            DB.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (checkBox.isChecked()) {
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, true);
+                new ImportBirthdays(LogInActivity.this).execute();
+            } else {
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
+            }
+            mProgress.setVisibility(View.INVISIBLE);
+            mText.setText(getString(R.string.simple_done));
+            startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+            finish();
         }
     }
 
@@ -503,7 +601,7 @@ public class LogInActivity extends Activity {
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
-            startActivity(new Intent(LogInActivity.this, MainActivity.class));
+            startActivity(new Intent(LogInActivity.this, ScreenManager.class));
             finish();
         }
     }

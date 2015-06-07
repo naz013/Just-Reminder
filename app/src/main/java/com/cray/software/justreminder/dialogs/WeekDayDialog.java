@@ -44,6 +44,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
+import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
@@ -161,7 +162,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
-        if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
+        if (type.matches(Constants.TYPE_WEEKDAY_CALL) || type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
             String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
             contactPhoto.setVisibility(View.VISIBLE);
             long conID = contacts.getContactIDFromNumber(number, WeekDayDialog.this);
@@ -172,7 +173,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 contactPhoto.setVisibility(View.GONE);
             }
             remText.setText(task + "\n" + number);
-        } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
+        } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) || type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
             if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
                 String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
@@ -187,6 +188,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 buttonDelayFor.setVisibility(View.GONE);
             }
         } else if (type.matches(Constants.TYPE_WEEKDAY)) {
+            remText.setText(task);
+            buttonCall.setVisibility(View.GONE);
+        } else {
             remText.setText(task);
             buttonCall.setVisibility(View.GONE);
         }
@@ -370,6 +374,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             intentId.putExtra(Constants.EDIT_ID, id);
             new AlarmReceiver().cancelAlarm(this, id);
             new WeekDayReceiver().cancelAlarm(this, id);
+            new MonthDayReceiver().cancelAlarm(this, id);
             new DelayReceiver().cancelAlarm(this, id);
             new PositionDelayReceiver().cancelDelay(this, id);
             startActivity(intentId);
@@ -432,20 +437,25 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         Cursor c = DB.getTask(id);
         if (c != null && c.moveToFirst()){
             String text = "";
+            String type = "";
             String weekdays = "";
             int hour = 0;
             int minute = 0;
+            int day = 0;
             int exp = 0;
             Cursor t = DB.getTask(id);
             if (t != null && t.moveToNext()) {
                 text = t.getString(t.getColumnIndex(Constants.COLUMN_TEXT));
+                type = t.getString(t.getColumnIndex(Constants.COLUMN_TYPE));
                 weekdays = t.getString(t.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 hour = t.getInt(t.getColumnIndex(Constants.COLUMN_HOUR));
+                day = t.getInt(t.getColumnIndex(Constants.COLUMN_DAY));
                 minute = t.getInt(t.getColumnIndex(Constants.COLUMN_MINUTE));
                 exp = t.getInt(t.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
             }
             TimeCount tc = new TimeCount(WeekDayDialog.this);
             long nextDate = tc.getNextWeekdayTime(hour, minute, weekdays, 0);
+            if (type.startsWith(Constants.TYPE_MONTHDAY)) nextDate = tc.getNextMonthDayTime(hour, minute, day, 0);
             sPrefs = new SharedPrefs(WeekDayDialog.this);
             if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && exp == 1) {

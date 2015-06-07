@@ -42,6 +42,8 @@
 
         <include layout="@layout/application_layout"/>
 
+        <include layout="@layout/reminder_day_of_month_layout"/>
+
         </LinearLayout>
 
     </RelativeLayout>

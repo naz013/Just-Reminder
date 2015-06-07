@@ -16,6 +16,7 @@ import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 
 import org.json.JSONException;
@@ -845,6 +846,30 @@ public class SyncHelper {
                                 melody, radius, 0, 0, categoryId);
                         DB.updateDateTime(id);
                         weekDayReceiver.setAlarm(sContext, id);
+                    }
+                }
+            } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                if (DB.getCount() == 0) {
+                    id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                            repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
+                            radius, 0, 0, categoryId);
+                    DB.updateDateTime(id);
+                    new MonthDayReceiver().setAlarm(sContext, id);
+                } else {
+                    List<String> namesPass = new ArrayList<>();
+                    Cursor e = DB.queryAll();
+                    while (e.moveToNext()) {
+                        for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                            namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
+                        }
+                    }
+                    e.close();
+                    if (!namesPass.contains(uuID)) {
+                        id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
+                                melody, radius, 0, 0, categoryId);
+                        DB.updateDateTime(id);
+                        new MonthDayReceiver().setAlarm(sContext, id);
                     }
                 }
             } else {

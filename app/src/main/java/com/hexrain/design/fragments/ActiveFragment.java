@@ -40,6 +40,7 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
@@ -154,6 +155,8 @@ public class ActiveFragment extends Fragment implements SyncListener {
             }
         });
 
+        loaderAdapter(null);
+
         if (!new ManageModule().isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
@@ -202,14 +205,13 @@ public class ActiveFragment extends Fragment implements SyncListener {
 
     @Override
     public void onResume() {
+        super.onResume();
         if (!new ManageModule().isPro()){
             if (adView != null) {
                 adView.resume();
             }
-        }
+        };
         loaderAdapter(null);
-        super.onResume();
-
     }
 
     @Override
@@ -314,6 +316,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
             intentId.putExtra(Constants.EDIT_ID, id);
             alarm.cancelAlarm(getActivity(), id);
             new WeekDayReceiver().cancelAlarm(getActivity(), id);
+            new MonthDayReceiver().cancelAlarm(getActivity(), id);
             new DelayReceiver().cancelAlarm(getActivity(), id);
             new PositionDelayReceiver().cancelDelay(getActivity(), id);
             startActivity(intentId);
@@ -351,6 +354,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
                 week.cancelAlarm(getActivity(), i);
                 delayReceiver.cancelAlarm(getActivity(), id);
                 new RepeatNotificationReceiver().cancelAlarm(getActivity(), i);
+                new MonthDayReceiver().cancelAlarm(getActivity(), i);
                 new PositionDelayReceiver().cancelDelay(getActivity(), i);
                 NotificationManager mNotifyMgr =
                         (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -382,6 +386,11 @@ public class ActiveFragment extends Fragment implements SyncListener {
                     DB.setUnDone(id);
                     DB.updateDateTime(id);
                     new WeekDayReceiver().setAlarm(getActivity(), id);
+                    loaderAdapter(null);
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                    DB.setUnDone(id);
+                    DB.updateDateTime(id);
+                    new MonthDayReceiver().setAlarm(getActivity(), id);
                     loaderAdapter(null);
                 } else if (type.startsWith(Constants.TYPE_LOCATION)) {
                     DB.setUnDone(id);

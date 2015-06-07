@@ -67,6 +67,7 @@ import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.Item;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
 import com.cray.software.justreminder.dialogs.utils.SelectApplication;
@@ -81,13 +82,13 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.datas.Item;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
@@ -118,11 +119,11 @@ import java.util.List;
 
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, AdapterView.OnItemSelectedListener, View.OnTouchListener,
-        DatePickerDialog.OnDateSetListener {
+        DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
 
     LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout,
             message_layout, location_call_layout, location_message_layout, weekday_layout, action_layout,
-            skype_layout, application_layout;
+            skype_layout, application_layout, monthDayLayout;
     LinearLayout callDateRing, dateRing, messageDateRing;
     FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber,
             weekPhoneNumber;
@@ -303,6 +304,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (i != 0){
             alarm.cancelAlarm(ReminderManager.this, id);
             new WeekDayReceiver().cancelAlarm(ReminderManager.this, id);
+            new MonthDayReceiver().cancelAlarm(ReminderManager.this, id);
             new DelayReceiver().cancelAlarm(ReminderManager.this, id);
             new PositionDelayReceiver().cancelDelay(ReminderManager.this, id);
             new DisableAsync(ReminderManager.this).execute();
@@ -353,6 +355,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 spinner.setSelection(8);
             } else if (type.startsWith(Constants.TYPE_APPLICATION)){
                 spinner.setSelection(9);
+            } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+                spinner.setSelection(10);
             } else {
                 spinner.setSelection(0);
             }
@@ -422,6 +426,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isDark) navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_white_24dp));
         else navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_grey600_24dp));
 
+        if (isDark) navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_white_24dp));
+        else navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_grey600_24dp));
+
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
@@ -436,7 +443,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Integer i = (int) (long) id;
             alarm.cancelAlarm(ReminderManager.this, i);
             week.cancelAlarm(ReminderManager.this, i);
-            new PositionDelayReceiver().cancelDelay(ReminderManager.this, i);
+            new PositionDelayReceiver().cancelDelay(ReminderManager.this, id);
+            new MonthDayReceiver().cancelAlarm(ReminderManager.this, i);
             NotificationManager mNotifyMgr =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotifyMgr.cancel(i);
@@ -535,6 +543,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (spinner.getSelectedItemPosition() == 7 && type.matches(Constants.TYPE_LOCATION_MESSAGE)) is = true;
         if (spinner.getSelectedItemPosition() == 8 && type.startsWith(Constants.TYPE_SKYPE)) is = true;
         if (spinner.getSelectedItemPosition() == 9 && type.startsWith(Constants.TYPE_APPLICATION)) is = true;
+        if (spinner.getSelectedItemPosition() == 10 && type.startsWith(Constants.TYPE_MONTHDAY)) is = true;
         return is;
     }
 
@@ -718,6 +727,221 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
             repeatDays.setText(String.valueOf(repCode));
+        }
+    }
+
+    CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
+    LinearLayout monthDayActionLayout;
+    TextView monthDayField, monthDayTimeField;
+    RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    ImageButton monthDayAddNumberButton;
+    FloatingEditText monthDayPhoneNumber;
+
+    private void attachMonthDay(){
+        taskField.setHint(getString(R.string.tast_hint));
+
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        fadeInAnimation(monthDayLayout);
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        if (myYear > 0){
+            cal.set(Calendar.YEAR, myYear);
+            cal.set(Calendar.MONTH, myMonth);
+            cal.set(Calendar.DAY_OF_MONTH, myDay);
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+
+        monthDayField = (TextView) findViewById(R.id.monthDayField);
+        monthDayField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateDialog();
+            }
+        });
+
+        monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
+        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))){
+            monthDayExport.setVisibility(View.VISIBLE);
+        }
+
+        monthDayTaskExport = (CheckBox) findViewById(R.id.monthDayTaskExport);
+        if (gtx.isLinked()){
+            monthDayTaskExport.setVisibility(View.VISIBLE);
+        }
+
+        String dayStr;
+        if (myDay > 28) myDay = 28;
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
+
+        String formattedTime;
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            formattedTime = sdf.format(cal.getTime());
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+            formattedTime = sdf.format(cal.getTime());
+        }
+
+        monthDayField.setText(dayStr);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+        monthDayField.setTypeface(typeface);
+
+        monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
+        monthDayTimeField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog().show();
+            }
+        });
+        monthDayTimeField.setText(formattedTime);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+        monthDayTimeField.setTypeface(typeface);
+
+        monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
+        monthDayActionLayout.setVisibility(View.GONE);
+
+        dayCheck = (RadioButton) findViewById(R.id.dayCheck);
+        dayCheck.setChecked(true);
+        lastCheck = (RadioButton) findViewById(R.id.lastCheck);
+        dayCheck.setOnCheckedChangeListener(this);
+        lastCheck.setOnCheckedChangeListener(this);
+
+        monthDayAttachAction = (CheckBox) findViewById(R.id.monthDayAttachAction);
+        monthDayAttachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        expand(monthDayActionLayout);
+                    } else action_layout.setVisibility(View.VISIBLE);
+                    monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
+                    monthDayAddNumberButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
+                            pickContacts(pd);
+                        }
+                    });
+                    setImage(monthDayAddNumberButton);
+
+                    monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
+
+                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
+                    monthDayCallCheck.setChecked(true);
+                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
+                    monthDayMessageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) taskField.setHint(getString(R.string.message_field_hint));
+                            else taskField.setHint(getString(R.string.tast_hint));
+                        }
+                    });
+                } else {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        collapse(monthDayActionLayout);
+                    } else monthDayActionLayout.setVisibility(View.GONE);
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
+            }
+        });
+
+        if (id != 0 && isSame()) {
+            DB.open();
+            Cursor c = DB.getTask(id);
+            String text = "";
+            String number = "";
+            int exp = 0;
+            int expTasks = 0;
+            if (c != null && c.moveToFirst()){
+                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            }
+            if (c != null) c.close();
+
+            if (exp == 1){
+                monthDayExport.setChecked(true);
+            }
+
+            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+                monthDayTaskExport.setChecked(true);
+            }
+
+            if (myDay == 0) myDay = 1;
+            if (myDay < 10) dayStr = "0" + myDay;
+            else dayStr = String.valueOf(myDay);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, myHour);
+            calendar.set(Calendar.MINUTE, myMinute);
+            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                formattedTime = sdf.format(calendar.getTime());
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+                formattedTime = sdf.format(calendar.getTime());
+            }
+
+            taskField.setText(text);
+            monthDayTimeField.setText(formattedTime);
+            monthDayField.setText(dayStr);
+
+            if (type.matches(Constants.TYPE_MONTHDAY)){
+                monthDayAttachAction.setChecked(false);
+                dayCheck.setChecked(true);
+            } else if(type.matches(Constants.TYPE_MONTHDAY_LAST)){
+                monthDayAttachAction.setChecked(false);
+                lastCheck.setChecked(true);
+            } else {
+                monthDayAttachAction.setChecked(true);
+                monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
+                monthDayPhoneNumber.setText(number);
+                if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
+                        type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
+                    lastCheck.setChecked(true);
+                } else dayCheck.setChecked(true);
+                if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
+                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
+                    monthDayCallCheck.setChecked(true);
+                } else {
+                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
+                    monthDayMessageCheck.setChecked(true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()){
+            case R.id.dayCheck:
+                if (dayCheck.isChecked()) {
+                    lastCheck.setChecked(false);
+                    expand(monthDayField);
+                    myDay = 1;
+                }
+                break;
+            case R.id.lastCheck:
+                if (lastCheck.isChecked()) {
+                    dayCheck.setChecked(false);
+                    collapse(monthDayField);
+                    myDay = 0;
+                }
+                break;
         }
     }
 
@@ -2714,6 +2938,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         fadeOutAnimation(location_message_layout);
     }
 
+    private void detachMonthDay(){
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        fadeOutAnimation(monthDayLayout);
+    }
+
     private boolean isDateReminderAttached(){
         by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         return by_date_layout.getVisibility() == View.VISIBLE;
@@ -2764,6 +2993,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return location_message_layout.getVisibility() == View.VISIBLE;
     }
 
+    private boolean isMonthDayAttached(){
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        return monthDayLayout.getVisibility() == View.VISIBLE;
+    }
+
     private void clearForm(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
         call_layout.setVisibility(View.GONE);
@@ -2785,6 +3019,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         skype_layout.setVisibility(View.GONE);
         application_layout = (LinearLayout) findViewById(R.id.application_layout);
         application_layout.setVisibility(View.GONE);
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        monthDayLayout.setVisibility(View.GONE);
     }
 
     private  void getTimeRepeat(int progress){
@@ -3028,6 +3264,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } else {
                     messageNumber.setError(getString(R.string.number_error));
                 }
+            } else if (isMonthDayAttached()) {
+                if (!checkNumber()) {
+                    saveMonthTask();
+                } else {
+                    monthDayPhoneNumber.setError(getString(R.string.number_error));
+                }
             }
         }
 
@@ -3042,6 +3284,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else type = Constants.TYPE_WEEKDAY_MESSAGE;
         } else {
             type = Constants.TYPE_WEEKDAY;
+        }
+        return type;
+    }
+
+    private String getMonthTaskType(){
+        String type;
+        if (monthDayAttachAction.isChecked()){
+            if (monthDayCallCheck.isChecked()){
+                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                else type = Constants.TYPE_MONTHDAY_CALL;
+            } else {
+                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                else type = Constants.TYPE_MONTHDAY_MESSAGE;
+            }
+        } else {
+            if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
+            else type = Constants.TYPE_MONTHDAY;
         }
         return type;
     }
@@ -3275,12 +3534,72 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return locationMessagePhoneNumber.getText().toString().trim().matches("");
         } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
             return weekPhoneNumber.getText().toString().trim().matches("");
+        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
+            return monthDayPhoneNumber.getText().toString().trim().matches("");
         } else
             return isLocationCallAttached() && locationCallPhoneNumber.getText().toString().trim().matches("");
     }
 
     private boolean checkMessage(){
         return taskField.getText().toString().trim().matches("");
+    }
+
+    private void saveMonthTask(){
+        String text = taskField.getText().toString().trim();
+        if (text.matches("")){
+            taskField.setError(getString(R.string.empty_field_error));
+            return;
+        }
+
+        String type = getMonthTaskType();
+        String number = null;
+        if (monthDayAttachAction.isChecked()) {
+            number = monthDayPhoneNumber.getText().toString().trim();
+        }
+
+        int day = myDay;
+        if (type.endsWith("_last")) day = 0;
+
+        DB.open();
+        if (id != 0) {
+            if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && monthDayExport.isChecked()){
+                DB.updateTask(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
+                        0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
+                exportToCalendar(text, getMonthTime(myHour, myMinute, day), id);
+            } else {
+                DB.updateTask(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
+                        0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
+            }
+            if (gtx.isLinked() && monthDayTaskExport.isChecked()){
+                exportToTasks(text, getMonthTime(myHour, myMinute, day), id);
+            }
+            DB.updateDateTime(id);
+            new MonthDayReceiver().setAlarm(ReminderManager.this, id);
+        } else {
+            sHelp = new SyncHelper(ReminderManager.this);
+            String uuID = sHelp.generateID();
+            long idN;
+            if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && monthDayExport.isChecked()) {
+                idN = DB.insertTask(text, type, day, 0, 0, myHour, myMinute, 0, number,
+                        0, 0, 0, 0, 0,
+                        uuID, null, 1, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
+                exportToCalendar(text, getMonthTime(myHour, myMinute, day), idN);
+            } else {
+                idN = DB.insertTask(text, type, day, 0, 0, myHour, myMinute, 0, number,
+                        0, 0, 0, 0, 0,
+                        uuID, null, 0, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
+            }
+            if (gtx.isLinked() && monthDayTaskExport.isChecked()){
+                exportToTasks(text, getMonthTime(myHour, myMinute, day), idN);
+            }
+            DB.updateDateTime(idN);
+            new MonthDayReceiver().setAlarm(ReminderManager.this, idN);
+        }
+        updatesHelper = new UpdatesHelper(ReminderManager.this);
+        updatesHelper.updateWidget();
+        finish();
     }
 
     private void saveDateTask(){
@@ -3679,6 +3998,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return count.getNextWeekdayTime(hour, minute, weekdays, 0);
     }
 
+    private long getMonthTime(int hour, int minute, int day){
+        TimeCount count = new TimeCount(ReminderManager.this);
+        return count.getNextMonthDayTime(hour, minute, day, 0);
+    }
+
     private long getTime(int day, int month, int year, int hour, int minute, int after){
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute);
@@ -3785,36 +4109,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void detachLayout(){
-        if (isDateReminderAttached()){
-            detachDateReminder();
-        }
-        if (isTimeReminderAttached()){
-            detachTimeReminder();
-        }
-        if (isCallAttached()){
-            detachCall();
-        }
-        if (isMessageAttached()){
-            detachMessage();
-        }
-        if (isLocationAttached()){
-            detachLocation();
-        }
-        if (isLocationCallAttached()){
-            detachLocationCall();
-        }
-        if (isLocationMessageAttached()){
-            detachLocationMessage();
-        }
-        if (isWeekDayReminderAttached()){
-            detachWeekDayReminder();
-        }
-        if (isSkypeAttached()){
-            detachSkype();
-        }
-        if (isApplicationAttached()){
-            detachApplication();
-        }
+        if (isDateReminderAttached()) detachDateReminder();
+        if (isTimeReminderAttached()) detachTimeReminder();
+        if (isCallAttached()) detachCall();
+        if (isMessageAttached()) detachMessage();
+        if (isLocationAttached()) detachLocation();
+        if (isLocationCallAttached()) detachLocationCall();
+        if (isLocationMessageAttached()) detachLocationMessage();
+        if (isWeekDayReminderAttached()) detachWeekDayReminder();
+        if (isSkypeAttached()) detachSkype();
+        if (isApplicationAttached()) detachApplication();
+        if (isMonthDayAttached()) detachMonthDay();
     }
 
     protected void dateDialog() {
@@ -3839,6 +4144,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
+        if (isMonthDayAttached() && myDay < 29){
+            monthDayField.setText(dayStr);
+        } else {
+            myDay = 28;
+            Toast.makeText(ReminderManager.this, getString(R.string.string_max_day_message), Toast.LENGTH_SHORT).show();
+        }
         if (isCallAttached()){
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
@@ -3907,6 +4218,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 formattedTime = sdf.format(c.getTime());
             }
 
+            if (isMonthDayAttached()){
+                monthDayTimeField.setText(formattedTime);
+            }
             if (isCallAttached()){
                 callTime.setText(formattedTime);
             }
@@ -3995,6 +4309,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             type.matches(Constants.TYPE_CALL) ||
                             type.matches(Constants.TYPE_MESSAGE)) {
                         alarm.setAlarm(ReminderManager.this, id);
+                    } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                        new MonthDayReceiver().setAlarm(ReminderManager.this, id);
                     } else if (type.startsWith(Constants.TYPE_LOCATION) && isDelayed) {
                         positionDelayReceiver.setDelay(ReminderManager.this, id);
                     }
@@ -4080,7 +4396,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private void onLeftSwipe() {
         int current = spinner.getSelectedItemPosition();
-        int maxInt = 9;
+        int maxInt = 10;
         if (current > 0){
             spinner.setSelection(current - 1);
             switchIt(current - 1);
@@ -4093,11 +4409,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private void onRightSwipe() {
         int current = spinner.getSelectedItemPosition();
-        if (current < 9){
+        if (current < 10){
             spinner.setSelection(current + 1);
             switchIt(current + 1);
         }
-        if (current == 9){
+        if (current == 10){
             spinner.setSelection(0);
             switchIt(0);
         }
@@ -4163,6 +4479,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case 9:
                 detachLayout();
                 attachApplication();
+                break;
+            case 10:
+                detachLayout();
+                attachMonthDay();
                 break;
         }
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_USED_REMINDER, position);
@@ -4336,6 +4656,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 if (isWeekDayReminderAttached() && attachAction.isChecked()){
                     weekPhoneNumber.setText(number);
+                }
+                if (isMonthDayAttached() && monthDayAttachAction.isChecked()){
+                    monthDayPhoneNumber.setText(number);
                 }
             }
         }

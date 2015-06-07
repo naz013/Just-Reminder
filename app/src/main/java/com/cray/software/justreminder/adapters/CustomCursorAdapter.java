@@ -81,8 +81,6 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         DB = new DataBase(cContext);
         mContacts = new Contacts(cContext);
         mInterval = new Interval(cContext);
-        SharedPrefs prefs = new SharedPrefs(cContext);
-        boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         Typeface typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Light.ttf");
         DB.open();
         String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
@@ -168,7 +166,61 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
         mCount = new TimeCount(cContext);
 
-        if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
+        if (type.startsWith(Constants.TYPE_MONTHDAY)){
+            taskTitle.setText(title);
+
+            taskIcon.setImageDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+
+            if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
+                reminder_phone.setText(number);
+                reminder_type.setText(cContext.getString(R.string.reminder_make_call));
+                String name = mContacts.getContactNameFromNumber(number, mContext);
+                if (name != null) reminder_contact_name.setText(name);
+                else reminder_contact_name.setText("");
+            } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
+                reminder_phone.setText(number);
+                reminder_type.setText(cContext.getString(R.string.reminder_send_message));
+                String name = mContacts.getContactNameFromNumber(number, mContext);
+                if (name != null) reminder_contact_name.setText(name);
+                else reminder_contact_name.setText("");
+            } else if (type.matches(Constants.TYPE_MONTHDAY) ||
+                    type.matches(Constants.TYPE_MONTHDAY_LAST)) {
+                reminder_type.setText(cContext.getString(R.string.reminder_type));
+            }
+
+            long time = mCount.getNextMonthDayTime(hour, minute, day, delay);
+
+            leftTimeIcon.setImageDrawable(mCount.
+                    getDifference(time));
+            repeatInterval.setVisibility(View.GONE);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            String formattedTime;
+            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                formattedTime = sdf.format(calendar.getTime());
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+                formattedTime = sdf.format(calendar.getTime());
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+            calendar.setTimeInMillis(time);
+            String date = dateFormat.format(calendar.getTime());
+
+            taskDate.setText(date);
+            if (isDone == 0) {
+                String remaining = mCount.getRemaining(time);
+                holder.leftTime.setText(remaining);
+            } else {
+                holder.leftTime.setVisibility(View.GONE);
+            }
+            viewTime.setText(formattedTime);
+
+            DB.close();
+        } else if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 reminder_phone.setText(number);
                 reminder_type.setText(cContext.getString(R.string.reminder_make_call));
@@ -298,7 +350,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             if (weekdays.length() == 7) {
                 taskDate.setText(getRepeatString(weekdays));
                 if (isDone == 0) {
-                    String remaining = mCount.getWeekRemaining(time);
+                    String remaining = mCount.getRemaining(time);
                     holder.leftTime.setText(remaining);
                 } else {
                     holder.leftTime.setVisibility(View.GONE);

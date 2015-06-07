@@ -274,6 +274,7 @@
         <receiver android:name=".services.BirthdayCheckAlarm" />
         <receiver android:name=".services.PositionDelayReceiver" />
         <receiver android:name=".services.WeekDayReceiver" />
+        <receiver android:name=".services.MonthDayReceiver" />
         <receiver android:name=".services.DelayReceiver" />
         <receiver android:name=".services.BirthdayAlarm" />
         <receiver android:name=".services.RepeatNotificationReceiver" />

@@ -689,10 +689,15 @@
     <string name="string_create_copy">Create copy</string>
     <string name="string_reminder_created">Reminder created</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close </string>
     <string name="string_no_archived">There is no reminders</string>
     <string name="simple_month">Month</string>
     <string name="string_new_place">New place</string>
     <string name="string_new_template">New SMS template</string>
+    <string name="string_local_sync">Local sync</string>
+    <string name="string_by_day_of_month">By day of month</string>
+    <string name="string_last_day_of_month">Last day of month</string>
+    <string name="string_day_of_month_max">Day of month (max 28)</string>
+    <string name="string_max_day_message">Only allowed days up to 28!</string>
 </resources>

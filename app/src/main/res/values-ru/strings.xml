@@ -689,10 +689,15 @@
     <string name="string_create_copy">Создать копию</string>
     <string name="string_reminder_created">Напоминание создано</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open </string>
+    <string name="navigation_drawer_close">Close </string>
     <string name="string_no_archived">В корзине нет напоминаний</string>
     <string name="simple_month">Месяц</string>
     <string name="string_new_place">Новое место</string>
     <string name="string_new_template">Новый шаблон</string>
+    <string name="string_local_sync">Локальная синхронизация</string>
+    <string name="string_by_day_of_month">По дню месяца</string>
+    <string name="string_last_day_of_month">Последний день месяца</string>
+    <string name="string_day_of_month_max">День месяца (max 28)</string>
+    <string name="string_max_day_message">Максимально разрешенный день - 28!</string>
 </resources>

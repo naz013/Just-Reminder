@@ -230,6 +230,11 @@ public class Constants {
     // Reminder types
     public static final String TYPE_REMINDER = "reminder";
     public static final String TYPE_MONTHDAY = "day_of_month";
+    public static final String TYPE_MONTHDAY_LAST = "day_of_month_last";
+    public static final String TYPE_MONTHDAY_CALL = "day_of_month_call";
+    public static final String TYPE_MONTHDAY_CALL_LAST = "day_of_month_call_last";
+    public static final String TYPE_MONTHDAY_MESSAGE = "day_of_month_message";
+    public static final String TYPE_MONTHDAY_MESSAGE_LAST = "day_of_month_message_last";
     public static final String TYPE_TIME = "time";
     public static final String TYPE_CALL = "call";
     public static final String TYPE_MAIL = "e_mail";

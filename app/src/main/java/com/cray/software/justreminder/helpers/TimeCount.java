@@ -185,6 +185,12 @@ public class TimeCount {
             long newDbTime;
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
                 newDbTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, 0);
+            } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+                if (type.endsWith("_last")){
+                    newDbTime = getLastMonthDayTime(hourOfDay, minuteOfHour, 0);
+                } else {
+                    newDbTime = getNextMonthDayTime(hourOfDay, minuteOfHour, dayOfMonth, 0);
+                }
             } else {
                 newDbTime = getEventTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
                         seconds, repTime, repCode, repCount, 0);
@@ -308,60 +314,6 @@ public class TimeCount {
         return nextDate;
     }
 
-    public String getWeekRemaining(long eventTime){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        long difference = eventTime - calendar.getTimeInMillis();
-        long secondMills = 1000;
-        long minuteMills = secondMills * 60;
-        long hourMills = minuteMills * 60;
-        long dayMills = hourMills * 24;
-        long days = (difference / (dayMills));
-        long hours = ((difference - (dayMills * days)) / (hourMills));
-        long min = (difference - (dayMills * days) - (hourMills * hours)) / (minuteMills);
-        long sec = (difference - (dayMills * days) - (hourMills * hours) - (minuteMills * min)) / (secondMills);
-        hours = (hours < 0 ? -hours : hours);
-        String result;
-        if (days > 5){
-            result = days + " " + mContext.getString(R.string.remaining_days);
-        } else if (days > 0 && days <= 5){
-            if (days > 1) {
-                result = days + " " + mContext.getString(R.string.remaining_days) +
-                        "," + " " + hours + " " + mContext.getString(R.string.remaining_hours) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
-            } else {
-                result = days + " " + mContext.getString(R.string.remaining_day) +
-                        "," + " " + hours + " " + mContext.getString(R.string.remaining_hours) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
-            }
-        } else if (days == 0 && hours > 0){
-            if (hours > 1) {
-                result = hours + " " + mContext.getString(R.string.remaining_hours) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
-            } else {
-                result = hours + " " + mContext.getString(R.string.remaining_hour) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
-            }
-        } else {
-            if (min >= 1) {
-                if (min == 1){
-                    result = min + " " + mContext.getString(R.string.remaining_minute) + " " +
-                            mContext.getString(R.string.remaining_and) +
-                            " " + sec + " " + mContext.getString(R.string.remaining_seconds);
-                } else {
-                    result = min + " " + mContext.getString(R.string.remaining_minutes);
-                }
-            } else {
-                result = mContext.getString(R.string.remaining_less_minute);
-            }
-        }
-        return result;
-    }
-
     public long getNextWeekdayTime(int hourOfDay, int minuteOfHour, String weekdays, int delay){
         long date;
         Calendar cc = Calendar.getInstance();
@@ -456,5 +408,70 @@ public class TimeCount {
             res = Character.toString(repeat.charAt(6)).matches(Constants.DAY_CHECKED);
         }
         return res;
+    }
+
+    public long getNextMonthDayTime(int hourOfDay, int minuteOfHour, int dayOfMonth, int delay){
+        if (dayOfMonth == 0){
+            return getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
+        }
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        long currTime = cc.getTimeInMillis();
+        cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cc.set(Calendar.MINUTE, minuteOfHour);
+        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cc.set(Calendar.SECOND, 0);
+        cc.set(Calendar.MILLISECOND, 0);
+        long mTime = cc.getTimeInMillis();
+        boolean isZeroSupport = false;
+        if (mTime > currTime) isZeroSupport = true;
+        long newDbTime;
+        if (isZeroSupport){
+            newDbTime = mTime + (delay * 1000 * 60);
+        } else {
+            cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + 1);
+            newDbTime = cc.getTimeInMillis() + (delay * 1000 * 60);
+        }
+        return newDbTime;
+    }
+
+    public long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
+        long currTime = cc.getTimeInMillis();
+        cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cc.set(Calendar.MINUTE, minuteOfHour);
+        cc.set(Calendar.DAY_OF_MONTH, lastDay);
+        cc.set(Calendar.SECOND, 0);
+        cc.set(Calendar.MILLISECOND, 0);
+        long mTime = cc.getTimeInMillis();
+        boolean isZeroSupport = false;
+        if (mTime > currTime) isZeroSupport = true;
+        long newDbTime;
+        if (isZeroSupport){
+            newDbTime = mTime + (delay * 1000 * 60);
+        } else {
+            cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + 1);
+            newDbTime = cc.getTimeInMillis() + (delay * 1000 * 60);
+        }
+        return newDbTime;
+    }
+
+    public boolean isDay(int dayOfMonth){
+        if (dayOfMonth == 0){
+            return isLastDay();
+        }
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        if (cc.get(Calendar.DAY_OF_MONTH) == dayOfMonth) return true;
+        else return false;
+    }
+
+    public boolean isLastDay(){
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        if (cc.get(Calendar.DAY_OF_MONTH) == cc.getActualMaximum(Calendar.DAY_OF_MONTH)) return true;
+        else return false;
     }
 }

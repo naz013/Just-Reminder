@@ -40,6 +40,8 @@ public class TaskButlerService extends IntentService {
                         if (isDone != 1) {
                             if (type.startsWith(Constants.TYPE_WEEKDAY))
                                 weekDayReceiver.setAlarm(getApplicationContext(), rowId);
+                            else if (type.startsWith(Constants.TYPE_MONTHDAY))
+                                new MonthDayReceiver().setAlarm(getApplicationContext(), rowId);
                             else if (!type.startsWith(Constants.TYPE_LOCATION))
                                 alarm.setAlarm(getApplicationContext(), rowId);
                         }

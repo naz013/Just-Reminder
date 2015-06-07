@@ -132,6 +132,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, true);
             itemPreviewCheck.setChecked(true);
         }
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
     }
 
     private void extendedChange (){
@@ -224,6 +225,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, true);
             animationsCheck.setChecked(true);
         }
+        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
     }
 
     private void smartFoldChange (){

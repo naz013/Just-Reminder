@@ -688,10 +688,15 @@
     <string name="string_create_copy">Kopie erstellen</string>
     <string name="string_reminder_created">Erinnerung erstellt</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open </string>
+    <string name="navigation_drawer_close">Close </string>
     <string name="string_no_archived">Es gibt noch keine Erinnerungen</string>
     <string name="simple_month">Monat</string>
     <string name="string_new_place">Neuen Ort</string>
     <string name="string_new_template">Neue SMS Schablone</string>
+    <string name="string_local_sync">Local Synchronisierung</string>
+    <string name="string_by_day_of_month"> Bis zum Tag des Monats</string>
+    <string name="string_last_day_of_month">Letzten Tag des Monats</string>
+    <string name="string_day_of_month_max">Tag des Monats (max 28)</string>
+    <string name="string_max_day_message">Darf nur Tage bis zu 28!</string>
 </resources>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center|top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/monthDayLayout">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="@dimen/create_margin"
+            android:layout_marginLeft="@dimen/create_margin">
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/export_check_title"
+                android:id="@+id/monthDayExport" />
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:text="@string/add_to_google_tasks"
+                android:id="@+id/monthDayTaskExport" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_primary"
+                android:text="14:05"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:background="?android:attr/selectableItemBackground"
+                android:ems="10"
+                android:id="@+id/monthDayTimeField" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dayCheck"
+                    android:layout_gravity="center|left"
+                    android:text="@string/string_day_of_month_max"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25"
+                    android:ems="10"
+                    android:clickable="true"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:id="@+id/monthDayField" />
+            </LinearLayout>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:id="@+id/lastCheck"
+                android:text="@string/string_last_day_of_month"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textSize="@dimen/checkbox_text_size"
+                android:layout_marginTop="@dimen/create_margin"
+                android:text="@string/action_check_text"
+                android:id="@+id/monthDayAttachAction" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/monthDayActionLayout"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent">
+
+                <RadioGroup
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="fill_parent">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:text="@string/reminder_make_call"
+                        android:id="@+id/monthDayCallCheck" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:layout_marginLeft="15dp"
+                        android:text="@string/reminder_send_message"
+                        android:id="@+id/monthDayMessageCheck" />
+                </RadioGroup>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_width="fill_parent"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_height="fill_parent">
+
+                    <ImageButton
+                        android:layout_width="@dimen/create_imagebutton_size"
+                        android:layout_height="@dimen/create_imagebutton_size"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_person_add_grey600_24dp"
+                        android:id="@+id/monthDayAddNumberButton" />
+
+                    <com.cray.software.justreminder.views.FloatingEditText
+                        app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:hint="@string/phone_number_hint"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:gravity="center"
+                        android:ems="10"
+                        android:singleLine="true"
+                        android:layout_gravity="center"
+                        android:id="@+id/monthDayPhoneNumber"
+                        android:inputType="text|phone" />
+                </LinearLayout>
+            </LinearLayout>
+            </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -688,10 +688,15 @@
     <string name="string_create_copy"> Створити копію</string>
     <string name="string_reminder_created">Нагадування створено</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open </string>
+    <string name="navigation_drawer_close">Close </string>
     <string name="simple_month">Місяць</string>
     <string name="string_no_archived">У кошику немає нагадувань</string>
     <string name="string_new_place">Нове місце</string>
     <string name="string_new_template">Новий шаблон</string>
+    <string name="string_local_sync">Локальна синхронізація</string>
+    <string name="string_by_day_of_month">За днем місяця</string>
+    <string name="string_last_day_of_month">Останній день місяця</string>
+    <string name="string_day_of_month_max">День місяця (max 28)</string>
+    <string name="string_max_day_message">Максимально дозволений день - 28!</string>
 </resources>

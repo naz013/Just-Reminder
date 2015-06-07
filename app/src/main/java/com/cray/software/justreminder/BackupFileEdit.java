@@ -31,10 +31,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -68,6 +70,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -92,11 +95,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener {
+        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
 
     LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout,
             message_layout, location_call_layout, location_message_layout, weekday_layout, action_layout,
-            skype_layout, application_layout;
+            skype_layout, application_layout, monthDayLayout;
     LinearLayout callDateRing, dateRing, messageDateRing;
     FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber, weekPhoneNumber;
     TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
@@ -237,6 +240,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 attachSkype();
             } else if (type.startsWith(Constants.TYPE_APPLICATION)){
                 attachApplication();
+            } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+                attachMonthDay();
             } else {
                 Toast.makeText(BackupFileEdit.this, getString(R.string.file_error_message), Toast.LENGTH_SHORT).show();
                 finish();
@@ -414,6 +419,274 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
             repeatDays.setText(String.valueOf(repCode));
         }
+    }
+
+    CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
+    LinearLayout monthDayActionLayout;
+    TextView monthDayField, monthDayTimeField;
+    RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    ImageButton monthDayAddNumberButton;
+    FloatingEditText monthDayPhoneNumber;
+
+    private void attachMonthDay(){
+        taskField.setHint(getString(R.string.tast_hint));
+
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        fadeInAnimation(monthDayLayout);
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        if (myYear > 0){
+            cal.set(Calendar.YEAR, myYear);
+            cal.set(Calendar.MONTH, myMonth);
+            cal.set(Calendar.DAY_OF_MONTH, myDay);
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+
+        monthDayField = (TextView) findViewById(R.id.monthDayField);
+        monthDayField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateDialog();
+            }
+        });
+
+        monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
+        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))){
+            monthDayExport.setVisibility(View.VISIBLE);
+        }
+
+        monthDayTaskExport = (CheckBox) findViewById(R.id.monthDayTaskExport);
+        if (gtx.isLinked()){
+            monthDayTaskExport.setVisibility(View.VISIBLE);
+        }
+
+        String dayStr;
+        if (myDay > 28) myDay = 28;
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
+
+        String formattedTime;
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            formattedTime = sdf.format(cal.getTime());
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+            formattedTime = sdf.format(cal.getTime());
+        }
+
+        monthDayField.setText(dayStr);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+        monthDayField.setTypeface(typeface);
+
+        monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
+        monthDayTimeField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog().show();
+            }
+        });
+        monthDayTimeField.setText(formattedTime);
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+        monthDayTimeField.setTypeface(typeface);
+
+        monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
+        monthDayActionLayout.setVisibility(View.GONE);
+
+        dayCheck = (RadioButton) findViewById(R.id.dayCheck);
+        dayCheck.setChecked(true);
+        lastCheck = (RadioButton) findViewById(R.id.lastCheck);
+        dayCheck.setOnCheckedChangeListener(this);
+        lastCheck.setOnCheckedChangeListener(this);
+
+        monthDayAttachAction = (CheckBox) findViewById(R.id.monthDayAttachAction);
+        monthDayAttachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        expand(monthDayActionLayout);
+                    } else action_layout.setVisibility(View.VISIBLE);
+                    monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
+                    monthDayAddNumberButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
+                            pickContacts(pd);
+                        }
+                    });
+                    setImage(monthDayAddNumberButton);
+
+                    monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
+
+                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
+                    monthDayCallCheck.setChecked(true);
+                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
+                    monthDayMessageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) taskField.setHint(getString(R.string.message_field_hint));
+                            else taskField.setHint(getString(R.string.tast_hint));
+                        }
+                    });
+                } else {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        collapse(monthDayActionLayout);
+                    } else monthDayActionLayout.setVisibility(View.GONE);
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
+            }
+        });
+
+        if (id != 0) {
+            fdb.open();
+            Cursor c = fdb.getTask(id);
+            String text = "";
+            String number = "";
+            int exp = 0;
+            int expTasks = 0;
+            if (c != null && c.moveToFirst()){
+                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            }
+            if (c != null) c.close();
+
+            if (exp == 1){
+                monthDayExport.setChecked(true);
+            }
+
+            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+                monthDayTaskExport.setChecked(true);
+            }
+
+            if (myDay == 0) myDay = 1;
+            if (myDay < 10) dayStr = "0" + myDay;
+            else dayStr = String.valueOf(myDay);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, myHour);
+            calendar.set(Calendar.MINUTE, myMinute);
+            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                formattedTime = sdf.format(calendar.getTime());
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+                formattedTime = sdf.format(calendar.getTime());
+            }
+
+            taskField.setText(text);
+            monthDayTimeField.setText(formattedTime);
+            monthDayField.setText(dayStr);
+
+            if (type.matches(Constants.TYPE_MONTHDAY)){
+                monthDayAttachAction.setChecked(false);
+                dayCheck.setChecked(true);
+            } else if(type.matches(Constants.TYPE_MONTHDAY_LAST)){
+                monthDayAttachAction.setChecked(false);
+                lastCheck.setChecked(true);
+            } else {
+                monthDayAttachAction.setChecked(true);
+                monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
+                monthDayPhoneNumber.setText(number);
+                if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
+                        type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
+                    lastCheck.setChecked(true);
+                } else dayCheck.setChecked(true);
+                if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
+                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
+                    monthDayCallCheck.setChecked(true);
+                } else {
+                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
+                    monthDayMessageCheck.setChecked(true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()){
+            case R.id.dayCheck:
+                if (dayCheck.isChecked()) {
+                    lastCheck.setChecked(false);
+                    expand(monthDayField);
+                    myDay = 1;
+                }
+                break;
+            case R.id.lastCheck:
+                if (lastCheck.isChecked()) {
+                    dayCheck.setChecked(false);
+                    collapse(monthDayField);
+                    myDay = 0;
+                }
+                break;
+        }
+    }
+
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        v.getLayoutParams().height = 0;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    public static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if(interpolatedTime == 1){
+                    v.setVisibility(View.GONE);
+                } else{
+                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
     ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
@@ -2195,6 +2468,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return location_message_layout.getVisibility() == View.VISIBLE;
     }
 
+    private boolean isMonthDayAttached(){
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        return monthDayLayout.getVisibility() == View.VISIBLE;
+    }
+
     private void clearForm(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
         call_layout.setVisibility(View.GONE);
@@ -2216,6 +2494,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skype_layout.setVisibility(View.GONE);
         application_layout = (LinearLayout) findViewById(R.id.application_layout);
         application_layout.setVisibility(View.GONE);
+        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        monthDayLayout.setVisibility(View.GONE);
     }
 
     private int getRepeat(int progress) {
@@ -2357,6 +2637,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (isWeekDayReminderAttached() && attachAction.isChecked()){
                     weekPhoneNumber.setText(number);
                 }
+                if (isMonthDayAttached() && monthDayAttachAction.isChecked()){
+                    monthDayPhoneNumber.setText(number);
+                }
             }
         }
 
@@ -2489,6 +2772,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 } else {
                     messageNumber.setError(getString(R.string.number_error));
                 }
+            } else if (isMonthDayAttached()) {
+                if (!checkNumber()) {
+                    saveMonthTask();
+                } else {
+                    monthDayPhoneNumber.setError(getString(R.string.number_error));
+                }
             }
         }
     }
@@ -2501,6 +2790,23 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             } else type = Constants.TYPE_WEEKDAY_MESSAGE;
         } else {
             type = Constants.TYPE_WEEKDAY;
+        }
+        return type;
+    }
+
+    private String getMonthTaskType(){
+        String type;
+        if (monthDayAttachAction.isChecked()){
+            if (monthDayCallCheck.isChecked()){
+                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                else type = Constants.TYPE_MONTHDAY_CALL;
+            } else {
+                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                else type = Constants.TYPE_MONTHDAY_MESSAGE;
+            }
+        } else {
+            if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
+            else type = Constants.TYPE_MONTHDAY;
         }
         return type;
     }
@@ -2683,6 +2989,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return locationMessagePhoneNumber.getText().toString().trim().matches("");
         } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
             return weekPhoneNumber.getText().toString().trim().matches("");
+        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
+            return monthDayPhoneNumber.getText().toString().trim().matches("");
         } else
             return isLocationCallAttached() && locationCallPhoneNumber.getText().toString().trim().matches("");
     }
@@ -2701,6 +3009,50 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         } else {
             return taskField.getText().toString().trim().matches("");
         }
+    }
+
+    private void saveMonthTask(){
+        String text = taskField.getText().toString().trim();
+        if (text.matches("")){
+            taskField.setError(getString(R.string.empty_field_error));
+            return;
+        }
+
+        String type = getMonthTaskType();
+        String number = null;
+        if (monthDayAttachAction.isChecked()) {
+            number = monthDayPhoneNumber.getText().toString().trim();
+        }
+
+        int day = myDay;
+        if (type.endsWith("_last")) day = 0;
+
+        DB.open();
+        if (!isUID(uuID)) {
+            Cursor cf = DB.queryCategories();
+            String categoryId = null;
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
+            long idN = DB.insertTask(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
+                    uuID, null, 0, null, 0, -1, 0, categoryId);
+            DB.updateDateTime(idN);
+            new MonthDayReceiver().setAlarm(this, id);
+            exportToCalendar(text, getMonthTime(myHour, myMinute, day), idN);
+
+            if (gtx.isLinked() && monthDayTaskExport.isChecked()){
+                exportToTasks(text, getMonthTime(myHour, myMinute, day), id);
+            }
+            DB.updateDateTime(id);
+
+        } else {
+            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        updatesHelper = new UpdatesHelper(this);
+        updatesHelper.updateWidget();
+        finish();
     }
 
     private void saveDateTask(){
@@ -3070,6 +3422,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return calendar.getTimeInMillis() + (60 * 1000 * after);
     }
 
+    private long getMonthTime(int hour, int minute, int day){
+        TimeCount count = new TimeCount(this);
+        return count.getNextMonthDayTime(hour, minute, day, 0);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -3191,6 +3548,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
         }
+        if (isMonthDayAttached() && myDay < 29){
+            monthDayField.setText(dayStr);
+        } else {
+            myDay = 28;
+            Toast.makeText(BackupFileEdit.this, getString(R.string.string_max_day_message), Toast.LENGTH_SHORT).show();
+        }
         if (isSkypeAttached()){
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
@@ -3255,6 +3618,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 formattedTime = sdf.format(c.getTime());
             }
 
+            if (isMonthDayAttached()){
+                monthDayTimeField.setText(formattedTime);
+            }
             if (isCallAttached()){
                 callTime.setText(formattedTime);
             }
