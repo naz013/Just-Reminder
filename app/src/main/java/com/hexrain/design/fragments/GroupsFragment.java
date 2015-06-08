@@ -71,7 +71,6 @@ public class GroupsFragment extends Fragment {
             }
         });
 
-        loadTemplates();
         return rootView;
     }
 
@@ -95,16 +94,7 @@ public class GroupsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
+        loadTemplates();
     }
 
     private void loadTemplates(){

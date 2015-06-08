@@ -137,9 +137,9 @@ public class GeolocationFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         loaderAdapter();
         loadMarkers();
-        super.onResume();
     }
 
     private void loadMarkers(){

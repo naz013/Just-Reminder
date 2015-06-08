@@ -210,7 +210,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
             if (adView != null) {
                 adView.resume();
             }
-        };
+        }
         loaderAdapter(null);
     }
 

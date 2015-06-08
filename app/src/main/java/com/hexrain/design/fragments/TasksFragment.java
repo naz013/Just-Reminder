@@ -167,12 +167,12 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
 
     @Override
     public void onResume() {
+        super.onResume();
         SharedPrefs sPrefs = new SharedPrefs(activity);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED)) {
             if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
         }
-        super.onResume();
     }
 
     private void showDialog(){

@@ -3,6 +3,7 @@ package com.hexrain.design;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -66,6 +67,7 @@ import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
@@ -1173,14 +1175,14 @@ public class ScreenManager extends AppCompatActivity
                         int days = 0;
                         if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
                             do {
-                                calendar.setTimeInMillis(time + (repCode * Intervals.MILLS_INTERVAL_DAY));
-                                time = calendar.getTimeInMillis();
+                                calendar.setTimeInMillis(calendar.getTimeInMillis() + (repCode *
+                                        AlarmManager.INTERVAL_DAY));
                                 days = days + repCode;
                                 day = calendar.get(Calendar.DAY_OF_MONTH);
                                 month = calendar.get(Calendar.MONTH);
                                 bdDate = getDate(0, month, day);
                                 dates.add(bdDate);
-                            } while (days < 61);
+                            } while (days < Configs.MAX_DAYS_COUNT);
                         }
                     }
                 } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
@@ -1197,8 +1199,7 @@ public class ScreenManager extends AppCompatActivity
                     if (isFeature){
                         ArrayList<Integer> list = getRepeatArray(weekdays);
                         do {
-                            calendar.setTimeInMillis(time + Intervals.MILLS_INTERVAL_DAY);
-                            time = calendar.getTimeInMillis();
+                            calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
                             int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
                             days = days + 1;
                             if (list.get(weekDay - 1) == 1){
@@ -1207,7 +1208,29 @@ public class ScreenManager extends AppCompatActivity
                                 Date bdDate = getDate(0, month, day);
                                 dates.add(bdDate);
                             }
-                        } while (days < 61);
+                        } while (days < Configs.MAX_DAYS_COUNT);
+                    }
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
+                    long time = mCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
+                    Calendar calendar = Calendar.getInstance();
+                    if (time > 0) {
+                        calendar.setTimeInMillis(time);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        int month = calendar.get(Calendar.MONTH);
+                        Date bdDate = getDate(0, month, day);
+                        dates.add(bdDate);
+                    }
+                    int days = 1;
+                    if (isFeature){
+                        do {
+                            time = mCount.getNextMonthDayTime(myDay, calendar.getTimeInMillis(), days);
+                            days = days + 1;
+                            calendar.setTimeInMillis(time);
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+                            int month = calendar.get(Calendar.MONTH);
+                            Date bdDate = getDate(0, month, day);
+                            dates.add(bdDate);
+                        } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
             } while (c.moveToNext());

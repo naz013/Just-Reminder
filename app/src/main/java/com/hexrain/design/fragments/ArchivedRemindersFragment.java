@@ -170,13 +170,13 @@ public class ArchivedRemindersFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         loaderAdapter();
         if (!new ManageModule().isPro()){
             if (adView != null) {
                 adView.resume();
             }
         }
-        super.onResume();
     }
 
     @Override

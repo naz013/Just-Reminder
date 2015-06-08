@@ -66,7 +66,6 @@ public class PlacesFragment extends Fragment {
             }
         });
 
-        loadPlaces();
         return rootView;
     }
 
@@ -90,6 +89,7 @@ public class PlacesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadPlaces();
     }
 
     private void loadPlaces(){

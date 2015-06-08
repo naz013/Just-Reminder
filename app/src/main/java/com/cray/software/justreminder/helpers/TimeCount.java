@@ -435,6 +435,32 @@ public class TimeCount {
         return newDbTime;
     }
 
+    public long getNextMonthDayTime(int dayOfMonth, long fromTime, int multi){
+        if (dayOfMonth == 0){
+            return getLastMonthDayTime(fromTime, multi);
+        }
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(fromTime);
+        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + multi);
+        cc.set(Calendar.SECOND, 0);
+        cc.set(Calendar.MILLISECOND, 0);
+        return cc.getTimeInMillis();
+    }
+
+    private long getLastMonthDayTime(long fromTime, int multi) {
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(fromTime);
+        int month = cc.get(Calendar.MONTH);
+        cc.set(Calendar.DAY_OF_MONTH, 15);
+        cc.set(Calendar.MONTH, month + multi);
+        int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
+        cc.set(Calendar.DAY_OF_MONTH, lastDay);
+        cc.set(Calendar.SECOND, 0);
+        cc.set(Calendar.MILLISECOND, 0);
+        return cc.getTimeInMillis();
+    }
+
     public long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());

@@ -76,7 +76,6 @@ public class TemplatesFragment extends Fragment {
             }
         });
 
-        loadTemplates();
         return rootView;
     }
 
@@ -100,6 +99,7 @@ public class TemplatesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadTemplates();
     }
 
     private void loadTemplates(){
