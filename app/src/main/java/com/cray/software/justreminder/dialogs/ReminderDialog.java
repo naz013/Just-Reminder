@@ -636,7 +636,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             int minute = 0;
             int seconds = 0;
             int repCode = 0;
-            int repTime = 0;
+            long repTime = 0;
             int remCount = 0;
             int exp = 0;
             Cursor t = DB.getTask(id);
@@ -649,7 +649,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 minute = t.getInt(t.getColumnIndex(Constants.COLUMN_MINUTE));
                 seconds = t.getInt(t.getColumnIndex(Constants.COLUMN_SECONDS));
                 repCode = t.getInt(t.getColumnIndex(Constants.COLUMN_REPEAT));
-                repTime = t.getInt(t.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                repTime = t.getLong(t.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 remCount = t.getInt(t.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 exp = t.getInt(t.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
             }

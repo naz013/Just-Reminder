@@ -95,7 +95,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
         int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
         int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-        int repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+        long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
         int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
         int archived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
         double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));

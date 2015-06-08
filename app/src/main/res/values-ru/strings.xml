@@ -220,8 +220,8 @@
     <string name="led_title">Световая индикация</string>
     <string name="turn_screen_warm">Выключите экран чтобы увидеть цвет индикатора!</string>
     <string name="by_date_title">По дате</string>
-    <string name="after_time_title">Через некоторое время</string>
-    <string name="by_weekdays_title">По дням недели</string>
+    <string name="after_time_title">Таймер</string>
+    <string name="by_weekdays_title">Будильник</string>
     <string name="make_call_title">Позвонить</string>
     <string name="send_message_title">Отправить сообщение</string>
     <string name="by_location_title">Локационное</string>
@@ -700,4 +700,8 @@
     <string name="string_last_day_of_month">Последний день месяца</string>
     <string name="string_day_of_month_max">День месяца (max 28)</string>
     <string name="string_max_day_message">Максимально разрешенный день - 28!</string>
+    <string name="char_s">с</string>
+    <string name="char_m">м</string>
+    <string name="char_h">ч</string>
+    <string name="string_generating_events">Генерирую события…</string>
 </resources>

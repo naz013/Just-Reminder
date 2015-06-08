@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.StartHelp;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.modules.ManageModule;
@@ -141,6 +144,25 @@ public class SplashScreen extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
+        SharedPrefs prefs = new SharedPrefs(this);
+        if (!prefs.loadBoolean("isGen")){
+            DataBase db = new DataBase(this);
+            db.open();
+            Cursor c = db.queryGroup();
+            if (c != null && c.moveToFirst()){
+                do {
+                    long time = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                    long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                    if(time < 1000) db.updateAfterTime(id, time * TimeCount.minute);
+                } while (c.moveToNext());
+            }
+            if (c != null) {
+                c.close();
+            }
+            db.close();
+            prefs.saveBoolean("isGen", true);
+        }
+
         checkPrefs();
 
         sPrefs = new SharedPrefs(SplashScreen.this);

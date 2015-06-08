@@ -219,8 +219,8 @@
     <string name="led_title">"LED Anzeige"</string>
     <string name="turn_screen_warm">"Ausschalten Anzeige, um die Leuchtanzeige zu sehen!"</string>
     <string name="by_date_title">"Nach Datum"</string>
-    <string name="after_time_title"> "Nach Zeit"</string>
-    <string name="by_weekdays_title">"Nach Wochentag"</string>
+    <string name="after_time_title">"Timer"</string>
+    <string name="by_weekdays_title">"Wecker"</string>
     <string name="make_call_title">"Tätigen eines Anrufs"</string>
     <string name="send_message_title">"Nachricht senden"</string>
     <string name="by_location_title">"Nach Ort"</string>
@@ -699,4 +699,8 @@
     <string name="string_last_day_of_month">Letzten Tag des Monats</string>
     <string name="string_day_of_month_max">Tag des Monats (max 28)</string>
     <string name="string_max_day_message">Darf nur Tage bis zu 28!</string>
+    <string name="char_s">s</string>
+    <string name="char_m">s</string>
+    <string name="char_h">s</string>
+    <string name="string_generating_events">Generieren von Ereignissen…</string>
 </resources>

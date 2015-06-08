@@ -370,11 +370,11 @@ public class ActiveFragment extends Fragment implements SyncListener {
                 int month;
                 int year;
                 int repCode;
-                int repTime;
+                long repTime;
                 int repCount;
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
                 month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));

@@ -332,7 +332,7 @@ public class DataBase {
     // Reminders database
 
     public long insertTask (String text, String type, int day, int month, int year, int hour,
-                            int minute, int seconds, String number, int repeatCode, int repMinute,
+                            int minute, int seconds, String number, int repeatCode, long repMinute,
                             long count, double latitude, double longitude, String uID, String weekdays,
                             int export, String melody, int radius, int color, int code, String categoryId) {
         openGuard();
@@ -367,7 +367,7 @@ public class DataBase {
 
     public boolean updateTask(long rowId, String text, String type, int day, int month, int year,
                               int hour, int minute, int seconds, String number, int repeatCode,
-                              int repMinute, long count, double latitude, double longitude,
+                              long repMinute, long count, double latitude, double longitude,
                               String weekdays, int export, String melody, int radius, int color,
                               int code, String categoryId) {
         openGuard();
@@ -418,6 +418,14 @@ public class DataBase {
         ContentValues args = new ContentValues();
         TimeCount mCount = new TimeCount(mContext);
         args.put(Constants.COLUMN_FEATURE_TIME, mCount.generateDateTime(rowId));
+        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateAfterTime(long rowId, long time) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        TimeCount mCount = new TimeCount(mContext);
+        args.put(Constants.COLUMN_REMIND_TIME, time);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

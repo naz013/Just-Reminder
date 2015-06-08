@@ -36,7 +36,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         Cursor c = DB.getTask(id);
         Integer i = (int) (long) id;
         int min = 60 * 1000;
-        int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0, inTime = 0, repeatTime = 0;
+        int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0, repeatTime = 0;
+        long inTime = 0;
         long remCount = 0;
         if (c != null && c.moveToNext()) {
             day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
@@ -45,7 +46,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
             minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
             seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-            inTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            inTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             repeatTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
         }
@@ -69,14 +70,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (inTime > 0){
             if (repeatTime > 0){
                 if (remCount > 0){
-                            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + (min * inTime) +
+                            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + inTime +
                             (min * remCount * repeatTime), min * repeatTime, alarmIntent);
                 } else {
                     alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() +
-                            (min * inTime), min * repeatTime, alarmIntent);
+                            inTime, min * repeatTime, alarmIntent);
                 }
             } else {
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + (min * inTime), alarmIntent);
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + inTime, alarmIntent);
             }
         } else {
             if (repeatTime > 0){

@@ -111,7 +111,7 @@ public class SyncHelper {
                 int isDone  = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 int repeatCode  = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int repMinute  = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long repMinute  = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 long radius = c.getLong(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
@@ -794,7 +794,7 @@ public class SyncHelper {
             number = jsonObj.getString(Constants.COLUMN_NUMBER);
         }
         int repeatCode = jsonObj.getInt(Constants.COLUMN_REPEAT);
-        int repMinute = jsonObj.getInt(Constants.COLUMN_REMIND_TIME);
+        long repMinute = jsonObj.getLong(Constants.COLUMN_REMIND_TIME);
         long count = jsonObj.getLong(Constants.COLUMN_REMINDERS_COUNT);
         double latitude = jsonObj.getDouble(Constants.COLUMN_LATITUDE);
         double longitude = jsonObj.getDouble(Constants.COLUMN_LONGITUDE);
@@ -802,6 +802,7 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
+        if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
         DB = new DataBase(sContext);
         DB.open();
         if (categoryId == null) {
@@ -1173,7 +1174,7 @@ public class SyncHelper {
             number = jsonObj.getString(Constants.COLUMN_NUMBER);
         }
         int repeatCode = jsonObj.getInt(Constants.COLUMN_REPEAT);
-        int repMinute = jsonObj.getInt(Constants.COLUMN_REMIND_TIME);
+        long repMinute = jsonObj.getLong(Constants.COLUMN_REMIND_TIME);
         long count = jsonObj.getLong(Constants.COLUMN_REMINDERS_COUNT);
         double latitude = jsonObj.getDouble(Constants.COLUMN_LATITUDE);
         double longitude = jsonObj.getDouble(Constants.COLUMN_LONGITUDE);
@@ -1183,6 +1184,7 @@ public class SyncHelper {
         }
         FilesDataBase fdb = new FilesDataBase(sContext);
         fdb.open();
+        if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
         fdb.insertTask(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays);
     }

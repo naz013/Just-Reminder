@@ -1153,7 +1153,7 @@ public class ScreenManager extends AppCompatActivity
                 int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));

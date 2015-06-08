@@ -384,7 +384,7 @@ public class CalendarActivity extends AppCompatActivity {
                         int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
                         int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
                         int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                        int afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                        long afterTime = s.getLong(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                         String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
                         String name = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
                         String number = s.getString(s.getColumnIndex(Constants.COLUMN_NUMBER));
@@ -573,7 +573,7 @@ public class CalendarActivity extends AppCompatActivity {
                 int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));

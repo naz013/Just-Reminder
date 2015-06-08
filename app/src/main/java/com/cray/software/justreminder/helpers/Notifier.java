@@ -998,7 +998,7 @@ public class Notifier {
                 int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));

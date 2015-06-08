@@ -14,10 +14,10 @@ import java.util.Calendar;
 
 public class TimeCount {
 
-    private final static long minute = 60 * 1000;
-    private final static long hour = minute  * 60;
-    private final static long halfDay = hour * 12;
-    private final static long day = halfDay * 2;
+    public final static long minute = 60 * 1000;
+    public final static long hour = minute  * 60;
+    public final static long halfDay = hour * 12;
+    public final static long day = halfDay * 2;
     Context mContext;
 
     public TimeCount(Context context){
@@ -62,7 +62,7 @@ public class TimeCount {
     }
 
     public Drawable getDifference(String weekdays, int year, int month, int dayOfMonth, int hourOfDay,
-                                  int minuteOfHour, int seconds, int inTime, int repeatCode,
+                                  int minuteOfHour, int seconds, long inTime, int repeatCode,
                                   int remCount, int delay){
         Drawable color;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
@@ -123,7 +123,7 @@ public class TimeCount {
     }
 
     public String[] getNextDateTime(int year, int month, int dayOfMonth, int hourOfDay,
-                                    int minuteOfHour, int seconds, int inTime, int repeatCode,
+                                    int minuteOfHour, int seconds, long inTime, int repeatCode,
                                     int remCount, int delay){
         String date;
         String time;
@@ -160,7 +160,7 @@ public class TimeCount {
         int monthOfYear = 0;
         int year = 0;
         int repCode = 0;
-        int repTime = 0;
+        long repTime = 0;
         int repCount = 0;
         String type = null;
         String weekdays = null;
@@ -168,7 +168,7 @@ public class TimeCount {
         if (c != null && c.moveToFirst()) {
             repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             dayOfMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
             monthOfYear = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
             year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
@@ -201,7 +201,7 @@ public class TimeCount {
     }
 
     public long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
-                             int seconds, int inTime, int repeatCode, int remCount, int delay){
+                             int seconds, long inTime, int repeatCode, int remCount, int delay){
         long date;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             date = 0;
@@ -218,12 +218,12 @@ public class TimeCount {
             if (inTime > 0){
                 if (repeatCode > 0){
                     if (remCount > 0){
-                        newDbTime = dbTime + (inTime * minute) + (remCount * repeatCode * minute);
+                        newDbTime = dbTime + inTime + (remCount * repeatCode * minute);
                     } else {
-                        newDbTime = dbTime + (inTime * minute);
+                        newDbTime = dbTime + inTime;
                     }
                 } else {
-                    newDbTime = dbTime + (inTime * minute);
+                    newDbTime = dbTime + inTime;
                 }
             } else {
                 if (repeatCode > 0){
@@ -297,7 +297,7 @@ public class TimeCount {
     }
 
     public boolean getNextDate(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
-                               int inTime, int repeatCode, int remCount) {
+                               long inTime, int repeatCode, int remCount) {
         boolean nextDate = false;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             nextDate = true;

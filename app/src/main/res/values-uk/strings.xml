@@ -218,8 +218,8 @@
     <string name="led_title">Світлова індикація</string>
     <string name="turn_screen_warm">Вимкніть дисплей щоб побачити колір індикатора!</string>
     <string name="by_date_title">За датою</string>
-    <string name="after_time_title">Через певний час</string>
-    <string name="by_weekdays_title">За днями тижня</string>
+    <string name="after_time_title">Таймер</string>
+    <string name="by_weekdays_title">Будильник</string>
     <string name="make_call_title">Зателефонувати</string>
     <string name="send_message_title">Надіслати повідомлення</string>
     <string name="by_location_title">Локаційне</string>
@@ -699,4 +699,8 @@
     <string name="string_last_day_of_month">Останній день місяця</string>
     <string name="string_day_of_month_max">День місяця (max 28)</string>
     <string name="string_max_day_message">Максимально дозволений день - 28!</string>
+    <string name="char_s">с</string>
+    <string name="char_m">х</string>
+    <string name="char_h">г</string>
+    <string name="string_generating_events">Генерую події…</string>
 </resources>

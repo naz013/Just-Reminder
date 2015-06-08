@@ -201,7 +201,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                         int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
                         int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
                         int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                        int afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                        long afterTime = s.getLong(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                         String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
                         String weekdays = s.getString(s.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                         int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));

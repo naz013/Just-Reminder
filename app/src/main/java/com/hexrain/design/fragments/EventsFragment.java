@@ -2,6 +2,8 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +27,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
@@ -167,9 +168,16 @@ public class EventsFragment extends Fragment {
     }
 
     ArrayList<PagerItem> pagerData = new ArrayList<>();
+    ProgressDialog dialog;
 
     private void showEvents(Date date) {
         progress.setVisibility(View.VISIBLE);
+        dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
+        dialog.setMax(100);
+        dialog.setTitle(getActivity().getString(R.string.string_generating_events));
+        dialog.setCancelable(false);
+        dialog.setIndeterminate(false);
+        dialog.show();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int targetDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -243,7 +251,7 @@ public class EventsFragment extends Fragment {
                         int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
                         int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
                         int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                        int afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                        long afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                         String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
                         String name = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
                         String number = s.getString(s.getColumnIndex(Constants.COLUMN_NUMBER));
@@ -360,6 +368,7 @@ public class EventsFragment extends Fragment {
         } while (position < Configs.MAX_DAYS_COUNT);
 
         progress.setVisibility(View.GONE);
+        if (dialog != null && dialog.isShowing()) dialog.dismiss();
         final MyFragmentPagerAdapter pagerAdapter =
                 new MyFragmentPagerAdapter(getChildFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);

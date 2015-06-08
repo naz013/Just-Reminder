@@ -92,12 +92,12 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
         int month;
         int year;
         int repCode;
-        int repTime;
+        long repTime;
         long lastModifiedS;
         double lat;
         double longi;
         repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-        repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+        repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
         lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
         longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
         day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));

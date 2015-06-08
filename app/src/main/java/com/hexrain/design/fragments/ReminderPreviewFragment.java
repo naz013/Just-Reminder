@@ -253,7 +253,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
 
                 if (type.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -569,7 +569,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));

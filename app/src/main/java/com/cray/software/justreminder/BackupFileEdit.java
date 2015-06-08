@@ -40,6 +40,7 @@ import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -103,11 +104,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     LinearLayout callDateRing, dateRing, messageDateRing;
     FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber, weekPhoneNumber;
     TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
-            repeatTimeIntLabel, afterTimeIntLabel, messageDate, messageYearDate, messageTime, weekTimeField;
+            messageDate, messageYearDate, messageTime, weekTimeField;
     ImageButton insertVoice, pickApplication;
     ImageButton addNumberButton, addMessageNumberButton, locationCallAddNumberButton, locationMessageAddNumberButton,
             weekAddNumberButton;
-    SeekBar repeatCallInt, repeatDateInt, afterTimeInt, repeatTimeInt, repeatMessageInt;
+    SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
 
     Spinner placesList, placesListCall, placesListMessage;
     ArrayList<String> spinnerArray = null;
@@ -867,6 +868,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     CheckBox timeTaskExport;
+    TextView hoursView, minutesView, secondsView;
+    ImageButton deleteButton;
+    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
+    String timeString = "000000";
 
     private void attachTimeReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
@@ -875,45 +880,125 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             fadeInAnimation(after_time_layout);
         } else after_time_layout.setVisibility(View.VISIBLE);
 
-        /*repeatTimeIntLabel = (TextView) findViewById(R.id.repeatTimeIntLabel);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatTimeIntLabel.setTypeface(typeface);
-
-        repeatTimeInt = (SeekBar) findViewById(R.id.repeatTimeInt);
-        repeatTimeInt.setOnSeekBarChangeListener(this);
-
-        afterTimeIntLabel = (TextView) findViewById(R.id.afterTimeIntLabel);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        afterTimeIntLabel.setTypeface(typeface);
-
-        afterTimeInt = (SeekBar) findViewById(R.id.afterTimeInt);
-        afterTimeInt.setOnSeekBarChangeListener(this);*/
-
         timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
         if (gtx.isLinked()){
             timeTaskExport.setVisibility(View.VISIBLE);
         }
 
-        getTimeRepeat(repeatTimeInt.getProgress());
-        getAfterTime(afterTimeInt.getProgress());
+        hoursView = (TextView) findViewById(R.id.hoursView);
+        minutesView = (TextView) findViewById(R.id.minutesView);
+        secondsView = (TextView) findViewById(R.id.secondsView);
+        setTypeFont(hoursView, minutesView, secondsView);
+
+        deleteButton = (ImageButton) findViewById(R.id.deleteButton);
+        sPrefs = new SharedPrefs(this);
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME))
+            deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
+        else deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeString = timeString.substring(0, timeString.length() - 1);
+                timeString = "0" + timeString;
+                updateTimeView();
+            }
+        });
+        deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                timeString = "000000";
+                updateTimeView();
+                return true;
+            }
+        });
+
+        updateTimeView();
+
+        b1 = (Button) findViewById(R.id.b1);
+        b2 = (Button) findViewById(R.id.b2);
+        b3 = (Button) findViewById(R.id.b3);
+        b4 = (Button) findViewById(R.id.b4);
+        b5 = (Button) findViewById(R.id.b5);
+        b6 = (Button) findViewById(R.id.b6);
+        b7 = (Button) findViewById(R.id.b7);
+        b8 = (Button) findViewById(R.id.b8);
+        b9 = (Button) findViewById(R.id.b9);
+        b0 = (Button) findViewById(R.id.b0);
+        b1.setId(101);
+        b2.setId(102);
+        b3.setId(103);
+        b4.setId(104);
+        b5.setId(105);
+        b6.setId(106);
+        b7.setId(107);
+        b8.setId(108);
+        b9.setId(109);
+        b0.setId(100);
+        b1.setOnClickListener(this);
+        b2.setOnClickListener(this);
+        b3.setOnClickListener(this);
+        b4.setOnClickListener(this);
+        b5.setOnClickListener(this);
+        b6.setOnClickListener(this);
+        b7.setOnClickListener(this);
+        b8.setOnClickListener(this);
+        b9.setOnClickListener(this);
+        b0.setOnClickListener(this);
 
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getTask(id);
             String text = "";
-            int repCode=0, afterTime=0;
+            long afterTime=0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (c != null) c.close();
             taskField.setText(text);
-            repeatTimeInt.setProgress(interval.getTimeProgressFromCode(repCode));
-            getTimeRepeat(repeatTimeInt.getProgress());
-            afterTimeInt.setProgress(interval.getAfterTimeProgressFromCode(afterTime));
-            getAfterTime(afterTimeInt.getProgress());
+
+            generateString(afterTime);
+        }
+    }
+
+    private void setTypeFont(TextView... views){
+        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        for (TextView v : views){
+            v.setTypeface(typeface);
+        }
+    }
+
+    private void generateString(long time){
+        long s = 1000;
+        long m = s * 60;
+        long h = m * 60;
+        long hours = (time / h);
+        long minutes = ((time - hours * h) / (m));
+        long seconds = ((time - (hours * h) - (minutes * m)) / (s));
+        String hourStr;
+        if (hours < 10) hourStr = "0" + hours;
+        else hourStr = String.valueOf(hours);
+        String minuteStr;
+        if (minutes < 10) minuteStr = "0" + minutes;
+        else minuteStr = String.valueOf(minutes);
+        String secondStr;
+        if (seconds < 10) secondStr = "0" + seconds;
+        else secondStr = String.valueOf(seconds);
+        timeString = hourStr + minuteStr + secondStr;
+        updateTimeView();
+    }
+
+    private void updateTimeView() {
+        if (timeString.matches("000000")) deleteButton.setEnabled(false);
+        else deleteButton.setEnabled(true);
+        if (timeString.length() == 6){
+            String hours = timeString.substring(0, 2);
+            String minutes = timeString.substring(2, 4);
+            String seconds = timeString.substring(4, 6);
+            hoursView.setText(hours);
+            minutesView.setText(minutes);
+            secondsView.setText(seconds);
         }
     }
 
@@ -2502,48 +2587,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return new Interval(BackupFileEdit.this).getRepeatDays(progress);
     }
 
-    private  void getTimeRepeat(int progress){
-        if (progress == 0){
-            repeatTimeIntLabel.setText(getString(R.string.interval_once));
-        } else if (progress == 1){
-            repeatTimeIntLabel.setText(getString(R.string.every_minute));
-        } else if (progress == 2){
-            repeatTimeIntLabel.setText(getString(R.string.every_five_minutes));
-        } else if (progress == 3){
-            repeatTimeIntLabel.setText(getString(R.string.every_ten_minutes));
-        } else if (progress == 4){
-            repeatTimeIntLabel.setText(getString(R.string.every_half_hour));
-        } else if (progress == 5){
-            repeatTimeIntLabel.setText(getString(R.string.every_hour));
-        } else if (progress == 6){
-            repeatTimeIntLabel.setText(getString(R.string.every_two_hours));
-        } else if (progress == 7){
-            repeatTimeIntLabel.setText(getString(R.string.every_five_hours));
-        }
-    }
-
-    private void getAfterTime(int progress){
-        if (progress == 0){
-            afterTimeIntLabel.setText(getString(R.string.after_one_minute));
-        } else if (progress == 1){
-            afterTimeIntLabel.setText(getString(R.string.after_two_minutes));
-        } else if (progress == 2){
-            afterTimeIntLabel.setText(getString(R.string.after_five_minutes));
-        } else if (progress == 3){
-            afterTimeIntLabel.setText(getString(R.string.after_ten_minutes));
-        } else if (progress == 4){
-            afterTimeIntLabel.setText(getString(R.string.after_fifteen_minutes));
-        } else if (progress == 5){
-            afterTimeIntLabel.setText(getString(R.string.after_half_hour));
-        } else if (progress == 6){
-            afterTimeIntLabel.setText(getString(R.string.after_one_hour));
-        } else if (progress == 7){
-            afterTimeIntLabel.setText(getString(R.string.after_two_hours));
-        } else if (progress == 8){
-            afterTimeIntLabel.setText(getString(R.string.after_five_hours));
-        }
-    }
-
     private String getTaskType(){
         String type="";
         if (isDateReminderAttached()){
@@ -3099,9 +3142,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
         String type = getTaskType();
-        interval = new Interval(BackupFileEdit.this);
-        int time = interval.getAfterTimeCode(afterTimeInt.getProgress());
-        int repeat = interval.getTimeRepeatCode(repeatTimeInt.getProgress());
+        long time = getAfterTime();
+        if (time == 0) return;
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         final Calendar c = Calendar.getInstance();
@@ -3118,7 +3160,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, repeat, time, 0, 0, 0,
+            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
+                    null, 0, time, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
             DB.updateDateTime(idN);
@@ -3136,6 +3179,23 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         updatesHelper.updateWidget();
 
         finish();
+    }
+
+    private long getAfterTime() {
+        long res = 0;
+        if (timeString.length() == 6 && !timeString.matches("000000")){
+            String hours = timeString.substring(0, 2);
+            String minutes = timeString.substring(2, 4);
+            String seconds = timeString.substring(4, 6);
+            int hour = Integer.parseInt(hours);
+            int minute = Integer.parseInt(minutes);
+            int sec = Integer.parseInt(seconds);
+            long s = 1000;
+            long m = s * 60;
+            long h = m * 60;
+            res = (hour * h) + (minute * m) + (sec * s);
+        } else Toast.makeText(this, "You don't insert any time!", Toast.LENGTH_SHORT).show();
+        return res;
     }
 
     private void saveCallTask(){
@@ -3416,10 +3476,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return count.getNextWeekdayTime(hour, minute, weekdays, 0);
     }
 
-    private long getTime(int day, int month, int year, int hour, int minute, int after){
+    private long getTime(int day, int month, int year, int hour, int minute, long after){
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis() + (60 * 1000 * after);
+        return calendar.getTimeInMillis() + after;
     }
 
     private long getMonthTime(int hour, int minute, int day){
@@ -3429,6 +3489,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+        int ids = v.getId();
+        if (ids >= 100 && ids < 110){
+            String charS = String.valueOf(timeString.charAt(0));
+            if (charS.matches("0")){
+                timeString = timeString.substring(1, timeString.length());
+                timeString = timeString + String.valueOf(ids - 100);
+                updateTimeView();
+            }
+        }
         switch (v.getId()){
             case R.id.callDateRing:
                 dateDialog();
@@ -3508,11 +3577,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
         }
-        if (isMonthDayAttached() && myDay < 29){
-            monthDayField.setText(dayStr);
-        } else {
-            myDay = 28;
-            Toast.makeText(BackupFileEdit.this, getString(R.string.string_max_day_message), Toast.LENGTH_SHORT).show();
+        if (isMonthDayAttached()){
+            if (myDay < 29) monthDayField.setText(dayStr);
+            else {
+                myDay = 28;
+                Toast.makeText(BackupFileEdit.this, getString(R.string.string_max_day_message), Toast.LENGTH_SHORT).show();
+            }
         }
         if (isSkypeAttached()){
             skypeDate.setText(dayStr + "/" + monthStr);

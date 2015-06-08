@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/insertVoice"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
+                style="?android:buttonBarButtonStyle"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_mic_white_24dp"/>

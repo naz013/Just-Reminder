@@ -68,7 +68,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         int month;
         int year;
         int repCode;
-        int repTime;
+        long repTime;
         int done;
         double lat;
         double longi;
@@ -80,7 +80,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+                repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));

@@ -96,7 +96,7 @@ public class FilesDataBase {
 
     public long insertTask (String fileName, String fileType, String fileLocation, long edit, String text, String type,
                             int day, int month, int year, int hour, int minute, int seconds,
-                            String number, int repeatCode, int repMinute, long count, double latitude, double longitude, String uID,
+                            String number, int repeatCode, long repMinute, long count, double latitude, double longitude, String uID,
                             String weekdays) {
         openGuard();
         ContentValues cv = new ContentValues();

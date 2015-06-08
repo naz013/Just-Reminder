@@ -102,7 +102,7 @@ public class VoiceResult extends Activity {
         int month = 0;
         int year = 0;
         int repCode = 0;
-        int repTime = 0;
+        long repTime = 0;
         double lat = 0.0;
         double longi = 0.0;
         int repCount = 0;
@@ -112,7 +112,7 @@ public class VoiceResult extends Activity {
         if (c != null && c.moveToFirst()) {
             repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            repTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
             longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
             day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));

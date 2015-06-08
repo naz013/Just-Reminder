@@ -216,8 +216,8 @@
     <string name="led_title">"LED indication"</string>
     <string name="turn_screen_warm">"Turn off the display to see the indicator light!"</string>
     <string name="by_date_title">"By date"</string>
-    <string name="after_time_title">"After time"</string>
-    <string name="by_weekdays_title">"By day of week"</string>
+    <string name="after_time_title">"Timer"</string>
+    <string name="by_weekdays_title">"Alarm clock"</string>
     <string name="make_call_title">"Make a call"</string>
     <string name="send_message_title">"Send message"</string>
     <string name="by_location_title">"By location"</string>
@@ -700,4 +700,8 @@
     <string name="string_last_day_of_month">Last day of month</string>
     <string name="string_day_of_month_max">Day of month (max 28)</string>
     <string name="string_max_day_message">Only allowed days up to 28!</string>
+    <string name="char_s">s</string>
+    <string name="char_m">m</string>
+    <string name="char_h">h</string>
+    <string name="string_generating_events">Generating events...</string>
 </resources>
