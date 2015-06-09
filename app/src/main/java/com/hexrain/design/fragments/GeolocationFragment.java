@@ -61,8 +61,7 @@ public class GeolocationFragment extends Fragment {
         if (!DB.isOpen())DB.open();
         if (DB.getCount() == 0){
             geoTasks.setVisibility(View.GONE);
-        }
-        if (DB.getCount() != 0){
+        } else {
             Cursor c = DB.queryGroup();
             if (c != null && c.moveToFirst()){
                 ArrayList<String> types = new ArrayList<>();

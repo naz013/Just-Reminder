@@ -121,7 +121,7 @@
                 android:id="@+id/type"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_local_offer_grey600_24dp"
+                android:drawableLeft="@drawable/ic_assignment_grey600_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -130,7 +130,16 @@
                 android:id="@+id/number"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_person_add_grey600_24dp"
+                android:drawableLeft="@drawable/ic_account_circle_grey600_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/melody"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_audiotrack_grey600_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -139,7 +148,7 @@
                 android:id="@+id/repeat"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_person_add_grey600_24dp"
+                android:drawableLeft="@drawable/ic_repeat_grey600_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
         <LinearLayout

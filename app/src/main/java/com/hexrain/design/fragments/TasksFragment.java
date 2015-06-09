@@ -33,14 +33,13 @@ import com.cray.software.justreminder.datas.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 import java.util.ArrayList;
 
-public class TasksFragment extends Fragment implements View.OnTouchListener, SyncListener {
+public class TasksFragment extends Fragment implements View.OnTouchListener {
 
     ListView mList;
     TasksData DB;
@@ -93,7 +92,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new DelayedAsync(activity, this).execute();
+                new DelayedAsync(activity, null).execute();
                 return true;
             case R.id.action_add_list:
                 startActivity(new Intent(activity, TaskListManager.class));
@@ -347,7 +346,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                     }
                 } while (c.moveToNext());
             }
-            adapter = new TasksRecyclerAdapter(activity, mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
@@ -370,7 +369,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                     }
                 } while (c.moveToNext());
             }
-            adapter = new TasksRecyclerAdapter(activity, mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
@@ -394,7 +393,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
                 } while (c.moveToNext());
             }
 
-            adapter = new TasksRecyclerAdapter(activity, mData, this);
+            adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
@@ -507,10 +506,5 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
 
     private void onRightSwipe() {
         switchIt(1);
-    }
-
-    @Override
-    public void endExecution(boolean result) {
-        if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
     }
 }

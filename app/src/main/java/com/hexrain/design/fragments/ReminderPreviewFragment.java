@@ -14,6 +14,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -73,6 +75,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,7 +89,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
     SharedPrefs sPrefs;
     Toolbar toolbar;
     FloatingActionButton mFab;
-    TextView task, statusText, time, location, group, type, number, repeat;
+    TextView task, statusText, time, location, group, type, number, repeat, melody;
     RelativeLayout switchWrapper;
     SwitchCompat statusSwitch;
     LinearLayout tasksContainer, notesContainer, mapContainer, background;
@@ -174,6 +177,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         type = (TextView) findViewById(R.id.type);
         number = (TextView) findViewById(R.id.number);
         repeat = (TextView) findViewById(R.id.repeat);
+        melody = (TextView) findViewById(R.id.melody);
 
         tasksContainer = (LinearLayout) findViewById(R.id.tasksContainer);
         tasksContainer.setVisibility(View.GONE);
@@ -215,6 +219,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
             number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_white_24dp, 0, 0, 0);
             repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_white_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audiotrack_white_24dp, 0, 0, 0);
         } else {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_grey600_24dp, 0, 0, 0);
             type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_grey600_24dp, 0, 0, 0);
@@ -222,6 +227,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_grey600_24dp, 0, 0, 0);
             number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_grey600_24dp, 0, 0, 0);
             repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_grey600_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audiotrack_grey600_24dp, 0, 0, 0);
         }
     }
 
@@ -555,13 +561,15 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             TimeCount mCount = new TimeCount(mContext);
             Cursor c = dataBase.getTask(mId);
             String doneStr = null, title = null, typeStr = null, timeStr = null, groupStr = null,
-                    locationLat = null, locationLon = null, numberStr = null, repeatStr = null;
+                    locationLat = null, locationLon = null, numberStr = null, repeatStr = null,
+                    melodyStr = null;
             if (c != null && c.moveToFirst()){
                 title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+                String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
                 int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
                 int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
@@ -575,6 +583,26 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
+
+                Uri soundUri;
+                if (melody != null && !melody.matches("")){
+                    File sound = new File(melody);
+                    soundUri = Uri.fromFile(sound);
+                } else {
+                    if (new SharedPrefs(mContext).loadBoolean(Constants.CUSTOM_SOUND)) {
+                        String path = new SharedPrefs(mContext).loadPrefs(Constants.CUSTOM_SOUND_FILE);
+                        if (path != null) {
+                            File sound = new File(path);
+                            soundUri = Uri.fromFile(sound);
+                        } else {
+                            soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        }
+                    } else {
+                        soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    }
+                }
+                File file = new File(soundUri.getPath());
+                if (file != null) melodyStr = file.getName();
 
                 Cursor cf = dataBase.getCategory(categoryId);
                 if (cf != null && cf.moveToFirst()) {
@@ -718,14 +746,14 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 }
             }
             return new String[]{doneStr, title, typeStr, groupStr, timeStr,
-                    numberStr, repeatStr, locationLat + "\n" + locationLon};
+                    numberStr, repeatStr, locationLat + "\n" + locationLon, melodyStr};
         }
 
         @Override
         protected void onPostExecute(String[] aVoid) {
             super.onPostExecute(aVoid);
             mProgress.setVisibility(View.GONE);
-            if (aVoid != null && aVoid.length == 8){
+            if (aVoid != null && aVoid.length > 0){
                 String done = aVoid[0];
                 if (done != null && done.matches("done")) {
                     statusSwitch.setChecked(false);
@@ -797,6 +825,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 String numberStr = aVoid[5];
                 if (numberStr != null && !numberStr.matches("")) number.setText(numberStr);
                 else number.setVisibility(View.GONE);
+
+                String melodyStr = aVoid[8];
+                if (melodyStr != numberStr) melody.setText(melodyStr);
+                else melody.setVisibility(View.GONE);
             }
 
             new loadOtherData(mContext, mProgress, mId).execute();

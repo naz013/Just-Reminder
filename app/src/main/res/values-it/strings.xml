@@ -452,7 +452,6 @@
     <string name="thanks_settings_title">"Open source licenses"</string>
     <string name="rate_button">"Rate"</string>
     <string name="menu_rate_application">"Rate this application"</string>
-    <string name="interval_year">"Annually"</string>
     <string name="edit_dialog_button">Edit</string>
     <string name="reminder_saved_title">Reminder saved</string>
     <string name="auto_launch_explanation">Check to enable launching application task or opening link in browser automatically</string>
