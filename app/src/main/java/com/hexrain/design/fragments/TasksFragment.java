@@ -137,12 +137,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
             }
         });
 
-        if (mCallbacks != null)
-            mCallbacks.onNavigationDrawerItemSelected(ScreenManager.TASKS_AUTHORIZATION);
-
         loadData();
-        SharedPrefs sPrefs = new SharedPrefs(activity);
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, false);
 
         return rootView;
     }
@@ -168,10 +163,11 @@ public class TasksFragment extends Fragment implements View.OnTouchListener, Syn
     @Override
     public void onResume() {
         super.onResume();
+
         SharedPrefs sPrefs = new SharedPrefs(activity);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED)) {
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, false);
             if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
         }
     }
 

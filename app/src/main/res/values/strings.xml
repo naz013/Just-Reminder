@@ -17,12 +17,12 @@
     <string name="theme_descr">"Choose a theme for the application"</string>
     <string name="menu_about">"About application"</string>
     <string name="press_again">"Press again to exit"</string>
-    <string name="delete_all">"Clear reminders archive"</string>
+    <string name="delete_all">"Clear trash"</string>
     <string name="save_reminder">"Save reminder"</string>
     <string name="activate_reminder">"Activate the reminder"</string>
     <string name="must_click_message">"You must press one of button!"</string>
     <string name="geo_fragment">"Locations"</string>
-    <string name="load_contats">"Loading contact list"</string>
+    <string name="load_contats">"Loading contacts list"</string>
     <string name="loading_wait">"Please wait …"</string>
     <string name="contact_dialog_title">"Select a contact"</string>
     <string name="map_dialog_title">"Select type of map"</string>
@@ -47,7 +47,7 @@
     <string name="location_block">"Location reminder settings"</string>
     <string name="rem_sound">"Reminder melody"</string>
     <string name="sound_default">"Standard"</string>
-    <string name="sound_custom">"Custom melody"</string>
+    <string name="sound_custom">"Melody"</string>
     <string name="sounds_dialog_title">"Select a reminder melody"</string>
     <string name="sounds_loading_text">"Loading list of music files"</string>
     <string name="sound_type_dialog_title">"Select the type of melody"</string>
@@ -56,27 +56,6 @@
     <string name="no_music">"We have not found any music file"</string>
     <string name="sync_title">"Synchronization"</string>
     <string name="number_error">"Enter a phone number"</string>
-    <string name="interval_once">"Once"</string>
-    <string name="interval_day">"Daily"</string>
-    <string name="interval_week">"Weekly"</string>
-    <string name="interval_month">"Monthly"</string>
-    <string name="every_minute">"Every minute"</string>
-    <string name="every_five_minutes">"Every 5 minutes"</string>
-    <string name="every_ten_minutes">"Every 10 minutes"</string>
-    <string name="every_half_hour">"Every half hour"</string>
-    <string name="every_hour">"Hourly"</string>
-    <string name="every_two_hours">"Every 2 hours"</string>
-    <string name="every_five_hours">"Every 5 hours"</string>
-
-    <string name="after_one_minute">"After 1 minute"</string>
-    <string name="after_two_minutes">"After 2 minutes"</string>
-    <string name="after_five_minutes">"After 5 minutes"</string>
-    <string name="after_ten_minutes">"After 10 minutes"</string>
-    <string name="after_fifteen_minutes">"After 15 minutes"</string>
-    <string name="after_half_hour">"After half an hour"</string>
-    <string name="after_one_hour">"After 1 hour"</string>
-    <string name="after_two_hours">"After 2 hours"</string>
-    <string name="after_five_hours">"After 5 hours"</string>
     <string name="infinite_title">"Endless Melody"</string>
     <string name="infinite_explanation">"Select to enable playing tunes by the time asking the user"</string>
     <string name="message_field_hint">"Message"</string>
@@ -447,10 +426,10 @@
     <string name="time_morning_title">Morning</string>
     <string name="export_to_calendar_settings">Export event to system calendar</string>
     <string name="export_to_calendar_settings_explanation">Check to enable exporting event to stock calendar, if You don\'t have Google Calendar</string>
-    <string name="custom_melody_title">Custom melody</string>
+    <string name="custom_melody_title">Melody</string>
     <string name="selected_melody_string">"Selected melody "</string>
     <string name="selected_radius_string">"Selected radius "</string>
-    <string name="custom_radius_title">Custom radius</string>
+    <string name="custom_radius_title">Radius</string>
     <string name="map_type_settings_title">Map type</string>
     <string name="skype_reminder_type">Skype call/chat</string>
     <string name="launch_application_reminder_type">Launch application</string>
@@ -706,5 +685,6 @@
     <string name="char_m">m</string>
     <string name="char_h">h</string>
     <string name="string_generating_events">Generating events...</string>
+    <string name="interval_day">Daily</string>
 
 </resources>

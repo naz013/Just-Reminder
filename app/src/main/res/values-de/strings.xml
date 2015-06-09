@@ -18,7 +18,7 @@
     <string name="theme_descr">"Wählen Sie ein Thema für die Anwendung"</string>
     <string name="menu_about">"Über die Anwendung"</string>
     <string name="press_again">"Drücken Sie zum Beenden erneut"</string>
-    <string name="delete_all">"Klar Erinnerungen Immer zu archivieren"</string>
+    <string name="delete_all">"Wolkenloser Papierkorb"</string>
     <string name="save_reminder">"Save Mahnung"</string>
     <string name="activate_reminder">"Aktivieren Sie die Mahnung"</string>
     <string name="must_click_message">"Sie müssen eine Taste drücken!"</string>
@@ -48,7 +48,7 @@
     <string name="location_block">"Location Einstellungen für Erinnerungen"</string>
     <string name="rem_sound">"Reminder Melodie"</string>
     <string name="sound_default">"Standard"</string>
-    <string name="sound_custom">"Individuelle Melodie"</string>
+    <string name="sound_custom">"Melodie"</string>
     <string name="sounds_dialog_title">"Wählen Sie eine Erinnerung Melodie"</string>
     <string name="sounds_loading_text">"Loading Liste der Musikdateien"</string>
     <string name="sound_type_dialog_title">"Wählen Sie die Melodie"</string>
@@ -57,27 +57,6 @@
     <string name="no_music">"Wir haben keine Musikdatei gefunden"</string>
     <string name="sync_title">"Synchronisation"</string>
     <string name="number_error">"Geben Sie eine Telefonnummer "</string>
-    <string name="interval_once">"Einst"</string>
-    <string name="interval_day">"Täglich"</string>
-    <string name="interval_week">"Wöchentlich"</string>
-    <string name="interval_month">"Monatlich"</string>
-    <string name="interval_year">"Jährlich"</string>
-    <string name="every_minute">"Jede minute"</string>
-    <string name="every_five_minutes">"Alle 5 Minuten"</string>
-    <string name="every_ten_minutes">"Alle 10 Minuten"</string>
-    <string name="every_half_hour">"Jede halbe Stunde"</string>
-    <string name="every_hour">"Stündlich"</string>
-    <string name="every_two_hours">"Alle 2 Minuten"</string>
-    <string name="every_five_hours">"Alle 5 Stunden"</string>
-    <string name="after_one_minute">"Nach einer Minute"</string>
-    <string name="after_two_minutes">"Nach zwei Minuten"</string>
-    <string name="after_five_minutes">"Nach fünf Minuten"</string>
-    <string name="after_ten_minutes">"Nach zehn Minuten"</string>
-    <string name="after_fifteen_minutes">"Nach 15 Minuten"</string>
-    <string name="after_half_hour">"Nach einer halben Stunde"</string>
-    <string name="after_one_hour">"Nach einer Stunde"</string>
-    <string name="after_two_hours">"Nach zwei Stunden"</string>
-    <string name="after_five_hours">"Nach fünf Stunden"</string>
     <string name="infinite_title">"Endless Melody"</string>
     <string name="infinite_explanation">"Wählen Sie Melodien durch die Zeit zu ermöglichen die Benutzer zu fragen"</string>
     <string name="message_field_hint">"Nachricht"</string>
@@ -449,10 +428,10 @@
     <string name="time_morning_title">"Morgens"</string>
     <string name="export_to_calendar_settings">"Veranstaltungen exportieren in Systemkalender"</string>
     <string name="export_to_calendar_settings_explanation">"Check exportieren Event Aktienkalender zu aktivieren, wenn Sie nicht über Google Calendar"</string>
-    <string name="custom_melody_title">"Individuelle Melodie"</string>
+    <string name="custom_melody_title">"Melodie"</string>
     <string name="selected_melody_string">"Selected Melodie"</string>
     <string name="selected_radius_string">"Selected radius "</string>
-    <string name="custom_radius_title">"Individuelle Radius"</string>
+    <string name="custom_radius_title">"Radius"</string>
     <string name="map_type_settings_title">"Kartentyp"</string>
     <string name="skype_reminder_type">"Skype Anruf/chat"</string>
     <string name="launch_application_reminder_type">"Anwendung starten"</string>
@@ -703,4 +682,5 @@
     <string name="char_m">s</string>
     <string name="char_h">s</string>
     <string name="string_generating_events">Generieren von Ereignissen…</string>
+    <string name="interval_day">Täglich</string>
 </resources>

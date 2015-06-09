@@ -766,6 +766,7 @@ public class ScreenManager extends AppCompatActivity
         if (colorSetter != 0){
             toolbar.setBackgroundColor(colorSetter);
             mFab.setColorNormal(colorSetter);
+            mainMenu.setButtonColorNormal(colorSetter);
         }
         if (colorStatus != 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -774,6 +775,7 @@ public class ScreenManager extends AppCompatActivity
         }
         if (colorChooser != 0){
             mFab.setColorPressed(colorChooser);
+            mainMenu.setButtonColorPressed(colorChooser);
         }
     }
 
@@ -928,6 +930,9 @@ public class ScreenManager extends AppCompatActivity
         if (!isExtended) {
             mFab.setColorNormal(cSetter.colorSetter());
             mFab.setColorPressed(cSetter.colorChooser());
+        } else {
+            mainMenu.setButtonColorNormal(cSetter.colorSetter());
+            mainMenu.setButtonColorPressed(cSetter.colorChooser());
         }
     }
 

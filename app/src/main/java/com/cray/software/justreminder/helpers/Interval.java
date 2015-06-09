@@ -159,50 +159,6 @@ public class Interval {
         return interval;
     }
 
-    public int getTimeRepeatCode(int progress){
-        int code = 0;
-        if (progress == 0){
-            code = Intervals.REPEAT_CODE_ONCE;
-        } else if(progress == 1){
-            code = Intervals.INTERVAL_MINUTE;
-        } else if(progress == 2){
-            code = Intervals.INTERVAL_FIVE_MINUTES;
-        } else if(progress == 3){
-            code = Intervals.INTERVAL_TEN_MINUTES;
-        } else if(progress == 4){
-            code = Intervals.INTERVAL_HALF_HOUR;
-        } else if(progress == 5){
-            code = Intervals.INTERVAL_HOUR;
-        } else if(progress == 6){
-            code = Intervals.INTERVAL_TWO_HOURS;
-        } else if(progress == 7){
-            code = Intervals.INTERVAL_FIVE_HOURS;
-        }
-        return code;
-    }
-
-    public int getTimeProgressFromCode(int code){
-        int progress = 0;
-        if (code == Intervals.REPEAT_CODE_ONCE){
-            progress = 0;
-        } else if(code == Intervals.INTERVAL_MINUTE){
-            progress = 1;
-        } else if(code == Intervals.INTERVAL_FIVE_MINUTES){
-            progress = 2;
-        } else if(code == Intervals.INTERVAL_TEN_MINUTES){
-            progress = 3;
-        } else if(code == Intervals.INTERVAL_HALF_HOUR){
-            progress = 4;
-        } else if(code == Intervals.INTERVAL_HOUR){
-            progress = 5;
-        } else if(code == Intervals.INTERVAL_TWO_HOURS){
-            progress = 6;
-        } else if(code == Intervals.INTERVAL_FIVE_HOURS){
-            progress = 7;
-        }
-        return progress;
-    }
-
     public String getTimeInterval(int code){
         String interval = "";
         if (code == Intervals.REPEAT_CODE_ONCE){
@@ -223,53 +179,5 @@ public class Interval {
             interval = mContext.getString(R.string.string_five_hours);
         }
         return interval;
-    }
-
-    public int getAfterTimeCode(int progress){
-        int code = 0;
-        if (progress == 0){
-            code = Intervals.INTERVAL_MINUTE;
-        } else if(progress == 1){
-            code = Intervals.INTERVAL_TWO_MINUTES;
-        } else if(progress == 2){
-            code = Intervals.INTERVAL_FIVE_MINUTES;
-        } else if(progress == 3){
-            code = Intervals.INTERVAL_TEN_MINUTES;
-        } else if(progress == 4){
-            code = Intervals.INTERVAL_FIFTEEN_MINUTES;
-        } else if(progress == 5){
-            code = Intervals.INTERVAL_HALF_HOUR;
-        } else if(progress == 6){
-            code = Intervals.INTERVAL_HOUR;
-        } else if(progress == 7){
-            code = Intervals.INTERVAL_TWO_HOURS;
-        } else if(progress == 8){
-            code = Intervals.INTERVAL_FIVE_HOURS;
-        }
-        return code;
-    }
-
-    public int getAfterTimeProgressFromCode(int code){
-        int progress = 0;
-        if (code == Intervals.INTERVAL_MINUTE){
-            progress = 0;
-        } else if(code == Intervals.INTERVAL_TWO_MINUTES){
-            progress = 1;
-        } else if(code == Intervals.INTERVAL_FIVE_MINUTES){
-            progress = 2;
-        } else if(code == Intervals.INTERVAL_TEN_MINUTES){
-            progress = 3;
-        } else if(code == Intervals.INTERVAL_FIFTEEN_MINUTES){
-            progress = 4;
-        } else if(code == Intervals.INTERVAL_HALF_HOUR){
-            progress = 5;
-        } else if(code == Intervals.INTERVAL_HOUR){
-            progress = 6;
-        } else if(code == Intervals.INTERVAL_TWO_HOURS){
-            progress = 7;
-        } else if(code == Intervals.INTERVAL_FIVE_HOURS){
-            progress = 8;
-        }
-        return progress;
     }
 }

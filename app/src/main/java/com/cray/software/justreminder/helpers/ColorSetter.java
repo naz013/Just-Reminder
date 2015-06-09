@@ -1070,7 +1070,7 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
             id = getColor(R.color.grey_dark_x);
-        } else id = getColor(android.R.color.transparent);
+        } else id = getColor(R.color.colorGreyDark);
         return id;
     }
 

@@ -18,7 +18,7 @@
     <string name="theme_descr">"Выбрать цвет темы приложения"</string>
     <string name="menu_about">"O приложении"</string>
     <string name="press_again">Нажмите еще раз чтобы выйти</string>
-    <string name="delete_all">Удалить все заархивированые напоминания</string>
+    <string name="delete_all">Очистить корзину</string>
     <string name="save_reminder">Сохранить напоминание</string>
     <string name="activate_reminder">Активировать напоминание</string>
     <string name="must_click_message">Вы должны нажать на одну из кнопок!</string>
@@ -48,7 +48,7 @@
     <string name="location_block">Настройки локационных напоминаний</string>
     <string name="rem_sound">Мелодия напоминания</string>
     <string name="sound_default">Стандартная</string>
-    <string name="sound_custom">Своя мелодия</string>
+    <string name="sound_custom">Мелодия</string>
     <string name="sounds_dialog_title">Выберите мелодию напоминания</string>
     <string name="sounds_loading_text">Загрузка списка музыкальных файлов</string>
     <string name="sound_type_dialog_title">Выберите тип мелодии</string>
@@ -57,27 +57,6 @@
     <string name="no_music">Не найдено ни одного музыкального файла</string>
     <string name="sync_title">Синхронизация</string>
     <string name="number_error">Введите номер телефона</string>
-    <string name="interval_once">Один раз</string>
-    <string name="interval_day">Ежедневно</string>
-    <string name="interval_week">Еженедельно</string>
-    <string name="interval_month">Ежемесячно</string>
-    <string name="interval_year">Ежегодно</string>
-    <string name="every_minute">Ежеминутно</string>
-    <string name="every_five_minutes">Каждые 5 минут</string>
-    <string name="every_ten_minutes">Каждые 10 минут</string>
-    <string name="every_half_hour">Каждые полчаса</string>
-    <string name="every_hour">Каждый час</string>
-    <string name="every_two_hours">Каждые 2 часа</string>
-    <string name="every_five_hours">Каждые 5 часов</string>
-    <string name="after_one_minute">Через минуту</string>
-    <string name="after_two_minutes">Через 2 минуты</string>
-    <string name="after_five_minutes">Через 5 минут</string>
-    <string name="after_ten_minutes">Через 10 минут</string>
-    <string name="after_fifteen_minutes">Через 15 минут</string>
-    <string name="after_half_hour">Через полчаса</string>
-    <string name="after_one_hour">Через час</string>
-    <string name="after_two_hours">Через 2 часа</string>
-    <string name="after_five_hours">Через 5 часов</string>
     <string name="infinite_title">Бесконечная мелодия</string>
     <string name="infinite_explanation">Отметьте, чтобы включить проигрывания мелодии до момента подтверждения пользователем</string>
     <string name="message_field_hint">Сообщение</string>
@@ -451,10 +430,10 @@
     <string name="time_morning_title">Утро</string>
     <string name="export_to_calendar_settings">Экспортировать событие в системный календарь</string>
     <string name="export_to_calendar_settings_explanation">Отметьте, чтобы включить экспорт события в системный календарь, если у Вас нету Календаря Google</string>
-    <string name="custom_melody_title">Собственная мелодия</string>
+    <string name="custom_melody_title">Мелодия</string>
     <string name="selected_melody_string">"Выбрано мелодию "</string>
     <string name="selected_radius_string">"Выбрано радиус "</string>
-    <string name="custom_radius_title">Собственный радиус</string>
+    <string name="custom_radius_title">Радиус</string>
     <string name="map_type_settings_title">Тип карты</string>
     <string name="skype_reminder_type">Skype звонок/чат</string>
     <string name="launch_application_reminder_type">Запуск приложения</string>
@@ -704,4 +683,5 @@
     <string name="char_m">м</string>
     <string name="char_h">ч</string>
     <string name="string_generating_events">Генерирую события…</string>
+    <string name="interval_day">Eжедневно</string>
 </resources>

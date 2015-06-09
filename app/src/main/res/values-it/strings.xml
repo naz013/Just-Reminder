@@ -17,7 +17,7 @@
     <string name="theme_descr">"Scegli un tema per l'applicazione"</string>
     <string name="menu_about">"Sull'applicazione "</string>
     <string name="press_again">"Premi di nuovo per uscire"</string>
-    <string name="delete_all">"Cancella i promemoria archiviati"</string>
+    <string name="delete_all">"Cancella spazzatura"</string>
     <string name="save_reminder">"Salva promemoria"</string>
     <string name="activate_reminder">"Attiva il promemoria"</string>
     <string name="must_click_message">"Devi premere uno dei bottoni!"</string>
@@ -47,7 +47,7 @@
     <string name="location_block">"Impostazioni promemoria a localizzazione "</string>
     <string name="rem_sound">"Suoneria"</string>
     <string name="sound_default">"Standard"</string>
-    <string name="sound_custom">"Suoneria personale"</string>
+    <string name="sound_custom">"Suoneria"</string>
     <string name="sounds_dialog_title">"Seleziona una suoneria per i promemoria"</string>
     <string name="sounds_loading_text">"Caricamento file musicali"</string>
     <string name="sound_type_dialog_title">"Seleziona una suoneria"</string>
@@ -56,27 +56,6 @@
     <string name="no_music">"Nessun file musicale"</string>
     <string name="sync_title">"Sincronizzazione "</string>
     <string name="number_error">"Immettere un numero di telefono"</string>
-    <string name="interval_once">"Una volta"</string>
-    <string name="interval_day">"Giornalmente"</string>
-    <string name="interval_week">"Settimanalmente"</string>
-    <string name="interval_month">"Mensilmente"</string>
-    <string name="every_minute">"Ogni minuto"</string>
-    <string name="every_five_minutes">"Ogni 5 minuti"</string>
-    <string name="every_ten_minutes">"Ogni 10 minuti "</string>
-    <string name="every_half_hour">"Ogni mezz'ora"</string>
-    <string name="every_hour">"Ogni ora"</string>
-    <string name="every_two_hours">"Ogni 2 ore"</string>
-    <string name="every_five_hours">"Ogni 5 ore"</string>
-
-    <string name="after_one_minute">"Dopo 1 minuto"</string>
-    <string name="after_two_minutes">"Dopo 2 minuti"</string>
-    <string name="after_five_minutes">"Dopo 5 minuti"</string>
-    <string name="after_ten_minutes">"Dopo 10 minuti"</string>
-    <string name="after_fifteen_minutes">"Dopo 15 minuti"</string>
-    <string name="after_half_hour">"Dopo mezz'ora"</string>
-    <string name="after_one_hour">"Dopo 1 ora"</string>
-    <string name="after_two_hours">"Dopo 2 ore"</string>
-    <string name="after_five_hours">"Dopo 5 ore"</string>
     <string name="infinite_title">"Suoneria infinita"</string>
     <string name="infinite_explanation">"Select to enable playing tunes by the time asking the user"</string>
     <string name="message_field_hint">"Messaggio"</string>
@@ -447,10 +426,10 @@
     <string name="time_morning_title">Morning</string>
     <string name="export_to_calendar_settings">Export event to system calendar</string>
     <string name="export_to_calendar_settings_explanation">Check to enable exporting event to stock calendar, if You don\'t have Google Calendar</string>
-    <string name="custom_melody_title">Custom melody</string>
+    <string name="custom_melody_title">Melody</string>
     <string name="selected_melody_string">"Selected melody "</string>
     <string name="selected_radius_string">"Selected radius "</string>
-    <string name="custom_radius_title">Custom radius</string>
+    <string name="custom_radius_title">Radius</string>
     <string name="map_type_settings_title">Map type</string>
     <string name="skype_reminder_type">Skype call/chat</string>
     <string name="launch_application_reminder_type">Launch application</string>
@@ -704,4 +683,5 @@
     <string name="char_m">m</string>
     <string name="char_h">h</string>
     <string name="string_generating_events">Generating events...</string>
+    <string name="interval_day">Daily</string>
 </resources>

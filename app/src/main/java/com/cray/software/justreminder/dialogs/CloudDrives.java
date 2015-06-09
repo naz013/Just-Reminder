@@ -104,6 +104,7 @@ public class CloudDrives extends AppCompatActivity {
                         dbx.startLink();
                     }
                 }
+                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
             }
         });
 
@@ -134,6 +135,7 @@ public class CloudDrives extends AppCompatActivity {
                             new String[]{"com.google"}, false, null, null, null, null);
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
                 }
+                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
             }
         });
 
@@ -158,6 +160,7 @@ public class CloudDrives extends AppCompatActivity {
                 } else {
                     startActivity(new Intent(CloudDrives.this, ExchangeLogIn.class));
                 }
+                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
             }
         });
 

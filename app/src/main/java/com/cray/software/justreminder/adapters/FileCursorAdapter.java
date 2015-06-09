@@ -14,6 +14,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.Utils;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.text.SimpleDateFormat;
@@ -155,25 +156,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             type.setText(cContext.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_TIME)){
             time.setText("");
-            if (repTime == 1){
-                date.setText(cContext.getString(R.string.after_one_minute));
-            } else if (repTime == 2){
-                date.setText(cContext.getString(R.string.after_two_minutes));
-            } else if (repTime == 5){
-                date.setText(cContext.getString(R.string.after_five_minutes));
-            } else if (repTime == 10){
-                date.setText(cContext.getString(R.string.after_ten_minutes));
-            } else if (repTime == 15){
-                date.setText(cContext.getString(R.string.after_fifteen_minutes));
-            } else if (repTime == 30){
-                date.setText(cContext.getString(R.string.after_half_hour));
-            } else if (repTime == 60){
-                date.setText(cContext.getString(R.string.after_one_hour));
-            } else if (repTime == 120){
-                date.setText(cContext.getString(R.string.after_two_hours));
-            } else if (repTime == 300){
-                date.setText(cContext.getString(R.string.after_five_hours));
-            }
+            date.setText(Utils.generateAfterString(repTime));
 
             repeat.setText(interval.getTimeInterval(repCode));
 
