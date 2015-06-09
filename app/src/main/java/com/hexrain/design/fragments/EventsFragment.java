@@ -174,7 +174,7 @@ public class EventsFragment extends Fragment {
         progress.setVisibility(View.VISIBLE);
         dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
         dialog.setMax(100);
-        dialog.setTitle(getActivity().getString(R.string.string_generating_events));
+        dialog.setMessage(getActivity().getString(R.string.string_generating_events));
         dialog.setCancelable(false);
         dialog.setIndeterminate(false);
         dialog.show();
