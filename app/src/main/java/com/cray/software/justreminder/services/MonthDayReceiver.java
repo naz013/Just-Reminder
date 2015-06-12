@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -32,8 +31,7 @@ public class MonthDayReceiver extends BroadcastReceiver {
         }
         if (c != null) c.close();
 
-        TimeCount timeCount = new TimeCount(context);
-        if (timeCount.isDay(dayOfMonth)) {
+        if (TimeCount.isDay(dayOfMonth)) {
             Intent service = new Intent(context, MonthDayReceiver.class);
             context.startService(service);
             Intent resultIntent = new Intent(context, WeekDayDialog.class);

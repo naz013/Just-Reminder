@@ -22,7 +22,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.views.RoundImageView;
+import com.cray.software.justreminder.utils.ReminderUtils;
 
 public class VoiceResult extends Activity {
 
@@ -241,47 +241,11 @@ public class VoiceResult extends Activity {
             } else hourStr = String.valueOf(hour);
 
             if (weekdays != null && weekdays.length() == 7) {
-                taskDate.setText(getRepeatString(weekdays));
+                taskDate.setText(ReminderUtils.getRepeatString(this, weekdays));
             }
             viewTime.setText(hourStr + ":" + minuteStr);
 
             DB.close();
         }
-    }
-
-    private String getRepeatString(String repCode){
-        String res;
-        StringBuilder sb = new StringBuilder();
-        if (Character.toString(repCode.charAt(0)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_monday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(1)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_tuesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(2)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_wednesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(3)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_thursday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(4)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_friday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(5)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_saturday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(6)).matches(Constants.DAY_CHECKED)){
-            sb.append(getString(R.string.weekday_sunday));
-        }
-        if (repCode.matches(Constants.ALL_CHECKED)){
-            res = getString(R.string.interval_day);
-        } else res = sb.toString();
-        return res;
     }
 }

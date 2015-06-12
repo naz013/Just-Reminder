@@ -24,6 +24,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.utils.ReminderUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -166,6 +167,8 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
         mCount = new TimeCount(cContext);
 
+        reminder_type.setText(ReminderUtils.getTypeString(cContext, type));
+
         if (type.startsWith(Constants.TYPE_MONTHDAY)){
             taskTitle.setText(title);
 
@@ -173,22 +176,17 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
             if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_make_call));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_send_message));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_MONTHDAY) ||
-                    type.matches(Constants.TYPE_MONTHDAY_LAST)) {
-                reminder_type.setText(cContext.getString(R.string.reminder_type));
             }
 
-            long time = mCount.getNextMonthDayTime(hour, minute, day, delay);
+            long time = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
 
             leftTimeIcon.setImageDrawable(mCount.
                     getDifference(time));
@@ -223,29 +221,16 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         } else if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_make_call));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_REMINDER) || type.matches(Constants.TYPE_TIME)) {
-                reminder_type.setText(cContext.getString(R.string.reminder_type));
-            } else if (type.matches(Constants.TYPE_LOCATION)) {
-                reminder_type.setText(cContext.getString(R.string.reminder_type));
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_send_message));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.startsWith(Constants.TYPE_SKYPE)){
                 reminder_phone.setText(number);
-                if (type.matches(Constants.TYPE_SKYPE)){
-                    reminder_type.setText(cContext.getString(R.string.skype_call_type_title));
-                } else if (type.matches(Constants.TYPE_SKYPE_VIDEO)){
-                    reminder_type.setText(cContext.getString(R.string.skype_video_type_title));
-                } else if (type.matches(Constants.TYPE_SKYPE_CHAT)){
-                    reminder_type.setText(cContext.getString(R.string.skype_chat_type_title));
-                }
                 reminder_contact_name.setText(number);
             } else if (type.matches(Constants.TYPE_APPLICATION)){
                 PackageManager packageManager = cContext.getPackageManager();
@@ -255,17 +240,15 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                 } catch (final PackageManager.NameNotFoundException ignored) {}
                 final String name = (String)((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_type_application));
                 reminder_contact_name.setText(name);
             } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_type_open_link));
                 reminder_contact_name.setText(number);
             }
 
             taskIcon.setImageDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
 
-            long time = mCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
+            long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
                     repCode, repCount, delay);
 
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
@@ -315,21 +298,17 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_make_call));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                reminder_type.setText(cContext.getString(R.string.reminder_send_message));
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_WEEKDAY)) {
-                reminder_type.setText(cContext.getString(R.string.reminder_type));
             }
 
-            long time = mCount.getNextWeekdayTime(hour, minute, weekdays, delay);
+            long time = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
 
             leftTimeIcon.setImageDrawable(mCount.
                     getDifference(time));
@@ -348,7 +327,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             }
 
             if (weekdays.length() == 7) {
-                taskDate.setText(getRepeatString(weekdays));
+                taskDate.setText(ReminderUtils.getRepeatString(cContext, weekdays));
                 if (isDone == 0) {
                     String remaining = mCount.getRemaining(time);
                     holder.leftTime.setText(remaining);
@@ -370,42 +349,6 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             leftTimeIcon.setVisibility(View.GONE);
         }
         return convertView;
-    }
-
-    private String getRepeatString(String repCode){
-        String res;
-        StringBuilder sb = new StringBuilder();
-        if (Character.toString(repCode.charAt(0)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_monday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(1)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_tuesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(2)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_wednesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(3)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_thursday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(4)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_friday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(5)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_saturday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(6)).matches(Constants.DAY_CHECKED)){
-            sb.append(cContext.getString(R.string.weekday_sunday));
-        }
-        if (repCode.matches(Constants.ALL_CHECKED)){
-            res = cContext.getString(R.string.interval_day);
-        } else res = sb.toString();
-        return res;
     }
 
     @Override

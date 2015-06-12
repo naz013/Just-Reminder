@@ -72,6 +72,7 @@ import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -212,221 +213,27 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
+    private void setUpButton(FloatingActionButton fab, View.OnClickListener listener, String title,
+                             int size, int icon){
+        fab.setTitle(title);
+        fab.setSize(size);
+        fab.setIcon(icon);
+        fab.setColorNormal(getResources().getColor(R.color.colorWhite));
+        fab.setColorPressed(getResources().getColor(R.color.grey_light));
+        fab.setOnClickListener(listener);
+    }
+
     private void initButton() {
         mainMenu = (FloatingActionsMenu) findViewById(R.id.mainMenu);
 
-        addNote = new FloatingActionButton(getBaseContext());
-        addNote.setTitle(getString(R.string.new_note));
-        addNote.setSize(FloatingActionButton.SIZE_MINI);
-        addNote.setIcon(R.drawable.ic_event_note_grey600_24dp);
-        addNote.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addNote.setColorPressed(getResources().getColor(R.color.grey_light));
-        addNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(ScreenManager.this, NotesManager.class));
-                    }
-                }, 150);
-            }
-        });
-
-        addTask = new FloatingActionButton(getBaseContext());
-        addTask.setTitle(getString(R.string.new_task));
-        addTask.setSize(FloatingActionButton.SIZE_MINI);
-        addTask.setIcon(R.drawable.google_tasks_grey);
-        addTask.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addTask.setColorPressed(getResources().getColor(R.color.grey_light));
-        addTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                    if (isNoteVisible()) {
-                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                            hide(noteCard);
-                        } else noteCard.setVisibility(View.GONE);
-                    }
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                    .putExtra(Constants.ITEM_ID_INTENT, listId)
-                                    .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
-                        }
-                    }, 150);
-
-                } else
-                    Toast.makeText(ScreenManager.this, getString(R.string.tasks_connection_warming), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        addBirthday = new FloatingActionButton(getBaseContext());
-        addBirthday.setTitle(getString(R.string.new_birthday));
-        addBirthday.setSize(FloatingActionButton.SIZE_MINI);
-        addBirthday.setIcon(R.drawable.ic_cake_grey600_24dp);
-        addBirthday.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addBirthday.setColorPressed(getResources().getColor(R.color.grey_light));
-        addBirthday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
-                    Toast.makeText(ScreenManager.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
-                else {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(ScreenManager.this, AddBirthday.class));
-                        }
-                    }, 150);
-                }
-            }
-        });
-
-        addQuick = new FloatingActionButton(getBaseContext());
-        addQuick.setTitle(getString(R.string.new_quick_note));
-        addQuick.setSize(FloatingActionButton.SIZE_MINI);
-        addQuick.setIcon(R.drawable.ic_done_grey600_24dp);
-        addQuick.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addQuick.setColorPressed(getResources().getColor(R.color.grey_light));
-        addQuick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (!isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        show(noteCard);
-                    } else noteCard.setVisibility(View.VISIBLE);
-                } else {
-                    quickNote.setText("");
-                    quickNote.setError(null);
-
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        addReminder = new FloatingActionButton(getBaseContext());
-        addReminder.setTitle(getString(R.string.new_reminder));
-        addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
-        addReminder.setIcon(R.drawable.ic_alarm_add_grey600_24dp);
-        addReminder.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addReminder.setColorPressed(getResources().getColor(R.color.grey_light));
-        addReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
-                                .putExtra("date", dateMills));
-                    }
-                }, 150);
-            }
-        });
-
-        addPlace = new FloatingActionButton(getBaseContext());
-        addPlace.setTitle(getString(R.string.string_new_place));
-        addPlace.setSize(FloatingActionButton.SIZE_MINI);
-        addPlace.setIcon(R.drawable.ic_location_on_grey600_24dp);
-        addPlace.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addPlace.setColorPressed(getResources().getColor(R.color.grey_light));
-        addPlace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (checkGooglePlayServicesAvailability()) {
-                            startActivity(new Intent(ScreenManager.this, NewPlace.class));
-                        }
-                    }
-                }, 150);
-            }
-        });
-
-        addGroup = new FloatingActionButton(getBaseContext());
-        addGroup.setTitle(getString(R.string.string_new_category));
-        addGroup.setSize(FloatingActionButton.SIZE_MINI);
-        addGroup.setIcon(R.drawable.ic_local_offer_grey600_24dp);
-        addGroup.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addGroup.setColorPressed(getResources().getColor(R.color.grey_light));
-        addGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(ScreenManager.this, CategoryManager.class));
-                    }
-                }, 150);
-            }
-        });
-
-        addTemplate = new FloatingActionButton(getBaseContext());
-        addTemplate.setTitle(getString(R.string.string_new_template));
-        addTemplate.setSize(FloatingActionButton.SIZE_MINI);
-        addTemplate.setIcon(R.drawable.ic_textsms_grey600_24dp);
-        addTemplate.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addTemplate.setColorPressed(getResources().getColor(R.color.grey_light));
-        addTemplate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(ScreenManager.this, NewTemplate.class));
-                    }
-                }, 150);
-            }
-        });
+        addNote = new FloatingActionButton(this);
+        addPlace = new FloatingActionButton(this);
+        addTemplate = new FloatingActionButton(this);
+        addQuick = new FloatingActionButton(this);
+        addTask = new FloatingActionButton(this);
+        addReminder = new FloatingActionButton(this);
+        addBirthday = new FloatingActionButton(this);
+        addGroup = new FloatingActionButton(this);
 
         mFab = new AddFloatingActionButton(this);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -495,7 +302,7 @@ public class ScreenManager extends AppCompatActivity
         boolean isExtend = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
             mFab.setVisibility(View.GONE);
-            addReminder.setOnClickListener(new View.OnClickListener() {
+            setUpButton(addReminder, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mainMenu.isExpanded()) mainMenu.collapse();
@@ -513,7 +320,30 @@ public class ScreenManager extends AppCompatActivity
                         }
                     }, 150);
                 }
-            });
+            }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
+
+            setUpButton(addBirthday, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mainMenu.isExpanded()) mainMenu.collapse();
+                    if (isNoteVisible()) {
+                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                            hide(noteCard);
+                        } else noteCard.setVisibility(View.GONE);
+                    }
+
+                    if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
+                        Toast.makeText(ScreenManager.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
+                    else {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(ScreenManager.this, AddBirthday.class));
+                            }
+                        }, 150);
+                    }
+                }
+            }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_grey600_24dp);
             attachButtons(addBirthday, addReminder);
             mainMenu.setVisibility(View.VISIBLE);
         } else if (mTag.matches(FRAGMENT_BACKUPS)){
@@ -525,7 +355,7 @@ public class ScreenManager extends AppCompatActivity
                 mainMenu.setVisibility(View.GONE);
                 if (mTag.matches(FRAGMENT_TASKS) || mTag.matches(FRAGMENT_ARCHIVE) ||
                         mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_NOTE)){
-                    addReminder.setOnClickListener(new View.OnClickListener() {
+                    setUpButton(addReminder, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
@@ -542,17 +372,175 @@ public class ScreenManager extends AppCompatActivity
                                 }
                             }, 150);
                         }
-                    });
+                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
+                    setUpButton(addBirthday, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
+                                Toast.makeText(ScreenManager.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
+                            else {
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(ScreenManager.this, AddBirthday.class));
+                                    }
+                                }, 150);
+                            }
+                        }
+                    }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_grey600_24dp);
+                    setUpButton(addTask, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (new GTasksHelper(ScreenManager.this).isLinked()) {
+                                if (isNoteVisible()) {
+                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                        hide(noteCard);
+                                    } else noteCard.setVisibility(View.GONE);
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(ScreenManager.this, TaskManager.class)
+                                                .putExtra(Constants.ITEM_ID_INTENT, listId)
+                                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
+                                    }
+                                }, 150);
+
+                            } else
+                                Toast.makeText(ScreenManager.this, getString(R.string.tasks_connection_warming), Toast.LENGTH_SHORT).show();
+                        }
+                    }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.google_tasks_grey);
+                    setUpButton(addNote, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, NotesManager.class));
+                                }
+                            }, 150);
+                        }
+                    }, getString(R.string.new_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_note_grey600_24dp);
+                    setUpButton(addQuick, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (!isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    show(noteCard);
+                                } else noteCard.setVisibility(View.VISIBLE);
+                            } else {
+                                quickNote.setText("");
+                                quickNote.setError(null);
+
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+                        }
+                    }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_grey600_24dp);
                     attachButtons(addBirthday, addTask, addNote, addQuick, addReminder);
                     mainMenu.setVisibility(View.VISIBLE);
                 } else {
+                    setUpButton(addReminder, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (isNoteVisible()) {
+                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    hide(noteCard);
+                                } else noteCard.setVisibility(View.GONE);
+                            }
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                                }
+                            }, 150);
+                        }
+                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
                     if (mTag.matches(FRAGMENT_LOCATIONS) || mTag.matches(FRAGMENT_PLACES)){
+                        setUpButton(addPlace, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (mainMenu.isExpanded()) mainMenu.collapse();
+                                if (isNoteVisible()) {
+                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                        hide(noteCard);
+                                    } else noteCard.setVisibility(View.GONE);
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (checkGooglePlayServicesAvailability()) {
+                                            startActivity(new Intent(ScreenManager.this, NewPlace.class));
+                                        }
+                                    }
+                                }, 150);
+                            }
+                        }, getString(R.string.string_new_place), FloatingActionButton.SIZE_MINI, R.drawable.ic_location_on_grey600_24dp);
                         attachButtons(addPlace, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     } else if (mTag.matches(FRAGMENT_GROUPS)){
+                        setUpButton(addGroup, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (mainMenu.isExpanded()) mainMenu.collapse();
+                                if (isNoteVisible()) {
+                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                        hide(noteCard);
+                                    } else noteCard.setVisibility(View.GONE);
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                                    }
+                                }, 150);
+                            }
+                        }, getString(R.string.string_new_category), FloatingActionButton.SIZE_MINI,
+                                R.drawable.ic_local_offer_grey600_24dp);
                         attachButtons(addGroup, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+                        setUpButton(addTemplate, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (mainMenu.isExpanded()) mainMenu.collapse();
+                                        if (isNoteVisible()) {
+                                            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                                hide(noteCard);
+                                            } else noteCard.setVisibility(View.GONE);
+                                        }
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+                                            }
+                                        }, 150);
+                                    }
+                                }, getString(R.string.string_new_template), FloatingActionButton.SIZE_MINI,
+                                R.drawable.ic_message_grey600_24dp);
                         attachButtons(addTemplate, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     }
@@ -1142,7 +1130,6 @@ public class ScreenManager extends AppCompatActivity
         if (!db.isOpen()) db.open();
         sPrefs = new SharedPrefs(this);
         boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-        TimeCount mCount = new TimeCount(this);
         ArrayList<Date> dates = new ArrayList<>();
         dates.clear();
         Cursor c = db.queryGroup();
@@ -1165,7 +1152,7 @@ public class ScreenManager extends AppCompatActivity
                         type.matches(Constants.TYPE_MESSAGE) ||
                         type.matches(Constants.TYPE_REMINDER) ||
                         type.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                    long time = mCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
+                    long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
                             afterTime, repCode, remCount, 0);
                     Calendar calendar = Calendar.getInstance();
                     if (time > 0) {
@@ -1188,7 +1175,7 @@ public class ScreenManager extends AppCompatActivity
                         }
                     }
                 } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
-                    long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
+                    long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
                     Calendar calendar = Calendar.getInstance();
                     if (time > 0) {
                         calendar.setTimeInMillis(time);
@@ -1199,7 +1186,7 @@ public class ScreenManager extends AppCompatActivity
                     }
                     int days = 0;
                     if (isFeature){
-                        ArrayList<Integer> list = getRepeatArray(weekdays);
+                        ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
                         do {
                             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
                             int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
@@ -1213,7 +1200,7 @@ public class ScreenManager extends AppCompatActivity
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                    long time = mCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
+                    long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
                     Calendar calendar = Calendar.getInstance();
                     if (time > 0) {
                         calendar.setTimeInMillis(time);
@@ -1225,7 +1212,7 @@ public class ScreenManager extends AppCompatActivity
                     int days = 1;
                     if (isFeature){
                         do {
-                            time = mCount.getNextMonthDayTime(myDay, calendar.getTimeInMillis(), days);
+                            time = TimeCount.getNextMonthDayTime(myDay, calendar.getTimeInMillis(), days);
                             days = days + 1;
                             calendar.setTimeInMillis(time);
                             int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -1247,25 +1234,6 @@ public class ScreenManager extends AppCompatActivity
                 calendarView.setBackgroundResourceForDate(cSetter.colorReminderCalendar(), dates.get(i));
             }
         }
-    }
-
-    private ArrayList<Integer> getRepeatArray(String weekdays){
-        ArrayList<Integer> res = new ArrayList<>();
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        return res;
     }
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

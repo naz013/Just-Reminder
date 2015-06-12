@@ -6,14 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.cray.software.justreminder.databases.DataBase;
-
 import java.util.Calendar;
 
 public class BirthdayAlarm extends BroadcastReceiver {
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    DataBase DB;
 
     @Override
     public void onReceive(Context context, Intent intent) {

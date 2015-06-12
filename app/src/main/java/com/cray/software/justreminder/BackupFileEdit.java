@@ -74,6 +74,7 @@ import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -2584,7 +2585,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     private int getRepeat(int progress) {
-        return new Interval(BackupFileEdit.this).getRepeatDays(progress);
+        return Interval.getRepeatDays(progress);
     }
 
     private String getTaskType(){
@@ -2908,7 +2909,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     0, 0, 0, 0, 0, uuID, repeat, 0, null, 0, -1, 0, categoryId);
             new WeekDayReceiver().setAlarm(BackupFileEdit.this, idN);
             if (gtx.isLinked() && weekTaskExport.isChecked()){
-                exportToTasks(task, getWeekTime(myHour, myMinute, repeat), idN);
+                exportToTasks(task, ReminderUtils.getWeekTime(myHour, myMinute, repeat), idN);
             }
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -2954,9 +2955,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
-            exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+            exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && appTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -2990,9 +2991,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
-            exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+            exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && skypeTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -3082,10 +3083,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             DB.updateDateTime(idN);
             new MonthDayReceiver().setAlarm(this, id);
-            exportToCalendar(text, getMonthTime(myHour, myMinute, day), idN);
+            exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, day), idN);
 
             if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-                exportToTasks(text, getMonthTime(myHour, myMinute, day), id);
+                exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, day), id);
             }
             DB.updateDateTime(id);
 
@@ -3119,9 +3120,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
             DB.updateDateTime(idN);
-            exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && dateTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -3165,9 +3166,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
             DB.updateDateTime(idN);
-            exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
+            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
             if (gtx.isLinked() && timeTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -3223,9 +3224,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
-            exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && callTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             finish();
         } else {
@@ -3258,9 +3259,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
-            exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && messageTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             finish();
         } else {
@@ -3469,22 +3470,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         new TaskAsync(BackupFileEdit.this, summary, null, null,
                 TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder),
                 localId).execute();
-    }
-
-    private long getWeekTime(int hour, int minute, String weekdays){
-        TimeCount count = new TimeCount(BackupFileEdit.this);
-        return count.getNextWeekdayTime(hour, minute, weekdays, 0);
-    }
-
-    private long getTime(int day, int month, int year, int hour, int minute, long after){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis() + after;
-    }
-
-    private long getMonthTime(int hour, int minute, int day){
-        TimeCount count = new TimeCount(this);
-        return count.getNextMonthDayTime(hour, minute, day, 0);
     }
 
     @Override

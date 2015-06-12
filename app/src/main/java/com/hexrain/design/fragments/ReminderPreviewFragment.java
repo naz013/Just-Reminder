@@ -65,6 +65,7 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -441,30 +442,32 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         type.startsWith(Constants.TYPE_SKYPE)){
                     if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                             sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                        exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour,
+                                myMinute, 0), idN);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                        exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour,
+                                myMinute, 0), idN);
                     }
                     new AlarmReceiver().setAlarm(this, idN);
                 }
                 if (type.startsWith(Constants.TYPE_WEEKDAY)){
                     if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                             sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, getWeekTime(myHour, myMinute, weekdays), idN);
+                        exportToCalendar(text, ReminderUtils.getWeekTime(myHour, myMinute, weekdays), idN);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, getWeekTime(myHour, myMinute, weekdays), idN);
+                        exportToTasks(text, ReminderUtils.getWeekTime(myHour, myMinute, weekdays), idN);
                     }
                     new WeekDayReceiver().setAlarm(this, idN);
                 }
                 if (type.startsWith(Constants.TYPE_MONTHDAY)){
                     if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                             sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, getMonthTime(myHour, myMinute, myDay), idN);
+                        exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, myDay), idN);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, getMonthTime(myHour, myMinute, myDay), idN);
+                        exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, myDay), idN);
                     }
                     new MonthDayReceiver().setAlarm(this, idN);
                 }
@@ -515,22 +518,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
         new TaskAsync(this, summary, null, null,
                 TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
-    }
-
-    private long getWeekTime(int hour, int minute, String weekdays){
-        TimeCount count = new TimeCount(this);
-        return count.getNextWeekdayTime(hour, minute, weekdays, 0);
-    }
-
-    private long getMonthTime(int hour, int minute, int day){
-        TimeCount count = new TimeCount(this);
-        return count.getNextMonthDayTime(hour, minute, day, 0);
-    }
-
-    private long getTime(int day, int month, int year, int hour, int minute, int after){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis() + (60 * 1000 * after);
     }
 
     public class loadAsync extends AsyncTask<Void, Void, String[]>{
@@ -613,30 +600,32 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 if (isDone == 1) doneStr = "done";
                 else doneStr = null;
 
+                typeStr = ReminderUtils.getTypeString(mContext, type);
+
                 if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
                     if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_make_call);
+                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_REMINDER) || type.matches(Constants.TYPE_TIME)) {
-                        typeStr = mContext.getString(R.string.reminder_type);
+                        //typeStr = mContext.getString(R.string.reminder_type);
                     } else if (type.matches(Constants.TYPE_LOCATION)) {
-                        typeStr = mContext.getString(R.string.reminder_type);
+                        //typeStr = mContext.getString(R.string.reminder_type);
                     } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_send_message);
+                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_SKYPE)){
                         numberStr = number;
-                        if (type.matches(Constants.TYPE_SKYPE)){
+                        /*if (type.matches(Constants.TYPE_SKYPE)){
                             typeStr = mContext.getString(R.string.skype_call_type_title);
                         } else if (type.matches(Constants.TYPE_SKYPE_VIDEO)){
                             typeStr = mContext.getString(R.string.skype_video_type_title);
                         } else if (type.matches(Constants.TYPE_SKYPE_CHAT)){
                             typeStr = mContext.getString(R.string.skype_chat_type_title);
-                        }
+                        }*/
                     } else if (type.matches(Constants.TYPE_APPLICATION)){
                         PackageManager packageManager = mContext.getPackageManager();
                         ApplicationInfo applicationInfo = null;
@@ -646,13 +635,13 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         final String name = (String)((applicationInfo != null) ?
                                 packageManager.getApplicationLabel(applicationInfo) : "???");
                         numberStr = name + "\n" + number;
-                        typeStr = mContext.getString(R.string.reminder_type_application);
+                        //typeStr = mContext.getString(R.string.reminder_type_application);
                     } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_type_open_link);
+                        //typeStr = mContext.getString(R.string.reminder_type_open_link);
                     }
 
-                    long time = mCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
+                    long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
                             repCode, repCount, delay);
 
                     if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
@@ -676,21 +665,21 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                     if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_make_call);
+                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_send_message);
+                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_MONTHDAY)) {
-                        typeStr = mContext.getString(R.string.reminder_type);
+                        //typeStr = mContext.getString(R.string.reminder_type);
                     } else {
-                        typeStr = mContext.getString(R.string.reminder_type);
+                        //typeStr = mContext.getString(R.string.reminder_type);
                     }
 
-                    long time = mCount.getNextMonthDayTime(hour, minute, day, delay);
+                    long time = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -713,19 +702,17 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 }else {
                     if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_make_call);
+                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                         numberStr = number;
-                        typeStr = mContext.getString(R.string.reminder_send_message);
+                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_WEEKDAY)) {
-                        typeStr = mContext.getString(R.string.reminder_type);
+                        //typeStr = mContext.getString(R.string.reminder_type);
                     }
-
-                    //long time = mCount.getNextWeekdayTime(hour, minute, weekdays, delay);
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -740,7 +727,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     }
 
                     if (weekdays.length() == 7) {
-                        repeatStr = getRepeatString(weekdays);
+                        repeatStr = ReminderUtils.getRepeatString(mContext, weekdays);
                     }
                     timeStr = formattedTime;
                 }
@@ -832,42 +819,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             }
 
             new loadOtherData(mContext, mProgress, mId).execute();
-        }
-
-        private String getRepeatString(String repCode){
-            String res;
-            StringBuilder sb = new StringBuilder();
-            if (Character.toString(repCode.charAt(0)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_monday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(1)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_tuesday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(2)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_wednesday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(3)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_thursday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(4)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_friday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(5)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_saturday));
-                sb.append(",");
-            }
-            if (Character.toString(repCode.charAt(6)).matches(Constants.DAY_CHECKED)){
-                sb.append(mContext.getString(R.string.weekday_sunday));
-            }
-            if (repCode.matches(Constants.ALL_CHECKED)){
-                res = mContext.getString(R.string.interval_day);
-            } else res = sb.toString();
-            return res;
         }
     }
 

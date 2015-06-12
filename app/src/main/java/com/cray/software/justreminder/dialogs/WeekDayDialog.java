@@ -453,9 +453,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 minute = t.getInt(t.getColumnIndex(Constants.COLUMN_MINUTE));
                 exp = t.getInt(t.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
             }
-            TimeCount tc = new TimeCount(WeekDayDialog.this);
-            long nextDate = tc.getNextWeekdayTime(hour, minute, weekdays, 0);
-            if (type.startsWith(Constants.TYPE_MONTHDAY)) nextDate = tc.getNextMonthDayTime(hour, minute, day, 0);
+            long nextDate = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
+            if (type.startsWith(Constants.TYPE_MONTHDAY)) nextDate = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
             sPrefs = new SharedPrefs(WeekDayDialog.this);
             if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && exp == 1) {
@@ -688,11 +687,6 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onDestroy() {
         if (sentReceiver != null) {
             unregisterReceiver(sentReceiver);
@@ -749,7 +743,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 }
             }
         } else
-            Log.e("error", "Initilization Failed!");
+            Log.e("error", "Initialization Failed!");
     }
 
     class moveToArchive extends AsyncTask<Long, Void, Void> {

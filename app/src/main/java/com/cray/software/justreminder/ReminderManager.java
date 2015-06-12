@@ -94,6 +94,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
 import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -3403,13 +3404,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && weekExport.isChecked()){
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, 0,
                         0, 0, 0, 0, repeat, 1, melody, 0, ledColor, getSyncCode(weekTaskExport), categoryId);
-                exportToCalendar(task, getWeekTime(myHour, myMinute, repeat), id);
+                exportToCalendar(task, ReminderUtils.getWeekTime(myHour, myMinute, repeat), id);
             } else {
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, 0,
                         0, 0, 0, 0, repeat, 0, melody, 0, ledColor, getSyncCode(weekTaskExport), categoryId);
             }
             if (gtx.isLinked() && weekTaskExport.isChecked()){
-                exportToTasks(task, getWeekTime(myHour, myMinute, repeat), id);
+                exportToTasks(task, ReminderUtils.getWeekTime(myHour, myMinute, repeat), id);
             }
             DB.updateDateTime(id);
             new WeekDayReceiver().setAlarm(ReminderManager.this, id);
@@ -3421,13 +3422,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && weekExport.isChecked()) {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                         uuID, repeat, 1, melody, 0, ledColor, getSyncCode(weekTaskExport), categoryId);
-                exportToCalendar(task, getWeekTime(myHour, myMinute, repeat), idN);
+                exportToCalendar(task, ReminderUtils.getWeekTime(myHour, myMinute, repeat), idN);
             } else {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                         uuID, repeat, 0, melody, 0, ledColor, getSyncCode(weekTaskExport), categoryId);
             }
             if (gtx.isLinked() && weekTaskExport.isChecked()){
-                exportToTasks(task, getWeekTime(myHour, myMinute, repeat), idN);
+                exportToTasks(task, ReminderUtils.getWeekTime(myHour, myMinute, repeat), idN);
             }
             DB.updateDateTime(idN);
             new WeekDayReceiver().setAlarm(ReminderManager.this, idN);
@@ -3450,13 +3451,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && skypeExport.isChecked()){
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(skypeTaskExport), categoryId);
-                exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             } else {
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(skypeTaskExport), categoryId);
             }
             if (gtx.isLinked() && skypeTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3468,13 +3469,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && skypeExport.isChecked()) {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                         uuID, null, 1, melody, 0, ledColor, getSyncCode(skypeTaskExport), categoryId);
-                exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             } else {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                         uuID, null, 0, melody, 0, ledColor, getSyncCode(skypeTaskExport), categoryId);
             }
             if (gtx.isLinked() && skypeTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3509,13 +3510,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && appExport.isChecked()){
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(appTaskExport), categoryId);
-                exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             } else {
                 DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(appTaskExport), categoryId);
             }
             if (gtx.isLinked() && appTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3527,13 +3528,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && appExport.isChecked()) {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                         uuID, null, 1, melody, 0, ledColor, getSyncCode(appTaskExport), categoryId);
-                exportToCalendar(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToCalendar(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             } else {
                 idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                         uuID, null, 0, melody, 0, ledColor, getSyncCode(appTaskExport), categoryId);
             }
             if (gtx.isLinked() && appTaskExport.isChecked()){
-                exportToTasks(task, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(task, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3611,13 +3612,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && monthDayExport.isChecked()){
                 DB.updateTask(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
                         0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
-                exportToCalendar(text, getMonthTime(myHour, myMinute, day), id);
+                exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, day), id);
             } else {
                 DB.updateTask(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
                         0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
             }
             if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-                exportToTasks(text, getMonthTime(myHour, myMinute, day), id);
+                exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, day), id);
             }
             DB.updateDateTime(id);
             new MonthDayReceiver().setAlarm(ReminderManager.this, id);
@@ -3630,14 +3631,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 idN = DB.insertTask(text, type, day, 0, 0, myHour, myMinute, 0, number,
                         0, 0, 0, 0, 0,
                         uuID, null, 1, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
-                exportToCalendar(text, getMonthTime(myHour, myMinute, day), idN);
+                exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, day), idN);
             } else {
                 idN = DB.insertTask(text, type, day, 0, 0, myHour, myMinute, 0, number,
                         0, 0, 0, 0, 0,
                         uuID, null, 0, melody, 0, ledColor, getSyncCode(monthDayTaskExport), categoryId);
             }
             if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-                exportToTasks(text, getMonthTime(myHour, myMinute, day), idN);
+                exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, day), idN);
             }
             DB.updateDateTime(idN);
             new MonthDayReceiver().setAlarm(ReminderManager.this, idN);
@@ -3662,13 +3663,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && dateExport.isChecked()){
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat,
                         0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(dateTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             } else {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat,
                         0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(dateTaskExport), categoryId);
             }
             if (gtx.isLinked() && dateTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3680,13 +3681,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && dateExport.isChecked()) {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat, 0, 0, 0, 0,
                         uuID, null, 1, melody, 0, ledColor, getSyncCode(dateTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             } else {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat, 0, 0, 0, 0,
                         uuID, null, 0, melody, 0, ledColor, getSyncCode(dateTaskExport), categoryId);
             }
             if (gtx.isLinked() && dateTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3719,13 +3720,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && timeExport.isChecked()) {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, 0, time,
                         0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, time), id);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), id);
             } else {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, 0, time,
                         0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
             }
             if (gtx.isLinked() && timeTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3737,13 +3738,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && timeExport.isChecked()) {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
                         0, time, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
             } else {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
                         0, time, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
             }
             if (gtx.isLinked() && timeTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3782,13 +3783,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && callExport.isChecked()) {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
                         repeat, 0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(callTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             } else {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
                         repeat, 0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(callTaskExport), categoryId);
             }
             if (gtx.isLinked() && callTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3800,13 +3801,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && callExport.isChecked()) {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, getSyncCode(callTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             } else {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, getSyncCode(callTaskExport), categoryId);
             }
             if (gtx.isLinked() && callTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3832,13 +3833,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && messageExport.isChecked()) {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(messageTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             } else {
                 DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(messageTaskExport), categoryId);
             }
             if (gtx.isLinked() && messageTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3850,13 +3851,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && messageExport.isChecked()) {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, getSyncCode(messageTaskExport), categoryId);
-                exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             } else {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
                         0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, getSyncCode(messageTaskExport), categoryId);
             }
             if (gtx.isLinked() && messageTaskExport.isChecked()){
-                exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -4036,7 +4037,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void exportToCalendar(String summary, long startTime, long id){
+    public void exportToCalendar(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
             new CalendarManager(ReminderManager.this).addEvent(summary, startTime, id);
@@ -4046,7 +4047,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void exportToTasks(String summary, long startTime, long mId){
+    public void exportToTasks(String summary, long startTime, long mId){
         long localId = new TasksData(ReminderManager.this).addTask(summary, null, 0, false, startTime,
                 null, null, getString(R.string.string_task_from_just_reminder),
                 null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
@@ -4054,21 +4055,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
     }
 
-    private long getWeekTime(int hour, int minute, String weekdays){
-        TimeCount count = new TimeCount(ReminderManager.this);
-        return count.getNextWeekdayTime(hour, minute, weekdays, 0);
-    }
-
-    private long getMonthTime(int hour, int minute, int day){
-        TimeCount count = new TimeCount(ReminderManager.this);
-        return count.getNextMonthDayTime(hour, minute, day, 0);
-    }
-
-    private long getTime(int day, int month, int year, int hour, int minute, long after){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis() + after;
-    }
 
     @Override
     public void onClick(View v) {
@@ -4124,8 +4110,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private int getRepeat(int progress) {
-        return new Interval(ReminderManager.this).getRepeatDays(progress);
+    public int getRepeat(int progress) {
+        return Interval.getRepeatDays(progress);
     }
 
     @Override

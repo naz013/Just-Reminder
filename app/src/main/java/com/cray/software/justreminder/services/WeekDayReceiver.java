@@ -32,8 +32,7 @@ public class WeekDayReceiver extends BroadcastReceiver {
         }
         if (c != null) c.close();
 
-        TimeCount timeCount = new TimeCount(context);
-        if (timeCount.isDay(repeat)) {
+        if (TimeCount.isDay(repeat)) {
             Intent service = new Intent(context, WeekDayReceiver.class);
             context.startService(service);
             Intent resultIntent = new Intent(context, WeekDayDialog.class);

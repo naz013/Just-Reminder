@@ -58,39 +58,13 @@
 
         <uses-library android:name="com.google.android.maps" />
 
-        <activity android:name=".MainActivity" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ArchiveActivity" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".SettingsActivity" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".GeolocationTasks"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".CalendarActivity"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".NotesActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -107,14 +81,6 @@
         </activity>
         <activity
             android:name="com.hexrain.design.fragments.ReminderPreviewFragment"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".TasksActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -173,28 +139,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.PlacesList"
-            android:configChanges="keyboardHidden|orientation" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.CategoriesList"
-            android:configChanges="keyboardHidden|orientation" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dialogs.utils.NewPlace"
-            android:configChanges="keyboardHidden|orientation" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.TemplatesList"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -209,6 +154,20 @@
         </activity>
         <activity
             android:name=".dialogs.utils.NewTemplate"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.TemplatesList"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".dialogs.PlacesList"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -243,14 +202,6 @@
 
                 <data android:mimeType="application/octet-stream" />
                 <data android:pathPattern=".*\\.note" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".BackupManager"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -420,14 +371,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.utils.ImportContacts"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dialogs.utils.ListSounds"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog" >
@@ -501,13 +444,6 @@
         </activity>
         <activity
             android:name=".dialogs.utils.ContactsList"
-            android:configChanges="keyboardHidden|orientation" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.utils.ContactsNameList"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

@@ -34,6 +34,7 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -211,7 +212,7 @@ public class QuickAddReminder extends AppCompatActivity implements
     }
 
     private int getRepeat(int progress) {
-        return new Interval(QuickAddReminder.this).getRepeatDays(progress);
+        return Interval.getRepeatDays(progress);
     }
 
     protected void dateDialog() {
@@ -291,13 +292,13 @@ public class QuickAddReminder extends AppCompatActivity implements
                 prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) {
             id = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
-            exportToCalendar(text, getTime(myDay, myMonth, myYear, myHour, myMinute), id);
+            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
         } else {
             id = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
-            exportToTasks(text, getTime(myDay, myMonth, myYear, myHour, myMinute), id);
+            exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
         }
         DB.updateDateTime(id);
         alarm.setAlarm(QuickAddReminder.this, id);
@@ -326,12 +327,6 @@ public class QuickAddReminder extends AppCompatActivity implements
                 null, null, null, 0, id, null, Constants.TASKS_NEED_ACTION, false);
         new TaskAsync(QuickAddReminder.this, summary, null, null,
                 TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
-    }
-
-    private long getTime(int day, int month, int year, int hour, int minute){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis();
     }
 
     @Override

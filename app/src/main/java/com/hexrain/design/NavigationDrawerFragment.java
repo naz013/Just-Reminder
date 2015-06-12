@@ -89,11 +89,13 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
+        String appName;
         if (new ManageModule().isPro()) {
-            appNameBanner.setText(R.string.app_name_pro);
+            appName = getString(R.string.app_name_pro);
         } else {
-            appNameBanner.setText(R.string.app_name);
+            appName = getString(R.string.app_name);
         }
+        appNameBanner.setText(appName.toUpperCase());
 
         fragmentSettings = (TextView) rootView.findViewById(R.id.fragmentSettings);
         fragmentSettings.setOnClickListener(this);

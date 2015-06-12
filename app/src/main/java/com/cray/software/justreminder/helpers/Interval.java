@@ -119,7 +119,7 @@ public class Interval {
         return interval;
     }
 
-    public int getRepeatDays(int progress){
+    public static int getRepeatDays(int progress){
         int interval = 0;
         if (progress == 0){
             interval = 0;

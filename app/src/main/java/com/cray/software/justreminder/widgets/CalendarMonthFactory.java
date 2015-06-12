@@ -18,6 +18,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.ReminderUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -145,7 +146,6 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         int minute = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
         boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR);
-        TimeCount mCount = new TimeCount(context);
 
         DataBase db = new DataBase(context);
         if (!db.isOpen()) db.open();
@@ -210,7 +210,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                                 mType.matches(Constants.TYPE_MESSAGE) ||
                                 mType.matches(Constants.TYPE_REMINDER) ||
                                 mType.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                            long time = mCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
+                            long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
                                     afterTime, repCode, remCount, 0);
                             Calendar calendar1 = Calendar.getInstance();
                             calendar1.setTimeInMillis(time);
@@ -236,7 +236,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                                 } while (days < Configs.MAX_DAYS_COUNT);
                             }
                         } else if (mType.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0) {
-                            long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
+                            long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
                             Calendar calendar1 = Calendar.getInstance();
                             calendar1.setTimeInMillis(time);
                             int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -247,7 +247,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             }
                             int days = 0;
                             if (isFeature) {
-                                ArrayList<Integer> list = getRepeatArray(weekdays);
+                                ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
                                 do {
                                     calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
                                             AlarmManager.INTERVAL_DAY);
@@ -265,7 +265,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                                 } while (days < Configs.MAX_DAYS_COUNT);
                             }
                         } else if (mType.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                            long time = mCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
+                            long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
                             Calendar calendar1 = Calendar.getInstance();
                             if (time > 0) {
                                 calendar1.setTimeInMillis(time);
@@ -279,7 +279,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             int days = 1;
                             if (isFeature){
                                 do {
-                                    time = mCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
+                                    time = TimeCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
                                     days = days + 1;
                                     calendar1.setTimeInMillis(time);
                                     int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -305,25 +305,6 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
     }
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-    private ArrayList<Integer> getRepeatArray(String weekdays){
-        ArrayList<Integer> res = new ArrayList<>();
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))res.add(1);
-        else res.add(0);
-        return res;
-    }
 
     @Override
     public void onDestroy() {

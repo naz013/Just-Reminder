@@ -200,7 +200,7 @@ public class TimeCount {
         return dateTime;
     }
 
-    public long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
+    public static long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
                              int seconds, long inTime, int repeatCode, int remCount, int delay){
         long date;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
@@ -314,7 +314,7 @@ public class TimeCount {
         return nextDate;
     }
 
-    public long getNextWeekdayTime(int hourOfDay, int minuteOfHour, String weekdays, int delay){
+    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour, String weekdays, int delay){
         long date;
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
@@ -382,7 +382,7 @@ public class TimeCount {
         return((value > min) && (value < max));
     }
 
-    public boolean isDay(String repeat){
+    public static boolean isDay(String repeat){
         boolean res = false;
         Calendar calendar = Calendar.getInstance();
         int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
@@ -410,7 +410,7 @@ public class TimeCount {
         return res;
     }
 
-    public long getNextMonthDayTime(int hourOfDay, int minuteOfHour, int dayOfMonth, int delay){
+    public static long getNextMonthDayTime(int hourOfDay, int minuteOfHour, int dayOfMonth, int delay){
         if (dayOfMonth == 0){
             return getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
         }
@@ -435,7 +435,7 @@ public class TimeCount {
         return newDbTime;
     }
 
-    public long getNextMonthDayTime(int dayOfMonth, long fromTime, int multi){
+    public static long getNextMonthDayTime(int dayOfMonth, long fromTime, int multi){
         if (dayOfMonth == 0){
             return getLastMonthDayTime(fromTime, multi);
         }
@@ -448,7 +448,7 @@ public class TimeCount {
         return cc.getTimeInMillis();
     }
 
-    private long getLastMonthDayTime(long fromTime, int multi) {
+    public static long getLastMonthDayTime(long fromTime, int multi) {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
         int month = cc.get(Calendar.MONTH);
@@ -461,7 +461,7 @@ public class TimeCount {
         return cc.getTimeInMillis();
     }
 
-    public long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
+    public static long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
         int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -484,7 +484,7 @@ public class TimeCount {
         return newDbTime;
     }
 
-    public boolean isDay(int dayOfMonth){
+    public static boolean isDay(int dayOfMonth){
         if (dayOfMonth == 0){
             return isLastDay();
         }
@@ -494,7 +494,7 @@ public class TimeCount {
         else return false;
     }
 
-    public boolean isLastDay(){
+    public static boolean isLastDay(){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
         if (cc.get(Calendar.DAY_OF_MONTH) == cc.getActualMaximum(Calendar.DAY_OF_MONTH)) return true;
