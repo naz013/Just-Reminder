@@ -43,7 +43,7 @@
     <dimen name="settings_margin">15dp</dimen>
     <dimen name="settings_text_size_primary">18sp</dimen>
     <dimen name="settings_text_size_secondary">14sp</dimen>
-    <dimen name="settings_view_size">40dp</dimen>
+    <dimen name="settings_view_size">25dp</dimen>
 
     <dimen name="category_margin">15dp</dimen>
     <dimen name="category_radio_margin">5dp</dimen>

@@ -186,7 +186,7 @@
             android:layout_width="@dimen/settings_view_size"
             android:layout_height="@dimen/settings_view_size"
             android:layout_marginRight="5dp"
-            android:background="@color/colorGrey"/>
+            android:background="@drawable/drawable_blue"/>
     </RelativeLayout>
 
     <View

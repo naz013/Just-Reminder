@@ -17,7 +17,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.MainActivity;
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
@@ -26,6 +25,7 @@ import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.hexrain.design.ScreenManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -972,9 +972,10 @@ public class Notifier {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.noteAdd, notePendingIntent);
 
-        Intent resInt = new Intent(ctx, MainActivity.class);
+        Intent resInt = new Intent(ctx, ScreenManager.class);
+        resInt.putExtra("tag", ScreenManager.FRAGMENT_ACTIVE);
         TaskStackBuilder stackInt = TaskStackBuilder.create(ctx);
-        stackInt.addParentStack(MainActivity.class);
+        stackInt.addParentStack(ScreenManager.class);
         stackInt.addNextIntent(resInt);
         PendingIntent resultPendingInt = stackInt.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);

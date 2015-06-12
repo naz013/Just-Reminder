@@ -1002,12 +1002,14 @@ public class SyncHelper {
         Cursor cf = DB.queryCategories();
         if (cf != null && cf.moveToFirst()) {
             List<String> namesPass = new ArrayList<>();
+            List<String> titles = new ArrayList<>();
             while (cf.moveToNext()) {
                 for (cf.moveToFirst(); !cf.isAfterLast(); cf.moveToNext()) {
                     namesPass.add(cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR)));
+                    titles.add(cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT)));
                 }
             }
-            if (!namesPass.contains(uuID)) {
+            if (!namesPass.contains(uuID) && !titles.contains(title)) {
                 DB.addCategory(title, date, uuID, color);
             }
         } else {

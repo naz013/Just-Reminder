@@ -48,7 +48,6 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.adapters.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.async.DelayedAsync;
-import com.cray.software.justreminder.async.GetExchangeTasksAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
@@ -69,7 +68,6 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
@@ -199,8 +197,6 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderNo = (TextView) findViewById(R.id.buttonReminderNo);
 
         initButton();
-
-        new GetExchangeTasksAsync(this, null).execute();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -1120,14 +1116,15 @@ public class ScreenManager extends AppCompatActivity
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
 
-        if (mTag != null) onNavigationDrawerItemSelected(mTag);
+        if (mTag != null) {
+            onNavigationDrawerItemSelected(mTag);
+        }
 
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)){
             new Notifier(this).recreatePermanent();
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG) &&
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)) {
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)) {
             isChangesShown();
         }
 

@@ -16,6 +16,7 @@ import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
+import com.hexrain.design.ScreenManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

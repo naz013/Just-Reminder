@@ -121,7 +121,7 @@ public class EventsFragment extends Fragment {
 
         if (dateMills != 0) cal.setTimeInMillis(dateMills);
         showEvents(cal.getTime());
-        updateMenuTitles(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
+        updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1));
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         return rootView;
     }
@@ -190,7 +190,7 @@ public class EventsFragment extends Fragment {
                 int day = pagerData.get(i).getDay();
                 int month = pagerData.get(i).getMonth();
                 int year = pagerData.get(i).getYear();
-                updateMenuTitles(String.valueOf(day));
+                updateMenuTitles(day + "/" + (month + 1));
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.set(Calendar.DAY_OF_MONTH, day);
                 calendar1.set(Calendar.MONTH, month);

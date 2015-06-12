@@ -11,7 +11,6 @@ import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.CalendarData;
+import com.cray.software.justreminder.datas.PagerItem;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
@@ -31,15 +32,12 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.datas.CalendarData;
+import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
-import com.cray.software.justreminder.datas.PagerItem;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.roomorama.caldroid.CaldroidFragment;
-import com.roomorama.caldroid.CaldroidListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,16 +48,14 @@ import java.util.Date;
 public class CalendarActivity extends AppCompatActivity {
 
     ColorSetter cSetter;
-    CaldroidFragment calendarView;
     DataBase db;
     SharedPrefs sPrefs;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     Toolbar toolbar;
-    boolean isCalendar;
     FloatingActionsMenu mainMenu;
     FloatingActionButton addReminder, addBirthday;
     long dateMills;
-    ImageButton monthView, voiceButton;
+    ImageButton voiceButton;
     Button currentEvent;
     TextView title;
     ViewPager pager;
@@ -89,28 +85,7 @@ public class CalendarActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.title);
         title.setText(getString(R.string.calendar_fragment));
 
-        monthView = (ImageButton) findViewById(R.id.monthView);
         voiceButton = (ImageButton) findViewById(R.id.voiceButton);
-        monthView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMonth();
-                if (isCalendar) {
-                    if (calendarView != null) {
-                        calendarView.refreshView();
-                        calendarView.clearSelectedDates();
-                    }
-                    sPrefs = new SharedPrefs(CalendarActivity.this);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR)) {
-                        loadReminders();
-                    }
-
-                    loadEvents();
-                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
-                }
-            }
-        });
-
         voiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,14 +170,9 @@ public class CalendarActivity extends AppCompatActivity {
             showEvents(cal.getTime());
             sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         } else {
-            if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW) == 1) {
-                showMonth();
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
-            } else {
-                cal.setTimeInMillis(System.currentTimeMillis());
-                showEvents(cal.getTime());
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
-            }
+            cal.setTimeInMillis(System.currentTimeMillis());
+            showEvents(cal.getTime());
+            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         }
     }
 
@@ -231,74 +201,6 @@ public class CalendarActivity extends AppCompatActivity {
             new Recognizer(this).selectTask(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void showMonth(){
-        calendarView = new CaldroidFragment();
-        Bundle args = new Bundle();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
-        args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
-        sPrefs = new SharedPrefs(CalendarActivity.this);
-        if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 0) {
-            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.SUNDAY);
-        } else {
-            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.MONDAY);
-        }
-        args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
-        calendarView.setArguments(args);
-        calendarView.setMinDate(null);
-        calendarView.setMaxDate(null);
-
-        currentEvent.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
-        currentEvent.setClickable(true);
-        monthView.setVisibility(View.GONE);
-        title.setText(getString(R.string.calendar_fragment));
-
-        calendarLayout.setVisibility(View.VISIBLE);
-        pager.setVisibility(View.GONE);
-
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.replace(R.id.calendarView, calendarView);
-        t.addToBackStack("calendar");
-        t.commit();
-
-        isCalendar = true;
-
-        final CaldroidListener listener = new CaldroidListener() {
-
-            @Override
-            public void onSelectDate(Date date, View view) {
-                showEvents(date);
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
-            }
-
-            @Override
-            public void onChangeMonth(int month, int year) {
-            }
-
-            @Override
-            public void onLongClickDate(Date date, View view) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                calendar.setTime(date);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                long dateMills = calendar.getTimeInMillis();
-                startActivity(new Intent(CalendarActivity.this, QuickAddReminder.class)
-                        .putExtra("date", dateMills));
-            }
-
-            @Override
-            public void onCaldroidViewCreated() {
-            }
-
-        };
-
-        calendarView.setCaldroidListener(listener);
     }
 
     private void addBirthday() {
@@ -421,7 +323,7 @@ public class CalendarActivity extends AppCompatActivity {
                                         if (number == null) number = "0";
                                         datas.add(new CalendarData("reminder", name, number, id, time));
                                     }
-                                } while (days < 31);
+                                } while (days < Configs.MAX_DAYS_COUNT);
                             }
                         } else if (mType.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0) {
                             long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
@@ -451,7 +353,35 @@ public class CalendarActivity extends AppCompatActivity {
                                             datas.add(new CalendarData("reminder", name, number, id, time));
                                         }
                                     }
-                                } while (days < 31);
+                                } while (days < Configs.MAX_DAYS_COUNT);
+                            }
+                        } else if (mType.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
+                            long time = mCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
+                            Calendar calendar1 = Calendar.getInstance();
+                            if (time > 0) {
+                                calendar1.setTimeInMillis(time);
+                                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                                int mMonth = calendar1.get(Calendar.MONTH);
+                                int mYear = calendar1.get(Calendar.YEAR);
+                                if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
+                                    if (number == null) number = "0";
+                                    datas.add(new CalendarData("reminder", name, number, id, time));
+                                }
+                            }
+                            int days = 1;
+                            if (isFeature){
+                                do {
+                                    time = mCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
+                                    days = days + 1;
+                                    calendar1.setTimeInMillis(time);
+                                    int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                                    int mMonth = calendar1.get(Calendar.MONTH);
+                                    int mYear = calendar1.get(Calendar.YEAR);
+                                    if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
+                                        if (number == null) number = "0";
+                                        datas.add(new CalendarData("reminder", name, number, id, time));
+                                    }
+                                } while (days < Configs.MAX_MONTH_COUNT);
                             }
                         }
                     } while (s.moveToNext());
@@ -462,14 +392,14 @@ public class CalendarActivity extends AppCompatActivity {
 
             if (currentDay == targetDay && currentMonth == targetMonth && currentYear == targetYear){
                 targetPosition = position;
-                pagerData.add(new PagerItem(datas, position, 1, currentDay));
+                pagerData.add(new PagerItem(datas, position, 1, currentDay, currentMonth, currentYear));
             } else {
-                pagerData.add(new PagerItem(datas, position, 0, currentDay));
+                pagerData.add(new PagerItem(datas, position, 0, currentDay, currentMonth, currentYear));
             }
 
             position++;
             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
-        } while (position < 60);
+        } while (position < Configs.MAX_DAYS_COUNT);
 
         calendarLayout.setVisibility(View.GONE);
         pager.setVisibility(View.VISIBLE);
@@ -485,7 +415,9 @@ public class CalendarActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                currentEvent.setText(String.valueOf(pagerData.get(i).getDay()));
+                int day = pagerData.get(i).getDay();
+                int month = pagerData.get(i).getMonth();
+                currentEvent.setText(day + "/" + (month + 1));
                 ArrayList<CalendarData> data = pagerData.get(i).getDatas();
                 if (data.size() > 0) dateMills = data.get(0).getDate();
             }
@@ -499,10 +431,7 @@ public class CalendarActivity extends AppCompatActivity {
         pager.setCurrentItem(targetPosition);
 
         currentEvent.setClickable(false);
-        monthView.setVisibility(View.VISIBLE);
         title.setText(getString(R.string.birthdays_dialog_title));
-
-        isCalendar = false;
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -529,120 +458,15 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sPrefs = new SharedPrefs(CalendarActivity.this);
-        if (isCalendar) {
-            if (calendarView != null) {
-                calendarView.refreshView();
-                calendarView.clearSelectedDates();
-            }
-
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR)) {
-                loadReminders();
-            }
-
-            loadEvents();
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+        Calendar calendar = Calendar.getInstance();
+        if (dateMills != 0){
+            calendar.setTimeInMillis(dateMills);
+            showEvents(calendar.getTime());
+            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         } else {
-            Calendar calendar = Calendar.getInstance();
-            if (dateMills != 0){
-                calendar.setTimeInMillis(dateMills);
-                showEvents(calendar.getTime());
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
-            } else {
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                showEvents(calendar.getTime());
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
-            }
-        }
-    }
-
-    private void loadReminders() {
-        db = new DataBase(CalendarActivity.this);
-        if (!db.isOpen()) db.open();
-        sPrefs = new SharedPrefs(CalendarActivity.this);
-        boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-        TimeCount mCount = new TimeCount(CalendarActivity.this);
-        ArrayList<Date> dates = new ArrayList<>();
-        dates.clear();
-        Cursor c = db.queryGroup();
-        if (c != null && c.moveToFirst()){
-            do {
-                int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                if ((type.startsWith(Constants.TYPE_SKYPE) ||
-                        type.matches(Constants.TYPE_CALL) ||
-                        type.startsWith(Constants.TYPE_APPLICATION) ||
-                        type.matches(Constants.TYPE_MESSAGE) ||
-                        type.matches(Constants.TYPE_REMINDER) ||
-                        type.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                    long time = mCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
-                            afterTime, repCode, remCount, 0);
-                    Calendar calendar = Calendar.getInstance();
-                    if (time > 0) {
-                        calendar.setTimeInMillis(time);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        Date bdDate = getDate(0, month, day);
-                        dates.add(bdDate);
-                        int days = 0;
-                        if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
-                            do {
-                                calendar.setTimeInMillis(time + (repCode * Intervals.MILLS_INTERVAL_DAY));
-                                time = calendar.getTimeInMillis();
-                                days = days + repCode;
-                                day = calendar.get(Calendar.DAY_OF_MONTH);
-                                month = calendar.get(Calendar.MONTH);
-                                bdDate = getDate(0, month, day);
-                                dates.add(bdDate);
-                            } while (days < 61);
-                        }
-                    }
-                } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
-                    long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
-                    Calendar calendar = Calendar.getInstance();
-                    if (time > 0) {
-                        calendar.setTimeInMillis(time);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        Date bdDate = getDate(0, month, day);
-                        dates.add(bdDate);
-                    }
-                    int days = 0;
-                    if (isFeature){
-                        ArrayList<Integer> list = getRepeatArray(weekdays);
-                        do {
-                            calendar.setTimeInMillis(time + Intervals.MILLS_INTERVAL_DAY);
-                            time = calendar.getTimeInMillis();
-                            int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
-                            days = days + 1;
-                            if (list.get(weekDay - 1) == 1){
-                                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                int month = calendar.get(Calendar.MONTH);
-                                Date bdDate = getDate(0, month, day);
-                                dates.add(bdDate);
-                            }
-                        } while (days < 61);
-                    }
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) {
-            c.close();
-        }
-        if (db != null) db.close();
-
-        for (int i = 0; i < dates.size(); i++) {
-            if (calendarView != null) {
-                calendarView.setBackgroundResourceForDate(cSetter.colorReminderCalendar(), dates.get(i));
-            }
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            showEvents(calendar.getTime());
+            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         }
     }
 
@@ -663,67 +487,6 @@ public class CalendarActivity extends AppCompatActivity {
         if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))res.add(1);
         else res.add(0);
         return res;
-    }
-
-    private void loadEvents(){
-        db = new DataBase(CalendarActivity.this);
-        if (!db.isOpen()) db.open();
-        ArrayList<Date> dates = new ArrayList<>();
-        Cursor c = db.queryEvents();
-        if (c != null && c.moveToFirst()){
-            do {
-                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                Date date = null;
-                try {
-                    date = format.parse(birthday);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Calendar calendar = Calendar.getInstance();
-                if (date != null) {
-                    try {
-                        calendar.setTime(date);
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
-                    }
-                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                    int month = calendar.get(Calendar.MONTH);
-                    Date bdDate = getDate(0, month, day);
-                    Date prevDate = getDate(0 - 1, month, day);
-                    Date nextDate = getDate(1, month, day);
-                    Date nextTwoDate = getDate(2, month, day);
-                    dates.add(bdDate);
-                    dates.add(prevDate);
-                    dates.add(nextDate);
-                    dates.add(nextTwoDate);
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) {
-            c.close();
-        }
-        if (db != null) db.close();
-
-        for (int i = 0; i < dates.size(); i++) {
-            if (calendarView != null) {
-                calendarView.setBackgroundResourceForDate(cSetter.colorBirthdayCalendar(), dates.get(i));
-            }
-        }
-    }
-
-    public static Date getDate(int index, int month, int day) {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, year + index);
-        cal1.set(Calendar.MONTH, month);
-        cal1.set(Calendar.DAY_OF_MONTH, day);
-        cal1.set(Calendar.HOUR_OF_DAY, 0);
-        cal1.set(Calendar.MINUTE, 0);
-        cal1.set(Calendar.SECOND, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        return cal1.getTime();
     }
 
     @Override

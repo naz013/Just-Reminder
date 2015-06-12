@@ -34,7 +34,6 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
@@ -56,7 +55,7 @@ import com.wdullaer.swipeactionadapter.SwipeDirections;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ActiveFragment extends Fragment implements SyncListener {
+public class ActiveFragment extends Fragment {
 
     ListView currentList;
     LinearLayout emptyLayout, emptyItem;
@@ -85,6 +84,7 @@ public class ActiveFragment extends Fragment implements SyncListener {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+        DB = new DataBase(getActivity());
     }
 
     @Override
@@ -251,9 +251,9 @@ public class ActiveFragment extends Fragment implements SyncListener {
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         if (categoryId != null) {
-            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(categoryId), this);
+            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(categoryId), null);
         } else {
-            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(), this);
+            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(), null);
         }
         final SwipeActionAdapter mAdapter = new SwipeActionAdapter(customAdapter);
         mAdapter.setListView(currentList);
@@ -504,11 +504,6 @@ public class ActiveFragment extends Fragment implements SyncListener {
     }
 
     private void startSync(){
-        new SyncTask(getActivity(), this).execute();
-    }
-
-    @Override
-    public void endExecution(boolean result) {
-        loaderAdapter(null);
+        new SyncTask(getActivity(), null).execute();
     }
 }

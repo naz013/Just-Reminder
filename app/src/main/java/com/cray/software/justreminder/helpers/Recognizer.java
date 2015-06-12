@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.cray.software.justreminder.CalendarActivity;
-import com.cray.software.justreminder.GeolocationTasks;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.SplashScreen;
@@ -26,6 +24,7 @@ import com.cray.software.justreminder.interfaces.RecognizerUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.hexrain.design.ScreenManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,12 +76,14 @@ public class Recognizer {
                 } else if (keyStr.matches(".*календар.*") ||
                         keyStr.matches(".*calendar.*") ||
                         keyStr.matches(".*календарь.*")){
-                    ctx.startActivity(new Intent(ctx, CalendarActivity.class));
+                    ctx.startActivity(new Intent(ctx, ScreenManager.class)
+                            .putExtra("tag", ScreenManager.ACTION_CALENDAR));
                     break;
                 } else if (keyStr.matches(".*локації.*") ||
                         keyStr.matches(".*locations?.*") ||
                         keyStr.matches(".*локации.*")){
-                    ctx.startActivity(new Intent(ctx, GeolocationTasks.class));
+                    ctx.startActivity(new Intent(ctx, ScreenManager.class)
+                            .putExtra("tag", ScreenManager.FRAGMENT_LOCATIONS));
                     break;
                 } else if ((keyStr.matches(".*додаток.*") ||
                         keyStr.matches(".*application.*") ||

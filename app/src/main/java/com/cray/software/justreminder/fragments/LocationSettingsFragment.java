@@ -21,6 +21,7 @@ import com.cray.software.justreminder.dialogs.utils.TrackerOption;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.hexrain.design.ScreenManager;
 
 public class LocationSettingsFragment extends Fragment implements View.OnClickListener {
 

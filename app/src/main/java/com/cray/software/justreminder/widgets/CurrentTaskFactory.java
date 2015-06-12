@@ -13,6 +13,7 @@ import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -24,8 +25,7 @@ import java.util.Calendar;
 
 public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    ArrayList<String> text, numberList, date, time;
-    ArrayList<Long> ids;
+    ArrayList<CalendarData> data;
     Context context;
     DataBase db;
     int widgetID;
@@ -40,21 +40,13 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onCreate() {
-        text = new ArrayList<>();
-        numberList = new ArrayList<>();
-        date = new ArrayList<>();
-        time = new ArrayList<>();
-        ids = new ArrayList<>();
+        data = new ArrayList<>();
         db = new DataBase(context);
     }
 
     @Override
     public void onDataSetChanged() {
-        text.clear();
-        numberList.clear();
-        time.clear();
-        date.clear();
-        ids.clear();
+        data.clear();
         db = new DataBase(context);
         db.open();
         String title;
@@ -96,23 +88,17 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
 
                 if (done != 1) {
-                    ids.add(id);
-
-                    text.add(title);
-                    if (number != null) {
-                        numberList.add(number);
-                    } else numberList.add(null);
                     tC = new TimeCount(context);
 
                     String[] dT = tC.getNextDateTime(year, month, day, hour, minute, seconds,
                             repTime, repCode, repCount, 0);
+                    String time = "";
+                    String date = "";
                     if (lat != 0.0 || longi != 0.0) {
-                        date.add(String.format("%.5f", lat));
-                        time.add(String.format("%.5f", longi));
+                        date = String.format("%.5f", lat);
+                        time = String.format("%.5f", longi);
                     } else {
-                        if (type.matches(Constants.TYPE_WEEKDAY) ||
-                                type.matches(Constants.TYPE_WEEKDAY_CALL) ||
-                                type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
+                        if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
                             calendar.set(Calendar.MINUTE, minute);
@@ -126,13 +112,35 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                                 formattedTime = sdf.format(calendar.getTime());
                             }
 
-                            date.add(getRepeatString(weekdays));
-                            time.add(formattedTime);
+                            date = getRepeatString(weekdays);
+                            time = formattedTime;
+                        } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                            long timeL = tC.getNextMonthDayTime(hour, minute, day, 0);
+                            Calendar calendar1 = Calendar.getInstance();
+                            if (timeL > 0) {
+                                calendar1.setTimeInMillis(timeL);
+
+                                SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
+
+                                String formattedTime;
+                                if (new SharedPrefs(context).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
+                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                    formattedTime = sdf.format(calendar1.getTime());
+                                } else {
+                                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
+                                    formattedTime = sdf.format(calendar1.getTime());
+                                }
+
+                                date = format.format(calendar1.getTime());
+                                time = formattedTime;
+                            }
                         } else {
-                            date.add(dT[0]);
-                            time.add(dT[1]);
+                            date = dT[0];
+                            time = dT[1];
                         }
                     }
+
+                    data.add(new CalendarData(title, number, id, time, date));
                 }
             } while (c.moveToNext());
         }
@@ -153,12 +161,8 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                     do {
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                         String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                        time.add(birthday);
-                        date.add("");
                         long i = 0;
-                        ids.add(i);
-                        text.add(context.getString(R.string.birthday_text));
-                        numberList.add(name);
+                        data.add(new CalendarData(context.getString(R.string.birthday_text), name, i, birthday, ""));
                     } while (cursor.moveToNext());
                 }
                 if (cursor != null) {
@@ -213,7 +217,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public int getCount() {
-        return text.size();
+        return data.size();
     }
 
     @Override
@@ -227,10 +231,10 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         float itemTextSize = sp.getFloat(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_SIZE + widgetID, 0);
         rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
 
-        String task = text.get(i);
+        String task = data.get(i).getName();
         Contacts contacts = new Contacts(context);
         if (task == null || task.matches("")) task = contacts
-                .getContactNameFromNumber(numberList.get(i), context);
+                .getContactNameFromNumber(data.get(i).getNumber(), context);
         rView.setTextViewText(R.id.taskText, task);
         rView.setTextColor(R.id.taskText, itemTextColor);
 
@@ -246,18 +250,19 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
         }
 
-        if (numberList.get(i) != null && !numberList.get(i).matches("")) {
-            rView.setTextViewText(R.id.taskNumber, numberList.get(i));
+        String number = data.get(i).getNumber();
+        if (number != null && !number.matches("")) {
+            rView.setTextViewText(R.id.taskNumber, number);
             rView.setTextColor(R.id.taskNumber, itemTextColor);
         } else {
             rView.setViewVisibility(R.id.taskNumber, View.GONE);
         }
-        rView.setTextViewText(R.id.taskDate, date.get(i));
+        rView.setTextViewText(R.id.taskDate, data.get(i).getDayDate());
         rView.setTextColor(R.id.taskDate, itemTextColor);
-        rView.setTextViewText(R.id.taskTime, time.get(i));
+        rView.setTextViewText(R.id.taskTime, data.get(i).getTime());
         rView.setTextColor(R.id.taskTime, itemTextColor);
 
-        long id = ids.get(i);
+        long id = data.get(i).getId();
         if (id != 0) {
             Intent fillInIntent = new Intent();
             fillInIntent.putExtra(Constants.EDIT_ID, id);

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -356,6 +355,8 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         rView.setInt(R.id.background, "setBackgroundColor", widgetBgColor);
 
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int realMonth = calendar.get(Calendar.MONTH);
 
         rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
         rView.setInt(R.id.reminderMark, "setBackgroundColor", Color.TRANSPARENT);
@@ -380,13 +381,11 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
             }
         }
 
-        if (mDay == selDay && mMonth == selMonth && mYear == selYear){
+        if (mDay == selDay && mMonth == selMonth && mYear == selYear && mMonth == realMonth + 1){
             rView.setInt(R.id.currentMark, "setBackgroundColor",
                     context.getResources().getColor(cs.colorCurrentCalendar()));
-            rView.setViewVisibility(R.id.currentMark, View.VISIBLE);
         } else {
             rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
-            rView.setViewVisibility(R.id.currentMark, View.INVISIBLE);
         }
 
         calendar.setTimeInMillis(System.currentTimeMillis());

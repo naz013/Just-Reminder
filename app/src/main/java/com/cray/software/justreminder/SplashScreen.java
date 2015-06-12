@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.async.GetExchangeTasksAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.StartHelp;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -171,6 +172,9 @@ public class SplashScreen extends Activity{
         } else {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         }
+
+        new GetExchangeTasksAsync(this, null).execute();
+
         finish();
     }
 

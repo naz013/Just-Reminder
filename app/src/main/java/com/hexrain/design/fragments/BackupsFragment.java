@@ -120,8 +120,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
-        dbx = new DropboxHelper(getActivity());
-        dbx.startSession();
 
         typefaceLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         typefaceMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Medium.ttf");
@@ -186,6 +184,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             navIds.add(Constants.LOCAL_INT);
         }
         dbx = new DropboxHelper(getActivity());
+        dbx.startSession();
         if (dbx.isLinked()){
             if (isDark) {
                 navSpinner.add(new SpinnerItem("Dropbox", R.drawable.dropbox_icon_white));

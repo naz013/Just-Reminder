@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CalendarData implements Parcelable {
-    private String type, name, number;
+    private String type, name, number, time, dayDate;
     private long id, date;
 
     public CalendarData(String type, String name, String number, long id, long date){
@@ -13,6 +13,31 @@ public class CalendarData implements Parcelable {
         this.id = id;
         this.date = date;
         this.number = number;
+    }
+
+    public CalendarData(String name, String number, long id, String time,
+                        String dayDate){
+        this.time = time;
+        this.dayDate = dayDate;
+        this.name = name;
+        this.id = id;
+        this.number = number;
+    }
+
+    public String getDayDate(){
+        return dayDate;
+    }
+
+    public void setDayDate(String dayDate){
+        this.dayDate = dayDate;
+    }
+
+    public String getTime(){
+        return time;
+    }
+
+    public void setTime(String time){
+        this.time = time;
     }
 
     public long getId(){
