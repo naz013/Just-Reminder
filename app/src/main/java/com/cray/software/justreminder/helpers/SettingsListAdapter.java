@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.navigation.NavDrawerItem;
+import com.cray.software.justreminder.datas.NavDrawerItem;
 
 import java.util.ArrayList;
 

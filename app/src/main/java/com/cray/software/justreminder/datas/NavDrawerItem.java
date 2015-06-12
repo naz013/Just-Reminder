@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.navigation;
+package com.cray.software.justreminder.datas;
 
 public class NavDrawerItem {
     private String mTitle;
