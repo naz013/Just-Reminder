@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -26,27 +33,38 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class CalendarWidgetConfig extends AppCompatActivity {
+public class CalendarWidgetConfig extends AppCompatActivity implements
+        RadioGroup.OnCheckedChangeListener {
 
     int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
     Intent resultValue;
     public final static String CURRENT_WIDGET_PREF = "calendar_pref";
     public final static String CURRENT_WIDGET_COLOR = "calendar_color_";
+    public final static String CURRENT_WIDGET_ROW_COLOR = "calendar_row_color_";
+    public final static String CURRENT_WIDGET_ITEM_TEXT_COLOR = "calendar_item_text_color_";
+    public final static String CURRENT_WIDGET_BORDER_COLOR = "calendar_border_color_";
+    public final static String CURRENT_WIDGET_HEADER_COLOR = "calendar_header_color_";
+    public final static String CURRENT_WIDGET_LEFT_ARROW_COLOR = "calendar_left_arrow_color_";
+    public final static String CURRENT_WIDGET_RIGHT_ARROW_COLOR = "calendar_right_arrow_color_";
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "calendar_button_color_";
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "calendar_button_voice_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "calendar_title_color_";
     public final static String CURRENT_WIDGET_MONTH = "calendar_month_";
-    int color, title, buttonColor, buttonVoice, buttonSettings;
+    int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor, borderColor,
+            leftArrow, rightArrow, headerColor;
     ColorSetter cSetter;
 
     Toolbar toolbar;
 
     TextView note, widgetTitle;
     Spinner widgetBgSpinner;
-    RadioGroup colorsTitleGroup, colorsButtonGroup;
-    RadioButton radioTitleBlack, radioButtonBlack, radioButtonWhite, radioTitleWhite;
-
+    RadioGroup colorsTitleGroup, colorsButtonGroup, group;
+    RadioButton radioTitleBlack, radioButtonBlack, radioButtonWhite, radioTitleWhite, custom, theme;
+    ViewPager themePager;
+    LinearLayout customContainer;
+    MyFragmentPagerAdapter adapter;
+    ArrayList<ThemeItem> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,12 +120,18 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                 switch (i) {
                     case 0:
                         color = getResources().getColor(R.color.colorWhite);
+                        headerColor = getResources().getColor(R.color.colorWhite);
+                        rowColor = getResources().getColor(R.color.colorWhite);
                         break;
                     case 1:
                         color = getResources().getColor(android.R.color.transparent);
+                        headerColor = getResources().getColor(android.R.color.transparent);
+                        rowColor = getResources().getColor(android.R.color.transparent);
                         break;
                     case 2:
                         color = getResources().getColor(R.color.colorBlack);
+                        headerColor = getResources().getColor(R.color.colorBlack);
+                        rowColor = getResources().getColor(R.color.colorBlack);
                         break;
                 }
             }
@@ -125,9 +149,11 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioTitleBlack:
                         title = getResources().getColor(R.color.colorBlack);
+                        itemTextColor = getResources().getColor(R.color.colorBlack);
                         break;
                     case R.id.radioTitleWhite:
                         title = getResources().getColor(R.color.colorWhite);
+                        itemTextColor = getResources().getColor(R.color.colorWhite);
                         break;
                 }
             }
@@ -142,11 +168,15 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                         buttonColor = R.drawable.ic_add_grey600_24dp;
                         buttonVoice = R.drawable.ic_mic_grey600_24dp;
                         buttonSettings = R.drawable.ic_settings_grey600_24dp;
+                        leftArrow = R.drawable.ic_keyboard_arrow_left_grey600_24dp;
+                        rightArrow = R.drawable.ic_keyboard_arrow_right_grey600_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         buttonColor = R.drawable.ic_add_white_24dp;
                         buttonVoice = R.drawable.ic_mic_white_24dp;
                         buttonSettings = R.drawable.ic_settings_white_24dp;
+                        leftArrow = R.drawable.ic_keyboard_arrow_left_white_24dp;
+                        rightArrow = R.drawable.ic_keyboard_arrow_right_white_24dp;
                 }
             }
         });
@@ -166,6 +196,66 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         else radioTitleWhite.setChecked(true);
 
         widgetBgSpinner.setSelection(0);
+
+        customContainer = (LinearLayout) findViewById(R.id.customContainer);
+        themePager = (ViewPager) findViewById(R.id.themePager);
+        customContainer.setVisibility(View.GONE);
+        themePager.setVisibility(View.GONE);
+
+        loadThemes();
+
+        custom = (RadioButton) findViewById(R.id.custom);
+        theme = (RadioButton) findViewById(R.id.theme);
+
+        group = (RadioGroup) findViewById(R.id.group);
+        group.setOnCheckedChangeListener(this);
+        theme.setChecked(true);
+    }
+
+    private int getColor(int res){
+        return getResources().getColor(res);
+    }
+
+    private void loadThemes(){
+        list = new ArrayList<>();
+        list.clear();
+        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_widget_color),
+                getColor(R.color.simple_header_color), getColor(R.color.simple_border_color),
+                getColor(R.color.simple_title_color), getColor(R.color.simple_row_color),
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Simple Emerald"));
+
+        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_black_widget_color),
+                getColor(R.color.simple_black_header_color), getColor(R.color.simple_border_color),
+                getColor(R.color.simple_title_color), getColor(R.color.simple_row_color),
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Simple Black"));
+
+        list.add(new ThemeItem(getColor(R.color.simple_transparent_row_text_color), getColor(R.color.simple_transparent_widget_color),
+                getColor(R.color.simple_transparent_header_color), getColor(R.color.simple_transparent_border_color),
+                getColor(R.color.simple_transparent_title_color), getColor(R.color.simple_transparent_row_color),
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Transparent Light"));
+
+        list.add(new ThemeItem(getColor(R.color.simple_transparent_row_text_color_black), getColor(R.color.simple_transparent_widget_color),
+                getColor(R.color.simple_transparent_header_color), getColor(R.color.simple_transparent_border_color),
+                getColor(R.color.simple_transparent_title_color_black), getColor(R.color.simple_transparent_row_color),
+                R.drawable.simple_left_arrow_black, R.drawable.simple_right_arrow_black,
+                R.drawable.simple_plus_button_black, R.drawable.simple_voice_button_black,
+                R.drawable.simple_settings_button_black, "Transparent Dark"));
+
+        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_brown_widget_color),
+                getColor(R.color.simple_brown_header_color), getColor(R.color.simple_border_color),
+                getColor(R.color.simple_title_color), getColor(R.color.simple_brown_row_color),
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Simple Brown"));
+
+        adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), list);
+        themePager.setAdapter(adapter);
     }
 
     @Override
@@ -183,11 +273,33 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                 SharedPreferences.Editor editor = sp.edit();
                 Calendar cal = new GregorianCalendar();
                 int month = cal.get(Calendar.MONTH);
-                editor.putInt(CURRENT_WIDGET_COLOR + widgetID, color);
-                editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
-                editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, buttonColor);
-                editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, buttonVoice);
-                editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
+                if (theme.isChecked()){
+                    int position = themePager.getCurrentItem();
+                    ThemeItem themeItem = list.get(position);
+                    editor.putInt(CURRENT_WIDGET_COLOR + widgetID, themeItem.getWidgetBgColor());
+                    editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, themeItem.getTitleColor());
+                    editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, themeItem.getIconPlus());
+                    editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, themeItem.getIconVoice());
+                    editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, themeItem.getIconSettings());
+                    editor.putInt(CURRENT_WIDGET_RIGHT_ARROW_COLOR + widgetID, themeItem.getRightArrow());
+                    editor.putInt(CURRENT_WIDGET_LEFT_ARROW_COLOR + widgetID, themeItem.getLeftArrow());
+                    editor.putInt(CURRENT_WIDGET_HEADER_COLOR + widgetID, themeItem.getHeaderColor());
+                    editor.putInt(CURRENT_WIDGET_BORDER_COLOR + widgetID, themeItem.getBorderColor());
+                    editor.putInt(CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, themeItem.getItemTextColor());
+                    editor.putInt(CURRENT_WIDGET_ROW_COLOR + widgetID, themeItem.getRowColor());
+                } else {
+                    editor.putInt(CURRENT_WIDGET_COLOR + widgetID, color);
+                    editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
+                    editor.putInt(CURRENT_WIDGET_BUTTON_COLOR + widgetID, buttonColor);
+                    editor.putInt(CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, buttonVoice);
+                    editor.putInt(CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, buttonSettings);
+                    editor.putInt(CURRENT_WIDGET_RIGHT_ARROW_COLOR + widgetID, rightArrow);
+                    editor.putInt(CURRENT_WIDGET_LEFT_ARROW_COLOR + widgetID, leftArrow);
+                    editor.putInt(CURRENT_WIDGET_HEADER_COLOR + widgetID, headerColor);
+                    editor.putInt(CURRENT_WIDGET_BORDER_COLOR + widgetID, getColor(R.color.colorGrey));
+                    editor.putInt(CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, itemTextColor);
+                    editor.putInt(CURRENT_WIDGET_ROW_COLOR + widgetID, rowColor);
+                }
                 editor.putInt(CURRENT_WIDGET_MONTH + widgetID, month);
                 editor.commit();
 
@@ -198,5 +310,211 @@ public class CalendarWidgetConfig extends AppCompatActivity {
                 return true;
         }
         return true;
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (group.getCheckedRadioButtonId()){
+            case R.id.theme:
+                customContainer.setVisibility(View.GONE);
+                themePager.setVisibility(View.VISIBLE);
+                break;
+            case R.id.custom:
+                customContainer.setVisibility(View.VISIBLE);
+                themePager.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        ArrayList<ThemeItem> arrayList;
+
+        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<ThemeItem> list) {
+            super(fm);
+            this.arrayList = list;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return CalendarThemeFragment.newInstance(position, list);
+        }
+
+        @Override
+        public int getCount() {
+            return arrayList.size();
+        }
+    }
+
+    public class ThemeItem implements Parcelable {
+        int itemTextColor, widgetBgColor, headerColor, borderColor, titleColor, rowColor;
+        int leftArrow, rightArrow, iconPlus, iconVoice, iconSettings;
+        String title;
+
+        public ThemeItem(int itemTextColor, int widgetBgColor, int headerColor, int borderColor,
+                         int titleColor, int rowColor, int leftArrow, int rightArrow, int iconPlus, int iconVoice,
+                         int iconSettings, String title){
+            this.itemTextColor = itemTextColor;
+            this.widgetBgColor = widgetBgColor;
+            this.headerColor = headerColor;
+            this.borderColor = borderColor;
+            this.titleColor = titleColor;
+            this.leftArrow = leftArrow;
+            this.rightArrow = rightArrow;
+            this.iconPlus = iconPlus;
+            this.iconVoice = iconVoice;
+            this.iconSettings = iconSettings;
+            this.rowColor = rowColor;
+            this.title = title;
+        }
+
+        public void setItemTextColor(int itemTextColor){
+            this.itemTextColor = itemTextColor;
+        }
+
+        public int getItemTextColor(){
+            return itemTextColor;
+        }
+
+        public void setRowColor(int rowColor){
+            this.rowColor = rowColor;
+        }
+
+        public int getRowColor(){
+            return rowColor;
+        }
+
+        public void setWidgetBgColor(int widgetBgColor){
+            this.widgetBgColor = widgetBgColor;
+        }
+
+        public int getWidgetBgColor(){
+            return widgetBgColor;
+        }
+
+        public void setHeaderColor(int headerColor){
+            this.headerColor = headerColor;
+        }
+
+        public int getHeaderColor(){
+            return headerColor;
+        }
+
+        public void setBorderColor(int borderColor){
+            this.borderColor = borderColor;
+        }
+
+        public int getBorderColor(){
+            return borderColor;
+        }
+
+        public void setTitleColor(int titleColor){
+            this.titleColor = titleColor;
+        }
+
+        public int getTitleColor(){
+            return titleColor;
+        }
+
+        public void setLeftArrow(int leftArrow){
+            this.leftArrow = leftArrow;
+        }
+
+        public int getLeftArrow(){
+            return leftArrow;
+        }
+
+        public void setRightArrow(int rightArrow){
+            this.rightArrow = rightArrow;
+        }
+
+        public int getRightArrow(){
+            return rightArrow;
+        }
+
+        public void setIconPlus(int iconPlus){
+            this.iconPlus = iconPlus;
+        }
+
+        public int getIconPlus(){
+            return iconPlus;
+        }
+
+        public void setIconVoice(int iconVoice){
+            this.iconVoice = iconVoice;
+        }
+
+        public int getIconVoice(){
+            return iconVoice;
+        }
+
+        public void setIconSettings(int iconSettings){
+            this.iconSettings = iconSettings;
+        }
+
+        public int getIconSettings(){
+            return iconSettings;
+        }
+
+        public void setTitle(String title){
+            this.title = title;
+        }
+
+        public String getTitle(){
+            return title;
+        }
+
+        public ThemeItem(Parcel in) {
+            super();
+            readFromParcel(in);
+        }
+
+        public final Parcelable.Creator<ThemeItem> CREATOR = new Parcelable.Creator<ThemeItem>() {
+            public ThemeItem createFromParcel(Parcel in) {
+                return new ThemeItem(in);
+            }
+
+            public ThemeItem[] newArray(int size) {
+
+                return new ThemeItem[size];
+            }
+
+        };
+
+        public void readFromParcel(Parcel in) {
+            title = in.readString();
+            itemTextColor = in.readInt();
+            widgetBgColor = in.readInt();
+            rowColor = in.readInt();
+            borderColor = in.readInt();
+            headerColor = in.readInt();
+            titleColor = in.readInt();
+            leftArrow = in.readInt();
+            rightArrow = in.readInt();
+            iconPlus = in.readInt();
+            iconSettings = in.readInt();
+            iconVoice = in.readInt();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(title);
+            dest.writeInt(itemTextColor);
+            dest.writeInt(widgetBgColor);
+            dest.writeInt(rowColor);
+            dest.writeInt(borderColor);
+            dest.writeInt(headerColor);
+            dest.writeInt(titleColor);
+            dest.writeInt(leftArrow);
+            dest.writeInt(rightArrow);
+            dest.writeInt(iconPlus);
+            dest.writeInt(iconVoice);
+            dest.writeInt(iconSettings);
+        }
     }
 }

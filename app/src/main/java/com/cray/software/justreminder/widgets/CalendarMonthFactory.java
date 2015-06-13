@@ -320,8 +320,8 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = context.getSharedPreferences(
                 CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
-        int widgetBgColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
+        int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
+        int rowColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ROW_COLOR + widgetID, 0);
         RemoteViews rView = new RemoteViews(context.getPackageName(),
                 R.layout.month_view_grid);
 
@@ -333,7 +333,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
         rView.setTextViewText(R.id.textView, String.valueOf(selDay));
         rView.setTextColor(R.id.textView, itemTextColor);
-        rView.setInt(R.id.background, "setBackgroundColor", widgetBgColor);
+        rView.setInt(R.id.background, "setBackgroundColor", rowColor);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());

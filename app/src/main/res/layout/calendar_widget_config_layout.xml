@@ -1,106 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:id="@+id/windowBackground"
     android:layout_height="match_parent">
 
     <include layout="@layout/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:id="@+id/toolbar"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginTop="@dimen/widget_config_margin"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:id="@+id/group"
+        android:layout_below="@+id/toolbar"
+        android:orientation="horizontal">
 
-        <TextView
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/widget_bg_color_title"
-            android:textSize="@dimen/widget_config_text_size"
-            android:id="@+id/textView3" />
+            android:text="Custom style"
+            android:id="@+id/custom"/>
 
-        <Spinner
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/widgetBgSpinner" />
-    </LinearLayout>
+            android:id="@+id/theme"
+            android:text="Theme"/>
+
+    </RadioGroup>
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/group"
+        android:id="@+id/themePager"/>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/widget_config_margin"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/group"
+        android:id="@+id/customContainer"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/text_color_string"/>
-
-        <RadioGroup
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:gravity="center"
             android:layout_height="wrap_content"
-            android:id="@+id/colorsTitleGroup"
-            android:orientation="horizontal">
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/widget_config_margin"
+            android:layout_gravity="center_horizontal">
 
-            <RadioButton
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/checkbox_text_size"
-                android:text="@string/black_radio_text"
-                android:id="@+id/radioTitleBlack" />
+                android:text="@string/widget_bg_color_title"
+                android:textSize="@dimen/widget_config_text_size"
+                android:id="@+id/textView3" />
 
-            <RadioButton
+            <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginLeft="15dp"
-                android:text="@string/white_radio_text"
-                android:id="@+id/radioTitleWhite" />
-        </RadioGroup>
-    </LinearLayout>
+                android:id="@+id/widgetBgSpinner" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/widget_config_margin_top"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/string_button_colot"/>
-
-        <RadioGroup
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
             android:gravity="center"
-            android:layout_height="wrap_content"
-            android:id="@+id/colorsButtonGroup"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/widget_config_margin"
+            android:layout_height="wrap_content">
 
-            <RadioButton
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/black_radio_text"
-                android:id="@+id/radioButtonBlack" />
+                android:text="@string/text_color_string"/>
 
-            <RadioButton
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:id="@+id/colorsTitleGroup"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/checkbox_text_size"
+                    android:text="@string/black_radio_text"
+                    android:id="@+id/radioTitleBlack" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/checkbox_text_size"
+                    android:layout_marginLeft="15dp"
+                    android:text="@string/white_radio_text"
+                    android:id="@+id/radioTitleWhite" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/widget_config_margin_top"
+            android:layout_height="wrap_content">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/white_radio_text"
-                android:id="@+id/radioButtonWhite" />
-        </RadioGroup>
-    </LinearLayout>
+                android:text="@string/string_button_colot"/>
 
-</LinearLayout>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:id="@+id/colorsButtonGroup"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/black_radio_text"
+                    android:id="@+id/radioButtonBlack" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="@dimen/widget_config_text_size"
+                    android:text="@string/white_radio_text"
+                    android:id="@+id/radioButtonWhite" />
+            </RadioGroup>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
