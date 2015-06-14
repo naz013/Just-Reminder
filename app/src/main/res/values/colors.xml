@@ -51,6 +51,8 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGrayDark">#778f9b</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBlueGrey">#607D8B</color>
+    <color name="colorGrey900">#212121</color>
 
     <color name="colorSemiTrWhite">#bfFFFFFF</color>
     <color name="colorSemiTrBlue">#bf5677fc</color>

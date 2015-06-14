@@ -16,7 +16,6 @@ import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
-import com.hexrain.design.ScreenManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -55,9 +54,9 @@ public class CalendarWidget extends AppWidgetProvider {
         Calendar cal = new GregorianCalendar();
         int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
         cal.set(Calendar.MONTH, month);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         dateFormat.setCalendar(cal);
-        String date = dateFormat.format(cal.getTime());
+        String date = dateFormat.format(cal.getTime()).toUpperCase();
 
         int widgetBgColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
         int widgetHeaderColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
@@ -74,9 +73,9 @@ public class CalendarWidget extends AppWidgetProvider {
         rv.setTextViewText(R.id.currentDate, date);
         rv.setTextColor(R.id.currentDate, widgetTitleColor);
 
-        rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
-        rv.setInt(R.id.header, "setBackgroundColor", widgetHeaderColor);
-        rv.setInt(R.id.monthGrid, "setBackgroundColor", widgetBorderColor);
+        rv.setInt(R.id.weekdayGrid, "setBackgroundResource", widgetBgColor);
+        rv.setInt(R.id.header, "setBackgroundResource", widgetHeaderColor);
+        rv.setInt(R.id.monthGrid, "setBackgroundResource", widgetBorderColor);
 
         Intent weekdayAdapter = new Intent(context, CalendarWeekdayService.class);
         weekdayAdapter.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);

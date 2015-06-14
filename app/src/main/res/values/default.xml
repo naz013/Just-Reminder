@@ -32,28 +32,10 @@
 
 
     <!-- Simple calendar widget theme  -->
-    <color name="simple_black_widget_color">@color/colorOrangeLight</color>
-    <color name="simple_black_header_color">@color/colorBlack</color>
-
-    <color name="simple_brown_widget_color">@color/colorOrangeLight</color>
-    <color name="simple_brown_header_color">@color/colorBrown</color>
-    <color name="simple_brown_row_color">@color/colorOrangeLight</color>
-
     <color name="simple_transparent_widget_color">#1affffff</color>
     <color name="simple_transparent_header_color">#1affffff</color>
     <color name="simple_transparent_row_color">#1affffff</color>
     <color name="simple_transparent_border_color">#1affffff</color>
-    <color name="simple_transparent_title_color">@color/colorWhite</color>
-    <color name="simple_transparent_row_text_color">@color/colorWhite</color>
-    <color name="simple_transparent_title_color_black">@color/colorBlack</color>
-    <color name="simple_transparent_row_text_color_black">@color/colorBlack</color>
-
-    <color name="simple_widget_color">@color/colorWhite</color>
-    <color name="simple_header_color">@color/colorSand</color>
-    <color name="simple_border_color">@color/colorGrey</color>
-    <color name="simple_row_color">@color/colorWhite</color>
-    <color name="simple_title_color">@color/colorWhite</color>
-    <color name="simple_row_text_color">@color/colorBlack</color>
 
     <drawable name="simple_left_arrow">@drawable/ic_keyboard_arrow_left_white_24dp</drawable>
     <drawable name="simple_right_arrow">@drawable/ic_keyboard_arrow_right_white_24dp</drawable>

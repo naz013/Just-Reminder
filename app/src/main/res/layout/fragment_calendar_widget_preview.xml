@@ -16,7 +16,7 @@
 
     <include layout="@layout/calendar_widget_layout"
         android:layout_below="@+id/themeTitle"
-        android:layout_height="wrap_content"
+        android:layout_height="180dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"/>
 

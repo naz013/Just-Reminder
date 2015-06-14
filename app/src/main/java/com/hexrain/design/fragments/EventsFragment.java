@@ -238,10 +238,9 @@ public class EventsFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-            dialog.setMax(100);
             dialog.setMessage(getActivity().getString(R.string.string_generating_events));
             dialog.setCancelable(false);
-            dialog.setIndeterminate(false);
+            dialog.setIndeterminate(true);
             dialog.show();
         }
 

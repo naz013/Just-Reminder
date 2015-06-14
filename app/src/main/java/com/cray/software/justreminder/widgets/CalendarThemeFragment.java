@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.widgets;
 
-import android.app.AlarmManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,17 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.roomorama.caldroid.CalendarHelper;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +36,7 @@ public class CalendarThemeFragment extends Fragment{
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_DATA = "arg_data";
     int pageNumber;
-    RelativeLayout widgetBg, header;
+    RelativeLayout header;
     ImageButton plusButton, voiceButton, settingsButton, prevMonth, nextMonth;
     TextView currentDate, themeTitle;
     GridView weekdayGrid, monthGrid;
@@ -71,7 +64,6 @@ public class CalendarThemeFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar_widget_preview, container, false);
 
-        widgetBg = (RelativeLayout) view.findViewById(R.id.widgetBg);
         header = (RelativeLayout) view.findViewById(R.id.header);
 
         plusButton = (ImageButton) view.findViewById(R.id.plusButton);
@@ -101,10 +93,14 @@ public class CalendarThemeFragment extends Fragment{
         int iconVoice = themeItem.getIconVoice();
         int iconSettings = themeItem.getIconSettings();
 
-        widgetBg.setBackgroundColor(widgetBgColor);
-        header.setBackgroundColor(headerColor);
+        int currentMark = themeItem.getCurrentMark();
+        int birthdayMark = themeItem.getBirthdayMark();
+        int reminderMark = themeItem.getReminderMark();
+
+        weekdayGrid.setBackgroundResource(widgetBgColor);
+        header.setBackgroundResource(headerColor);
         currentDate.setTextColor(titleColor);
-        monthGrid.setBackgroundColor(borderColor);
+        monthGrid.setBackgroundResource(borderColor);
 
         plusButton.setImageResource(iconPlus);
         nextMonth.setImageResource(rightArrow);
@@ -113,15 +109,16 @@ public class CalendarThemeFragment extends Fragment{
         settingsButton.setImageResource(iconSettings);
 
         Calendar cal = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
         dateFormat.setCalendar(cal);
-        String date = dateFormat.format(cal.getTime());
+        String date = dateFormat.format(cal.getTime()).toUpperCase();
         currentDate.setText(date);
 
         themeTitle.setText(themeItem.getTitle());
 
         weekdayGrid.setAdapter(new WeekdayAdapter(getActivity(), itemTextColor));
-        monthGrid.setAdapter(new MonthGridAdapter(getActivity(), new int[]{itemTextColor, rowColor}));
+        monthGrid.setAdapter(new MonthGridAdapter(getActivity(), new int[]{itemTextColor, rowColor,
+                currentMark, birthdayMark, reminderMark}));
         return view;
     }
 
@@ -206,12 +203,15 @@ public class CalendarThemeFragment extends Fragment{
         int mDay, mMonth, mYear, prefsMonth;
         Context context;
         LayoutInflater inflater;
-        int textColor, widgetBgColor;
+        int textColor, widgetBgColor, cMark, bMark, rMark;
 
         public MonthGridAdapter(Context context, int[] resources){
             this.context = context;
             this.textColor = resources[0];
             this.widgetBgColor = resources[1];
+            this.cMark = resources[2];
+            this.bMark = resources[3];
+            this.rMark = resources[4];
             inflater = LayoutInflater.from(context);
             datetimeList = new ArrayList<>();
             datetimeList.clear();
@@ -286,181 +286,7 @@ public class CalendarThemeFragment extends Fragment{
                 DateTime nextDateTime = lastDateTime.plusDays(i);
                 datetimeList.add(nextDateTime);
             }
-
-            showEvents();
         }
-
-        private void showEvents() {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            int currentDay;
-            int currentMonth;
-            int currentYear;
-
-            SharedPrefs sPrefs = new SharedPrefs(context);
-            int hour = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-            int minute = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
-            boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-            boolean isRemindersEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR);
-
-            DataBase db = new DataBase(context);
-            if (!db.isOpen()) db.open();
-
-            pagerData.clear();
-
-            int position = 0;
-            boolean hasBirthdays;
-            boolean hasReminders;
-            do {
-                hasBirthdays = false;
-                hasReminders = false;
-                currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                currentMonth = calendar.get(Calendar.MONTH);
-                currentYear = calendar.get(Calendar.YEAR);
-                Cursor c = db.getEvents(currentDay, currentMonth);
-                if (c != null && c.moveToFirst()){
-                    do {
-                        String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                        Date date1 = null;
-                        try {
-                            date1 = format.parse(birthday);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (date1 != null) {
-                            Calendar calendar1 = Calendar.getInstance();
-                            calendar1.setTime(date1);
-                            int bDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                            int bMonth = calendar1.get(Calendar.MONTH);
-                            calendar1.setTimeInMillis(System.currentTimeMillis());
-                            calendar1.set(Calendar.MONTH, bMonth);
-                            calendar1.set(Calendar.DAY_OF_MONTH, bDay);
-                            calendar1.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar1.set(Calendar.MINUTE, minute);
-                            if (bDay == currentDay && currentMonth == bMonth) {
-                                hasBirthdays = true;
-                            }
-                        }
-                    } while (c.moveToNext());
-                }
-                if (c != null) c.close();
-
-                if (isRemindersEnabled) {
-                    Cursor s = db.queryGroup();
-                    if (s != null && s.moveToFirst()) {
-                        do {
-                            int myHour = s.getInt(s.getColumnIndex(Constants.COLUMN_HOUR));
-                            int myMinute = s.getInt(s.getColumnIndex(Constants.COLUMN_MINUTE));
-                            int myDay = s.getInt(s.getColumnIndex(Constants.COLUMN_DAY));
-                            int myMonth = s.getInt(s.getColumnIndex(Constants.COLUMN_MONTH));
-                            int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
-                            int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
-                            int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                            long afterTime = s.getLong(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                            String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
-                            String weekdays = s.getString(s.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                            int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
-                            if ((mType.startsWith(Constants.TYPE_SKYPE) ||
-                                    mType.matches(Constants.TYPE_CALL) ||
-                                    mType.startsWith(Constants.TYPE_APPLICATION) ||
-                                    mType.matches(Constants.TYPE_MESSAGE) ||
-                                    mType.matches(Constants.TYPE_REMINDER) ||
-                                    mType.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                                long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
-                                        afterTime, repCode, remCount, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.setTimeInMillis(time);
-                                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                int mMonth = calendar1.get(Calendar.MONTH);
-                                int mYear = calendar1.get(Calendar.YEAR);
-                                if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                    hasReminders = true;
-                                }
-                                if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
-                                    int days = 0;
-                                    do {
-                                        calendar1.setTimeInMillis(calendar1.getTimeInMillis() + (repCode *
-                                                AlarmManager.INTERVAL_DAY));
-                                        time = calendar1.getTimeInMillis();
-                                        mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                        mMonth = calendar1.get(Calendar.MONTH);
-                                        mYear = calendar1.get(Calendar.YEAR);
-                                        days = days + repCode;
-                                        if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                            hasReminders = true;
-                                        }
-                                    } while (days < Configs.MAX_DAYS_COUNT);
-                                }
-                            } else if (mType.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0) {
-                                long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.setTimeInMillis(time);
-                                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                int mMonth = calendar1.get(Calendar.MONTH);
-                                int mYear = calendar1.get(Calendar.YEAR);
-                                if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                    hasReminders = true;
-                                }
-                                int days = 0;
-                                if (isFeature) {
-                                    ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
-                                    do {
-                                        calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
-                                                AlarmManager.INTERVAL_DAY);
-                                        time = calendar1.getTimeInMillis();
-                                        int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                                        days = days + 1;
-                                        if (list.get(weekDay - 1) == 1) {
-                                            int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                            int sMonth = calendar1.get(Calendar.MONTH);
-                                            int sYear = calendar1.get(Calendar.YEAR);
-                                            if (time > 0 && sDay == currentDay && sMonth == currentMonth && sYear == currentYear) {
-                                                hasReminders = true;
-                                            }
-                                        }
-                                    } while (days < Configs.MAX_DAYS_COUNT);
-                                }
-                            } else if (mType.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                                long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                if (time > 0) {
-                                    calendar1.setTimeInMillis(time);
-                                    int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                    int mMonth = calendar1.get(Calendar.MONTH);
-                                    int mYear = calendar1.get(Calendar.YEAR);
-                                    if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                        hasReminders = true;
-                                    }
-                                }
-                                int days = 1;
-                                if (isFeature){
-                                    do {
-                                        time = TimeCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
-                                        days = days + 1;
-                                        calendar1.setTimeInMillis(time);
-                                        int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                        int sMonth = calendar1.get(Calendar.MONTH);
-                                        int sYear = calendar1.get(Calendar.YEAR);
-                                        if (time > 0 && sDay == currentDay && sMonth == currentMonth && sYear == currentYear) {
-                                            hasReminders = true;
-                                        }
-                                    } while (days < Configs.MAX_MONTH_COUNT);
-                                }
-                            }
-                        } while (s.moveToNext());
-                    }
-                    if (s != null) s.close();
-                }
-                db.close();
-
-                pagerData.add(new WidgetItem(currentDay, currentMonth, currentYear,
-                        hasReminders, hasBirthdays));
-                position++;
-                calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
-            } while (position < Configs.MAX_DAYS_COUNT);
-        }
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
         @Override
         public int getCount() {
@@ -487,8 +313,6 @@ public class CalendarThemeFragment extends Fragment{
             ColorSetter cs = new ColorSetter(context);
 
             int selDay = datetimeList.get(position).getDay();
-            int selMonth = datetimeList.get(position).getMonth();
-            int selYear = datetimeList.get(position).getYear();
 
             FrameLayout background = (FrameLayout) convertView.findViewById(R.id.background);
             TextView textView = (TextView) convertView.findViewById(R.id.textView);
@@ -498,39 +322,35 @@ public class CalendarThemeFragment extends Fragment{
 
             textView.setText(String.valueOf(selDay));
             textView.setTextColor(textColor);
-            background.setBackgroundColor(widgetBgColor);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            int realMonth = calendar.get(Calendar.MONTH);
+            background.setBackgroundResource(widgetBgColor);
 
             currentMark.setBackgroundColor(Color.TRANSPARENT);
             reminderMark.setBackgroundColor(Color.TRANSPARENT);
             birthdayMark.setBackgroundColor(Color.TRANSPARENT);
-            if (pagerData.size() > 0){
-                for (WidgetItem item : pagerData){
-                    int day = item.getDay();
-                    int month = item.getMonth() + 1;
-                    int year = item.getYear();
-                    if (day == selDay && month == selMonth){
-                        if (item.isHasReminders() && year == selYear){
-                            reminderMark.setBackgroundColor(context.getResources()
-                                    .getColor(cs.colorReminderCalendar()));
-                        }
-                        if (item.isHasBirthdays()){
-                            birthdayMark.setBackgroundColor(context.getResources()
-                                    .getColor(cs.colorBirthdayCalendar()));
-                        }
-                        break;
-                    }
+            if (selDay == 15){
+                if (rMark != 0){
+                    reminderMark.setBackgroundResource(rMark);
+                } else {
+                    reminderMark.setBackgroundColor(context.getResources()
+                            .getColor(cs.colorReminderCalendar()));
+                }
+            }
+            if (selDay == 11){
+                if (bMark != 0){
+                    birthdayMark.setBackgroundResource(bMark);
+                } else {
+                    birthdayMark.setBackgroundColor(context.getResources()
+                            .getColor(cs.colorBirthdayCalendar()));
                 }
             }
 
-            if (mDay == selDay && mMonth == selMonth && mYear == selYear && mMonth == realMonth + 1){
-                currentMark.setBackgroundColor(context.getResources()
-                        .getColor(cs.colorCurrentCalendar()));
-            } else {
-                currentMark.setBackgroundColor(Color.TRANSPARENT);
+            if (11 == selDay){
+                if (cMark != 0){
+                    currentMark.setBackgroundResource(cMark);
+                } else {
+                    currentMark.setBackgroundColor(context.getResources()
+                            .getColor(cs.colorCurrentCalendar()));
+                }
             }
 
             return convertView;

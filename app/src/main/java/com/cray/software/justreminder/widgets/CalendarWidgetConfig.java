@@ -50,8 +50,13 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "calendar_button_voice_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "calendar_title_color_";
+
+    public final static String CURRENT_WIDGET_REMINDER_COLOR = "calendar_reminder_color_";
+    public final static String CURRENT_WIDGET_BIRTHDAY_COLOR = "calendar_birthday_color_";
+    public final static String CURRENT_WIDGET_CURRENT_COLOR = "calendar_current_color_";
+
     public final static String CURRENT_WIDGET_MONTH = "calendar_month_";
-    int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor, borderColor,
+    int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor,
             leftArrow, rightArrow, headerColor;
     ColorSetter cSetter;
 
@@ -210,6 +215,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         group = (RadioGroup) findViewById(R.id.group);
         group.setOnCheckedChangeListener(this);
         theme.setChecked(true);
+        group.setVisibility(View.GONE);
     }
 
     private int getColor(int res){
@@ -219,40 +225,82 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
     private void loadThemes(){
         list = new ArrayList<>();
         list.clear();
-        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_widget_color),
-                getColor(R.color.simple_header_color), getColor(R.color.simple_border_color),
-                getColor(R.color.simple_title_color), getColor(R.color.simple_row_color),
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorSand, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Simple Emerald"));
+                R.drawable.simple_settings_button, "Simple Emerald", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_black_widget_color),
-                getColor(R.color.simple_black_header_color), getColor(R.color.simple_border_color),
-                getColor(R.color.simple_title_color), getColor(R.color.simple_row_color),
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorBlueLight,
+                R.color.colorIndigo, R.color.colorLightBlueLight,
+                getColor(R.color.colorWhite), R.color.colorLightBlueLight,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Simple Black"));
+                R.drawable.simple_settings_button, "Indigo", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.simple_transparent_row_text_color), getColor(R.color.simple_transparent_widget_color),
-                getColor(R.color.simple_transparent_header_color), getColor(R.color.simple_transparent_border_color),
-                getColor(R.color.simple_transparent_title_color), getColor(R.color.simple_transparent_row_color),
+        list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.colorBlueGrey,
+                R.color.colorGrey900, R.color.colorBlueGrey,
+                getColor(R.color.colorWhite), R.color.colorBlueGrey,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Transparent Light"));
+                R.drawable.simple_settings_button, "Gray", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.simple_transparent_row_text_color_black), getColor(R.color.simple_transparent_widget_color),
-                getColor(R.color.simple_transparent_header_color), getColor(R.color.simple_transparent_border_color),
-                getColor(R.color.simple_transparent_title_color_black), getColor(R.color.simple_transparent_row_color),
+        list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.colorBlack,
+                R.color.colorBlack, R.color.colorBlack,
+                getColor(R.color.colorWhite), R.color.colorBlack,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Dark", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorWhite, R.color.colorWhite,
+                getColor(R.color.colorBlack), R.color.colorWhite,
                 R.drawable.simple_left_arrow_black, R.drawable.simple_right_arrow_black,
                 R.drawable.simple_plus_button_black, R.drawable.simple_voice_button_black,
-                R.drawable.simple_settings_button_black, "Transparent Dark"));
+                R.drawable.simple_settings_button_black, "White", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.simple_row_text_color), getColor(R.color.simple_brown_widget_color),
-                getColor(R.color.simple_brown_header_color), getColor(R.color.simple_border_color),
-                getColor(R.color.simple_title_color), getColor(R.color.simple_brown_row_color),
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorDeepOrangeDark, R.color.colorWhite,
+                getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Simple Brown"));
+                R.drawable.simple_settings_button, "Orange", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.simple_transparent_widget_color,
+                R.color.colorRedDark, R.color.simple_transparent_border_color,
+                getColor(R.color.colorWhite), R.color.simple_transparent_row_color,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Red", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorOrangeLight,
+                R.color.colorBlack, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorWhite,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Simple Black", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.simple_transparent_widget_color,
+                R.color.simple_transparent_header_color, R.color.simple_transparent_border_color,
+                getColor(R.color.colorWhite), R.color.simple_transparent_row_color,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Transparent Light", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.simple_transparent_widget_color,
+                R.color.simple_transparent_header_color, R.color.simple_transparent_border_color,
+                getColor(R.color.colorBlack), R.color.simple_transparent_row_color,
+                R.drawable.simple_left_arrow_black, R.drawable.simple_right_arrow_black,
+                R.drawable.simple_plus_button_black, R.drawable.simple_voice_button_black,
+                R.drawable.simple_settings_button_black, "Transparent Dark", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorOrangeLight,
+                R.color.colorBrown, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorOrangeLight,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Simple Brown", 0, 0, 0));
 
         adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), list);
         themePager.setAdapter(adapter);
@@ -273,7 +321,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 SharedPreferences.Editor editor = sp.edit();
                 Calendar cal = new GregorianCalendar();
                 int month = cal.get(Calendar.MONTH);
-                if (theme.isChecked()){
+                if (group.getCheckedRadioButtonId() == R.id.theme){
                     int position = themePager.getCurrentItem();
                     ThemeItem themeItem = list.get(position);
                     editor.putInt(CURRENT_WIDGET_COLOR + widgetID, themeItem.getWidgetBgColor());
@@ -287,6 +335,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                     editor.putInt(CURRENT_WIDGET_BORDER_COLOR + widgetID, themeItem.getBorderColor());
                     editor.putInt(CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, themeItem.getItemTextColor());
                     editor.putInt(CURRENT_WIDGET_ROW_COLOR + widgetID, themeItem.getRowColor());
+                    editor.putInt(CURRENT_WIDGET_REMINDER_COLOR + widgetID, themeItem.getReminderMark());
+                    editor.putInt(CURRENT_WIDGET_BIRTHDAY_COLOR + widgetID, themeItem.getBirthdayMark());
+                    editor.putInt(CURRENT_WIDGET_CURRENT_COLOR + widgetID, themeItem.getCurrentMark());
                 } else {
                     editor.putInt(CURRENT_WIDGET_COLOR + widgetID, color);
                     editor.putInt(CURRENT_WIDGET_TITLE_COLOR + widgetID, title);
@@ -299,6 +350,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                     editor.putInt(CURRENT_WIDGET_BORDER_COLOR + widgetID, getColor(R.color.colorGrey));
                     editor.putInt(CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, itemTextColor);
                     editor.putInt(CURRENT_WIDGET_ROW_COLOR + widgetID, rowColor);
+                    editor.putInt(CURRENT_WIDGET_REMINDER_COLOR + widgetID, 0);
+                    editor.putInt(CURRENT_WIDGET_BIRTHDAY_COLOR + widgetID, 0);
+                    editor.putInt(CURRENT_WIDGET_CURRENT_COLOR + widgetID, 0);
                 }
                 editor.putInt(CURRENT_WIDGET_MONTH + widgetID, month);
                 editor.commit();
@@ -349,11 +403,12 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
     public class ThemeItem implements Parcelable {
         int itemTextColor, widgetBgColor, headerColor, borderColor, titleColor, rowColor;
         int leftArrow, rightArrow, iconPlus, iconVoice, iconSettings;
+        int currentMark, birthdayMark, reminderMark;
         String title;
 
         public ThemeItem(int itemTextColor, int widgetBgColor, int headerColor, int borderColor,
                          int titleColor, int rowColor, int leftArrow, int rightArrow, int iconPlus, int iconVoice,
-                         int iconSettings, String title){
+                         int iconSettings, String title, int currentMark, int birthdayMark, int reminderMark){
             this.itemTextColor = itemTextColor;
             this.widgetBgColor = widgetBgColor;
             this.headerColor = headerColor;
@@ -366,6 +421,33 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             this.iconSettings = iconSettings;
             this.rowColor = rowColor;
             this.title = title;
+            this.currentMark = currentMark;
+            this.birthdayMark = birthdayMark;
+            this.reminderMark = reminderMark;
+        }
+
+        public void setCurrentMark(int currentMark){
+            this.currentMark = currentMark;
+        }
+
+        public int getCurrentMark(){
+            return currentMark;
+        }
+
+        public void setBirthdayMark(int birthdayMark){
+            this.birthdayMark = birthdayMark;
+        }
+
+        public int getBirthdayMark(){
+            return birthdayMark;
+        }
+
+        public void setReminderMark(int reminderMark){
+            this.reminderMark = reminderMark;
+        }
+
+        public int getReminderMark(){
+            return reminderMark;
         }
 
         public void setItemTextColor(int itemTextColor){

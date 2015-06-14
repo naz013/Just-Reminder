@@ -322,6 +322,10 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                 CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
         int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
         int rowColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ROW_COLOR + widgetID, 0);
+        int reminderM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_REMINDER_COLOR + widgetID, 0);
+        int birthdayM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BIRTHDAY_COLOR + widgetID, 0);
+        int currentM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_CURRENT_COLOR + widgetID, 0);
+        int prefsMonth = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
         RemoteViews rView = new RemoteViews(context.getPackageName(),
                 R.layout.month_view_grid);
 
@@ -331,13 +335,14 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         int selMonth = datetimeList.get(i).getMonth();
         int selYear = datetimeList.get(i).getYear();
 
-        rView.setTextViewText(R.id.textView, String.valueOf(selDay));
-        rView.setTextColor(R.id.textView, itemTextColor);
-        rView.setInt(R.id.background, "setBackgroundColor", rowColor);
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int realMonth = calendar.get(Calendar.MONTH);
+
+        rView.setTextViewText(R.id.textView, String.valueOf(selDay));
+        if (selMonth == prefsMonth + 1) rView.setTextColor(R.id.textView, itemTextColor);
+        else rView.setTextColor(R.id.textView, context.getResources().getColor(R.color.colorGrey));
+        rView.setInt(R.id.background, "setBackgroundResource", rowColor);
 
         rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
         rView.setInt(R.id.reminderMark, "setBackgroundColor", Color.TRANSPARENT);
@@ -350,12 +355,20 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                 int year = item.getYear();
                 if (day == selDay && month == selMonth){
                     if (item.isHasReminders() && year == selYear){
-                        rView.setInt(R.id.reminderMark, "setBackgroundColor",
-                                context.getResources().getColor(cs.colorReminderCalendar()));
+                        if (reminderM != 0){
+                            rView.setInt(R.id.reminderMark, "setBackgroundResource", reminderM);
+                        } else {
+                            rView.setInt(R.id.reminderMark, "setBackgroundColor",
+                                    context.getResources().getColor(cs.colorReminderCalendar()));
+                        }
                     }
                     if (item.isHasBirthdays()){
-                        rView.setInt(R.id.birthdayMark, "setBackgroundColor",
-                                context.getResources().getColor(cs.colorBirthdayCalendar()));
+                        if (birthdayM != 0){
+                            rView.setInt(R.id.birthdayMark, "setBackgroundResource", birthdayM);
+                        } else {
+                            rView.setInt(R.id.birthdayMark, "setBackgroundColor",
+                                    context.getResources().getColor(cs.colorBirthdayCalendar()));
+                        }
                     }
                     break;
                 }
@@ -363,8 +376,12 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         }
 
         if (mDay == selDay && mMonth == selMonth && mYear == selYear && mMonth == realMonth + 1){
-            rView.setInt(R.id.currentMark, "setBackgroundColor",
-                    context.getResources().getColor(cs.colorCurrentCalendar()));
+            if (currentM != 0){
+                rView.setInt(R.id.currentMark, "setBackgroundResource", currentM);
+            } else {
+                rView.setInt(R.id.currentMark, "setBackgroundColor",
+                        context.getResources().getColor(cs.colorCurrentCalendar()));
+            }
         } else {
             rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
         }
