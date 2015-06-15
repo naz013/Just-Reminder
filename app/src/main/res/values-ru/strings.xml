@@ -638,4 +638,5 @@
     <string name="char_h">ч</string>
     <string name="string_generating_events">Генерирую события…</string>
     <string name="interval_day">Eжедневно</string>
+    <string name="string_swipe_left_or_right">Потяните влево или вправо чтобы выбрать тему.</string>
 </resources>

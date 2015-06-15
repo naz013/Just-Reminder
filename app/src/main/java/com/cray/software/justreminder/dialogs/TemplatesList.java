@@ -20,7 +20,7 @@ import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListen
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;

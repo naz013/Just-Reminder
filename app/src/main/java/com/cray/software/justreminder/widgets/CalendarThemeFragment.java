@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -108,11 +110,15 @@ public class CalendarThemeFragment extends Fragment{
         voiceButton.setImageResource(iconVoice);
         settingsButton.setImageResource(iconSettings);
 
+        StringBuilder monthYearStringBuilder = new StringBuilder(50);
+        Formatter monthYearFormatter = new Formatter(
+                monthYearStringBuilder, Locale.getDefault());
+        int MONTH_YEAR_FLAG = DateUtils.FORMAT_SHOW_DATE
+                | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR;
         Calendar cal = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        dateFormat.setCalendar(cal);
-        String date = dateFormat.format(cal.getTime()).toUpperCase();
-        currentDate.setText(date);
+        String monthTitle = DateUtils.formatDateRange(getActivity(),
+                monthYearFormatter, cal.getTimeInMillis(), cal.getTimeInMillis(), MONTH_YEAR_FLAG).toString();
+        currentDate.setText(monthTitle.toUpperCase());
 
         themeTitle.setText(themeItem.getTitle());
 

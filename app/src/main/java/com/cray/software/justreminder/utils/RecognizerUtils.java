@@ -1,4 +1,6 @@
-package com.cray.software.justreminder.interfaces;
+package com.cray.software.justreminder.utils;
+
+import com.cray.software.justreminder.interfaces.Constants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,7 +11,7 @@ public class RecognizerUtils {
         StringBuilder sb = new StringBuilder();
         input = input.toLowerCase();
         String[] splitParts = input.split("\\s+");
-        int decimal = 0;
+        double decimal = 0;
         boolean isDecimalBefore = false;
         for (String splitPart : splitParts) {
             splitPart = splitPart.trim();
@@ -20,7 +22,7 @@ public class RecognizerUtils {
                 } else {
                     if (isDecimalBefore){
                         isDecimalBefore = false;
-                        int number = getNumberFromString(splitPart);
+                        double number = getNumberFromString(splitPart);
                         number = number + decimal;
                         decimal = 0;
                         sb.append(" ").append(number);
@@ -32,18 +34,19 @@ public class RecognizerUtils {
     }
 
     public static boolean isDecimal(String input){
-        return getNumberFromString(input) > 19;
+        return getNumberFromString(input) > 19.0;
     }
 
     public static boolean isNumber(String input){
-        return getNumberFromString(input) > 0;
+        return getNumberFromString(input) > 0.0;
     }
 
-    public static int getNumberFromString(String input){
-        int number = 0;
+    public static double getNumberFromString(String input){
+        double number = 0;
         input = input.toLowerCase();
         if (input.matches("one") || input.matches("один") || input.matches("одну") ||
                 input.matches("одна")) number = 1;
+        if (input.matches("півтори") || input.matches("півтора") || input.matches("полтора")) number = 1.5;
         if (input.matches("two") || input.matches("два") || input.matches("дві") ||
                 input.matches("две")) number = 2;
         if (input.matches("three") || input.matches("три")) number = 3;
@@ -124,14 +127,15 @@ public class RecognizerUtils {
     }
 
     public static boolean isNumberContains(String input){
-        return findNumberInString(input) > 0;
+        return findNumberInString(input) > 0.0;
     }
 
-    public static int findNumberInString(String input){
-        int number = 0;
+    public static double findNumberInString(String input){
+        double number = 0;
         input = input.toLowerCase();
         if (input.contains("one") || input.contains("один") || input.contains("одну") ||
                 input.contains("одна")) number = 1;
+        if (input.contains("півтори") || input.contains("півтора") || input.contains("полтора")) number = 1.5;
         if (input.contains("two") || input.contains("два") || input.contains("дві") ||
                 input.contains("две")) number = 2;
         if (input.contains("three") || input.contains("три")) number = 3;

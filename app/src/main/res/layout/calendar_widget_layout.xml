@@ -87,6 +87,7 @@
         android:numColumns="7"
         android:background="@color/colorWhite"
         android:layout_below="@+id/header"
+        android:overScrollMode="never"
         android:id="@+id/weekdayGrid"/>
 
     <GridView
@@ -97,6 +98,7 @@
         android:horizontalSpacing="1dp"
         android:background="@color/colorGrey"
         android:stretchMode="columnWidth"
+        android:overScrollMode="never"
         android:layout_below="@+id/weekdayGrid"
         android:id="@+id/monthGrid"/>
 

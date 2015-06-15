@@ -638,4 +638,5 @@
     <string name="char_h">s</string>
     <string name="string_generating_events">Generieren von Ereignissen…</string>
     <string name="interval_day">Täglich</string>
+    <string name="string_swipe_left_or_right">Streichen Sie nach links oder rechts, um Thema auswählen.</string>
 </resources>

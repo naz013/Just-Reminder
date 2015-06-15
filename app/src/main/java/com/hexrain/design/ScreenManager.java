@@ -61,7 +61,7 @@ import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;

@@ -638,4 +638,5 @@
     <string name="char_h">г</string>
     <string name="string_generating_events">Генерую події…</string>
     <string name="interval_day">Щоденно</string>
+    <string name="string_swipe_left_or_right">Потягніть вліво або вправо, щоб обрати тему.</string>
 </resources>

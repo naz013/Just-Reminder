@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.helpers;
+package com.cray.software.justreminder.utils;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;

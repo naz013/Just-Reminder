@@ -20,9 +20,10 @@ import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.dialogs.utils.SelectVolume;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.RecognizerUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.RecognizerUtils;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.hexrain.design.ScreenManager;
 
@@ -1027,9 +1028,11 @@ public class Recognizer {
         }
     }
 
+    public static final long MINUTE = 1000 * 60;
+
     private void unknownAfter(String keyStr, boolean isWidget) {
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
-        String[] parts = keyStr.split(" \\d\\d?");
+        String[] parts = keyStr.split(" \\d.?\\d?");
         if (parts.length == 3){
             String tech = parts[0];
             String time = parts[1];
@@ -1053,8 +1056,8 @@ public class Recognizer {
                 if (indexEnd != -1 && indexStart != -1){
                     indexStart = indexStart + increment;
                     String task = time.substring(indexStart, indexEnd).trim();
-                    int minus = Integer.parseInt(numberBefore) * divider;
-                    int after = Integer.parseInt(number) * multiplier;
+                    double minus = Double.parseDouble(numberBefore) * divider;
+                    double after = Double.parseDouble(number) * multiplier;
                     if (after > minus) after = after - minus;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
@@ -1063,7 +1066,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, after);
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(after * MINUTE));
                 }
             } else {
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
@@ -1082,12 +1085,12 @@ public class Recognizer {
                 if (indexEnd != -1 && indexStart != -1){
                     indexStart = indexStart + increment;
                     String task = time.substring(indexStart, indexEnd).trim();
-                    int minus = Integer.parseInt(numberBefore) * divider;
-                    int after = Integer.parseInt(number) * multiplier;
+                    double minus = Double.parseDouble(numberBefore) * divider;
+                    double after = Double.parseDouble(number) * multiplier;
                     if (after > minus) after = after - minus;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis() +
-                            AlarmManager.INTERVAL_DAY * after);
+                            Math.round(AlarmManager.INTERVAL_DAY * after));
                     int mHour = calendar.get(Calendar.HOUR_OF_DAY);
                     int mMinute = calendar.get(Calendar.MINUTE);
                     int mMonth = calendar.get(Calendar.MONTH);
@@ -1111,7 +1114,7 @@ public class Recognizer {
                 if (indexStart != -1){
                     indexStart = indexStart + increment;
                     String task = time.substring(indexStart).trim();
-                    int after = Integer.parseInt(number) * multiplier;
+                    double after = Double.parseDouble(number) * multiplier;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     int mHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -1119,7 +1122,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, after);
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(after * MINUTE));
                 }
             } else {
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
@@ -1131,10 +1134,10 @@ public class Recognizer {
                 if (indexStart != -1){
                     indexStart = indexStart + increment;
                     String task = time.substring(indexStart).trim();
-                    int after = Integer.parseInt(number) * multiplier;
+                    double after = Double.parseDouble(number) * multiplier;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis() +
-                            AlarmManager.INTERVAL_DAY * after);
+                            Math.round(AlarmManager.INTERVAL_DAY * after));
                     int mHour = calendar.get(Calendar.HOUR_OF_DAY);
                     int mMinute = calendar.get(Calendar.MINUTE);
                     int mMonth = calendar.get(Calendar.MONTH);
@@ -1162,7 +1165,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, multiplier);
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(multiplier * MINUTE));
                 }
             } else {
                 int[] indexes = RecognizerUtils.getIndexes(time);
@@ -1909,7 +1912,7 @@ public class Recognizer {
 
     private void saveTimeReminder(String task, boolean isWidget, boolean export, int dayOfMonth,
                               int monthOfYear, int mYear, int hourOfDay, int minuteOfHour,
-                              int after){
+                              long after){
         DB = new DataBase(ctx);
         DB.open();
         sHelp = new SyncHelper(ctx);
@@ -1927,7 +1930,7 @@ public class Recognizer {
             id = DB.insertTask(task, Constants.TYPE_TIME,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
-            exportToCalendar(task, getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after), id);
+            exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after), id);
         } else {
             id = DB.insertTask(task, Constants.TYPE_TIME,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
@@ -1960,7 +1963,7 @@ public class Recognizer {
             id = DB.insertTask(task, Constants.TYPE_REMINDER,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
-            exportToCalendar(task, getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0), id);
+            exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0), id);
         } else {
             id = DB.insertTask(task, Constants.TYPE_REMINDER,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
@@ -3171,7 +3174,7 @@ public class Recognizer {
                             id = DB.insertTask(text, Constants.TYPE_MESSAGE,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
                                     1, null, 0, 0, 0, categoryId);
-                            exportToCalendar(user, getTime(currentDay, currentMonth, currentYear, hour, minute, 0), id);
+                            exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth, currentYear, hour, minute, 0), id);
                         } else {
                             id = DB.insertTask(text, Constants.TYPE_MESSAGE,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
@@ -3255,12 +3258,15 @@ public class Recognizer {
                         if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
                             id = DB.insertTask(user, Constants.TYPE_CALL,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
+                                    currentDay, currentMonth, currentYear, hour, minute, 0, number,
+                                    0, 0, 0, 0, 0, uuID, null,
                                     1, null, 0, 0, 0, categoryId);
-                            exportToCalendar(user, getTime(currentDay, currentMonth, currentYear, hour, minute, 0), id);
+                            exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth,
+                                    currentYear, hour, minute, 0), id);
                         } else {
                             id = DB.insertTask(user, Constants.TYPE_CALL,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
+                                    currentDay, currentMonth, currentYear, hour, minute, 0, number,
+                                    0, 0, 0, 0, 0, uuID, null,
                                     0, null, 0, 0, 0, categoryId);
                         }
                         DB.updateDateTime(id);
@@ -3378,7 +3384,7 @@ public class Recognizer {
                 int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int currentMinute = calendar.get(Calendar.MINUTE);
                 int currentSeconds = calendar.get(Calendar.SECOND);
-                int minute = hour * 60;
+                long minute = hour * 60 * 1000;
                 DB = new DataBase(ctx);
                 DB.open();
                 sHelp = new SyncHelper(ctx);
@@ -3397,7 +3403,8 @@ public class Recognizer {
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 1,
                             null, 0, 0, 0, categoryId);
-                    exportToCalendar(res, getTime(currentDay, currentMonth, currentYear, currentHour, currentMinute, minute), id);
+                    exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
+                            currentHour, currentMinute, minute), id);
                 } else {
                     id = DB.insertTask(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
@@ -3421,7 +3428,7 @@ public class Recognizer {
                 int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int currentMinute = calendar.get(Calendar.MINUTE);
                 int currentSeconds = calendar.get(Calendar.SECOND);
-                int minute = hour;
+                long minute = hour * 1000;
                 DB = new DataBase(ctx);
                 DB.open();
                 sHelp = new SyncHelper(ctx);
@@ -3440,7 +3447,8 @@ public class Recognizer {
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
                             1, null, 0, 0, 0, categoryId);
-                    exportToCalendar(res, getTime(currentDay, currentMonth, currentYear, currentHour, currentMinute, minute), id);
+                    exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
+                            currentHour, currentMinute, minute), id);
                 } else {
                     id = DB.insertTask(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
@@ -3529,11 +3537,5 @@ public class Recognizer {
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
             new CalendarManager(ctx).addEventToStock(summary, startTime);
         }
-    }
-
-    private long getTime(int day, int month, int year, int hour, int minute, int after){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
-        return calendar.getTimeInMillis() + (60 * 1000 * after);
     }
 }

@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.interfaces.CollapseListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 

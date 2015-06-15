@@ -4,7 +4,7 @@ import android.animation.ObjectAnimator;
 import android.view.View;
 import android.widget.AbsListView;
 
-import com.cray.software.justreminder.helpers.QuickReturnUtils;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.interfaces.CollapseListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 

@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.CalendarActivity;
@@ -17,9 +18,10 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Formatter;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class CalendarWidget extends AppWidgetProvider {
 
@@ -54,9 +56,14 @@ public class CalendarWidget extends AppWidgetProvider {
         Calendar cal = new GregorianCalendar();
         int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
         cal.set(Calendar.MONTH, month);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-        dateFormat.setCalendar(cal);
-        String date = dateFormat.format(cal.getTime()).toUpperCase();
+        StringBuilder monthYearStringBuilder = new StringBuilder(50);
+        Formatter monthYearFormatter = new Formatter(
+                monthYearStringBuilder, Locale.getDefault());
+        int MONTH_YEAR_FLAG = DateUtils.FORMAT_SHOW_DATE
+                | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR;
+        String date = DateUtils.formatDateRange(context,
+                monthYearFormatter, cal.getTimeInMillis(), cal.getTimeInMillis(), MONTH_YEAR_FLAG)
+                .toString().toUpperCase();
 
         int widgetBgColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
         int widgetHeaderColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);

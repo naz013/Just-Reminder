@@ -230,14 +230,14 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Simple Emerald", 0, 0, 0));
+                R.drawable.simple_settings_button, "Teal", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorBlueLight,
-                R.color.colorIndigo, R.color.colorLightBlueLight,
-                getColor(R.color.colorWhite), R.color.colorLightBlueLight,
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorBlueDark, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
-                R.drawable.simple_settings_button, "Indigo", 0, 0, 0));
+                R.drawable.simple_settings_button, "Blue", 0, 0, 0));
 
         list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.colorBlueGrey,
                 R.color.colorGrey900, R.color.colorBlueGrey,
@@ -245,6 +245,13 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Gray", 0, 0, 0));
+
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorGreenDark, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorWhite,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Green", 0, 0, 0));
 
         list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.colorBlack,
                 R.color.colorBlack, R.color.colorBlack,
@@ -267,15 +274,15 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Orange", 0, 0, 0));
 
-        list.add(new ThemeItem(getColor(R.color.colorWhite), R.color.simple_transparent_widget_color,
-                R.color.colorRedDark, R.color.simple_transparent_border_color,
-                getColor(R.color.colorWhite), R.color.simple_transparent_row_color,
+        list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorRedDark, R.color.colorGrey,
+                getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Red", 0, 0, 0));
 
         list.add(new ThemeItem(getColor(R.color.colorBlack), R.color.colorOrangeLight,
-                R.color.colorBlack, R.color.colorGrey,
+                R.color.colorGrey900, R.color.colorGrey,
                 getColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,

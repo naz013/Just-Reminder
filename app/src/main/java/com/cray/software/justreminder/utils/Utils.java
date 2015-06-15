@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.helpers;
+package com.cray.software.justreminder.utils;
 
 public class Utils {
     public static String generateAfterString(long time){

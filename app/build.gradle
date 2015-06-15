@@ -112,6 +112,6 @@ dependencies {
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.1'
-    compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
+    //compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
     compile project(':fab')
 }

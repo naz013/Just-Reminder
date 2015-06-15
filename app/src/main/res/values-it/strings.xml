@@ -638,4 +638,5 @@
     <string name="char_h">h</string>
     <string name="string_generating_events">Generating events...</string>
     <string name="interval_day">Daily</string>
+    <string name="string_swipe_left_or_right">Scorrere verso sinistra o destra per selezionare tema.</string>
 </resources>
