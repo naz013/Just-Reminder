@@ -1031,6 +1031,7 @@ public class Recognizer {
     public static final long MINUTE = 1000 * 60;
 
     private void unknownAfter(String keyStr, boolean isWidget) {
+        keyStr = RecognizerUtils.convertToDouble(keyStr);
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
         String[] parts = keyStr.split(" \\d.?\\d?");
         if (parts.length == 3){

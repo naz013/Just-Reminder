@@ -11,7 +11,7 @@ public class RecognizerUtils {
         StringBuilder sb = new StringBuilder();
         input = input.toLowerCase();
         String[] splitParts = input.split("\\s+");
-        double decimal = 0;
+        int decimal = 0;
         boolean isDecimalBefore = false;
         for (String splitPart : splitParts) {
             splitPart = splitPart.trim();
@@ -22,7 +22,7 @@ public class RecognizerUtils {
                 } else {
                     if (isDecimalBefore){
                         isDecimalBefore = false;
-                        double number = getNumberFromString(splitPart);
+                        int number = getNumberFromString(splitPart);
                         number = number + decimal;
                         decimal = 0;
                         sb.append(" ").append(number);
@@ -33,20 +33,53 @@ public class RecognizerUtils {
         return sb.toString().trim();
     }
 
+    public static String convertToDouble(String input){
+        StringBuilder sb = new StringBuilder();
+        input = input.toLowerCase();
+        String[] splitParts = input.split("\\s+");
+        double decimal = 0;
+        boolean isDecimalBefore = false;
+        for (String splitPart : splitParts) {
+            splitPart = splitPart.trim();
+            if (isDouble(splitPart)){
+                if (isDoubleDecimal(splitPart)){
+                    isDecimalBefore = true;
+                    decimal = getDoubleNumberFromString(splitPart);
+                } else {
+                    if (isDecimalBefore){
+                        isDecimalBefore = false;
+                        double number = getDoubleNumberFromString(splitPart);
+                        number = number + decimal;
+                        decimal = 0;
+                        sb.append(" ").append(number);
+                    } else sb.append(" ").append(getDoubleNumberFromString(splitPart));
+                }
+            } else sb.append(" ").append(splitPart);
+        }
+        return sb.toString().trim();
+    }
+
     public static boolean isDecimal(String input){
-        return getNumberFromString(input) > 19.0;
+        return getNumberFromString(input) > 19;
     }
 
     public static boolean isNumber(String input){
-        return getNumberFromString(input) > 0.0;
+        return getNumberFromString(input) > 0;
     }
 
-    public static double getNumberFromString(String input){
-        double number = 0;
+    public static boolean isDouble(String input){
+        return getDoubleNumberFromString(input) > 0;
+    }
+
+    public static boolean isDoubleDecimal(String input){
+        return getDoubleNumberFromString(input) > 19;
+    }
+
+    public static int getNumberFromString(String input){
+        int number = 0;
         input = input.toLowerCase();
         if (input.matches("one") || input.matches("один") || input.matches("одну") ||
                 input.matches("одна")) number = 1;
-        if (input.matches("півтори") || input.matches("півтора") || input.matches("полтора")) number = 1.5;
         if (input.matches("two") || input.matches("два") || input.matches("дві") ||
                 input.matches("две")) number = 2;
         if (input.matches("three") || input.matches("три")) number = 3;
@@ -123,6 +156,13 @@ public class RecognizerUtils {
         if (input.matches("eightieth") || input.matches("вісімдесятого") || input.matches("восьмидесятого")) number = 80;
         if (input.matches("ninetieth") || input.matches("дев'яностого") || input.matches("девяностого"))
             number = 90;
+        return number;
+    }
+
+    public static double getDoubleNumberFromString(String input){
+        double number = 0;
+        input = input.toLowerCase();
+        if (input.matches("півтори") || input.matches("півтора") || input.matches("полтора")) number = 1.5;
         return number;
     }
 

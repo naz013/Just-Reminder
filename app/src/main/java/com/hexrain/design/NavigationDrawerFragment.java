@@ -338,7 +338,14 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (tag != null) mCallbacks.onNavigationDrawerItemSelected(tag);
+                    if (tag != null) {
+                        try {
+                            mCallbacks.onNavigationDrawerItemSelected(tag);
+                        } catch (NullPointerException e){
+                            e.printStackTrace();
+                            mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+                        }
+                    }
                     else mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                 }
             }, 250);

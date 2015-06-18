@@ -3,25 +3,47 @@ package com.cray.software.justreminder.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.view.View;
 
-public class StripedDrawable extends View{
+public class StripedDrawable extends Drawable{
 
     Paint paint = new Paint();
+    int colorStatus, colorNormal, colorTheme;
 
-    public StripedDrawable(Context context) {
-        super(context);
+    public StripedDrawable(int colorStatus, int colorNormal, int colorTheme) {
+        this.colorStatus = colorStatus;
+        this.colorNormal = colorNormal;
+        this.colorTheme = colorTheme;
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         paint.setStrokeWidth(0);
-        paint.setColor(Color.CYAN);
-        canvas.drawRect(33, 60, 77, 77, paint );
-        paint.setColor(Color.YELLOW);
-        canvas.drawRect(33, 33, 77, 60, paint);
+        paint.setColor(colorStatus);
+        canvas.drawRect(0, 0, 200, 100, paint);
+        paint.setColor(colorNormal);
+        canvas.drawRect(0, 100, 200, 200, paint);
+        paint.setColor(colorTheme);
+        canvas.drawRect(0, 200, 200, 300, paint);
+    }
+
+    @Override
+    public void setAlpha(int alpha) {
+
+    }
+
+    @Override
+    public void setColorFilter(ColorFilter cf) {
+
+    }
+
+    @Override
+    public int getOpacity() {
+        return 0;
     }
 }
