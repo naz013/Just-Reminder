@@ -1,6 +1,37 @@
 package com.cray.software.justreminder.utils;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Utils {
+    public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+    public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a");
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+    public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
+    public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a");
+
+    public static Drawable getDrawable (Context context, int resource){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return context.getResources().getDrawable(resource, null);
+        } else {
+            return context.getResources().getDrawable(resource);
+        }
+    }
+
+    public static String getDateTime(Date date, boolean is24){
+        if (is24) return format24.format(date);
+        else return format12.format(date);
+    }
+
+    public static String getTime(Date date, boolean is24){
+        if (is24) return time24.format(date);
+        else return time12.format(date);
+    }
+
     public static String generateAfterString(long time){
         long s = 1000;
         long m = s * 60;

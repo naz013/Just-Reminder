@@ -17,11 +17,11 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.datas.NoteItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.datas.NoteItem;
 import com.hexrain.design.fragments.NotePreviewFragment;
 
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     public NotesRecyclerAdapter(Context context, ArrayList<NoteItem> data) {
         this.cContext = context;
         this.data = data;
-        cs = new ColorSetter(cContext);
-        prefs = new SharedPrefs(cContext);
-        syncHelper = new SyncHelper(cContext);
+        cs = new ColorSetter(context);
+        prefs = new SharedPrefs(context);
+        syncHelper = new SyncHelper(context);
     }
 
     public interface EventListener {
@@ -103,7 +103,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     }
 
     private void onItemClick(long id, ImageView imageView){
-        if (new SharedPrefs(cContext).loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
+        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Intent intent = new Intent(cContext, NotePreviewFragment.class);
                 intent.putExtra(Constants.EDIT_ID, id);

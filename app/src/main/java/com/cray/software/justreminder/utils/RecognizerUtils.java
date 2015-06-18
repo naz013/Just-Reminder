@@ -162,7 +162,8 @@ public class RecognizerUtils {
     public static double getDoubleNumberFromString(String input){
         double number = 0;
         input = input.toLowerCase();
-        if (input.matches("півтори") || input.matches("півтора") || input.matches("полтора")) number = 1.5;
+        if (input.matches("півтори") || input.matches("півтора") || input.matches("полтора")
+                || input.matches("полторы")) number = 1.5;
         return number;
     }
 
@@ -175,7 +176,8 @@ public class RecognizerUtils {
         input = input.toLowerCase();
         if (input.contains("one") || input.contains("один") || input.contains("одну") ||
                 input.contains("одна")) number = 1;
-        if (input.contains("півтори") || input.contains("півтора") || input.contains("полтора")) number = 1.5;
+        if (input.contains("півтори") || input.contains("півтора") || input.contains("полтора") ||
+                input.contains("полторы")) number = 1.5;
         if (input.contains("two") || input.contains("два") || input.contains("дві") ||
                 input.contains("две")) number = 2;
         if (input.contains("three") || input.contains("три")) number = 3;
@@ -255,6 +257,7 @@ public class RecognizerUtils {
     }
 
     public static int[] getIndexes(String input){
+        input = " " + input;
         int multiplier = 1;
         int indexStart = input.indexOf(" днів");
         int increment = 5;
@@ -550,6 +553,7 @@ public class RecognizerUtils {
     }
 
     public static long getLongIndexes(String input){
+        input = " " + input;
         long minute = 1000 * 60;
         long hour = minute * 60;
         long day = hour * 24;
@@ -792,7 +796,7 @@ public class RecognizerUtils {
     }
 
     public static int getIndexFromDay(String input){
-        input = input.toLowerCase();
+        input = (" " + input).toLowerCase();
         int index = input.lastIndexOf(" first ");
         if (index == -1) index = input.lastIndexOf(" second ");
         if (index == -1) index = input.lastIndexOf(" third ");
@@ -893,7 +897,7 @@ public class RecognizerUtils {
 
     public static int getIndexForMonth(String input){
         int res;
-        input = input.toLowerCase();
+        input = (" " + input).toLowerCase();
         res = input.lastIndexOf(" january");
         if (res == -1) res = input.lastIndexOf(" february");
         if (res == -1) res = input.lastIndexOf(" march");

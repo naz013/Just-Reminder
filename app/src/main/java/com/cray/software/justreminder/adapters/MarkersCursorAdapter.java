@@ -14,16 +14,16 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 public class MarkersCursorAdapter extends CursorAdapter implements Filterable {
 
-    TextView taskTitle, latitude, longitude;
     LayoutInflater inflater;
     private Cursor c;
-    Context cContext;
+    Context context;
 
     @SuppressWarnings("deprecation")
     public MarkersCursorAdapter(Context context, Cursor c) {
         super(context, c);
-        this.cContext = context;
+        this.context = context;
         inflater = LayoutInflater.from(context);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.c = c;
         c.moveToFirst();
     }
@@ -49,21 +49,17 @@ public class MarkersCursorAdapter extends CursorAdapter implements Filterable {
     public View getView(int position, View convertView, ViewGroup parent) {
         c.moveToPosition(position);
         if (convertView == null) {
-            inflater = (LayoutInflater) cContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_geo, null);
         }
 
-        taskTitle = (TextView) convertView.findViewById(R.id.taskText);
-        latitude = (TextView) convertView.findViewById(R.id.latitude);
-        longitude = (TextView) convertView.findViewById(R.id.longitude);
+        TextView taskTitle = (TextView) convertView.findViewById(R.id.taskText);
+        TextView latitude = (TextView) convertView.findViewById(R.id.latitude);
+        TextView longitude = (TextView) convertView.findViewById(R.id.longitude);
 
-        String title;
-        title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+        String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
 
-        double lat;
-        double longi;
-        lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-        longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+        double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+        double longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
 
         taskTitle.setText(title);
         latitude.setText(String.valueOf(lat));

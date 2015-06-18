@@ -10,29 +10,38 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CalendarEventsAdapter extends BaseAdapter{
 
-    TextView eventColor, eventType, eventDate, eventText, eventNumber;
     Contacts contacts;
     LayoutInflater inflater;
-    ArrayList<CalendarData> mDatas = new ArrayList<>();
-    Context cContext;
+    ArrayList<CalendarData> mDatas;
+    Context mContext;
+    ColorSetter cs;
+    Typeface typeface;
+    SharedPrefs prefs;
 
     @SuppressWarnings("deprecation")
     public CalendarEventsAdapter(Context context, ArrayList<CalendarData> datas) {
-        this.cContext = context;
+        this.mContext = context;
+        this.mDatas = new ArrayList<>();
         this.mDatas = datas;
         inflater = LayoutInflater.from(context);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        contacts = new Contacts(context);
+        cs = new ColorSetter(context);
+        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+        prefs = new SharedPrefs(context);
     }
 
     @Override
@@ -52,35 +61,31 @@ public class CalendarEventsAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        contacts = new Contacts(cContext);
         String type = mDatas.get(position).getType();
         if (convertView == null) {
-            inflater = (LayoutInflater) cContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_events, null);
         }
 
-        ColorSetter cs = new ColorSetter(cContext);
         CardView card = (CardView) convertView.findViewById(R.id.card);
         card.setCardBackgroundColor(cs.getCardStyle());
 
-        Typeface typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Light.ttf");
-
-        eventColor = (TextView) convertView.findViewById(R.id.eventColor);
-        eventType = (TextView) convertView.findViewById(R.id.eventType);
+        TextView eventColor = (TextView) convertView.findViewById(R.id.eventColor);
+        TextView eventType = (TextView) convertView.findViewById(R.id.eventType);
         eventType.setTypeface(typeface);
-        eventDate = (TextView) convertView.findViewById(R.id.eventDate);
+        TextView eventDate = (TextView) convertView.findViewById(R.id.eventDate);
         eventDate.setTypeface(typeface);
-        eventText = (TextView) convertView.findViewById(R.id.eventText);
+        TextView eventText = (TextView) convertView.findViewById(R.id.eventText);
         eventText.setTypeface(typeface);
-        eventNumber = (TextView) convertView.findViewById(R.id.eventNumber);
+        TextView eventNumber = (TextView) convertView.findViewById(R.id.eventNumber);
         eventNumber.setTypeface(typeface);
+        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
         if (type.matches("birthday")) {
-            eventColor.setBackgroundColor(cContext.getResources().getColor(cs.colorBirthdayCalendar()));
-            eventType.setText(cContext.getString(R.string.birthday_text));
+            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorBirthdayCalendar()));
+            eventType.setText(mContext.getString(R.string.birthday_text));
             String title = mDatas.get(position).getName();
             String phone = mDatas.get(position).getNumber();
-            if (phone == null || phone.matches("")) phone = contacts.get_Number(title, cContext);
+            if (phone == null || phone.matches("")) phone = contacts.get_Number(title, mContext);
             if (phone != null && !phone.matches("")){
                 eventNumber.setText(phone);
             } else {
@@ -90,43 +95,28 @@ public class CalendarEventsAdapter extends BaseAdapter{
 
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(mDatas.get(position).getDate());
-
-            String formattedTime;
-            if (new SharedPrefs(cContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                formattedTime = sdf.format(cl.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, K:mm a");
-                formattedTime = sdf.format(cl.getTime());
-            }
-            eventDate.setText(formattedTime);
+            Date time = cl.getTime();
+            eventDate.setText(Utils.getDateTime(time, is24));
         } else {
-            eventColor.setBackgroundColor(cContext.getResources().getColor(cs.colorReminderCalendar()));
-            eventType.setText(cContext.getString(R.string.reminder_type));
+            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorReminderCalendar()));
+            eventType.setText(mContext.getString(R.string.reminder_type));
 
             String number = mDatas.get(position).getNumber();
 
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(mDatas.get(position).getDate());
 
-            String formattedTime;
-            if (new SharedPrefs(cContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-                formattedTime = sdf.format(cl.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, K:mm a");
-                formattedTime = sdf.format(cl.getTime());
-            }
-
             eventText.setText(mDatas.get(position).getName());
 
             if (!number.matches("0")) {
-                String contactName = contacts.getContactNameFromNumber(number, cContext);
+                String contactName = contacts.getContactNameFromNumber(number, mContext);
                 eventNumber.setText(number + "\n" + contactName);
             } else {
                 eventNumber.setText("");
             }
-            eventDate.setText(formattedTime);
+
+            Date time = cl.getTime();
+            eventDate.setText(Utils.getDateTime(time, is24));
         }
 
         return convertView;

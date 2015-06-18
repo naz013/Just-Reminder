@@ -1,18 +1,15 @@
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.interfaces;
 
 import android.animation.ObjectAnimator;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.cray.software.justreminder.interfaces.CollapseListener;
-import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
+public class QuickReturnListViewOnScrollListener implements AbsListView.OnScrollListener {
 
     // region Member Variables
     private final QuickReturnViewType mQuickReturnViewType;
@@ -25,34 +22,32 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     private int mPrevScrollY = 0;
     private int mHeaderDiffTotal = 0;
     private int mFooterDiffTotal = 0;
-    private final int mColumnCount;
     private CollapseListener mListener = null;
-    private List<RecyclerView.OnScrollListener> mExtraOnScrollListenerList = new ArrayList<RecyclerView.OnScrollListener>();
+    private List<AbsListView.OnScrollListener> mExtraOnScrollListenerList = new ArrayList<AbsListView.OnScrollListener>();
     // endregion
 
     // region Constructors
-    private QuickReturnRecyclerViewOnScrollListener(Builder builder) {
+    private QuickReturnListViewOnScrollListener(Builder builder) {
         mQuickReturnViewType = builder.mQuickReturnViewType;
         mHeader = builder.mHeader;
         mMinHeaderTranslation = builder.mMinHeaderTranslation;
         mFooter = builder.mFooter;
         mListener = builder.mListener;
-        mColumnCount = builder.mColumnCount;
         mMinFooterTranslation = builder.mMinFooterTranslation;
         mIsSnappable = builder.mIsSnappable;
     }
     // endregion
 
     @Override
-    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        Log.d(getClass().getSimpleName(), "onScrollStateChanged() : scrollState - " + newState);
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+//        Log.d(getClass().getSimpleName(), "onScrollStateChanged() : scrollState - "+scrollState);
         // apply another list' s on scroll listener
-        for (RecyclerView.OnScrollListener listener : mExtraOnScrollListenerList) {
-            listener.onScrollStateChanged(recyclerView, newState);
+        for (AbsListView.OnScrollListener listener : mExtraOnScrollListenerList) {
+            listener.onScrollStateChanged(view, scrollState);
         }
 
         if (mListener != null) mListener.onStartScroll(true);
-        if(newState == RecyclerView.SCROLL_STATE_IDLE && mIsSnappable){
+        if(scrollState == SCROLL_STATE_IDLE && mIsSnappable){
 
             int midHeader = -mMinHeaderTranslation/2;
             int midFooter = mMinFooterTranslation/2;
@@ -140,20 +135,12 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     }
 
     @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+    public void onScroll(AbsListView listview, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         // apply extra on scroll listener
-        for (RecyclerView.OnScrollListener listener : mExtraOnScrollListenerList) {
-            /*RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            int firstVisibleItem = 0;
-            int visibleItemCount = 0;
-            int totalItemCount = 0;
-            if (manager != null){
-                totalItemCount = manager.getItemCount();
-                visibleItemCount = manager.getChildCount();
-            }*/
-            listener.onScrolled(recyclerView, dx, dy);
+        for (AbsListView.OnScrollListener listener : mExtraOnScrollListenerList) {
+            listener.onScroll(listview, firstVisibleItem, visibleItemCount, totalItemCount);
         }
-        int scrollY = QuickReturnUtils.getScrollY(recyclerView, mColumnCount);
+        int scrollY = QuickReturnUtils.getScrollY(listview);
         int diff = mPrevScrollY - scrollY;
 
 //        Log.d(getClass().getSimpleName(), "onScroll() : scrollY - "+scrollY);
@@ -216,7 +203,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     }
 
     // region Helper Methods
-    public void registerExtraOnScrollListener(RecyclerView.OnScrollListener listener) {
+    public void registerExtraOnScrollListener(AbsListView.OnScrollListener listener) {
         mExtraOnScrollListenerList.add(listener);
     }
     // endregion
@@ -233,7 +220,6 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         private View mFooter = null;
         private int mMinFooterTranslation = 0;
         private boolean mIsSnappable = false;
-        private int mColumnCount = 1;
         private CollapseListener mListener = null;
 
         public Builder(QuickReturnViewType quickReturnViewType) {
@@ -265,18 +251,13 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
             return this;
         }
 
-        public Builder columnCount(int columnCount){
-            mColumnCount = columnCount;
-            return this;
-        }
-
         public Builder isSnappable(boolean isSnappable){
             mIsSnappable = isSnappable;
             return this;
         }
 
-        public QuickReturnRecyclerViewOnScrollListener build() {
-            return new QuickReturnRecyclerViewOnScrollListener(this);
+        public QuickReturnListViewOnScrollListener build() {
+            return new QuickReturnListViewOnScrollListener(this);
         }
     }
 }

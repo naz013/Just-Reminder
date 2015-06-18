@@ -14,29 +14,31 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class FileCursorAdapter extends CursorAdapter implements Filterable {
-
-    TextView fileName, lastModified, task, type, number, date, time, repeat;
     LayoutInflater inflater;
     private Cursor c;
-    Context cContext;
+    Context context;
     Interval interval;
-    SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-    SimpleDateFormat format12 = new SimpleDateFormat("dd-MM-yyyy K:mm a");
+    SharedPrefs sPrefs;
+    ColorSetter cs;
 
     @SuppressWarnings("deprecation")
     public FileCursorAdapter(Context context, Cursor c) {
         super(context, c);
-        this.cContext = context;
+        this.context = context;
+        interval = new Interval(context);
+        sPrefs = new SharedPrefs(context);
+        cs = new ColorSetter(context);
+
         inflater = LayoutInflater.from(context);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.c = c;
         c.moveToFirst();
     }
@@ -61,58 +63,37 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         c.moveToPosition(position);
-        interval = new Interval(cContext);
 
         if (convertView == null) {
-            inflater = (LayoutInflater) cContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_file, null);
         }
 
-        SharedPrefs sPrefs = new SharedPrefs(cContext);
-
-        fileName = (TextView) convertView.findViewById(R.id.fileName);
-        lastModified = (TextView) convertView.findViewById(R.id.lastModified);
-        task = (TextView) convertView.findViewById(R.id.task);
-        type = (TextView) convertView.findViewById(R.id.type);
-        number = (TextView) convertView.findViewById(R.id.number);
-        date = (TextView) convertView.findViewById(R.id.date);
-        time = (TextView) convertView.findViewById(R.id.time);
-        repeat = (TextView) convertView.findViewById(R.id.repeat);
-
-        ColorSetter cs = new ColorSetter(cContext);
+        TextView fileName = (TextView) convertView.findViewById(R.id.fileName);
+        TextView lastModified = (TextView) convertView.findViewById(R.id.lastModified);
+        TextView task = (TextView) convertView.findViewById(R.id.task);
+        TextView type = (TextView) convertView.findViewById(R.id.type);
+        TextView number = (TextView) convertView.findViewById(R.id.number);
+        TextView date = (TextView) convertView.findViewById(R.id.date);
+        TextView time = (TextView) convertView.findViewById(R.id.time);
+        TextView repeat = (TextView) convertView.findViewById(R.id.repeat);
         CardView card = (CardView) convertView.findViewById(R.id.card);
         card.setCardBackgroundColor(cs.getCardStyle());
 
-        String title;
-        String fileNameS;
-        String typeS;
-        String numberS;
-        String weekdays;
-        int hour;
-        int minute;
-        int day;
-        int month;
-        int year;
-        int repCode;
-        long repTime;
-        long lastModifiedS;
-        double lat;
-        double longi;
-        repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-        repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-        lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-        longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-        day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-        month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-        year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-        hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-        minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-        numberS = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-        title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-        fileNameS = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_NAME));
-        lastModifiedS = c.getLong(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_LAST_EDIT));
-        typeS = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-        weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+        String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+        String fileNameS = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_NAME));
+        String typeS = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+        String numberS = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+        String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+        int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+        int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+        int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+        int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+        int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+        int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+        long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+        long lastModifiedS = c.getLong(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_LAST_EDIT));
+        double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+        double longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
 
         int pos = fileNameS.lastIndexOf(".");
         String fileN = fileNameS.substring(0, pos);
@@ -121,13 +102,9 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
         calendar.setTimeInMillis(lastModifiedS);
         Date date1 = calendar.getTime();
 
-        String dateS;
-        if (new SharedPrefs(cContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            dateS = format.format(date1);
-        } else {
-            dateS = format12.format(date1);
-        }
-        lastModified.setText(dateS);
+        boolean is24 = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+
+        lastModified.setText(Utils.getDateTime(date1, is24));
         task.setText(title);
         number.setText("");
         repeat.setText("");
@@ -139,53 +116,35 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            String formattedDate = dateFormat.format(calendar.getTime());
-            date.setText(formattedDate);
-            time.setText(formattedTime);
+            Date mTime = calendar.getTime();
+            date.setText(Utils.dateFormat.format(mTime));
+            time.setText(Utils.getTime(mTime, is24));
             repeat.setText(interval.getInterval(repCode));
 
-            type.setText(cContext.getString(R.string.reminder_type));
+            type.setText(context.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_TIME)){
             time.setText("");
             date.setText(Utils.generateAfterString(repTime));
 
             repeat.setText(interval.getTimeInterval(repCode));
 
-            type.setText(cContext.getString(R.string.reminder_type));
+            type.setText(context.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_WEEKDAY)){
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
 
-            time.setText(formattedTime);
+            time.setText(Utils.getTime(calendar.getTime(), is24));
 
             if (weekdays.length() == 7) {
-                date.setText(ReminderUtils.getRepeatString(cContext, weekdays));
+                date.setText(ReminderUtils.getRepeatString(context, weekdays));
             }
 
-            type.setText(cContext.getString(R.string.reminder_type));
+            type.setText(context.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_LOCATION)){
             date.setText(String.valueOf(lat));
             time.setText(String.valueOf(longi));
 
-            type.setText(cContext.getString(R.string.reminder_type));
+            type.setText(context.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_MESSAGE) || typeS.matches(Constants.TYPE_CALL)){
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, day);
@@ -193,20 +152,9 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            String formattedDate = dateFormat.format(calendar.getTime());
-
-            date.setText(formattedDate);
-            time.setText(formattedTime);
+            Date mTime = calendar.getTime();
+            date.setText(Utils.dateFormat.format(mTime));
+            time.setText(Utils.getTime(mTime, is24));
 
             number.setText(numberS);
 
@@ -214,19 +162,11 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
         } else if (typeS.matches(Constants.TYPE_WEEKDAY_CALL) || typeS.matches(Constants.TYPE_WEEKDAY_MESSAGE)){
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
 
-            time.setText(formattedTime);
+            time.setText(Utils.getTime(calendar.getTime(), is24));
 
             if (weekdays.length() == 7) {
-                date.setText(ReminderUtils.getRepeatString(cContext, weekdays));
+                date.setText(ReminderUtils.getRepeatString(context, weekdays));
             }
 
             number.setText(numberS);
@@ -242,28 +182,18 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            String formattedDate = dateFormat.format(calendar.getTime());
-
-            date.setText(formattedDate);
-            time.setText(formattedTime);
+            Date mTime = calendar.getTime();
+            date.setText(Utils.dateFormat.format(mTime));
+            time.setText(Utils.getTime(mTime, is24));
+            repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));
             if (typeS.matches(Constants.TYPE_SKYPE)){
-                type.setText(cContext.getString(R.string.skype_call_type_title));
+                type.setText(context.getString(R.string.skype_call_type_title));
             } else if (typeS.matches(Constants.TYPE_SKYPE_VIDEO)){
-                type.setText(cContext.getString(R.string.skype_video_type_title));
+                type.setText(context.getString(R.string.skype_video_type_title));
             } else if (typeS.matches(Constants.TYPE_SKYPE_CHAT)){
-                type.setText(cContext.getString(R.string.skype_chat_type_title));
+                type.setText(context.getString(R.string.skype_chat_type_title));
             }
             number.setText(numberS);
         } else if (typeS.matches(Constants.TYPE_APPLICATION)){
@@ -273,23 +203,13 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            String formattedDate = dateFormat.format(calendar.getTime());
-
-            date.setText(formattedDate);
-            time.setText(formattedTime);
+            Date mTime = calendar.getTime();
+            date.setText(Utils.dateFormat.format(mTime));
+            time.setText(Utils.getTime(mTime, is24));
+            repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));
-            type.setText(cContext.getString(R.string.reminder_type_application));
+            type.setText(context.getString(R.string.reminder_type_application));
             number.setText(numberS);
         } else if (typeS.matches(Constants.TYPE_APPLICATION_BROWSER)){
             calendar.set(Calendar.MONTH, month);
@@ -298,30 +218,20 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            String formattedDate = dateFormat.format(calendar.getTime());
-
-            date.setText(formattedDate);
-            time.setText(formattedTime);
+            Date mTime = calendar.getTime();
+            date.setText(Utils.dateFormat.format(mTime));
+            time.setText(Utils.getTime(mTime, is24));
+            repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));
-            type.setText(cContext.getString(R.string.reminder_type_open_link));
+            type.setText(context.getString(R.string.reminder_type_open_link));
             number.setText(numberS);
         }
 
         if (typeS.endsWith(Constants.TYPE_MESSAGE)){
-            type.setText(cContext.getString(R.string.reminder_send_message));
+            type.setText(context.getString(R.string.reminder_send_message));
         } else if (typeS.endsWith(Constants.TYPE_CALL)){
-            type.setText(cContext.getString(R.string.reminder_make_call));
+            type.setText(context.getString(R.string.reminder_make_call));
         }
 
         return convertView;

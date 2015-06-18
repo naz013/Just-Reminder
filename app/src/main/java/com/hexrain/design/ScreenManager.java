@@ -45,8 +45,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
-import com.cray.software.justreminder.adapters.QuickReturnRecyclerViewOnScrollListener;
+import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
+import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -1112,9 +1112,7 @@ public class ScreenManager extends AppCompatActivity
             new Notifier(this).recreatePermanent();
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)) {
-            isChangesShown();
-        }
+        isChangesShown();
 
         new DelayedAsync(this, null).execute();
     }

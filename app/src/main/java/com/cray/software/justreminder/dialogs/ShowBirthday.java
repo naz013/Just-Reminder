@@ -26,11 +26,11 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,8 +48,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     int contactId;
     String name, number, birthDate;
     ColorSetter cs = new ColorSetter(ShowBirthday.this);
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
     Notifier notifier = new Notifier(ShowBirthday.this);
     boolean isDark = false;
 
@@ -96,13 +94,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonSend);
         if (isDark){
-            buttonOk.setIconDrawable(getResources().getDrawable(R.drawable.ic_done_grey600_24dp));
-            buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_call_grey600_24dp));
-            buttonSend.setIconDrawable(getResources().getDrawable(R.drawable.ic_send_grey600_24dp));
+            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
+            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
+            buttonSend.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
         } else {
-            buttonOk.setIconDrawable(getResources().getDrawable(R.drawable.ic_done_white_24dp));
-            buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_call_white_24dp));
-            buttonSend.setIconDrawable(getResources().getDrawable(R.drawable.ic_send_white_24dp));
+            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_white_24dp));
+            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_white_24dp));
+            buttonSend.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
         }
 
         DB = new DataBase(ShowBirthday.this);
@@ -199,7 +197,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         int years;
         Date date = null;
         try {
-            date = format.parse(dateOfBirth);
+            date = Utils.dateFormat.parse(dateOfBirth);
         } catch (ParseException e) {
             e.printStackTrace();
         }

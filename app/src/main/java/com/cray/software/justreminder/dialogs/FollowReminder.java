@@ -33,11 +33,11 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -64,11 +64,6 @@ public class FollowReminder extends AppCompatActivity implements
     long tomorrow, nextWork, currTime;
 
     boolean is24Hour = true;
-    SimpleDateFormat hour24Format = new SimpleDateFormat("HH:mm");
-    SimpleDateFormat hour12Format = new SimpleDateFormat("K:mm a");
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
-    SimpleDateFormat full12Format = new SimpleDateFormat("EEE, dd MMMM yyyy, K:mm a");
-    SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM yyyy, HH:mm");
 
     SharedPrefs sPrefs = new SharedPrefs(FollowReminder.this);
     GTasksHelper gtx = new GTasksHelper(FollowReminder.this);
@@ -187,9 +182,8 @@ public class FollowReminder extends AppCompatActivity implements
         is24Hour = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
         //Calculate custom time
-        customDate.setText(dateFormat.format(c.getTime()));
-        if (is24Hour) customTime.setText(hour24Format.format(c.getTime()));
-        else customTime.setText(hour12Format.format(c.getTime()));
+        customDate.setText(Utils.dateFormat.format(c.getTime()));
+        customTime.setText(Utils.getTime(c.getTime(), is24Hour));
         customHour = c.get(Calendar.HOUR_OF_DAY);
         customMinute = c.get(Calendar.MINUTE);
         customYear = c.get(Calendar.YEAR);
@@ -218,8 +212,7 @@ public class FollowReminder extends AppCompatActivity implements
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
-        if (is24Hour) tomorrowTime.setText(full24Format.format(c.getTime()));
-        else tomorrowTime.setText(full12Format.format(c.getTime()));
+        tomorrowTime.setText(Utils.getDateTime(c.getTime(), is24Hour));
 
         //Calculate next business day time
         if (currDay == Calendar.FRIDAY){
@@ -230,8 +223,7 @@ public class FollowReminder extends AppCompatActivity implements
             c.setTimeInMillis(currTime + (1000 * 60 * 60 * 24));
         }
         nextWork = c.getTimeInMillis();
-        if (is24Hour) nextWorkingTime.setText(full24Format.format(c.getTime()));
-        else nextWorkingTime.setText(full12Format.format(c.getTime()));
+        nextWorkingTime.setText(Utils.getDateTime(c.getTime(), is24Hour));
     }
 
     private int getAfterMins(int progress) {
@@ -267,7 +259,7 @@ public class FollowReminder extends AppCompatActivity implements
         c.set(Calendar.MONTH, monthOfYear);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        customDate.setText(dateFormat.format(c.getTime()));
+        customDate.setText(Utils.dateFormat.format(c.getTime()));
     }
 
     protected Dialog timeDialog() {
@@ -283,8 +275,7 @@ public class FollowReminder extends AppCompatActivity implements
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            if (is24Hour) customTime.setText(hour24Format.format(c.getTime()));
-            else customTime.setText(hour12Format.format(c.getTime()));
+            customTime.setText(Utils.getTime(c.getTime(), is24Hour));
         }
     };
 

@@ -35,12 +35,12 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class QuickAddReminder extends AppCompatActivity implements
@@ -148,14 +148,6 @@ public class QuickAddReminder extends AppCompatActivity implements
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
         dateYearField.setTypeface(typeface);
 
-        String formattedTime;
-        if (new SharedPrefs(QuickAddReminder.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(c.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(c.getTime());
-        }
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +155,8 @@ public class QuickAddReminder extends AppCompatActivity implements
                 timeDialog().show();
             }
         });
-        timeField.setText(formattedTime);
+        timeField.setText(Utils.getTime(c.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         timeField.setTypeface(typeface);
 
@@ -255,16 +248,8 @@ public class QuickAddReminder extends AppCompatActivity implements
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (new SharedPrefs(QuickAddReminder.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(c.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(c.getTime());
-            }
-
-            timeField.setText(formattedTime);
+            timeField.setText(Utils.getTime(c.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     };
 

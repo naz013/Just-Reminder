@@ -23,6 +23,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 
 public class VoiceResult extends Activity {
 
@@ -85,11 +86,7 @@ public class VoiceResult extends Activity {
 
         SharedPrefs prefs = new SharedPrefs(VoiceResult.this);
         boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
-        if (mDark){
-            repeatInterval.setBackground(getResources().getDrawable(R.drawable.round_view_white));
-        } else {
-            repeatInterval.setBackground(getResources().getDrawable(R.drawable.round_view_black));
-        }
+        repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white : R.drawable.round_view_black);
 
         String title = null;
         String type = null;
@@ -138,7 +135,7 @@ public class VoiceResult extends Activity {
         }
         if (cf != null) cf.close();
 
-        taskIcon.setImageDrawable(getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+        taskIcon.setImageDrawable(Utils.getDrawable(this, cs.getCategoryIndicator(categoryColor)));
 
         if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {

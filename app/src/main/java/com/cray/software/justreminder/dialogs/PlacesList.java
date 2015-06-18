@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
+import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;

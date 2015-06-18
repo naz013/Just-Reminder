@@ -12,17 +12,21 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 
 public class SimpleAdapter extends CursorAdapter {
 
     LayoutInflater inflater;
     private Cursor c;
     Context cContext;
+    ColorSetter cs;
 
     public SimpleAdapter(Context context, Cursor c) {
         super(context, c);
         this.cContext = context;
+        cs = new ColorSetter(context);
         inflater = LayoutInflater.from(context);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.c = c;
         c.moveToFirst();
     }
@@ -53,7 +57,6 @@ public class SimpleAdapter extends CursorAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         c.moveToPosition(position);
         if (convertView == null) {
-            inflater = (LayoutInflater) cContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_category_card, null);
         }
 
@@ -63,13 +66,11 @@ public class SimpleAdapter extends CursorAdapter {
         TextView textView = (TextView) convertView.findViewById(R.id.textView);
         textView.setText(text);
 
-        ColorSetter cs = new ColorSetter(cContext);
-
         CardView card = (CardView) convertView.findViewById(R.id.card);
         card.setCardBackgroundColor(cs.getCardStyle());
 
         View indicator = convertView.findViewById(R.id.indicator);
-        indicator.setBackgroundDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(color)));
+        indicator.setBackgroundDrawable(Utils.getDrawable(cContext, cs.getCategoryIndicator(color)));
 
         return convertView;
     }

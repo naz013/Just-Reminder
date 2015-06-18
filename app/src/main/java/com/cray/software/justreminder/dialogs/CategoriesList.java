@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.QuickReturnListViewOnScrollListener;
+import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;

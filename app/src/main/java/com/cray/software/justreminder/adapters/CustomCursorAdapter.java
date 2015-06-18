@@ -25,33 +25,40 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
     LayoutInflater inflater;
     private Cursor c;
-    Context cContext;
+    Context context;
     DataBase DB;
     TimeCount mCount;
     Contacts mContacts;
     Interval mInterval;
-    CardView card;
     SyncListener mListener;
-    long mId;
-    ArrayList<Long> arrayList;
+    Typeface typeface;
+    ColorSetter cs;
+    SharedPrefs prefs;
 
     @SuppressWarnings("deprecation")
     public CustomCursorAdapter(Context context, Cursor c, SyncListener clickListener) {
         super(context, c);
-        this.cContext = context;
+        this.context = context;
         inflater = LayoutInflater.from(context);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.c = c;
         this.mListener = clickListener;
-        arrayList = new ArrayList<>();
+        DB = new DataBase(context);
+        mContacts = new Contacts(context);
+        mInterval = new Interval(context);
+        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+        mCount = new TimeCount(context);
+        cs = new ColorSetter(context);
+        prefs = new SharedPrefs(context);
         c.moveToFirst();
     }
 
@@ -72,17 +79,9 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         return super.getItem(position);
     }
 
-    class ViewHolder {
-        TextView leftTime;
-    }
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         c.moveToPosition(position);
-        DB = new DataBase(cContext);
-        mContacts = new Contacts(cContext);
-        mInterval = new Interval(cContext);
-        Typeface typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Light.ttf");
         DB.open();
         String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
         String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
@@ -103,8 +102,6 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
         int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
         int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-        mId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-        arrayList.add(mId);
 
         Cursor cf = DB.getCategory(categoryId);
         int categoryColor = 0;
@@ -113,19 +110,12 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         }
         if (cf != null) cf.close();
 
-        final ViewHolder holder;
         if (convertView == null) {
-            holder = new ViewHolder();
-            inflater = (LayoutInflater) cContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_card, null);
-
-            holder.leftTime = (TextView) convertView.findViewById(R.id.remainingTime);
-            holder.leftTime.setTypeface(typeface);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
         }
+
+        TextView leftTime = (TextView) convertView.findViewById(R.id.remainingTime);
+        leftTime.setTypeface(typeface);
         CheckBox check = (CheckBox) convertView.findViewById(R.id.itemCheck);
         check.setFocusable(false);
         check.setVisibility(View.VISIBLE);
@@ -154,9 +144,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         ImageView leftTimeIcon = (ImageView) convertView.findViewById(R.id.leftTime);
         leftTimeIcon.setVisibility(View.VISIBLE);
 
-        ColorSetter cs = new ColorSetter(cContext);
-
-        card = (CardView) convertView.findViewById(R.id.card);
+        CardView card = (CardView) convertView.findViewById(R.id.card);
         card.setCardBackgroundColor(cs.getCardStyle());
 
         if (isDone == 1){
@@ -165,14 +153,14 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             check.setChecked(false);
         }
 
-        mCount = new TimeCount(cContext);
+        reminder_type.setText(ReminderUtils.getTypeString(context, type));
 
-        reminder_type.setText(ReminderUtils.getTypeString(cContext, type));
+        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
         if (type.startsWith(Constants.TYPE_MONTHDAY)){
             taskTitle.setText(title);
 
-            taskIcon.setImageDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                 reminder_phone.setText(number);
@@ -195,29 +183,17 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
-            String formattedTime;
-            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            Date mTime = calendar.getTime();
+            viewTime.setText(Utils.getTime(mTime, is24));
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
             calendar.setTimeInMillis(time);
-            String date = dateFormat.format(calendar.getTime());
-
-            taskDate.setText(date);
+            taskDate.setText(Utils.dateFormat.format(calendar.getTime()));
             if (isDone == 0) {
                 String remaining = mCount.getRemaining(time);
-                holder.leftTime.setText(remaining);
+                leftTime.setText(remaining);
             } else {
-                holder.leftTime.setVisibility(View.GONE);
+                leftTime.setVisibility(View.GONE);
             }
-            viewTime.setText(formattedTime);
-
-            DB.close();
         } else if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 reminder_phone.setText(number);
@@ -233,7 +209,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                 reminder_phone.setText(number);
                 reminder_contact_name.setText(number);
             } else if (type.matches(Constants.TYPE_APPLICATION)){
-                PackageManager packageManager = cContext.getPackageManager();
+                PackageManager packageManager = context.getPackageManager();
                 ApplicationInfo applicationInfo = null;
                 try {
                     applicationInfo = packageManager.getApplicationInfo(number, 0);
@@ -246,7 +222,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                 reminder_contact_name.setText(number);
             }
 
-            taskIcon.setImageDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
                     repCode, repCount, delay);
@@ -267,7 +243,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                     repeatInterval.setVisibility(View.GONE);
                 } else {
                     leftTimeIcon.setVisibility(View.GONE);
-                    repeatInterval.setText(cContext.getString(R.string.interval_zero));
+                    repeatInterval.setText(context.getString(R.string.interval_zero));
                 }
             }
 
@@ -278,23 +254,22 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             if (lat != 0.0 || lon != 0.0) {
                 taskDate.setText(String.format("%.5f", lat));
                 viewTime.setText(String.format("%.5f", lon));
-                holder.leftTime.setVisibility(View.GONE);
+                leftTime.setVisibility(View.GONE);
             } else {
                 if (isDone == 0) {
-                    holder.leftTime.setText(mCount.
+                    leftTime.setText(mCount.
                             getRemaining(time));
                 } else {
-                    holder.leftTime.setVisibility(View.GONE);
+                   leftTime.setVisibility(View.GONE);
                 }
 
                 taskDate.setText(dT[0]);
                 viewTime.setText(dT[1]);
             }
-            DB.close();
         } else {
             taskTitle.setText(title);
 
-            taskIcon.setImageDrawable(cContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
@@ -317,37 +292,30 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
-            String formattedTime;
-            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            Date mTime = calendar.getTime();
+            viewTime.setText(Utils.getTime(mTime, is24));
 
             if (weekdays.length() == 7) {
-                taskDate.setText(ReminderUtils.getRepeatString(cContext, weekdays));
+                taskDate.setText(ReminderUtils.getRepeatString(context, weekdays));
                 if (isDone == 0) {
                     String remaining = mCount.getRemaining(time);
-                    holder.leftTime.setText(remaining);
+                    leftTime.setText(remaining);
                 } else {
-                    holder.leftTime.setVisibility(View.GONE);
+                    leftTime.setVisibility(View.GONE);
                 }
             }
-            viewTime.setText(formattedTime);
-
-            DB.close();
         }
         if (isDone == 1){
-            leftTimeIcon.setImageDrawable(cContext.getResources().getDrawable(R.drawable.drawable_grey));
+            leftTimeIcon.setImageDrawable(Utils.getDrawable(context, R.drawable.drawable_grey));
         }
 
         if (archived > 0) {
             check.setVisibility(View.GONE);
-            holder.leftTime.setVisibility(View.GONE);
+            leftTime.setVisibility(View.GONE);
             leftTimeIcon.setVisibility(View.GONE);
         }
+
+        DB.close();
         return convertView;
     }
 

@@ -1038,9 +1038,9 @@ public class Recognizer {
             String tech = parts[0];
             String time = parts[1];
             String before = parts[2];
-            if (time.contains(" годин") || time.contains(" хвил") ||
-                    time.contains(" час") || time.contains(" минут") ||
-                    time.contains(" hour") || time.contains(" minute")){
+            if (keyStr.contains("годин") || keyStr.contains("хвил") ||
+                    keyStr.contains("час") || keyStr.contains("минут") ||
+                    keyStr.contains("hour") || keyStr.contains("minute")){
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
                         keyStr.lastIndexOf(time)).trim();
                 int[] indexes = RecognizerUtils.getIndexes(time);
@@ -1067,7 +1067,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(after * MINUTE));
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(after));
                 }
             } else {
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
@@ -1103,9 +1103,9 @@ public class Recognizer {
         } else if (parts.length == 2){
             String tech = parts[0];
             String time = parts[1];
-            if (time.contains(" годин") || time.contains(" хвил") ||
-                    time.contains(" час") || time.contains(" минут") ||
-                    time.contains(" hour") || time.contains(" minute")){
+            if (keyStr.contains("годин") || keyStr.contains("хвил") ||
+                    keyStr.contains("час") || keyStr.contains("минут") ||
+                    keyStr.contains("hour") || keyStr.contains("minute")){
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
                         keyStr.lastIndexOf(time)).trim();
                 int[] indexes = RecognizerUtils.getIndexes(time);
@@ -1123,7 +1123,8 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(after * MINUTE));
+                    long afterTime = Math.round(after * MINUTE);
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, afterTime);
                 }
             } else {
                 String number = keyStr.substring(keyStr.lastIndexOf(tech) + tech.length(),
@@ -1149,9 +1150,9 @@ public class Recognizer {
             }
         } else if (parts.length == 1){
             String time = parts[0];
-            if (time.contains(" годин") || time.contains(" хвил") ||
-                    time.contains(" час") || time.contains(" минут") ||
-                    time.contains(" hour") || time.contains(" minute")){
+            if (keyStr.contains("годин") || keyStr.contains("хвил") ||
+                    keyStr.contains("час") || keyStr.contains("минут") ||
+                    keyStr.contains("hour") || keyStr.contains("minute")){
                 int[] indexes = RecognizerUtils.getIndexes(time);
                 int indexStart = indexes[0];
                 int increment = indexes[1];
@@ -1166,7 +1167,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(multiplier * MINUTE));
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(multiplier));
                 }
             } else {
                 int[] indexes = RecognizerUtils.getIndexes(time);

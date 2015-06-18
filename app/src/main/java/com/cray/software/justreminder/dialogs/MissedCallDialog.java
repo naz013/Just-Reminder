@@ -24,6 +24,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.MissedCallAlarm;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -97,15 +98,15 @@ public class MissedCallDialog extends Activity {
         isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
         if (isDark){
-            buttonOk.setIconDrawable(getResources().getDrawable(R.drawable.ic_done_grey600_24dp));
-            buttonCancel.setIconDrawable(getResources().getDrawable(R.drawable.ic_clear_grey600_24dp));
-            buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_call_grey600_24dp));
-            buttonNotification.setIconDrawable(getResources().getDrawable(R.drawable.ic_favorite_grey600_24dp));
+            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
+            buttonCancel.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
+            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
+            buttonNotification.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_favorite_grey600_24dp));
         } else {
-            buttonOk.setIconDrawable(getResources().getDrawable(R.drawable.ic_done_white_24dp));
-            buttonCancel.setIconDrawable(getResources().getDrawable(R.drawable.ic_clear_white_24dp));
-            buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_call_white_24dp));
-            buttonNotification.setIconDrawable(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
+            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_white_24dp));
+            buttonCancel.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_clear_white_24dp));
+            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_white_24dp));
+            buttonNotification.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_favorite_white_24dp));
         }
 
         remText = (TextView) findViewById(R.id.remText);
@@ -128,8 +129,8 @@ public class MissedCallDialog extends Activity {
                     "\n" +
                     "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        if (isDark) buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_send_grey600_24dp));
-        else buttonCall.setIconDrawable(getResources().getDrawable(R.drawable.ic_send_white_24dp));
+        if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+        else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
 
         contactPhoto.setVisibility(View.VISIBLE);
         Bitmap photo = contacts.openPhoto(id);

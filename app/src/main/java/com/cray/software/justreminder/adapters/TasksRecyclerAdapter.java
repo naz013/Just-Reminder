@@ -16,9 +16,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 
@@ -32,13 +32,18 @@ public class TasksRecyclerAdapter extends BaseAdapter {
     LayoutInflater inflater;
     Context mContext;
     SyncListener mListener;
+    TasksData data;
+    ColorSetter cs;
     SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM");
 
     public TasksRecyclerAdapter(Context context, ArrayList<ListItems> myDataset, SyncListener listener) {
         this.mDataset = myDataset;
         this.mContext = context;
         this.mListener = listener;
+        data = new TasksData(context);
+        cs = new ColorSetter(context);
         inflater = LayoutInflater.from(context.getApplicationContext());
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         notifyDataSetChanged();
     }
 
@@ -59,12 +64,10 @@ public class TasksRecyclerAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        TasksData data = new TasksData(mContext);
         data.open();
         final ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
-            inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item_task, null);
 
             holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkDone);
@@ -86,8 +89,6 @@ public class TasksRecyclerAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        ColorSetter cs = new ColorSetter(mContext);
 
         Cursor c = data.getTasksList(mDataset.get(position).getListId());
         if (c != null && c.moveToFirst()){
@@ -151,7 +152,6 @@ public class TasksRecyclerAdapter extends BaseAdapter {
     }
 
     private void switchTask(int position, boolean isDone){
-        final TasksData data = new TasksData(mContext);
         data.open();
         if (isDone){
             data.setTaskDone(mDataset.get(position).getId());

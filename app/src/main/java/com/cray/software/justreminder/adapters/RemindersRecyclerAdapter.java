@@ -24,12 +24,12 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -41,13 +41,24 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     TimeCount mCount;
     Contacts mContacts;
     Interval mInterval;
+    SharedPrefs prefs;
+    ColorSetter cs;
     ArrayList<ReminderItem> arrayList;
+    Typeface typeface;
     private EventListener mEventListener;
     private View.OnClickListener mSwipeableViewContainerOnClickListener;
 
     public RemindersRecyclerAdapter(Context context, ArrayList<ReminderItem> arrayList) {
         this.mContext = context;
         this.arrayList = arrayList;
+        DB = new DataBase(context);
+        mContacts = new Contacts(context);
+        mInterval = new Interval(context);
+        prefs = new SharedPrefs(context);
+        cs = new ColorSetter(context);
+        mCount = new TimeCount(context);
+        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+
         mSwipeableViewContainerOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,12 +150,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        DB = new DataBase(mContext);
-        mContacts = new Contacts(mContext);
-        mInterval = new Interval(mContext);
-        final SharedPrefs prefs = new SharedPrefs(mContext);
         boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
-        Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
+        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
         DB.open();
 
         ReminderItem item = arrayList.get(position);
@@ -173,8 +180,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.reminder_type.setTypeface(typeface);
         holder.reminder_phone.setTypeface(typeface);
         holder.repeatInterval.setTypeface(typeface);
-
-        ColorSetter cs = new ColorSetter(mContext);
         holder.container.setBackgroundColor(cs.getCardStyle());
 
         // (if the item is *pinned*, click event comes to the mContainer)
@@ -184,21 +189,14 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.setSwipeItemSlideAmount(
                 item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
 
-        if (mDark){
-            holder.repeatInterval.setBackgroundDrawable(mContext.getResources()
-                    .getDrawable(R.drawable.round_view_white));
-        } else {
-            holder.repeatInterval.setBackgroundDrawable(mContext.getResources()
-                    .getDrawable(R.drawable.round_view_black));
-        }
+        holder.repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white :
+                R.drawable.round_view_black);
 
         if (isDone == 1){
             holder.check.setChecked(true);
         } else {
             holder.check.setChecked(false);
         }
-
-        mCount = new TimeCount(mContext);
 
         if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
@@ -243,7 +241,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.reminder_contact_name.setText(number);
             }
 
-            holder.taskIcon.setImageDrawable(mContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+            holder.taskIcon.setImageDrawable(Utils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
 
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
                     type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
@@ -288,7 +286,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         } else {
             holder.taskTitle.setText(title);
 
-            holder.taskIcon.setImageDrawable(mContext.getResources().getDrawable(cs.getCategoryIndicator(categoryColor)));
+            holder.taskIcon.setImageDrawable(Utils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
 
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 holder. reminder_phone.setText(number);
@@ -312,14 +310,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(due);
-            String formattedTime;
-            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
 
             holder.taskDate.setText(repeat);
             if (isDone == 0) {
@@ -328,12 +318,10 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             } else {
                 holder.leftTime.setVisibility(View.GONE);
             }
-            holder.viewTime.setText(formattedTime);
-
-            DB.close();
+            holder.viewTime.setText(Utils.getTime(calendar.getTime(), is24));
         }
         if (isDone == 1){
-            holder.leftTimeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.drawable_grey));
+            holder.leftTimeIcon.setImageDrawable(Utils.getDrawable(mContext, R.drawable.drawable_grey));
         }
 
         if (archived > 0) {
@@ -364,7 +352,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)){
+                if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
                     if (mEventListener != null) {
                         mEventListener.toggleItem(position);
                     }
@@ -375,6 +363,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 }
             }
         });
+
+        DB.close();
     }
 
     @Override
