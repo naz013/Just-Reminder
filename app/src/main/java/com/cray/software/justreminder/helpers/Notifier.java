@@ -958,7 +958,6 @@ public class Notifier {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx);
         stackBuilder.addParentStack(ReminderManager.class);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
-        //stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_ONE_SHOT);
         remoteViews.setOnClickPendingIntent(R.id.notificationAdd, resultPendingIntent);
@@ -984,7 +983,6 @@ public class Notifier {
         DataBase db = new DataBase(ctx);
         db.open();
         int count = db.getCountActive();
-        TimeCount mCount = new TimeCount(ctx);
         ArrayList<Long> dates = new ArrayList<>();
         ArrayList<String> tasks = new ArrayList<>();
         dates.clear();
@@ -1010,14 +1008,20 @@ public class Notifier {
                         type.matches(Constants.TYPE_MESSAGE) ||
                         type.matches(Constants.TYPE_REMINDER) ||
                         type.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                    long time = mCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
+                    long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
                             afterTime, repCode, remCount, 0);
                     if (time > 0) {
                         dates.add(time);
                         tasks.add(text);
                     }
                 } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
-                    long time = mCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
+                    long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
+                    if (time > 0) {
+                        dates.add(time);
+                        tasks.add(text);
+                    }
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
+                    long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
                     if (time > 0) {
                         dates.add(time);
                         tasks.add(text);
@@ -1028,7 +1032,7 @@ public class Notifier {
         if (c != null) {
             c.close();
         }
-        if (db != null) db.close();
+        db.close();
         String event = "";
         long prevTime = 0;
         for (int i = 0; i < dates.size(); i++) {

@@ -1167,7 +1167,7 @@ public class Recognizer {
                     int mMonth = calendar.get(Calendar.MONTH);
                     int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                     int mYear = calendar.get(Calendar.YEAR);
-                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, Math.round(multiplier));
+                    saveTimeReminder(task, isWidget, export, mDay, mMonth, mYear, mHour, mMinute, multiplier);
                 }
             } else {
                 int[] indexes = RecognizerUtils.getIndexes(time);

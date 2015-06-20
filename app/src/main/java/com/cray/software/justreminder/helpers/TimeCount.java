@@ -3,14 +3,14 @@ package com.cray.software.justreminder.helpers;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class TimeCount {
 
@@ -25,13 +25,7 @@ public class TimeCount {
     }
 
     private Drawable getColor(int color){
-        Drawable res;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            res = mContext.getResources().getDrawable(color, null);
-        } else {
-            res = mContext.getResources().getDrawable(color);
-        }
-        return res;
+        return Utils.getDrawable(mContext, color);
     }
 
     public Drawable getDifference(long time){
@@ -106,18 +100,10 @@ public class TimeCount {
         } else {
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(timeLong);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            date = dateFormat.format(cl.getTime());
-
-            String formattedTime;
-            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                formattedTime = sdf.format(cl.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm:ss a");
-                formattedTime = sdf.format(cl.getTime());
-            }
-            time = formattedTime;
+            Date mTime = cl.getTime();
+            date = Utils.dateFormat.format(mTime);
+            time = Utils.getTime(mTime,
+                    new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         }
         return new String[]{date, time};
     }
@@ -135,18 +121,10 @@ public class TimeCount {
                     inTime, repeatCode, remCount, delay);
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(newDbTime);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-            date = dateFormat.format(cl.getTime());
-
-            String formattedTime;
-            if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                formattedTime = sdf.format(cl.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm:ss a");
-                formattedTime = sdf.format(cl.getTime());
-            }
-            time = formattedTime;
+            Date mTime = cl.getTime();
+            date = Utils.dateFormat.format(mTime);
+            time = Utils.getTime(mTime,
+                    new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         }
         return new String[]{date, time};
     }
@@ -260,25 +238,27 @@ public class TimeCount {
             result = days + " " + mContext.getString(R.string.remaining_days);
         } else if (days > 0 && days <= 5){
             if (days > 1) {
-                result = days + " " + mContext.getString(R.string.remaining_days) +
-                        "," + " " + hours + " " + mContext.getString(R.string.remaining_hours) + " " +
+                result = days + " " + mContext.getString(R.string.remaining_days) + "," + " " + hours
+                        + " " + (hours > 1 ? mContext.getString(R.string.remaining_hours) :
+                        mContext.getString(R.string.remaining_hour)) + " " +
                         mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
+                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
             } else {
                 result = days + " " + mContext.getString(R.string.remaining_day) +
-                        "," + " " + hours + " " + mContext.getString(R.string.remaining_hours) + " " +
+                        "," + " " + hours + " " +(hours > 1 ? mContext.getString(R.string.remaining_hours) :
+                        mContext.getString(R.string.remaining_hour)) + " " +
                         mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
+                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
             }
         } else if (days == 0 && hours > 0){
             if (hours > 1) {
                 result = hours + " " + mContext.getString(R.string.remaining_hours) + " " +
                         mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
+                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
             } else {
                 result = hours + " " + mContext.getString(R.string.remaining_hour) + " " +
                         mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        mContext.getString(R.string.remaining_minutes);
+                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
             }
         } else {
             if (min >= 1) {
@@ -490,14 +470,12 @@ public class TimeCount {
         }
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
-        if (cc.get(Calendar.DAY_OF_MONTH) == dayOfMonth) return true;
-        else return false;
+        return cc.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
     }
 
     public static boolean isLastDay(){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
-        if (cc.get(Calendar.DAY_OF_MONTH) == cc.getActualMaximum(Calendar.DAY_OF_MONTH)) return true;
-        else return false;
+        return cc.get(Calendar.DAY_OF_MONTH) == cc.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 }

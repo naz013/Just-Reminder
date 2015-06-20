@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.databases.NotesBase;
@@ -1244,41 +1243,4 @@ public class SyncHelper {
         }
         return Base64.encodeToString(string_byted, Base64.DEFAULT).trim();
     }
-
-    public String getRepeatString(String repCode){
-        String res;
-        StringBuilder sb = new StringBuilder();
-        if (Character.toString(repCode.charAt(0)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_monday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(1)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_tuesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(2)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_wednesday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(3)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_thursday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(4)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_friday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(5)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_saturday));
-            sb.append(",");
-        }
-        if (Character.toString(repCode.charAt(6)).matches(Constants.DAY_CHECKED)){
-            sb.append(sContext.getString(R.string.weekday_sunday));
-        }
-        if (repCode.matches(Constants.ALL_CHECKED)){
-            res = sContext.getString(R.string.interval_day);
-        } else res = sb.toString();
-        return res;
-    }
-
 }

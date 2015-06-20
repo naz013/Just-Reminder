@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.utils.Utils;
 
 public class ColorSetter {
 
@@ -303,7 +304,7 @@ public class ColorSetter {
     }
 
     private Drawable getDrawable(int i){
-        return cContext.getResources().getDrawable(i);
+        return Utils.getDrawable(cContext, i);
     }
 
     public Drawable toggleDrawable(){
