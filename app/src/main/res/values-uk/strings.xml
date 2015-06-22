@@ -240,11 +240,16 @@
     <string name="color_dark_green">Темно-зелений</string>
     <string name="color_brown">Коричневий</string>
 
+    <string name="map_normal">Звичайна</string>
+    <string name="map_satellite">Супутникова</string>
+    <string name="map_hybrid">Гібридна</string>
+    <string name="map_terrain">Земля</string>
+
     <array name="map_types">
-        <item>Звичайна</item>
-        <item>Супутникова</item>
-        <item>Гібридна</item>
-        <item>Земля</item>
+        <item>@string/map_normal</item>
+        <item>@string/map_satellite</item>
+        <item>@string/map_hybrid</item>
+        <item>@string/map_terrain</item>
     </array>
 
     <array name="colors_list">
@@ -639,4 +644,5 @@
     <string name="string_generating_events">Генерую події…</string>
     <string name="interval_day">Щоденно</string>
     <string name="string_swipe_left_or_right">Потягніть вліво або вправо, щоб обрати тему.</string>
+    <string name="string_address">Адреса...</string>
 </resources>

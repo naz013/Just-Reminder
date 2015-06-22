@@ -37,7 +37,8 @@ public class MapType extends Activity{
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-        ArrayAdapter<CharSequence> aa = ArrayAdapter.createFromResource(this, R.array.map_types, android.R.layout.select_dialog_singlechoice);
+        ArrayAdapter<CharSequence> aa = ArrayAdapter.createFromResource(this, R.array.map_types,
+                android.R.layout.select_dialog_singlechoice);
         musicList.setAdapter(aa);
 
         sPrefs = new SharedPrefs(MapType.this);

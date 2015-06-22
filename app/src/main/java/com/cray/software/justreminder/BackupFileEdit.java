@@ -32,10 +32,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,6 +50,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -65,7 +68,6 @@ import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
@@ -75,6 +77,7 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -89,7 +92,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -99,22 +101,20 @@ import java.util.List;
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
 
-    LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout,
-            message_layout, location_call_layout, location_message_layout, weekday_layout, action_layout,
-            skype_layout, application_layout, monthDayLayout;
+    LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout, message_layout,
+            weekday_layout, action_layout, skype_layout, application_layout, monthDayLayout;
     LinearLayout callDateRing, dateRing, messageDateRing;
-    FloatingEditText phoneNumber, messageNumber, locationCallPhoneNumber, locationMessagePhoneNumber, weekPhoneNumber;
+    FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
     TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
             messageDate, messageYearDate, messageTime, weekTimeField;
     ImageButton insertVoice, pickApplication;
-    ImageButton addNumberButton, addMessageNumberButton, locationCallAddNumberButton, locationMessageAddNumberButton,
-            weekAddNumberButton;
+    ImageButton addNumberButton, addMessageNumberButton, weekAddNumberButton;
     SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
 
-    Spinner placesList, placesListCall, placesListMessage;
+    Spinner placesList;
     ArrayList<String> spinnerArray = null;
-    LinearLayout layoutContainer, delayLayout, delayMessageLayout, delayCallLayout;
-    CheckBox attackDelay, attackCallDelay, attackMessageDelay;
+    LinearLayout layoutContainer, delayLayout;
+    CheckBox attackDelay;
 
     int myHour = 0;
     int myMinute = 0;
@@ -139,8 +139,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
     Typeface typeface;
 
-    private MapFragment googleMap, locationCallMap, locationMessageMap;
-    private Marker destination, locationCallDestination, locationMessageDestination;
+    private GoogleMap googleMap;
+    private Marker destination;
 
     long id;
     String type, selectedPackage = null;
@@ -215,23 +215,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 attachCall();
             } else if (type.matches(Constants.TYPE_MESSAGE)){
                 attachMessage();
-            } else if (type.matches(Constants.TYPE_LOCATION)){
+            } else if (type.startsWith(Constants.TYPE_LOCATION)){
                 if (checkGooglePlayServicesAvailability()) {
                     attachLocation();
-                } else {
-                    Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            } else if (type.matches(Constants.TYPE_LOCATION_CALL)){
-                if (checkGooglePlayServicesAvailability()) {
-                    attachLocationCall();
-                } else {
-                    Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE)){
-                if (checkGooglePlayServicesAvailability()) {
-                    attachLocationMessage();
                 } else {
                     Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
                     finish();
@@ -342,15 +328,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         dateField.setText(dayStr + "/" + monthStr);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         dateField.setTypeface(typeface);
@@ -367,7 +344,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        timeField.setText(formattedTime);
+        timeField.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         timeField.setTypeface(typeface);
 
@@ -403,19 +381,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
-            timeField.setText(formattedTime);
+            timeField.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(interval.getProgressFromCode(repCode));
@@ -476,15 +447,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myDay < 10) dayStr = "0" + myDay;
         else dayStr = String.valueOf(myDay);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         monthDayField.setText(dayStr);
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         monthDayField.setTypeface(typeface);
@@ -496,7 +458,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        monthDayTimeField.setText(formattedTime);
+        monthDayTimeField.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         monthDayTimeField.setTypeface(typeface);
 
@@ -579,19 +542,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myDay < 10) dayStr = "0" + myDay;
             else dayStr = String.valueOf(myDay);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
-            monthDayTimeField.setText(formattedTime);
+            monthDayTimeField.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             monthDayField.setText(dayStr);
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
@@ -714,15 +670,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             weekTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(c.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(c.getTime());
-        }
-
         weekTimeField = (TextView) findViewById(R.id.weekTimeField);
         weekTimeField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -730,7 +677,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        weekTimeField.setText(formattedTime);
+        weekTimeField.setText(Utils.getTime(c.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
         weekTimeField.setTypeface(typeface);
 
@@ -805,18 +753,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (x != null) x.close();
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            c.set(Calendar.HOUR_OF_DAY, myHour);
+            c.set(Calendar.MINUTE, myMinute);
 
-            weekTimeField.setText(formattedTime);
+            weekTimeField.setText(Utils.getTime(c.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             taskField.setText(text);
 
             setCheckForDays(weekdays);
@@ -1059,15 +1000,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         skypeDate = (TextView) findViewById(R.id.skypeDate);
         skypeDate.setText(dayStr + "/" + monthStr);
         skypeDate.setOnClickListener(new View.OnClickListener() {
@@ -1085,7 +1017,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skypeYearDate.setTypeface(typeface);
 
         skypeTime = (TextView) findViewById(R.id.skypeTime);
-        skypeTime.setText(formattedTime);
+        skypeTime.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         skypeTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1138,22 +1071,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
             skypeUser.setText(number);
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
-            skypeTime.setText(formattedTime);
+            skypeTime.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             repeatSkype.setProgress(interval.getProgressFromCode(repCode));
             repeatDaysSkype.setText(String.valueOf(repCode));
         }
@@ -1191,6 +1117,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         browser = (RadioButton) findViewById(R.id.browser);
 
         final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
         myYear = cal.get(Calendar.YEAR);
         myMonth = cal.get(Calendar.MONTH);
         myDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -1219,15 +1146,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         appDate = (TextView) findViewById(R.id.appDate);
         appDate.setText(dayStr + "/" + monthStr);
         appDate.setOnClickListener(new View.OnClickListener() {
@@ -1245,7 +1163,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         appYearDate.setTypeface(typeface);
 
         appTime = (TextView) findViewById(R.id.appTime);
-        appTime.setText(formattedTime);
+        appTime.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         appTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1308,22 +1227,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
 
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
-            appTime.setText(formattedTime);
+            appTime.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             repeatApp.setProgress(interval.getProgressFromCode(repCode));
             repeatDaysApp.setText(String.valueOf(repCode));
         }
@@ -1351,6 +1263,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
 
         final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
         myYear = cal.get(Calendar.YEAR);
         myMonth = cal.get(Calendar.MONTH);
         myDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -1374,15 +1287,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         callDate = (TextView) findViewById(R.id.callDate);
         callDate.setText(dayStr + "/" + monthStr);
         callDate.setOnClickListener(new View.OnClickListener() {
@@ -1400,7 +1304,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         callYearDate.setTypeface(typeface);
 
         callTime = (TextView) findViewById(R.id.callTime);
-        callTime.setText(formattedTime);
+        callTime.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         callTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1443,22 +1348,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
             phoneNumber.setText(number);
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
-            callTime.setText(formattedTime);
+            callTime.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             repeatCallInt.setProgress(interval.getProgressFromCode(repCode));
             repeatDaysCall.setText(String.valueOf(repCode));
         }
@@ -1486,6 +1384,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
 
         final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
         myYear = cal.get(Calendar.YEAR);
         myMonth = cal.get(Calendar.MONTH);
         myDay = cal.get(Calendar.DAY_OF_MONTH);
@@ -1509,15 +1408,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         messageDate = (TextView) findViewById(R.id.messageDate);
         messageDate.setText(dayStr + "/" + monthStr);
         messageDate.setOnClickListener(new View.OnClickListener() {
@@ -1535,7 +1425,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         messageYearDate.setTypeface(typeface);
 
         messageTime = (TextView) findViewById(R.id.messageTime);
-        messageTime.setText(formattedTime);
+        messageTime.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         messageTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1578,22 +1469,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(calendar.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(calendar.getTime());
-            }
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
             messageNumber.setText(number);
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
-            messageTime.setText(formattedTime);
+            messageTime.setText(Utils.getTime(cal.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             repeatMessageInt.setProgress(interval.getProgressFromCode(repCode));
             repeatDaysMessage.setText(String.valueOf(repCode));
         }
@@ -1644,16 +1528,31 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 adapter = new ArrayAdapter<>(
                         BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
                 if (isLocationAttached()){
-                    searchField.setAdapter(adapter);
-                } else if (isLocationCallAttached()){
-                    searchFieldCall.setAdapter(adapter);
-                } else if (isLocationMessageAttached()){
-                    searchFieldMessage.setAdapter(adapter);
+                    if (isMapVisible()) cardSearch.setAdapter(adapter);
+                    else searchField.setAdapter(adapter);
                 }
 
                 adapter.notifyDataSetChanged();
             }
         }
+    }
+
+    ImageButton mapButton, cardClear, zoomOut, layers, addNumberButtonLocation;
+    LinearLayout layersContainer, actionLocation;
+    RelativeLayout mapContainer;
+    ScrollView specsContainer;
+    AutoCompleteTextView cardSearch;
+    TextView typeNormal, typeSatellite, typeHybrid, typeTerrain;
+    CheckBox attachLocationAction;
+    RadioButton callCheckLocation, messageCheckLocation;
+    FloatingEditText phoneNumberLocation;
+
+    private boolean isMapVisible(){
+        return mapContainer.getVisibility() == View.VISIBLE;
+    }
+
+    private boolean isLayersVisible(){
+        return layersContainer.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocation() {
@@ -1663,7 +1562,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         } else geolocationlayout.setVisibility(View.VISIBLE);
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
+        specsContainer = (ScrollView) findViewById(R.id.specsContainer);
+        layersContainer = (LinearLayout) findViewById(R.id.layersContainer);
+        mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
+        mapContainer.setVisibility(View.GONE);
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1683,18 +1586,89 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         clearField = (ImageButton) findViewById(R.id.clearButton);
+        cardClear = (ImageButton) findViewById(R.id.cardClear);
+        zoomOut = (ImageButton) findViewById(R.id.zoomOut);
+        layers = (ImageButton) findViewById(R.id.layers);
+        mapButton = (ImageButton) findViewById(R.id.mapButton);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            clearField.setImageResource(R.drawable.ic_clear_white_24dp);
-        } else clearField.setImageResource(R.drawable.ic_clear_grey600_24dp);
+            clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
+            mapButton.setImageResource(R.drawable.ic_map_white_24dp);
+        } else {
+            clearField.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+            mapButton.setImageResource(R.drawable.ic_map_grey600_24dp);
+        }
         clearField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchField.setText("");
             }
         });
+        cardClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardSearch.setText("");
+            }
+        });
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fadeOutAnimation(specsContainer);
+                fadeInAnimation(mapContainer);
+            }
+        });
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersVisible()) hideOver(layersContainer);
+                fadeOutAnimation(mapContainer);
+                fadeInAnimation(specsContainer);
+            }
+        });
+        layers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersVisible()) hideOver(layersContainer);
+                else showOver(layersContainer);
+            }
+        });
+
+        typeNormal = (TextView) findViewById(R.id.typeNormal);
+        typeSatellite = (TextView) findViewById(R.id.typeSatellite);
+        typeHybrid = (TextView) findViewById(R.id.typeHybrid);
+        typeTerrain = (TextView) findViewById(R.id.typeTerrain);
+        typeNormal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                layersContainer.setVisibility(View.GONE);
+            }
+        });
+        typeSatellite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                layersContainer.setVisibility(View.GONE);
+            }
+        });
+        typeHybrid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                layersContainer.setVisibility(View.GONE);
+            }
+        });
+        typeTerrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                layersContainer.setVisibility(View.GONE);
+            }
+        });
 
         searchField = (AutoCompleteTextView) findViewById(R.id.searchField);
+        cardSearch = (AutoCompleteTextView) findViewById(R.id.cardSearch);
         searchField.setThreshold(3);
+        cardSearch.setThreshold(3);
         adapter = new ArrayAdapter<>(
                 BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
         adapter.setNotifyOnChange(true);
@@ -1723,18 +1697,97 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                GoogleMap mMap = googleMap.getMap();
-                mMap.clear();
+                googleMap.clear();
                 String title = taskField.getText().toString().trim();
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                destination = mMap.addMarker(new MarkerOptions()
+                destination = googleMap.addMarker(new MarkerOptions()
                         .position(pos)
                         .title(title)
                         .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
                         .draggable(true));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            }
+        });
+        cardSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (task != null && !task.isCancelled()) task.cancel(true);
+                task = new GeocoderTask();
+                task.execute(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        cardSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Address sel = foundPlaces.get(position);
+                double lat = sel.getLatitude();
+                double lon = sel.getLongitude();
+                LatLng pos = new LatLng(lat, lon);
+                googleMap.clear();
+                String title = taskField.getText().toString().trim();
+                if (title.matches("")) {
+                    title = pos.toString();
+                }
+                destination = googleMap.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                        .draggable(true));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            }
+        });
+
+        actionLocation = (LinearLayout) findViewById(R.id.actionLocation);
+        actionLocation.setVisibility(View.GONE);
+
+        attachLocationAction = (CheckBox) findViewById(R.id.attachLocationAction);
+        attachLocationAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        showOver(actionLocation);
+                    } else actionLocation.setVisibility(View.VISIBLE);
+                    addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
+                    addNumberButtonLocation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
+                            pickContacts(pd);
+                        }
+                    });
+                    setImage(addNumberButtonLocation);
+
+                    phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
+
+                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
+                    callCheckLocation.setChecked(true);
+                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
+                    messageCheckLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) taskField.setHint(getString(R.string.message_field_hint));
+                            else taskField.setHint(getString(R.string.tast_hint));
+                        }
+                    });
+                } else {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hideOver(actionLocation);
+                    } else actionLocation.setVisibility(View.GONE);
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
             }
         });
 
@@ -1754,15 +1807,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
         locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
         locationDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1778,7 +1822,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
         locationTimeField.setTypeface(typeface);
-        locationTimeField.setText(formattedTime);
+        locationTimeField.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         locationTimeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1810,18 +1855,18 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                             double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
 
                             LatLng latLng = new LatLng(latitude, longitude);
-                            googleMap.getMap().clear();
+                            googleMap.clear();
                             String title = taskField.getText().toString().trim();
                             if (title.matches("")) {
                                 title = latLng.toString();
                             }
-                            destination = googleMap.getMap().addMarker(new MarkerOptions()
+                            destination = googleMap.addMarker(new MarkerOptions()
                                     .position(latLng)
                                     .title(title)
                                     .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
                                     .draggable(true));
 
-                            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                         }
                         if (c != null) c.close();
                     }
@@ -1834,37 +1879,38 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             });
         }
 
-        googleMap = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
+        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
+        googleMap = fragment.getMap();
         sPrefs = new SharedPrefs(BackupFileEdit.this);
         String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+            googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         } else {
-            googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
 
-        googleMap.getMap().setMyLocationEnabled(true);
-        if (googleMap.getMap().getMyLocation() != null) {
-            double lat = googleMap.getMap().getMyLocation().getLatitude();
-            double lon = googleMap.getMap().getMyLocation().getLongitude();
+        googleMap.setMyLocationEnabled(true);
+        if (googleMap.getMyLocation() != null) {
+            double lat = googleMap.getMyLocation().getLatitude();
+            double lon = googleMap.getMyLocation().getLongitude();
             LatLng pos = new LatLng(lat, lon);
-            googleMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
         }
-        googleMap.getMap().setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                googleMap.getMap().clear();
+                googleMap.clear();
                 String title = taskField.getText().toString().trim();
                 if (title.matches("")) {
                     title = latLng.toString();
                 }
-                destination = googleMap.getMap().addMarker(new MarkerOptions()
+                destination = googleMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(title)
                         .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
@@ -1897,18 +1943,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (myMonth < 9) monthStr = "0" + (myMonth + 1);
                 else monthStr = String.valueOf(myMonth + 1);
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, myHour);
-                calendar.set(Calendar.MINUTE, myMinute);
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
+                cal.set(Calendar.HOUR_OF_DAY, myHour);
+                cal.set(Calendar.MINUTE, myMinute);
 
-                locationTimeField.setText(formattedTime);
+                locationTimeField.setText(Utils.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
                 locationDateField.setText(dayStr + "/" + monthStr);
                 locationDateYearField.setText(String.valueOf(myYear));
                 attackDelay.setChecked(true);
@@ -1918,7 +1957,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
-                destination = googleMap.getMap().addMarker(new MarkerOptions()
+                destination = googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .title(text)
                         .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
@@ -1926,582 +1965,24 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    LinearLayout locationCallDateRing;
-    TextView locationCallDateField, locationCallDateYearField, locationCallTimeField;
-    AutoCompleteTextView searchFieldCall;
-    ImageButton clearFieldCall;
-
-    private void attachLocationCall() {
-        location_call_layout = (LinearLayout) findViewById(R.id.location_call_layout);
+    private void showOver(View view){
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            fadeInAnimation(location_call_layout);
-        } else location_call_layout.setVisibility(View.VISIBLE);
-
-        locationCallAddNumberButton = (ImageButton) findViewById(R.id.locationCallAddNumberButton);
-        locationCallAddNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(BackupFileEdit.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                pickContacts(pd);
-            }
-        });
-        setImage(locationCallAddNumberButton);
-
-        locationCallPhoneNumber = (FloatingEditText) findViewById(R.id.locationCallPhoneNumber);
-
-        delayCallLayout = (LinearLayout) findViewById(R.id.delayCallLayout);
-        delayCallLayout.setVisibility(View.GONE);
-
-        attackCallDelay = (CheckBox) findViewById(R.id.attackCallDelay);
-        attackCallDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                        delayCallLayout.startAnimation(slide);
-                        delayCallLayout.setVisibility(View.VISIBLE);
-                    } else delayCallLayout.setVisibility(View.VISIBLE);
-                }
-                else {
-                    delayCallLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        clearFieldCall = (ImageButton) findViewById(R.id.clearButtonCall);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            clearFieldCall.setImageResource(R.drawable.ic_clear_white_24dp);
-        } else clearFieldCall.setImageResource(R.drawable.ic_clear_grey600_24dp);
-        clearFieldCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchFieldCall.setText("");
-            }
-        });
-
-        searchFieldCall = (AutoCompleteTextView) findViewById(R.id.searchFieldCall);
-        searchFieldCall.setThreshold(3);
-        adapter = new ArrayAdapter<>(
-                BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
-        searchFieldCall.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        searchFieldCall.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                GoogleMap mMap = locationCallMap.getMap();
-                mMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = mMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
-
-        final Calendar cal = Calendar.getInstance();
-        myYear = cal.get(Calendar.YEAR);
-        myMonth = cal.get(Calendar.MONTH);
-        myDay = cal.get(Calendar.DAY_OF_MONTH);
-        myHour = cal.get(Calendar.HOUR_OF_DAY);
-        myMinute = cal.get(Calendar.MINUTE);
-
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
-        locationCallDateRing = (LinearLayout) findViewById(R.id.locationCallDateRing);
-        locationCallDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
-        locationCallDateField = (TextView) findViewById(R.id.locationCallDateField);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        locationCallDateField.setTypeface(typeface);
-        locationCallDateField.setText(dayStr + "/" + monthStr);
-        locationCallDateYearField = (TextView) findViewById(R.id.locationCallDateYearField);
-        locationCallTimeField = (TextView) findViewById(R.id.locationCallTimeField);
-        locationCallTimeField.setTypeface(typeface);
-        locationCallTimeField.setText(formattedTime);
-        locationCallTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        locationCallDateYearField.setTypeface(typeface);
-        locationCallDateYearField.setText(String.valueOf(myYear));
-
-        placesListCall = (Spinner) findViewById(R.id.placesListCall);
-        placesListCall.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesListCall.setVisibility(View.GONE);
-        } else {
-            placesListCall.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesListCall.setAdapter(spinnerArrayAdapter);
-            placesListCall.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (position > 0){
-                        DB.open();
-                        String placeName = spinnerArray.get(position);
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            locationCallMap.getMap().clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            locationCallDestination = locationCallMap.getMap().addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            locationCallMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        }
-
-        locationCallMap = (MapFragment)getFragmentManager().findFragmentById(R.id.locationCallMap);
-        sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            locationCallMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            locationCallMap.getMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            locationCallMap.getMap().setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            locationCallMap.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            locationCallMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        locationCallMap.getMap().setMyLocationEnabled(true);
-        if (locationCallMap.getMap().getMyLocation() != null) {
-            double lat = locationCallMap.getMap().getMyLocation().getLatitude();
-            double lon = locationCallMap.getMap().getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            locationCallMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        locationCallMap.getMap().setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                locationCallMap.getMap().clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                locationCallDestination = locationCallMap.getMap().addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-            }
-        });
-
-        if (id != 0) {
-            fdb.open();
-            Cursor c = fdb.getTask(id);
-            String text = "", number="";
-            double latitude=0, longitude=0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            }
-            if (c != null) c.close();
-
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
-                if (myDay < 10) dayStr = "0" + myDay;
-                else dayStr = String.valueOf(myDay);
-
-                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-                else monthStr = String.valueOf(myMonth + 1);
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, myHour);
-                calendar.set(Calendar.MINUTE, myMinute);
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
-
-                locationCallTimeField.setText(formattedTime);
-                locationCallDateField.setText(dayStr + "/" + monthStr);
-                locationCallDateYearField.setText(String.valueOf(myYear));
-                attackCallDelay.setChecked(true);
-            } else {
-                attackCallDelay.setChecked(false);
-            }
-
-            taskField.setText(text);
-            locationCallPhoneNumber.setText(number);
-            if (longitude != 0 && latitude != 0) {
-                locationCallDestination = locationCallMap.getMap().addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-            }
-        }
+            Animation fadeIn = new AlphaAnimation(0, 1);
+            fadeIn.setInterpolator(new OvershootInterpolator());
+            fadeIn.setDuration(300);
+            view.setAnimation(fadeIn);
+            view.setVisibility(View.VISIBLE);
+        } else view.setVisibility(View.VISIBLE);
     }
 
-    LinearLayout locationMessageDateRing;
-    TextView locationMessageDateField, locationMessageDateYearField, locationMessageTimeField;
-    AutoCompleteTextView searchFieldMessage;
-    ImageButton clearFieldMessage;
-
-    private void attachLocationMessage() {
-        location_message_layout = (LinearLayout) findViewById(R.id.location_message_layout);
+    private void hideOver(View view){
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            fadeInAnimation(location_message_layout);
-        } else location_message_layout.setVisibility(View.VISIBLE);
-
-        locationMessageAddNumberButton = (ImageButton) findViewById(R.id.locationMessageAddNumberButton);
-        locationMessageAddNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(BackupFileEdit.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                pickContacts(pd);
-            }
-        });
-        setImage(locationMessageAddNumberButton);
-
-        locationMessagePhoneNumber = (FloatingEditText) findViewById(R.id.locationMessagePhoneNumber);
-
-        delayMessageLayout = (LinearLayout) findViewById(R.id.delayMessageLayout);
-        delayMessageLayout.setVisibility(View.GONE);
-
-        attackMessageDelay = (CheckBox) findViewById(R.id.attackMessageDelay);
-        attackMessageDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                        delayMessageLayout.startAnimation(slide);
-                        delayMessageLayout.setVisibility(View.VISIBLE);
-                    } else delayMessageLayout.setVisibility(View.VISIBLE);
-                }
-                else {
-                    delayMessageLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        clearFieldMessage = (ImageButton) findViewById(R.id.clearButtonMessage);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            clearFieldMessage.setImageResource(R.drawable.ic_clear_white_24dp);
-        } else clearFieldMessage.setImageResource(R.drawable.ic_clear_grey600_24dp);
-        clearFieldMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchFieldMessage.setText("");
-            }
-        });
-
-        searchFieldMessage = (AutoCompleteTextView) findViewById(R.id.searchFieldMessage);
-        searchFieldMessage.setThreshold(3);
-        adapter = new ArrayAdapter<>(
-                BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
-        searchFieldMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        searchFieldMessage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                GoogleMap mMap = locationMessageMap.getMap();
-                mMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = mMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
-
-        final Calendar cal = Calendar.getInstance();
-        myYear = cal.get(Calendar.YEAR);
-        myMonth = cal.get(Calendar.MONTH);
-        myDay = cal.get(Calendar.DAY_OF_MONTH);
-        myHour = cal.get(Calendar.HOUR_OF_DAY);
-        myMinute = cal.get(Calendar.MINUTE);
-
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(cal.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(cal.getTime());
-        }
-
-        locationMessageDateRing = (LinearLayout) findViewById(R.id.locationMessageDateRing);
-        locationMessageDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
-        locationMessageDateField = (TextView) findViewById(R.id.locationMessageDateField);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        locationMessageDateField.setTypeface(typeface);
-        locationMessageDateField.setText(dayStr + "/" + monthStr);
-        locationMessageDateYearField = (TextView) findViewById(R.id.locationMessageDateYearField);
-        locationMessageTimeField = (TextView) findViewById(R.id.locationMessageTimeField);
-        locationMessageTimeField.setTypeface(typeface);
-        locationMessageTimeField.setText(formattedTime);
-        locationMessageTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        locationMessageDateYearField.setTypeface(typeface);
-        locationMessageDateYearField.setText(String.valueOf(myYear));
-
-        placesListMessage = (Spinner) findViewById(R.id.placesListMessage);
-        placesListMessage.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesListMessage.setVisibility(View.GONE);
-        } else {
-            placesListMessage.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesListMessage.setAdapter(spinnerArrayAdapter);
-            placesListMessage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (position > 0){
-                        String placeName = spinnerArray.get(position);
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            locationMessageMap.getMap().clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            locationMessageDestination = locationMessageMap.getMap().addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            locationMessageMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        }
-
-        locationMessageMap = (MapFragment)getFragmentManager().findFragmentById(R.id.locationMessageMap);
-        sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            locationMessageMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            locationMessageMap.getMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            locationMessageMap.getMap().setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            locationMessageMap.getMap().setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            locationMessageMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        locationMessageMap.getMap().setMyLocationEnabled(true);
-        if (locationMessageMap.getMap().getMyLocation() != null) {
-            double lat = locationMessageMap.getMap().getMyLocation().getLatitude();
-            double lon = locationMessageMap.getMap().getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            locationMessageMap.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        locationMessageMap.getMap().setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                locationMessageMap.getMap().clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                locationMessageDestination = locationMessageMap.getMap().addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-            }
-        });
-
-        if (id != 0) {
-            fdb.open();
-            Cursor c = fdb.getTask(id);
-            String text = "", number="";
-            double latitude=0, longitude=0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            }
-            if (c != null) c.close();
-
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
-                if (myDay < 10) dayStr = "0" + myDay;
-                else dayStr = String.valueOf(myDay);
-
-                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-                else monthStr = String.valueOf(myMonth + 1);
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, myHour);
-                calendar.set(Calendar.MINUTE, myMinute);
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
-
-                locationMessageTimeField.setText(formattedTime);
-                locationMessageDateField.setText(dayStr + "/" + monthStr);
-                locationMessageDateYearField.setText(String.valueOf(myYear));
-                attackMessageDelay.setChecked(true);
-            } else {
-                attackMessageDelay.setChecked(false);
-            }
-
-            taskField.setText(text);
-            locationMessagePhoneNumber.setText(number);
-            if (longitude != 0 && latitude != 0) {
-                locationMessageDestination = locationMessageMap.getMap().addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-            }
-        }
+            Animation fadeIn = new AlphaAnimation(1, 0);
+            fadeIn.setInterpolator(new OvershootInterpolator());
+            fadeIn.setDuration(300);
+            view.setAnimation(fadeIn);
+            view.setVisibility(View.GONE);
+        } else view.setVisibility(View.GONE);
     }
 
     private boolean isDateReminderAttached(){
@@ -2544,16 +2025,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return geolocationlayout.getVisibility() == View.VISIBLE;
     }
 
-    private boolean isLocationCallAttached(){
-        location_call_layout = (LinearLayout) findViewById(R.id.location_call_layout);
-        return location_call_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLocationMessageAttached(){
-        location_message_layout = (LinearLayout) findViewById(R.id.location_message_layout);
-        return location_message_layout.getVisibility() == View.VISIBLE;
-    }
-
     private boolean isMonthDayAttached(){
         monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         return monthDayLayout.getVisibility() == View.VISIBLE;
@@ -2572,16 +2043,22 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         geolocationlayout.setVisibility(View.GONE);
         message_layout = (LinearLayout) findViewById(R.id.message_layout);
         message_layout.setVisibility(View.GONE);
-        location_call_layout = (LinearLayout) findViewById(R.id.location_call_layout);
-        location_call_layout.setVisibility(View.GONE);
-        location_message_layout = (LinearLayout) findViewById(R.id.location_message_layout);
-        location_message_layout.setVisibility(View.GONE);
         skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
         skype_layout.setVisibility(View.GONE);
         application_layout = (LinearLayout) findViewById(R.id.application_layout);
         application_layout.setVisibility(View.GONE);
         monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         monthDayLayout.setVisibility(View.GONE);
+    }
+
+    private void fadeOutAnimation(View view){
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+            Animation fadeOut = new AlphaAnimation(1, 0);
+            fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+            fadeOut.setDuration(400);
+            view.setAnimation(fadeOut);
+            view.setVisibility(View.GONE);
+        } else view.setVisibility(View.GONE);
     }
 
     private int getRepeat(int progress) {
@@ -2599,11 +2076,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         } else if (isMessageAttached()){
             type = Constants.TYPE_MESSAGE;
         } else if (isLocationAttached()){
-            type = Constants.TYPE_LOCATION;
-        } else if (isLocationCallAttached()){
-            type = Constants.TYPE_LOCATION_CALL;
-        } else if (isLocationMessageAttached()){
-            type = Constants.TYPE_LOCATION_MESSAGE;
+            if (attachLocationAction.isChecked()){
+                if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
+                else type = Constants.TYPE_LOCATION_MESSAGE;
+            } else type = Constants.TYPE_LOCATION;
         }
         return type;
     }
@@ -2672,17 +2148,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (isMessageAttached()){
                     messageNumber.setText(number);
                 }
-                if (isLocationCallAttached()){
-                    locationCallPhoneNumber.setText(number);
-                }
-                if (isLocationMessageAttached()){
-                    locationMessagePhoneNumber.setText(number);
-                }
                 if (isWeekDayReminderAttached() && attachAction.isChecked()){
                     weekPhoneNumber.setText(number);
                 }
                 if (isMonthDayAttached() && monthDayAttachAction.isChecked()){
                     monthDayPhoneNumber.setText(number);
+                }
+                if (isLocationAttached() && attachLocationAction.isChecked()){
+                    phoneNumberLocation.setText(number);
                 }
             }
         }
@@ -2744,32 +2217,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     private void saveTask(){
-        if (isLocationAttached() || isLocationCallAttached() || isLocationMessageAttached()){
+        if (isLocationAttached()){
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (isGPSEnabled || isNetworkEnabled) {
-                if (isLocationAttached()) {
-                    addLocation();
-                } else if (isLocationCallAttached()) {
-                    if (!checkNumber()) {
-                        addLocationCall();
-                    } else {
-                        locationCallPhoneNumber.setError(getString(R.string.number_error));
-                    }
-                } else if (isLocationMessageAttached()){
-                    if (!checkNumber()) {
-                        if (!checkMessage()){
-                            addLocationMessage();
-                        } else {
-                            taskField.setError(getString(R.string.message_empty_error));
-                        }
-                    } else {
-                        locationMessagePhoneNumber.setError(getString(R.string.number_error));
-                    }
-                }
+                if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
+                else if (attachLocationAction.isChecked() && checkNumber())
+                    phoneNumberLocation.setError(getString(R.string.number_error));
+                else addLocation();
             } else {
                 showSettingsAlert();
             }
@@ -3029,14 +2487,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return skypeUser.getText().toString().trim().matches("");
         } else if (isMessageAttached()){
             return messageNumber.getText().toString().trim().matches("");
-        } else if (isLocationMessageAttached()){
-            return locationMessagePhoneNumber.getText().toString().trim().matches("");
+        } else if (isLocationAttached() && attachLocationAction.isChecked()){
+            return phoneNumberLocation.getText().toString().trim().matches("");
         } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
             return weekPhoneNumber.getText().toString().trim().matches("");
         } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
             return monthDayPhoneNumber.getText().toString().trim().matches("");
-        } else
-            return isLocationCallAttached() && locationCallPhoneNumber.getText().toString().trim().matches("");
+        } else return false;
     }
 
     private boolean checkApplication(){
@@ -3278,6 +2735,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
         String type = getTaskType();
+        String number = null;
+        if (attachLocationAction.isChecked()) number = phoneNumberLocation.getText().toString().trim();
         LatLng dest = null;
         boolean isNull = false;
         try {
@@ -3299,7 +2758,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (cf != null) cf.close();
                 if (attackDelay.isChecked()){
                     long newIds = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                            null, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
+                            number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
                     DB.updateDateTime(newIds);
                     DB.close();
                     positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
@@ -3307,7 +2766,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     updatesHelper.updateWidget();
                     finish();
                 } else {
-                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, null,
+                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, number,
                             0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
                     DB.updateDateTime(ids);
                     DB.close();
@@ -3319,114 +2778,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             } else {
                 Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void addLocationCall(){
-        String task = taskField.getText().toString().trim();
-        if (task.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        String number = locationCallPhoneNumber.getText().toString().trim();
-        LatLng dest = null;
-        boolean isNull = false;
-        try {
-            dest = locationCallDestination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
-        }
-        if (!isNull) {
-            Double latitude = dest.latitude;
-            Double longitude = dest.longitude;
-            DB = new DataBase(BackupFileEdit.this);
-            DB.open();
-            if (!isUID(uuID)) {
-                Cursor cf = DB.queryCategories();
-                String categoryId = null;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                }
-                if (cf != null) cf.close();
-                if (attackCallDelay.isChecked()){
-                    long newIds = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                            number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(newIds);
-                    DB.close();
-                    positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
-                } else {
-                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, number,
-                            0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(ids);
-                    DB.close();
-                    startService(new Intent(BackupFileEdit.this, GeolocationService.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                }
-            } else {
-                Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            updatesHelper = new UpdatesHelper(BackupFileEdit.this);
-            updatesHelper.updateWidget();
-            finish();
-        } else {
-            Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void addLocationMessage(){
-        String task = taskField.getText().toString().trim();
-        if (task.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        String number = locationMessagePhoneNumber.getText().toString().trim();
-        LatLng dest = null;
-        boolean isNull = false;
-        try {
-            dest = locationMessageDestination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
-        }
-        if (!isNull) {
-            Double latitude = dest.latitude;
-            Double longitude = dest.longitude;
-            DB = new DataBase(BackupFileEdit.this);
-            DB.open();
-            if (!isUID(uuID)) {
-                Cursor cf = DB.queryCategories();
-                String categoryId = null;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                }
-                if (cf != null) cf.close();
-                if (attackMessageDelay.isChecked()){
-                    DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
-                            0, 0, 0, latitude, longitude, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(id);
-                    DB.close();
-                    positionDelayReceiver.setDelay(BackupFileEdit.this, id);
-                } else {
-                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, number,
-                            0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(ids);
-                    DB.close();
-                    startService(new Intent(BackupFileEdit.this, GeolocationService.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                }
-            } else {
-                Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            updatesHelper = new UpdatesHelper(BackupFileEdit.this);
-            updatesHelper.updateWidget();
-            finish();
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
         }
@@ -3593,22 +2944,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
-        if (isLocationCallAttached()){
-            if (attackCallDelay.isChecked()){
-                if (delayCallLayout.getVisibility() == View.VISIBLE) {
-                    locationCallDateField.setText(dayStr + "/" + monthStr);
-                    locationCallDateYearField.setText(String.valueOf(myYear));
-                }
-            }
-        }
-        if (isLocationMessageAttached()){
-            if (attackMessageDelay.isChecked()){
-                if (delayMessageLayout.getVisibility() == View.VISIBLE) {
-                    locationMessageDateField.setText(dayStr + "/" + monthStr);
-                    locationMessageDateYearField.setText(String.valueOf(myYear));
-                }
-            }
-        }
     }
 
     protected Dialog timeDialog() {
@@ -3624,14 +2959,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (new SharedPrefs(BackupFileEdit.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(c.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(c.getTime());
-            }
+            String formattedTime = Utils.getTime(c.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
 
             if (isMonthDayAttached()){
                 monthDayTimeField.setText(formattedTime);
@@ -3657,16 +2986,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (isLocationAttached()){
                 if (attackDelay.isChecked()){
                     if (delayLayout.getVisibility() == View.VISIBLE) locationTimeField.setText(formattedTime);
-                }
-            }
-            if (isLocationCallAttached()){
-                if (attackCallDelay.isChecked()){
-                    if (delayCallLayout.getVisibility() == View.VISIBLE) locationCallTimeField.setText(formattedTime);
-                }
-            }
-            if (isLocationMessageAttached()) {
-                if (attackMessageDelay.isChecked()) {
-                    if (delayMessageLayout.getVisibility() == View.VISIBLE) locationMessageTimeField.setText(formattedTime);
                 }
             }
         }

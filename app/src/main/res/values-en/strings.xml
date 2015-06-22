@@ -237,11 +237,16 @@
     <string name="color_dark_green">Dark green</string>
     <string name="color_brown">Brown</string>
 
+    <string name="map_normal">Normal</string>
+    <string name="map_satellite">Satellite</string>
+    <string name="map_hybrid">Hybrid</string>
+    <string name="map_terrain">Terrain</string>
+
     <array name="map_types">
-        <item>Normal</item>
-        <item>Satellite</item>
-        <item>Hybrid</item>
-        <item>Terrain</item>
+        <item>@string/map_normal</item>
+        <item>@string/map_satellite</item>
+        <item>@string/map_hybrid</item>
+        <item>@string/map_terrain</item>
     </array>
 
     <array name="colors_list">
@@ -639,4 +644,5 @@
     <string name="string_generating_events">Generating events...</string>
     <string name="interval_day">Daily</string>
     <string name="string_swipe_left_or_right">Swipe left or right to select theme.</string>
+    <string name="string_address">Address...</string>
 </resources>

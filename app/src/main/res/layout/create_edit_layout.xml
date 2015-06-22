@@ -34,10 +34,6 @@
 
         <include layout="@layout/location_reminder_layout"/>
 
-        <include layout="@layout/location_call_layout"/>
-
-        <include layout="@layout/location_message_layout"/>
-
         <include layout="@layout/skype_layout"/>
 
         <include layout="@layout/application_layout"/>
