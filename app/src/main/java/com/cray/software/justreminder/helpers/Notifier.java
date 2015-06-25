@@ -71,11 +71,16 @@ public class Notifier {
         builder.setContentText(app);
 
         int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) || typePrefs.matches(Constants.TYPE_LOCATION_CALL)) {
+        if (typePrefs.matches(Constants.TYPE_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
             icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
             icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION)) {
+        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_TIME)) {
             icon = R.drawable.ic_access_time_white_24dp;
@@ -243,11 +248,16 @@ public class Notifier {
         builder.setContentText(app);
 
         int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) || typePrefs.matches(Constants.TYPE_LOCATION_CALL)) {
+        if (typePrefs.matches(Constants.TYPE_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
             icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
             icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION)) {
+        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_TIME)) {
             icon = R.drawable.ic_access_time_white_24dp;
@@ -552,14 +562,25 @@ public class Notifier {
         builder.setContentText(app);
 
         int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) || typePrefs.matches(Constants.TYPE_LOCATION_CALL)) {
+        if (typePrefs.matches(Constants.TYPE_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
             icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
             icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION)) {
+        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_TIME)) {
             icon = R.drawable.ic_access_time_white_24dp;
+        } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
+            icon = R.drawable.skype_icon_white;
+        } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {
+            icon = R.drawable.ic_launch_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+            icon = R.drawable.ic_public_white_24dp;
         } else {
             icon = R.drawable.ic_event_white_24dp;
         }

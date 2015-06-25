@@ -7,7 +7,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_above="@+id/emptyLayout"
-        android:layout_below="@+id/toolbar_main"
         android:id="@+id/wrapper"
         android:layout_height="match_parent">
 

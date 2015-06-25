@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:visibility="visible"
-    android:id="@+id/geolocationlayout">
+    android:id="@+id/locationOutLayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,8 +15,8 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/mapContainer"
-            android:id="@+id/specsContainer">
+            android:layout_above="@+id/mapContainerOut"
+            android:id="@+id/specsContainerOut">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/attackDelay"
+                    android:id="@+id/attachDelayOut"
                     android:textSize="@dimen/checkbox_text_size"
                     android:text="@string/location_delay_checkbox"
                     android:gravity="center"
@@ -36,7 +36,7 @@
                     android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:gravity="center_horizontal"
-                    android:id="@+id/delayLayout"
+                    android:id="@+id/delayLayoutOut"
                     android:layout_gravity="center_horizontal"
                     android:layout_height="wrap_content">
 
@@ -48,7 +48,7 @@
                         android:layout_weight="1"
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:id="@+id/locationDateRing">
+                        android:id="@+id/locationOutDateRing">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
                             android:clickable="false"
                             android:gravity="center"
                             android:textSize="@dimen/create_text_size_primary"
-                            android:id="@+id/locationDateField" />
+                            android:id="@+id/locationOutDateField" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
                             android:clickable="false"
                             android:gravity="center"
                             android:textSize="@dimen/create_text_size_secondary"
-                            android:id="@+id/locationDateYearField" />
+                            android:id="@+id/locationOutDateYearField" />
 
                     </LinearLayout>
                     <TextView
@@ -82,8 +82,33 @@
                         android:background="?android:attr/selectableItemBackground"
                         android:layout_marginLeft="10dp"
                         android:ems="10"
-                        android:id="@+id/locationTimeField" />
+                        android:id="@+id/locationOutTimeField" />
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current location"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/currentCheck"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/currentLocation"
+                        android:layout_toRightOf="@+id/currentCheck"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"/>
+
+                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -91,34 +116,48 @@
                     android:layout_marginLeft="@dimen/create_margin"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
+                    <RadioButton
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="@string/string_address"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_normal"
-                        android:layout_toLeftOf="@+id/clearButton"
-                        android:id="@+id/searchField"/>
-
-                    <ImageButton
-                        android:layout_width="@dimen/create_imagebutton_size"
-                        android:layout_height="@dimen/create_imagebutton_size"
-                        android:id="@+id/clearButton"
+                        android:text="Map point"
+                        android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toLeftOf="@+id/mapButton"
-                        android:src="@drawable/ic_clear_grey600_24dp"/>
+                        android:id="@+id/mapCheck"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/mapLocation"
+                        android:layout_toRightOf="@+id/mapCheck"
+                        android:layout_toLeftOf="@+id/mapButtonOut"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"/>
 
                     <ImageButton
                         android:layout_width="@dimen/create_imagebutton_size"
                         android:layout_height="@dimen/create_imagebutton_size"
-                        android:id="@+id/mapButton"
+                        android:id="@+id/mapButtonOut"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/ic_map_grey600_24dp"/>
 
                     </RelativeLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:id="@+id/radiusMark"/>
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="5000"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:id="@+id/pointRadius"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
@@ -128,11 +167,11 @@
                     android:textSize="@dimen/checkbox_text_size"
                     android:layout_marginTop="@dimen/create_margin"
                     android:text="@string/action_check_text"
-                    android:id="@+id/attachLocationAction" />
+                    android:id="@+id/attachLocationOutAction" />
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:id="@+id/actionLocation"
+                    android:id="@+id/actionLocationOut"
                     android:layout_marginTop="@dimen/create_margin"
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent">
@@ -148,7 +187,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/create_text_size_normal"
                             android:text="@string/reminder_make_call"
-                            android:id="@+id/callCheckLocation" />
+                            android:id="@+id/callCheckLocationOut" />
 
                         <RadioButton
                             android:layout_width="wrap_content"
@@ -156,7 +195,7 @@
                             android:textSize="@dimen/create_text_size_normal"
                             android:layout_marginLeft="15dp"
                             android:text="@string/reminder_send_message"
-                            android:id="@+id/messageCheckLocation" />
+                            android:id="@+id/messageCheckLocationOut" />
                     </RadioGroup>
 
                     <LinearLayout
@@ -172,7 +211,7 @@
                             android:layout_height="@dimen/create_imagebutton_size"
                             android:layout_gravity="center_vertical"
                             android:src="@drawable/ic_person_add_grey600_24dp"
-                            android:id="@+id/addNumberButtonLocation" />
+                            android:id="@+id/addNumberButtonLocationOut" />
 
                         <com.cray.software.justreminder.views.FloatingEditText
                             app:floating_edit_text_highlighted_color="?attr/colorAccent"
@@ -185,7 +224,7 @@
                             android:ems="10"
                             android:singleLine="true"
                             android:layout_gravity="center"
-                            android:id="@+id/phoneNumberLocation"
+                            android:id="@+id/phoneNumberLocationOut"
                             android:inputType="text|phone" />
                     </LinearLayout>
                 </LinearLayout>
@@ -196,12 +235,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
-            android:visibility="visible"
+            android:visibility="gone"
             android:orientation="vertical"
-            android:id="@+id/mapContainer">
+            android:id="@+id/mapContainerOut">
 
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/map"
+                android:id="@+id/mapOut"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
@@ -212,7 +251,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
-                android:id="@+id/card"
+                android:id="@+id/cardOut"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp">
 
@@ -228,13 +267,13 @@
                         android:layout_margin="2dp"
                         android:layout_centerVertical="true"
                         android:textSize="@dimen/create_text_size_normal"
-                        android:layout_toLeftOf="@+id/cardClear"
-                        android:id="@+id/cardSearch"/>
+                        android:layout_toLeftOf="@+id/cardClearOut"
+                        android:id="@+id/cardSearchOut"/>
 
                     <ImageButton
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/cardClear"
+                        android:id="@+id/cardClearOut"
                         android:layout_centerVertical="true"
                         android:layout_margin="2dp"
                         android:layout_alignParentRight="true"
@@ -247,9 +286,9 @@
             <ImageButton
                 android:layout_width="@dimen/create_imagebutton_size"
                 android:layout_height="@dimen/create_imagebutton_size"
-                android:id="@+id/zoomOut"
+                android:id="@+id/zoomOutOut"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/card"
+                android:layout_below="@+id/cardOut"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/ic_fullscreen_exit_grey600_24dp"/>
@@ -257,9 +296,9 @@
             <ImageButton
                 android:layout_width="@dimen/create_imagebutton_size"
                 android:layout_height="@dimen/create_imagebutton_size"
-                android:id="@+id/layers"
+                android:id="@+id/layersOut"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/zoomOut"
+                android:layout_below="@+id/zoomOutOut"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
@@ -268,9 +307,9 @@
             <ImageButton
                 android:layout_width="@dimen/create_imagebutton_size"
                 android:layout_height="@dimen/create_imagebutton_size"
-                android:id="@+id/myLocation"
+                android:id="@+id/myLocationOut"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/layers"
+                android:layout_below="@+id/layersOut"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
@@ -284,13 +323,13 @@
                 android:visibility="visible"
                 android:layout_alignParentTop="true"
                 android:background="@drawable/popup"
-                android:layout_toRightOf="@+id/layers"
-                android:id="@+id/layersContainer">
+                android:layout_toRightOf="@+id/layersOut"
+                android:id="@+id/layersContainerOut">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/typeNormal"
+                    android:id="@+id/typeNormalOut"
                     android:textSize="18sp"
                     android:clickable="true"
                     android:padding="7dp"
@@ -299,7 +338,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/typeSatellite"
+                    android:id="@+id/typeSatelliteOut"
                     android:textSize="18sp"
                     android:clickable="true"
                     android:padding="7dp"
@@ -308,7 +347,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/typeHybrid"
+                    android:id="@+id/typeHybridOut"
                     android:textSize="18sp"
                     android:clickable="true"
                     android:padding="7dp"
@@ -317,7 +356,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/typeTerrain"
+                    android:id="@+id/typeTerrainOut"
                     android:textSize="18sp"
                     android:clickable="true"
                     android:padding="7dp"
@@ -332,7 +371,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_margin="10dp"
-                android:id="@+id/placesList"/>
+                android:id="@+id/placesListOut"/>
 
         </RelativeLayout>
 

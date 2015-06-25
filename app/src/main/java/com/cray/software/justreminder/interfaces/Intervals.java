@@ -1,17 +1,8 @@
 package com.cray.software.justreminder.interfaces;
 
 public class Intervals {
-
     public static final int REPEAT_CODE_ONCE = 0;
     public static final int INTERVAL_DAY = 1;
-    public static final int INTERVAL_HOUR_DAY = INTERVAL_DAY / 24;
-    public static final int INTERVAL_QUARTER_OF_DAY = INTERVAL_DAY / 4;
-    public static final int INTERVAL_HALF_OF_DAY = INTERVAL_DAY / 2;
-    public static final int INTERVAL_TWO_DAYS = INTERVAL_DAY * 2;
-    public static final int INTERVAL_TREE_DAYS = INTERVAL_DAY * 3;
-    public static final int INTERVAL_FOUR_DAYS = INTERVAL_DAY * 4;
-    public static final int INTERVAL_FIVE_DAYS = INTERVAL_DAY * 5;
-    public static final int INTERVAL_SIX_DAYS = INTERVAL_DAY * 6;
     public static final int INTERVAL_WEEK = INTERVAL_DAY * 7;
     public static final int INTERVAL_TWO_WEEKS = INTERVAL_WEEK * 2;
     public static final int INTERVAL_THREE_WEEKS = INTERVAL_WEEK * 3;
@@ -30,7 +21,6 @@ public class Intervals {
     public static final int MILLS_INTERVAL_DAY = MILLS_INTERVAL_HALF_DAY * 2;
 
     public static final int INTERVAL_MINUTE = 1;
-    public static final int INTERVAL_TWO_MINUTES = INTERVAL_MINUTE * 2;
     public static final int INTERVAL_FIVE_MINUTES = INTERVAL_MINUTE * 5;
     public static final int INTERVAL_TEN_MINUTES = INTERVAL_FIVE_MINUTES * 2;
     public static final int INTERVAL_FIFTEEN_MINUTES = INTERVAL_FIVE_MINUTES * 3;

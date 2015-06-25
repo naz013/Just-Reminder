@@ -55,7 +55,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         DB = new DataBase(context);
         mContacts = new Contacts(context);
         mInterval = new Interval(context);
-        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+        typeface = Utils.getLightTypeface(context);
         mCount = new TimeCount(context);
         cs = new ColorSetter(context);
         prefs = new SharedPrefs(context);
@@ -118,6 +118,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         leftTime.setTypeface(typeface);
         CheckBox check = (CheckBox) convertView.findViewById(R.id.itemCheck);
         check.setFocusable(false);
+        check.setFocusableInTouchMode(false);
         check.setVisibility(View.VISIBLE);
         ImageView taskIcon = (ImageView) convertView.findViewById(R.id.taskIcon);
         TextView taskTitle = (TextView) convertView.findViewById(R.id.taskText);
@@ -195,12 +196,14 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                 leftTime.setVisibility(View.GONE);
             }
         } else if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
+            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
+                    type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                 reminder_phone.setText(number);
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+            } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                    type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                 reminder_phone.setText(number);
                 String name = mContacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
@@ -238,7 +241,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                         getDifference(time));
                 repeatInterval.setText(mInterval.getTimeInterval(repCode));
             } else {
-                if (type.startsWith(Constants.TYPE_LOCATION)){
+                if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)){
                     leftTimeIcon.setVisibility(View.GONE);
                     repeatInterval.setVisibility(View.GONE);
                 } else {

@@ -645,4 +645,5 @@
     <string name="interval_day">Täglich</string>
     <string name="string_swipe_left_or_right">Streichen Sie nach links oder rechts, um Thema auswählen.</string>
     <string name="string_address">Adresse...</string>
+    <string name="string_place_out">Place out</string>
 </resources>

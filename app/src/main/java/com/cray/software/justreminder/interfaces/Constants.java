@@ -240,8 +240,10 @@ public class Constants {
     public static final String TYPE_MAIL = "e_mail";
     public static final String TYPE_MESSAGE = "message";
     public static final String TYPE_LOCATION = "location";
-    public static final String TYPE_LOCATION_OUT = "location_out";
-    public static final String TYPE_LOCATION_CHAIN = "location_chain";
+    public static final String TYPE_LOCATION_OUT = "out_location";
+    public static final String TYPE_LOCATION_OUT_CALL = "out_location_call";
+    public static final String TYPE_LOCATION_OUT_MESSAGE = "out_location_message";
+    public static final String TYPE_LOCATION_CHAIN = "chain_location";
     public static final String TYPE_LOCATION_CALL = "location_call";
     public static final String TYPE_LOCATION_MESSAGE = "location_message";
     public static final String TYPE_WEEKDAY = "weekday";

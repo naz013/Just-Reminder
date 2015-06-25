@@ -25,6 +25,7 @@ import com.cray.software.justreminder.interfaces.TasksConstants;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class TasksRecyclerAdapter extends BaseAdapter {
 
@@ -34,7 +35,7 @@ public class TasksRecyclerAdapter extends BaseAdapter {
     SyncListener mListener;
     TasksData data;
     ColorSetter cs;
-    SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM");
+    SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
     public TasksRecyclerAdapter(Context context, ArrayList<ListItems> myDataset, SyncListener listener) {
         this.mDataset = myDataset;

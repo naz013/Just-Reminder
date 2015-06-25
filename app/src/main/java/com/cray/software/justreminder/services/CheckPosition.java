@@ -17,6 +17,7 @@ import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.LocationUtil;
 
 import java.util.ArrayList;
 
@@ -51,6 +52,7 @@ public class CheckPosition extends IntentService {
                 DB = new DataBase(getApplicationContext());
                 tc = new TimeCount(getApplicationContext());
                 SharedPrefs sPrefs = new SharedPrefs(getApplicationContext());
+                boolean isEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION);
                 DB.open();
                 Cursor c = DB.queryGroup();
                 if (c != null && c.moveToFirst()) {
@@ -60,17 +62,18 @@ public class CheckPosition extends IntentService {
                         types.add(tp);
                     } while (c.moveToNext());
                     if (types.contains(Constants.TYPE_LOCATION) || types.contains(Constants.TYPE_LOCATION_CALL) ||
-                            types.contains(Constants.TYPE_LOCATION_MESSAGE)) {
+                            types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
+                            types.contains(Constants.TYPE_LOCATION_OUT) || types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
+                            types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                         c.moveToFirst();
                         do {
                             String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                            if (type.matches(Constants.TYPE_LOCATION) || type.matches(Constants.TYPE_LOCATION_CALL) ||
-                                    type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+                            if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                                 double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                                 double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                                int isShown = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                                int status = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                                 int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                                 int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
@@ -88,31 +91,30 @@ public class CheckPosition extends IntentService {
                                         locationB.setLongitude(lon);
                                         float distance = locationA.distanceTo(locationB);
                                         int roundedDistance = Math.round(distance);
-                                        if (roundedDistance <= radius) {
-                                            if (isShown != 1) {
-                                                DB.setLocationShown(id);
-                                                Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
-                                                resultIntent.putExtra("taskDialog", task);
-                                                resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
-                                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                getApplication().startActivity(resultIntent);
-                                                stopIt();
+                                        if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                                            if (status == LocationUtil.ACTIVE){
+                                                if (roundedDistance <= radius) {
+                                                    DB.setLocationStatus(id, LocationUtil.LOCKED);
+                                                }
+                                            }
+                                            if (status == LocationUtil.LOCKED){
+                                                if (roundedDistance > radius) {
+                                                    showReminder(id, task);
+                                                } else {
+                                                    if (isEnabled) {
+                                                        showNotification(id, roundedDistance, shown, task);
+                                                    }
+                                                }
                                             }
                                         } else {
-                                            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                                                Integer i = (int) (long) id;
-
-                                                builder = new NotificationCompat.Builder(getApplicationContext());
-                                                builder.setContentText(String.valueOf(roundedDistance));
-                                                if (shown != 1) {
-                                                    builder.setContentTitle(task);
-                                                    builder.setContentText(String.valueOf(roundedDistance));
-                                                    builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
+                                            if (roundedDistance <= radius) {
+                                                if (status != LocationUtil.SHOWN) {
+                                                    showReminder(id, task);
                                                 }
-                                                mNotifyMgr =
-                                                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-                                                mNotifyMgr.notify(i, builder.build());
+                                            } else {
+                                                if (isEnabled) {
+                                                    showNotification(id, roundedDistance, shown, task);
+                                                }
                                             }
                                         }
                                     } else {
@@ -122,30 +124,30 @@ public class CheckPosition extends IntentService {
                                             locationB.setLongitude(lon);
                                             float distance = locationA.distanceTo(locationB);
                                             int roundedDistance = Math.round(distance);
-                                            if (roundedDistance <= radius) {
-                                                if (isShown != 1) {
-                                                    DB.setLocationShown(id);
-                                                    Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
-                                                    resultIntent.putExtra("taskDialog", task);
-                                                    resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
-                                                    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    getApplication().startActivity(resultIntent);
-                                                    stopIt();
+                                            if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                                                if (status == LocationUtil.ACTIVE){
+                                                    if (roundedDistance <= radius) {
+                                                        DB.setLocationStatus(id, LocationUtil.LOCKED);
+                                                    }
+                                                }
+                                                if (status == LocationUtil.LOCKED){
+                                                    if (roundedDistance > radius) {
+                                                        showReminder(id, task);
+                                                    } else {
+                                                        if (isEnabled) {
+                                                            showNotification(id, roundedDistance, shown, task);
+                                                        }
+                                                    }
                                                 }
                                             } else {
-                                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                                                    Integer i = (int) (long) id;
-                                                    builder = new NotificationCompat.Builder(getApplicationContext());
-                                                    builder.setContentText(String.valueOf(roundedDistance));
-                                                    if (shown != 1) {
-                                                        builder.setContentTitle(task);
-                                                        builder.setContentText(String.valueOf(roundedDistance));
-                                                        builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
+                                                if (roundedDistance <= radius) {
+                                                    if (status != LocationUtil.SHOWN) {
+                                                        showReminder(id, task);
                                                     }
-                                                    mNotifyMgr =
-                                                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-                                                    mNotifyMgr.notify(i, builder.build());
+                                                } else {
+                                                    if (isEnabled) {
+                                                        showNotification(id, roundedDistance, shown, task);
+                                                    }
                                                 }
                                             }
                                         }
@@ -166,6 +168,32 @@ public class CheckPosition extends IntentService {
                 if (c != null) c.close();
             }
         }).start();
+    }
+
+    private void showReminder(long id, String task){
+        DataBase DB = new DataBase(getApplicationContext());
+        DB.open().setLocationStatus(id, LocationUtil.SHOWN);
+        Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
+        resultIntent.putExtra("taskDialog", task);
+        resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplication().startActivity(resultIntent);
+        stopIt();
+    }
+
+    private void showNotification(long id, int roundedDistance, int shown, String task){
+        Integer i = (int) (long) id;
+        builder = new NotificationCompat.Builder(getApplicationContext());
+        builder.setContentText(String.valueOf(roundedDistance));
+        if (shown != 1) {
+            builder.setContentTitle(task);
+            builder.setContentText(String.valueOf(roundedDistance));
+            builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
+        }
+        mNotifyMgr =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(i, builder.build());
     }
 
     private void stopIt(){

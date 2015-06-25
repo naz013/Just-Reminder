@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.fragments.StartFragment;
+import com.cray.software.justreminder.utils.Utils;
 import com.hexrain.design.LogInActivity;
 
 public class StartHelp extends FragmentActivity implements View.OnClickListener {
@@ -23,7 +24,6 @@ public class StartHelp extends FragmentActivity implements View.OnClickListener 
     ViewPager pager;
     PagerAdapter pagerAdapter;
     TextView skipButton, nextCloseButton;
-    Typeface typeface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class StartHelp extends FragmentActivity implements View.OnClickListener 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
         setContentView(R.layout.guide_layout);
 
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
 
         skipButton = (TextView) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(this);
@@ -93,10 +93,7 @@ public class StartHelp extends FragmentActivity implements View.OnClickListener 
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
-            return false;
-        }
-        return super.onTouchEvent(event);
+        return MotionEvent.ACTION_OUTSIDE != event.getAction() && super.onTouchEvent(event);
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -51,7 +51,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -65,7 +64,9 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -273,7 +274,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     db.updateDateTime(id);
                     new MonthDayReceiver().setAlarm(this, id);
                     loadData();
-                } else if (type.startsWith(Constants.TYPE_LOCATION)) {
+                } else if (type.startsWith(Constants.TYPE_LOCATION) ||
+                        type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     db.setUnDone(id);
                     db.updateDateTime(id);
                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
@@ -429,7 +431,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         number, repCode, 0, 0, latitude, longitude, uuID, weekdays, exp, melody, radius, ledColor,
                         code, categoryId);
                 db.updateDateTime(idN);
-                if (type.startsWith(Constants.TYPE_LOCATION)){
+                if (type.startsWith(Constants.TYPE_LOCATION) ||
+                        type.startsWith(Constants.TYPE_LOCATION_OUT)){
                     if (myHour > 0 && myMinute > 0){
                         new PositionDelayReceiver().setDelay(this, idN);
                     } else {
@@ -589,7 +592,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     }
                 }
                 File file = new File(soundUri.getPath());
-                if (file != null) melodyStr = file.getName();
+                melodyStr = file.getName();
 
                 Cursor cf = dataBase.getCategory(categoryId);
                 if (cf != null && cf.moveToFirst()) {
@@ -601,31 +604,23 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 else doneStr = null;
 
                 typeStr = ReminderUtils.getTypeString(mContext, type);
+                boolean is24 = new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
                 if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
+                    if (type.matches(Constants.TYPE_CALL) ||
+                            type.matches(Constants.TYPE_LOCATION_CALL) ||
+                            type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_REMINDER) || type.matches(Constants.TYPE_TIME)) {
-                        //typeStr = mContext.getString(R.string.reminder_type);
-                    } else if (type.matches(Constants.TYPE_LOCATION)) {
-                        //typeStr = mContext.getString(R.string.reminder_type);
-                    } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+                    } else if (type.matches(Constants.TYPE_MESSAGE) ||
+                            type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                            type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_SKYPE)){
                         numberStr = number;
-                        /*if (type.matches(Constants.TYPE_SKYPE)){
-                            typeStr = mContext.getString(R.string.skype_call_type_title);
-                        } else if (type.matches(Constants.TYPE_SKYPE_VIDEO)){
-                            typeStr = mContext.getString(R.string.skype_video_type_title);
-                        } else if (type.matches(Constants.TYPE_SKYPE_CHAT)){
-                            typeStr = mContext.getString(R.string.skype_chat_type_title);
-                        }*/
                     } else if (type.matches(Constants.TYPE_APPLICATION)){
                         PackageManager packageManager = mContext.getPackageManager();
                         ApplicationInfo applicationInfo = null;
@@ -635,10 +630,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         final String name = (String)((applicationInfo != null) ?
                                 packageManager.getApplicationLabel(applicationInfo) : "???");
                         numberStr = name + "\n" + number;
-                        //typeStr = mContext.getString(R.string.reminder_type_application);
                     } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_type_open_link);
                     }
 
                     long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
@@ -665,18 +658,12 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                     if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_MONTHDAY)) {
-                        //typeStr = mContext.getString(R.string.reminder_type);
-                    } else {
-                        //typeStr = mContext.getString(R.string.reminder_type);
                     }
 
                     long time = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
@@ -684,52 +671,30 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
-                    String formattedTime;
-                    if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                        formattedTime = sdf.format(calendar.getTime());
-                    } else {
-                        SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                        formattedTime = sdf.format(calendar.getTime());
-                    }
-
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
                     calendar.setTimeInMillis(time);
-                    String date = dateFormat.format(calendar.getTime());
+                    String date = Utils.dateFormat.format(calendar.getTime());
 
                     repeatStr = getString(R.string.string_by_day_of_month);
-                    timeStr = date + "\n" + formattedTime;
-                }else {
+                    timeStr = date + "\n" + Utils.getTime(calendar.getTime(), is24);
+                } else {
                     if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_make_call);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                         numberStr = number;
-                        //typeStr = mContext.getString(R.string.reminder_send_message);
                         String name = mContacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_WEEKDAY)) {
-                        //typeStr = mContext.getString(R.string.reminder_type);
                     }
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
-                    String formattedTime;
-                    if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                        formattedTime = sdf.format(calendar.getTime());
-                    } else {
-                        SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                        formattedTime = sdf.format(calendar.getTime());
-                    }
 
                     if (weekdays.length() == 7) {
                         repeatStr = ReminderUtils.getRepeatString(mContext, weekdays);
                     }
-                    timeStr = formattedTime;
+                    timeStr = Utils.getTime(calendar.getTime(), is24);
                 }
             }
             return new String[]{doneStr, title, typeStr, groupStr, timeStr,
@@ -814,7 +779,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 else number.setVisibility(View.GONE);
 
                 String melodyStr = aVoid[8];
-                if (melodyStr != numberStr) melody.setText(melodyStr);
+                if (melodyStr != null && !melodyStr.matches("")) melody.setText(melodyStr);
                 else melody.setVisibility(View.GONE);
             }
 
@@ -827,7 +792,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         Context mContext;
         CircularProgress mProgress;
         long mId;
-        SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM");
+        SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
         public loadOtherData(Context context, CircularProgress circularProgress, long id){
             this.mContext = context;

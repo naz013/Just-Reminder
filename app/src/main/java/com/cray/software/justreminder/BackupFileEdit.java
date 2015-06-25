@@ -137,7 +137,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
     Interval interval = new Interval(BackupFileEdit.this);
     GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
-    Typeface typeface;
 
     private GoogleMap googleMap;
     private Marker destination;
@@ -329,13 +328,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         dateField.setText(dayStr + "/" + monthStr);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        dateField.setTypeface(typeface);
+        dateField.setTypeface(Utils.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        dateYearField.setTypeface(typeface);
+        dateYearField.setTypeface(Utils.getThinTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -346,12 +343,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         timeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        timeField.setTypeface(typeface);
+        timeField.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDays.setTypeface(typeface);
+        repeatDays.setTypeface(Utils.getLightTypeface(this));
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
@@ -448,8 +443,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else dayStr = String.valueOf(myDay);
 
         monthDayField.setText(dayStr);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        monthDayField.setTypeface(typeface);
+        monthDayField.setTypeface(Utils.getMediumTypeface(this));
 
         monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
         monthDayTimeField.setOnClickListener(new View.OnClickListener() {
@@ -460,8 +454,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         monthDayTimeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        monthDayTimeField.setTypeface(typeface);
+        monthDayTimeField.setTypeface(Utils.getMediumTypeface(this));
 
         monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
         monthDayActionLayout.setVisibility(View.GONE);
@@ -679,8 +672,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         weekTimeField.setText(Utils.getTime(c.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        weekTimeField.setTypeface(typeface);
+        weekTimeField.setTypeface(Utils.getMediumTypeface(this));
 
         mondayCheck = (ToggleButton) findViewById(R.id.mondayCheck);
         tuesdayCheck = (ToggleButton) findViewById(R.id.tuesdayCheck);
@@ -905,7 +897,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     private void setTypeFont(TextView... views){
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
         for (TextView v : views){
             v.setTypeface(typeface);
         }
@@ -1008,13 +1000,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        skypeDate.setTypeface(typeface);
+        skypeDate.setTypeface(Utils.getMediumTypeface(this));
 
         skypeYearDate = (TextView) findViewById(R.id.skypeYearDate);
         skypeYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        skypeYearDate.setTypeface(typeface);
+        skypeYearDate.setTypeface(Utils.getThinTypeface(this));
 
         skypeTime = (TextView) findViewById(R.id.skypeTime);
         skypeTime.setText(Utils.getTime(cal.getTime(),
@@ -1025,12 +1015,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        skypeTime.setTypeface(typeface);
+        skypeTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysSkype.setTypeface(typeface);
+        repeatDaysSkype.setTypeface(Utils.getLightTypeface(this));
 
         repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
@@ -1154,13 +1142,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        appDate.setTypeface(typeface);
+        appDate.setTypeface(Utils.getMediumTypeface(this));
 
         appYearDate = (TextView) findViewById(R.id.appYearDate);
         appYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        appYearDate.setTypeface(typeface);
+        appYearDate.setTypeface(Utils.getThinTypeface(this));
 
         appTime = (TextView) findViewById(R.id.appTime);
         appTime.setText(Utils.getTime(cal.getTime(),
@@ -1171,12 +1157,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        appTime.setTypeface(typeface);
+        appTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysApp.setTypeface(typeface);
+        repeatDaysApp.setTypeface(Utils.getLightTypeface(this));
 
         repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
@@ -1295,13 +1279,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        callDate.setTypeface(typeface);
+        callDate.setTypeface(Utils.getMediumTypeface(this));
 
         callYearDate = (TextView) findViewById(R.id.callYearDate);
         callYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        callYearDate.setTypeface(typeface);
+        callYearDate.setTypeface(Utils.getThinTypeface(this));
 
         callTime = (TextView) findViewById(R.id.callTime);
         callTime.setText(Utils.getTime(cal.getTime(),
@@ -1312,12 +1294,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        callTime.setTypeface(typeface);
+        callTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysCall.setTypeface(typeface);
+        repeatDaysCall.setTypeface(Utils.getLightTypeface(this));
 
         repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
@@ -1416,13 +1396,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        messageDate.setTypeface(typeface);
+        messageDate.setTypeface(Utils.getMediumTypeface(this));
 
         messageYearDate = (TextView) findViewById(R.id.messageYearDate);
         messageYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        messageYearDate.setTypeface(typeface);
+        messageYearDate.setTypeface(Utils.getThinTypeface(this));
 
         messageTime = (TextView) findViewById(R.id.messageTime);
         messageTime.setText(Utils.getTime(cal.getTime(),
@@ -1433,12 +1411,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        messageTime.setTypeface(typeface);
+        messageTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysMessage.setTypeface(typeface);
+        repeatDaysMessage.setTypeface(Utils.getLightTypeface(this));
 
         repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
@@ -1816,12 +1792,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         locationDateField = (TextView) findViewById(R.id.locationDateField);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        locationDateField.setTypeface(typeface);
+        locationDateField.setTypeface(Utils.getMediumTypeface(this));
         locationDateField.setText(dayStr + "/" + monthStr);
         locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
-        locationTimeField.setTypeface(typeface);
+        locationTimeField.setTypeface(Utils.getMediumTypeface(this));
         locationTimeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         locationTimeField.setOnClickListener(new View.OnClickListener() {
@@ -1830,8 +1805,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        locationDateYearField.setTypeface(typeface);
+        locationDateYearField.setTypeface(Utils.getThinTypeface(this));
         locationDateYearField.setText(String.valueOf(myYear));
 
         placesList = (Spinner) findViewById(R.id.placesList);

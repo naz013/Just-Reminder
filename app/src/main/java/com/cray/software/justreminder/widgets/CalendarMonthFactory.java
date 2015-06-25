@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import hirondelle.date4j.DateTime;
 
@@ -304,7 +305,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         } while (position < Configs.MAX_DAYS_COUNT);
     }
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     public void onDestroy() {

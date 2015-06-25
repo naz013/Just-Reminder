@@ -1,12 +1,11 @@
 package com.cray.software.justreminder.dialogs.utils;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -28,8 +27,8 @@ public class LedColor extends Activity{
     TextView musicDialogOk;
     TextView dialogTitle;
     ColorSetter cs;
-    NotificationManager mNotifyMgr;
-    Notification.Builder builder;
+    NotificationManagerCompat mNotifyMgr;
+    NotificationCompat.Builder builder;
     int id;
 
     @Override
@@ -70,7 +69,7 @@ public class LedColor extends Activity{
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i != -1) {
                     Toast.makeText(LedColor.this, getString(R.string.turn_screen_warm), Toast.LENGTH_SHORT).show();
-                    builder = new Notification.Builder(LedColor.this);
+                    builder = new NotificationCompat.Builder(LedColor.this);
                     if (i == 0){
                         showLED(Constants.ColorConstants.COLOR_WHITE);
                     } else if (i == 1){
@@ -133,8 +132,7 @@ public class LedColor extends Activity{
                         i.putExtra(Constants.SELECTED_LED_COLOR, selectedPosition);
                         setResult(RESULT_OK, i);
                     }
-                    mNotifyMgr =
-                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
                     mNotifyMgr.cancel(1);
                     finish();
                 } else {
@@ -146,12 +144,10 @@ public class LedColor extends Activity{
 
     private void showLED(int color){
         musicDialogOk.setEnabled(false);
-        mNotifyMgr =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
         mNotifyMgr.cancel(1);
         builder.setLights(color, 500, 1000);
-        mNotifyMgr =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

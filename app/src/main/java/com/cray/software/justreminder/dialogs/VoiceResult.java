@@ -66,7 +66,7 @@ public class VoiceResult extends Activity {
         DB.open();
 
         ImageView taskIcon = (ImageView) findViewById(R.id.taskIcon);
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
         TextView taskTitle = (TextView) findViewById(R.id.taskText);
         taskTitle.setTypeface(typeface);
         TextView taskDate = (TextView) findViewById(R.id.taskDate);

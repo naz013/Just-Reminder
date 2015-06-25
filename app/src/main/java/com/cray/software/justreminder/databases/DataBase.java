@@ -475,10 +475,10 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean setLocationShown(long rowId) {
+    public boolean setLocationStatus(long rowId, int status) {
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_REMINDERS_COUNT, 1);
+        args.put(Constants.COLUMN_REMINDERS_COUNT, status);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
@@ -560,11 +560,15 @@ public class DataBase {
                         + minute + "'", null, null, null, null, null);
     }
 
-    public Cursor getMarkers(String type, String type2, String type3) throws SQLException {
+    public Cursor getMarkers() throws SQLException {
         openGuard();
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TYPE  + "='" + type + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + type2 + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + type3 + "'" + " AND "+ Constants.COLUMN_ARCHIVED + "='"
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TYPE  + "='" + Constants.TYPE_LOCATION +
+                "'" + " OR "+ Constants.COLUMN_TYPE + "='"
+                + Constants.TYPE_LOCATION_CALL + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
+                + Constants.TYPE_LOCATION_MESSAGE + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
+                + Constants.TYPE_LOCATION_OUT + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
+                + Constants.TYPE_LOCATION_OUT_CALL + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
+                + Constants.TYPE_LOCATION_OUT_MESSAGE + "'" + " AND "+ Constants.COLUMN_ARCHIVED + "='"
                 + 0 + "'" + " AND "+ Constants.COLUMN_IS_DONE + "='"
                 + 0 + "'", null, null, null, null, null);
     }

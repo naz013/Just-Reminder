@@ -647,5 +647,6 @@
     <string name="interval_day">Daily</string>
     <string name="string_swipe_left_or_right">Swipe left or right to select theme.</string>
     <string name="string_address">Address...</string>
+    <string name="string_place_out">Place out</string>
 
 </resources>

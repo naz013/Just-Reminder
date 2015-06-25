@@ -245,7 +245,7 @@
     <string name="map_normal">Обычная</string>
     <string name="map_satellite">Спутниковая</string>
     <string name="map_hybrid">Гибридная</string>
-    <string name="map_terrain">Земля</string>
+    <string name="map_terrain">Ландшафт</string>
 
     <array name="map_types">
         <item>@string/map_normal</item>
@@ -645,4 +645,5 @@
     <string name="interval_day">Eжедневно</string>
     <string name="string_swipe_left_or_right">Потяните влево или вправо чтобы выбрать тему.</string>
     <string name="string_address">Адрес...</string>
+    <string name="string_place_out">Place out</string>
 </resources>

@@ -15,11 +15,13 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class TimesOfDay extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +32,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
     int nightHour, nightMinute;
     ColorSetter cs = new ColorSetter(TimesOfDay.this);
     SharedPrefs prefs = new SharedPrefs(TimesOfDay.this);
-    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
     Toolbar toolbar;
 
     @Override
@@ -77,15 +79,8 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         calendar.setTime(date);
         morningHour = calendar.get(Calendar.HOUR_OF_DAY);
         morningMinute = calendar.get(Calendar.MINUTE);
-        String formattedTime;
-        if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
-        morningTime.setText(formattedTime);
+        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        morningTime.setText(Utils.getTime(calendar.getTime(), is24));
 
         try {
             date = format.parse(day);
@@ -95,14 +90,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         calendar.setTime(date);
         dayHour = calendar.get(Calendar.HOUR_OF_DAY);
         dayMinute = calendar.get(Calendar.MINUTE);
-        if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
-        dayTime.setText(formattedTime);
+        dayTime.setText(Utils.getTime(calendar.getTime(), is24));
 
         try {
             date = format.parse(evening);
@@ -112,14 +100,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         calendar.setTime(date);
         eveningHour = calendar.get(Calendar.HOUR_OF_DAY);
         eveningMinute = calendar.get(Calendar.MINUTE);
-        if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
-        eveningTime.setText(formattedTime);
+        eveningTime.setText(Utils.getTime(calendar.getTime(), is24));
 
         try {
             date = format.parse(night);
@@ -129,15 +110,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         calendar.setTime(date);
         nightHour = calendar.get(Calendar.HOUR_OF_DAY);
         nightMinute = calendar.get(Calendar.MINUTE);
-        if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
-        nightTime.setText(formattedTime);
-
+        nightTime.setText(Utils.getTime(calendar.getTime(), is24));
     }
 
     @Override
@@ -159,19 +132,12 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 morningMinute = minute;
                 String time = morningHour + ":" + morningMinute;
                 prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_MORNING, time);
-                String formattedTime;
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
 
-                morningTime.setText(formattedTime);
+                morningTime.setText(Utils.getTime(calendar.getTime(),
+                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             }
         }, morningHour, morningMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
 }
@@ -184,19 +150,12 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 dayMinute = minute;
                 String time = dayHour + ":" + dayMinute;
                 prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_DAY, time);
-                String formattedTime;
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
 
-                dayTime.setText(formattedTime);
+                dayTime.setText(Utils.getTime(calendar.getTime(),
+                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             }
         }, dayHour, dayMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
     }
@@ -209,19 +168,12 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 nightMinute = minute;
                 String time = nightHour + ":" + nightMinute;
                 prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_NIGHT, time);
-                String formattedTime;
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
 
-                nightTime.setText(formattedTime);
+                nightTime.setText(Utils.getTime(calendar.getTime(),
+                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             }
         }, nightHour, nightMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
     }
@@ -234,19 +186,12 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 eveningMinute = minute;
                 String time = eveningHour + ":" + eveningMinute;
                 prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_EVENING, time);
-                String formattedTime;
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                if (new SharedPrefs(TimesOfDay.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                    formattedTime = sdf.format(calendar.getTime());
-                } else {
-                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                    formattedTime = sdf.format(calendar.getTime());
-                }
 
-                eveningTime.setText(formattedTime);
+                eveningTime.setText(Utils.getTime(calendar.getTime(),
+                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
             }
         }, eveningHour, eveningMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
     }

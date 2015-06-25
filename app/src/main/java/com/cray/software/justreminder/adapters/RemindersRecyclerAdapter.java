@@ -57,7 +57,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
-        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+        typeface = Utils.getLightTypeface(context);
 
         mSwipeableViewContainerOnClickListener = new View.OnClickListener() {
             @Override

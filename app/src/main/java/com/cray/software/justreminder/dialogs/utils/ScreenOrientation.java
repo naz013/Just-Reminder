@@ -43,7 +43,7 @@ public class ScreenOrientation extends Activity{
                 getString(R.string.screen_portrait),
                 getString(R.string.screen_landscape)};
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(ScreenOrientation.this,
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(ScreenOrientation.this,
                 android.R.layout.simple_list_item_single_choice, types);
         musicList.setAdapter(adapter);
 

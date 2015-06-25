@@ -43,7 +43,7 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
         if (c != null && c.moveToFirst()) {
             do {
                 String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                if (tp.startsWith(Constants.TYPE_LOCATION)) {
+                if (tp.startsWith(Constants.TYPE_LOCATION) || tp.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                     int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                     int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));

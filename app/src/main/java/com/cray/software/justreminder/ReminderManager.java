@@ -17,6 +17,7 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -120,6 +121,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
@@ -162,7 +164,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
     Interval interval = new Interval(ReminderManager.this);
     GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
-    Typeface typeface;
 
     private GoogleMap googleMap;
     private Marker destination;
@@ -354,6 +355,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 spinner.setSelection(7);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                 spinner.setSelection(8);
+            } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                spinner.setSelection(9);
             } else {
                 spinner.setSelection(0);
             }
@@ -419,6 +422,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (isDark) navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_white_24dp));
         else navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_grey600_24dp));
+
+        if (isDark) navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_white_24dp));
+        else navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_grey600_24dp));
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
         spinner.setAdapter(adapter);
@@ -647,13 +653,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else monthStr = String.valueOf(myMonth + 1);
 
         dateField.setText(dayStr + "/" + monthStr);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        dateField.setTypeface(typeface);
+        dateField.setTypeface(Utils.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        dateYearField.setTypeface(typeface);
+        dateYearField.setTypeface(Utils.getThinTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -664,12 +668,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
         timeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        timeField.setTypeface(typeface);
+        timeField.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDays.setTypeface(typeface);
+        repeatDays.setTypeface(Utils.getLightTypeface(this));
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
@@ -778,8 +780,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else dayStr = String.valueOf(myDay);
 
         monthDayField.setText(dayStr);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        monthDayField.setTypeface(typeface);
+        monthDayField.setTypeface(Utils.getMediumTypeface(this));
 
         monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
         monthDayTimeField.setOnClickListener(new View.OnClickListener() {
@@ -790,8 +791,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
         monthDayTimeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        monthDayTimeField.setTypeface(typeface);
+        monthDayTimeField.setTypeface(Utils.getMediumTypeface(this));
 
         monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
         monthDayActionLayout.setVisibility(View.GONE);
@@ -836,6 +836,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+
+        if (monthDayAttachAction.isChecked()) showOver(monthDayActionLayout);
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -917,6 +919,28 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myDay = 0;
                 }
                 break;
+            case R.id.currentCheck:
+                if (currentCheck.isChecked()) {
+                    mapCheck.setChecked(false);
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    mLocList = new CurrentLocation();
+                    SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+                    long time;
+                    time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000);
+                    int distance;
+                    distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE);
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+                }
+                break;
+            case R.id.mapCheck:
+                if (mapCheck.isChecked()) {
+                    currentCheck.setChecked(false);
+                    fadeOutAnimation(specsContainerOut);
+                    fadeInAnimation(mapContainerOut);
+                    mLocationManager.removeUpdates(mLocList);
+                }
+                break;
         }
     }
 
@@ -967,8 +991,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
         weekTimeField.setText(Utils.getTime(c.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        weekTimeField.setTypeface(typeface);
+        weekTimeField.setTypeface(Utils.getMediumTypeface(this));
 
         mondayCheck = (ToggleButton) findViewById(R.id.mondayCheck);
         tuesdayCheck = (ToggleButton) findViewById(R.id.tuesdayCheck);
@@ -1022,6 +1045,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+
+        if (attachAction.isChecked()) showOver(action_layout);
 
         if (id != 0 && isSame()) {
             DB.open();
@@ -1223,7 +1248,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setTypeFont(TextView... views){
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
         for (TextView v : views){
             v.setTypeface(typeface);
         }
@@ -1341,13 +1366,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        skypeDate.setTypeface(typeface);
+        skypeDate.setTypeface(Utils.getMediumTypeface(this));
 
         skypeYearDate = (TextView) findViewById(R.id.skypeYearDate);
         skypeYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        skypeYearDate.setTypeface(typeface);
+        skypeYearDate.setTypeface(Utils.getThinTypeface(this));
 
         skypeTime = (TextView) findViewById(R.id.skypeTime);
         skypeTime.setText(Utils.getTime(cal.getTime(),
@@ -1358,12 +1381,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        skypeTime.setTypeface(typeface);
+        skypeTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysSkype.setTypeface(typeface);
+        repeatDaysSkype.setTypeface(Utils.getLightTypeface(this));
 
         repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
@@ -1541,13 +1562,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        appDate.setTypeface(typeface);
+        appDate.setTypeface(Utils.getMediumTypeface(this));
 
         appYearDate = (TextView) findViewById(R.id.appYearDate);
         appYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        appYearDate.setTypeface(typeface);
+        appYearDate.setTypeface(Utils.getThinTypeface(this));
 
         appTime = (TextView) findViewById(R.id.appTime);
         appTime.setText(Utils.getTime(cal.getTime(),
@@ -1558,12 +1577,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        appTime.setTypeface(typeface);
+        appTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysApp.setTypeface(typeface);
+        repeatDaysApp.setTypeface(Utils.getLightTypeface(this));
 
         repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
@@ -1705,13 +1722,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        callDate.setTypeface(typeface);
+        callDate.setTypeface(Utils.getMediumTypeface(this));
 
         callYearDate = (TextView) findViewById(R.id.callYearDate);
         callYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        callYearDate.setTypeface(typeface);
+        callYearDate.setTypeface(Utils.getThinTypeface(this));
 
         callTime = (TextView) findViewById(R.id.callTime);
         callTime.setText(Utils.getTime(cal.getTime(),
@@ -1722,12 +1737,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        callTime.setTypeface(typeface);
+        callTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysCall.setTypeface(typeface);
+        repeatDaysCall.setTypeface(Utils.getLightTypeface(this));
 
         repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
@@ -1851,13 +1864,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateDialog();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        messageDate.setTypeface(typeface);
+        messageDate.setTypeface(Utils.getMediumTypeface(this));
 
         messageYearDate = (TextView) findViewById(R.id.messageYearDate);
         messageYearDate.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        messageYearDate.setTypeface(typeface);
+        messageYearDate.setTypeface(Utils.getThinTypeface(this));
 
         messageTime = (TextView) findViewById(R.id.messageTime);
         messageTime.setText(Utils.getTime(cal.getTime(),
@@ -1868,12 +1879,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        messageTime.setTypeface(typeface);
+        messageTime.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDaysMessage.setTypeface(typeface);
+        repeatDaysMessage.setTypeface(Utils.getLightTypeface(this));
 
         repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
@@ -1977,6 +1986,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (isMapVisible()) cardSearch.setAdapter(adapter);
                     else searchField.setAdapter(adapter);
                 }
+                if (isLocationOutAttached()){
+                    if (isMapOutVisible()) cardSearchOut.setAdapter(adapter);
+                }
                 adapter.notifyDataSetChanged();
             }
         }
@@ -1994,11 +2006,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     CardView card;
 
     private boolean isMapVisible(){
-        return mapContainer.getVisibility() == View.VISIBLE;
+        return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
     }
 
     private boolean isLayersVisible(){
-        return layersContainer.getVisibility() == View.VISIBLE;
+        return layersContainer != null && layersContainer.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocation() {
@@ -2010,6 +2022,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
         specsContainer = (ScrollView) findViewById(R.id.specsContainer);
         layersContainer = (LinearLayout) findViewById(R.id.layersContainer);
+        layersContainer.setVisibility(View.GONE);
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
@@ -2232,9 +2245,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        showOver(actionLocation);
-                    } else actionLocation.setVisibility(View.VISIBLE);
+                    showOver(actionLocation);
                     addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
                     addNumberButtonLocation.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -2258,13 +2269,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         }
                     });
                 } else {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hideOver(actionLocation);
-                    } else actionLocation.setVisibility(View.GONE);
+                    hideOver(actionLocation);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
         });
+
+        if (attachLocationAction.isChecked()) showOver(actionLocation);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -2300,12 +2311,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         locationDateField = (TextView) findViewById(R.id.locationDateField);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        locationDateField.setTypeface(typeface);
+        locationDateField.setTypeface(Utils.getMediumTypeface(this));
         locationDateField.setText(dayStr + "/" + monthStr);
         locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
-        locationTimeField.setTypeface(typeface);
+        locationTimeField.setTypeface(Utils.getMediumTypeface(this));
         locationTimeField.setText(Utils.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         locationTimeField.setOnClickListener(new View.OnClickListener() {
@@ -2314,8 +2324,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeDialog().show();
             }
         });
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        locationDateYearField.setTypeface(typeface);
+        locationDateYearField.setTypeface(Utils.getThinTypeface(this));
         locationDateYearField.setText(String.valueOf(myYear));
 
         placesList = (Spinner) findViewById(R.id.placesList);
@@ -2420,11 +2429,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (id != 0 && isSame()) {
             DB.open();
             Cursor c = DB.getTask(id);
-            String text = "", number = null;
-            double latitude=0, longitude=0;
+            String text = "", number = null, remType = "";
+            double latitude = 0, longitude = 0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                remType = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -2455,11 +2465,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 attackDelay.setChecked(false);
             }
 
-            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
+            if (remType.matches(Constants.TYPE_LOCATION_CALL) || remType.matches(Constants.TYPE_LOCATION_MESSAGE)){
                 attachLocationAction.setChecked(true);
                 phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
                 phoneNumberLocation.setText(number);
-                if (type.matches(Constants.TYPE_LOCATION_CALL)){
+                if (remType.matches(Constants.TYPE_LOCATION_CALL)){
                     callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
                     callCheckLocation.setChecked(true);
                 } else {
@@ -2477,6 +2487,492 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         .title(text)
                         .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13));
+            }
+        }
+    }
+
+    ImageButton mapButtonOut, cardClearOut, zoomOutOut, layersOut, addNumberButtonLocationOut,
+            myLocationOut;
+    LinearLayout layersContainerOut, actionLocationOut, locationOutLayout, delayLayoutOut,
+            locationOutDateRing;
+    RelativeLayout mapContainerOut;
+    ScrollView specsContainerOut;
+    AutoCompleteTextView cardSearchOut;
+    TextView typeNormalOut, typeSatelliteOut, typeHybridOut, typeTerrainOut, locationOutDateField,
+            locationOutDateYearField, locationOutTimeField, currentLocation, mapLocation, radiusMark;
+    CheckBox attachLocationOutAction, attachDelayOut;
+    RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    FloatingEditText phoneNumberLocationOut;
+    CardView cardOut;
+    GoogleMap mapOut;
+    Spinner placesListOut;
+    SeekBar pointRadius;
+
+    private boolean isMapOutVisible(){
+        return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
+    }
+
+    private boolean isLayersOutVisible(){
+        return layersContainerOut != null && layersContainerOut.getVisibility() == View.VISIBLE;
+    }
+
+    private void attachLocationOut() {
+        taskField.setHint(getString(R.string.tast_hint));
+
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        fadeInAnimation(locationOutLayout);
+
+        delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
+        specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
+        layersContainerOut = (LinearLayout) findViewById(R.id.layersContainerOut);
+        layersContainerOut.setVisibility(View.GONE);
+        mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
+        delayLayoutOut.setVisibility(View.GONE);
+        mapContainerOut.setVisibility(View.GONE);
+
+        attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
+        attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        expand(delayLayoutOut);
+                    } else delayLayoutOut.setVisibility(View.VISIBLE);
+                } else {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        collapse(delayLayoutOut);
+                    } else delayLayoutOut.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        cardOut = (CardView) findViewById(R.id.cardOut);
+        cardOut.setCardBackgroundColor(cSetter.getCardStyle());
+
+        cardClearOut = (ImageButton) findViewById(R.id.cardClearOut);
+        zoomOutOut = (ImageButton) findViewById(R.id.zoomOutOut);
+        layersOut = (ImageButton) findViewById(R.id.layersOut);
+        mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
+        myLocationOut = (ImageButton) findViewById(R.id.myLocationOut);
+
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+            cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
+            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
+            layersOut.setImageResource(R.drawable.ic_layers_white_24dp);
+            myLocationOut.setImageResource(R.drawable.ic_my_location_white_24dp);
+            layersContainerOut.setBackgroundResource(R.drawable.popup_dark);
+        } else {
+            cardClearOut.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
+            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
+            layersOut.setImageResource(R.drawable.ic_layers_grey600_24dp);
+            myLocationOut.setImageResource(R.drawable.ic_my_location_grey600_24dp);
+            layersContainerOut.setBackgroundResource(R.drawable.popup);
+        }
+
+        cardClearOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardSearchOut.setText("");
+            }
+        });
+        mapButtonOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fadeOutAnimation(specsContainerOut);
+                fadeInAnimation(mapContainerOut);
+                mapCheck.setChecked(true);
+            }
+        });
+        zoomOutOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                fadeOutAnimation(mapContainerOut);
+                fadeInAnimation(specsContainerOut);
+            }
+        });
+        layersOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                else showOver(layersContainerOut);
+            }
+        });
+        myLocationOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                Location location = mapOut.getMyLocation();
+                if (location != null){
+                    double lat = location.getLatitude();
+                    double lon = location.getLongitude();
+                    LatLng pos = new LatLng(lat, lon);
+                    mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                }
+            }
+        });
+
+        typeNormalOut = (TextView) findViewById(R.id.typeNormalOut);
+        typeSatelliteOut = (TextView) findViewById(R.id.typeSatelliteOut);
+        typeHybridOut = (TextView) findViewById(R.id.typeHybridOut);
+        typeTerrainOut = (TextView) findViewById(R.id.typeTerrainOut);
+        currentLocation = (TextView) findViewById(R.id.currentLocation);
+        mapLocation = (TextView) findViewById(R.id.mapLocation);
+        radiusMark = (TextView) findViewById(R.id.radiusMark);
+        typeNormalOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeSatelliteOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeHybridOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeTerrainOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+
+        currentCheck = (RadioButton) findViewById(R.id.currentCheck);
+        mapCheck = (RadioButton) findViewById(R.id.mapCheck);
+        currentCheck.setOnCheckedChangeListener(this);
+        mapCheck.setOnCheckedChangeListener(this);
+        currentCheck.setChecked(true);
+
+        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
+        pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                radiusMark.setText(String.format("Selected radius - %s", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        if (pointRadius.getProgress() == 0)
+            pointRadius.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS));
+
+        cardSearchOut = (AutoCompleteTextView) findViewById(R.id.cardSearchOut);
+        cardSearchOut.setThreshold(3);
+        adapter = new ArrayAdapter<>(
+                ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
+        adapter.setNotifyOnChange(true);
+        cardSearchOut.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (task != null && !task.isCancelled()) task.cancel(true);
+                task = new GeocoderTask();
+                task.execute(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        cardSearchOut.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Address sel = foundPlaces.get(position);
+                double lat = sel.getLatitude();
+                double lon = sel.getLongitude();
+                LatLng pos = new LatLng(lat, lon);
+                mapOut.clear();
+                String title = taskField.getText().toString().trim();
+                if (title.matches("")) {
+                    title = pos.toString();
+                }
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                        .draggable(true));
+                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            }
+        });
+
+        actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
+        actionLocationOut.setVisibility(View.GONE);
+
+        attachLocationOutAction = (CheckBox) findViewById(R.id.attachLocationOutAction);
+        attachLocationOutAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    showOver(actionLocationOut);
+                    addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
+                    addNumberButtonLocationOut.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
+                            pickContacts(pd);
+                        }
+                    });
+                    setImage(addNumberButtonLocationOut);
+
+                    phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
+
+                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
+                    callCheckLocationOut.setChecked(true);
+                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
+                    messageCheckLocationOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) taskField.setHint(getString(R.string.message_field_hint));
+                            else taskField.setHint(getString(R.string.tast_hint));
+                        }
+                    });
+                } else {
+                    hideOver(actionLocationOut);
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
+            }
+        });
+
+        if (attachLocationOutAction.isChecked()) showOver(actionLocationOut);
+
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        if (myYear > 0){
+            cal.set(Calendar.YEAR, myYear);
+            cal.set(Calendar.MONTH, myMonth);
+            cal.set(Calendar.DAY_OF_MONTH, myDay);
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+
+        String dayStr;
+        String monthStr;
+
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
+
+        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+        else monthStr = String.valueOf(myMonth + 1);
+
+        locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
+        locationOutDateRing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateDialog();
+            }
+        });
+
+        locationOutDateField = (TextView) findViewById(R.id.locationOutDateField);
+        locationOutDateField.setTypeface(Utils.getMediumTypeface(this));
+        locationOutDateField.setText(dayStr + "/" + monthStr);
+        locationOutDateYearField = (TextView) findViewById(R.id.locationOutDateYearField);
+        locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
+        locationOutTimeField.setTypeface(Utils.getMediumTypeface(this));
+        locationOutTimeField.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+        locationOutTimeField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog().show();
+            }
+        });
+        locationOutDateYearField.setTypeface(Utils.getThinTypeface(this));
+        locationOutDateYearField.setText(String.valueOf(myYear));
+
+        placesListOut = (Spinner) findViewById(R.id.placesListOut);
+        placesListOut.setBackgroundColor(cSetter.getSpinnerStyle());
+        if (spinnerArray.isEmpty()){
+            placesListOut.setVisibility(View.GONE);
+        } else {
+            placesListOut.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            placesListOut.setAdapter(spinnerArrayAdapter);
+            placesListOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (isLayersOutVisible()) hideOver(layersContainerOut);
+                    if (position > 0){
+                        String placeName = spinnerArray.get(position);
+                        DB.open();
+                        Cursor c = DB.getPlace(placeName);
+                        if (c != null && c.moveToFirst()) {
+                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
+                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
+
+                            LatLng latLng = new LatLng(latitude, longitude);
+                            mapOut.clear();
+                            String title = taskField.getText().toString().trim();
+                            if (title.matches("")) {
+                                title = latLng.toString();
+                            }
+                            destination = mapOut.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(title)
+                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                                    .draggable(true));
+
+                            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                        }
+                        if (c != null) c.close();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                    if (isLayersOutVisible()) hideOver(layersContainerOut);
+                }
+            });
+        }
+
+        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapOut);
+        mapOut = fragment.getMap();
+        mapOut.getUiSettings().setMyLocationButtonEnabled(false);
+        sPrefs = new SharedPrefs(ReminderManager.this);
+        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        if (type.matches(Constants.MAP_TYPE_NORMAL)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        } else {
+            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+
+        mapOut.setMyLocationEnabled(true);
+        if (mapOut.getMyLocation() != null) {
+            double lat = mapOut.getMyLocation().getLatitude();
+            double lon = mapOut.getMyLocation().getLongitude();
+            LatLng pos = new LatLng(lat, lon);
+            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+        }
+        mapOut.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(!spinnerArray.isEmpty()){
+                    placesListOut.setSelection(0);
+                }
+                if (isLayersVisible()) hideOver(layersContainerOut);
+                mapOut.clear();
+                String title = taskField.getText().toString().trim();
+                if (title.matches("")) {
+                    title = latLng.toString();
+                }
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                        .draggable(true));
+                mapLocation.setText(getAddress(latLng.latitude, latLng.longitude));
+            }
+        });
+
+        if (destination != null) {
+            LatLng latLng = destination.getPosition();
+            destination = mapOut.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(destination.getTitle())
+                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                    .draggable(true));
+            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+            mapLocation.setText(getAddress(latLng.latitude, latLng.longitude));
+        }
+
+        if (id != 0 && isSame()) {
+            DB.open();
+            Cursor c = DB.getTask(id);
+            String text = "", number = null, remType = "";
+            double latitude = 0, longitude = 0;
+            if (c != null && c.moveToFirst()){
+                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                remType = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            }
+            if (c != null) c.close();
+
+            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+                if (myDay < 10) dayStr = "0" + myDay;
+                else dayStr = String.valueOf(myDay);
+
+                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+                else monthStr = String.valueOf(myMonth + 1);
+
+                cal.set(Calendar.HOUR_OF_DAY, myHour);
+                cal.set(Calendar.MINUTE, myMinute);
+
+                locationTimeField.setText(Utils.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                locationDateField.setText(dayStr + "/" + monthStr);
+                locationDateYearField.setText(String.valueOf(myYear));
+                attackDelay.setChecked(true);
+                isDelayed = true;
+            } else {
+                attackDelay.setChecked(false);
+            }
+
+            if (remType.matches(Constants.TYPE_LOCATION_CALL) || remType.matches(Constants.TYPE_LOCATION_MESSAGE)){
+                attachLocationAction.setChecked(true);
+                phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
+                phoneNumberLocation.setText(number);
+                if (remType.matches(Constants.TYPE_LOCATION_CALL)){
+                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
+                    callCheckLocation.setChecked(true);
+                } else {
+                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
+                    messageCheckLocation.setChecked(true);
+                }
+            } else {
+                attachLocationAction.setChecked(false);
+            }
+
+            taskField.setText(text);
+            if (longitude != 0 && latitude != 0) {
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title(text)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13));
             }
         }
     }
@@ -2536,6 +3032,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         fadeOutAnimation(monthDayLayout);
     }
 
+    private void detachLocationOut(){
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        fadeOutAnimation(locationOutLayout);
+        mLocationManager.removeUpdates(mLocList);
+    }
+
     private boolean isDateReminderAttached(){
         by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         return by_date_layout.getVisibility() == View.VISIBLE;
@@ -2581,6 +3083,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return monthDayLayout.getVisibility() == View.VISIBLE;
     }
 
+    private boolean isLocationOutAttached(){
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        return locationOutLayout.getVisibility() == View.VISIBLE;
+    }
+
     private void clearForm(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
         call_layout.setVisibility(View.GONE);
@@ -2600,6 +3107,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         application_layout.setVisibility(View.GONE);
         monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         monthDayLayout.setVisibility(View.GONE);
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        locationOutLayout.setVisibility(View.GONE);
     }
 
     private String getTaskType(){
@@ -2617,6 +3126,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
                 else type = Constants.TYPE_LOCATION_MESSAGE;
             } else type = Constants.TYPE_LOCATION;
+        } else if (isLocationOutAttached()){
+            if (attachLocationOutAction.isChecked()){
+                if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
+                else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
+            } else type = Constants.TYPE_LOCATION_OUT;
         }
         return type;
     }
@@ -2728,17 +3242,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void saveTask(){
-        if (isLocationAttached()){
+        if (isLocationAttached() || isLocationOutAttached()){
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (isGPSEnabled || isNetworkEnabled) {
-                if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
-                else if (attachLocationAction.isChecked() && checkNumber())
-                    phoneNumberLocation.setError(getString(R.string.number_error));
-                else addLocation();
+                if (isLocationOutAttached()){
+                    if (attachLocationOutAction.isChecked() && !checkNumber()) addLocationOut();
+                    else if (attachLocationOutAction.isChecked() && checkNumber())
+                        phoneNumberLocationOut.setError(getString(R.string.number_error));
+                    else addLocationOut();
+                } else {
+                    if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
+                    else if (attachLocationAction.isChecked() && checkNumber())
+                        phoneNumberLocation.setError(getString(R.string.number_error));
+                    else addLocation();
+                }
             } else {
                 showSettingsAlert();
             }
@@ -3057,6 +3578,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return weekPhoneNumber.getText().toString().trim().matches("");
         } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
             return monthDayPhoneNumber.getText().toString().trim().matches("");
+        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
+            return phoneNumberLocationOut.getText().toString().trim().matches("");
         } else return false;
     }
 
@@ -3400,6 +3923,68 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private void addLocationOut(){
+        String task = taskField.getText().toString().trim();
+        if (task.matches("")){
+            taskField.setError(getString(R.string.empty_field_error));
+            return;
+        }
+        String type = getTaskType();
+        String number = null;
+        if (attachLocationOutAction.isChecked()) number = phoneNumberLocationOut.getText().toString().trim();
+        LatLng dest = null;
+        boolean isNull = false;
+        try {
+            dest = destination.getPosition();
+        } catch (NullPointerException e){
+            isNull = true;
+        }
+        int techRadius = pointRadius.getProgress();
+        if (!isNull) {
+            Double latitude = dest.latitude;
+            Double longitude = dest.longitude;
+            DB.open();
+            if (id != 0) {
+                if (attachDelayOut.isChecked()){
+                    DB.updateTask(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
+                            0, 0, 0, latitude, longitude, null, 0, melody, techRadius, ledColor, 0,
+                            categoryId);
+                    positionDelayReceiver.setDelay(ReminderManager.this, id);
+                    DB.updateDateTime(id);
+                } else {
+                    DB.updateTask(id, task, type, 0, 0, 0, 0, 0, 0, number,
+                            0, 0, 0, latitude, longitude, null, 0, melody, techRadius, ledColor, 0,
+                            categoryId);
+                    DB.updateDateTime(id);
+                    startService(new Intent(ReminderManager.this, GeolocationService.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            } else {
+                sHelp = new SyncHelper(ReminderManager.this);
+                String uuID = sHelp.generateID();
+                if (attachDelayOut.isChecked()){
+                    long newIds = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+                            number, 0, 0, 0, latitude, longitude, uuID, null, 0, melody, techRadius,
+                            ledColor, 0, categoryId);
+                    positionDelayReceiver.setDelay(ReminderManager.this, newIds);
+                    DB.updateDateTime(newIds);
+                } else {
+                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, number,
+                            0, 0, 0, latitude, longitude, uuID, null, 0, melody, techRadius, ledColor, 0,
+                            categoryId);
+                    DB.updateDateTime(ids);
+                    startService(new Intent(ReminderManager.this, GeolocationService.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                }
+            }
+            updatesHelper = new UpdatesHelper(ReminderManager.this);
+            updatesHelper.updateWidget();
+            finish();
+        } else {
+            Toast.makeText(ReminderManager.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void exportToCalendar(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
@@ -3496,6 +4081,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isSkypeAttached()) detachSkype();
         if (isApplicationAttached()) detachApplication();
         if (isMonthDayAttached()) detachMonthDay();
+        if (isLocationOutAttached()) detachLocationOut();
     }
 
     protected void dateDialog() {
@@ -3556,6 +4142,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }
+        if (isLocationOutAttached()){
+            if (attachDelayOut.isChecked()){
+                if (delayLayoutOut.getVisibility() == View.VISIBLE) {
+                    locationOutDateField.setText(dayStr + "/" + monthStr);
+                    locationOutDateYearField.setText(String.valueOf(myYear));
+                }
+            }
+        }
     }
 
     protected Dialog timeDialog() {
@@ -3602,6 +4196,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         locationTimeField.setText(formattedTime);
                 }
             }
+            if (isLocationOutAttached()){
+                if (attachDelayOut.isChecked()){
+                    if (delayLayoutOut.getVisibility() == View.VISIBLE)
+                        locationOutTimeField.setText(formattedTime);
+                }
+            }
         }
     };
 
@@ -3609,6 +4209,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         if (isLayersVisible()) {
             hideOver(layersContainer);
+            return;
+        }
+        if (isLayersOutVisible()) {
+            hideOver(layersContainerOut);
             return;
         }
         if (mFab.getVisibility() == View.GONE){
@@ -3636,9 +4240,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             types.add(tp);
                         }
                     } while (c.moveToNext());
-                    if (!types.contains(Constants.TYPE_LOCATION) &&
-                            !types.contains(Constants.TYPE_LOCATION_CALL) &&
-                            !types.contains(Constants.TYPE_LOCATION_MESSAGE)) {
+                    if (!types.contains(Constants.TYPE_LOCATION) ||
+                            !types.contains(Constants.TYPE_LOCATION_CALL) ||
+                            !types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
+                            !types.contains(Constants.TYPE_LOCATION_OUT) ||
+                            !types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
+                            !types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                         stopService(new Intent(ReminderManager.this, GeolocationService.class));
                         stopService(new Intent(ReminderManager.this, CheckPosition.class));
                     } else {
@@ -3748,7 +4355,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private void onLeftSwipe() {
         int current = spinner.getSelectedItemPosition();
-        int maxInt = 8;
+        int maxInt = spinnerArray.size();
         if (current > 0){
             spinner.setSelection(current - 1);
             switchIt(current - 1);
@@ -3761,11 +4368,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private void onRightSwipe() {
         int current = spinner.getSelectedItemPosition();
-        if (current < 8){
+        int maxInt = spinnerArray.size();
+        if (current < maxInt){
             spinner.setSelection(current + 1);
             switchIt(current + 1);
         }
-        if (current == 8){
+        if (current == maxInt){
             spinner.setSelection(0);
             switchIt(0);
         }
@@ -3819,6 +4427,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case 8:
                 detachLayout();
                 attachMonthDay();
+                break;
+            case 9:
+                detachLayout();
+                if (checkGooglePlayServicesAvailability()) {
+                    attachLocationOut();
+                } else {
+                    spinner.setSelection(0);
+                }
                 break;
         }
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_USED_REMINDER, position);
@@ -3995,6 +4611,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (isLocationAttached() && attachLocationAction.isChecked()){
                     phoneNumberLocation.setText(number);
                 }
+                if (isLocationOutAttached() && attachLocationOutAction.isChecked()){
+                    phoneNumberLocationOut.setText(number);
+                }
             }
         }
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -4126,5 +4745,99 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             editor.commit();
         }
         return !ranBefore;
+    }
+
+    ProgressDialog progressDlg;
+
+    private String getAddress(double currentLat, double currentLong){
+        progressDlg = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDlg.setMax(100);
+        progressDlg.setMessage(getString(R.string.loading_wait));
+        progressDlg.setCancelable(false);
+        progressDlg.setIndeterminate(false);
+        progressDlg.show();
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        String _Location = null;
+        try {
+            List<Address> listAddresses = geocoder.getFromLocation(currentLat, currentLong, 1);
+            if(null != listAddresses&&listAddresses.size() > 0){
+                _Location = listAddresses.get(0).getAddressLine(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        progressDlg.dismiss();
+        if (_Location == null) return String.format("%.5f", currentLat) + ", " +
+                String.format("%.5f", currentLong);
+        else return _Location;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+        super.onDestroy();
+    }
+
+    LocationManager mLocationManager;
+    LocationListener mLocList;
+
+    public class CurrentLocation implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            double currentLat = location.getLatitude();
+            double currentLong = location.getLongitude();
+            String _Location = getAddress(currentLat, currentLong);
+            String text = taskField.getText().toString().trim();
+            if (text == null || text.matches("")) text = _Location;
+            if (isLocationOutAttached()) {
+                currentLocation.setText(_Location);
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(new LatLng(currentLat, currentLong))
+                        .title(text)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLong), 13));
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
     }
 }

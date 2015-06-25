@@ -31,13 +31,14 @@ import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ShowBirthday extends Activity implements View.OnClickListener {
 
     DataBase DB;
-    Typeface typeface;
     RoundImageView contactPhoto;
     TextView userName, userNumber, userYears;
     FloatingActionButton buttonOk, buttonCall, buttonSend;
@@ -80,7 +81,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
 
         buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(this);
@@ -193,11 +194,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
     }
 
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
     private int getYears(String dateOfBirth){
         int years;
         Date date = null;
         try {
-            date = Utils.dateFormat.parse(dateOfBirth);
+            date = format.parse(dateOfBirth);
         } catch (ParseException e) {
             e.printStackTrace();
         }

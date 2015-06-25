@@ -355,14 +355,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.utils.DatePick"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dialogs.utils.FontStyleDialog"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog" >

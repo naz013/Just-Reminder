@@ -37,7 +37,10 @@ public class JustBootReceiver extends BroadcastReceiver {
                 } while (c.moveToNext());
                 if (types.contains(Constants.TYPE_LOCATION) ||
                         types.contains(Constants.TYPE_LOCATION_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_MESSAGE)){
+                        types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     context.startService(new Intent(context, GeolocationService.class));
                 }
             }

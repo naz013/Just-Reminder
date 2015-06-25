@@ -32,42 +32,6 @@ public class Interval {
     }
 
     public int getProgressFromCode(int code){
-        /*int progress = 0;
-        if (code == Intervals.REPEAT_CODE_ONCE){
-            progress = 0;
-        } else if(code == Intervals.INTERVAL_DAY){
-            progress = 1;
-        } else if(code == Intervals.INTERVAL_TWO_DAYS){
-            progress = 2;
-        } else if(code == Intervals.INTERVAL_TREE_DAYS){
-            progress = 3;
-        } else if(code == Intervals.INTERVAL_FOUR_DAYS){
-            progress = 4;
-        } else if(code == Intervals.INTERVAL_FIVE_DAYS){
-            progress = 5;
-        } else if(code == Intervals.INTERVAL_SIX_DAYS){
-            progress = 6;
-        } else if(code == Intervals.INTERVAL_WEEK){
-            progress = 7;
-        } else if(code == Intervals.INTERVAL_TWO_WEEKS){
-            progress = 8;
-        } else if(code == Intervals.INTERVAL_THREE_WEEKS){
-            progress = 9;
-        } else if(code == Intervals.INTERVAL_MONTH){
-            progress = 10;
-        } else if(code == Intervals.INTERVAL_TWO_MONTH){
-            progress = 11;
-        } else if(code == Intervals.INTERVAL_THREE_MONTH){
-            progress = 12;
-        } else if(code == Intervals.INTERVAL_FOUR_MONTH){
-            progress = 13;
-        } else if(code == Intervals.INTERVAL_FIVE_MONTH){
-            progress = 14;
-        } else if(code == Intervals.INTERVAL_HALF_YEAR){
-            progress = 15;
-        }else if(code == Intervals.INTERVAL_YEAR){
-            progress = 16;
-        }*/
         return code;
     }
 
@@ -103,43 +67,6 @@ public class Interval {
 
     public static int getRepeatDays(int progress){
         return progress;
-        /*int interval = 0;
-        if (progress == 0){
-            interval = 0;
-        } else if (progress == 1){
-            interval = 1;
-        } else if(progress == 2){
-            interval = 2;
-        } else if(progress == 3){
-            interval = 3;
-        } else if(progress == 4){
-            interval = 4;
-        } else if(progress == 5){
-            interval = 5;
-        } else if(progress == 6){
-            interval = 6;
-        } else if (progress == 7){
-            interval = 7;
-        } else if (progress == 8){
-            interval = 14;
-        } else if (progress == 9){
-            interval = 21;
-        } else if (progress == 10){
-            interval = 30;
-        } else if (progress == 11){
-            interval = 60;
-        } else if (progress == 12){
-            interval = 90;
-        } else if (progress == 13){
-            interval = 120;
-        } else if (progress == 14){
-            interval = 150;
-        } else if (progress == 15){
-            interval = 180;
-        } else if (progress == 16){
-            interval = 365;
-        }
-        return interval;*/
     }
 
     public String getTimeInterval(int code){

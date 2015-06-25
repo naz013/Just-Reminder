@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -70,7 +69,6 @@ public class FollowReminder extends AppCompatActivity implements
 
     UpdatesHelper updatesHelper;
     AlarmReceiver alarm = new AlarmReceiver();
-    Typeface typeface;
     String number;
 
     @Override
@@ -109,8 +107,7 @@ public class FollowReminder extends AppCompatActivity implements
         textField.setHint(getString(R.string.message_field_hint) + getString(R.string.hint_attention));
 
         contactInfo = (TextView) findViewById(R.id.contactInfo);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        contactInfo.setTypeface(typeface);
+        contactInfo.setTypeface(Utils.getMediumTypeface(this));
         if (name != null && !name.matches("")) {
             contactInfo.setText(name + "\n" + number);
         } else {
@@ -324,7 +321,7 @@ public class FollowReminder extends AppCompatActivity implements
 
     private void setUpTimes() {
         if (timeNextWorking.isChecked()){
-            setUpNextBisiness();
+            setUpNextBusiness();
         } else if (timeTomorrow.isChecked()){
             setUpTomorrow();
         } else if (timeCustom.isChecked()){
@@ -403,7 +400,7 @@ public class FollowReminder extends AppCompatActivity implements
                     timeAfter.setChecked(false);
                     timeCustom.setChecked(false);
                 }
-                setUpNextBisiness();
+                setUpNextBusiness();
                 break;
             case R.id.timeAfter:
                 if (timeAfter.isChecked()) {
@@ -422,7 +419,7 @@ public class FollowReminder extends AppCompatActivity implements
         }
     }
 
-    private void setUpNextBisiness() {
+    private void setUpNextBusiness() {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(nextWork);
         myHour = c.get(Calendar.HOUR_OF_DAY);

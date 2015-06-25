@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 public class AddBirthday extends AppCompatActivity implements View.OnClickListener,
         DatePickerDialog.OnDateSetListener {
@@ -58,7 +59,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     SharedPrefs sPrefs;
     Toolbar toolbar;
     FloatingActionButton mFab;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

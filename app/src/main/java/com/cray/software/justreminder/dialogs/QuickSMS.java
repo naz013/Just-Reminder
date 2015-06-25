@@ -26,11 +26,11 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.Utils;
 
 public class QuickSMS extends Activity {
 
     DataBase DB;
-    Typeface typeface;
     TextView contactInfo, buttonSend;
     ListView messagesList;
     SharedPrefs sPrefs;
@@ -62,7 +62,7 @@ public class QuickSMS extends Activity {
         Intent i = getIntent();
         number = i.getStringExtra(Constants.ITEM_ID_INTENT);
 
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
 
         messagesList = (ListView) findViewById(R.id.messagesList);
 
@@ -176,7 +176,6 @@ public class QuickSMS extends Activity {
 
     @Override
     public void onBackPressed() {
-        sPrefs = new SharedPrefs(QuickSMS.this);
         removeFlags();
     }
 }

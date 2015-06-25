@@ -392,7 +392,7 @@ public class ActiveFragment extends Fragment {
                     DB.updateDateTime(id);
                     new MonthDayReceiver().setAlarm(getActivity(), id);
                     loaderAdapter(null);
-                } else if (type.startsWith(Constants.TYPE_LOCATION)) {
+                } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     DB.setUnDone(id);
                     DB.updateDateTime(id);
                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {

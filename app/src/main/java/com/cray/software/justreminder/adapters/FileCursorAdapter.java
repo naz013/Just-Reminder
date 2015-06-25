@@ -140,7 +140,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             }
 
             type.setText(context.getString(R.string.reminder_type));
-        } else if (typeS.matches(Constants.TYPE_LOCATION)){
+        } else if (typeS.matches(Constants.TYPE_LOCATION) || typeS.matches(Constants.TYPE_LOCATION_OUT)){
             date.setText(String.valueOf(lat));
             time.setText(String.valueOf(longi));
 
@@ -170,7 +170,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             }
 
             number.setText(numberS);
-        } else if (typeS.matches(Constants.TYPE_LOCATION_MESSAGE) || typeS.matches(Constants.TYPE_LOCATION_CALL)){
+        } else if (typeS.matches(Constants.TYPE_LOCATION_MESSAGE) || typeS.matches(Constants.TYPE_LOCATION_CALL) ||
+                typeS.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) || typeS.matches(Constants.TYPE_LOCATION_OUT_CALL)){
             date.setText(String.valueOf(lat));
             time.setText(String.valueOf(longi));
 

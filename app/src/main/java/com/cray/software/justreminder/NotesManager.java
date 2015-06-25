@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +28,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,8 +37,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.async.deleteNote;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ImagePreview;
@@ -53,6 +48,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -68,7 +64,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -96,7 +91,6 @@ public class NotesManager extends AppCompatActivity {
 
     ColorSetter cSetter = new ColorSetter(NotesManager.this);
     SharedPrefs sPrefs = new SharedPrefs(NotesManager.this);
-    Typeface typeface;
 
     long id;
     Toolbar toolbar;
@@ -181,7 +175,7 @@ public class NotesManager extends AppCompatActivity {
             fadeInAnimation(layoutContainer);
         } else layoutContainer.setVisibility(View.VISIBLE);
 
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Utils.getLightTypeface(this);
 
         remindDate = (TextView) findViewById(R.id.remindDate);
         remindDate.setTypeface(typeface);
@@ -489,16 +483,8 @@ public class NotesManager extends AppCompatActivity {
 
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
 
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
-
-        remindTime.setText(formattedTime);
+        remindTime.setText(Utils.getTime(calendar.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
     }
 
     private boolean isReminderAttached(){
@@ -722,7 +708,7 @@ public class NotesManager extends AppCompatActivity {
                     break;
                 case Constants.REQUEST_CODE_FONT_STYLE:
                     style = data.getIntExtra(Constants.SELECTED_FONT_STYLE, 5);
-                    typeface = cSetter.getTypeface(style);
+                    Typeface typeface = cSetter.getTypeface(style);
                     taskField.setTypeface(typeface);
                     break;
             }
@@ -791,23 +777,15 @@ public class NotesManager extends AppCompatActivity {
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (new SharedPrefs(NotesManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(c.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(c.getTime());
-            }
-
-            remindTime.setText(formattedTime);
+            remindTime.setText(Utils.getTime(c.getTime(),
+                    new SharedPrefs(NotesManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     };
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (DB != null && DB.isOpen()) DB.close();
+        super.onDestroy();
     }
 
     @Override

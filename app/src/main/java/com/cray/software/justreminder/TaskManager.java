@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,12 +35,14 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 
 public class TaskManager extends AppCompatActivity {
@@ -66,10 +67,9 @@ public class TaskManager extends AppCompatActivity {
     String action;
 
     TasksData data = new TasksData(TaskManager.this);
-    Typeface typeface;
 
     public static final int MENU_ITEM_DELETE = 12;
-    SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM");
+    SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM", Locale.getDefault());
 
     FloatingActionButton mFab;
 
@@ -186,8 +186,7 @@ public class TaskManager extends AppCompatActivity {
         });
 
         dateField.setText(full24Format.format(calendar.getTime()));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        dateField.setTypeface(typeface);
+        dateField.setTypeface(Utils.getMediumTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -196,22 +195,14 @@ public class TaskManager extends AppCompatActivity {
                 timeDialog().show();
             }
         });
-        timeField.setTypeface(typeface);
-        String formattedTime;
-        if (new SharedPrefs(TaskManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
+        timeField.setTypeface(Utils.getMediumTypeface(this));
 
-        timeField.setText(formattedTime);
+        timeField.setText(Utils.getTime(calendar.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        dateYearField.setTypeface(typeface);
+        dateYearField.setTypeface(Utils.getThinTypeface(this));
 
         Intent intent = getIntent();
         long tmp = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
@@ -461,16 +452,8 @@ public class TaskManager extends AppCompatActivity {
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            String formattedTime;
-            if (new SharedPrefs(TaskManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                formattedTime = sdf.format(c.getTime());
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                formattedTime = sdf.format(c.getTime());
-            }
-
-            timeField.setText(formattedTime);
+            timeField.setText(Utils.getTime(c.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     };
 

@@ -243,7 +243,7 @@
     <string name="map_normal">Звичайна</string>
     <string name="map_satellite">Супутникова</string>
     <string name="map_hybrid">Гібридна</string>
-    <string name="map_terrain">Земля</string>
+    <string name="map_terrain">Ландшафт</string>
 
     <array name="map_types">
         <item>@string/map_normal</item>
@@ -645,4 +645,5 @@
     <string name="interval_day">Щоденно</string>
     <string name="string_swipe_left_or_right">Потягніть вліво або вправо, щоб обрати тему.</string>
     <string name="string_address">Адреса...</string>
+    <string name="string_place_out">Place out</string>
 </resources>

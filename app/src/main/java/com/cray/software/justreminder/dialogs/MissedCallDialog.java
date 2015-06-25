@@ -28,7 +28,6 @@ import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MissedCallDialog extends Activity {
@@ -112,14 +111,8 @@ public class MissedCallDialog extends Activity {
         remText = (TextView) findViewById(R.id.remText);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
-        String formattedTime;
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMMM yyyy, HH:mm");
-            formattedTime = sdf.format(calendar.getTime());
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMMM yyyy, K:mm a");
-            formattedTime = sdf.format(calendar.getTime());
-        }
+        String formattedTime = Utils.getTime(calendar.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
             remText.setText(name + "\n" + number + "\n\n" +
                     "\n" +

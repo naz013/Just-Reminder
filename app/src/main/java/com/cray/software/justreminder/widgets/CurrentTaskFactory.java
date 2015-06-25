@@ -19,6 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -99,41 +100,23 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         date = String.format("%.5f", lat);
                         time = String.format("%.5f", longi);
                     } else {
+                        boolean is24 = new SharedPrefs(context)
+                                .loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
                         if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
                             calendar.set(Calendar.MINUTE, minute);
 
-                            String formattedTime;
-                            if (new SharedPrefs(context).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                formattedTime = sdf.format(calendar.getTime());
-                            } else {
-                                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                                formattedTime = sdf.format(calendar.getTime());
-                            }
-
                             date = ReminderUtils.getRepeatString(context, weekdays);
-                            time = formattedTime;
+                            time = Utils.getTime(calendar.getTime(), is24);
                         } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                             long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
                             Calendar calendar1 = Calendar.getInstance();
                             if (timeL > 0) {
                                 calendar1.setTimeInMillis(timeL);
 
-                                SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
-
-                                String formattedTime;
-                                if (new SharedPrefs(context).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                                    formattedTime = sdf.format(calendar1.getTime());
-                                } else {
-                                    SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                                    formattedTime = sdf.format(calendar1.getTime());
-                                }
-
-                                date = format.format(calendar1.getTime());
-                                time = formattedTime;
+                                date = Utils.dateFormat.format(calendar1.getTime());
+                                time = Utils.getTime(calendar1.getTime(), is24);
                             }
                         } else {
                             date = dT[0];

@@ -89,11 +89,13 @@ public class ReminderUtils {
     public static String getTypeString(Context context, String type){
         String res;
         if (type.startsWith(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
-                type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)){
+                type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
+                type.matches(Constants.TYPE_LOCATION_OUT_CALL)){
             String init = context.getString(R.string.reminder_make_call);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE) || type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
-                type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
+                type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
             String init = context.getString(R.string.reminder_send_message);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SKYPE)){
@@ -126,6 +128,8 @@ public class ReminderUtils {
             res = context.getString(R.string.by_weekdays_title);
         } else if (type.startsWith(Constants.TYPE_LOCATION)){
             res = context.getString(R.string.by_location_title);
+        } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+            res = context.getString(R.string.string_place_out);
         } else if (type.matches(Constants.TYPE_TIME)){
             res = context.getString(R.string.after_time_title);
         } else {

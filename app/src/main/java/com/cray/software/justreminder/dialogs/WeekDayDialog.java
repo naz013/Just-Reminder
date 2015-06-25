@@ -188,7 +188,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 buttonDelay.setVisibility(View.GONE);
                 buttonDelayFor.setVisibility(View.GONE);
             }
-        } else if (type.matches(Constants.TYPE_WEEKDAY)) {
+        } else if (type.matches(Constants.TYPE_WEEKDAY) || type.matches(Constants.TYPE_MONTHDAY) ||
+                type.matches(Constants.TYPE_MONTHDAY_LAST)) {
             remText.setText(task);
             buttonCall.setVisibility(View.GONE);
         } else {
@@ -323,7 +324,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
                 String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
                 String task = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
-                if (typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) || typePrefs.matches(Constants.TYPE_MESSAGE)) {
+                if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                     sendSMS(number, task, melody);
                 } else {
                     makeCall(number);
@@ -331,7 +332,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 makeBackup();
                 removeFlags();
                 DB.setDelay(id, 0);
-                if (!typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
+                if (!typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || !typePrefs.matches(Constants.TYPE_MONTHDAY_MESSAGE)
+                        || !typePrefs.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)) {
                     updatesHelper = new UpdatesHelper(WeekDayDialog.this);
                     updatesHelper.updateWidget();
                     finish();
@@ -341,7 +343,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
         String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
         String text = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
-        if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE)) {
+        if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
             if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
                 sendSMS(number, text, melody);
             } else {

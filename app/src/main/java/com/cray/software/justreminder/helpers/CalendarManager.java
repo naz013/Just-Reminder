@@ -80,9 +80,7 @@ public class CalendarManager {
         if (c != null && c.moveToFirst()){
             do {
                 long mID = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                long eventID = c.getLong(c.getColumnIndex(Constants.COLUMN_EVENT_ID));
                 String uri = c.getString(c.getColumnIndex(Constants.COLUMN_DELETE_URI));
-                Uri l_eventUri = CalendarContract.Calendars.CONTENT_URI;
                 Uri eventUri = Uri.parse(uri);
                 ContentResolver cr = ctx.getContentResolver();
                 cr.delete(eventUri, null, null);

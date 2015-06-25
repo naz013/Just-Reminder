@@ -40,7 +40,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         contacts = new Contacts(context);
         cs = new ColorSetter(context);
-        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
+        typeface = Utils.getLightTypeface(context);
         prefs = new SharedPrefs(context);
     }
 

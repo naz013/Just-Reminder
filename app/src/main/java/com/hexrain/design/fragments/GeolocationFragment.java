@@ -71,7 +71,10 @@ public class GeolocationFragment extends Fragment {
                 } while (c.moveToNext());
                 if (types.contains(Constants.TYPE_LOCATION) ||
                         types.contains(Constants.TYPE_LOCATION_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_MESSAGE)){
+                        types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
+                        types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     geoTasks.setVisibility(View.VISIBLE);
                 } else {
                     geoTasks.setVisibility(View.GONE);
@@ -179,8 +182,7 @@ public class GeolocationFragment extends Fragment {
     public void loaderAdapter(){
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        markersCursorAdapter = new MarkersCursorAdapter(getActivity(), DB.getMarkers(Constants.TYPE_LOCATION,
-                Constants.TYPE_LOCATION_CALL, Constants.TYPE_LOCATION_MESSAGE));
+        markersCursorAdapter = new MarkersCursorAdapter(getActivity(), DB.getMarkers());
         geoTasks.setAdapter(markersCursorAdapter);
         DB.close();
     }

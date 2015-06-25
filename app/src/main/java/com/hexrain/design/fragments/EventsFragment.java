@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class EventsFragment extends Fragment {
@@ -232,7 +233,7 @@ public class EventsFragment extends Fragment {
     private class LoadAsync extends AsyncTask<Date, Void, ArrayList<PagerItem>>{
 
         ProgressDialog dialog;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         @Override
         protected void onPreExecute() {
@@ -420,7 +421,7 @@ public class EventsFragment extends Fragment {
                     }
                     if (s != null) s.close();
                 }
-                if (db != null) db.close();
+                db.close();
 
                 if (currentDay == targetDay && currentMonth == targetMonth && currentYear == targetYear){
                     targetPosition = position;

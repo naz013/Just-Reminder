@@ -23,22 +23,15 @@
         android:id="@+id/layoutContainer">
 
         <include layout="@layout/call_layout"/>
-
         <include layout="@layout/weekdays_reminder_layout"/>
-
         <include layout="@layout/message_layout"/>
-
         <include layout="@layout/date_layout"/>
-
         <include layout="@layout/time_layout"/>
-
         <include layout="@layout/location_reminder_layout"/>
-
         <include layout="@layout/skype_layout"/>
-
         <include layout="@layout/application_layout"/>
-
         <include layout="@layout/reminder_day_of_month_layout"/>
+        <include layout="@layout/location_out_reminder_layout"/>
 
         </LinearLayout>
 

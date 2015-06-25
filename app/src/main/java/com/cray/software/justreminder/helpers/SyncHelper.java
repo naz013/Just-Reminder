@@ -879,10 +879,10 @@ public class SyncHelper {
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
                         DB.updateDateTime(id);
-                        if (type.matches(Constants.TYPE_LOCATION) ||
-                                type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                                type.matches(Constants.TYPE_LOCATION_CALL)) {
-                            sContext.startService(new Intent(sContext, GeolocationService.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        if (type.startsWith(Constants.TYPE_LOCATION) ||
+                                type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                            sContext.startService(new Intent(sContext, GeolocationService.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         } else {
                             alarm.setAlarm(sContext, id);
                         }
@@ -900,10 +900,10 @@ public class SyncHelper {
                                     repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                     melody, radius, 0, 0, categoryId);
                             DB.updateDateTime(id);
-                            if (type.matches(Constants.TYPE_LOCATION) ||
-                                    type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                                    type.matches(Constants.TYPE_LOCATION_CALL)) {
-                                sContext.startService(new Intent(sContext, GeolocationService.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                            if (type.startsWith(Constants.TYPE_LOCATION) ||
+                                    type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                                sContext.startService(new Intent(sContext, GeolocationService.class)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {
                                 alarm.setAlarm(sContext, id);
                             }

@@ -161,7 +161,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
         if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
-                type.matches(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_SKYPE_VIDEO)) {
+                type.matches(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_SKYPE_VIDEO) ||
+                type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
             String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
             if (!type.startsWith(Constants.TYPE_SKYPE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
@@ -175,7 +176,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
             name = contacts.getContactNameFromNumber(number, ReminderDialog.this);
             remText.setText(task + "\n" + name + "\n" + number);
-        } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+        } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) ||
                 type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_SKYPE_CHAT)){
             if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
                 String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
@@ -213,9 +214,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             buttonCall.setVisibility(View.GONE);
         }
 
-        if (type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                type.matches(Constants.TYPE_LOCATION_CALL) ||
-                type.matches(Constants.TYPE_LOCATION)){
+        if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)){
             buttonDelay.setVisibility(View.GONE);
             buttonDelayFor.setVisibility(View.GONE);
         }
@@ -300,7 +299,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
                     notifier.discardNotification(id);
                 }
-
                 if (repCode == 0) {
                     makeArchive(id);
                 } else generateEvent(id);
@@ -356,7 +354,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER).trim();
                 String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
                 String task = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
-                if (typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) || typePrefs.matches(Constants.TYPE_MESSAGE)){
+                if (typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                        typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     sendSMS(number, task, melody);
                 } else if (typePrefs.matches(Constants.TYPE_SKYPE)){
                     String uri = "skype:" + number + "?call";
@@ -389,7 +388,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 updatesHelper = new UpdatesHelper(ReminderDialog.this);
                 updatesHelper.updateWidget();
-                if (!typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) || !typePrefs.matches(Constants.TYPE_MESSAGE)){
+                if (!typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                        !typePrefs.matches(Constants.TYPE_MESSAGE) ||
+                        !typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     updatesHelper = new UpdatesHelper(ReminderDialog.this);
                     updatesHelper.updateWidget();
                     finish();
@@ -399,7 +400,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
         String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
         boolean autoLaunch = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_APPLICATION_AUTO_LAUNCH);
-        if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE)){
+        if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
             if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
                 sendSMS(number, task, melody);
             } else {

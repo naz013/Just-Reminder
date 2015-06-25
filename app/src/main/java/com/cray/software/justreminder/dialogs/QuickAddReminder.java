@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +66,6 @@ public class QuickAddReminder extends AppCompatActivity implements
 
     UpdatesHelper updatesHelper;
     AlarmReceiver alarm = new AlarmReceiver();
-    Typeface typeface;
     Toolbar toolbar;
     FloatingActionButton mFab;
     GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
@@ -140,13 +138,11 @@ public class QuickAddReminder extends AppCompatActivity implements
         else monthStr = String.valueOf(myMonth + 1);
 
         dateField.setText(dayStr + "/" + monthStr);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        dateField.setTypeface(typeface);
+        dateField.setTypeface(Utils.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
-        dateYearField.setTypeface(typeface);
+        dateYearField.setTypeface(Utils.getThinTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -157,12 +153,10 @@ public class QuickAddReminder extends AppCompatActivity implements
         });
         timeField.setText(Utils.getTime(c.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
-        timeField.setTypeface(typeface);
+        timeField.setTypeface(Utils.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
-        typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
-        repeatDays.setTypeface(typeface);
+        repeatDays.setTypeface(Utils.getLightTypeface(this));
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
