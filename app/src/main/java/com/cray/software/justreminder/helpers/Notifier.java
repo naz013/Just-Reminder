@@ -25,6 +25,7 @@ import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.utils.Utils;
 import com.hexrain.design.ScreenManager;
 
 import java.io.File;
@@ -69,31 +70,7 @@ public class Notifier {
             app = ctx.getString(R.string.app_name_pro);
         } else app = ctx.getString(R.string.app_name);
         builder.setContentText(app);
-
-        int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-            icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-            icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
-            icon = R.drawable.ic_navigation_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_TIME)) {
-            icon = R.drawable.ic_access_time_white_24dp;
-        } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
-            icon = R.drawable.skype_icon_white;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {
-            icon = R.drawable.ic_launch_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-            icon = R.drawable.ic_public_white_24dp;
-        } else {
-            icon = R.drawable.ic_event_white_24dp;
-        }
-        builder.setSmallIcon(icon);
+        builder.setSmallIcon(Utils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
@@ -246,31 +223,7 @@ public class Notifier {
             app = ctx.getString(R.string.app_name_pro);
         } else app = ctx.getString(R.string.app_name);
         builder.setContentText(app);
-
-        int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-            icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-            icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
-            icon = R.drawable.ic_navigation_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_TIME)) {
-            icon = R.drawable.ic_access_time_white_24dp;
-        } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
-            icon = R.drawable.skype_icon_white;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {
-            icon = R.drawable.ic_launch_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-            icon = R.drawable.ic_public_white_24dp;
-        } else {
-            icon = R.drawable.ic_event_white_24dp;
-        }
-        builder.setSmallIcon(icon);
+        builder.setSmallIcon(Utils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
@@ -560,31 +513,7 @@ public class Notifier {
             app = ctx.getString(R.string.app_name_pro);
         } else app = ctx.getString(R.string.app_name);
         builder.setContentText(app);
-
-        int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-            icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-            icon = R.drawable.ic_message_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
-            icon = R.drawable.ic_navigation_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_TIME)) {
-            icon = R.drawable.ic_access_time_white_24dp;
-        } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
-            icon = R.drawable.skype_icon_white;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {
-            icon = R.drawable.ic_launch_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-            icon = R.drawable.ic_public_white_24dp;
-        } else {
-            icon = R.drawable.ic_event_white_24dp;
-        }
-        builder.setSmallIcon(icon);
+        builder.setSmallIcon(Utils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ctx.getResources().getColor(R.color.colorBlue));

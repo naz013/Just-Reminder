@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">"Reminder"</string>
-    <string name="app_name_pro">"Reminder PRO"</string>
+    <string name="app_name">"Нагадування"</string>
+    <string name="app_name_pro">"Нагадування ПРО"</string>
     <string name="action_settings">"Налаштування"</string>
     <string name="drawer_active_reminder">Нагадування</string>
     <string name="drawer_archive_reminder">Кошик</string>
@@ -541,7 +541,7 @@
     <string name="delete_task_list_question">Ви дійсно хочете видалити цей список завдань?</string>
     <string name="string_delete_task">Видалити завдання</string>
     <string name="delete_task_question">Ви дійсно хочете видалити це завдання?</string>
-    <string name="string_task_from_just_reminder">Завдання з Just Reminder</string>
+    <string name="string_task_from_just_reminder">Завдання з Reminder</string>
     <string name="string_list">Список</string>
     <string name="string_add_reminder">Додати нагадування</string>
     <string name="string_add_due">Встановити дату</string>
@@ -646,4 +646,7 @@
     <string name="string_swipe_left_or_right">Потягніть вліво або вправо, щоб обрати тему.</string>
     <string name="string_address">Адреса...</string>
     <string name="string_place_out">Place out</string>
+    <string name="string_map_point">Місце на карті</string>
+    <string name="string_selected_radius">Радіус %s</string>
+    <string name="string_current_location">Поточне місце</string>
 </resources>

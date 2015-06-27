@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">"Reminder"</string>
-    <string name="app_name_pro">"Reminder PRO"</string>
+    <string name="app_name">"Mahnung"</string>
+    <string name="app_name_pro">"Mahnung PRO"</string>
     <string name="action_settings">"Einstellungen"</string>
     <string name="drawer_active_reminder">Mahnungen</string>
     <string name="drawer_archive_reminder">Papierkorb</string>
@@ -541,7 +541,7 @@
     <string name="delete_task_list_question">Sie wollen diese Aufgabenliste löschen?</string>
     <string name="string_delete_task">Aufgabe löschen</string>
     <string name="delete_task_question">Sie wollen, um diese Aufgabe zu löschen?</string>
-    <string name="string_task_from_just_reminder">Aufgabe von Just Reminder</string>
+    <string name="string_task_from_just_reminder">Aufgabe von Reminder</string>
     <string name="string_list">Liste</string>
     <string name="string_add_reminder">Mahnung hinzufügen</string>
     <string name="string_add_due">Datum einstellen</string>
@@ -646,4 +646,7 @@
     <string name="string_swipe_left_or_right">Streichen Sie nach links oder rechts, um Thema auswählen.</string>
     <string name="string_address">Adresse...</string>
     <string name="string_place_out">Place out</string>
+    <string name="string_current_location">Gegenwärtige Platz</string>
+    <string name="string_map_point">Karte Punkt</string>
+    <string name="string_selected_radius">Radius %s</string>
 </resources>

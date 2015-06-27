@@ -541,7 +541,7 @@
     <string name="delete_task_list_question">Do You want to delete this task list?</string>
     <string name="string_delete_task">Delete task</string>
     <string name="delete_task_question">Do You want to delete this task?</string>
-    <string name="string_task_from_just_reminder">Task from Just Reminder</string>
+    <string name="string_task_from_just_reminder">Task from Reminder</string>
     <string name="string_list">List</string>
     <string name="string_add_reminder">Add reminder</string>
     <string name="string_add_due">Set date</string>
@@ -646,4 +646,7 @@
     <string name="string_swipe_left_or_right">Swipe left or right to select theme.</string>
     <string name="string_address">Address...</string>
     <string name="string_place_out">Place out</string>
+    <string name="string_current_location">Current place</string>
+    <string name="string_map_point">Map point</string>
+    <string name="string_selected_radius">Radius %s</string>
 </resources>

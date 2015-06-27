@@ -95,7 +95,7 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current location"
+                        android:text="@string/string_current_location"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:id="@+id/currentCheck"/>
@@ -119,7 +119,7 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Map point"
+                        android:text="@string/string_map_point"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:id="@+id/mapCheck"/>
@@ -154,7 +154,7 @@
                 <SeekBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:max="5000"
+                    android:max="1000"
                     android:layout_marginRight="@dimen/create_margin"
                     android:layout_marginLeft="@dimen/create_margin"
                     android:id="@+id/pointRadius"/>

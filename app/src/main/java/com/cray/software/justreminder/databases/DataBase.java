@@ -8,14 +8,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cray.software.justreminder.async.CacheAsync;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 10;
     private static final String CURRENT_TABLE_NAME = "current_task_table";
+    private static final String CURRENT_CACHE_TABLE_NAME = "current_cache_task_table";
     private static final String CONTACTS_TABLE_NAME = "contacts_task_table";
     private static final String LOCATION_TABLE_NAME = "locations_table";
     private static final String NOTE_TABLE_NAME = "notes_table";
@@ -56,6 +58,22 @@ public class DataBase {
                     Constants.COLUMN_DELAY + " INTEGER, " +
                     Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
                     Constants.COLUMN_DATE_TIME + " VARCHAR(255), " +
+                    Constants.COLUMN_CATEGORY + " VARCHAR(255), " +
+                    Constants.COLUMN_WEEKDAYS + " VARCHAR(255) " +
+                    ");";
+
+    private static final String CURRENT_CACHE_TABLE_CREATE =
+            "create table " + CURRENT_CACHE_TABLE_NAME + "(" +
+                    Constants.COLUMN_ID + " integer primary key autoincrement, " +
+                    Constants.COLUMN_TEXT + " VARCHAR(255), " +
+                    Constants.COLUMN_TYPE + " VARCHAR(255), " +
+                    Constants.COLUMN_DAY + " INTEGER, " +
+                    Constants.COLUMN_REMINDER_ID + " INTEGER, " +
+                    Constants.COLUMN_MONTH + " INTEGER, " +
+                    Constants.COLUMN_YEAR + " INTEGER, " +
+                    Constants.COLUMN_NUMBER + " VARCHAR(255), " +
+                    Constants.COLUMN_FEATURE_TIME + " INTEGER, " +
+                    Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
                     Constants.COLUMN_CATEGORY + " VARCHAR(255), " +
                     Constants.COLUMN_WEEKDAYS + " VARCHAR(255) " +
                     ");";
@@ -140,6 +158,7 @@ public class DataBase {
             sqLiteDatabase.execSQL(CALLS_TABLE_CREATE);
             sqLiteDatabase.execSQL(MESSAGES_TABLE_CREATE);
             sqLiteDatabase.execSQL(CATEGORIES_TABLE_CREATE);
+            sqLiteDatabase.execSQL(CURRENT_CACHE_TABLE_CREATE);
         }
 
         @Override
@@ -152,6 +171,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -177,6 +197,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -201,6 +222,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -225,6 +247,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("DELETE FROM "+ NOTE_TABLE_NAME);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
@@ -250,6 +273,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -274,6 +298,7 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -293,9 +318,14 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     break;
                 case 8:
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
+                    break;
+                case 9:
+                    db.execSQL(CURRENT_CACHE_TABLE_CREATE);
                     break;
             }
         }
@@ -418,6 +448,7 @@ public class DataBase {
         ContentValues args = new ContentValues();
         TimeCount mCount = new TimeCount(mContext);
         args.put(Constants.COLUMN_FEATURE_TIME, mCount.generateDateTime(rowId));
+        new CacheAsync(mContext, CacheAsync.RE_GENERATE, null, rowId);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
@@ -456,6 +487,7 @@ public class DataBase {
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_IS_DONE, 1);
         args.put(Constants.COLUMN_DELAY, 0);
+        new CacheAsync(mContext, CacheAsync.DELETE_CACHES, null, rowId);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
@@ -463,6 +495,7 @@ public class DataBase {
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_ARCHIVED, 1);
+        new CacheAsync(mContext, CacheAsync.DELETE_CACHES, null, rowId);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
@@ -575,6 +608,7 @@ public class DataBase {
 
     public boolean deleteTask(long rowId) {
         openGuard();
+        new CacheAsync(mContext, CacheAsync.DELETE_CACHES, null, rowId);
         return db.delete(CURRENT_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
@@ -885,6 +919,58 @@ public class DataBase {
     public boolean deleteCategory(long rowId) {
         openGuard();
         return db.delete(CATEGORIES_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    //cache methods
+
+    public long insertCache (long remId, String text, String type, int day, int month, int year, String number,
+                             String uID, String weekdays, String categoryId, long time) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.COLUMN_TEXT, text);
+        cv.put(Constants.COLUMN_TYPE, type);
+        cv.put(Constants.COLUMN_DAY, day);
+        cv.put(Constants.COLUMN_REMINDER_ID, remId);
+        cv.put(Constants.COLUMN_MONTH, month);
+        cv.put(Constants.COLUMN_YEAR, year);
+        cv.put(Constants.COLUMN_FEATURE_TIME, time);
+        cv.put(Constants.COLUMN_NUMBER, number);
+        cv.put(Constants.COLUMN_TECH_VAR, uID);
+        cv.put(Constants.COLUMN_WEEKDAYS, weekdays);
+        cv.put(Constants.COLUMN_CATEGORY, categoryId);
+        //Log.d(LOG_TAG, "data is inserted " + cv);
+        return db.insert(CURRENT_CACHE_TABLE_NAME, null, cv);
+    }
+
+    public Cursor queryAllCache() throws SQLException {
+        openGuard();
+        return db.query(CURRENT_CACHE_TABLE_NAME, null, null, null, null, null, null);
+    }
+
+    public Cursor getCache(String uuID) throws SQLException {
+        openGuard();
+        return db.query(CURRENT_CACHE_TABLE_NAME, null, Constants.COLUMN_TECH_VAR  + "='" + uuID + "'", null, null, null,
+                null, null);
+    }
+
+    public Cursor getCache(long id) throws SQLException {
+        openGuard();
+        return db.query(CURRENT_CACHE_TABLE_NAME, null, Constants.COLUMN_ID  +
+                "=" + id, null, null, null, null, null);
+    }
+
+    public Cursor getCache(int day, int month, int year) throws SQLException {
+        openGuard();
+        return db.query(CURRENT_CACHE_TABLE_NAME, null,
+                Constants.COLUMN_DAY  + "='" + day + "'" +
+                        " AND "+ Constants.COLUMN_MONTH + "='" + month + "'" +
+                        " AND "+ Constants.COLUMN_YEAR + "='" + year + "'"
+                , null, null, null, null, null);
+    }
+
+    public boolean deleteCache(long rowId) {
+        openGuard();
+        return db.delete(CURRENT_CACHE_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public void openGuard() throws SQLiteException {

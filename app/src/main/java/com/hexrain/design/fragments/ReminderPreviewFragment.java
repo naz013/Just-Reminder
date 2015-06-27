@@ -728,50 +728,52 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     repeat.setVisibility(View.GONE);
                     mapContainer.setVisibility(View.VISIBLE);
                     MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-                    final GoogleMap mMap = googleMap.getMap();
-                    SharedPrefs prefs = new SharedPrefs(mContext);
-                    String type = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
-                    if (type.matches(Constants.MAP_TYPE_NORMAL)){
-                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                    } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-                        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                    } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-                        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                    } else {
-                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    }
-
-                    mMap.setMyLocationEnabled(true);
-                    if (mMap.getMyLocation() != null) {
-                        double lat = mMap.getMyLocation().getLatitude();
-                        double lon = mMap.getMyLocation().getLongitude();
-                        LatLng pos = new LatLng(lat, lon);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-                    }
-
-                    if (lon != 0 && lat != 0) {
-                        LatLng pos = new LatLng(lat, lon);
-                        mMap.addMarker(new MarkerOptions()
-                                .position(pos)
-                                .title(aVoid[1])
-                                .icon(BitmapDescriptorFactory.fromResource(new ColorSetter(mContext).getMarkerStyle())));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
-                    }
-                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                    try {
-                        List<Address> listAddresses = geocoder.getFromLocation(lat, lon, 1);
-                        if(null != listAddresses&&listAddresses.size() > 0){
-                            String _Location = listAddresses.get(0).getAddressLine(0);
-                            if (_Location != null && !_Location.matches("")) {
-                                location.setText(_Location + "\n" + "("
-                                        + String.format("%.5f", lat) + ", " +
-                                        String.format("%.5f", lon) + ")");
-                            }
+                    if (googleMap != null) {
+                        final GoogleMap mMap = googleMap.getMap();
+                        SharedPrefs prefs = new SharedPrefs(mContext);
+                        String type = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+                        if (type.matches(Constants.MAP_TYPE_NORMAL)) {
+                            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)) {
+                            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                        } else if (type.matches(Constants.MAP_TYPE_HYBRID)) {
+                            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)) {
+                            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                        } else {
+                            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                        mMap.setMyLocationEnabled(true);
+                        if (mMap.getMyLocation() != null) {
+                            double lat = mMap.getMyLocation().getLatitude();
+                            double lon = mMap.getMyLocation().getLongitude();
+                            LatLng pos = new LatLng(lat, lon);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                        }
+
+                        if (lon != 0 && lat != 0) {
+                            LatLng pos = new LatLng(lat, lon);
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(pos)
+                                    .title(aVoid[1])
+                                    .icon(BitmapDescriptorFactory.fromResource(new ColorSetter(mContext).getMarkerStyle())));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                        }
+                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                        try {
+                            List<Address> listAddresses = geocoder.getFromLocation(lat, lon, 1);
+                            if (null != listAddresses && listAddresses.size() > 0) {
+                                String _Location = listAddresses.get(0).getAddressLine(0);
+                                if (_Location != null && !_Location.matches("")) {
+                                    location.setText(_Location + "\n" + "("
+                                            + String.format("%.5f", lat) + ", " +
+                                            String.format("%.5f", lon) + ")");
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 String numberStr = aVoid[5];

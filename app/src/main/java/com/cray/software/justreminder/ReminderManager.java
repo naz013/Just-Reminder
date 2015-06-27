@@ -121,7 +121,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
@@ -938,7 +937,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     currentCheck.setChecked(false);
                     fadeOutAnimation(specsContainerOut);
                     fadeInAnimation(mapContainerOut);
-                    mLocationManager.removeUpdates(mLocList);
+                    if (mLocList != null) mLocationManager.removeUpdates(mLocList);
                 }
                 break;
         }
@@ -2053,6 +2052,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButton = (ImageButton) findViewById(R.id.mapButton);
         myLocation = (ImageButton) findViewById(R.id.myLocation);
 
+        zoomOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        layers.setBackgroundColor(cSetter.getBackgroundStyle());
+        myLocation.setBackgroundColor(cSetter.getBackgroundStyle());
+
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
             cardClear.setImageResource(R.drawable.ic_backspace_white_24dp);
@@ -2555,6 +2558,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
         myLocationOut = (ImageButton) findViewById(R.id.myLocationOut);
 
+        zoomOutOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        layersOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        myLocationOut.setBackgroundColor(cSetter.getBackgroundStyle());
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
             cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
@@ -2660,7 +2666,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                radiusMark.setText(String.format("Selected radius - %s", progress));
+                radiusMark.setText(String.format(getString(R.string.string_selected_radius), progress));
             }
 
             @Override
@@ -3035,7 +3041,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void detachLocationOut(){
         locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
         fadeOutAnimation(locationOutLayout);
-        mLocationManager.removeUpdates(mLocList);
+        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
     }
 
     private boolean isDateReminderAttached(){
@@ -4750,27 +4756,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     ProgressDialog progressDlg;
 
     private String getAddress(double currentLat, double currentLong){
-        progressDlg = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDlg.setMax(100);
-        progressDlg.setMessage(getString(R.string.loading_wait));
-        progressDlg.setCancelable(false);
-        progressDlg.setIndeterminate(false);
-        progressDlg.show();
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-        String _Location = null;
-        try {
-            List<Address> listAddresses = geocoder.getFromLocation(currentLat, currentLong, 1);
-            if(null != listAddresses&&listAddresses.size() > 0){
-                _Location = listAddresses.get(0).getAddressLine(0);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        progressDlg.dismiss();
-        if (_Location == null) return String.format("%.5f", currentLat) + ", " +
+        return String.format("%.5f", currentLat) + ", " +
                 String.format("%.5f", currentLong);
-        else return _Location;
     }
 
     @Override
