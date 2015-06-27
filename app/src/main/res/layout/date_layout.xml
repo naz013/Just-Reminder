@@ -144,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/repeatDateInt"
                     android:max="4"
-                    android:layout_marginRight="@dimen/create_margin"/>
+                    android:layout_marginBottom="88dp"/>
 
             </LinearLayout>
 

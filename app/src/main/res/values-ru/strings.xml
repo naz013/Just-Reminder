@@ -649,4 +649,5 @@
     <string name="string_current_location">Текущее место</string>
     <string name="string_map_point">Место на карте</string>
     <string name="string_selected_radius">Радиус %s</string>
+    <string name="string_timer_warming">Вы не выбрали время!</string>
 </resources>

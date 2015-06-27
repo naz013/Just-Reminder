@@ -651,5 +651,6 @@
     <string name="string_current_location">Current place</string>
     <string name="string_map_point">Map point</string>
     <string name="string_selected_radius">Radius %s</string>
+    <string name="string_timer_warming">You don\'t select any time!</string>
 
 </resources>

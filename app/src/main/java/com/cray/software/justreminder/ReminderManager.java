@@ -175,7 +175,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     Spinner spinner;
     FloatingEditText taskField;
     TextView category;
-    FloatingActionButton mFab;
+    FloatingActionButton mFab, mHelp;
 
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     public static final int MENU_ITEM_DELETE = 12;
@@ -292,12 +292,29 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mFab.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_NORMAL);
         mFab.setIcon(R.drawable.ic_done_white_24dp);
 
+        mHelp = new FloatingActionButton(ReminderManager.this);
+        mHelp.setColorNormal(cSetter.colorSetter());
+        mHelp.setColorPressed(cSetter.colorChooser());
+        mHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showHelp();
+            }
+        });
+        mHelp.setSize(FloatingActionButton.SIZE_MINI);
+        mHelp.setIcon(R.drawable.ic_help_white_24dp);
+
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
         wrapper.addView(mFab);
+        //wrapper.addView(mHelp);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+       /* params = (RelativeLayout.LayoutParams) mHelp.getLayoutParams();
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);*/
 
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
@@ -363,6 +380,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         loadPlaces();
         clearForm();
+    }
+
+    private void showHelp() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReminderManager.this);
+        alertDialog.setMessage(getString(R.string.gps_text));
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 
     private void changeCategory() {
@@ -1135,8 +1159,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     CheckBox timeTaskExport;
     TextView hoursView, minutesView, secondsView;
     ImageButton deleteButton;
+    EditText repeatMinutes;
     Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
     String timeString = "000000";
+    SeekBar repeatMinutesSeek;
 
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1218,17 +1244,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             b0.setOnClickListener(this);
         }
 
+        repeatMinutes = (EditText) findViewById(R.id.repeatMinutes);
+        repeatMinutes.setTypeface(Utils.getLightTypeface(this));
+
+        repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
+        repeatMinutesSeek.setOnSeekBarChangeListener(this);
+        repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
+
         if (id != 0 && isSame()) {
             DB.open();
             Cursor c = DB.getTask(id);
             String text = "";
-            int  exp = 0, expTasks = 0;
+            int  exp = 0, expTasks = 0, repeat = 0;
             long afterTime = 0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
                 expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+                repeat = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             }
             if (c != null) c.close();
 
@@ -1241,6 +1275,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
                 timeTaskExport.setChecked(true);
             }
+
+            repeatMinutesSeek.setProgress(repeat);
 
             taskField.setText(text);
         }
@@ -2042,6 +2078,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        if (attackDelay.isChecked()) {
+            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                expand(delayLayout);
+            } else delayLayout.setVisibility(View.VISIBLE);
+        }
+
         card = (CardView) findViewById(R.id.card);
         card.setCardBackgroundColor(cSetter.getCardStyle());
 
@@ -2548,6 +2590,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+
+        if (attachDelayOut.isChecked()) {
+            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                expand(delayLayoutOut);
+            } else delayLayoutOut.setVisibility(View.VISIBLE);
+        }
 
         cardOut = (CardView) findViewById(R.id.cardOut);
         cardOut.setCardBackgroundColor(cSetter.getCardStyle());
@@ -3709,6 +3757,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         String type = getTaskType();
         long time = getAfterTime();
         if (time == 0) return;
+        int repeat = repeatMinutesSeek.getProgress();
 
         DB.open();
         final Calendar c = Calendar.getInstance();
@@ -3721,15 +3770,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (id != 0) {
             if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && timeExport.isChecked()) {
-                DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, 0, time,
+                DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, repeat, time,
                         0, 0, 0, null, 1, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
                 exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), id);
             } else {
-                DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, 0, time,
+                DB.updateTask(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, repeat, time,
                         0, 0, 0, null, 0, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
             }
             if (gtx.isLinked() && timeTaskExport.isChecked()){
-                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), id);
             }
             DB.updateDateTime(id);
             alarm.setAlarm(ReminderManager.this, id);
@@ -3740,14 +3789,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && timeExport.isChecked()) {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
-                        0, time, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
+                        repeat, time, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
                 exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
             } else {
                 idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
-                        0, time, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
+                        repeat, time, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, getSyncCode(timeTaskExport), categoryId);
             }
             if (gtx.isLinked() && timeTaskExport.isChecked()){
-                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
+                exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
             }
             DB.updateDateTime(idN);
             alarm.setAlarm(ReminderManager.this, idN);
@@ -3770,7 +3819,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             long m = s * 60;
             long h = m * 60;
             res = (hour * h) + (minute * m) + (sec * s);
-        } else Toast.makeText(this, "You don't insert any time!", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(this, R.string.string_timer_warming, Toast.LENGTH_SHORT).show();
         return res;
     }
 
@@ -4059,6 +4108,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.repeatDateInt:
                 repeatDays.setText(String.valueOf(getRepeat(progress)));
+                break;
+            case R.id.repeatMinutesSeek:
+                repeatMinutes.setText(String.valueOf(progress));
                 break;
         }
     }

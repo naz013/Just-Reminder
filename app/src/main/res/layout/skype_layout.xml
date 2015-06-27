@@ -183,6 +183,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_margin"
                 android:id="@+id/repeatSkype"
+                android:layout_marginBottom="88dp"
                 android:max="4"/>
 
             </LinearLayout>

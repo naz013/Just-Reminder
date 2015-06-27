@@ -649,4 +649,5 @@
     <string name="string_current_location">Gegenwärtige Platz</string>
     <string name="string_map_point">Karte Punkt</string>
     <string name="string_selected_radius">Radius %s</string>
+    <string name="string_timer_warming">Sie haben keine Zeit zu wählen!</string>
 </resources>
