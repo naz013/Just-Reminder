@@ -24,7 +24,7 @@ public class WeekDayReceiver extends BroadcastReceiver {
         long id = intent.getLongExtra("alarmId", 0);
         DB = new DataBase(context);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
 
         String repeat = "";
         if (c != null && c.moveToFirst()) {
@@ -50,7 +50,7 @@ public class WeekDayReceiver extends BroadcastReceiver {
     public void setAlarm(Context context, long id) {
         DB = new DataBase(context);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
 
         Integer i = (int) (long) id;
         int hour = 0, minute = 0;

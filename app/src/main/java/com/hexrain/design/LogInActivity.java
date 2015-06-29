@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -602,6 +603,7 @@ public class LogInActivity extends Activity {
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
             startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+            new ScanTask(LogInActivity.this).execute();
             finish();
         }
     }
@@ -627,7 +629,7 @@ public class LogInActivity extends Activity {
             DataBase db = new DataBase(mContext);
             db.open();
             if (db.getCountEvents() > 0){
-                Cursor c = db.queryEvents();
+                Cursor c = db.getEvents();
                 if (c != null && c.moveToFirst()){
                     do {
                         long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));

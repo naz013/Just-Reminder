@@ -90,7 +90,7 @@ public class GeolocationFragment extends Fragment {
                 if (i != 0) {
                     DataBase DB = new DataBase(getActivity());
                     if (!DB.isOpen())DB.open();
-                    Cursor c = DB.getTask(i);
+                    Cursor c = DB.getReminder(i);
                     if (c != null && c.moveToFirst()) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                 new LatLng(c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE)),
@@ -154,7 +154,8 @@ public class GeolocationFragment extends Fragment {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                if (longitude != 0 && latitude != 0) {
+                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+                if (longitude != 0 && latitude != 0 && isDone != 1) {
                     googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
                             .title(task)

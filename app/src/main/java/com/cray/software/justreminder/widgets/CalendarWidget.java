@@ -55,7 +55,9 @@ public class CalendarWidget extends AppWidgetProvider {
                                     SharedPreferences sp, int widgetID){
         Calendar cal = new GregorianCalendar();
         int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
+        int year  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetID, 0);
         cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.YEAR, year);
         StringBuilder monthYearStringBuilder = new StringBuilder(50);
         Formatter monthYearFormatter = new Formatter(
                 monthYearStringBuilder, Locale.getDefault());

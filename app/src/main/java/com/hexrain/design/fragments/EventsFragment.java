@@ -19,20 +19,17 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.CalendarData;
+import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.PagerItem;
 import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -173,10 +170,17 @@ public class EventsFragment extends Fragment {
 
     private void showEvents(Date date) {
         pagerData.clear();
+        ProgressDialog dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(getActivity().getString(R.string.string_generating_events));
+        dialog.setCancelable(false);
+        dialog.setIndeterminate(true);
+        dialog.show();
         try {
-            pagerData = new LoadAsync().execute(date).get();
+            pagerData = new LoadAsync(dialog).execute(date).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+        } finally {
+            if (dialog != null && dialog.isShowing()) dialog.dismiss();
         }
         final MyFragmentPagerAdapter pagerAdapter =
                 new MyFragmentPagerAdapter(getChildFragmentManager(), pagerData);
@@ -233,16 +237,9 @@ public class EventsFragment extends Fragment {
     private class LoadAsync extends AsyncTask<Date, Void, ArrayList<PagerItem>>{
 
         ProgressDialog dialog;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage(getActivity().getString(R.string.string_generating_events));
-            dialog.setCancelable(false);
-            dialog.setIndeterminate(true);
-            dialog.show();
+        public LoadAsync(ProgressDialog dialog) {
+            this.dialog = dialog;
         }
 
         @Override
@@ -269,159 +266,25 @@ public class EventsFragment extends Fragment {
             DataBase db = new DataBase(getActivity());
             if (!db.isOpen()) db.open();
 
+            EventsDataProvider provider = new EventsDataProvider();
+            Cursor c = db.getEvents();
+            provider.setBirthdays(c);
+            provider.setTime(hour, minute);
+            if (isRemindersEnabled) {
+                Cursor s = db.queryGroup();
+                provider.setReminders(s);
+                provider.setFeature(isFeature);
+            }
+            provider.fillArray();
+
             int position = 0;
             do {
-                ArrayList<CalendarData> datas = new ArrayList<>();
-                datas.clear();
                 currentDay = calendar.get(Calendar.DAY_OF_MONTH);
                 currentMonth = calendar.get(Calendar.MONTH);
                 currentYear = calendar.get(Calendar.YEAR);
-                Cursor c = db.getEvents(currentDay, currentMonth);
-                if (c != null && c.moveToFirst()){
-                    do {
-                        String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                        String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                        long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                        String number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
-                        Date date1 = null;
-                        try {
-                            date1 = format.parse(birthday);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if (date1 != null) {
-                            Calendar calendar1 = Calendar.getInstance();
-                            calendar1.setTime(date1);
-                            int bDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                            int bMonth = calendar1.get(Calendar.MONTH);
-                            calendar1.setTimeInMillis(System.currentTimeMillis());
-                            calendar1.set(Calendar.MONTH, bMonth);
-                            calendar1.set(Calendar.DAY_OF_MONTH, bDay);
-                            calendar1.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar1.set(Calendar.MINUTE, minute);
-                            if (bDay == currentDay && currentMonth == bMonth) {
-                                datas.add(new CalendarData("birthday", name, number, id, calendar1.getTimeInMillis()));
-                            }
-                        }
-                    } while (c.moveToNext());
-                }
-                if (c != null) c.close();
 
-                if (isRemindersEnabled) {
-                    Cursor s = db.queryGroup();
-                    if (s != null && s.moveToFirst()) {
-                        do {
-                            int myHour = s.getInt(s.getColumnIndex(Constants.COLUMN_HOUR));
-                            int myMinute = s.getInt(s.getColumnIndex(Constants.COLUMN_MINUTE));
-                            int myDay = s.getInt(s.getColumnIndex(Constants.COLUMN_DAY));
-                            int myMonth = s.getInt(s.getColumnIndex(Constants.COLUMN_MONTH));
-                            int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
-                            int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
-                            int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                            long afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                            String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
-                            String name = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
-                            String number = s.getString(s.getColumnIndex(Constants.COLUMN_NUMBER));
-                            String weekdays = s.getString(s.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                            int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
-                            long id = s.getLong(s.getColumnIndex(Constants.COLUMN_ID));
-                            if ((mType.startsWith(Constants.TYPE_SKYPE) ||
-                                    mType.matches(Constants.TYPE_CALL) ||
-                                    mType.startsWith(Constants.TYPE_APPLICATION) ||
-                                    mType.matches(Constants.TYPE_MESSAGE) ||
-                                    mType.matches(Constants.TYPE_REMINDER) ||
-                                    mType.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                                long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
-                                        afterTime, repCode, remCount, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.setTimeInMillis(time);
-                                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                int mMonth = calendar1.get(Calendar.MONTH);
-                                int mYear = calendar1.get(Calendar.YEAR);
-                                if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                    if (number == null) number = "0";
-                                    datas.add(new CalendarData("reminder", name, number, id, time));
-                                }
-                                if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
-                                    int days = 0;
-                                    do {
-                                        calendar1.setTimeInMillis(calendar1.getTimeInMillis() + (repCode *
-                                                AlarmManager.INTERVAL_DAY));
-                                        time = calendar1.getTimeInMillis();
-                                        mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                        mMonth = calendar1.get(Calendar.MONTH);
-                                        mYear = calendar1.get(Calendar.YEAR);
-                                        days = days + repCode;
-                                        if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                            if (number == null) number = "0";
-                                            datas.add(new CalendarData("reminder", name, number, id, time));
-                                        }
-                                    } while (days < Configs.MAX_DAYS_COUNT);
-                                }
-                            } else if (mType.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0) {
-                                long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                calendar1.setTimeInMillis(time);
-                                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                int mMonth = calendar1.get(Calendar.MONTH);
-                                int mYear = calendar1.get(Calendar.YEAR);
-                                if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                    if (number == null) number = "0";
-                                    datas.add(new CalendarData("reminder", name, number, id, time));
-                                }
-                                int days = 0;
-                                if (isFeature) {
-                                    ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
-                                    do {
-                                        calendar1.setTimeInMillis(calendar1.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
-                                        time = calendar1.getTimeInMillis();
-                                        int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                                        days = days + 1;
-                                        if (list.get(weekDay - 1) == 1) {
-                                            int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                            int sMonth = calendar1.get(Calendar.MONTH);
-                                            int sYear = calendar1.get(Calendar.YEAR);
-                                            if (time > 0 && sDay == currentDay && sMonth == currentMonth && sYear == currentYear) {
-                                                if (number == null) number = "0";
-                                                datas.add(new CalendarData("reminder", name, number, id, time));
-                                            }
-                                        }
-                                    } while (days < Configs.MAX_DAYS_COUNT);
-                                }
-                            } else if (mType.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                                long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
-                                Calendar calendar1 = Calendar.getInstance();
-                                if (time > 0) {
-                                    calendar1.setTimeInMillis(time);
-                                    int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                    int mMonth = calendar1.get(Calendar.MONTH);
-                                    int mYear = calendar1.get(Calendar.YEAR);
-                                    if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                        if (number == null) number = "0";
-                                        datas.add(new CalendarData("reminder", name, number, id, time));
-                                    }
-                                }
-                                int days = 1;
-                                if (isFeature){
-                                    do {
-                                        time = TimeCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
-                                        days = days + 1;
-                                        calendar1.setTimeInMillis(time);
-                                        int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                        int mMonth = calendar1.get(Calendar.MONTH);
-                                        int mYear = calendar1.get(Calendar.YEAR);
-                                        if (time > 0 && mDay == currentDay && mMonth == currentMonth && mYear == currentYear) {
-                                            if (number == null) number = "0";
-                                            datas.add(new CalendarData("reminder", name, number, id, time));
-                                        }
-                                    } while (days < Configs.MAX_MONTH_COUNT);
-                                }
-                            }
-                        } while (s.moveToNext());
-                    }
-                    if (s != null) s.close();
-                }
-                db.close();
+                ArrayList<EventsDataProvider.EventsItem> datas =
+                        provider.getMatches(currentDay, currentMonth, currentYear);
 
                 if (currentDay == targetDay && currentMonth == targetMonth && currentYear == targetYear){
                     targetPosition = position;

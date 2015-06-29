@@ -230,7 +230,7 @@ public class CategoriesList extends AppCompatActivity {
             if (c != null && c.moveToFirst()){
                 do {
                     String remUUId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                    dataBase.deleteTask(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)));
+                    dataBase.deleteReminder(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)));
                     if (syncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);

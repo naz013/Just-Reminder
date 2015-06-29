@@ -37,7 +37,7 @@ public class CheckBirthdays extends IntentService{
                 long currentTime = getCurrentDate(days, hourC, minuteC);
                 db = new DataBase(getApplicationContext());
                 db.open();
-                Cursor c = db.queryEvents();
+                Cursor c = db.getEvents();
                 if (c != null && c.moveToFirst()){
                     do {
                         Calendar cal = Calendar.getInstance();

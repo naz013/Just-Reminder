@@ -251,7 +251,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             new DisableAsync(ReminderPreviewFragment.this).execute();
             loadData();
         } else {
-            Cursor c = db.getTask(id);
+            Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()) {
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -266,18 +266,18 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
                 if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                     db.setUnDone(id);
-                    db.updateDateTime(id);
+                    db.updateReminderDateTime(id);
                     new WeekDayReceiver().setAlarm(ReminderPreviewFragment.this, id);
                     loadData();
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                     db.setUnDone(id);
-                    db.updateDateTime(id);
+                    db.updateReminderDateTime(id);
                     new MonthDayReceiver().setAlarm(this, id);
                     loadData();
                 } else if (type.startsWith(Constants.TYPE_LOCATION) ||
                         type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     db.setUnDone(id);
-                    db.updateDateTime(id);
+                    db.updateReminderDateTime(id);
                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
                         startService(new Intent(ReminderPreviewFragment.this, GeolocationService.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -296,15 +296,15 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         int myHour = calendar1.get(Calendar.HOUR_OF_DAY);
                         int myMinute = calendar1.get(Calendar.MINUTE);
                         int mySeconds = calendar1.get(Calendar.SECOND);
-                        db.updateStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
-                        db.updateDateTime(id);
+                        db.updateReminderStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
+                        db.updateReminderDateTime(id);
                         new AlarmReceiver().setAlarm(ReminderPreviewFragment.this, id);
                         loadData();
                     } else {
                         if (new TimeCount(ReminderPreviewFragment.this)
                                 .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
                             db.setUnDone(id);
-                            db.updateDateTime(id);
+                            db.updateReminderDateTime(id);
                             new AlarmReceiver().setAlarm(ReminderPreviewFragment.this, id);
                             loadData();
                         } else {
@@ -342,7 +342,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         if (ids == R.id.action_make_copy){
             db = new DataBase(this);
             if (!db.isOpen()) db.open();
-            Cursor c = db.getTask(id);
+            Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()){
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 if (!type.startsWith(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)){
@@ -401,7 +401,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         db = new DataBase(this);
         sPrefs = new SharedPrefs(this);
         if (!db.isOpen()) db.open();
-        Cursor c = db.getTask(id);
+        Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
             String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
@@ -427,10 +427,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 calendar.setTimeInMillis(time);
                 myHour = calendar.get(Calendar.HOUR_OF_DAY);
                 myMinute = calendar.get(Calendar.MINUTE);
-                long idN = db.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+                long idN = db.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                         number, repCode, 0, 0, latitude, longitude, uuID, weekdays, exp, melody, radius, ledColor,
                         code, categoryId);
-                db.updateDateTime(idN);
+                db.updateReminderDateTime(idN);
                 if (type.startsWith(Constants.TYPE_LOCATION) ||
                         type.startsWith(Constants.TYPE_LOCATION_OUT)){
                     if (myHour > 0 && myMinute > 0){
@@ -490,12 +490,12 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Integer i = (int) (long) id;
         mNotifyMgr.cancel(i);
-        Cursor c = db.getTask(id);
+        Cursor c = db.getReminder(id);
         String uuID = null;
         if (c != null && c.moveToFirst()){
             uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
-        db.deleteTask(id);
+        db.deleteReminder(id);
         new DeleteReminder(ReminderPreviewFragment.this, uuID).execute();
         if (db != null) db.close();
         UpdatesHelper updatesHelper = new UpdatesHelper(this);
@@ -549,7 +549,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             Contacts mContacts = new Contacts(mContext);
             Interval mInterval = new Interval(mContext);
             TimeCount mCount = new TimeCount(mContext);
-            Cursor c = dataBase.getTask(mId);
+            Cursor c = dataBase.getReminder(mId);
             String doneStr = null, title = null, typeStr = null, timeStr = null, groupStr = null,
                     locationLat = null, locationLon = null, numberStr = null, repeatStr = null,
                     melodyStr = null;

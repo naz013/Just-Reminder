@@ -826,14 +826,14 @@ public class SyncHelper {
         if (type != null) {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 if (DB.getCount() == 0) {
-                    id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                    id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                             repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
                             radius, 0, 0, categoryId);
-                    DB.updateDateTime(id);
+                    DB.updateReminderDateTime(id);
                     weekDayReceiver.setAlarm(sContext, id);
                 } else {
                     List<String> namesPass = new ArrayList<>();
-                    Cursor e = DB.queryAll();
+                    Cursor e = DB.queryAllReminders();
                     while (e.moveToNext()) {
                         for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                             namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
@@ -841,23 +841,23 @@ public class SyncHelper {
                     }
                     e.close();
                     if (!namesPass.contains(uuID)) {
-                        id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
-                        DB.updateDateTime(id);
+                        DB.updateReminderDateTime(id);
                         weekDayReceiver.setAlarm(sContext, id);
                     }
                 }
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                 if (DB.getCount() == 0) {
-                    id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                    id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                             repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
                             radius, 0, 0, categoryId);
-                    DB.updateDateTime(id);
+                    DB.updateReminderDateTime(id);
                     new MonthDayReceiver().setAlarm(sContext, id);
                 } else {
                     List<String> namesPass = new ArrayList<>();
-                    Cursor e = DB.queryAll();
+                    Cursor e = DB.queryAllReminders();
                     while (e.moveToNext()) {
                         for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                             namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
@@ -865,20 +865,20 @@ public class SyncHelper {
                     }
                     e.close();
                     if (!namesPass.contains(uuID)) {
-                        id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
-                        DB.updateDateTime(id);
+                        DB.updateReminderDateTime(id);
                         new MonthDayReceiver().setAlarm(sContext, id);
                     }
                 }
             } else {
                 if (timeCount.getNextDate(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
                     if (DB.getCount() == 0) {
-                        id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
-                        DB.updateDateTime(id);
+                        DB.updateReminderDateTime(id);
                         if (type.startsWith(Constants.TYPE_LOCATION) ||
                                 type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                             sContext.startService(new Intent(sContext, GeolocationService.class)
@@ -888,7 +888,7 @@ public class SyncHelper {
                         }
                     } else {
                         List<String> namesPass = new ArrayList<>();
-                        Cursor e = DB.queryAll();
+                        Cursor e = DB.queryAllReminders();
                         while (e.moveToNext()) {
                             for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                                 namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
@@ -896,10 +896,10 @@ public class SyncHelper {
                         }
                         e.close();
                         if (!namesPass.contains(uuID)) {
-                            id = DB.insertTask(text, type, day, month, year, hour, minute, seconds, number,
+                            id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                                     repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                     melody, radius, 0, 0, categoryId);
-                            DB.updateDateTime(id);
+                            DB.updateReminderDateTime(id);
                             if (type.startsWith(Constants.TYPE_LOCATION) ||
                                     type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                                 sContext.startService(new Intent(sContext, GeolocationService.class)

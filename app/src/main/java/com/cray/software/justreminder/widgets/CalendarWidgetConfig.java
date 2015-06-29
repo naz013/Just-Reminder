@@ -56,6 +56,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
     public final static String CURRENT_WIDGET_CURRENT_COLOR = "calendar_current_color_";
 
     public final static String CURRENT_WIDGET_MONTH = "calendar_month_";
+    public final static String CURRENT_WIDGET_YEAR = "calendar_year_";
     int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor,
             leftArrow, rightArrow, headerColor;
     ColorSetter cSetter;
@@ -327,7 +328,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 SharedPreferences sp = getSharedPreferences(CURRENT_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 Calendar cal = new GregorianCalendar();
+                cal.setTimeInMillis(System.currentTimeMillis());
                 int month = cal.get(Calendar.MONTH);
+                int year = cal.get(Calendar.YEAR);
                 if (group.getCheckedRadioButtonId() == R.id.theme){
                     int position = themePager.getCurrentItem();
                     ThemeItem themeItem = list.get(position);
@@ -362,6 +365,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                     editor.putInt(CURRENT_WIDGET_CURRENT_COLOR + widgetID, 0);
                 }
                 editor.putInt(CURRENT_WIDGET_MONTH + widgetID, month);
+                editor.putInt(CURRENT_WIDGET_YEAR + widgetID, year);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);

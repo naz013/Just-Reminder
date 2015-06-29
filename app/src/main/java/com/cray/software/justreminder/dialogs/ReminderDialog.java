@@ -143,7 +143,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         DB = new DataBase(ReminderDialog.this);
         DB.open();
-        Cursor r = DB.getTask(id);
+        Cursor r = DB.getReminder(id);
         String type = "";
         if (r != null && r.moveToFirst()) {
             task = r.getString(r.getColumnIndex(Constants.COLUMN_TEXT));
@@ -237,7 +237,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 updatesHelper.updateWidget();
                 makeBackup();
                 removeFlags();
-                if (repCode > 0) DB.updateCount(id, remCount + 1);
+                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 finish();
             }
@@ -258,7 +258,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 updatesHelper.updateWidget();
                 makeBackup();
                 removeFlags();
-                if (repCode > 0) DB.updateCount(id, remCount + 1);
+                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 if ((task == null || task.trim().matches("")) &&
                         (num != null && !num.trim().matches(""))) {
@@ -284,7 +284,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 updatesHelper = new UpdatesHelper(ReminderDialog.this);
                 updatesHelper.updateWidget();
                 makeBackup();
-                if (repCode > 0) DB.updateCount(id, remCount + 1);
+                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 finish();
@@ -306,7 +306,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 updatesHelper = new UpdatesHelper(ReminderDialog.this);
                 updatesHelper.updateWidget();
                 makeBackup();
-                if (repCode > 0) DB.updateCount(id, remCount + 1);
+                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
                 editReminder(id);
                 finish();
@@ -383,7 +383,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     new moveToArchive().execute(id);
                 } else generateEvent(id);
                 makeBackup();
-                if (repCode > 0) DB.updateCount(id, remCount + 1);
+                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 updatesHelper = new UpdatesHelper(ReminderDialog.this);
@@ -629,7 +629,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private void generateEvent(long id){
         DB = new DataBase(ReminderDialog.this);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         if (c != null && c.moveToFirst()){
             String text = "";
             int day = 0;
@@ -642,7 +642,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             long repTime = 0;
             int remCount = 0;
             int exp = 0;
-            Cursor t = DB.getTask(id);
+            Cursor t = DB.getReminder(id);
             if (t != null && t.moveToNext()) {
                 text = t.getString(t.getColumnIndex(Constants.COLUMN_TEXT));
                 day = t.getInt(t.getColumnIndex(Constants.COLUMN_DAY));
@@ -787,7 +787,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         DB = new DataBase(ReminderDialog.this);
         DB.open();
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
     }
 
     @Override

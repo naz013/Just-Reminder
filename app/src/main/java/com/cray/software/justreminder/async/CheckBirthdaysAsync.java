@@ -61,7 +61,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
             String[] selectionArgs = null;
             String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
             mContacts = new Contacts(mContext);
-            Cursor cursor = db.queryEvents();
+            Cursor cursor = db.getEvents();
             ArrayList<Integer> types = new ArrayList<Integer>();
             if (cursor != null && cursor.moveToFirst()){
                 do{

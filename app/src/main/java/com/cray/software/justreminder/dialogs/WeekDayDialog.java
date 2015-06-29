@@ -145,7 +145,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
 
         DB.open();
-        Cursor r = DB.getTask(id);
+        Cursor r = DB.getReminder(id);
         String type = "";
         if (r != null && r.moveToFirst()) {
             task = r.getString(r.getColumnIndex(Constants.COLUMN_TEXT));
@@ -198,7 +198,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
 
         wakeScreen();
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
 
         buttonCancel.setVisibility(View.VISIBLE);
         buttonCancel.setOnClickListener(new View.OnClickListener() {
@@ -437,7 +437,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     private void generateEvent(long id){
         DB = new DataBase(WeekDayDialog.this);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         if (c != null && c.moveToFirst()){
             String text = "";
             String type = "";
@@ -446,7 +446,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             int minute = 0;
             int day = 0;
             int exp = 0;
-            Cursor t = DB.getTask(id);
+            Cursor t = DB.getReminder(id);
             if (t != null && t.moveToNext()) {
                 text = t.getString(t.getColumnIndex(Constants.COLUMN_TEXT));
                 type = t.getString(t.getColumnIndex(Constants.COLUMN_TYPE));

@@ -538,10 +538,10 @@ public class NotesManager extends AppCompatActivity {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long remId = new DataBase(NotesManager.this).insertTask(note, Constants.TYPE_REMINDER, myDay,
+            long remId = new DataBase(NotesManager.this).insertReminder(note, Constants.TYPE_REMINDER, myDay,
                     myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, sHelp.generateID(),
                     null, 0, null, 0, 0, 0, categoryId);
-            new DataBase(NotesManager.this).updateDateTime(remId);
+            new DataBase(NotesManager.this).updateReminderDateTime(remId);
             DB.linkToReminder(id, remId);
             alarm.setAlarm(NotesManager.this, remId);
         }

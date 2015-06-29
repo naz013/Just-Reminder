@@ -344,9 +344,9 @@ public class TaskManager extends AppCompatActivity {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        long id = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
+        long id = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
         new AlarmReceiver().setAlarm(TaskManager.this, id);
         DB.close();
         UpdatesHelper updatesHelper = new UpdatesHelper(TaskManager.this);

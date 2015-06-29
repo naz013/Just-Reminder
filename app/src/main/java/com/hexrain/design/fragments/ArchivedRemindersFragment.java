@@ -72,7 +72,7 @@ public class ArchivedRemindersFragment extends Fragment {
         inflater.inflate(R.menu.archive_menu, menu);
         DB = new DataBase(getActivity());
         DB.open();
-        Cursor c = DB.queryArchived();
+        Cursor c = DB.getArchivedReminders();
         if (c.getCount() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -208,7 +208,7 @@ public class ArchivedRemindersFragment extends Fragment {
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        archiveCursorAdapter = new CustomCursorAdapter(getActivity(), DB.queryArchived(), null);
+        archiveCursorAdapter = new CustomCursorAdapter(getActivity(), DB.getArchivedReminders(), null);
         final SwipeActionAdapter mAdapter = new SwipeActionAdapter(archiveCursorAdapter);
         mAdapter.setListView(currentList);
         mAdapter.setFixedBackgrounds(true);
@@ -260,12 +260,12 @@ public class ArchivedRemindersFragment extends Fragment {
             DB = new DataBase(getActivity());
             if (!DB.isOpen()) DB.open();
             new CalendarManager(getActivity()).deleteEvents(itId);
-            Cursor c = DB.getTask(itId);
+            Cursor c = DB.getReminder(itId);
             String uuId = null;
             if (c != null && c.moveToFirst()){
                 uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            DB.deleteTask(itId);
+            DB.deleteReminder(itId);
             new DeleteReminder(getActivity(), uuId).execute();
             Toast.makeText(getActivity(), getString(R.string.swipe_delete),
                     Toast.LENGTH_SHORT).show();
@@ -276,13 +276,13 @@ public class ArchivedRemindersFragment extends Fragment {
     private void deleteAll(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        Cursor c = DB.queryArchived();
+        Cursor c = DB.getArchivedReminders();
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 new CalendarManager(getActivity()).deleteEvents(rowId);
-                DB.deleteTask(rowId);
+                DB.deleteReminder(rowId);
                 new DeleteReminder(getActivity(), uuId).execute();
             }while (c.moveToNext());
         }

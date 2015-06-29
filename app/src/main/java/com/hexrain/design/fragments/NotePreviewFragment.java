@@ -357,7 +357,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             if (remId != 0){
                 DataBase dataBase = new DataBase(NotePreviewFragment.this);
                 dataBase.open();
-                Cursor r = dataBase.getTask(remId);
+                Cursor r = dataBase.getReminder(remId);
                 if (r != null && r.moveToFirst()){
                     long feature = r.getLong(r.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
                     Calendar calendar = Calendar.getInstance();
@@ -384,7 +384,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         if (!DB.isOpen()) DB.open();
 
         new CalendarManager(NotePreviewFragment.this).deleteEvents(id);
-        DB.deleteTask(id);
+        DB.deleteReminder(id);
         loadData();
         Toast.makeText(NotePreviewFragment.this, getString(R.string.swipe_delete),
                 Toast.LENGTH_SHORT).show();

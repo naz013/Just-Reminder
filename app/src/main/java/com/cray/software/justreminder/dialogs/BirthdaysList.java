@@ -16,6 +16,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -27,12 +28,12 @@ public class BirthdaysList extends Fragment{
     ListView contactsList;
     CalendarEventsAdapter customAdapter;
     ColorSetter cs;
-    ArrayList<CalendarData> datas;
+    ArrayList<EventsDataProvider.EventsItem> datas;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_PAGE_DATA = "arg_page_data";
     int pageNumber;
 
-    public static BirthdaysList newInstance(int page, ArrayList<CalendarData> datas) {
+    public static BirthdaysList newInstance(int page, ArrayList<EventsDataProvider.EventsItem> datas) {
         BirthdaysList pageFragment = new BirthdaysList();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
@@ -94,7 +95,7 @@ public class BirthdaysList extends Fragment{
         return view;
     }
 
-    public void loaderAdapter(ArrayList<CalendarData> calendarDatas){
+    public void loaderAdapter(ArrayList<EventsDataProvider.EventsItem> calendarDatas){
         customAdapter = new CalendarEventsAdapter(getActivity(), calendarDatas);
         contactsList.setAdapter(customAdapter);
     }

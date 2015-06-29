@@ -69,7 +69,7 @@ public class CacheAsync extends AsyncTask<Void, Void, Void> {
                 } while (c.moveToNext());
             }
             if (c != null) c.close();
-            c = data.getTask(localId);
+            c = data.getReminder(localId);
             if (c != null && c.moveToFirst()){
                 int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
                 int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
@@ -166,7 +166,7 @@ public class CacheAsync extends AsyncTask<Void, Void, Void> {
         }
         if (taskType.matches(GENERATE)){
             //update caches
-            Cursor c = data.queryAll();
+            Cursor c = data.queryAllReminders();
             if (c != null && c.moveToFirst()){
                 do {
                     int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));

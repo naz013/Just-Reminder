@@ -249,7 +249,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 db = new DataBase(getActivity());
                 db.open();
                 if (db.getCountEvents() > 0){
-                    Cursor c = db.queryEvents();
+                    Cursor c = db.getEvents();
                     if (c != null && c.moveToFirst()){
                         do {
                             long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
@@ -375,7 +375,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 String[] selectionArgs = null;
                 String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
                 cc = new Contacts(tContext);
-                Cursor cursor = db.queryEvents();
+                Cursor cursor = db.getEvents();
                 ArrayList<Integer> types = new ArrayList<>();
                 if (cursor != null && cursor.moveToFirst()){
                     do{

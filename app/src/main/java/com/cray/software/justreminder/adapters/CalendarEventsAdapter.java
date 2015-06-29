@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.CalendarData;
+import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -25,14 +26,14 @@ public class CalendarEventsAdapter extends BaseAdapter{
 
     Contacts contacts;
     LayoutInflater inflater;
-    ArrayList<CalendarData> mDatas;
+    ArrayList<EventsDataProvider.EventsItem> mDatas;
     Context mContext;
     ColorSetter cs;
     Typeface typeface;
     SharedPrefs prefs;
 
     @SuppressWarnings("deprecation")
-    public CalendarEventsAdapter(Context context, ArrayList<CalendarData> datas) {
+    public CalendarEventsAdapter(Context context, ArrayList<EventsDataProvider.EventsItem> datas) {
         this.mContext = context;
         this.mDatas = new ArrayList<>();
         this.mDatas = datas;

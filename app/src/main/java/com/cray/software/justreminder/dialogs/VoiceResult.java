@@ -105,7 +105,7 @@ public class VoiceResult extends Activity {
         int repCount = 0;
         int delay = 0;
         String categoryId = null;
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         if (c != null && c.moveToFirst()) {
             repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));

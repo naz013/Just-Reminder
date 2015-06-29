@@ -1097,7 +1097,7 @@ public class ScreenManager extends AppCompatActivity
         showRate();
 
         if (new ManageModule().isPro()){
-            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)) {
+            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN) && hasChanges()) {
                 thanksDialog().show();
             }
         }
@@ -1241,7 +1241,7 @@ public class ScreenManager extends AppCompatActivity
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
         ArrayList<Date> dates = new ArrayList<>();
-        Cursor c = db.queryEvents();
+        Cursor c = db.getEvents();
         if (c != null && c.moveToFirst()){
             do {
                 String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
@@ -1319,6 +1319,21 @@ public class ScreenManager extends AppCompatActivity
             sPrefs.saveVersionBoolean(version);
             showChanges();
         }
+    }
+
+    private boolean hasChanges() {
+        SharedPrefs sPrefs = new SharedPrefs(this);
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = null;
+        if (pInfo != null) {
+            version = pInfo.versionName;
+        }
+        return sPrefs.loadVersionBoolean(version);
     }
 
     private void showRate(){
@@ -1500,11 +1515,11 @@ public class ScreenManager extends AppCompatActivity
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 }
                 if (cf != null) cf.close();
-                long remId = DB.insertTask(note, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
+                long remId = DB.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
                         0, sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME),
                         0, 0, 0, sHelp.generateID(), null, 0, null, 0, 0, 0, categoryId);
                 new AlarmReceiver().setAlarm(ScreenManager.this, remId);
-                DB.updateDateTime(remId);
+                DB.updateReminderDateTime(remId);
                 new UpdatesHelper(ScreenManager.this).updateWidget();
                 NotesBase base = new NotesBase(ScreenManager.this);
                 base.open();

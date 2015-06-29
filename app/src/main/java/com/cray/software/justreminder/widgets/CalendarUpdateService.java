@@ -20,11 +20,14 @@ public class CalendarUpdateService extends IntentService {
         SharedPreferences sp =
                 getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
         int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetId, 0);
+        int year  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetId, 0);
         if (action != 0){
             SharedPreferences.Editor editor = sp.edit();
-            if (month < 11 && month >= 0) month = month + 1;
+            if (month < 11 && month >= 0) month += 1;
             else month = 0;
             editor.putInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetId, month);
+            if (month == 0) year += 1;
+            editor.putInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetId, year);
             editor.commit();
             new UpdatesHelper(CalendarUpdateService.this).updateCalendarWidget();
             stopSelf();

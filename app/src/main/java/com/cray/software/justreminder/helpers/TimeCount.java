@@ -142,7 +142,7 @@ public class TimeCount {
         int repCount = 0;
         String type = null;
         String weekdays = null;
-        Cursor c = db.getTask(id);
+        Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));

@@ -33,7 +33,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         DB.open();
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         Integer i = (int) (long) id;
         int min = 60 * 1000;
         int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0, repeatTime = 0;

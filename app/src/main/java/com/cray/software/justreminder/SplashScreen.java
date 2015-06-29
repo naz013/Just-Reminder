@@ -154,7 +154,7 @@ public class SplashScreen extends Activity{
                 do {
                     long time = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    if(time < 1000) db.updateAfterTime(id, time * TimeCount.minute);
+                    if(time < 1000) db.updateReminderAfterTime(id, time * TimeCount.minute);
                 } while (c.moveToNext());
             }
             if (c != null) {

@@ -25,7 +25,7 @@ public class PositionDelayReceiver extends BroadcastReceiver {
     public void setDelay(Context context, long id) {
         DB = new DataBase(context);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
 
         Integer i = (int) (long) id;
         int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0;

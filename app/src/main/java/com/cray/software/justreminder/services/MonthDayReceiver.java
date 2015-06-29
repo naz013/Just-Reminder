@@ -24,7 +24,7 @@ public class MonthDayReceiver extends BroadcastReceiver {
         long id = intent.getLongExtra("alarmId", 0);
         DB = new DataBase(context);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         int dayOfMonth = 0;
         if (c != null && c.moveToFirst()) {
             dayOfMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
@@ -49,7 +49,7 @@ public class MonthDayReceiver extends BroadcastReceiver {
     public void setAlarm(Context context, long id) {
         DB = new DataBase(context);
         DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
 
         Integer i = (int) (long) id;
         int hour = 0, minute = 0;

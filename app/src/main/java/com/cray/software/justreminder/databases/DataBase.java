@@ -361,10 +361,10 @@ public class DataBase {
 
     // Reminders database
 
-    public long insertTask (String text, String type, int day, int month, int year, int hour,
-                            int minute, int seconds, String number, int repeatCode, long repMinute,
-                            long count, double latitude, double longitude, String uID, String weekdays,
-                            int export, String melody, int radius, int color, int code, String categoryId) {
+    public long insertReminder(String text, String type, int day, int month, int year, int hour,
+                               int minute, int seconds, String number, int repeatCode, long repMinute,
+                               long count, double latitude, double longitude, String uID, String weekdays,
+                               int export, String melody, int radius, int color, int code, String categoryId) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_TEXT, text);
@@ -395,11 +395,11 @@ public class DataBase {
         return db.insert(CURRENT_TABLE_NAME, null, cv);
     }
 
-    public boolean updateTask(long rowId, String text, String type, int day, int month, int year,
-                              int hour, int minute, int seconds, String number, int repeatCode,
-                              long repMinute, long count, double latitude, double longitude,
-                              String weekdays, int export, String melody, int radius, int color,
-                              int code, String categoryId) {
+    public boolean updateReminder(long rowId, String text, String type, int day, int month, int year,
+                                  int hour, int minute, int seconds, String number, int repeatCode,
+                                  long repMinute, long count, double latitude, double longitude,
+                                  String weekdays, int export, String melody, int radius, int color,
+                                  int code, String categoryId) {
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, text);
@@ -428,7 +428,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateStartTime(long rowId, int day, int month, int year, int hour, int minute, int seconds) {
+    public boolean updateReminderStartTime(long rowId, int day, int month, int year, int hour, int minute, int seconds) {
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_DAY, day);
@@ -443,7 +443,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateDateTime(long rowId) {
+    public boolean updateReminderDateTime(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
         TimeCount mCount = new TimeCount(mContext);
@@ -452,7 +452,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateAfterTime(long rowId, long time) {
+    public boolean updateReminderAfterTime(long rowId, long time) {
         openGuard();
         ContentValues args = new ContentValues();
         TimeCount mCount = new TimeCount(mContext);
@@ -460,7 +460,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateCount(long rowId, long count) {
+    public boolean updateReminderCount(long rowId, long count) {
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_REMINDERS_COUNT, count);
@@ -529,7 +529,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor queryAll() throws SQLException {
+    public Cursor queryAllReminders() throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
     }
@@ -575,18 +575,23 @@ public class DataBase {
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 0 + "'", null, null, null, order);
     }
 
-    public Cursor queryArchived() throws SQLException {
+    public Cursor getArchivedReminders() throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 1 + "'", null, null, null, null);
     }
 
-    public Cursor getTask(long rowId) throws SQLException {
+    public Cursor getActiveReminders() throws SQLException {
+        openGuard();
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_IS_DONE  + "='" + 0 + "'", null, null, null, null);
+    }
+
+    public Cursor getReminder(long rowId) throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + rowId, null, null, null,
                 null, null);
     }
 
-    public Cursor getTasks(int hour, int minute) throws SQLException {
+    public Cursor getReminders(int hour, int minute) throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null,
                 Constants.COLUMN_HOUR  + "='" + hour + "'" + " AND "+ Constants.COLUMN_MINUTE + "='"
@@ -606,7 +611,7 @@ public class DataBase {
                 + 0 + "'", null, null, null, null, null);
     }
 
-    public boolean deleteTask(long rowId) {
+    public boolean deleteReminder(long rowId) {
         openGuard();
         new CacheAsync(mContext, CacheAsync.DELETE_CACHES, null, rowId);
         return db.delete(CURRENT_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
@@ -662,7 +667,7 @@ public class DataBase {
                 "=" + rowId, null, null, null, null, null);
     }
 
-    public Cursor queryEvents() throws SQLException {
+    public Cursor getEvents() throws SQLException {
         openGuard();
         return db.query(CONTACTS_TABLE_NAME, null, null, null, null, null, null);
     }

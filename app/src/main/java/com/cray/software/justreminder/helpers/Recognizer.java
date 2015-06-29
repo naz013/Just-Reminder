@@ -1929,16 +1929,16 @@ public class Recognizer {
         if (cf != null) cf.close();
         if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-            id = DB.insertTask(task, Constants.TYPE_TIME,
+            id = DB.insertReminder(task, Constants.TYPE_TIME,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
             exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after), id);
         } else {
-            id = DB.insertTask(task, Constants.TYPE_TIME,
+            id = DB.insertReminder(task, Constants.TYPE_TIME,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
                     0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
         alarm.setAlarm(ctx, id);
         updatesHelper = new UpdatesHelper(ctx);
         updatesHelper.updateWidget();
@@ -1962,16 +1962,16 @@ public class Recognizer {
         if (cf != null) cf.close();
         if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-            id = DB.insertTask(task, Constants.TYPE_REMINDER,
+            id = DB.insertReminder(task, Constants.TYPE_REMINDER,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
             exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0), id);
         } else {
-            id = DB.insertTask(task, Constants.TYPE_REMINDER,
+            id = DB.insertReminder(task, Constants.TYPE_REMINDER,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
                     0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
         alarm.setAlarm(ctx, id);
         updatesHelper = new UpdatesHelper(ctx);
         updatesHelper.updateWidget();
@@ -3086,11 +3086,11 @@ public class Recognizer {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long id = DB.insertTask(res, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
+            long id = DB.insertReminder(res, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
                     0, sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME),
                     0, 0, 0, sHelp.generateID(), null, 0, null, 0, 0, 0, categoryId);
             alarm.setAlarm(ctx, id);
-            DB.updateDateTime(id);
+            DB.updateReminderDateTime(id);
             new UpdatesHelper(ctx).updateWidget();
         }
         new UpdatesHelper(ctx).updateNotesWidget();
@@ -3173,16 +3173,16 @@ public class Recognizer {
                         if (cf != null) cf.close();
                         if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-                            id = DB.insertTask(text, Constants.TYPE_MESSAGE,
+                            id = DB.insertReminder(text, Constants.TYPE_MESSAGE,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
                                     1, null, 0, 0, 0, categoryId);
                             exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth, currentYear, hour, minute, 0), id);
                         } else {
-                            id = DB.insertTask(text, Constants.TYPE_MESSAGE,
+                            id = DB.insertReminder(text, Constants.TYPE_MESSAGE,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
                                     0, null, 0, 0, 0, categoryId);
                         }
-                        DB.updateDateTime(id);
+                        DB.updateReminderDateTime(id);
                         alarm.setAlarm(ctx, id);
                         DB.close();
                         updatesHelper = new UpdatesHelper(ctx);
@@ -3259,19 +3259,19 @@ public class Recognizer {
                         if (cf != null) cf.close();
                         if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-                            id = DB.insertTask(user, Constants.TYPE_CALL,
+                            id = DB.insertReminder(user, Constants.TYPE_CALL,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number,
                                     0, 0, 0, 0, 0, uuID, null,
                                     1, null, 0, 0, 0, categoryId);
                             exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth,
                                     currentYear, hour, minute, 0), id);
                         } else {
-                            id = DB.insertTask(user, Constants.TYPE_CALL,
+                            id = DB.insertReminder(user, Constants.TYPE_CALL,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number,
                                     0, 0, 0, 0, 0, uuID, null,
                                     0, null, 0, 0, 0, categoryId);
                         }
-                        DB.updateDateTime(id);
+                        DB.updateReminderDateTime(id);
                         alarm.setAlarm(ctx, id);
                         DB.close();
                         updatesHelper = new UpdatesHelper(ctx);
@@ -3330,7 +3330,7 @@ public class Recognizer {
                         if (cf != null) cf.close();
                         sHelp = new SyncHelper(ctx);
                         String uuID = sHelp.generateID();
-                        long id = DB.insertTask(res, Constants.TYPE_WEEKDAY, 0, 0, 0,
+                        long id = DB.insertReminder(res, Constants.TYPE_WEEKDAY, 0, 0, 0,
                                 hour, minute, 0, null, 0, 0, 0, 0, 0, uuID, weekdays, 0, null, 0, 0,
                                 0, categoryId);
                         new WeekDayReceiver().setAlarm(ctx, id);
@@ -3401,19 +3401,19 @@ public class Recognizer {
                 if (cf != null) cf.close();
                 if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                         sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-                    id = DB.insertTask(res, Constants.TYPE_TIME,
+                    id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 1,
                             null, 0, 0, 0, categoryId);
                     exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
                             currentHour, currentMinute, minute), id);
                 } else {
-                    id = DB.insertTask(res, Constants.TYPE_TIME,
+                    id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 0,
                             null, 0, 0, 0, categoryId);
                 }
-                DB.updateDateTime(id);
+                DB.updateReminderDateTime(id);
                 alarm.setAlarm(ctx, id);
                 DB.close();
                 updatesHelper = new UpdatesHelper(ctx);
@@ -3445,19 +3445,19 @@ public class Recognizer {
                 if (cf != null) cf.close();
                 if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                         sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
-                    id = DB.insertTask(res, Constants.TYPE_TIME,
+                    id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
                             1, null, 0, 0, 0, categoryId);
                     exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
                             currentHour, currentMinute, minute), id);
                 } else {
-                    id = DB.insertTask(res, Constants.TYPE_TIME,
+                    id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
                             0, null, 0, 0, 0, categoryId);
                 }
-                DB.updateDateTime(id);
+                DB.updateReminderDateTime(id);
                 alarm.setAlarm(ctx, id);
                 DB.close();
                 updatesHelper = new UpdatesHelper(ctx);

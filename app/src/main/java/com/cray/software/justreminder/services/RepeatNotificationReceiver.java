@@ -38,7 +38,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         if (id != 0) {
             DataBase db = new DataBase(context);
             db.open();
-            Cursor c = db.getTask(id);
+            Cursor c = db.getReminder(id);
             if (c!= null && c.moveToFirst()) {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));

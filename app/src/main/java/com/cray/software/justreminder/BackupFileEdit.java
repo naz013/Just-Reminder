@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -13,6 +14,8 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +26,7 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -217,6 +221,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             } else if (type.startsWith(Constants.TYPE_LOCATION)){
                 if (checkGooglePlayServicesAvailability()) {
                     attachLocation();
+                } else {
+                    Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                if (checkGooglePlayServicesAvailability()) {
+                    attachLocationOut();
                 } else {
                     Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
                     finish();
@@ -585,6 +596,28 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     myDay = 0;
                 }
                 break;
+            case R.id.currentCheck:
+                if (currentCheck.isChecked()) {
+                    mapCheck.setChecked(false);
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    mLocList = new CurrentLocation();
+                    SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+                    long time;
+                    time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000);
+                    int distance;
+                    distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE);
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+                }
+                break;
+            case R.id.mapCheck:
+                if (mapCheck.isChecked()) {
+                    currentCheck.setChecked(false);
+                    fadeOutAnimation(specsContainerOut);
+                    fadeInAnimation(mapContainerOut);
+                    if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+                }
+                break;
         }
     }
 
@@ -804,8 +837,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     CheckBox timeTaskExport;
     TextView hoursView, minutesView, secondsView;
     ImageButton deleteButton;
+    EditText repeatMinutes;
     Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
     String timeString = "000000";
+    SeekBar repeatMinutesSeek;
 
     private void attachTimeReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
@@ -879,19 +914,28 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         b9.setOnClickListener(this);
         b0.setOnClickListener(this);
 
+        repeatMinutes = (EditText) findViewById(R.id.repeatMinutes);
+        repeatMinutes.setTypeface(Utils.getLightTypeface(this));
+
+        repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
+        repeatMinutesSeek.setOnSeekBarChangeListener(this);
+        repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
+
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getTask(id);
             String text = "";
+            int repeat = 0;
             long afterTime=0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                repeat = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             }
             if (c != null) c.close();
             taskField.setText(text);
-
+            repeatMinutesSeek.setProgress(repeat);
             generateString(afterTime);
         }
     }
@@ -1507,6 +1551,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (isMapVisible()) cardSearch.setAdapter(adapter);
                     else searchField.setAdapter(adapter);
                 }
+                if (isLocationOutAttached()){
+                    if (isMapOutVisible()) cardSearchOut.setAdapter(adapter);
+                }
 
                 adapter.notifyDataSetChanged();
             }
@@ -1524,11 +1571,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     FloatingEditText phoneNumberLocation;
 
     private boolean isMapVisible(){
-        return mapContainer.getVisibility() == View.VISIBLE;
+        return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
     }
 
     private boolean isLayersVisible(){
-        return layersContainer.getVisibility() == View.VISIBLE;
+        return layersContainer != null && layersContainer.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocation() {
@@ -1895,10 +1942,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getTask(id);
-            String text = "";
+            String text = "", number = null;
             double latitude=0, longitude=0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -1929,12 +1977,502 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 attackDelay.setChecked(false);
             }
 
+            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
+                attachLocationAction.setChecked(true);
+                phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
+                phoneNumberLocation.setText(number);
+                if (type.matches(Constants.TYPE_LOCATION_CALL)){
+                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
+                    callCheckLocation.setChecked(true);
+                } else {
+                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
+                    messageCheckLocation.setChecked(true);
+                }
+            } else {
+                attachLocationAction.setChecked(false);
+            }
+
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
                 destination = googleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .title(text)
                         .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+            }
+        }
+    }
+
+    ImageButton mapButtonOut, cardClearOut, zoomOutOut, layersOut, addNumberButtonLocationOut,
+            myLocationOut;
+    LinearLayout layersContainerOut, actionLocationOut, locationOutLayout, delayLayoutOut,
+            locationOutDateRing;
+    RelativeLayout mapContainerOut;
+    ScrollView specsContainerOut;
+    AutoCompleteTextView cardSearchOut;
+    TextView typeNormalOut, typeSatelliteOut, typeHybridOut, typeTerrainOut, locationOutDateField,
+            locationOutDateYearField, locationOutTimeField, currentLocation, mapLocation, radiusMark;
+    CheckBox attachLocationOutAction, attachDelayOut;
+    RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    FloatingEditText phoneNumberLocationOut;
+    CardView cardOut;
+    GoogleMap mapOut;
+    Spinner placesListOut;
+    SeekBar pointRadius;
+
+    private boolean isMapOutVisible(){
+        return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
+    }
+
+    private boolean isLayersOutVisible(){
+        return layersContainerOut != null && layersContainerOut.getVisibility() == View.VISIBLE;
+    }
+
+    private void attachLocationOut() {
+        taskField.setHint(getString(R.string.tast_hint));
+
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        fadeInAnimation(locationOutLayout);
+
+        delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
+        specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
+        layersContainerOut = (LinearLayout) findViewById(R.id.layersContainerOut);
+        mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
+        delayLayoutOut.setVisibility(View.GONE);
+        mapContainerOut.setVisibility(View.GONE);
+
+        attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
+        attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+                        delayLayoutOut.startAnimation(slide);
+                        delayLayoutOut.setVisibility(View.VISIBLE);
+                    } else delayLayoutOut.setVisibility(View.VISIBLE);
+                }
+                else {
+                    delayLayoutOut.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        if (attachDelayOut.isChecked()) {
+            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                expand(delayLayoutOut);
+            } else delayLayoutOut.setVisibility(View.VISIBLE);
+        }
+
+        cardOut = (CardView) findViewById(R.id.cardOut);
+        cardOut.setCardBackgroundColor(cSetter.getCardStyle());
+
+        cardClearOut = (ImageButton) findViewById(R.id.cardClearOut);
+        zoomOutOut = (ImageButton) findViewById(R.id.zoomOutOut);
+        layersOut = (ImageButton) findViewById(R.id.layersOut);
+        mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
+        myLocationOut = (ImageButton) findViewById(R.id.myLocationOut);
+        zoomOutOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        layersOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        myLocationOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+            cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
+            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
+            layersOut.setImageResource(R.drawable.ic_layers_white_24dp);
+            myLocationOut.setImageResource(R.drawable.ic_my_location_white_24dp);
+            layersContainerOut.setBackgroundResource(R.drawable.popup_dark);
+        } else {
+            cardClearOut.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
+            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
+            layersOut.setImageResource(R.drawable.ic_layers_grey600_24dp);
+            myLocationOut.setImageResource(R.drawable.ic_my_location_grey600_24dp);
+            layersContainerOut.setBackgroundResource(R.drawable.popup);
+        }
+
+        cardClearOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardSearchOut.setText("");
+            }
+        });
+        mapButtonOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fadeOutAnimation(specsContainerOut);
+                fadeInAnimation(mapContainerOut);
+            }
+        });
+        zoomOutOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                fadeOutAnimation(mapContainerOut);
+                fadeInAnimation(specsContainerOut);
+            }
+        });
+        layersOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                else showOver(layersContainerOut);
+            }
+        });
+        myLocationOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLayersOutVisible()) hideOver(layersContainerOut);
+                Location location = mapOut.getMyLocation();
+                if (location != null){
+                    double lat = location.getLatitude();
+                    double lon = location.getLongitude();
+                    LatLng pos = new LatLng(lat, lon);
+                    mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                }
+            }
+        });
+
+        typeNormalOut = (TextView) findViewById(R.id.typeNormalOut);
+        typeSatelliteOut = (TextView) findViewById(R.id.typeSatelliteOut);
+        typeHybridOut = (TextView) findViewById(R.id.typeHybridOut);
+        typeTerrainOut = (TextView) findViewById(R.id.typeTerrainOut);
+        typeNormalOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeSatelliteOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeHybridOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+        typeTerrainOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                layersContainerOut.setVisibility(View.GONE);
+            }
+        });
+
+        currentCheck = (RadioButton) findViewById(R.id.currentCheck);
+        mapCheck = (RadioButton) findViewById(R.id.mapCheck);
+        currentCheck.setOnCheckedChangeListener(this);
+        mapCheck.setOnCheckedChangeListener(this);
+        currentCheck.setChecked(true);
+
+        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
+        pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                radiusMark.setText(String.format(getString(R.string.string_selected_radius), progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        if (pointRadius.getProgress() == 0)
+            pointRadius.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS));
+
+        cardSearchOut = (AutoCompleteTextView) findViewById(R.id.cardSearchOut);
+        cardSearchOut.setThreshold(3);
+        adapter = new ArrayAdapter<>(
+                BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
+        adapter.setNotifyOnChange(true);
+        cardSearchOut.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (task != null && !task.isCancelled()) task.cancel(true);
+                task = new GeocoderTask();
+                task.execute(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        cardSearchOut.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Address sel = foundPlaces.get(position);
+                double lat = sel.getLatitude();
+                double lon = sel.getLongitude();
+                LatLng pos = new LatLng(lat, lon);
+                mapOut.clear();
+                String title = taskField.getText().toString().trim();
+                if (title.matches("")) {
+                    title = pos.toString();
+                }
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                        .draggable(true));
+                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            }
+        });
+
+        actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
+        actionLocationOut.setVisibility(View.GONE);
+
+        attachLocationOutAction = (CheckBox) findViewById(R.id.attachLocationOutAction);
+        attachLocationOutAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        showOver(actionLocationOut);
+                    } else actionLocation.setVisibility(View.VISIBLE);
+                    addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
+                    addNumberButtonLocationOut.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
+                            pickContacts(pd);
+                        }
+                    });
+                    setImage(addNumberButtonLocationOut);
+
+                    phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
+
+                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
+                    callCheckLocationOut.setChecked(true);
+                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
+                    messageCheckLocationOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) taskField.setHint(getString(R.string.message_field_hint));
+                            else taskField.setHint(getString(R.string.tast_hint));
+                        }
+                    });
+                } else {
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                        hideOver(actionLocationOut);
+                    } else actionLocationOut.setVisibility(View.GONE);
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
+            }
+        });
+
+        final Calendar cal = Calendar.getInstance();
+        myYear = cal.get(Calendar.YEAR);
+        myMonth = cal.get(Calendar.MONTH);
+        myDay = cal.get(Calendar.DAY_OF_MONTH);
+        myHour = cal.get(Calendar.HOUR_OF_DAY);
+        myMinute = cal.get(Calendar.MINUTE);
+
+        String dayStr;
+        String monthStr;
+
+        if (myDay < 10) dayStr = "0" + myDay;
+        else dayStr = String.valueOf(myDay);
+
+        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+        else monthStr = String.valueOf(myMonth + 1);
+
+        locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
+        locationOutDateRing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateDialog();
+            }
+        });
+
+        locationOutDateField = (TextView) findViewById(R.id.locationOutDateField);
+        locationOutDateField.setTypeface(Utils.getMediumTypeface(this));
+        locationOutDateField.setText(dayStr + "/" + monthStr);
+        locationOutDateYearField = (TextView) findViewById(R.id.locationOutDateYearField);
+        locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
+        locationOutTimeField.setTypeface(Utils.getMediumTypeface(this));
+        locationOutTimeField.setText(Utils.getTime(cal.getTime(),
+                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+        locationOutTimeField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog().show();
+            }
+        });
+        locationOutDateYearField.setTypeface(Utils.getThinTypeface(this));
+        locationOutDateYearField.setText(String.valueOf(myYear));
+
+        placesListOut = (Spinner) findViewById(R.id.placesListOut);
+        placesListOut.setBackgroundColor(cSetter.getSpinnerStyle());
+        if (spinnerArray.isEmpty()){
+            placesListOut.setVisibility(View.GONE);
+        } else {
+            placesListOut.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            placesListOut.setAdapter(spinnerArrayAdapter);
+            placesListOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (position > 0){
+                        String placeName = spinnerArray.get(position);
+                        DB.open();
+                        Cursor c = DB.getPlace(placeName);
+                        if (c != null && c.moveToFirst()) {
+                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
+                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
+
+                            LatLng latLng = new LatLng(latitude, longitude);
+                            mapOut.clear();
+                            String title = taskField.getText().toString().trim();
+                            if (title.matches("")) {
+                                title = latLng.toString();
+                            }
+                            destination = mapOut.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(title)
+                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                                    .draggable(true));
+
+                            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                        }
+                        if (c != null) c.close();
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }
+
+        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapOut);
+        mapOut = fragment.getMap();
+        sPrefs = new SharedPrefs(BackupFileEdit.this);
+        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        if (type.matches(Constants.MAP_TYPE_NORMAL)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
+            mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+        } else {
+            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+
+        mapOut.setMyLocationEnabled(true);
+        if (mapOut.getMyLocation() != null) {
+            double lat = mapOut.getMyLocation().getLatitude();
+            double lon = mapOut.getMyLocation().getLongitude();
+            LatLng pos = new LatLng(lat, lon);
+            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+        }
+        mapOut.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mapOut.clear();
+                String title = taskField.getText().toString().trim();
+                if (title.matches("")) {
+                    title = latLng.toString();
+                }
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(title)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                        .draggable(true));
+            }
+        });
+
+        if (destination != null) {
+            LatLng latLng = destination.getPosition();
+            destination = mapOut.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(destination.getTitle())
+                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                    .draggable(true));
+            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+            mapLocation.setText(getAddress(latLng.latitude, latLng.longitude));
+        }
+
+        if (id != 0) {
+            fdb.open();
+            Cursor c = fdb.getTask(id);
+            String text = "", number = null;
+            double latitude=0, longitude=0;
+            if (c != null && c.moveToFirst()){
+                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            }
+            if (c != null) c.close();
+
+            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+                if (myDay < 10) dayStr = "0" + myDay;
+                else dayStr = String.valueOf(myDay);
+
+                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
+                else monthStr = String.valueOf(myMonth + 1);
+
+                cal.set(Calendar.HOUR_OF_DAY, myHour);
+                cal.set(Calendar.MINUTE, myMinute);
+
+                locationOutTimeField.setText(Utils.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                locationOutDateField.setText(dayStr + "/" + monthStr);
+                locationOutDateYearField.setText(String.valueOf(myYear));
+                attachDelayOut.setChecked(true);
+            } else {
+                attachDelayOut.setChecked(false);
+            }
+
+            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
+                attachLocationOutAction.setChecked(true);
+                phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
+                phoneNumberLocationOut.setText(number);
+                if (type.matches(Constants.TYPE_LOCATION_CALL)){
+                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
+                    callCheckLocationOut.setChecked(true);
+                } else {
+                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
+                    messageCheckLocationOut.setChecked(true);
+                }
+            } else {
+                attachLocationOutAction.setChecked(false);
+            }
+
+            taskField.setText(text);
+            if (longitude != 0 && latitude != 0) {
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title(text)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                mapCheck.setChecked(true);
             }
         }
     }
@@ -2004,6 +2542,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return monthDayLayout.getVisibility() == View.VISIBLE;
     }
 
+    private boolean isLocationOutAttached(){
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        return locationOutLayout.getVisibility() == View.VISIBLE;
+    }
+
     private void clearForm(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
         call_layout.setVisibility(View.GONE);
@@ -2023,6 +2566,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         application_layout.setVisibility(View.GONE);
         monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         monthDayLayout.setVisibility(View.GONE);
+        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        locationOutLayout.setVisibility(View.GONE);
     }
 
     private void fadeOutAnimation(View view){
@@ -2054,6 +2599,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
                 else type = Constants.TYPE_LOCATION_MESSAGE;
             } else type = Constants.TYPE_LOCATION;
+        } else if (isLocationOutAttached()){
+            if (attachLocationOutAction.isChecked()){
+                if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
+                else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
+            } else type = Constants.TYPE_LOCATION_OUT;
         }
         return type;
     }
@@ -2131,6 +2681,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (isLocationAttached() && attachLocationAction.isChecked()){
                     phoneNumberLocation.setText(number);
                 }
+                if (isLocationOutAttached() && attachLocationOutAction.isChecked()){
+                    phoneNumberLocationOut.setText(number);
+                }
             }
         }
 
@@ -2198,10 +2751,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (isGPSEnabled || isNetworkEnabled) {
-                if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
-                else if (attachLocationAction.isChecked() && checkNumber())
-                    phoneNumberLocation.setError(getString(R.string.number_error));
-                else addLocation();
+                if (isLocationOutAttached()){
+                    if (attachLocationOutAction.isChecked() && !checkNumber()) addLocationOut();
+                    else if (attachLocationOutAction.isChecked() && checkNumber())
+                        phoneNumberLocationOut.setError(getString(R.string.number_error));
+                    else addLocationOut();
+                } else {
+                    if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
+                    else if (attachLocationAction.isChecked() && checkNumber())
+                        phoneNumberLocation.setError(getString(R.string.number_error));
+                    else addLocation();
+                }
             } else {
                 showSettingsAlert();
             }
@@ -2337,7 +2897,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(task, type, 0, 0, 0, myHour, myMinute, 0, number,
+            long idN = DB.insertReminder(task, type, 0, 0, 0, myHour, myMinute, 0, number,
                     0, 0, 0, 0, 0, uuID, repeat, 0, null, 0, -1, 0, categoryId);
             new WeekDayReceiver().setAlarm(BackupFileEdit.this, idN);
             if (gtx.isLinked() && weekTaskExport.isChecked()){
@@ -2380,10 +2940,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+            long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
@@ -2416,10 +2976,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+            long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
@@ -2467,6 +3027,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return weekPhoneNumber.getText().toString().trim().matches("");
         } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
             return monthDayPhoneNumber.getText().toString().trim().matches("");
+        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
+            return phoneNumberLocationOut.getText().toString().trim().matches("");
         } else return false;
     }
 
@@ -2510,16 +3072,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
+            long idN = DB.insertReminder(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             new MonthDayReceiver().setAlarm(this, id);
             exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, day), idN);
 
             if (gtx.isLinked() && monthDayTaskExport.isChecked()){
                 exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, day), id);
             }
-            DB.updateDateTime(id);
+            DB.updateReminderDateTime(id);
 
         } else {
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
@@ -2547,10 +3109,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat, 0, 0, 0, 0,
+            long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
             if (gtx.isLinked() && dateTaskExport.isChecked()){
                 exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
@@ -2592,11 +3154,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
+            long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
                     null, 0, time, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time), idN);
             if (gtx.isLinked() && timeTaskExport.isChecked()){
                 exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), idN);
@@ -2648,10 +3210,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+            long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
             alarm.setAlarm(BackupFileEdit.this, idN);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
             updatesHelper.updateWidget();
@@ -2683,9 +3245,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long idN = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+            long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                     uuID, null, 0, null, 0, -1, 0, categoryId);
-            DB.updateDateTime(idN);
+            DB.updateReminderDateTime(idN);
             alarm.setAlarm(BackupFileEdit.this, idN);
             DB.close();
             updatesHelper = new UpdatesHelper(BackupFileEdit.this);
@@ -2731,18 +3293,73 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
                 if (cf != null) cf.close();
                 if (attackDelay.isChecked()){
-                    long newIds = DB.insertTask(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+                    long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                             number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(newIds);
+                    DB.updateReminderDateTime(newIds);
                     DB.close();
                     positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
                     updatesHelper = new UpdatesHelper(BackupFileEdit.this);
                     updatesHelper.updateWidget();
                     finish();
                 } else {
-                    long ids = DB.insertTask(task, type, 0, 0, 0, 0, 0, 0, number,
+                    long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
                             0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-                    DB.updateDateTime(ids);
+                    DB.updateReminderDateTime(ids);
+                    DB.close();
+                    startService(new Intent(BackupFileEdit.this, GeolocationService.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    updatesHelper = new UpdatesHelper(BackupFileEdit.this);
+                    updatesHelper.updateWidget();
+                    finish();
+                }
+            } else {
+                Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void addLocationOut() {
+        String task = taskField.getText().toString().trim();
+        if (task.matches("")){
+            taskField.setError(getString(R.string.empty_field_error));
+            return;
+        }
+        String type = getTaskType();
+        String number = null;
+        if (attachLocationOutAction.isChecked()) number = phoneNumberLocationOut.getText().toString().trim();
+        LatLng dest = null;
+        boolean isNull = false;
+        try {
+            dest = destination.getPosition();
+        } catch (NullPointerException e){
+            isNull = true;
+        }
+        if (!isNull) {
+            Double latitude = dest.latitude;
+            Double longitude = dest.longitude;
+            DB = new DataBase(BackupFileEdit.this);
+            DB.open();
+            if (!isUID(uuID)) {
+                Cursor cf = DB.queryCategories();
+                String categoryId = null;
+                if (cf != null && cf.moveToFirst()) {
+                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                }
+                if (cf != null) cf.close();
+                if (attachDelayOut.isChecked()){
+                    long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+                            number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
+                    DB.updateReminderDateTime(newIds);
+                    DB.close();
+                    positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
+                    updatesHelper = new UpdatesHelper(BackupFileEdit.this);
+                    updatesHelper.updateWidget();
+                    finish();
+                } else {
+                    long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
+                            0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
+                    DB.updateReminderDateTime(ids);
                     DB.close();
                     startService(new Intent(BackupFileEdit.this, GeolocationService.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     updatesHelper = new UpdatesHelper(BackupFileEdit.this);
@@ -2769,7 +3386,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (c != null) {
             c.close();
         }
-        Cursor a = DB.queryArchived();
+        Cursor a = DB.getArchivedReminders();
         if (a != null && a.moveToFirst()){
             do {
                 ids.add(a.getString(a.getColumnIndex(Constants.COLUMN_TECH_VAR)));
@@ -2848,6 +3465,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             case R.id.repeatDateInt:
                 repeatDays.setText(String.valueOf(getRepeat(progress)));
                 break;
+            case R.id.repeatMinutesSeek:
+                repeatMinutes.setText(String.valueOf(progress));
+                break;
         }
     }
 
@@ -2918,6 +3538,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
+        if (isLocationOutAttached()){
+            if (attachDelayOut.isChecked()){
+                if (delayLayoutOut.getVisibility() == View.VISIBLE) {
+                    locationOutDateField.setText(dayStr + "/" + monthStr);
+                    locationOutDateYearField.setText(String.valueOf(myYear));
+                }
+            }
+        }
     }
 
     protected Dialog timeDialog() {
@@ -2962,17 +3590,99 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (delayLayout.getVisibility() == View.VISIBLE) locationTimeField.setText(formattedTime);
                 }
             }
+            if (isLocationOutAttached()){
+                if (attachDelayOut.isChecked()){
+                    if (delayLayoutOut.getVisibility() == View.VISIBLE)
+                        locationOutTimeField.setText(formattedTime);
+                }
+            }
         }
     };
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
         if (DB != null) DB.close();
+        super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (isLayersVisible()) {
+            hideOver(layersContainer);
+            return;
+        }
+        if (isLayersOutVisible()) {
+            hideOver(layersContainerOut);
+            return;
+        }
+        finish();
+    }
+
+    private String getAddress(double currentLat, double currentLong){
+        return String.format("%.5f", currentLat) + ", " +
+                String.format("%.5f", currentLong);
+    }
+
+    LocationManager mLocationManager;
+    LocationListener mLocList;
+
+    public class CurrentLocation implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            double currentLat = location.getLatitude();
+            double currentLong = location.getLongitude();
+            String _Location = getAddress(currentLat, currentLong);
+            String text = taskField.getText().toString().trim();
+            if (text == null || text.matches("")) text = _Location;
+            if (isLocationOutAttached()) {
+                currentLocation.setText(_Location);
+                destination = mapOut.addMarker(new MarkerOptions()
+                        .position(new LatLng(currentLat, currentLong))
+                        .title(text)
+                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLong), 13));
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
+        }
     }
 }

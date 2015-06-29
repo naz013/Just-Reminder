@@ -341,7 +341,7 @@ public class ActiveFragment extends Fragment {
     private void toggle(long id) {
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        Cursor c = DB.getTask(id);
+        Cursor c = DB.getReminder(id);
         if (c != null && c.moveToFirst()) {
             int done = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
             if (done == 0) {
@@ -384,17 +384,17 @@ public class ActiveFragment extends Fragment {
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                     DB.setUnDone(id);
-                    DB.updateDateTime(id);
+                    DB.updateReminderDateTime(id);
                     new WeekDayReceiver().setAlarm(getActivity(), id);
                     loaderAdapter(null);
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                     DB.setUnDone(id);
-                    DB.updateDateTime(id);
+                    DB.updateReminderDateTime(id);
                     new MonthDayReceiver().setAlarm(getActivity(), id);
                     loaderAdapter(null);
                 } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     DB.setUnDone(id);
-                    DB.updateDateTime(id);
+                    DB.updateReminderDateTime(id);
                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
                         getActivity().startService(new Intent(getActivity(), GeolocationService.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -413,15 +413,15 @@ public class ActiveFragment extends Fragment {
                         int myHour = calendar1.get(Calendar.HOUR_OF_DAY);
                         int myMinute = calendar1.get(Calendar.MINUTE);
                         int mySeconds = calendar1.get(Calendar.SECOND);
-                        DB.updateStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
-                        DB.updateDateTime(id);
+                        DB.updateReminderStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
+                        DB.updateReminderDateTime(id);
                         new AlarmReceiver().setAlarm(getActivity(), id);
                         loaderAdapter(null);
                     } else {
                         if (new TimeCount(getActivity())
                                 .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
                             DB.setUnDone(id);
-                            DB.updateDateTime(id);
+                            DB.updateReminderDateTime(id);
                             new AlarmReceiver().setAlarm(getActivity(), id);
                             loaderAdapter(null);
                         } else {

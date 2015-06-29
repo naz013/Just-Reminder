@@ -298,18 +298,18 @@ public class FollowReminder extends AppCompatActivity implements
         if (cf != null) cf.close();
         if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                 prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) {
-            id = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
+            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
             exportToCalendar(text.matches("") ? number : text, ReminderUtils.getTime(myDay, myMonth,
                     myYear, myHour, myMinute, 0), id);
         } else {
-            id = DB.insertTask(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
+            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
             exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
         }
-        DB.updateDateTime(id);
+        DB.updateReminderDateTime(id);
         alarm.setAlarm(FollowReminder.this, id);
         DB.close();
         updatesHelper = new UpdatesHelper(FollowReminder.this);
