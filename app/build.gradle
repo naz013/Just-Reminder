@@ -7,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 93
-        versionName '3.2.1'
+        versionCode 94
+        versionName '3.2.2'
         multiDexEnabled true
     }
 
@@ -50,8 +50,8 @@ android {
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
-            versionCode 65
-            versionName '3.2.1'
+            versionCode 66
+            versionName '3.2.2'
         }
     }
 
@@ -111,7 +111,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.1'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.2'
     //compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
     compile project(':fab')
 }

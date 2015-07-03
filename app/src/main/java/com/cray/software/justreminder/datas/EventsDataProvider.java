@@ -18,6 +18,11 @@ import java.util.Date;
 import java.util.Locale;
 
 public class EventsDataProvider {
+    public enum Type {
+        birthday,
+        reminder
+    }
+
     private ArrayList<EventsItem> data;
     private Cursor s, c;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -63,13 +68,23 @@ public class EventsDataProvider {
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
-            if (year == 0){
+            Type type = item.getInn();
+            if (year == 0 || mYear == 0 || type == Type.birthday){
                 if (mDay == day && mMonth == month) res.add(item);
             } else {
                 if (mDay == day && mMonth == month && mYear == year) res.add(item);
             }
         }
         return res;
+    }
+
+    public long getStartTime(){
+        long time = System.currentTimeMillis();
+        for (EventsItem item : data) {
+            long value = item.getDate();
+            if (value < time) time = value;
+        }
+        return time;
     }
 
     public void fillArray(){
@@ -102,7 +117,7 @@ public class EventsDataProvider {
                     calendar1.set(Calendar.HOUR_OF_DAY, hour);
                     calendar1.set(Calendar.MINUTE, minute);
                     data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
-                            bDay, bMonth, bYear));
+                            bDay, bMonth, bYear, Type.birthday));
                 }
             } while (c.moveToNext());
         }
@@ -140,7 +155,8 @@ public class EventsDataProvider {
                     int mYear = calendar1.get(Calendar.YEAR);
                     if (time > 0) {
                         if (number == null) number = "0";
-                        data.add(new EventsItem("reminder", name, number, id, time, mDay, mMonth, mYear));
+                        data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                mMonth, mYear, Type.reminder));
                     }
                     if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
                         int days = 0;
@@ -154,7 +170,8 @@ public class EventsDataProvider {
                             days = days + repCode;
                             if (time > 0) {
                                 if (number == null) number = "0";
-                                data.add(new EventsItem("reminder", name, number, id, time, mDay, mMonth, mYear));
+                                data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                        mMonth, mYear, Type.reminder));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -167,7 +184,8 @@ public class EventsDataProvider {
                     int mYear = calendar1.get(Calendar.YEAR);
                     if (time > 0) {
                         if (number == null) number = "0";
-                        data.add(new EventsItem("reminder", name, number, id, time, mDay, mMonth, mYear));
+                        data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                mMonth, mYear, Type.reminder));
                     }
                     int days = 0;
                     if (isFeature) {
@@ -183,7 +201,8 @@ public class EventsDataProvider {
                                 int sYear = calendar1.get(Calendar.YEAR);
                                 if (time > 0) {
                                     if (number == null) number = "0";
-                                    data.add(new EventsItem("reminder", name, number, id, time, sDay, sMonth, sYear));
+                                    data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                            mMonth, mYear, Type.reminder));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
@@ -198,7 +217,8 @@ public class EventsDataProvider {
                         int mYear = calendar1.get(Calendar.YEAR);
                         if (time > 0) {
                             if (number == null) number = "0";
-                            data.add(new EventsItem("reminder", name, number, id, time, mDay, mMonth, mYear));
+                            data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                    mMonth, mYear, Type.reminder));
                         }
                     }
                     int days = 1;
@@ -212,7 +232,8 @@ public class EventsDataProvider {
                             int mYear = calendar1.get(Calendar.YEAR);
                             if (time > 0) {
                                 if (number == null) number = "0";
-                                data.add(new EventsItem("reminder", name, number, id, time, mDay, mMonth, mYear));
+                                data.add(new EventsItem("reminder", name, number, id, time, mDay,
+                                        mMonth, mYear, Type.reminder));
                             }
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
@@ -225,9 +246,10 @@ public class EventsDataProvider {
         private String type, name, number, time;
         private long id, date;
         private int day, month, year;
+        private Type inn;
 
         public EventsItem(String type, String name, String number, long id, long date, int day,
-                          int month, int year){
+                          int month, int year, Type inn){
             this.type = type;
             this.name = name;
             this.id = id;
@@ -236,6 +258,15 @@ public class EventsDataProvider {
             this.day = day;
             this.month = month;
             this.year = year;
+            this.inn = inn;
+        }
+
+        public Type getInn(){
+            return inn;
+        }
+
+        public void setInn(Type inn){
+            this.inn = inn;
         }
 
         public int getYear(){

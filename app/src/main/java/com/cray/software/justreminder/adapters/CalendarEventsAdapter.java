@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.CalendarData;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -35,7 +34,6 @@ public class CalendarEventsAdapter extends BaseAdapter{
     @SuppressWarnings("deprecation")
     public CalendarEventsAdapter(Context context, ArrayList<EventsDataProvider.EventsItem> datas) {
         this.mContext = context;
-        this.mDatas = new ArrayList<>();
         this.mDatas = datas;
         inflater = LayoutInflater.from(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -81,11 +79,13 @@ public class CalendarEventsAdapter extends BaseAdapter{
         eventNumber.setTypeface(typeface);
         boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
+        EventsDataProvider.EventsItem item = mDatas.get(position);
+
         if (type.matches("birthday")) {
             eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorBirthdayCalendar()));
             eventType.setText(mContext.getString(R.string.birthday_text));
-            String title = mDatas.get(position).getName();
-            String phone = mDatas.get(position).getNumber();
+            String title = item.getName();
+            String phone = item.getNumber();
             if (phone == null || phone.matches("")) phone = contacts.get_Number(title, mContext);
             if (phone != null && !phone.matches("")){
                 eventNumber.setText(phone);
@@ -95,19 +95,20 @@ public class CalendarEventsAdapter extends BaseAdapter{
             eventText.setText(title);
 
             Calendar cl = Calendar.getInstance();
-            cl.setTimeInMillis(mDatas.get(position).getDate());
+            cl.setTimeInMillis(item.getDate());
             Date time = cl.getTime();
-            eventDate.setText(Utils.getDateTime(time, is24));
+            eventDate.setText(Utils.getDateTime(time, is24) + "\n" + Utils.getAge(item.getYear()) +
+                    " " + mContext.getString(R.string.years_string));
         } else {
             eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorReminderCalendar()));
             eventType.setText(mContext.getString(R.string.reminder_type));
 
-            String number = mDatas.get(position).getNumber();
+            String number = item.getNumber();
 
             Calendar cl = Calendar.getInstance();
-            cl.setTimeInMillis(mDatas.get(position).getDate());
+            cl.setTimeInMillis(item.getDate());
 
-            eventText.setText(mDatas.get(position).getName());
+            eventText.setText(item.getName());
 
             if (!number.matches("0")) {
                 String contactName = contacts.getContactNameFromNumber(number, mContext);

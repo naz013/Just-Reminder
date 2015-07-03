@@ -30,11 +30,9 @@ import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class EventsFragment extends Fragment {
@@ -120,7 +118,8 @@ public class EventsFragment extends Fragment {
 
         if (dateMills != 0) cal.setTimeInMillis(dateMills);
         showEvents(cal.getTime());
-        updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1));
+        updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
+                "/" + cal.get(Calendar.YEAR));
         sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
         return rootView;
     }
@@ -196,7 +195,7 @@ public class EventsFragment extends Fragment {
                 int day = pagerData.get(i).getDay();
                 int month = pagerData.get(i).getMonth();
                 int year = pagerData.get(i).getYear();
-                updateMenuTitles(day + "/" + (month + 1));
+                updateMenuTitles(day + "/" + (month + 1) + "/" + year);
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.set(Calendar.DAY_OF_MONTH, day);
                 calendar1.set(Calendar.MONTH, month);
@@ -271,11 +270,14 @@ public class EventsFragment extends Fragment {
             provider.setBirthdays(c);
             provider.setTime(hour, minute);
             if (isRemindersEnabled) {
-                Cursor s = db.queryGroup();
+                Cursor s = db.getActiveReminders();
                 provider.setReminders(s);
                 provider.setFeature(isFeature);
             }
             provider.fillArray();
+
+            //long start = provider.getStartTime();
+            //calendar.setTimeInMillis(start);
 
             int position = 0;
             do {

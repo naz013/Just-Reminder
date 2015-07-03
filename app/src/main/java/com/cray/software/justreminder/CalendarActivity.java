@@ -278,7 +278,8 @@ public class CalendarActivity extends AppCompatActivity {
             public void onPageSelected(int i) {
                 int day = pagerData.get(i).getDay();
                 int month = pagerData.get(i).getMonth();
-                currentEvent.setText(day + "/" + (month + 1));
+                int year = pagerData.get(i).getYear();
+                currentEvent.setText(day + "/" + (month + 1) + "/" + year);
                 ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
                 if (data.size() > 0) dateMills = data.get(0).getDate();
             }
@@ -290,6 +291,14 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         pager.setCurrentItem(targetPosition);
+
+        int i = pager.getCurrentItem();
+        int day = pagerData.get(i).getDay();
+        int month = pagerData.get(i).getMonth();
+        int year = pagerData.get(i).getYear();
+        currentEvent.setText(day + "/" + (month + 1) + "/" + year);
+        ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
+        if (data.size() > 0) dateMills = data.get(0).getDate();
 
         currentEvent.setClickable(false);
         title.setText(getString(R.string.birthdays_dialog_title));

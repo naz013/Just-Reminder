@@ -204,6 +204,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int realMonth = calendar.get(Calendar.MONTH);
+        int realYear = calendar.get(Calendar.YEAR);
 
         rView.setTextViewText(R.id.textView, String.valueOf(selDay));
         if (selMonth == prefsMonth + 1) rView.setTextColor(R.id.textView, itemTextColor);
@@ -227,7 +228,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             rView.setInt(R.id.reminderMark, "setBackgroundColor",
                                     context.getResources().getColor(cs.colorReminderCalendar()));
                         }
-                    }
+                    } else rView.setInt(R.id.reminderMark, "setBackgroundColor", Color.TRANSPARENT);
                     if (item.isHasBirthdays()){
                         if (birthdayM != 0){
                             rView.setInt(R.id.birthdayMark, "setBackgroundResource", birthdayM);
@@ -235,13 +236,14 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             rView.setInt(R.id.birthdayMark, "setBackgroundColor",
                                     context.getResources().getColor(cs.colorBirthdayCalendar()));
                         }
-                    }
+                    } else rView.setInt(R.id.birthdayMark, "setBackgroundColor", Color.TRANSPARENT);
                     break;
                 }
             }
         }
 
-        if (mDay == selDay && mMonth == selMonth && mYear == selYear && mMonth == realMonth + 1){
+        if (mDay == selDay && mMonth == selMonth && mYear == realYear && mMonth == realMonth + 1
+                && mYear == selYear){
             if (currentM != 0){
                 rView.setInt(R.id.currentMark, "setBackgroundResource", currentM);
             } else {

@@ -650,4 +650,6 @@
     <string name="string_selected_radius">Радіус %s</string>
     <string name="string_current_location">Поточне місце</string>
     <string name="string_timer_warming">Ви не вказали час!</string>
+    <string name="string_contact_group">Фільтр контактів</string>
+    <string name="contact_group_explanation">Оберіть контакти для того, щоб увімкнути наступні нагадування для них.</string>
 </resources>

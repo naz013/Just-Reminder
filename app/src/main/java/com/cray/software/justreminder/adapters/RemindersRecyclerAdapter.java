@@ -1,9 +1,9 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,21 +16,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.services.DelayReceiver;
+import com.cray.software.justreminder.services.MonthDayReceiver;
+import com.cray.software.justreminder.services.PositionDelayReceiver;
+import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.Utils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.RecyclerViewAdapterUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder>
@@ -40,20 +45,18 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     DataBase DB;
     TimeCount mCount;
     Contacts mContacts;
-    Interval mInterval;
     SharedPrefs prefs;
     ColorSetter cs;
-    ArrayList<ReminderItem> arrayList;
+    ReminderDataProvider provider;
     Typeface typeface;
     private EventListener mEventListener;
     private View.OnClickListener mSwipeableViewContainerOnClickListener;
 
-    public RemindersRecyclerAdapter(Context context, ArrayList<ReminderItem> arrayList) {
+    public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
-        this.arrayList = arrayList;
+        this.provider = provider;
         DB = new DataBase(context);
         mContacts = new Contacts(context);
-        mInterval = new Interval(context);
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
@@ -76,10 +79,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     }
 
     public interface EventListener {
-        void onItemRemoved(int position);
-
-        void onItemPinned(int position);
-
         void onItemClicked(int position);
 
         void onItemLongClicked(int position);
@@ -154,9 +153,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
         DB.open();
 
-        ReminderItem item = arrayList.get(position);
+        ReminderDataProvider.ReminderItem item = provider.getData().get(position);
         String title = item.getTitle();
-        String categoryId = item.getCategory();
         String type = item.getType();
         String number = item.getNumber();
         long due = item.getDue();
@@ -166,12 +164,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         String repeat = item.getRepeat();
         int archived = item.getArchived();
 
-        Cursor cf = DB.getCategory(categoryId);
-        int categoryColor = 0;
-        if (cf != null && cf.moveToFirst()) {
-            categoryColor = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
-        }
-        if (cf != null) cf.close();
+        int categoryColor = item.getCatColor();
 
         holder.reminder_contact_name.setTypeface(typeface);
         holder.taskTitle.setTypeface(typeface);
@@ -374,12 +367,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public long getItemId(int position) {
-        return arrayList.get(position).getId();
+        return provider.getData().get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return arrayList.size();
+        return provider.getData().size();
     }
 
     @Override
@@ -413,7 +406,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         switch (result) {
             // swipe right
             case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                if (arrayList.get(position).isPinnedToSwipeLeft()) {
+                if (provider.getData().get(position).isPinnedToSwipeLeft()) {
                     // pinned --- back to default position
                     return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
                 } else {
@@ -430,27 +423,35 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
     }
 
+    private void editItem(int position){
+        Intent intentId = new Intent(mContext, ReminderManager.class);
+        long id = getItemId(position);
+        if (id != 0) {
+            intentId.putExtra(Constants.EDIT_ID, id);
+            new AlarmReceiver().cancelAlarm(mContext, id);
+            new WeekDayReceiver().cancelAlarm(mContext, id);
+            new MonthDayReceiver().cancelAlarm(mContext, id);
+            new DelayReceiver().cancelAlarm(mContext, id);
+            new PositionDelayReceiver().cancelDelay(mContext, id);
+            mContext.startActivity(intentId);
+            new DisableAsync(mContext).execute();
+        }
+    }
+
     @Override
     public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
         Log.d(Constants.LOG_TAG, "onPerformAfterSwipeReaction(position = " + position +
                 ", result = " + result + ", reaction = " + reaction + ")");
 
-        ReminderItem item = arrayList.get(position);
+        ReminderDataProvider.ReminderItem item = provider.getData().get(position);
 
         if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-            //mProvider.removeItem(position);
+            provider.removeItem(position);
             notifyItemRemoved(position);
-
-            if (mEventListener != null) {
-                mEventListener.onItemRemoved(position);
-            }
         } else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
             item.setPinnedToSwipeLeft(true);
             notifyItemChanged(position);
-
-            if (mEventListener != null) {
-                mEventListener.onItemPinned(position);
-            }
+            editItem(position);
         } else {
             item.setPinnedToSwipeLeft(false);
         }

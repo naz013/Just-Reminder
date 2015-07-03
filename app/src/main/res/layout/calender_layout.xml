@@ -31,10 +31,11 @@
                 android:src="@drawable/ic_mic_white_24dp"/>
 
             <Button
-                android:layout_width="?attr/actionBarSize"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/currentEvent"
-                android:textSize="18sp"
+                android:textSize="16sp"
+                android:text="30/6/2015"
                 android:textStyle="bold"
                 android:layout_toLeftOf="@+id/voiceButton"
                 android:background="?android:attr/selectableItemBackground"
@@ -48,6 +49,7 @@
                 android:text="@string/calendar_fragment"
                 android:textColor="@color/colorWhite"
                 android:textSize="20sp"
+                android:layout_toLeftOf="@+id/currentEvent"
                 android:gravity="center|left"/>
 
         </RelativeLayout>

@@ -59,14 +59,12 @@ public class WidgetDataProvider {
     public boolean hasReminder(int day, int month, int year){
         boolean res = false;
         for (Item item : data){
+            if (res) break;
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
             Type type = item.getType();
-            if (mDay == day && mMonth == month && mYear == year && type == Type.REMINDER){
-                res = true;
-                break;
-            }
+            res = mDay == day && mMonth == month && mYear == year && type == Type.REMINDER;
         }
         return res;
     }
@@ -86,6 +84,7 @@ public class WidgetDataProvider {
     }
 
     public void fillArray(){
+        data.clear();
         loadBirthdays();
         loadReminders();
     }
@@ -128,7 +127,7 @@ public class WidgetDataProvider {
                             mDay = calendar1.get(Calendar.DAY_OF_MONTH);
                             mMonth = calendar1.get(Calendar.MONTH);
                             mYear = calendar1.get(Calendar.YEAR);
-                            days = days + repCode;
+                            days += repCode;
                             if (time > 0) {
                                 data.add(new Item(mDay, mMonth, mYear, Type.REMINDER));
                             }
@@ -152,7 +151,7 @@ public class WidgetDataProvider {
                                     AlarmManager.INTERVAL_DAY);
                             time = calendar1.getTimeInMillis();
                             int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                            days = days + 1;
+                            days += 1;
                             if (list.get(weekDay - 1) == 1) {
                                 int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
                                 int sMonth = calendar1.get(Calendar.MONTH);
@@ -179,7 +178,7 @@ public class WidgetDataProvider {
                     if (isFeature){
                         do {
                             time = TimeCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis(), days);
-                            days = days + 1;
+                            days += 1;
                             calendar1.setTimeInMillis(time);
                             int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
                             int sMonth = calendar1.get(Calendar.MONTH);

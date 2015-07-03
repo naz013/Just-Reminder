@@ -3233,7 +3233,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             public void run() {
                 Looper.prepare();
 
-                Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+                Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
+                        null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
                 final ArrayList<String> contacts = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));

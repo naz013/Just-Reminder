@@ -1061,7 +1061,10 @@ public class ScreenManager extends AppCompatActivity
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             if (eventsDate != null) calendar.setTime(eventsDate);
-            menu.findItem(R.id.action_day).setTitle(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH);
+            int year = calendar.get(Calendar.YEAR);
+            menu.findItem(R.id.action_day).setTitle(day + "/" + (month + 1) + "/" + year);
         }
         toolbar.setTitle(mTitle);
         mainMenu.collapse();
@@ -1131,7 +1134,7 @@ public class ScreenManager extends AppCompatActivity
         boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
         ArrayList<Date> dates = new ArrayList<>();
         dates.clear();
-        Cursor c = db.queryGroup();
+        Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()){
             do {
                 int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -1158,8 +1161,8 @@ public class ScreenManager extends AppCompatActivity
                         calendar.setTimeInMillis(time);
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
-                        Date bdDate = getDate(0, month, day);
-                        dates.add(bdDate);
+                        int year = calendar.get(Calendar.YEAR);
+                        dates.add(getDate(year, month, day));
                         int days = 0;
                         if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
                             do {
@@ -1168,8 +1171,8 @@ public class ScreenManager extends AppCompatActivity
                                 days = days + repCode;
                                 day = calendar.get(Calendar.DAY_OF_MONTH);
                                 month = calendar.get(Calendar.MONTH);
-                                bdDate = getDate(0, month, day);
-                                dates.add(bdDate);
+                                year = calendar.get(Calendar.YEAR);
+                                dates.add(getDate(year, month, day));
                             } while (days < Configs.MAX_DAYS_COUNT);
                         }
                     }
@@ -1180,8 +1183,8 @@ public class ScreenManager extends AppCompatActivity
                         calendar.setTimeInMillis(time);
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
-                        Date bdDate = getDate(0, month, day);
-                        dates.add(bdDate);
+                        int year = calendar.get(Calendar.YEAR);
+                        dates.add(getDate(year, month, day));
                     }
                     int days = 0;
                     if (isFeature){
@@ -1193,8 +1196,8 @@ public class ScreenManager extends AppCompatActivity
                             if (list.get(weekDay - 1) == 1){
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
-                                Date bdDate = getDate(0, month, day);
-                                dates.add(bdDate);
+                                int year = calendar.get(Calendar.YEAR);
+                                dates.add(getDate(year, month, day));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -1205,8 +1208,8 @@ public class ScreenManager extends AppCompatActivity
                         calendar.setTimeInMillis(time);
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
-                        Date bdDate = getDate(0, month, day);
-                        dates.add(bdDate);
+                        int year = calendar.get(Calendar.YEAR);
+                        dates.add(getDate(year, month, day));
                     }
                     int days = 1;
                     if (isFeature){
@@ -1216,8 +1219,8 @@ public class ScreenManager extends AppCompatActivity
                             calendar.setTimeInMillis(time);
                             int day = calendar.get(Calendar.DAY_OF_MONTH);
                             int month = calendar.get(Calendar.MONTH);
-                            Date bdDate = getDate(0, month, day);
-                            dates.add(bdDate);
+                            int year = calendar.get(Calendar.YEAR);
+                            dates.add(getDate(year, month, day));
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
@@ -1252,6 +1255,8 @@ public class ScreenManager extends AppCompatActivity
                     e.printStackTrace();
                 }
                 Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                int year = calendar.get(Calendar.YEAR);
                 if (date != null) {
                     try {
                         calendar.setTime(date);
@@ -1260,10 +1265,10 @@ public class ScreenManager extends AppCompatActivity
                     }
                     int day = calendar.get(Calendar.DAY_OF_MONTH);
                     int month = calendar.get(Calendar.MONTH);
-                    Date bdDate = getDate(0, month, day);
-                    Date prevDate = getDate(0 - 1, month, day);
-                    Date nextDate = getDate(1, month, day);
-                    Date nextTwoDate = getDate(2, month, day);
+                    Date bdDate = getDate(year, month, day);
+                    Date prevDate = getDate(year - 1, month, day);
+                    Date nextDate = getDate(year + 1, month, day);
+                    Date nextTwoDate = getDate(year + 2, month, day);
                     dates.add(bdDate);
                     dates.add(prevDate);
                     dates.add(nextDate);
@@ -1283,12 +1288,9 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    public static Date getDate(int index, int month, int day) {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-
+    public static Date getDate(int year, int month, int day) {
         Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, year + index);
+        cal1.set(Calendar.YEAR, year);
         cal1.set(Calendar.MONTH, month);
         cal1.set(Calendar.DAY_OF_MONTH, day);
         cal1.set(Calendar.HOUR_OF_DAY, 0);

@@ -34,11 +34,14 @@ public class Contacts {
         return bmp;
     }
 
-    public int getContactIDFromNumber(String contactNumber,Context context) {
+    public static int getContactIDFromNumber(String contactNumber,Context context) {
         int phoneContactID = 0;
         try {
             String contact = Uri.encode(contactNumber);
-            Cursor contactLookupCursor = context.getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contact),new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID}, null, null, null);
+            Cursor contactLookupCursor = context.getContentResolver()
+                    .query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contact),
+                            new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID},
+                            null, null, null);
             while(contactLookupCursor.moveToNext()){
                 phoneContactID = contactLookupCursor.getInt(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
             }
@@ -49,7 +52,7 @@ public class Contacts {
         return phoneContactID;
     }
 
-    public String getContactNameFromNumber(String contactNumber,Context context) {
+    public static String getContactNameFromNumber(String contactNumber, Context context) {
         String phoneContactID = null;
         if (contactNumber != null) {
             try {
@@ -59,6 +62,80 @@ public class Contacts {
                 phoneContactID = contactLookupCursor.getString(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
             contactLookupCursor.close();
+            } catch (IllegalArgumentException iae) {
+                return phoneContactID;
+            }
+        }
+        return phoneContactID;
+    }
+
+    public static long getGroupIdFor(Long contactId, Context context){
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String where = String.format(
+                "%s = ? AND %s = ?",
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID);
+
+        String[] whereParams = new String[] {
+                ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE,
+                Long.toString(contactId),
+        };
+
+        String[] selectColumns = new String[]{
+                ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID,
+        };
+
+
+        Cursor groupIdCursor = context.getContentResolver().query(
+                uri,
+                selectColumns,
+                where,
+                whereParams,
+                null);
+        try{
+            if (groupIdCursor.moveToFirst()) {
+                return groupIdCursor.getLong(0);
+            }
+            return Long.MIN_VALUE; // Has no group ...
+        } finally{
+            groupIdCursor.close();
+        }
+    }
+
+    public static String getGroupTitle(Context context, long groupId){
+        Uri uri = ContactsContract.Data.CONTENT_URI;
+        String where = String.format("%s = ?", ContactsContract.Groups._ID);
+        String[] whereParams = new String[]{Long.toString(groupId)};
+        String[] selectColumns = {ContactsContract.Groups.TITLE};
+        Cursor c = context.getContentResolver().query(
+                uri,
+                selectColumns,
+                where,
+                whereParams,
+                null);
+
+        try{
+            if (c.moveToFirst()){
+                return c.getString(0);
+            }
+            return null;
+        }finally{
+            c.close();
+        }
+    }
+
+    public static String getContactGroupIdFromNumber(Context context, String contactNumber) {
+        String phoneContactID = null;
+        if (contactNumber != null) {
+            try {
+                Cursor cursor = context.getContentResolver().query(
+                        ContactsContract.Data.CONTENT_URI, new String[] {ContactsContract.CommonDataKinds.Phone.IN_VISIBLE_GROUP},
+                        ContactsContract.CommonDataKinds.Phone.NUMBER + "='" + contactNumber + "'", null, null);
+                while (cursor.moveToNext()) {
+                    phoneContactID = cursor.getString(cursor
+                            .getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.IN_VISIBLE_GROUP));
+                }
+                cursor.close();
             } catch (IllegalArgumentException iae) {
                 return phoneContactID;
             }

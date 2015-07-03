@@ -12,7 +12,7 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="75dp">
+        android:layout_height="90dp">
 
         <TextView
             android:layout_width="10dp"
@@ -43,7 +43,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Type"
-                    android:singleLine="true"
                     android:id="@+id/eventType"/>
 
                 <TextView
@@ -51,8 +50,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Date"
-                    android:singleLine="true"
+                    android:lines="2"
+                    android:gravity="center"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:paddingBottom="5dp"
                     android:id="@+id/eventDate"/>
 
                 </LinearLayout>
@@ -61,7 +63,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -69,7 +70,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Text"
-                    android:singleLine="true"
                     android:id="@+id/eventText"/>
 
                 <TextView
@@ -77,8 +77,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Number"
-                    android:singleLine="true"
+                    android:lines="2"
+                    android:gravity="center"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
                     android:id="@+id/eventNumber"/>
 
             </LinearLayout>

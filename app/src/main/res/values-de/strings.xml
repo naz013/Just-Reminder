@@ -650,4 +650,6 @@
     <string name="string_map_point">Karte Punkt</string>
     <string name="string_selected_radius">Radius %s</string>
     <string name="string_timer_warming">Sie haben keine Zeit zu wählen!</string>
+    <string name="string_contact_group">Kontakte Filter</string>
+    <string name="contact_group_explanation">Wählen Sie Kontakte aus, um Folge Erinnerung für sie zu aktivieren.</string>
 </resources>

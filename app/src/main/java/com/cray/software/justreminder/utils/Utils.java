@@ -9,6 +9,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -89,6 +90,13 @@ public class Utils {
     public static String getTime(Date date, boolean is24){
         if (is24) return time24.format(date);
         else return time12.format(date);
+    }
+
+    public static int getAge(int year){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int mYear = calendar.get(Calendar.YEAR);
+        return mYear - year;
     }
 
     public static String generateAfterString(long time){

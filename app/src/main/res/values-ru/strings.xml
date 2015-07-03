@@ -650,4 +650,6 @@
     <string name="string_map_point">Место на карте</string>
     <string name="string_selected_radius">Радиус %s</string>
     <string name="string_timer_warming">Вы не выбрали время!</string>
+    <string name="string_contact_group">Фильтр контактов</string>
+    <string name="contact_group_explanation">Выберите контакты для того, чтобы включить последующие напоминания для них.</string>
 </resources>

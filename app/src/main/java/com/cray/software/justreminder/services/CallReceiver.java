@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.FollowReminder;
 import com.cray.software.justreminder.dialogs.QuickSMS;
+import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 
@@ -33,8 +34,6 @@ public class CallReceiver extends BroadcastReceiver {
         @Override
         public void onCallStateChanged(int state, String incomingNumber){
             SharedPrefs prefs = new SharedPrefs(mContext);
-            MissedCallAlarm alarm = new MissedCallAlarm();
-
             if(incomingNumber != null && incomingNumber.length() > 0) incoming_nr = incomingNumber;
 
             switch(state){
@@ -50,11 +49,16 @@ public class CallReceiver extends BroadcastReceiver {
                         prev_state = state;
                         //Answered Call which is ended
                         //Start quick contact reminder window
-                        if (incoming_nr != null && prefs.loadBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER)) {
-                            mContext.startActivity(new Intent(mContext, FollowReminder.class)
-                                    .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
-                                    .putExtra(Constants.SELECTED_RADIUS, startCallTime)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK));
+                        boolean isFollow = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER);
+                        if (incoming_nr != null && isFollow ) {
+                            String contact = Contacts.getContactNameFromNumber(incoming_nr, mContext);
+                            //boolean isEnabled = prefs.loadBoolean(contact);
+                            //if (isEnabled) {
+                                mContext.startActivity(new Intent(mContext, FollowReminder.class)
+                                        .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
+                                        .putExtra(Constants.SELECTED_RADIUS, startCallTime)
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                            //}
                             break;
                         }
                     }
@@ -75,6 +79,8 @@ public class CallReceiver extends BroadcastReceiver {
                                 if (c != null){
                                     size = c.getCount();
                                 }
+
+                                MissedCallAlarm alarm = new MissedCallAlarm();
 
                                 if (size > 0) {
                                     c.moveToFirst();

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.TemplatesList;
+import com.cray.software.justreminder.dialogs.utils.ContactGroups;
 import com.cray.software.justreminder.dialogs.utils.RepeatInterval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -27,7 +28,7 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
     LinearLayout missedTime;
     RelativeLayout missed, quickSMS, followReminder;
     CheckBox missedCheck, quickSMSCheck, followReminderCheck;
-    TextView textMissed2, textMissed3, templates;
+    TextView textMissed2, textMissed3, templates, contactGroups;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +55,9 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         templates = (TextView) rootView.findViewById(R.id.templates);
         templates.setOnClickListener(this);
 
+        contactGroups = (TextView) rootView.findViewById(R.id.contactGroups);
+        contactGroups.setOnClickListener(this);
+
         quickSMS = (RelativeLayout) rootView.findViewById(R.id.quickSMS);
         quickSMS.setOnClickListener(this);
 
@@ -68,6 +72,7 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
 
         checkMissedEnabling();
         checkQuickEnabling();
+        checkFollow();
 
         return rootView;
     }
@@ -104,6 +109,14 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    private void checkFollow(){
+        if (followReminderCheck.isChecked()){
+            contactGroups.setEnabled(true);
+        } else {
+            contactGroups.setEnabled(false);
+        }
+    }
+
     private void quickChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (quickSMSCheck.isChecked()){
@@ -124,7 +137,8 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         } else {
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER, true);
             followReminderCheck.setChecked(true);
-        };
+        }
+        checkFollow();
     }
 
     @Override
@@ -163,6 +177,11 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
                 break;
             case R.id.followReminder:
                 followChange();
+                break;
+            case R.id.contactGroups:
+                getActivity().getApplicationContext()
+                        .startActivity(new Intent(getActivity().getApplicationContext(), ContactGroups.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
         }
     }
