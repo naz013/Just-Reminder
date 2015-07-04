@@ -1190,7 +1190,7 @@ public class SyncHelper {
                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays);
     }
 
-    public String generateID(){
+    public static String generateID(){
         return UUID.randomUUID().toString();
     }
 

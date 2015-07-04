@@ -550,9 +550,26 @@ public class DataBase {
 
     public Cursor getActiveReminders() throws SQLException {
         openGuard();
+        SharedPrefs prefs = new SharedPrefs(mContext);
+        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER);
+        String order;
+        if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
+            order = Constants.COLUMN_FEATURE_TIME + " ASC";
+        } else if (orderPrefs.matches(Constants.ORDER_DATE_Z_A)){
+            order = Constants.COLUMN_FEATURE_TIME + " DESC";
+        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z)){
+            order = Constants.COLUMN_IS_DONE + " ASC, " +
+                    Constants.COLUMN_FEATURE_TIME + " ASC";
+        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A)){
+            order = Constants.COLUMN_IS_DONE + " ASC, " +
+                    Constants.COLUMN_FEATURE_TIME + " DESC";
+        } else {
+            order = Constants.COLUMN_IS_DONE + " ASC, " +
+                    Constants.COLUMN_FEATURE_TIME + " ASC";
+        }
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_IS_DONE  + "='" + 0 + "'"
                 + " AND "+ Constants.COLUMN_ARCHIVED + "='"
-                + 0 + "'", null, null, null, null);
+                + 0 + "'", null, null, null, order);
     }
 
     public Cursor getReminder(long rowId) throws SQLException {

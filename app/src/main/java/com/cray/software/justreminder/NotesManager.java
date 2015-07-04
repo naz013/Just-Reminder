@@ -21,12 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Transformation;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,7 +42,9 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -131,11 +127,11 @@ public class NotesManager extends AppCompatActivity {
                                 if (!isReminderAttached()) {
                                     setDateTime();
                                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        expand(remindContainer);
+                                        ViewUtils.expand(remindContainer);
                                     } else remindContainer.setVisibility(View.VISIBLE);
                                 } else {
                                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        collapse(remindContainer);
+                                        ViewUtils.collapse(remindContainer);
                                     } else remindContainer.setVisibility(View.GONE);
                                 }
                                 return true;
@@ -172,10 +168,10 @@ public class NotesManager extends AppCompatActivity {
         color = cSetter.getNoteColor(8);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            fadeInAnimation(layoutContainer);
+            ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
         } else layoutContainer.setVisibility(View.VISIBLE);
 
-        Typeface typeface = Utils.getLightTypeface(this);
+        Typeface typeface = AssetsUtil.getLightTypeface(this);
 
         remindDate = (TextView) findViewById(R.id.remindDate);
         remindDate.setTypeface(typeface);
@@ -236,7 +232,7 @@ public class NotesManager extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                    collapse(remindContainer);
+                    ViewUtils.collapse(remindContainer);
                 } else remindContainer.setVisibility(View.GONE);
             }
         });
@@ -247,7 +243,7 @@ public class NotesManager extends AppCompatActivity {
             public void onClick(View v) {
                 if (isImageAttached()) {
                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        collapse(imageContainer);
+                        ViewUtils.collapse(imageContainer);
                     } else imageContainer.setVisibility(View.GONE);
                     image = null;
                     img = null;
@@ -277,7 +273,7 @@ public class NotesManager extends AppCompatActivity {
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                hide(mFab);
+                ViewUtils.hide(NotesManager.this, mFab, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
                 return false;
             }
         });
@@ -313,7 +309,7 @@ public class NotesManager extends AppCompatActivity {
                             imageByte.length);
                     noteImage.setImageBitmap(img);
                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        expand(imageContainer);
+                        ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
             }
@@ -363,7 +359,7 @@ public class NotesManager extends AppCompatActivity {
                             imageByte.length);
                     noteImage.setImageBitmap(img);
                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        expand(imageContainer);
+                        ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -383,7 +379,7 @@ public class NotesManager extends AppCompatActivity {
                             imageByte.length);
                     noteImage.setImageBitmap(img);
                     if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        expand(imageContainer);
+                        ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
             }
@@ -402,26 +398,6 @@ public class NotesManager extends AppCompatActivity {
             mFab.setColorNormal(cSetter.getNoteColor(color));
         }
         mFab.setColorPressed(cSetter.getNoteDarkColor(color));
-    }
-
-    public void show(final View v) {
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom);
-            v.startAnimation(slide);
-            v.setVisibility(View.VISIBLE);
-        } else {
-            v.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void hide(final View v) {
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
-            v.startAnimation(slide);
-            v.setVisibility(View.GONE);
-        } else {
-            v.setVisibility(View.GONE);
-        }
     }
 
     private void shareNote() {
@@ -483,7 +459,7 @@ public class NotesManager extends AppCompatActivity {
 
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
 
-        remindTime.setText(Utils.getTime(calendar.getTime(),
+        remindTime.setText(TimeUtil.getTime(calendar.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
     }
 
@@ -600,15 +576,6 @@ public class NotesManager extends AppCompatActivity {
         new Notifier(NotesManager.this).discardStatusNotification(id);
     }
 
-    private void fadeInAnimation(View view){
-        Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setInterpolator(new DecelerateInterpolator());
-        fadeIn.setStartOffset(400);
-        fadeIn.setDuration(400);
-        view.setAnimation(fadeIn);
-        view.setVisibility(View.VISIBLE);
-    }
-
     private void setImages(){
         sPrefs = new SharedPrefs(NotesManager.this);
         if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
@@ -675,7 +642,7 @@ public class NotesManager extends AppCompatActivity {
                         noteImage.setImageBitmap(bitmapImage);
                         if (!isImageAttached()) {
                             if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                expand(imageContainer);
+                                ViewUtils.expand(imageContainer);
                             } else imageContainer.setVisibility(View.VISIBLE);
                         }
                     }
@@ -690,7 +657,7 @@ public class NotesManager extends AppCompatActivity {
                         noteImage.setImageBitmap(cameraImage);
                         if (!isImageAttached()) {
                             if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                expand(imageContainer);
+                                ViewUtils.expand(imageContainer);
                             } else imageContainer.setVisibility(View.VISIBLE);
                         }
                     }
@@ -777,7 +744,7 @@ public class NotesManager extends AppCompatActivity {
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            remindTime.setText(Utils.getTime(c.getTime(),
+            remindTime.setText(TimeUtil.getTime(c.getTime(),
                     new SharedPrefs(NotesManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     };
@@ -791,63 +758,10 @@ public class NotesManager extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (mFab.getVisibility() == View.GONE){
-            show(mFab);
+            ViewUtils.show(NotesManager.this, mFab, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
             return;
         }
 
         finish();
-    }
-
-    public static void expand(final View v) {
-        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                } else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
     }
 }

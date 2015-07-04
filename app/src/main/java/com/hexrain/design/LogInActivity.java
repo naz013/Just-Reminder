@@ -59,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class LogInActivity extends Activity {
@@ -612,11 +613,11 @@ public class LogInActivity extends Activity {
 
         Context mContext;
         public final SimpleDateFormat[] birthdayFormats = {
-                new SimpleDateFormat("yyyy-MM-dd"),
-                new SimpleDateFormat("yyyyMMdd"),
-                new SimpleDateFormat("yyyy.MM.dd"),
-                new SimpleDateFormat("yy.MM.dd"),
-                new SimpleDateFormat("yy/MM/dd"),
+                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+                new SimpleDateFormat("yyyyMMdd", Locale.getDefault()),
+                new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()),
+                new SimpleDateFormat("yy.MM.dd", Locale.getDefault()),
+                new SimpleDateFormat("yy/MM/dd", Locale.getDefault()),
         };
 
         public ImportBirthdays (Context context){
@@ -658,10 +659,9 @@ public class LogInActivity extends Activity {
                         " and " + ContactsContract.CommonDataKinds.Event.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE +
                         "' and "                  + ContactsContract.Data.CONTACT_ID + " = " + contactId;
 
-                String[] selectionArgs = null;
                 String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
                 Contacts cc = new Contacts(mContext);
-                Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, selectionArgs, sortOrder);
+                Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, null, sortOrder);
                 if (birthdayCur.getCount() > 0) {
                     while (birthdayCur.moveToNext()) {
                         // fix error;

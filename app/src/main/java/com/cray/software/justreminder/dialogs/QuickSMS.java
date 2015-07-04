@@ -26,7 +26,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.AssetsUtil;
 
 public class QuickSMS extends Activity {
 
@@ -34,7 +34,6 @@ public class QuickSMS extends Activity {
     TextView contactInfo, buttonSend;
     ListView messagesList;
     SharedPrefs sPrefs;
-    Contacts contacts;
     String number;
     ColorSetter cs = new ColorSetter(QuickSMS.this);
     BroadcastReceiver deliveredReceiver, sentReceiver;
@@ -62,7 +61,7 @@ public class QuickSMS extends Activity {
         Intent i = getIntent();
         number = i.getStringExtra(Constants.ITEM_ID_INTENT);
 
-        Typeface typeface = Utils.getLightTypeface(this);
+        Typeface typeface = AssetsUtil.getLightTypeface(this);
 
         messagesList = (ListView) findViewById(R.id.messagesList);
 
@@ -83,10 +82,9 @@ public class QuickSMS extends Activity {
 
         DB = new DataBase(QuickSMS.this);
         sPrefs = new SharedPrefs(QuickSMS.this);
-        contacts = new Contacts(QuickSMS.this);
 
         DB.open();
-        String name = contacts.getContactNameFromNumber(number, QuickSMS.this);
+        String name = Contacts.getContactNameFromNumber(number, QuickSMS.this);
 
         contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(typeface);

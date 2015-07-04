@@ -24,6 +24,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.MissedCallAlarm;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -39,7 +40,6 @@ public class MissedCallDialog extends Activity {
     MissedCallAlarm alarm = new MissedCallAlarm();
     long id;
     SharedPrefs sPrefs;
-    Contacts contacts;
     ColorSetter cs = new ColorSetter(MissedCallDialog.this);
     Notifier notifier = new Notifier(MissedCallDialog.this);
     DataBase db = new DataBase(MissedCallDialog.this);
@@ -74,8 +74,7 @@ public class MissedCallDialog extends Activity {
         final String number = res.getStringExtra("number");
         long time = res.getLongExtra("time", 0);
 
-        contacts = new Contacts(MissedCallDialog.this);
-        String name = contacts.getContactNameFromNumber(number, MissedCallDialog.this);
+        String name = Contacts.getContactNameFromNumber(number, MissedCallDialog.this);
 
         single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
@@ -111,22 +110,19 @@ public class MissedCallDialog extends Activity {
         remText = (TextView) findViewById(R.id.remText);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
-        String formattedTime = Utils.getTime(calendar.getTime(),
+        String formattedTime = TimeUtil.getTime(calendar.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
-            remText.setText(name + "\n" + number + "\n\n" +
-                    "\n" +
-                    "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
+            remText.setText(name + "\n" + number + "\n\n" + "\n" + "\n" + getString(R.string.string_last_called) +
+                    "\n" + formattedTime);
         } else {
-            remText.setText(number + "\n" +
-                    "\n" +
-                    "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
+            remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
         else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
 
         contactPhoto.setVisibility(View.VISIBLE);
-        Bitmap photo = contacts.openPhoto(id);
+        Bitmap photo = Contacts.getPhoto(this, id);
         if (photo != null) {
             contactPhoto.setImageBitmap(photo);
         } else {

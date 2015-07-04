@@ -18,14 +18,14 @@ public class Contacts {
         this.cContext = context;
     }
 
-    public Bitmap openPhoto(long contactId) {
+    public static Bitmap getPhoto(Context context, long contactId) {
         Bitmap bmp = null;
         if (contactId != 0) {
             Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
             Uri displayPhotoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
             try {
                 AssetFileDescriptor fd =
-                        cContext.getContentResolver().openAssetFileDescriptor(displayPhotoUri, "r");
+                        context.getContentResolver().openAssetFileDescriptor(displayPhotoUri, "r");
                 bmp = BitmapFactory.decodeStream(fd.createInputStream());
             } catch (IOException e) {
                 return null;
@@ -161,7 +161,7 @@ public class Contacts {
         return mail;
     }
 
-    public String get_Number(String name, Context context) {
+    public static String get_Number(String name, Context context) {
         String number="";
         String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '%" + name +"%'";
         String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};

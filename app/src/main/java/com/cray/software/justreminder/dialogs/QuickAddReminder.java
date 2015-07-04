@@ -19,22 +19,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -47,7 +43,6 @@ public class QuickAddReminder extends AppCompatActivity implements
 
     DataBase DB;
     ColorSetter cs;
-    SyncHelper sHelp;
 
     LinearLayout by_date_layout, dateRing;
     FloatingEditText task_text;
@@ -63,9 +58,6 @@ public class QuickAddReminder extends AppCompatActivity implements
     int myDay = 1;
 
     SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
-
-    UpdatesHelper updatesHelper;
-    AlarmReceiver alarm = new AlarmReceiver();
     Toolbar toolbar;
     FloatingActionButton mFab;
     GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
@@ -138,11 +130,11 @@ public class QuickAddReminder extends AppCompatActivity implements
         else monthStr = String.valueOf(myMonth + 1);
 
         dateField.setText(dayStr + "/" + monthStr);
-        dateField.setTypeface(Utils.getMediumTypeface(this));
+        dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
-        dateYearField.setTypeface(Utils.getThinTypeface(this));
+        dateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -151,19 +143,19 @@ public class QuickAddReminder extends AppCompatActivity implements
                 timeDialog().show();
             }
         });
-        timeField.setText(Utils.getTime(c.getTime(),
+        timeField.setText(TimeUtil.getTime(c.getTime(),
                 sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
-        timeField.setTypeface(Utils.getMediumTypeface(this));
+        timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
-        repeatDays.setTypeface(Utils.getLightTypeface(this));
+        repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
 
         repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDateInt.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                repeatDays.setText(String.valueOf(getRepeat(progress)));
+                repeatDays.setText(String.valueOf(progress));
             }
 
             @Override
@@ -176,7 +168,7 @@ public class QuickAddReminder extends AppCompatActivity implements
 
             }
         });
-        repeatDays.setText(String.valueOf(getRepeat(repeatDateInt.getProgress())));
+        repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
 
         mFab = new FloatingActionButton(QuickAddReminder.this);
         mFab.setColorNormal(cs.colorSetter());
@@ -196,10 +188,6 @@ public class QuickAddReminder extends AppCompatActivity implements
                 saveDateTask();
             }
         });
-    }
-
-    private int getRepeat(int progress) {
-        return Interval.getRepeatDays(progress);
     }
 
     protected void dateDialog() {
@@ -242,7 +230,7 @@ public class QuickAddReminder extends AppCompatActivity implements
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            timeField.setText(Utils.getTime(c.getTime(),
+            timeField.setText(TimeUtil.getTime(c.getTime(),
                     sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     };
@@ -257,55 +245,34 @@ public class QuickAddReminder extends AppCompatActivity implements
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
         DB = new DataBase(QuickAddReminder.this);
         DB.open();
-        sHelp = new SyncHelper(QuickAddReminder.this);
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         Cursor cf = DB.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        SharedPrefs prefs = new SharedPrefs(QuickAddReminder.this);
         long id;
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) {
+        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+        boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
+        boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+        if (isCalendar || isStock) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
-            exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+            ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
         } else {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
-            exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+            ReminderUtils.exportToTasks(this, text, startTime, id);
         }
         DB.updateReminderDateTime(id);
-        alarm.setAlarm(QuickAddReminder.this, id);
         DB.close();
-        updatesHelper = new UpdatesHelper(QuickAddReminder.this);
-        updatesHelper.updateWidget();
+        new AlarmReceiver().setAlarm(QuickAddReminder.this, id);
+        new UpdatesHelper(QuickAddReminder.this).updateWidget();
         new Notifier(QuickAddReminder.this).recreatePermanent();
         finish();
-    }
-
-    private void exportToCalendar(String summary, long startTime, long id){
-        SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            new CalendarManager(QuickAddReminder.this)
-                    .addEvent(summary, startTime, id);
-        }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            new CalendarManager(QuickAddReminder.this)
-                    .addEventToStock(summary, startTime);
-        }
-    }
-
-    private void exportToTasks(String summary, long startTime, long id){
-        long localId = new TasksData(QuickAddReminder.this).addTask(summary, null, 0, false, startTime,
-                null, null, getString(R.string.string_task_from_just_reminder),
-                null, null, null, 0, id, null, Constants.TASKS_NEED_ACTION, false);
-        new TaskAsync(QuickAddReminder.this, summary, null, null,
-                TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
     }
 
     @Override

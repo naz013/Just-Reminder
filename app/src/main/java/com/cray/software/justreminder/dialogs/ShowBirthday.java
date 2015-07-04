@@ -26,15 +26,13 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
+import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class ShowBirthday extends Activity implements View.OnClickListener {
 
@@ -81,7 +79,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        Typeface typeface = Utils.getLightTypeface(this);
+        Typeface typeface = AssetsUtil.getLightTypeface(this);
 
         buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(this);
@@ -118,17 +116,17 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         }
         if (c != null) c.close();
         if (number == null || number.matches("")) {
-            number = contacts.get_Number(name, ShowBirthday.this);
+            number = Contacts.get_Number(name, ShowBirthday.this);
         }
         contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
-        Bitmap photo = contacts.openPhoto(contactId);
+        Bitmap photo = Contacts.getPhoto(this, contactId);
         if (photo != null) {
             contactPhoto.setImageBitmap(photo);
         } else {
             contactPhoto.setVisibility(View.GONE);
         }
 
-        String years = getYears(birthDate) + " " + getString(R.string.years_string);
+        String years = TimeUtil.getYears(birthDate) + " " + getString(R.string.years_string);
 
         userName = (TextView) findViewById(R.id.userName);
         userName.setTypeface(typeface);
@@ -150,7 +148,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
 
         wakeScreen();
 
-        notifier.showNotification(getYears(birthDate), name);
+        notifier.showNotification(TimeUtil.getYears(birthDate), name);
     }
 
     private void colorify(FloatingActionButton... fab){
@@ -192,27 +190,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-    }
-
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-    private int getYears(String dateOfBirth){
-        int years;
-        Date date = null;
-        try {
-            date = format.parse(dateOfBirth);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        int yearOfBirth = calendar.get(Calendar.YEAR);
-
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.getTimeInMillis();
-        int currentYear = calendar1.get(Calendar.YEAR);
-        years = currentYear - yearOfBirth;
-        return years;
     }
 
     private void makeCall(String number){

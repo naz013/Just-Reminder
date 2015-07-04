@@ -1,10 +1,17 @@
 package com.cray.software.justreminder.utils;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.widget.CheckBox;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.TaskAsync;
+import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.TasksConstants;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,8 +20,48 @@ public class ReminderUtils {
 
     Context context;
 
+    public ReminderUtils(){}
+
     public ReminderUtils(Context context){
         this.context = context;
+    }
+
+    public static void exportToCalendar(Context context, String summary, long startTime, long id,
+                                        boolean calendar, boolean stock){
+        if (calendar){
+            new CalendarManager(context).addEvent(summary, startTime, id);
+        }
+        if (stock){
+            new CalendarManager(context).addEventToStock(summary, startTime);
+        }
+    }
+
+    public static void exportToTasks(Context context, String summary, long startTime, long mId){
+        long localId = new TasksData(context).addTask(summary, null, 0, false, startTime,
+                null, null, context.getString(R.string.string_task_from_just_reminder),
+                null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
+        new TaskAsync(context, summary, null, null, TasksConstants.INSERT_TASK, startTime,
+                context.getString(R.string.string_task_from_just_reminder), localId).execute();
+    }
+
+    public static boolean isSdPresent() {
+        return Environment.getExternalStorageState() != null;
+    }
+
+    public static boolean isSkypeClientInstalled(Context context) {
+        PackageManager myPackageMgr = context.getPackageManager();
+        try {
+            myPackageMgr.getPackageInfo("com.skype.raider", PackageManager.GET_ACTIVITIES);
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            return (false);
+        }
+        return (true);
+    }
+
+    public static int getSyncCode(CheckBox tasks){
+        if (tasks.isChecked()) return Constants.SYNC_GTASKS_ONLY;
+        else return Constants.SYNC_NO;
     }
 
     public static ArrayList<Integer> getRepeatArray(String weekdays){

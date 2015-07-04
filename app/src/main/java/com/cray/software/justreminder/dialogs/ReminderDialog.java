@@ -37,7 +37,6 @@ import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.async.BackupTask;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -50,6 +49,7 @@ import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
@@ -72,7 +72,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     SharedPrefs sPrefs;
     int repCode, color = -1;
     BroadcastReceiver deliveredReceiver, sentReceiver;
-    Contacts contacts;
     ColorSetter cs = new ColorSetter(ReminderDialog.this);
     UpdatesHelper updatesHelper;
     String melody, num, name;
@@ -139,8 +138,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
-        contacts = new Contacts(ReminderDialog.this);
-
         DB = new DataBase(ReminderDialog.this);
         DB.open();
         Cursor r = DB.getReminder(id);
@@ -166,15 +163,15 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
             if (!type.startsWith(Constants.TYPE_SKYPE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
-                long conID = contacts.getContactIDFromNumber(number, ReminderDialog.this);
-                Bitmap photo = contacts.openPhoto(conID);
+                long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
+                Bitmap photo = Contacts.getPhoto(this, conID);
                 if (photo != null) {
                     contactPhoto.setImageBitmap(photo);
                 } else {
                     contactPhoto.setVisibility(View.GONE);
                 }
             }
-            name = contacts.getContactNameFromNumber(number, ReminderDialog.this);
+            name = Contacts.getContactNameFromNumber(number, ReminderDialog.this);
             remText.setText(task + "\n" + name + "\n" + number);
         } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) ||
                 type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_SKYPE_CHAT)){
@@ -660,22 +657,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             long nextDate = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
                     repCode, remCount, 0);
             sPrefs = new SharedPrefs(ReminderDialog.this);
-            if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && exp == 1) {
-                exportToCalendar(text, nextDate, id);
+            boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
+            boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+            if ((isCalendar || isStock) && exp == 1) {
+                ReminderUtils.exportToCalendar(this, text, nextDate, id, isCalendar, isStock);
             }
         }
         if (c != null) c.close();
-    }
-
-    private void exportToCalendar(String summary, long startTime, long id){
-        sPrefs = new SharedPrefs(ReminderDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            new CalendarManager(ReminderDialog.this).addEvent(summary, startTime, id);
-        }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            new CalendarManager(ReminderDialog.this).addEventToStock(summary, startTime);
-        }
     }
 
     private void sendSMS(String phoneNumber, String message, final String melody) {

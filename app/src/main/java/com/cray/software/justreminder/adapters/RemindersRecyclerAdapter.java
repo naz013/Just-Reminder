@@ -30,6 +30,8 @@ import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
@@ -60,7 +62,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
-        typeface = Utils.getLightTypeface(context);
+        typeface = AssetsUtil.getLightTypeface(context);
 
         mSwipeableViewContainerOnClickListener = new View.OnClickListener() {
             @Override
@@ -195,7 +197,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 holder.reminder_phone.setText(number);
                 holder.reminder_type.setText(mContext.getString(R.string.reminder_make_call));
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) holder.reminder_contact_name.setText(name);
                 else holder.reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_REMINDER) || type.matches(Constants.TYPE_TIME)) {
@@ -205,7 +207,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
                 holder.reminder_phone.setText(number);
                 holder.reminder_type.setText(mContext.getString(R.string.reminder_send_message));
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) holder.reminder_contact_name.setText(name);
                 else holder.reminder_contact_name.setText("");
             } else if (type.startsWith(Constants.TYPE_SKYPE)){
@@ -284,13 +286,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 holder. reminder_phone.setText(number);
                 holder.reminder_type.setText(mContext.getString(R.string.reminder_make_call));
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) holder.reminder_contact_name.setText(name);
                 else holder.reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 holder.reminder_phone.setText(number);
                 holder.reminder_type.setText(mContext.getString(R.string.reminder_send_message));
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) holder.reminder_contact_name.setText(name);
                 else holder.reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_WEEKDAY)) {
@@ -311,7 +313,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             } else {
                 holder.leftTime.setVisibility(View.GONE);
             }
-            holder.viewTime.setText(Utils.getTime(calendar.getTime(), is24));
+            holder.viewTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
         }
         if (isDone == 1){
             holder.leftTimeIcon.setImageDrawable(Utils.getDrawable(mContext, R.drawable.drawable_grey));

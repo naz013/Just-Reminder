@@ -27,12 +27,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -71,8 +68,11 @@ import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -82,8 +82,6 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
@@ -155,6 +153,7 @@ public class ScreenManager extends AppCompatActivity
     private Activity a = this;
     RecyclerView currentList;
     ListView currentListView;
+    private boolean isAnimation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,12 +166,12 @@ public class ScreenManager extends AppCompatActivity
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
 
+        isAnimation = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(R.string.drawer_active_reminder);
-
         mTitle = getTitle().toString();
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
@@ -241,9 +240,7 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
+                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                 }
 
                 new Handler().postDelayed(new Runnable() {
@@ -258,16 +255,12 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public boolean onLongClick(View v) {
                 if (!isNoteVisible()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        show(noteCard);
-                    } else noteCard.setVisibility(View.VISIBLE);
+                    ViewUtils.show(ScreenManager.this, noteCard, isAnimation);
                 } else {
                     quickNote.setText("");
                     quickNote.setError(null);
 
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                        hide(noteCard);
-                    } else noteCard.setVisibility(View.GONE);
+                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                 }
                 return true;
             }
@@ -300,7 +293,7 @@ public class ScreenManager extends AppCompatActivity
 
     private void reloadButton(){
         sPrefs = new SharedPrefs(this);
-        boolean isExtend = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
+        final boolean isExtend = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
             mFab.setVisibility(View.GONE);
             setUpButton(addReminder, new View.OnClickListener() {
@@ -308,9 +301,7 @@ public class ScreenManager extends AppCompatActivity
                 public void onClick(View v) {
                     if (mainMenu.isExpanded()) mainMenu.collapse();
                     if (isNoteVisible()) {
-                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                            hide(noteCard);
-                        } else noteCard.setVisibility(View.GONE);
+                        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                     }
 
                     new Handler().postDelayed(new Runnable() {
@@ -328,13 +319,13 @@ public class ScreenManager extends AppCompatActivity
                 public void onClick(View v) {
                     if (mainMenu.isExpanded()) mainMenu.collapse();
                     if (isNoteVisible()) {
-                        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                            hide(noteCard);
-                        } else noteCard.setVisibility(View.GONE);
+                        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                     }
 
                     if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
-                        Toast.makeText(ScreenManager.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ScreenManager.this,
+                                getString(R.string.calendar_birthday_info),
+                                Toast.LENGTH_LONG).show();
                     else {
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -361,9 +352,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -379,13 +368,13 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
-                                Toast.makeText(ScreenManager.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
+                                Toast.makeText(ScreenManager.this,
+                                        getString(R.string.calendar_birthday_info),
+                                        Toast.LENGTH_LONG).show();
                             else {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -402,9 +391,7 @@ public class ScreenManager extends AppCompatActivity
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
                                 if (isNoteVisible()) {
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        hide(noteCard);
-                                    } else noteCard.setVisibility(View.GONE);
+                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                                 }
 
                                 new Handler().postDelayed(new Runnable() {
@@ -425,9 +412,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -443,16 +428,12 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (!isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    show(noteCard);
-                                } else noteCard.setVisibility(View.VISIBLE);
+                                ViewUtils.show(ScreenManager.this, noteCard, isAnimation);
                             } else {
                                 quickNote.setText("");
                                 quickNote.setError(null);
 
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
                         }
                     }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_grey600_24dp);
@@ -464,9 +445,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -483,15 +462,13 @@ public class ScreenManager extends AppCompatActivity
                             public void onClick(View v) {
                                 if (mainMenu.isExpanded()) mainMenu.collapse();
                                 if (isNoteVisible()) {
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        hide(noteCard);
-                                    } else noteCard.setVisibility(View.GONE);
+                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                                 }
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (checkGooglePlayServicesAvailability()) {
+                                        if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
                                             startActivity(new Intent(ScreenManager.this, NewPlace.class));
                                         }
                                     }
@@ -506,9 +483,7 @@ public class ScreenManager extends AppCompatActivity
                             public void onClick(View v) {
                                 if (mainMenu.isExpanded()) mainMenu.collapse();
                                 if (isNoteVisible()) {
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        hide(noteCard);
-                                    } else noteCard.setVisibility(View.GONE);
+                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                                 }
 
                                 new Handler().postDelayed(new Runnable() {
@@ -528,9 +503,7 @@ public class ScreenManager extends AppCompatActivity
                                     public void onClick(View v) {
                                         if (mainMenu.isExpanded()) mainMenu.collapse();
                                         if (isNoteVisible()) {
-                                            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                                hide(noteCard);
-                                            } else noteCard.setVisibility(View.GONE);
+                                            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                                         }
 
                                         new Handler().postDelayed(new Runnable() {
@@ -555,9 +528,7 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -575,9 +546,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
                                 if (isNoteVisible()) {
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                        hide(noteCard);
-                                    } else noteCard.setVisibility(View.GONE);
+                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                                 }
 
                                 new Handler().postDelayed(new Runnable() {
@@ -600,9 +569,7 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -619,9 +586,7 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -638,15 +603,13 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (checkGooglePlayServicesAvailability()) {
+                                    if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
                                         startActivity(new Intent(ScreenManager.this, NewPlace.class));
                                     }
                                 }
@@ -659,9 +622,7 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (isNoteVisible()) {
-                                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                                    hide(noteCard);
-                                } else noteCard.setVisibility(View.GONE);
+                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -819,7 +780,7 @@ public class ScreenManager extends AppCompatActivity
                 mTag = tag;
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
             } else if (tag.matches(FRAGMENT_LOCATIONS)) {
-                if (checkGooglePlayServicesAvailability()) {
+                if (LocationUtil.checkGooglePlayServicesAvailability(this)) {
                     fragmentManager.beginTransaction()
                             .replace(R.id.container, GeolocationFragment.newInstance(), tag)
                             .commitAllowingStateLoss();
@@ -1162,7 +1123,7 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(getDate(year, month, day));
+                        dates.add(TimeUtil.getDate(year, month, day));
                         int days = 0;
                         if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
                             do {
@@ -1172,7 +1133,7 @@ public class ScreenManager extends AppCompatActivity
                                 day = calendar.get(Calendar.DAY_OF_MONTH);
                                 month = calendar.get(Calendar.MONTH);
                                 year = calendar.get(Calendar.YEAR);
-                                dates.add(getDate(year, month, day));
+                                dates.add(TimeUtil.getDate(year, month, day));
                             } while (days < Configs.MAX_DAYS_COUNT);
                         }
                     }
@@ -1184,7 +1145,7 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(getDate(year, month, day));
+                        dates.add(TimeUtil.getDate(year, month, day));
                     }
                     int days = 0;
                     if (isFeature){
@@ -1197,7 +1158,7 @@ public class ScreenManager extends AppCompatActivity
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
                                 int year = calendar.get(Calendar.YEAR);
-                                dates.add(getDate(year, month, day));
+                                dates.add(TimeUtil.getDate(year, month, day));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -1209,7 +1170,7 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(getDate(year, month, day));
+                        dates.add(TimeUtil.getDate(year, month, day));
                     }
                     int days = 1;
                     if (isFeature){
@@ -1220,7 +1181,7 @@ public class ScreenManager extends AppCompatActivity
                             int day = calendar.get(Calendar.DAY_OF_MONTH);
                             int month = calendar.get(Calendar.MONTH);
                             int year = calendar.get(Calendar.YEAR);
-                            dates.add(getDate(year, month, day));
+                            dates.add(TimeUtil.getDate(year, month, day));
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
@@ -1265,10 +1226,10 @@ public class ScreenManager extends AppCompatActivity
                     }
                     int day = calendar.get(Calendar.DAY_OF_MONTH);
                     int month = calendar.get(Calendar.MONTH);
-                    Date bdDate = getDate(year, month, day);
-                    Date prevDate = getDate(year - 1, month, day);
-                    Date nextDate = getDate(year + 1, month, day);
-                    Date nextTwoDate = getDate(year + 2, month, day);
+                    Date bdDate = TimeUtil.getDate(year, month, day);
+                    Date prevDate = TimeUtil.getDate(year - 1, month, day);
+                    Date nextDate = TimeUtil.getDate(year + 1, month, day);
+                    Date nextTwoDate = TimeUtil.getDate(year + 2, month, day);
                     dates.add(bdDate);
                     dates.add(prevDate);
                     dates.add(nextDate);
@@ -1286,18 +1247,6 @@ public class ScreenManager extends AppCompatActivity
                 calendarView.setBackgroundResourceForDate(cSetter.colorBirthdayCalendar(), dates.get(i));
             }
         }
-    }
-
-    public static Date getDate(int year, int month, int day) {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.set(Calendar.YEAR, year);
-        cal1.set(Calendar.MONTH, month);
-        cal1.set(Calendar.DAY_OF_MONTH, day);
-        cal1.set(Calendar.HOUR_OF_DAY, 0);
-        cal1.set(Calendar.MINUTE, 0);
-        cal1.set(Calendar.SECOND, 0);
-        cal1.set(Calendar.MILLISECOND, 0);
-        return cal1.getTime();
     }
 
     private void showChanges() {
@@ -1357,25 +1306,6 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    public boolean checkGooglePlayServicesAvailability() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if(resultCode != ConnectionResult.SUCCESS) {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 69);
-            dialog.setCancelable(false);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-            return false;
-        } else {
-            Log.d("GooglePlayServicesUtil", "Result is: " + resultCode);
-            return true;
-        }
-    }
-
     protected Dialog thanksDialog() {
         return new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.thank_dialog_title))
@@ -1420,9 +1350,8 @@ public class ScreenManager extends AppCompatActivity
 
         quickNote.setText("");
         quickNote.setError(null);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            hide(noteCard);
-        } else noteCard.setVisibility(View.GONE);
+
+        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
 
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
@@ -1443,18 +1372,13 @@ public class ScreenManager extends AppCompatActivity
 
     private void askNotification(final String note, final long id){
         sPrefs = new SharedPrefs(ScreenManager.this);
-        final boolean animate = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS);
-        if (animate) {
-            show(noteStatusCard);
-        } else noteStatusCard.setVisibility(View.VISIBLE);
+        ViewUtils.show(ScreenManager.this, noteStatusCard, isAnimation);
 
         buttonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Notifier(ScreenManager.this).showNoteNotification(note, id);
-                if (animate) {
-                    hide(noteStatusCard);
-                } else noteStatusCard.setVisibility(View.GONE);
+                ViewUtils.hide(ScreenManager.this, noteStatusCard, isAnimation);
 
                 if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1470,9 +1394,7 @@ public class ScreenManager extends AppCompatActivity
         buttonNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (animate) {
-                    hide(noteStatusCard);
-                } else noteStatusCard.setVisibility(View.GONE);
+                ViewUtils.hide(ScreenManager.this, noteStatusCard, isAnimation);
 
                 if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1488,18 +1410,12 @@ public class ScreenManager extends AppCompatActivity
 
     private void askReminder(final String note, final long noteId){
         sPrefs = new SharedPrefs(ScreenManager.this);
-
-        final boolean animate = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS);
-        if (animate) {
-            show(noteReminderCard);
-        } else noteReminderCard.setVisibility(View.VISIBLE);
+        ViewUtils.show(ScreenManager.this, noteReminderCard, isAnimation);
 
         buttonReminderYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (animate) {
-                    hide(noteReminderCard);
-                } else noteReminderCard.setVisibility(View.GONE);
+                ViewUtils.hide(ScreenManager.this, noteReminderCard, isAnimation);
 
                 SyncHelper sHelp = new SyncHelper(ScreenManager.this);
                 DB = new DataBase(ScreenManager.this);
@@ -1535,27 +1451,13 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (animate) {
-                    hide(noteReminderCard);
-                } else noteReminderCard.setVisibility(View.GONE);
+                ViewUtils.hide(ScreenManager.this, noteReminderCard, isAnimation);
             }
         });
     }
 
     private boolean isNoteVisible(){
         return noteCard.getVisibility() == View.VISIBLE;
-    }
-
-    public void show(final View v) {
-        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up);
-        v.startAnimation(slide);
-        v.setVisibility(View.VISIBLE);
-    }
-
-    private void hide(final View v) {
-        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_left);
-        v.startAnimation(slide);
-        v.setVisibility(View.GONE);
     }
 
     private boolean doubleBackToExitPressedOnce = false;
@@ -1565,16 +1467,11 @@ public class ScreenManager extends AppCompatActivity
         if (isNoteVisible()){
             quickNote.setText("");
             quickNote.setError(null);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-                hide(noteCard);
-            } else noteCard.setVisibility(View.GONE);
-
-            //mFab.setImageResource(R.drawable.ic_add_white_24dp);
+            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
 
             InputMethodManager imm = (InputMethodManager)getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
-            //if (isButtonVisible) hideButtons();
             return;
         }
         if (mainMenu.isExpanded()) {

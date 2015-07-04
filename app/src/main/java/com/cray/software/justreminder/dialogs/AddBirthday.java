@@ -11,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -28,6 +26,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -54,7 +53,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     long id = 0;
     ProgressDialog pd;
     DataBase db;
-    Contacts contacts;
     ColorSetter cs;
     SharedPrefs sPrefs;
     Toolbar toolbar;
@@ -65,6 +63,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cs = new ColorSetter(AddBirthday.this);
+        sPrefs = new SharedPrefs(this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -146,7 +145,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         birthDate.setText(format.format(calendar.getTime()));
 
         pickContact = (Button) findViewById(R.id.pickContact);
-        setImage(pickContact);
+        ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME));
         contactLayout.setOnClickListener(this);
 
         mFab = new FloatingActionButton(AddBirthday.this);
@@ -169,13 +168,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
     }
 
-    private void setImage(Button ib){
-        sPrefs = new SharedPrefs(AddBirthday.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_white_24dp, 0, 0, 0);
-        } else ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_grey600_24dp, 0, 0, 0);
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -189,26 +181,15 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public void show(final View v) {
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom);
-            v.startAnimation(slide);
-            v.setVisibility(View.VISIBLE);
-        } else {
-            v.setVisibility(View.VISIBLE);
-        }
-    }
-
     private void saveBirthday(){
         db = new DataBase(AddBirthday.this);
         db.open();
-        contacts = new Contacts(AddBirthday.this);
         if (id != 0){
             String contact = birthName.getText().toString();
             if (contact.matches("")){
                 birthName.setError(getString(R.string.empty_field_error));
             } else {
-                int contactId = contacts.getContactIDFromNumber(number, AddBirthday.this);
+                int contactId = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                 if (number != null) {
                     db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, number, null, 0);
                 } else
@@ -222,7 +203,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 if (contact.matches("")) {
                     birthName.setError(getString(R.string.empty_field_error));
                 } else {
-                    int id = contacts.getContactIDFromNumber(number, AddBirthday.this);
+                    int id = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                     if (number != null) {
                         db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, number, null);
                     } else

@@ -34,7 +34,6 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.async.BackupTask;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -48,6 +47,7 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
@@ -70,7 +70,6 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     String task;
     int repCode, color = -1;
     BroadcastReceiver deliveredReceiver, sentReceiver;
-    Contacts contacts;
     ColorSetter cs = new ColorSetter(WeekDayDialog.this);
     UpdatesHelper updatesHelper;
 
@@ -122,7 +121,6 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         contactPhoto.setVisibility(View.GONE);
 
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        contacts = new Contacts(WeekDayDialog.this);
 
         isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor,
@@ -155,7 +153,10 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             repCode = r.getInt(r.getColumnIndex(Constants.COLUMN_REPEAT));
             remCount = r.getLong(r.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
             color = r.getInt(r.getColumnIndex(Constants.COLUMN_LED_COLOR));
-        } else Log.d(Constants.LOG_TAG, "--------------- nullable cursor ");
+        } else {
+            Log.d(Constants.LOG_TAG, "--------------- nullable cursor ");
+            finish();
+        }
 
         sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE, type);
         sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT, task);
@@ -166,8 +167,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         if (type.matches(Constants.TYPE_WEEKDAY_CALL) || type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
             String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
             contactPhoto.setVisibility(View.VISIBLE);
-            long conID = contacts.getContactIDFromNumber(number, WeekDayDialog.this);
-            Bitmap photo = contacts.openPhoto(conID);
+            long conID = Contacts.getContactIDFromNumber(number, WeekDayDialog.this);
+            Bitmap photo = Contacts.getPhoto(this, conID);
             if (photo != null) {
                 contactPhoto.setImageBitmap(photo);
             } else {
@@ -457,22 +458,15 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 exp = t.getInt(t.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
             }
             long nextDate = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
-            if (type.startsWith(Constants.TYPE_MONTHDAY)) nextDate = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
             sPrefs = new SharedPrefs(WeekDayDialog.this);
-            if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && exp == 1) {
-                exportToCalendar(text, nextDate, id);
-            }
-        }
-    }
+            boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
+            boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+            if (type.startsWith(Constants.TYPE_MONTHDAY))
+                nextDate = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
 
-    private void exportToCalendar(String summary, long startTime, long id){
-        sPrefs = new SharedPrefs(WeekDayDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            new CalendarManager(WeekDayDialog.this).addEvent(summary, startTime, id);
-        }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            new CalendarManager(WeekDayDialog.this).addEventToStock(summary, startTime);
+            if (isCalendar || isStock && exp == 1) {
+                ReminderUtils.exportToCalendar(this, text, nextDate, id, isCalendar, isStock);
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -23,7 +24,7 @@ public class EventsDataProvider {
         reminder
     }
 
-    private ArrayList<EventsItem> data;
+    private ArrayList<EventsItem> data = new ArrayList<>();
     private Cursor s, c;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     int hour, minute;
@@ -69,9 +70,10 @@ public class EventsDataProvider {
             int mMonth = item.getMonth();
             int mYear = item.getYear();
             Type type = item.getInn();
-            if (year == 0 || mYear == 0 || type == Type.birthday){
+            if (type == Type.birthday){
                 if (mDay == day && mMonth == month) res.add(item);
-            } else {
+            }
+            if (type == Type.reminder){
                 if (mDay == day && mMonth == month && mYear == year) res.add(item);
             }
         }
@@ -134,6 +136,7 @@ public class EventsDataProvider {
                 int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
                 int remCount = s.getInt(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
                 long afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String mType = s.getString(s.getColumnIndex(Constants.COLUMN_TYPE));
                 String name = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
@@ -145,7 +148,7 @@ public class EventsDataProvider {
                         mType.startsWith(Constants.TYPE_APPLICATION) ||
                         mType.matches(Constants.TYPE_MESSAGE) ||
                         mType.matches(Constants.TYPE_REMINDER) ||
-                        mType.matches(Constants.TYPE_TIME))) {
+                        mType.matches(Constants.TYPE_TIME)) && isDone == 0) {
                     long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
                             afterTime, repCode, remCount, 0);
                     Calendar calendar1 = Calendar.getInstance();
@@ -175,7 +178,7 @@ public class EventsDataProvider {
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
-                } else if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                } else if (mType.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0) {
                     long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
                     Calendar calendar1 = Calendar.getInstance();
                     calendar1.setTimeInMillis(time);
@@ -201,13 +204,13 @@ public class EventsDataProvider {
                                 int sYear = calendar1.get(Calendar.YEAR);
                                 if (time > 0) {
                                     if (number == null) number = "0";
-                                    data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                            mMonth, mYear, Type.reminder));
+                                    data.add(new EventsItem("reminder", name, number, id, time, sDay,
+                                            sMonth, sYear, Type.reminder));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
-                } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                } else if (mType.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0) {
                     long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
                     Calendar calendar1 = Calendar.getInstance();
                     if (time > 0) {

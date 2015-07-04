@@ -10,7 +10,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.modules.ManageModule;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.AssetsUtil;
 
 public class AboutDialog extends Activity {
 
@@ -25,14 +25,14 @@ public class AboutDialog extends Activity {
         setContentView(R.layout.about_dialog_layout);
 
         appName = (TextView) findViewById(R.id.appName);
-        appName.setTypeface(Utils.getMediumTypeface(this));
+        appName.setTypeface(AssetsUtil.getMediumTypeface(this));
         String name;
         if (new ManageModule().isPro()) name = getString(R.string.app_name_pro);
         else name = getString(R.string.app_name);
         appName.setText(name.toUpperCase());
 
         appVersion = (TextView) findViewById(R.id.appVersion);
-        appVersion.setTypeface(Utils.getThinTypeface(this));
+        appVersion.setTypeface(AssetsUtil.getThinTypeface(this));
         PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -43,6 +43,6 @@ public class AboutDialog extends Activity {
         }
 
         TextView rights = (TextView) findViewById(R.id.rights);
-        rights.setTypeface(Utils.getThinTypeface(this));
+        rights.setTypeface(AssetsUtil.getThinTypeface(this));
     }
 }

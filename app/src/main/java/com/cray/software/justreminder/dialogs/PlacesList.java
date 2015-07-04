@@ -1,13 +1,10 @@
 package com.cray.software.justreminder.dialogs;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,18 +16,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
+import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class PlacesList extends AppCompatActivity {
 
@@ -84,32 +80,13 @@ public class PlacesList extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkGooglePlayServicesAvailability()) {
+                if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
                     startActivity(new Intent(PlacesList.this, NewPlace.class));
                 }
             }
         });
         mFab.setColorNormal(cs.colorSetter());
         mFab.setColorPressed(cs.colorChooser());
-    }
-
-    public boolean checkGooglePlayServicesAvailability() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if(resultCode != ConnectionResult.SUCCESS) {
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 69);
-            dialog.setCancelable(false);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-            return false;
-        } else {
-            Log.d("GooglePlayServicesUtil", "Result is: " + resultCode);
-            return true;
-        }
     }
 
     private void loadPlaces(){

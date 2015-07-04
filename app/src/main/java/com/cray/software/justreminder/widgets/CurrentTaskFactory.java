@@ -19,6 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 
 import java.text.SimpleDateFormat;
@@ -108,15 +109,15 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                             calendar.set(Calendar.MINUTE, minute);
 
                             date = ReminderUtils.getRepeatString(context, weekdays);
-                            time = Utils.getTime(calendar.getTime(), is24);
+                            time = TimeUtil.getTime(calendar.getTime(), is24);
                         } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                             long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
                             Calendar calendar1 = Calendar.getInstance();
                             if (timeL > 0) {
                                 calendar1.setTimeInMillis(timeL);
 
-                                date = Utils.dateFormat.format(calendar1.getTime());
-                                time = Utils.getTime(calendar1.getTime(), is24);
+                                date = TimeUtil.dateFormat.format(calendar1.getTime());
+                                time = TimeUtil.getTime(calendar1.getTime(), is24);
                             }
                         } else {
                             date = dT[0];

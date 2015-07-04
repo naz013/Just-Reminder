@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.fragments.StartFragment;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.Utils;
 import com.hexrain.design.LogInActivity;
 
@@ -32,7 +33,7 @@ public class StartHelp extends FragmentActivity implements View.OnClickListener 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
         setContentView(R.layout.guide_layout);
 
-        Typeface typeface = Utils.getLightTypeface(this);
+        Typeface typeface = AssetsUtil.getLightTypeface(this);
 
         skipButton = (TextView) findViewById(R.id.skipButton);
         skipButton.setOnClickListener(this);

@@ -19,20 +19,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -46,7 +44,6 @@ public class FollowReminder extends AppCompatActivity implements
 
     DataBase DB;
     ColorSetter cs;
-    SyncHelper sHelp;
 
     FloatingEditText textField;
     TextView buttonSave, buttonCancel, contactInfo, tomorrowTime, nextWorkingTime, customDate, customTime;
@@ -66,9 +63,6 @@ public class FollowReminder extends AppCompatActivity implements
 
     SharedPrefs sPrefs = new SharedPrefs(FollowReminder.this);
     GTasksHelper gtx = new GTasksHelper(FollowReminder.this);
-
-    UpdatesHelper updatesHelper;
-    AlarmReceiver alarm = new AlarmReceiver();
     String number;
 
     @Override
@@ -94,8 +88,7 @@ public class FollowReminder extends AppCompatActivity implements
         Intent i = getIntent();
         long receivedDate = i.getLongExtra(Constants.SELECTED_RADIUS, 0);
         number = i.getStringExtra(Constants.SELECTED_CONTACT_NUMBER);
-        Contacts contacts = new Contacts(FollowReminder.this);
-        String name = contacts.getContactNameFromNumber(number, FollowReminder.this);
+        String name = Contacts.getContactNameFromNumber(number, FollowReminder.this);
 
         Calendar c = Calendar.getInstance();
         if (receivedDate != 0) {
@@ -107,7 +100,7 @@ public class FollowReminder extends AppCompatActivity implements
         textField.setHint(getString(R.string.message_field_hint) + getString(R.string.hint_attention));
 
         contactInfo = (TextView) findViewById(R.id.contactInfo);
-        contactInfo.setTypeface(Utils.getMediumTypeface(this));
+        contactInfo.setTypeface(AssetsUtil.getMediumTypeface(this));
         if (name != null && !name.matches("")) {
             contactInfo.setText(name + "\n" + number);
         } else {
@@ -179,8 +172,8 @@ public class FollowReminder extends AppCompatActivity implements
         is24Hour = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
         //Calculate custom time
-        customDate.setText(Utils.dateFormat.format(c.getTime()));
-        customTime.setText(Utils.getTime(c.getTime(), is24Hour));
+        customDate.setText(TimeUtil.dateFormat.format(c.getTime()));
+        customTime.setText(TimeUtil.getTime(c.getTime(), is24Hour));
         customHour = c.get(Calendar.HOUR_OF_DAY);
         customMinute = c.get(Calendar.MINUTE);
         customYear = c.get(Calendar.YEAR);
@@ -209,7 +202,7 @@ public class FollowReminder extends AppCompatActivity implements
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
-        tomorrowTime.setText(Utils.getDateTime(c.getTime(), is24Hour));
+        tomorrowTime.setText(TimeUtil.getDateTime(c.getTime(), is24Hour));
 
         //Calculate next business day time
         if (currDay == Calendar.FRIDAY){
@@ -220,7 +213,7 @@ public class FollowReminder extends AppCompatActivity implements
             c.setTimeInMillis(currTime + (1000 * 60 * 60 * 24));
         }
         nextWork = c.getTimeInMillis();
-        nextWorkingTime.setText(Utils.getDateTime(c.getTime(), is24Hour));
+        nextWorkingTime.setText(TimeUtil.getDateTime(c.getTime(), is24Hour));
     }
 
     private int getAfterMins(int progress) {
@@ -256,7 +249,7 @@ public class FollowReminder extends AppCompatActivity implements
         c.set(Calendar.MONTH, monthOfYear);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        customDate.setText(Utils.dateFormat.format(c.getTime()));
+        customDate.setText(TimeUtil.dateFormat.format(c.getTime()));
     }
 
     protected Dialog timeDialog() {
@@ -272,7 +265,7 @@ public class FollowReminder extends AppCompatActivity implements
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
 
-            customTime.setText(Utils.getTime(c.getTime(), is24Hour));
+            customTime.setText(TimeUtil.getTime(c.getTime(), is24Hour));
         }
     };
 
@@ -286,8 +279,7 @@ public class FollowReminder extends AppCompatActivity implements
         setUpTimes();
         DB = new DataBase(FollowReminder.this);
         DB.open();
-        sHelp = new SyncHelper(FollowReminder.this);
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         SharedPrefs prefs = new SharedPrefs(FollowReminder.this);
         long id;
         Cursor cf = DB.queryCategories();
@@ -296,24 +288,26 @@ public class FollowReminder extends AppCompatActivity implements
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
+        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
                 prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
-            exportToCalendar(text.matches("") ? number : text, ReminderUtils.getTime(myDay, myMonth,
-                    myYear, myHour, myMinute, 0), id);
+            ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, startTime, id,
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK));
         } else {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
-            exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0), id);
+            ReminderUtils.exportToTasks(this, text, startTime, id);
         }
         DB.updateReminderDateTime(id);
-        alarm.setAlarm(FollowReminder.this, id);
         DB.close();
-        updatesHelper = new UpdatesHelper(FollowReminder.this);
-        updatesHelper.updateWidget();
+
+        new AlarmReceiver().setAlarm(FollowReminder.this, id);
+        new UpdatesHelper(FollowReminder.this).updateWidget();
         new Notifier(FollowReminder.this).recreatePermanent();
         removeFlags();
         finish();
@@ -346,23 +340,6 @@ public class FollowReminder extends AppCompatActivity implements
     private String getType() {
         if (typeCall.isChecked()) return Constants.TYPE_CALL;
         else return Constants.TYPE_MESSAGE;
-    }
-
-    private void exportToCalendar(String summary, long startTime, long id){
-        SharedPrefs sPrefs = new SharedPrefs(FollowReminder.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            new CalendarManager(FollowReminder.this)
-                    .addEvent(summary, startTime, id);
-        }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            new CalendarManager(FollowReminder.this)
-                    .addEventToStock(summary, startTime);
-        }
-    }
-
-    private void exportToTasks(String summary, long startTime, long id){
-        new TaskAsync(FollowReminder.this, summary, null, null,
-                TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), id).execute();
     }
 
     @Override

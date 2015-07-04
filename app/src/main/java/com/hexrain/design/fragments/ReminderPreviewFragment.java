@@ -40,13 +40,11 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DeleteReminder;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
-import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ItemData;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
@@ -66,7 +64,7 @@ import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ReminderUtils;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -422,7 +420,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
             double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
             if (!type.matches(Constants.TYPE_TIME)) {
-                String uuID = new SyncHelper().generateID();
+                String uuID = SyncHelper.generateID();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(time);
                 myHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -440,37 +438,37 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 }
+                boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
+                boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
                 if (type.startsWith(Constants.TYPE_APPLICATION) || type.matches(Constants.TYPE_CALL) ||
                         type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_REMINDER) ||
                         type.startsWith(Constants.TYPE_SKYPE)){
-                    if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour,
-                                myMinute, 0), idN);
+                    long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+                    if (exp == 1 && isCalendar || isStock)
+                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, ReminderUtils.getTime(myDay, myMonth, myYear, myHour,
-                                myMinute, 0), idN);
+                        ReminderUtils.exportToTasks(this, text, startTime, idN);
                     }
                     new AlarmReceiver().setAlarm(this, idN);
                 }
                 if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                    if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, ReminderUtils.getWeekTime(myHour, myMinute, weekdays), idN);
+                    long startTime = ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
+                    if (exp == 1 && isCalendar || isStock)
+                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, ReminderUtils.getWeekTime(myHour, myMinute, weekdays), idN);
+                        ReminderUtils.exportToTasks(this, text, startTime, idN);
                     }
                     new WeekDayReceiver().setAlarm(this, idN);
                 }
                 if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                    if (exp == 1 && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))
-                        exportToCalendar(text, ReminderUtils.getMonthTime(myHour, myMinute, myDay), idN);
+                    long startTime = ReminderUtils.getMonthTime(myHour, myMinute, myDay);
+                    if (exp == 1 && isCalendar || isStock)
+                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
                     if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
                             code == Constants.SYNC_ALL){
-                        exportToTasks(text, ReminderUtils.getMonthTime(myHour, myMinute, myDay), idN);
+                        ReminderUtils.exportToTasks(this, text, startTime, idN);
                     }
                     new MonthDayReceiver().setAlarm(this, idN);
                 }
@@ -505,24 +503,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         new DisableAsync(this).execute();
     }
 
-    private void exportToCalendar(String summary, long startTime, long id){
-        sPrefs = new SharedPrefs(this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            new CalendarManager(this).addEvent(summary, startTime, id);
-        }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            new CalendarManager(this).addEventToStock(summary, startTime);
-        }
-    }
-
-    private void exportToTasks(String summary, long startTime, long mId){
-        long localId = new TasksData(this).addTask(summary, null, 0, false, startTime,
-                null, null, getString(R.string.string_task_from_just_reminder),
-                null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
-        new TaskAsync(this, summary, null, null,
-                TasksConstants.INSERT_TASK, startTime, getString(R.string.string_task_from_just_reminder), localId).execute();
-    }
-
     public class loadAsync extends AsyncTask<Void, Void, String[]>{
 
         Context mContext;
@@ -546,7 +526,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         protected String[] doInBackground(Void... params) {
             DataBase dataBase = new DataBase(mContext);
             dataBase.open();
-            Contacts mContacts = new Contacts(mContext);
             Interval mInterval = new Interval(mContext);
             TimeCount mCount = new TimeCount(mContext);
             Cursor c = dataBase.getReminder(mId);
@@ -611,13 +590,13 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                             type.matches(Constants.TYPE_LOCATION_CALL) ||
                             type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_MESSAGE) ||
                             type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                             type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_SKYPE)){
                         numberStr = number;
@@ -658,11 +637,11 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                     if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     }
 
@@ -672,18 +651,18 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
                     calendar.setTimeInMillis(time);
-                    String date = Utils.dateFormat.format(calendar.getTime());
+                    String date = TimeUtil.dateFormat.format(calendar.getTime());
 
                     repeatStr = getString(R.string.string_by_day_of_month);
-                    timeStr = date + "\n" + Utils.getTime(calendar.getTime(), is24);
+                    timeStr = date + "\n" + TimeUtil.getTime(calendar.getTime(), is24);
                 } else {
                     if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                         numberStr = number;
-                        String name = mContacts.getContactNameFromNumber(number, mContext);
+                        String name = Contacts.getContactNameFromNumber(number, mContext);
                         if (name != null) numberStr = name + "\n" + number;
                     }
 
@@ -694,7 +673,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     if (weekdays.length() == 7) {
                         repeatStr = ReminderUtils.getRepeatString(mContext, weekdays);
                     }
-                    timeStr = Utils.getTime(calendar.getTime(), is24);
+                    timeStr = TimeUtil.getTime(calendar.getTime(), is24);
                 }
             }
             return new String[]{doneStr, title, typeStr, groupStr, timeStr,

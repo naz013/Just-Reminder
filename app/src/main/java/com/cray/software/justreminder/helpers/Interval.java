@@ -12,7 +12,8 @@ public class Interval {
         this.mContext = context;
     }
 
-    public String getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri, boolean sat, boolean sun){
+    public String getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
+                                boolean sat, boolean sun){
         StringBuilder sb = new StringBuilder();
         if (mon) sb.append(Constants.DAY_CHECKED);
         else sb.append(Constants.DAY_UNCHECKED);
@@ -29,10 +30,6 @@ public class Interval {
         if (sun) sb.append(Constants.DAY_CHECKED);
         else sb.append(Constants.DAY_UNCHECKED);
         return sb.toString();
-    }
-
-    public int getProgressFromCode(int code){
-        return code;
     }
 
     public String getInterval(int code){
@@ -63,10 +60,6 @@ public class Interval {
             interval = "" + code + mContext.getString(R.string.character_d);
         }
         return interval;
-    }
-
-    public static int getRepeatDays(int progress){
-        return progress;
     }
 
     public String getTimeInterval(int code){

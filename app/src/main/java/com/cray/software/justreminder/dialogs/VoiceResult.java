@@ -22,6 +22,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.Utils;
 
@@ -61,12 +62,11 @@ public class VoiceResult extends Activity {
         });
 
         DB = new DataBase(VoiceResult.this);
-        Contacts contacts = new Contacts(VoiceResult.this);
         Interval interval = new Interval(VoiceResult.this);
         DB.open();
 
         ImageView taskIcon = (ImageView) findViewById(R.id.taskIcon);
-        Typeface typeface = Utils.getLightTypeface(this);
+        Typeface typeface = AssetsUtil.getLightTypeface(this);
         TextView taskTitle = (TextView) findViewById(R.id.taskText);
         taskTitle.setTypeface(typeface);
         TextView taskDate = (TextView) findViewById(R.id.taskDate);
@@ -141,7 +141,7 @@ public class VoiceResult extends Activity {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 reminder_phone.setText(number);
                 reminder_type.setText(getString(R.string.reminder_make_call));
-                String contactName = contacts.getContactNameFromNumber(number, VoiceResult.this);
+                String contactName = Contacts.getContactNameFromNumber(number, VoiceResult.this);
                 reminder_contact_name.setText(contactName);
             } else if (type.matches(Constants.TYPE_REMINDER) || type.matches(Constants.TYPE_TIME)) {
                 reminder_type.setText(getString(R.string.reminder_type));
@@ -150,7 +150,7 @@ public class VoiceResult extends Activity {
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
                 reminder_phone.setText(number);
                 reminder_type.setText(getString(R.string.reminder_send_message));
-                String contactName = contacts.getContactNameFromNumber(number, VoiceResult.this);
+                String contactName = Contacts.getContactNameFromNumber(number, VoiceResult.this);
                 reminder_contact_name.setText(contactName);
             } else if (type.startsWith(Constants.TYPE_SKYPE)) {
                 reminder_phone.setText(number);
@@ -212,12 +212,12 @@ public class VoiceResult extends Activity {
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
                 reminder_type.setText(getString(R.string.reminder_make_call));
-                String contactName = contacts.getContactNameFromNumber(number, VoiceResult.this);
+                String contactName = Contacts.getContactNameFromNumber(number, VoiceResult.this);
                 reminder_contact_name.setText(contactName);
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 reminder_phone.setText(number);
                 reminder_type.setText(getString(R.string.reminder_send_message));
-                String contactName = contacts.getContactNameFromNumber(number, VoiceResult.this);
+                String contactName = Contacts.getContactNameFromNumber(number, VoiceResult.this);
                 reminder_contact_name.setText(contactName);
             } else if (type.matches(Constants.TYPE_WEEKDAY)) {
                 reminder_type.setText(getString(R.string.reminder_type));

@@ -16,6 +16,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 
 import java.util.Calendar;
@@ -104,7 +105,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
 
         boolean is24 = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
 
-        lastModified.setText(Utils.getDateTime(date1, is24));
+        lastModified.setText(TimeUtil.getDateTime(date1, is24));
         task.setText(title);
         number.setText("");
         repeat.setText("");
@@ -117,14 +118,14 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.MINUTE, minute);
 
             Date mTime = calendar.getTime();
-            date.setText(Utils.dateFormat.format(mTime));
-            time.setText(Utils.getTime(mTime, is24));
+            date.setText(TimeUtil.dateFormat.format(mTime));
+            time.setText(TimeUtil.getTime(mTime, is24));
             repeat.setText(interval.getInterval(repCode));
 
             type.setText(context.getString(R.string.reminder_type));
         } else if (typeS.matches(Constants.TYPE_TIME)){
             time.setText("");
-            date.setText(Utils.generateAfterString(repTime));
+            date.setText(TimeUtil.generateAfterString(repTime));
 
             repeat.setText(interval.getTimeInterval(repCode));
 
@@ -133,7 +134,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            time.setText(Utils.getTime(calendar.getTime(), is24));
+            time.setText(TimeUtil.getTime(calendar.getTime(), is24));
 
             if (weekdays.length() == 7) {
                 date.setText(ReminderUtils.getRepeatString(context, weekdays));
@@ -153,8 +154,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.MINUTE, minute);
 
             Date mTime = calendar.getTime();
-            date.setText(Utils.dateFormat.format(mTime));
-            time.setText(Utils.getTime(mTime, is24));
+            date.setText(TimeUtil.dateFormat.format(mTime));
+            time.setText(TimeUtil.getTime(mTime, is24));
 
             number.setText(numberS);
 
@@ -163,7 +164,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
 
-            time.setText(Utils.getTime(calendar.getTime(), is24));
+            time.setText(TimeUtil.getTime(calendar.getTime(), is24));
 
             if (weekdays.length() == 7) {
                 date.setText(ReminderUtils.getRepeatString(context, weekdays));
@@ -184,8 +185,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.MINUTE, minute);
 
             Date mTime = calendar.getTime();
-            date.setText(Utils.dateFormat.format(mTime));
-            time.setText(Utils.getTime(mTime, is24));
+            date.setText(TimeUtil.dateFormat.format(mTime));
+            time.setText(TimeUtil.getTime(mTime, is24));
             repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));
@@ -205,8 +206,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.MINUTE, minute);
 
             Date mTime = calendar.getTime();
-            date.setText(Utils.dateFormat.format(mTime));
-            time.setText(Utils.getTime(mTime, is24));
+            date.setText(TimeUtil.dateFormat.format(mTime));
+            time.setText(TimeUtil.getTime(mTime, is24));
             repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));
@@ -220,8 +221,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.MINUTE, minute);
 
             Date mTime = calendar.getTime();
-            date.setText(Utils.dateFormat.format(mTime));
-            time.setText(Utils.getTime(mTime, is24));
+            date.setText(TimeUtil.dateFormat.format(mTime));
+            time.setText(TimeUtil.getTime(mTime, is24));
             repeat.setText(interval.getInterval(repCode));
 
             repeat.setText(interval.getInterval(repCode));

@@ -17,12 +17,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,7 +40,6 @@ import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -50,6 +47,9 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -59,7 +59,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class NotePreviewFragment extends AppCompatActivity {
@@ -174,7 +173,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }
-                    String fileName = new SyncHelper(NotePreviewFragment.this).generateID() + Constants.FILE_NAME_IMAGE;
+                    String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
                     File f = new File(sdPathDr
                             + File.separator + fileName);
                     f.createNewFile();
@@ -196,9 +195,9 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (buttonContainer.getVisibility() == View.VISIBLE) {
-                    collapse(buttonContainer);
+                    ViewUtils.collapse(buttonContainer);
                 } else {
-                    expand(buttonContainer);
+                    ViewUtils.expand(buttonContainer);
                     scrollContent.fullScroll(View.FOCUS_DOWN);
                 }
             }
@@ -363,16 +362,9 @@ public class NotePreviewFragment extends AppCompatActivity {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     if (feature != 0) calendar.setTimeInMillis(feature);
-                    String res;
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)) {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
-                        res = dateFormat.format(calendar.getTime());
-                    } else {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, K:mm:ss a");
-                        res = dateFormat.format(calendar.getTime());
-                    }
 
-                    reminderTime.setText(res);
+                    reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
+                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
                     reminderContainer.setVisibility(View.VISIBLE);
                 }
             }
@@ -413,7 +405,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             byte[] imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
             String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
             if (uuID == null || uuID.matches("")) {
-                uuID = sHelp.generateID();
+                uuID = SyncHelper.generateID();
             }
 
             try {
@@ -514,58 +506,5 @@ public class NotePreviewFragment extends AppCompatActivity {
         new Notifier(this).discardStatusNotification(mParam1);
         sPrefs = new SharedPrefs(this);
         sPrefs.saveBoolean("isNew", true);
-    }
-
-    public static void expand(final View v) {
-        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int)(targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation()
-        {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1){
-                    v.setVisibility(View.GONE);
-                } else{
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
     }
 }

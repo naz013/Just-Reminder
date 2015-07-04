@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 
 import java.util.Calendar;
@@ -101,8 +102,8 @@ public class TimeCount {
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(timeLong);
             Date mTime = cl.getTime();
-            date = Utils.dateFormat.format(mTime);
-            time = Utils.getTime(mTime,
+            date = TimeUtil.dateFormat.format(mTime);
+            time = TimeUtil.getTime(mTime,
                     new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         }
         return new String[]{date, time};
@@ -122,8 +123,8 @@ public class TimeCount {
             Calendar cl = Calendar.getInstance();
             cl.setTimeInMillis(newDbTime);
             Date mTime = cl.getTime();
-            date = Utils.dateFormat.format(mTime);
-            time = Utils.getTime(mTime,
+            date = TimeUtil.dateFormat.format(mTime);
+            time = TimeUtil.getTime(mTime,
                     new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
         }
         return new String[]{date, time};

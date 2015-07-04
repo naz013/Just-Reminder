@@ -24,7 +24,9 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 
 import java.util.Calendar;
@@ -37,7 +39,6 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
     Context context;
     DataBase DB;
     TimeCount mCount;
-    Contacts mContacts;
     Interval mInterval;
     SyncListener mListener;
     Typeface typeface;
@@ -53,9 +54,8 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         this.c = c;
         this.mListener = clickListener;
         DB = new DataBase(context);
-        mContacts = new Contacts(context);
         mInterval = new Interval(context);
-        typeface = Utils.getLightTypeface(context);
+        typeface = AssetsUtil.getLightTypeface(context);
         mCount = new TimeCount(context);
         cs = new ColorSetter(context);
         prefs = new SharedPrefs(context);
@@ -165,12 +165,12 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
             if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             }
@@ -185,10 +185,10 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
             Date mTime = calendar.getTime();
-            viewTime.setText(Utils.getTime(mTime, is24));
+            viewTime.setText(TimeUtil.getTime(mTime, is24));
 
             calendar.setTimeInMillis(time);
-            taskDate.setText(Utils.dateFormat.format(calendar.getTime()));
+            taskDate.setText(TimeUtil.dateFormat.format(calendar.getTime()));
             if (isDone == 0) {
                 String remaining = mCount.getRemaining(time);
                 leftTime.setText(remaining);
@@ -199,13 +199,13 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                     type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                     type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.startsWith(Constants.TYPE_SKYPE)){
@@ -276,12 +276,12 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = mContacts.getContactNameFromNumber(number, mContext);
+                String name = Contacts.getContactNameFromNumber(number, mContext);
                 if (name != null) reminder_contact_name.setText(name);
                 else reminder_contact_name.setText("");
             }
@@ -296,7 +296,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
             Date mTime = calendar.getTime();
-            viewTime.setText(Utils.getTime(mTime, is24));
+            viewTime.setText(TimeUtil.getTime(mTime, is24));
 
             if (weekdays.length() == 7) {
                 taskDate.setText(ReminderUtils.getRepeatString(context, weekdays));

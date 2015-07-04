@@ -215,9 +215,6 @@ public class CalendarActivity extends AppCompatActivity {
         int targetYear = calendar.get(Calendar.YEAR);
 
         calendar.setTimeInMillis(System.currentTimeMillis());
-        int currentDay;
-        int currentMonth;
-        int currentYear;
 
         sPrefs = new SharedPrefs(getApplicationContext());
         int hour = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
@@ -233,7 +230,7 @@ public class CalendarActivity extends AppCompatActivity {
         provider.setBirthdays(c);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
-            Cursor s = db.queryGroup();
+            Cursor s = db.getActiveReminders();
             provider.setReminders(s);
             provider.setFeature(isFeature);
         }
@@ -244,18 +241,18 @@ public class CalendarActivity extends AppCompatActivity {
         int position = 0;
         int targetPosition = -1;
         do {
-            currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-            currentMonth = calendar.get(Calendar.MONTH);
-            currentYear = calendar.get(Calendar.YEAR);
+            int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            int mMonth = calendar.get(Calendar.MONTH);
+            int mYear = calendar.get(Calendar.YEAR);
 
             ArrayList<EventsDataProvider.EventsItem> datas =
-                    provider.getMatches(currentDay, currentMonth, currentYear);
+                    provider.getMatches(mDay, mMonth, mYear);
 
-            if (currentDay == targetDay && currentMonth == targetMonth && currentYear == targetYear){
+            if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
                 targetPosition = position;
-                pagerData.add(new PagerItem(datas, position, 1, currentDay, currentMonth, currentYear));
+                pagerData.add(new PagerItem(datas, position, 1, mDay, mMonth, mYear));
             } else {
-                pagerData.add(new PagerItem(datas, position, 0, currentDay, currentMonth, currentYear));
+                pagerData.add(new PagerItem(datas, position, 0, mDay, mMonth, mYear));
             }
 
             position++;
