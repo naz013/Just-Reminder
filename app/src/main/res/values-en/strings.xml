@@ -652,4 +652,6 @@
     <string name="string_timer_warming">You don\'t select any time!</string>
     <string name="string_contact_group">Contacts filter</string>
     <string name="contact_group_explanation">Select contacts to enable follow reminder for it.</string>
+    <string name="string_delete_selected">Delete selected</string>
+    <string name="string_selected">selected</string>
 </resources>

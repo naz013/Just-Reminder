@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.dialogs.utils.NoteReminderTime;
 import com.cray.software.justreminder.dialogs.utils.TextSize;
 import com.cray.software.justreminder.helpers.SharedPrefs;

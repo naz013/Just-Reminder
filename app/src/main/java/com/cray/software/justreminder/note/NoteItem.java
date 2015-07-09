@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.datas;
+package com.cray.software.justreminder.note;
 
 public class NoteItem {
     String note;

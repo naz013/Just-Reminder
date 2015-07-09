@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -23,6 +22,7 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.MissedCallAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
@@ -166,7 +166,7 @@ public class MissedCallDialog extends Activity {
                 notifier.discardNotification(id);
                 db.open();
                 db.deleteMissedCall(id);
-                makeCall(number);
+                Telephony.makeCall(number, MissedCallDialog.this);
                 removeFlags();
                 finish();
             }
@@ -202,12 +202,6 @@ public class MissedCallDialog extends Activity {
         }
     }
 
-    public void makeCall(String number){
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
-        startActivity(callIntent);
-    }
-
     public void removeFlags(){
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -233,8 +227,7 @@ public class MissedCallDialog extends Activity {
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        sPrefs = new SharedPrefs(MissedCallDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
+        if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
         } else {

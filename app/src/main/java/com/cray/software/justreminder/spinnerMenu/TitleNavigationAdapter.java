@@ -32,6 +32,8 @@ public class TitleNavigationAdapter extends BaseAdapter {
                                   ArrayList<SpinnerItem> spinnerNavItem) {
         this.spinnerNavItem = spinnerNavItem;
         this.context = context;
+        cs = new ColorSetter(context);
+        prefs = new SharedPrefs(context);
     }
 
     @Override
@@ -76,8 +78,6 @@ public class TitleNavigationAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_item_navigation, null);
         }
 
-        cs = new ColorSetter(context);
-        prefs = new SharedPrefs(context);
         itemBg = (RelativeLayout) convertView.findViewById(R.id.itemBg);
         itemBg.setBackgroundColor(cs.getSpinnerStyle());
 

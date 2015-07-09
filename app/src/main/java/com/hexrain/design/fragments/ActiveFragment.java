@@ -2,71 +2,55 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.adapters.CustomCursorAdapter;
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.reminder.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.CheckPosition;
-import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.GeolocationService;
-import com.cray.software.justreminder.services.MonthDayReceiver;
-import com.cray.software.justreminder.services.PositionDelayReceiver;
-import com.cray.software.justreminder.services.RepeatNotificationReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class ActiveFragment extends Fragment {
 
-    ListView currentList;
+    RecyclerView currentList;
     LinearLayout emptyLayout, emptyItem;
     RelativeLayout ads_container;
     private AdView adView;
     ImageView emptyImage;
 
     DataBase DB;
-    UpdatesHelper updatesHelper;
     AlarmReceiver alarm = new AlarmReceiver();
-    NotificationManager mNotifyMgr;
     ColorSetter cSetter;
     SharedPrefs sPrefs;
 
@@ -117,7 +101,7 @@ public class ActiveFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_with_listview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
@@ -132,28 +116,8 @@ public class ActiveFragment extends Fragment {
             emptyImage.setImageResource(R.drawable.ic_notifications_grey600_24dp);
         }
 
-        currentList = (ListView) rootView.findViewById(R.id.currentList);
-        currentList.setEmptyView(emptyItem);
-        currentList.setItemsCanFocus(true);
-        currentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                sPrefs = new SharedPrefs(getActivity());
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
-                    startActivity(new Intent(getActivity(), ReminderPreviewFragment.class)
-                            .putExtra(Constants.EDIT_ID, id));
-                } else {
-                    toggle(id);
-                }
-            }
-        });
-        currentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                editReminder(id);
-                return true;
-            }
-        });
+        currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         loaderAdapter(null);
 
@@ -234,208 +198,91 @@ public class ActiveFragment extends Fragment {
         super.onPause();
     }
 
-    private void makeArchive(long id){
-        DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
-        mNotifyMgr =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        Integer i = (int) (long) id;
-        mNotifyMgr.cancel(i);
-        DB.toArchive(id);
-        new DisableAsync(getActivity()).execute();
-    }
-
-    CustomCursorAdapter customAdapter;
+    ReminderDataProvider provider;
+    RemindersRecyclerAdapter adapter;
 
     public void loaderAdapter(String categoryId){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
+        provider = new ReminderDataProvider(getActivity());
         if (categoryId != null) {
-            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(categoryId), null);
+            provider.setCursor(DB.queryGroup(categoryId));
         } else {
-            customAdapter = new CustomCursorAdapter(getActivity(), DB.queryGroup(), null);
+            provider.setCursor(DB.queryGroup());
         }
-        final SwipeActionAdapter mAdapter = new SwipeActionAdapter(customAdapter);
-        mAdapter.setListView(currentList);
-        currentList.setAdapter(mAdapter);
-        mAdapter.setFixedBackgrounds(true);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
-        mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+        provider.load();
+        adapter = new RemindersRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(new RemindersRecyclerAdapter.EventListener() {
             @Override
-            public boolean hasActions(int position) {
-                return true;
-            }
-
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    DB = new DataBase(getActivity());
-                    if (!DB.isOpen()) DB.open();
-                    customAdapter = new CustomCursorAdapter(getActivity(),
-                            DB.queryGroup(), null);
-                    final long id = customAdapter.getItemId(position);
-                    new AlarmReceiver().cancelAlarm(getActivity(), id);
-                    new WeekDayReceiver().cancelAlarm(getActivity(), id);
-                    new DelayReceiver().cancelAlarm(getActivity(), id);
-                    new PositionDelayReceiver().cancelDelay(getActivity(), id);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            disableReminder(id);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            disableReminder(id);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            editReminder(id);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            editReminder(id);
-                            break;
+            public void onItemClicked(int position) {
+                if (mActionMode == null) {
+                    long id = adapter.getItemId(position);
+                    sPrefs = new SharedPrefs(getActivity());
+                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
+                        getActivity().startActivity(new Intent(getActivity(), ReminderPreviewFragment.class)
+                                .putExtra(Constants.EDIT_ID, id));
+                    } else {
+                        Reminder.toggle(id, getActivity());
+                        loaderAdapter(null);
                     }
                 }
             }
+
+            @Override
+            public void onItemLongClicked(int position) {
+                long id = adapter.getItemId(position);
+                editReminder(id);
+                if (mActionMode != null) {
+                    mActionMode.finish();
+                    mActionMode = null;
+                }
+            }
+
+            @Override
+            public void actionMode() {
+                if (mActionMode != null) {
+                    return;
+                }
+                mActionMode = getActivity().startActionMode(mActionModeCallback);
+            }
+
+            @Override
+            public void invalidate() {
+                if (mActionMode == null) return;
+
+                mActionMode.invalidate();
+            }
+
+            @Override
+            public void itemChange() {
+                loaderAdapter(null);
+            }
         });
+        currentList.setAdapter(adapter);
+        currentList.setItemAnimator(new DefaultItemAnimator());
+
+        if (provider.getCount() > 0){
+            currentList.setVisibility(View.VISIBLE);
+            emptyItem.setVisibility(View.GONE);
+        } else {
+            currentList.setVisibility(View.GONE);
+            emptyItem.setVisibility(View.VISIBLE);
+        }
 
         if (mCallbacks != null) mCallbacks.onListChange(currentList);
     }
 
     private void editReminder(long id){
-        Intent intentId = new Intent(getActivity(), ReminderManager.class);
         if (id != 0) {
-            intentId.putExtra(Constants.EDIT_ID, id);
-            alarm.cancelAlarm(getActivity(), id);
-            new WeekDayReceiver().cancelAlarm(getActivity(), id);
-            new MonthDayReceiver().cancelAlarm(getActivity(), id);
-            new DelayReceiver().cancelAlarm(getActivity(), id);
-            new PositionDelayReceiver().cancelDelay(getActivity(), id);
-            startActivity(intentId);
-            new DisableAsync(getActivity()).execute();
+            Reminder.edit(id, getActivity());
         }
     }
 
     private void disableReminder(long id){
         if (id != 0) {
-            makeArchive(id);
-            updatesHelper = new UpdatesHelper(getActivity());
-            updatesHelper.updateWidget();
-
-            Toast.makeText(getActivity(),
-                    getString(R.string.archived_result_message),
-                    Toast.LENGTH_SHORT).show();
-
+            Reminder.makeArchive(id, getActivity());
             loaderAdapter(null);
         }
-    }
-
-    private void toggle(long id) {
-        DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
-        Cursor c = DB.getReminder(id);
-        if (c != null && c.moveToFirst()) {
-            int done = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-            if (done == 0) {
-                DB.setDone(id);
-                AlarmReceiver alarm = new AlarmReceiver();
-                WeekDayReceiver week = new WeekDayReceiver();
-                DelayReceiver delayReceiver = new DelayReceiver();
-                Integer i = (int) (long) id;
-                alarm.cancelAlarm(getActivity(), i);
-                week.cancelAlarm(getActivity(), i);
-                delayReceiver.cancelAlarm(getActivity(), id);
-                new RepeatNotificationReceiver().cancelAlarm(getActivity(), i);
-                new MonthDayReceiver().cancelAlarm(getActivity(), i);
-                new PositionDelayReceiver().cancelDelay(getActivity(), i);
-                NotificationManager mNotifyMgr =
-                        (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotifyMgr.cancel(i);
-                loaderAdapter(null);
-                new DisableAsync(getActivity()).execute();
-            } else {
-                String type;
-                int hour;
-                int minute;
-                int seconds;
-                int day;
-                int month;
-                int year;
-                int repCode;
-                long repTime;
-                int repCount;
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    DB.setUnDone(id);
-                    DB.updateReminderDateTime(id);
-                    new WeekDayReceiver().setAlarm(getActivity(), id);
-                    loaderAdapter(null);
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                    DB.setUnDone(id);
-                    DB.updateReminderDateTime(id);
-                    new MonthDayReceiver().setAlarm(getActivity(), id);
-                    loaderAdapter(null);
-                } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                    DB.setUnDone(id);
-                    DB.updateReminderDateTime(id);
-                    if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
-                        getActivity().startService(new Intent(getActivity(), GeolocationService.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        getActivity().startService(new Intent(getActivity(), CheckPosition.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                    } else {
-                        new PositionDelayReceiver().setDelay(getActivity(), id);
-                    }
-                    loaderAdapter(null);
-                } else {
-                    if (type.matches(Constants.TYPE_TIME)) {
-                        final Calendar calendar1 = Calendar.getInstance();
-                        int myYear = calendar1.get(Calendar.YEAR);
-                        int myMonth = calendar1.get(Calendar.MONTH);
-                        int myDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                        int myHour = calendar1.get(Calendar.HOUR_OF_DAY);
-                        int myMinute = calendar1.get(Calendar.MINUTE);
-                        int mySeconds = calendar1.get(Calendar.SECOND);
-                        DB.updateReminderStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
-                        DB.updateReminderDateTime(id);
-                        new AlarmReceiver().setAlarm(getActivity(), id);
-                        loaderAdapter(null);
-                    } else {
-                        if (new TimeCount(getActivity())
-                                .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
-                            DB.setUnDone(id);
-                            DB.updateReminderDateTime(id);
-                            new AlarmReceiver().setAlarm(getActivity(), id);
-                            loaderAdapter(null);
-                        } else {
-                            Toast.makeText(getActivity(),
-                                    getString(R.string.edit_reminder_toast),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            }
-            new Notifier(getActivity()).recreatePermanent();
-            new UpdatesHelper(getActivity()).updateWidget();
-        }
-        if (c != null) c.close();
     }
 
     ArrayList<String> ids;
@@ -506,4 +353,87 @@ public class ActiveFragment extends Fragment {
     private void startSync(){
         new SyncTask(getActivity(), null).execute();
     }
+
+    ActionMode mActionMode;
+
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            int size = provider.getSelected().size();
+            if (size > 0){
+                menu.findItem(R.id.action_title).setTitle(size + " " +
+                        getActivity().getString(R.string.string_selected));
+                if (provider.hasActive()) menu.findItem(R.id.action_disable).setVisible(true);
+                else menu.findItem(R.id.action_disable).setVisible(false);
+                if (size == 1){
+                    if (provider.getSelected().get(0).getCompleted() == 0)
+                        menu.findItem(R.id.action_disable).setVisible(true);
+                    else menu.findItem(R.id.action_disable).setVisible(false);
+                    menu.findItem(R.id.action_edit).setVisible(true);
+                } else {
+                    menu.findItem(R.id.action_edit).setVisible(false);
+                }
+            } else {
+                if (mActionMode != null) {
+                    mActionMode.finish();
+                }
+            }
+            return false; // Return false if nothing is done
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_edit:
+                    if (provider.getSelected().size() == 1){
+                        for (ReminderDataProvider.ReminderItem reminderItem : provider.getSelected()){
+                            editReminder(reminderItem.getId());
+                            loaderAdapter(null);
+                        }
+                        mode.finish();
+                    } else return true;
+                    return true;
+                case R.id.action_delete:
+                    if (provider.getSelected().size() > 0){
+                        for (ReminderDataProvider.ReminderItem reminderItem : provider.getSelected()){
+                            provider.removeItem(reminderItem);
+                            disableReminder(reminderItem.getId());
+                            loaderAdapter(null);
+                        }
+                        mode.finish();
+                    } else return true;
+                    return true;
+                case R.id.action_disable:
+                    if (provider.getSelected().size() > 0){
+                        for (ReminderDataProvider.ReminderItem reminderItem : provider.getSelected()){
+                            int position = provider.getPosition(reminderItem);
+                            if (provider.isActive(position)){
+                                Reminder.toggle(reminderItem.getId(), getActivity());
+                                loaderAdapter(null);
+                            }
+                        }
+                        mode.finish();
+                    } else return true;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            provider.deselectItems();
+            loaderAdapter(null);
+        }
+    };
 }

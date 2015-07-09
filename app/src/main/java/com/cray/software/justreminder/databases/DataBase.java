@@ -415,12 +415,13 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateReminderDateTime(long rowId) {
+    public long updateReminderDateTime(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
-        TimeCount mCount = new TimeCount(mContext);
-        args.put(Constants.COLUMN_FEATURE_TIME, mCount.generateDateTime(rowId));
-        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        long time = new TimeCount(mContext).generateDateTime(rowId);
+        args.put(Constants.COLUMN_FEATURE_TIME, time);
+        db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null);
+        return time;
     }
 
     public boolean updateReminderAfterTime(long rowId, long time) {
@@ -518,7 +519,9 @@ public class DataBase {
             order = Constants.COLUMN_IS_DONE + " ASC, " +
                     Constants.COLUMN_FEATURE_TIME + " DESC";
         }
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_CATEGORY  + "='" + categoty + "'", null, null, null, order);
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_CATEGORY  + "='" + categoty + "'"
+                + " AND "+ Constants.COLUMN_ARCHIVED + "='"
+                + 0 + "'", null, null, null, order);
     }
 
     public Cursor queryGroup() throws SQLException {

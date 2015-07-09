@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -25,6 +24,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -192,18 +192,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
     }
 
-    private void makeCall(String number){
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
-        startActivity(callIntent);
-    }
-
-    private void sendSMS(String number){
-        Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-        smsIntent.setData(Uri.parse("sms:" + number));
-        startActivity(smsIntent);
-    }
-
     @Override
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance();
@@ -219,7 +207,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 break;
             case R.id.buttonCall:
                 notifier.discardNotification();
-                makeCall(number);
+                Telephony.makeCall(number, ShowBirthday.this);
                 DB.open();
                 DB.setShown(id, String.valueOf(year));
                 removeFlags();
@@ -228,7 +216,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 break;
             case R.id.buttonSend:
                 notifier.discardNotification();
-                sendSMS(number);
+                Telephony.sendSms(number, ShowBirthday.this);
                 DB.open();
                 DB.setShown(id, String.valueOf(year));
                 removeFlags();

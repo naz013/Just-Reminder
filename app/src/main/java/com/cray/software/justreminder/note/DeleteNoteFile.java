@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.note;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -11,14 +11,11 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 import java.io.File;
 
-/**
- * Created by Nazar on 08.05.2015.
- */
-public class deleteNote extends AsyncTask<String, Void, Boolean> {
+public class DeleteNoteFile extends AsyncTask<String, Void, Boolean> {
 
     Context ctx;
 
-    public deleteNote(Context context){
+    public DeleteNoteFile(Context context){
         this.ctx = context;
     }
 

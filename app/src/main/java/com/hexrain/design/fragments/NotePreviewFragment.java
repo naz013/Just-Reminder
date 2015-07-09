@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,34 +30,26 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.async.DisableAsync;
-import com.cray.software.justreminder.async.deleteNote;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ImagePreview;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.PositionDelayReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.note.DeleteNoteFile;
+import com.cray.software.justreminder.note.Note;
+import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Calendar;
 
 public class NotePreviewFragment extends AppCompatActivity {
@@ -147,8 +138,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                     return 0;
                 }
                 else {
-                    int alpha = 0;
-                    alpha = (int)  ((255.0 / maxDist) * scrollY);
+                    int alpha = (int)  ((255.0 / maxDist) * scrollY);
                     return alpha;
                 }
             }
@@ -224,14 +214,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (remId != 0) {
-                    Intent intentId = new Intent(NotePreviewFragment.this, ReminderManager.class);
-                    intentId.putExtra(Constants.EDIT_ID, remId);
-                    new AlarmReceiver().cancelAlarm(NotePreviewFragment.this, remId);
-                    new WeekDayReceiver().cancelAlarm(NotePreviewFragment.this, remId);
-                    new DelayReceiver().cancelAlarm(NotePreviewFragment.this, remId);
-                    new PositionDelayReceiver().cancelDelay(NotePreviewFragment.this, remId);
-                    startActivity(intentId);
-                    new DisableAsync(NotePreviewFragment.this).execute();
+                    Reminder.edit(remId, NotePreviewFragment.this);
                 }
             }
         });
@@ -240,13 +223,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (remId != 0) {
-                    makeArchive(remId);
-                    UpdatesHelper updatesHelper = new UpdatesHelper(NotePreviewFragment.this);
-                    updatesHelper.updateWidget();
-
-                    Toast.makeText(NotePreviewFragment.this,
-                            getString(R.string.archived_result_message),
-                            Toast.LENGTH_SHORT).show();
+                    Reminder.delete(remId, NotePreviewFragment.this);
                 }
             }
         });
@@ -371,66 +348,13 @@ public class NotePreviewFragment extends AppCompatActivity {
         }
     }
 
-    private void makeArchive(long id){
-        DataBase DB = new DataBase(NotePreviewFragment.this);
-        if (!DB.isOpen()) DB.open();
-
-        new CalendarManager(NotePreviewFragment.this).deleteEvents(id);
-        DB.deleteReminder(id);
-        loadData();
-        Toast.makeText(NotePreviewFragment.this, getString(R.string.swipe_delete),
-                Toast.LENGTH_SHORT).show();
-    }
-
-    private void shareNote() {
-        SyncHelper sHelp = new SyncHelper(NotePreviewFragment.this);
-        base = new NotesBase(NotePreviewFragment.this);
-        base.open();
-        Cursor c = base.getNote(mParam1);
-        if (c != null && c.moveToFirst()) {
-            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-            SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)) {
-                note = new SyncHelper(NotePreviewFragment.this).decrypt(note);
-            }
-            Calendar calendar1 = Calendar.getInstance();
-            int day = calendar1.get(Calendar.DAY_OF_MONTH);
-            int month = calendar1.get(Calendar.MONTH);
-            int year = calendar1.get(Calendar.YEAR);
-            String date = year + "/" + month + "/" + day;
-
-            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-            remId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
-            byte[] imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-            if (uuID == null || uuID.matches("")) {
-                uuID = SyncHelper.generateID();
-            }
-
-            try {
-                File file = sHelp.createNote(note, date, uuID, color, imageByte, style);
-                sendMail(file);
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void sendMail(File file){
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
-        if (!file.exists() || !file.canRead()) {
+    private void shareNote(){
+        if (!Note.shareNote(mParam1, this)) {
             Toast.makeText(this, getString(R.string.attach_error_message), Toast.LENGTH_SHORT).show();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else finish();
-            return;
         }
-        Uri uri = Uri.fromFile(file);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, "Send email..."));
     }
 
     @Override
@@ -501,7 +425,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
         }
         DB.deleteNote(mParam1);
-        new deleteNote(NotePreviewFragment.this).execute(uuId);
+        new DeleteNoteFile(NotePreviewFragment.this).execute(uuId);
         new UpdatesHelper(this).updateNotesWidget();
         new Notifier(this).discardStatusNotification(mParam1);
         sPrefs = new SharedPrefs(this);

@@ -1,7 +1,6 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,15 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.adapters.CustomCursorAdapter;
-import com.cray.software.justreminder.async.DeleteReminder;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.reminder.CustomCursorAdapter;
+import com.cray.software.justreminder.reminder.Reminder;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -37,7 +34,7 @@ import com.hexrain.design.ScreenManager;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
 import com.wdullaer.swipeactionadapter.SwipeDirections;
 
-public class ArchivedRemindersFragment extends Fragment {
+public class TrashFragment extends Fragment {
 
     ListView currentList;
     private CustomCursorAdapter archiveCursorAdapter;
@@ -53,11 +50,11 @@ public class ArchivedRemindersFragment extends Fragment {
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
-    public static ArchivedRemindersFragment newInstance() {
-        return new ArchivedRemindersFragment();
+    public static TrashFragment newInstance() {
+        return new TrashFragment();
     }
 
-    public ArchivedRemindersFragment() {
+    public TrashFragment() {
     }
 
     @Override
@@ -118,7 +115,7 @@ public class ArchivedRemindersFragment extends Fragment {
         currentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editReminder(id);
+                Reminder.edit(id, getActivity());
             }
         });
 
@@ -199,12 +196,6 @@ public class ArchivedRemindersFragment extends Fragment {
         super.onPause();
     }
 
-    private void editReminder(long id){
-        Intent intentId = new Intent(getActivity(), ReminderManager.class);
-        intentId.putExtra(Constants.EDIT_ID, id);
-        startActivity(intentId);
-    }
-
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
@@ -235,17 +226,13 @@ public class ArchivedRemindersFragment extends Fragment {
                     long itId = archiveCursorAdapter.getItemId(position);
 
                     switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
+                        case SwipeDirections.DIRECTION_NORMAL_LEFT |
+                                SwipeDirections.DIRECTION_FAR_LEFT:
                             removeReminder(itId);
                             break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            removeReminder(itId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            editReminder(itId);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            editReminder(itId);
+                        case SwipeDirections.DIRECTION_NORMAL_RIGHT |
+                                SwipeDirections.DIRECTION_FAR_RIGHT:
+                            Reminder.edit(itId, getActivity());
                             break;
                     }
                 }
@@ -257,16 +244,7 @@ public class ArchivedRemindersFragment extends Fragment {
 
     private void removeReminder(long itId){
         if (itId != 0) {
-            DB = new DataBase(getActivity());
-            if (!DB.isOpen()) DB.open();
-            new CalendarManager(getActivity()).deleteEvents(itId);
-            Cursor c = DB.getReminder(itId);
-            String uuId = null;
-            if (c != null && c.moveToFirst()){
-                uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            DB.deleteReminder(itId);
-            new DeleteReminder(getActivity(), uuId).execute();
+            Reminder.delete(itId, getActivity());
             Toast.makeText(getActivity(), getString(R.string.swipe_delete),
                     Toast.LENGTH_SHORT).show();
             loaderAdapter();
@@ -280,10 +258,7 @@ public class ArchivedRemindersFragment extends Fragment {
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                new CalendarManager(getActivity()).deleteEvents(rowId);
-                DB.deleteReminder(rowId);
-                new DeleteReminder(getActivity(), uuId).execute();
+                removeReminder(rowId);
             }while (c.moveToNext());
         }
         if (c != null) c.close();

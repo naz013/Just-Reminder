@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.databases;
+package com.cray.software.justreminder.note;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.TasksConstants;
 
 public class NotesBase {
     private static final String DB_NAME = "notes_base";

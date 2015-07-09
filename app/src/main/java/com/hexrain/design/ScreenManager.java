@@ -46,7 +46,6 @@ import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
@@ -67,6 +66,7 @@ import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScroll
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -86,7 +86,6 @@ import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccoun
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
 import com.hexrain.design.fragments.ActiveFragment;
-import com.hexrain.design.fragments.ArchivedRemindersFragment;
 import com.hexrain.design.fragments.BackupsFragment;
 import com.hexrain.design.fragments.EventsFragment;
 import com.hexrain.design.fragments.GeolocationFragment;
@@ -95,6 +94,7 @@ import com.hexrain.design.fragments.NotesFragment;
 import com.hexrain.design.fragments.PlacesFragment;
 import com.hexrain.design.fragments.TasksFragment;
 import com.hexrain.design.fragments.TemplatesFragment;
+import com.hexrain.design.fragments.TrashFragment;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -739,7 +739,7 @@ public class ScreenManager extends AppCompatActivity
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
             } else if (tag.matches(FRAGMENT_ARCHIVE)) {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, ArchivedRemindersFragment.newInstance(), tag)
+                        .replace(R.id.container, TrashFragment.newInstance(), tag)
                         .commitAllowingStateLoss();
                 mTag = tag;
                 sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
@@ -1334,7 +1334,7 @@ public class ScreenManager extends AppCompatActivity
         SimpleDateFormat full24Format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
         String date = full24Format.format(calendar1.getTime());
 
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(ScreenManager.this);
         db.open();
         Random r = new Random();
@@ -1416,8 +1416,6 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 ViewUtils.hide(ScreenManager.this, noteReminderCard, isAnimation);
-
-                SyncHelper sHelp = new SyncHelper(ScreenManager.this);
                 DB = new DataBase(ScreenManager.this);
                 if (!DB.isOpen()) DB.open();
                 Calendar calendar1 = Calendar.getInstance();
@@ -1435,7 +1433,7 @@ public class ScreenManager extends AppCompatActivity
                 if (cf != null) cf.close();
                 long remId = DB.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
                         0, sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME),
-                        0, 0, 0, sHelp.generateID(), null, 0, null, 0, 0, 0, categoryId);
+                        0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
                 new AlarmReceiver().setAlarm(ScreenManager.this, remId);
                 DB.updateReminderDateTime(remId);
                 new UpdatesHelper(ScreenManager.this).updateWidget();

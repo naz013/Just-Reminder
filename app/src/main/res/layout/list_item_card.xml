@@ -16,21 +16,23 @@
         android:id="@+id/container"
         android:focusable="false">
 
-        <CheckBox
+        <android.support.v7.widget.SwitchCompat
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:focusable="false"
-            android:paddingRight="5dp"
             android:visibility="gone"
+            android:layout_marginRight="5dp"
             android:id="@+id/itemCheck"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_toRightOf="@+id/itemCheck"
+            android:layout_toLeftOf="@+id/itemCheck"
             android:layout_height="wrap_content"
             android:focusable="false"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
             android:orientation="vertical">
 
             <LinearLayout

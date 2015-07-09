@@ -277,6 +277,21 @@ public class TimeCount {
         return result;
     }
 
+    public boolean getNextDate(long due) {
+        boolean nextDate = false;
+        if (due == 0) {
+            nextDate = true;
+        } else {
+            Calendar cc = Calendar.getInstance();
+            cc.setTimeInMillis(System.currentTimeMillis());
+            long currentTome = cc.getTimeInMillis();
+            if (due > currentTome) {
+                nextDate = true;
+            }
+        }
+        return nextDate;
+    }
+
     public boolean getNextDate(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
                                long inTime, int repeatCode, int remCount) {
         boolean nextDate = false;

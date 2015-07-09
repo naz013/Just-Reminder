@@ -3,7 +3,6 @@ package com.hexrain.design.fragments;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,41 +31,33 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.async.DeleteReminder;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
-import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ItemData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.GeolocationService;
-import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
-import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.CircularProgress;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -164,7 +155,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         switchWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggle();
+                Reminder.toggle(id, ReminderPreviewFragment.this);
             }
         });
 
@@ -231,94 +222,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         }
     }
 
-    private void toggle() {
-        db = new DataBase(this);
-        db.open();
-        if (statusSwitch.isChecked()){
-            db.setDone(id);
-            Integer i = (int) (long) id;
-            new AlarmReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
-            new WeekDayReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
-            new MonthDayReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
-            new DelayReceiver().cancelAlarm(ReminderPreviewFragment.this, id);
-            new RepeatNotificationReceiver().cancelAlarm(ReminderPreviewFragment.this, i);
-            new PositionDelayReceiver().cancelDelay(ReminderPreviewFragment.this, i);
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotifyMgr.cancel(i);
-            new DisableAsync(ReminderPreviewFragment.this).execute();
-            loadData();
-        } else {
-            Cursor c = db.getReminder(id);
-            if (c != null && c.moveToFirst()) {
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-
-                if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    db.setUnDone(id);
-                    db.updateReminderDateTime(id);
-                    new WeekDayReceiver().setAlarm(ReminderPreviewFragment.this, id);
-                    loadData();
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                    db.setUnDone(id);
-                    db.updateReminderDateTime(id);
-                    new MonthDayReceiver().setAlarm(this, id);
-                    loadData();
-                } else if (type.startsWith(Constants.TYPE_LOCATION) ||
-                        type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                    db.setUnDone(id);
-                    db.updateReminderDateTime(id);
-                    if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
-                        startService(new Intent(ReminderPreviewFragment.this, GeolocationService.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        startService(new Intent(ReminderPreviewFragment.this, CheckPosition.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                    } else {
-                        new PositionDelayReceiver().setDelay(ReminderPreviewFragment.this, id);
-                    }
-                    loadData();
-                } else {
-                    if (type.matches(Constants.TYPE_TIME)){
-                        final Calendar calendar1 = Calendar.getInstance();
-                        int myYear = calendar1.get(Calendar.YEAR);
-                        int myMonth = calendar1.get(Calendar.MONTH);
-                        int myDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                        int myHour = calendar1.get(Calendar.HOUR_OF_DAY);
-                        int myMinute = calendar1.get(Calendar.MINUTE);
-                        int mySeconds = calendar1.get(Calendar.SECOND);
-                        db.updateReminderStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
-                        db.updateReminderDateTime(id);
-                        new AlarmReceiver().setAlarm(ReminderPreviewFragment.this, id);
-                        loadData();
-                    } else {
-                        if (new TimeCount(ReminderPreviewFragment.this)
-                                .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
-                            db.setUnDone(id);
-                            db.updateReminderDateTime(id);
-                            new AlarmReceiver().setAlarm(ReminderPreviewFragment.this, id);
-                            loadData();
-                        } else {
-                            Toast.makeText(ReminderPreviewFragment.this, getString(R.string.edit_reminder_toast),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            }
-            if (c != null) c.close();
-        }
-        if (db != null) db.close();
-        new Notifier(this).recreatePermanent();
-        new UpdatesHelper(this).updateWidget();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_reminder_preview, menu);
@@ -330,7 +233,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         int ids = item.getItemId();
 
         if (ids == R.id.action_delete) {
-            makeArchive();
+            Reminder.delete(id, ReminderPreviewFragment.this);
             finish();
             return true;
         }
@@ -387,120 +290,12 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         builder.setTitle(getString(R.string.string_select_time));
         builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                createCopy(list.get(item));
+                Reminder.copy(id, list.get(item), ReminderPreviewFragment.this);
                 dialog.dismiss();
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    private void createCopy(long time) {
-        db = new DataBase(this);
-        sPrefs = new SharedPrefs(this);
-        if (!db.isOpen()) db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-            String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-            int myHour;
-            int myMinute;
-            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
-            int code = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
-            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-            if (!type.matches(Constants.TYPE_TIME)) {
-                String uuID = SyncHelper.generateID();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(time);
-                myHour = calendar.get(Calendar.HOUR_OF_DAY);
-                myMinute = calendar.get(Calendar.MINUTE);
-                long idN = db.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                        number, repCode, 0, 0, latitude, longitude, uuID, weekdays, exp, melody, radius, ledColor,
-                        code, categoryId);
-                db.updateReminderDateTime(idN);
-                if (type.startsWith(Constants.TYPE_LOCATION) ||
-                        type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                    if (myHour > 0 && myMinute > 0){
-                        new PositionDelayReceiver().setDelay(this, idN);
-                    } else {
-                        startService(new Intent(this, GeolocationService.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                    }
-                }
-                boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-                boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
-                if (type.startsWith(Constants.TYPE_APPLICATION) || type.matches(Constants.TYPE_CALL) ||
-                        type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_REMINDER) ||
-                        type.startsWith(Constants.TYPE_SKYPE)){
-                    long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-                    if (exp == 1 && isCalendar || isStock)
-                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
-                        ReminderUtils.exportToTasks(this, text, startTime, idN);
-                    }
-                    new AlarmReceiver().setAlarm(this, idN);
-                }
-                if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                    long startTime = ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
-                    if (exp == 1 && isCalendar || isStock)
-                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
-                        ReminderUtils.exportToTasks(this, text, startTime, idN);
-                    }
-                    new WeekDayReceiver().setAlarm(this, idN);
-                }
-                if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                    long startTime = ReminderUtils.getMonthTime(myHour, myMinute, myDay);
-                    if (exp == 1 && isCalendar || isStock)
-                        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(this).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
-                        ReminderUtils.exportToTasks(this, text, startTime, idN);
-                    }
-                    new MonthDayReceiver().setAlarm(this, idN);
-                }
-            }
-        }
-        if (db != null) db.close();
-        UpdatesHelper updatesHelper = new UpdatesHelper(this);
-        updatesHelper.updateWidget();
-
-        Toast.makeText(this, getString(R.string.string_reminder_created), Toast.LENGTH_SHORT).show();
-    }
-
-    private void makeArchive() {
-        db = new DataBase(this);
-        if (!db.isOpen()) db.open();
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Integer i = (int) (long) id;
-        mNotifyMgr.cancel(i);
-        Cursor c = db.getReminder(id);
-        String uuID = null;
-        if (c != null && c.moveToFirst()){
-            uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-        }
-        db.deleteReminder(id);
-        new DeleteReminder(ReminderPreviewFragment.this, uuID).execute();
-        if (db != null) db.close();
-        UpdatesHelper updatesHelper = new UpdatesHelper(this);
-        updatesHelper.updateWidget();
-
-        Toast.makeText(this, getString(R.string.archived_result_message), Toast.LENGTH_SHORT).show();
-        new DisableAsync(this).execute();
     }
 
     public class loadAsync extends AsyncTask<Void, Void, String[]>{

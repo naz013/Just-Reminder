@@ -13,12 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.reminder.Reminder;
 
 import java.util.ArrayList;
 
@@ -81,10 +80,7 @@ public class BirthdaysList extends Fragment{
                             .putExtra("BDid", id)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } else {
-                    Intent intentId = new Intent(getActivity(), ReminderManager.class);
-                    intentId.putExtra(Constants.EDIT_WIDGET, 2);
-                    intentId.putExtra(Constants.EDIT_ID, id);
-                    startActivity(intentId);
+                    Reminder.edit(id, getActivity());
                 }
             }
         });

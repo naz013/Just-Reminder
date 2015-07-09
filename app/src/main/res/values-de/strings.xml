@@ -652,4 +652,6 @@
     <string name="string_timer_warming">Sie haben keine Zeit zu wählen!</string>
     <string name="string_contact_group">Kontakte Filter</string>
     <string name="contact_group_explanation">Wählen Sie Kontakte aus, um Folge Erinnerung für sie zu aktivieren.</string>
+    <string name="string_delete_selected">Delete selected</string>
+    <string name="string_selected">selected</string>
 </resources>

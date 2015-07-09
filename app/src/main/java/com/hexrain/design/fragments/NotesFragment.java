@@ -21,16 +21,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.NotesRecyclerAdapter;
-import com.cray.software.justreminder.async.SyncNotes;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.NoteItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.note.Note;
+import com.cray.software.justreminder.note.NoteItem;
+import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.note.NotesRecyclerAdapter;
+import com.cray.software.justreminder.note.SyncNotes;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -307,8 +307,7 @@ public class NotesFragment extends Fragment implements SyncListener {
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                db.deleteNote(rowId);
-                new Notifier(getActivity()).discardStatusNotification(rowId);
+                Note.deleteNote(rowId, getActivity());
 
             }while (c.moveToNext());
         }

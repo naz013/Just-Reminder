@@ -30,17 +30,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.cray.software.justreminder.async.deleteNote;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.dialogs.utils.ColorPicker;
 import com.cray.software.justreminder.dialogs.utils.FontStyleDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.note.Note;
+import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -210,7 +210,7 @@ public class NotesManager extends AppCompatActivity {
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }
-                    String fileName = new SyncHelper(NotesManager.this).generateID() + Constants.FILE_NAME_IMAGE;
+                    String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
                     File f = new File(sdPathDr
                             + File.separator + fileName);
                     f.createNewFile();
@@ -415,7 +415,7 @@ public class NotesManager extends AppCompatActivity {
         String date = year + "/" + month + "/" + day;
 
         if (uuID == null || uuID.matches("")) {
-            uuID = sHelp.generateID();
+            uuID = SyncHelper.generateID();
         }
 
         try {
@@ -427,17 +427,12 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void sendMail(File file){
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
         if (!file.exists() || !file.canRead()) {
             Toast.makeText(this, getString(R.string.attach_error_message), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        Uri uri = Uri.fromFile(file);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, "Send email..."));
+        Telephony.sendMail(file, this);
     }
 
     private void setDateTime() {
@@ -490,7 +485,7 @@ public class NotesManager extends AppCompatActivity {
                 + hour + ":" + minute + ":" + seconds;
 
         if (uuID == null || uuID.matches("")) {
-            uuID = sHelp.generateID();
+            uuID = SyncHelper.generateID();
         }
         DB.open();
         if (id != 0){
@@ -515,7 +510,7 @@ public class NotesManager extends AppCompatActivity {
             }
             if (cf != null) cf.close();
             long remId = new DataBase(NotesManager.this).insertReminder(note, Constants.TYPE_REMINDER, myDay,
-                    myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, sHelp.generateID(),
+                    myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, SyncHelper.generateID(),
                     null, 0, null, 0, 0, 0, categoryId);
             new DataBase(NotesManager.this).updateReminderDateTime(remId);
             DB.linkToReminder(id, remId);
@@ -551,29 +546,15 @@ public class NotesManager extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                deleteNote();
+                Note.deleteNote(id, NotesManager.this);
                 dialog.dismiss();
-                sPrefs = new SharedPrefs(NotesManager.this);
-                sPrefs.saveBoolean("isNew", true);
+                new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
                 finish();
             }
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    private void deleteNote() {
-        DB.open();
-        String uuId = null;
-        Cursor c = DB.getNote(id);
-        if (c != null && c.moveToFirst()){
-            uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-        }
-        DB.deleteNote(id);
-        new deleteNote(NotesManager.this).execute(uuId);
-        new UpdatesHelper(NotesManager.this).updateNotesWidget();
-        new Notifier(NotesManager.this).discardStatusNotification(id);
     }
 
     private void setImages(){

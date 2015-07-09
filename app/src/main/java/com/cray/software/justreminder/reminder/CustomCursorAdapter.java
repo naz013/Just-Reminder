@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,7 +117,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
         TextView leftTime = (TextView) convertView.findViewById(R.id.remainingTime);
         leftTime.setTypeface(typeface);
-        CheckBox check = (CheckBox) convertView.findViewById(R.id.itemCheck);
+        SwitchCompat check = (SwitchCompat) convertView.findViewById(R.id.itemCheck);
         check.setFocusable(false);
         check.setFocusableInTouchMode(false);
         check.setVisibility(View.VISIBLE);
@@ -149,9 +150,9 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         card.setCardBackgroundColor(cs.getCardStyle());
 
         if (isDone == 1){
-            check.setChecked(true);
-        } else {
             check.setChecked(false);
+        } else {
+            check.setChecked(true);
         }
 
         reminder_type.setText(ReminderUtils.getTypeString(context, type));

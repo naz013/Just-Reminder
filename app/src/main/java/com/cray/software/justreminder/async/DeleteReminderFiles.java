@@ -11,15 +11,12 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 import java.io.File;
 
-/**
- * Created by Nazar on 08.05.2015.
- */
-public class DeleteReminder extends AsyncTask<Void, Void, Void> {
+public class DeleteReminderFiles extends AsyncTask<Void, Void, Void> {
 
     Context mContext;
     String uuId;
 
-    public DeleteReminder(Context context, String uuId){
+    public DeleteReminderFiles(Context context, String uuId){
         this.mContext = context;
         this.uuId = uuId;
     }

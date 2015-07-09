@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -274,17 +273,12 @@ public class EventsFragment extends Fragment {
             }
             provider.fillArray();
 
-            //long start = provider.getStartTime();
-            //calendar.setTimeInMillis(start);
-
             int position = 0;
             targetPosition = -1;
             while (position < Configs.MAX_DAYS_COUNT) {
                 int mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 int mMonth = calendar.get(Calendar.MONTH);
                 int mYear = calendar.get(Calendar.YEAR);
-
-                Log.d(Constants.LOG_TAG, "d/m/y " + mDay + "/" + mMonth + "/" + mYear);
 
                 ArrayList<EventsDataProvider.EventsItem> datas =
                         provider.getMatches(mDay, mMonth, mYear);

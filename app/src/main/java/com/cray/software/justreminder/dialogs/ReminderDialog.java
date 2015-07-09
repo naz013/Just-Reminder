@@ -17,8 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -33,23 +31,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.async.BackupTask;
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
+import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
@@ -73,7 +66,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     int repCode, color = -1;
     BroadcastReceiver deliveredReceiver, sentReceiver;
     ColorSetter cs = new ColorSetter(ReminderDialog.this);
-    UpdatesHelper updatesHelper;
     String melody, num, name;
     Notifier notifier = new Notifier(ReminderDialog.this);
     TextToSpeech tts;
@@ -229,10 +221,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             public void onClick(View v) {
                 alarm.cancelAlarm(getApplicationContext(), id);
                 notifier.discardNotification(id);
-                new moveToArchive().execute(id);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
+                makeArchive(id);
+                Reminder.backup(ReminderDialog.this);
                 removeFlags();
                 if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 repeater.cancelAlarm(ReminderDialog.this, id);
@@ -244,16 +234,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                sPrefs = new SharedPrefs(ReminderDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                    notifier.discardNotification(id);
-                }
-                if (repCode == 0) {
-                    new moveToArchive().execute(id);
-                } else generateEvent(id);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
+                make();
                 removeFlags();
                 if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 repeater.cancelAlarm(ReminderDialog.this, id);
@@ -271,16 +252,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                sPrefs = new SharedPrefs(ReminderDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                    notifier.discardNotification(id);
-                }
-                if (repCode == 0) {
-                    new moveToArchive().execute(id);
-                } else generateEvent(id);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
+                make();
                 if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
                 repeater.cancelAlarm(ReminderDialog.this, id);
@@ -292,20 +264,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                sPrefs = new SharedPrefs(ReminderDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                    notifier.discardNotification(id);
-                }
-                if (repCode == 0) {
-                    makeArchive(id);
-                } else generateEvent(id);
+                make();
                 repeater.cancelAlarm(ReminderDialog.this, id);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
                 if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
-                editReminder(id);
+                Reminder.edit(id, ReminderDialog.this);
                 finish();
             }
         });
@@ -314,16 +277,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                sPrefs = new SharedPrefs(ReminderDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                    notifier.discardNotification(id);
-                }
                 delay.setAlarm(ReminderDialog.this, 1, id);
                 int inTime = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
                 DB.setDelay(id, inTime);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
+                Reminder.backup(ReminderDialog.this);
                 repeater.cancelAlarm(ReminderDialog.this, id);
                 removeFlags();
                 finish();
@@ -333,14 +290,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                sPrefs = new SharedPrefs(ReminderDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
-                    notifier.discardNotification(id);
-                }
                 showDialog();
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
-                makeBackup();
+                Reminder.backup(ReminderDialog.this);
                 repeater.cancelAlarm(ReminderDialog.this, id);
             }
         });
@@ -355,41 +306,25 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                         typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     sendSMS(number, task, melody);
                 } else if (typePrefs.matches(Constants.TYPE_SKYPE)){
-                    String uri = "skype:" + number + "?call";
-                    Intent sky = new Intent("android.intent.action.VIEW");
-                    sky.setData(Uri.parse(uri));
-                    startActivity(sky);
+                    Telephony.skypeCall(number, ReminderDialog.this);
                 } else if (typePrefs.matches(Constants.TYPE_SKYPE_VIDEO)){
-                    String uri = "skype:" + number + "?call&video=true";
-                    Intent sky = new Intent("android.intent.action.VIEW");
-                    sky.setData(Uri.parse(uri));
-                    startActivity(sky);
+                    Telephony.skypeVideoCall(number, ReminderDialog.this);
                 } else if (typePrefs.matches(Constants.TYPE_SKYPE_CHAT)){
-                    String uri = "skype:" + number + "?chat";
-                    Intent sky = new Intent("android.intent.action.VIEW");
-                    sky.setData(Uri.parse(uri));
-                    startActivity(sky);
+                    Telephony.skypeChat(number, ReminderDialog.this);
                 } else if (typePrefs.matches(Constants.TYPE_APPLICATION)){
                     openApplication(number);
                 } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)){
                     openLink(number);
                 } else {
-                    makeCall(number);
+                    Telephony.makeCall(number, ReminderDialog.this);
                 }
-                if (repCode == 0){
-                    new moveToArchive().execute(id);
-                } else generateEvent(id);
-                makeBackup();
+                make();
                 if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
                 removeFlags();
                 repeater.cancelAlarm(ReminderDialog.this, id);
-                updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                updatesHelper.updateWidget();
                 if (!typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         !typePrefs.matches(Constants.TYPE_MESSAGE) ||
                         !typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                    updatesHelper = new UpdatesHelper(ReminderDialog.this);
-                    updatesHelper.updateWidget();
                     finish();
                 }
             }
@@ -438,16 +373,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
     }
 
-    private void editReminder(long id){
-        Intent intentId = new Intent(this, ReminderManager.class);
-        if (id != 0) {
-            intentId.putExtra(Constants.EDIT_ID, id);
-            new AlarmReceiver().cancelAlarm(this, id);
-            new WeekDayReceiver().cancelAlarm(this, id);
-            new DelayReceiver().cancelAlarm(this, id);
-            new PositionDelayReceiver().cancelDelay(this, id);
-            startActivity(intentId);
-        }
+    private void make(){
+        if (repCode == 0){
+            makeArchive(id);
+        } else Reminder.generate(id, this);
+        Reminder.backup(this);
     }
 
     private void setTextDrawable(FloatingActionButton button, String text){
@@ -516,30 +446,18 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     public void openLink(String number) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(number));
-        startActivity(browserIntent);
+        Telephony.openLink(number, this);
         notifier.discardNotification(id);
-        if (repCode == 0){
-            new moveToArchive().execute(id);
-        } else generateEvent(id);
-        makeBackup();
+        make();
         repeater.cancelAlarm(ReminderDialog.this, id);
-        updatesHelper = new UpdatesHelper(ReminderDialog.this);
-        updatesHelper.updateWidget();
         finish();
     }
 
     public void openApplication(String number) {
-        Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(number);
-        startActivity(LaunchIntent);
+        Telephony.openApp(number, this);
         notifier.discardNotification(id);
-        if (repCode == 0){
-            new moveToArchive().execute(id);
-        } else generateEvent(id);
-        makeBackup();
+        make();
         repeater.cancelAlarm(ReminderDialog.this, id);
-        updatesHelper = new UpdatesHelper(ReminderDialog.this);
-        updatesHelper.updateWidget();
         finish();
     }
 
@@ -616,68 +534,16 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         alert.show();
     }
 
-    public void makeBackup(){
-        sPrefs = new SharedPrefs(ReminderDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP)){
-            new BackupTask(ReminderDialog.this).execute();
-        }
-    }
-
-    private void generateEvent(long id){
-        DB = new DataBase(ReminderDialog.this);
-        DB.open();
-        Cursor c = DB.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            String text = "";
-            int day = 0;
-            int month = 0;
-            int year = 0;
-            int hour = 0;
-            int minute = 0;
-            int seconds = 0;
-            int repCode = 0;
-            long repTime = 0;
-            int remCount = 0;
-            int exp = 0;
-            Cursor t = DB.getReminder(id);
-            if (t != null && t.moveToNext()) {
-                text = t.getString(t.getColumnIndex(Constants.COLUMN_TEXT));
-                day = t.getInt(t.getColumnIndex(Constants.COLUMN_DAY));
-                month = t.getInt(t.getColumnIndex(Constants.COLUMN_MONTH));
-                year = t.getInt(t.getColumnIndex(Constants.COLUMN_YEAR));
-                hour = t.getInt(t.getColumnIndex(Constants.COLUMN_HOUR));
-                minute = t.getInt(t.getColumnIndex(Constants.COLUMN_MINUTE));
-                seconds = t.getInt(t.getColumnIndex(Constants.COLUMN_SECONDS));
-                repCode = t.getInt(t.getColumnIndex(Constants.COLUMN_REPEAT));
-                repTime = t.getLong(t.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                remCount = t.getInt(t.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                exp = t.getInt(t.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-            }
-            if (t != null) t.close();
-            long nextDate = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
-                    repCode, remCount, 0);
-            sPrefs = new SharedPrefs(ReminderDialog.this);
-            boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-            boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
-            if ((isCalendar || isStock) && exp == 1) {
-                ReminderUtils.exportToCalendar(this, text, nextDate, id, isCalendar, isStock);
-            }
-        }
-        if (c != null) c.close();
-    }
-
     private void sendSMS(String phoneNumber, String message, final String melody) {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
 
         PendingIntent sentPI = PendingIntent.getBroadcast(ReminderDialog.this, 0,
                 new Intent(SENT), 0);
-
         PendingIntent deliveredPI = PendingIntent.getBroadcast(ReminderDialog.this,
                 0, new Intent(DELIVERED), 0);
 
         registerReceiver(sentReceiver = new BroadcastReceiver() {
-
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 sPrefs = new SharedPrefs(ReminderDialog.this);
@@ -693,7 +559,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         notifier.showReminder(text, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        //buttonCall.setText(getString(R.string.dialog_button_retry));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
@@ -703,7 +568,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         notifier.showReminder(text, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        //buttonCall.setText(getString(R.string.dialog_button_retry));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
@@ -713,7 +577,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         notifier.showReminder(text, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        //buttonCall.setText(getString(R.string.dialog_button_retry));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
@@ -723,14 +586,12 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         notifier.showReminder(text, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        //buttonCall.setText(getString(R.string.dialog_button_retry));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
                         }
                         break;
-
                 }
             }
         }, new IntentFilter(SENT));
@@ -756,12 +617,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
     }
 
-    public void makeCall(String number){
-        Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
-        startActivity(callIntent);
-    }
-
     public void removeFlags(){
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -773,6 +628,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             tts.shutdown();
         }
 
+        new UpdatesHelper(ReminderDialog.this).updateWidget();
         DB = new DataBase(ReminderDialog.this);
         DB.open();
         DB.updateReminderDateTime(id);
@@ -787,14 +643,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     public void makeArchive(long id){
-        DB = new DataBase(ReminderDialog.this);
-        DB.open();
-        DB.setDone(id);
-        stopIt();
-    }
-
-    private void stopIt(){
-        new DisableAsync(ReminderDialog.this).execute();
+        Reminder.disable(id, this);
     }
 
     @Override
@@ -816,15 +665,14 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        sPrefs = new SharedPrefs(ReminderDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
-            updatesHelper = new UpdatesHelper(ReminderDialog.this);
-            updatesHelper.updateWidget();
+        if (new SharedPrefs(ReminderDialog.this)
+                .loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
             moveTaskToBack(true);
             repeater.cancelAlarm(ReminderDialog.this, id);
             removeFlags();
         } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.must_click_message), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.must_click_message), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -855,25 +703,5 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
         } else
             Log.e("error", "Initilization Failed!");
-    }
-
-    class moveToArchive extends AsyncTask<Long, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Long... params) {
-            long i = 0;
-            if (params.length > 0){
-                i = params[0];
-            }
-            makeArchive(i);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            updatesHelper = new UpdatesHelper(ReminderDialog.this);
-            updatesHelper.updateWidget();
-            notifier.recreatePermanent();
-        }
     }
 }

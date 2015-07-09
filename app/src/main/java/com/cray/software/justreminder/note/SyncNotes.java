@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.note;
 
 import android.app.Notification;
 import android.app.NotificationManager;
