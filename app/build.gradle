@@ -7,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 95
-        versionName '3.2.3'
+        versionCode 96
+        versionName '3.2.4'
         multiDexEnabled true
     }
 
@@ -50,8 +50,8 @@ android {
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
-            versionCode 67
-            versionName '3.2.3'
+            versionCode 68
+            versionName '3.2.4'
         }
     }
 
@@ -105,13 +105,13 @@ dependencies {
     compile project(':swipe_actions')
     compile project(':photoPreview')
     compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'com.android.support:cardview-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.2'
-    compile 'jp.wasabeef:recyclerview-animators:1.2.0@aar'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.3'
+    compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
     compile project(':fab')
 }

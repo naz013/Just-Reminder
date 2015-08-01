@@ -79,7 +79,7 @@ public class Reminder {
         }
     }
 
-    public static void toggle(long id, Context context){
+    public static boolean toggle(long id, Context context){
         DataBase db = new DataBase(context);
         db.open();
         Cursor c = db.getReminder(id);
@@ -101,6 +101,7 @@ public class Reminder {
             isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
         }
         if (c != null) c.close();
+        boolean res;
         if (isDone == 0){
             db.setDone(id);
             Integer i = (int) (long) id;
@@ -114,15 +115,18 @@ public class Reminder {
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotifyMgr.cancel(i);
             new DisableAsync(context).execute();
+            res = true;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 db.setUnDone(id);
                 db.updateReminderDateTime(id);
                 new WeekDayReceiver().setAlarm(context, id);
+                res = true;
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                 db.setUnDone(id);
                 db.updateReminderDateTime(id);
                 new MonthDayReceiver().setAlarm(context, id);
+                res = true;
             } else if (type.startsWith(Constants.TYPE_LOCATION) ||
                     type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                 db.setUnDone(id);
@@ -135,6 +139,7 @@ public class Reminder {
                 } else {
                     new PositionDelayReceiver().setDelay(context, id);
                 }
+                res = true;
             } else {
                 if (type.matches(Constants.TYPE_TIME)){
                     final Calendar calendar1 = Calendar.getInstance();
@@ -147,13 +152,16 @@ public class Reminder {
                     db.updateReminderStartTime(id, myDay, myMonth, myYear, myHour, myMinute, mySeconds);
                     db.updateReminderDateTime(id);
                     new AlarmReceiver().setAlarm(context, id);
+                    res = true;
                 } else {
                     if (new TimeCount(context)
                             .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
                         db.setUnDone(id);
                         db.updateReminderDateTime(id);
                         new AlarmReceiver().setAlarm(context, id);
+                        res = true;
                     } else {
+                        res = false;
                         Toast.makeText(context, context.getString(R.string.edit_reminder_toast),
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -163,6 +171,7 @@ public class Reminder {
         db.close();
         new Notifier(context).recreatePermanent();
         new UpdatesHelper(context).updateWidget();
+        return res;
     }
 
     public static void copy(long id, long time, Context context) {
@@ -277,6 +286,10 @@ public class Reminder {
         mNotifyMgr.cancel(i);
         DB.toArchive(id);
         DB.close();
+        new AlarmReceiver().cancelAlarm(context, id);
+        new WeekDayReceiver().cancelAlarm(context, id);
+        new DelayReceiver().cancelAlarm(context, id);
+        new PositionDelayReceiver().cancelDelay(context, id);
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
         Toast.makeText(context, context.getString(R.string.archived_result_message),

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +24,15 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder> {
+public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder>
+        implements SwipeableItemAdapter<RemindersRecyclerAdapter.ViewHolder> {
 
     Context mContext;
     TimeCount mCount;
@@ -50,16 +54,83 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         setHasStableIds(true);
     }
 
+    @Override
+    public int onGetSwipeReactionType(ViewHolder viewHolder, int position, int x, int y) {
+        return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+    }
+
+    @Override
+    public void onSetSwipeBackground(ViewHolder viewHolder, int position, int type) {
+        int bgRes = 0;
+        switch (type) {
+            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
+                bgRes = R.drawable.bg_swipe_item_neutral;
+                break;
+            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
+                bgRes = R.drawable.bg_swipe_item_left;
+                break;
+            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
+                bgRes = R.drawable.bg_swipe_item_right;
+                break;
+        }
+
+        viewHolder.itemView.setBackgroundResource(bgRes);
+    }
+
+    @Override
+    public int onSwipeItem(ViewHolder holder, int position, int result) {
+        Log.d(Constants.LOG_TAG, "onSwipeItem(position = " + position + ", result = " + result + ")");
+
+        switch (result) {
+            // swipe right
+            case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
+                if (provider.getItem(position).isPinnedToSwipeLeft()) {
+                    // pinned --- back to default position
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+                } else {
+                    // not pinned --- remove
+                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
+                }
+                // swipe left -- pin
+            case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
+                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION;
+            // other --- do nothing
+            case RecyclerViewSwipeManager.RESULT_CANCELED:
+            default:
+                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
+        }
+    }
+
+    @Override
+    public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
+        Log.d(Constants.LOG_TAG,
+                "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
+
+        final ReminderDataProvider.ReminderItem item = provider.getItem(position);
+
+        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
+            if (mEventListener != null) {
+                mEventListener.onItemEdit(position);
+            }
+        } else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
+            if (mEventListener != null) {
+                mEventListener.onItemRemoved(position);
+            }
+        } else {
+            item.setPinnedToSwipeLeft(false);
+        }
+    }
+
     public interface EventListener {
+        void onItemEdit(int position);
+
+        void onItemRemoved(int position);
+
+        void onItemSwitched(int position);
+
         void onItemClicked(int position);
 
         void onItemLongClicked(int position);
-
-        void actionMode();
-
-        void invalidate();
-
-        void itemChange();
     }
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
@@ -314,22 +385,27 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                int newPos = ReminderDataProvider.toggle(position, mContext, provider);
-                provider.moveItem(position, newPos);
-                if (mEventListener != null) mEventListener.itemChange();
+                if (mEventListener != null) mEventListener.onItemSwitched(position);
             }
         });
 
-        holder.taskIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchItem(position);
-                if (mEventListener != null) {
-                    mEventListener.actionMode();
-                    mEventListener.invalidate();
-                }
+        final int swipeState = holder.getSwipeStateFlags();
+
+        if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
+            int bgResId;
+
+            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
+                bgResId = R.drawable.bg_swipe_item_left;
+            } else {
+                bgResId = R.color.colorWhite;
             }
-        });
+
+            holder.container.setBackgroundResource(bgResId);
+        }
+
+        // set swiping properties
+        holder.setSwipeItemSlideAmount(
+                item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
     }
 
     @Override
@@ -345,16 +421,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     @Override
     public int getItemCount() {
         return provider.getData().size();
-    }
-
-    private void switchItem(int position){
-        ReminderDataProvider.ReminderItem item = provider.getData().get(position);
-        if (item.getSelected()) {
-            item.setSelected(false);
-        } else {
-            item.setSelected(true);
-        }
-        notifyItemChanged(position);
     }
 
     public EventListener getEventListener() {

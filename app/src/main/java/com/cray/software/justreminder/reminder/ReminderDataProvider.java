@@ -165,6 +165,7 @@ public class ReminderDataProvider {
     }
 
     public void load(){
+        data.clear();
         DataBase db = new DataBase(context);
         db.open();
         if (c != null && c.moveToNext()){

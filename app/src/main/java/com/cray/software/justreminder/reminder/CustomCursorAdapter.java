@@ -11,7 +11,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -318,6 +318,18 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             leftTime.setVisibility(View.GONE);
             leftTimeIcon.setVisibility(View.GONE);
         }
+
+        check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Reminder.toggle(getItemId(position), context);
+                try {
+                    notifyDataSetChanged();
+                } catch (IllegalStateException e){
+                    e.printStackTrace();
+                }
+            }
+        });
 
         DB.close();
         return convertView;
