@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -43,10 +44,11 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     private DrawerLayout mDrawerLayout;
     ImageView basket;
-    TextView archiveScreen, activeScreen, fragmentSettings, geoScreen, calendar,
-            manageBackup, notes, help, helpTranslate, googleTasks, moreApps, templates, places,
+    TextView archiveScreen, activeScreen, geoScreen, calendar,
+            manageBackup, notes, helpTranslate, googleTasks, moreApps, templates, places,
             categories;
     TextView appNameBanner;
+    ImageButton prefsButton, feedButton, helpButton;
     RelativeLayout ads_container;
     private View mFragmentContainerView;
 
@@ -97,8 +99,19 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         }
         appNameBanner.setText(appName.toUpperCase());
 
-        fragmentSettings = (TextView) rootView.findViewById(R.id.fragmentSettings);
-        fragmentSettings.setOnClickListener(this);
+        prefsButton = (ImageButton) rootView.findViewById(R.id.prefsButton);
+        prefsButton.setOnClickListener(this);
+
+        helpButton = (ImageButton) rootView.findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.HELP, false);
+            }
+        });
+
+        feedButton = (ImageButton) rootView.findViewById(R.id.feedButton);
+        feedButton.setOnClickListener(this);
 
         geoScreen = (TextView) rootView.findViewById(R.id.geoScreen);
         geoScreen.setOnClickListener(this);
@@ -123,15 +136,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         archiveScreen = (TextView) rootView.findViewById(R.id.archiveScreen);
         archiveScreen.setVisibility(View.VISIBLE);
         archiveScreen.setOnClickListener(this);
-
-        help = (TextView) rootView.findViewById(R.id.help);
-        help.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.HELP, false);
-            }
-        });
-        help.setTypeface(typeface);
 
         helpTranslate = (TextView) rootView.findViewById(R.id.helpTranslate);
         helpTranslate.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +198,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         }
         if (c != null) c.close();
 
-        fragmentSettings.setTypeface(typeface);
         geoScreen.setTypeface(typeface);
         calendar.setTypeface(typeface);
         notes.setTypeface(typeface);
@@ -246,7 +249,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_grey600_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_grey600_24dp, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_grey600_24dp, 0, 0, 0);
-            fragmentSettings.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_grey600_24dp, 0, 0, 0);
             manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_grey600_24dp, 0, 0, 0);
             notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_grey600_24dp, 0, 0, 0);
             googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_tasks_grey, 0, 0, 0);
@@ -258,7 +260,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_white_24dp, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
-            fragmentSettings.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_white_24dp, 0, 0, 0);
             manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_white_24dp, 0, 0, 0);
             notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_white_24dp, 0, 0, 0);
             googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_tasks_white, 0, 0, 0);
@@ -428,8 +429,19 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
                 disableItem(ScreenManager.FRAGMENT_ACTIVE);
                 break;
-            case R.id.fragmentSettings:
+            case R.id.prefsButton:
                 selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
+                break;
+            case R.id.feedButton:
+                final Intent emailIntent = new Intent( Intent.ACTION_SEND);
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
+                if (new ManageModule().isPro()){
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
+                } else {
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
+                }
+                getActivity().startActivity(Intent.createChooser(emailIntent, "Send mail..."));
                 break;
             case R.id.geoScreen:
                 selectItem(ScreenManager.FRAGMENT_LOCATIONS, true);

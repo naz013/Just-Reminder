@@ -99,6 +99,7 @@ public class Constants {
     public static final String APP_UI_PREFERENCES_QUICK_NOTE_REMINDER = "quick_note_reminder";
     public static final String APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME = "quick_note_reminder_time";
     public static final String APP_UI_PREFERENCES_SYNC_NOTES = "sync_notes";
+    public static final String APP_UI_PREFERENCES_SYNC_BIRTHDAYS = "sync_birthdays";
     public static final String APP_UI_PREFERENCES_ANIMATIONS = "animation";
     public static final String APP_UI_PREFERENCES_DELETE_NOTE_FILE = "delete_note_file";
     public static final String APP_UI_PREFERENCES_AUTO_LANGUAGE = "auto_language";
@@ -206,17 +207,25 @@ public class Constants {
     public final static String DIR_IMAGE_CASHE = "img";
     public final static String DIR_NOTES_SD = "notes";
     public final static String DIR_GROUP_SD = "groups";
+    public final static String DIR_BIRTHDAY_SD = "birthdays";
     public final static String DIR_MAIL_SD = "mail_attachments";
     public final static String DIR_SD_DBX_TMP = "tmp_dropbox";
     public final static String DIR_NOTES_SD_DBX_TMP = "tmp_dropbox_notes";
     public final static String DIR_GROUP_SD_DBX_TMP = "tmp_dropbox_groups";
+    public final static String DIR_BIRTHDAY_SD_DBX_TMP = "tmp_dropbox_birthdays";
     public final static String DIR_SD_GDRIVE_TMP = "tmp_gdrive";
     public final static String DIR_NOTES_SD_GDRIVE_TMP = "tmp_gdrive_notes";
     public final static String DIR_GROUP_SD_GDRIVE_TMP = "tmp_gdrive_group";
+    public final static String DIR_BIRTHDAY_SD_GDRIVE_TMP = "tmp_gdrive_birthdays";
+    public final static String DIR_SD_BOX_TMP = "tmp_box";
+    public final static String DIR_NOTES_SD_BOX_TMP = "tmp_box_notes";
+    public final static String DIR_GROUP_SD_BOX_TMP = "tmp_box_group";
+    public final static String DIR_BIRTHDAY_SD_BOX_TMP = "tmp_box_birthdays";
 
-    public static final String FILE_NAME = ".json";
+    public static final String FILE_NAME_REMINDER = ".json";
     public static final String FILE_NAME_NOTE = ".note";
     public static final String FILE_NAME_GROUP = ".rgroup";
+    public static final String FILE_NAME_BIRTHDAY = ".rbd";
     public static final String FILE_NAME_IMAGE = ".jpeg";
 
     public static final String EDIT_ID = "edit_id";
@@ -314,7 +323,7 @@ public class Constants {
         public static final String COLUMN_CONTACT_NUMBER = "phone_number";
         public static final String COLUMN_CONTACT_MAIL = "e_mail";
         public static final String COLUMN_CONTACT_BIRTHDAY = "birthday";
-        public static final String COLUMN_CONTACT_PHOTO_ID = "photo_id";
+        public static final String COLUMN_CONTACT_UUID = "photo_id";
         public static final String COLUMN_CONTACT_DAY = "day";
         public static final String COLUMN_CONTACT_VAR = "var";
         public static final String COLUMN_CONTACT_MONTH = "month";

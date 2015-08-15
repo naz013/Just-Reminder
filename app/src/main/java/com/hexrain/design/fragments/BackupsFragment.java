@@ -291,7 +291,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         if (syncHelper.isSdPresent()){
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                            String exportFileName = uuID + Constants.FILE_NAME;
+                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                             File file = new File(sdPathDr, exportFileName);
                             if (file.exists()){
                                 file.delete();
@@ -360,7 +360,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();
@@ -384,7 +384,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();
@@ -507,7 +507,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         if (syncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                            String exportFileName = uuID + Constants.FILE_NAME;
+                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                             File file = new File(sdPathDr, exportFileName);
                             if (file.exists()) {
                                 file.delete();
@@ -574,7 +574,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();
@@ -598,7 +598,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();
@@ -635,7 +635,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 gdx = new GDriveHelper(getActivity());
                 if (gdx.isLinked()){
                     if (SyncHelper.isConnected(getActivity())){
-                        gdx.deleteFile(name + Constants.FILE_NAME);
+                        gdx.deleteFile(name + Constants.FILE_NAME_REMINDER);
                     }
                 }
 
@@ -815,7 +815,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         if (syncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                            String exportFileName = uuID + Constants.FILE_NAME;
+                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                             File file = new File(sdPathDr, exportFileName);
                             if (file.exists()) {
                                 file.delete();
@@ -902,7 +902,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();
@@ -927,7 +927,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                                 if (syncHelper.isSdPresent()){
                                     File sdPath = Environment.getExternalStorageDirectory();
                                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                                    String exportFileName = uuID + Constants.FILE_NAME;
+                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                                     File file = new File(sdPathDr, exportFileName);
                                     if (file.exists()){
                                         file.delete();

@@ -234,7 +234,7 @@ public class CategoriesList extends AppCompatActivity {
                     if (syncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        String exportFileName = remUUId + Constants.FILE_NAME;
+                        String exportFileName = remUUId + Constants.FILE_NAME_REMINDER;
                         File file = new File(sdPathDr, exportFileName);
                         if (file.exists()) {
                             file.delete();

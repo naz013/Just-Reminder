@@ -9,6 +9,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.utils.ReminderUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -224,6 +225,8 @@ public class ReminderDataProvider {
                     due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
 
                     if (weekdays.length() == 7) {
+                        repeat = ReminderUtils.getRepeatString(context, weekdays);
+                    } else {
                         repeat = context.getString(R.string.interval_zero);
                     }
                 }

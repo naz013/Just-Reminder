@@ -15,6 +15,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.StartHelp;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
@@ -129,6 +130,7 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Constants.APP_UI_PREFERENCES_TTS, false);
             uiEd.putBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, true);
             uiEd.putBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, true);
+            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
 
             if (new ManageModule().isPro()) {
                 uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_STATUS, false);
@@ -162,6 +164,28 @@ public class SplashScreen extends Activity{
             }
             db.close();
             prefs.saveBoolean("isGen", true);
+        }
+
+        if (!prefs.loadBoolean("isGenB")){
+            DataBase db = new DataBase(this);
+            db.open();
+            Cursor c = db.getEvents();
+            if (c != null && c.moveToFirst()){
+                do {
+                    String id = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID));
+                    if (id == null || id.matches("")){
+                        String uuId = SyncHelper.generateID();
+                        db.updateOtherInformationEvent(
+                                c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID)),
+                                uuId);
+                    }
+                } while (c.moveToNext());
+            }
+            if (c != null) {
+                c.close();
+            }
+            db.close();
+            prefs.saveBoolean("isGenB", true);
         }
 
         checkPrefs();
@@ -293,6 +317,9 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_ANIMATIONS)){
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, true);
+        }
+        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS)){
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
         }
         if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
             sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT, true);

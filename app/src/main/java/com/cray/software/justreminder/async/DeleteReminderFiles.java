@@ -4,8 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 
@@ -23,31 +22,7 @@ public class DeleteReminderFiles extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        SyncHelper syncHelper = new SyncHelper(mContext);
-        if (syncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            String exportFileName = uuId + Constants.FILE_NAME;
-            File file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-        }
-        boolean isInternet = SyncHelper.isConnected(mContext);
-        DropboxHelper dbx = new DropboxHelper(mContext);
-        GDriveHelper gdx = new GDriveHelper(mContext);
-        if (dbx.isLinked() && isInternet) dbx.deleteFile(uuId);
-        if (gdx.isLinked() && isInternet) gdx.deleteFile(uuId);
+        new IOHelper(mContext).deleteReminder(uuId);
         return null;
     }
 }

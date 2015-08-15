@@ -272,8 +272,6 @@ public class Reminder {
         DB.close();
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
-        Toast.makeText(context, context.getString(R.string.archived_result_message),
-                Toast.LENGTH_SHORT).show();
         new DisableAsync(context).execute();
     }
 

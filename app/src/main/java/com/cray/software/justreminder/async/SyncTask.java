@@ -1,16 +1,14 @@
 package com.cray.software.justreminder.async;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -20,19 +18,18 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import org.json.JSONException;
 
-import java.io.File;
 import java.io.IOException;
 
-public class SyncTask extends AsyncTask<Void, Void, Boolean> {
+public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
     Context tContext;
-    NotificationManager mNotifyMgr;
-    Notification.Builder builder;
+    NotificationManagerCompat mNotifyMgr;
+    NotificationCompat.Builder builder;
     private SyncListener mListener;
 
     public SyncTask(Context context, SyncListener mListener){
         this.tContext = context;
-        builder = new Notification.Builder(context);
+        builder = new NotificationCompat.Builder(context);
         this.mListener = mListener;
     }
 
@@ -42,8 +39,15 @@ public class SyncTask extends AsyncTask<Void, Void, Boolean> {
         builder.setContentTitle(tContext.getString(R.string.sync_start_message));
         builder.setContentText(tContext.getString(R.string.loading_wait));
         builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
-        mNotifyMgr =
-                (NotificationManager) tContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr = NotificationManagerCompat.from(tContext);
+        mNotifyMgr.notify(2, builder.build());
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        builder.setContentTitle(values[0]);
+        builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify(2, builder.build());
     }
 
@@ -51,54 +55,20 @@ public class SyncTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         DataBase DB = new DataBase(tContext);
         DB.open();
-        SyncHelper sHelp = new SyncHelper(tContext);
-        boolean isConnected = SyncHelper.isConnected(tContext);
-        DropboxHelper dbx = new DropboxHelper(tContext);
-        GDriveHelper gdx = new GDriveHelper(tContext);
-        try {
-            sHelp.exportGroups();
-        } catch (JSONException | IOException e) {
-            e.printStackTrace();
-        }
-        if (sHelp.isSdPresent()){
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-            if (sdPathDr.exists()){
-                File[] files = sdPathDr.listFiles();
-                final int x = files.length;
-                if (x > 0) {
-                    try {
-                        sHelp.importGroup(null, null);
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        if (isConnected){
-            dbx.uploadGroupToCloud();
-            dbx.downloadGroupFromCloud();
-            try {
-                gdx.saveGroupToDrive();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                gdx.loadGroupsFromDrive();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        IOHelper ioHelper = new IOHelper(tContext);
+
+        ioHelper.backupGroup(true);
+        ioHelper.restoreGroup(true);
 
         Cursor cat = DB.queryCategories();
-        if (cat == null || cat.getCount() == 0){
+        if (cat == null || cat.getCount() == 0) {
             long time = System.currentTimeMillis();
-            String defUiID = sHelp.generateID();
+            String defUiID = SyncHelper.generateID();
             DB.addCategory("General", time, defUiID, 5);
-            DB.addCategory("Work", time, sHelp.generateID(), 3);
-            DB.addCategory("Personal", time, sHelp.generateID(), 0);
+            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
+            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
             Cursor c = DB.queryGroup();
-            if (c != null && c.moveToFirst()){
+            if (c != null && c.moveToFirst()) {
                 do {
                     DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
                 } while (c.moveToNext());
@@ -107,99 +77,30 @@ public class SyncTask extends AsyncTask<Void, Void, Boolean> {
         }
 
         //export & import reminders
-        if (DB.getCount() > 0) {
-            try {
-                sHelp.exportReminderToJSON();
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
-            if (sHelp.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
-                if (sdPathDr.exists()){
-                    File[] files = sdPathDr.listFiles();
-                    final int x = files.length;
-                    if (x > 0) {
-                        try {
-                            sHelp.importReminderFromJSON(null, null);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } else {
-            if (sHelp.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
-                if (sdPathDr.exists()){
-                    File[] files = sdPathDr.listFiles();
-                    final int x = files.length;
-                    if (x > 0) {
-                        try {
-                            sHelp.importReminderFromJSON(null, null);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
+        publishProgress(tContext.getString(R.string.message_sync_reminders));
 
-        if (isConnected) {
-            dbx.uploadToCloud(null);
-            dbx.downloadFromCloud();
-
-            try {
-                gdx.saveFileToDrive();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                gdx.loadFileFromDrive();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        ioHelper.backupReminder(true);
+        ioHelper.restoreReminder(true);
 
         //export & import notes
         SharedPrefs prefs = new SharedPrefs(tContext);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES)){
-            try {
-                sHelp.exportNotes();
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-            }
+        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES)) {
+            publishProgress(tContext.getString(R.string.message_sync_notes));
+            ioHelper.backupNote(true);
+            ioHelper.restoreNote(true);
+        }
 
-            if (isConnected) {
-                dbx.uploadNoteToCloud();
-                try {
-                    gdx.saveNoteToDrive();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            try {
-                sHelp.importNotes(null, null);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-
-            if (isConnected) {
-                dbx.downloadNoteFromCloud();
-                try {
-                    gdx.loadNoteFromDrive();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        //export & import birthdays
+        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS)) {
+            publishProgress(tContext.getString(R.string.message_sync_birthdays));
+            ioHelper.backupBirthday(true);
+            ioHelper.restoreBirthday(true);
         }
 
         DB.close();
 
         try {
-            sHelp.scanFoldersForJSON();
+            new SyncHelper(tContext).scanFoldersForJSON();
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -211,7 +112,7 @@ public class SyncTask extends AsyncTask<Void, Void, Boolean> {
         super.onPostExecute(aVoid);
         builder.setContentTitle(tContext.getString(R.string.sync_end_message));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
-        if (new ManageModule().isPro()){
+        if (new ManageModule().isPro()) {
             builder.setContentText(tContext.getString(R.string.app_name_pro));
         } else builder.setContentText(tContext.getString(R.string.app_name));
         builder.setWhen(System.currentTimeMillis());

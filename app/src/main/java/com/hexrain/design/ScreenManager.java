@@ -20,7 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -479,21 +479,21 @@ public class ScreenManager extends AppCompatActivity
                         mainMenu.setVisibility(View.VISIBLE);
                     } else if (mTag.matches(FRAGMENT_GROUPS)){
                         setUpButton(addGroup, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (mainMenu.isExpanded()) mainMenu.collapse();
-                                if (isNoteVisible()) {
-                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                                }
-
-                                new Handler().postDelayed(new Runnable() {
                                     @Override
-                                    public void run() {
-                                        startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                                    public void onClick(View v) {
+                                        if (mainMenu.isExpanded()) mainMenu.collapse();
+                                        if (isNoteVisible()) {
+                                            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                                        }
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                                            }
+                                        }, 150);
                                     }
-                                }, 150);
-                            }
-                        }, getString(R.string.string_new_category), FloatingActionButton.SIZE_MINI,
+                                }, getString(R.string.string_new_category), FloatingActionButton.SIZE_MINI,
                                 R.drawable.ic_local_offer_grey600_24dp);
                         attachButtons(addGroup, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
@@ -725,67 +725,39 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
+    private void replace(Fragment fragment, String tag){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
+        ft.replace(R.id.container, fragment, tag);
+        ft.commitAllowingStateLoss();
+        mTag = tag;
+        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(String tag) {
         // update the main content by replacing fragments
         if (tag != null) {
             restoreUi();
-            FragmentManager fragmentManager = getSupportFragmentManager();
             if (tag.matches(FRAGMENT_ACTIVE)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, ActiveFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(ActiveFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_ARCHIVE)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, TrashFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(TrashFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_NOTE)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, NotesFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(NotesFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_GROUPS)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, GroupsFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(GroupsFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_PLACES)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlacesFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(PlacesFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_TEMPLATES)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, TemplatesFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(TemplatesFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_TASKS)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, TasksFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(TasksFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_BACKUPS)) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, BackupsFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                replace(BackupsFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_LOCATIONS)) {
                 if (LocationUtil.checkGooglePlayServicesAvailability(this)) {
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.container, GeolocationFragment.newInstance(), tag)
-                            .commitAllowingStateLoss();
-                    mTag = tag;
-                    sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
+                    replace(GeolocationFragment.newInstance(), tag);
                 }
             } else if (tag.matches(ACTION_CALENDAR)) {
                 showMonth();
@@ -798,11 +770,7 @@ public class ScreenManager extends AppCompatActivity
                 if (eventsDate != null) {
                     cal.setTime(eventsDate);
                 }
-                mTag = tag;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, EventsFragment.newInstance(cal.getTimeInMillis()), tag)
-                        .commitAllowingStateLoss();
+                replace(EventsFragment.newInstance(cal.getTimeInMillis()), tag);
                 sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
@@ -830,16 +798,10 @@ public class ScreenManager extends AppCompatActivity
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
                 }
             } else {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, ActiveFragment.newInstance(), tag)
-                        .commitAllowingStateLoss();
+                replace(ActiveFragment.newInstance(), tag);
             }
         } else {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, ActiveFragment.newInstance(), FRAGMENT_ACTIVE)
-                    .commitAllowingStateLoss();
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, FRAGMENT_ACTIVE);
+            replace(ActiveFragment.newInstance(), FRAGMENT_ACTIVE);
         }
     }
 
@@ -904,11 +866,7 @@ public class ScreenManager extends AppCompatActivity
         calendarView.setMaxDate(null);
 
         eventsDate = cal.getTime();
-
-        FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-        t.replace(R.id.container, calendarView);
-        t.addToBackStack(mTag);
-        t.commitAllowingStateLoss();
+        replace(calendarView, mTag);
 
         final CaldroidListener listener = new CaldroidListener() {
 

@@ -5,7 +5,7 @@
     <string name="action_settings">"Налаштування"</string>
     <string name="drawer_active_reminder">Нагадування</string>
     <string name="drawer_archive_reminder">Кошик</string>
-    <string name="copyright">"2014–2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Закрити"</string>
     <string name="menu_send_feedback">"Надіслати відгук"</string>
     <string name="menu_rate_application">"Оцінити додаток"</string>
@@ -654,4 +654,11 @@
     <string name="contact_group_explanation">Оберіть контакти для того, щоб увімкнути наступні нагадування для них.</string>
     <string name="string_delete_selected">Delete selected</string>
     <string name="string_selected">selected</string>
+    <string name="message_sync_birthdays">Синхронізація днів народження...</string>
+    <string name="message_sync_notes">Синхронізація нотаток...</string>
+    <string name="message_sync_reminders">Синхронізація нагадувань...</string>
+    <string name="string_getting_birthdays">Відновлення днів народжень...</string>
+    <string name="string_backup_birthdays">Синхронізація днів народжень</string>
+    <string name="string_backup_birthdays_explanation">Відмітьте, щоб увімкнути синхронізацію ДН при синхронізації нагадувань</string>
+    <string name="simple_m_letter">m</string>
 </resources>

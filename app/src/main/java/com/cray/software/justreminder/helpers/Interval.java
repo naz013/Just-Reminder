@@ -63,24 +63,7 @@ public class Interval {
     }
 
     public String getTimeInterval(int code){
-        String interval = "";
-        if (code == Intervals.REPEAT_CODE_ONCE){
-            interval = mContext.getString(R.string.interval_zero);
-        } else if(code == Intervals.INTERVAL_MINUTE){
-            interval = mContext.getString(R.string.string_min);
-        } else if(code == Intervals.INTERVAL_FIVE_MINUTES){
-            interval = mContext.getString(R.string.string_five_min);
-        } else if(code == Intervals.INTERVAL_TEN_MINUTES){
-            interval = mContext.getString(R.string.string_tem_min);
-        } else if(code == Intervals.INTERVAL_HALF_HOUR){
-            interval = mContext.getString(R.string.string_half_hour);
-        } else if(code == Intervals.INTERVAL_HOUR){
-            interval = mContext.getString(R.string.string_hour);
-        } else if(code == Intervals.INTERVAL_TWO_HOURS){
-            interval = mContext.getString(R.string.string_two_hours);
-        } else if(code == Intervals.INTERVAL_FIVE_HOURS){
-            interval = mContext.getString(R.string.string_five_hours);
-        }
-        return interval;
+        if (code == 0) return mContext.getString(R.string.interval_zero);
+        else return code + mContext.getString(R.string.simple_m_letter);
     }
 }

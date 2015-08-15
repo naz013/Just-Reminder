@@ -97,9 +97,9 @@ public class OtherSettingsFragment extends Fragment {
                 emailIntent.setType("plain/text");
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
                 if (new ManageModule().isPro()){
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Just Reminder PRO");
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
                 } else {
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Just Reminder");
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
                 }
                 getActivity().startActivity(Intent.createChooser(emailIntent, "Send mail..."));
             }

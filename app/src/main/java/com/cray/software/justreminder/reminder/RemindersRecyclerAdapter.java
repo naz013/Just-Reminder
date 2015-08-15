@@ -24,6 +24,7 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
@@ -258,8 +259,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (isDone == 0) {
                 String remaining = mCount.getRemaining(due);
                 holder.leftTime.setText(remaining);
-            } else {
-                holder.leftTime.setVisibility(View.GONE);
             }
         } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
@@ -285,8 +284,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (isDone == 0) {
                 String remaining = mCount.getRemaining(due);
                 holder.leftTime.setText(remaining);
-            } else {
-                holder.leftTime.setVisibility(View.GONE);
             }
             holder.viewTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
         } else {
@@ -349,8 +346,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (isDone == 0) {
                     holder.leftTime.setText(mCount.
                             getRemaining(due));
-                } else {
-                    holder.leftTime.setVisibility(View.GONE);
                 }
 
                 holder.taskDate.setText(dT[0]);
@@ -359,12 +354,30 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
         if (isDone == 1){
             holder.leftTimeIcon.setImageDrawable(Utils.getDrawable(mContext, R.drawable.drawable_grey));
+            holder.leftTime.setVisibility(View.GONE);
         }
 
         if (archived > 0) {
             holder.check.setVisibility(View.GONE);
             holder.leftTime.setVisibility(View.GONE);
             holder.leftTimeIcon.setVisibility(View.GONE);
+        }
+
+        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)){
+            holder.leftTimeIcon.setVisibility(View.GONE);
+            holder.repeatInterval.setVisibility(View.GONE);
+            holder.taskIcon.setVisibility(View.GONE);
+            ViewUtils.zoom(holder.taskIcon, position, 1);
+            boolean prev = false;
+            if (type.matches(Constants.TYPE_CALL) || type.startsWith(Constants.TYPE_APPLICATION) ||
+                    type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_TIME) ||
+                    type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)){
+                ViewUtils.zoom(holder.repeatInterval, position, 2);
+                prev = true;
+            }
+            if (archived == 0){
+                ViewUtils.zoom(holder.leftTimeIcon, position, prev ? 3 : 2);
+            }
         }
 
         holder.container.setOnClickListener(new View.OnClickListener() {

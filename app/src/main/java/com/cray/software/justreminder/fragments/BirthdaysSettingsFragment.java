@@ -28,27 +28,31 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.DaysTo;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
 import com.cray.software.justreminder.services.BirthdayAlarm;
 import com.cray.software.justreminder.services.BirthdayCheckAlarm;
 import com.cray.software.justreminder.services.SetBirthdays;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener {
 
     ActionBar ab;
     SharedPrefs sPrefs;
     TextView daysToText, contactsScan, reminderTimeText, text, text1, text2, text3, text4,
-            birthdayNotification, text6, text7;
-    RelativeLayout useContacts, daysTo, reminderTime, autoScan, birthdayNotifContainer, widgetShow;
+            birthdayNotification, text6, text7, text9, text10;
+    RelativeLayout useContacts, daysTo, reminderTime, autoScan, birthdayNotifContainer, widgetShow,
+            backupBirth;
     SwitchCompat contactsSwitch;
-    CheckBox autoScanCheck, widgetShowCheck;
+    CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck;
     DataBase db;
     BirthdayAlarm alarmReceiver = new BirthdayAlarm();
     int myHour = 0, myMinute = 0;
@@ -88,8 +92,13 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         autoScan.setOnClickListener(this);
 
         autoScanCheck = (CheckBox) rootView.findViewById(R.id.autoScanCheck);
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         autoScanCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS));
+
+        backupBirth = (RelativeLayout) rootView.findViewById(R.id.backupBirth);
+        backupBirth.setOnClickListener(this);
+
+        backupBirthCheck = (CheckBox) rootView.findViewById(R.id.backupBirthCheck);
+        backupBirthCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS));
 
         text = (TextView) rootView.findViewById(R.id.text);
         text1 = (TextView) rootView.findViewById(R.id.text1);
@@ -98,6 +107,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         text4 = (TextView) rootView.findViewById(R.id.text4);
         text6 = (TextView) rootView.findViewById(R.id.text6);
         text7 = (TextView) rootView.findViewById(R.id.text7);
+        text9 = (TextView) rootView.findViewById(R.id.text9);
+        text10 = (TextView) rootView.findViewById(R.id.text10);
 
         if (new ManageModule().isPro()){
             birthdayNotifContainer = (RelativeLayout) rootView.findViewById(R.id.birthdayNotifContainer);
@@ -137,15 +148,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, myHour);
             calendar.set(Calendar.MINUTE, myMinute);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                String formattedTime = sdf.format(calendar.getTime());
-                reminderTimeText.setText(formattedTime);
-            } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("K:mm a");
-                String formattedTime = sdf.format(calendar.getTime());
-                reminderTimeText.setText(formattedTime);
-            }
+            reminderTimeText.setText(TimeUtil.getTime(calendar.getTime(),
+                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
         }
     }
 
@@ -158,6 +162,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             autoScanCheck.setEnabled(true);
             widgetShow.setEnabled(true);
             widgetShowCheck.setEnabled(true);
+            backupBirth.setEnabled(true);
+            backupBirthCheck.setEnabled(true);
             text.setEnabled(true);
             text1.setEnabled(true);
             text2.setEnabled(true);
@@ -165,6 +171,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             text4.setEnabled(true);
             text6.setEnabled(true);
             text7.setEnabled(true);
+            text9.setEnabled(true);
+            text10.setEnabled(true);
             daysToText.setEnabled(true);
             reminderTimeText.setEnabled(true);
             if (new ManageModule().isPro()) {
@@ -179,6 +187,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             autoScanCheck.setEnabled(false);
             widgetShow.setEnabled(false);
             widgetShowCheck.setEnabled(false);
+            backupBirth.setEnabled(false);
+            backupBirthCheck.setEnabled(false);
             text.setEnabled(false);
             text1.setEnabled(false);
             text2.setEnabled(false);
@@ -186,6 +196,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             text4.setEnabled(false);
             text6.setEnabled(false);
             text7.setEnabled(false);
+            text9.setEnabled(false);
+            text10.setEnabled(false);
             daysToText.setEnabled(false);
             reminderTimeText.setEnabled(false);
             if (new ManageModule().isPro()) {
@@ -221,6 +233,17 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             widgetShowCheck.setChecked(true);
             UpdatesHelper helper = new UpdatesHelper(getActivity());
             helper.updateWidget();
+        }
+    }
+
+    private void setBackupBirthCheck (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (backupBirthCheck.isChecked()){
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, false);
+            backupBirthCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
+            backupBirthCheck.setChecked(true);
         }
     }
 
@@ -294,6 +317,9 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             case R.id.autoScan:
                 autoScanCheck();
                 break;
+            case R.id.backupBirth:
+                setBackupBirthCheck();
+                break;
             case R.id.widgetShow:
                 widgetCheck();
                 break;
@@ -325,11 +351,11 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         Contacts cc;
         //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         public final SimpleDateFormat[] birthdayFormats = {
-                new SimpleDateFormat("yyyy-MM-dd"),
-                new SimpleDateFormat("yyyyMMdd"),
-                new SimpleDateFormat("yyyy.MM.dd"),
-                new SimpleDateFormat("yy.MM.dd"),
-                new SimpleDateFormat("yy/MM/dd"),
+                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+                new SimpleDateFormat("yyyyMMdd", Locale.getDefault()),
+                new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()),
+                new SimpleDateFormat("yy.MM.dd", Locale.getDefault()),
+                new SimpleDateFormat("yy/MM/dd", Locale.getDefault()),
         };
 
         public checkBirthdays(Context context){
@@ -390,7 +416,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                         String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = cc.get_Number(name, tContext);
+                        String number = Contacts.get_Number(name, tContext);
                         String email = cc.getMail(id);
                         Calendar calendar = Calendar.getInstance();
                         for (SimpleDateFormat f : birthdayFormats) {
@@ -402,7 +428,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                     int month = calendar.get(Calendar.MONTH);
                                     if (!types.contains(id)) {
                                         i = i + 1;
-                                        db.insertEvent(name, id, birthday, day, month, number, email);
+                                        db.insertEvent(name, id, birthday, day, month, number,
+                                                SyncHelper.generateID());
                                     }
                                 }
                             } catch (Exception e) {

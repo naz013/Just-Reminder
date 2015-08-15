@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -49,36 +50,28 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
-
-        boolean isConnected = SyncHelper.isConnected(tContext);
-        if (isConnected) {
-            new DropboxHelper(tContext).uploadNoteToCloud();
-        }
-
-        if (isConnected) {
-            try {
-                new GDriveHelper(tContext).saveNoteToDrive();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
             sHelp.importNotes(null, null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
+        boolean isConnected = SyncHelper.isConnected(tContext);
         if (isConnected) {
+            new DropboxHelper(tContext).uploadNoteToCloud();
+            try {
+                new GDriveHelper(tContext).saveNoteToDrive();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            new BoxHelper(tContext).uploadNote();
             new DropboxHelper(tContext).downloadNoteFromCloud();
-        }
-
-        if (isConnected) {
             try {
                 new GDriveHelper(tContext).loadNoteFromDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            new BoxHelper(tContext).downloadNote();
         }
         return true;
     }

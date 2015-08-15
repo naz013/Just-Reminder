@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
+import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.TasksData;
@@ -50,10 +51,11 @@ public class CloudDrives extends AppCompatActivity {
     ColorSetter cs = new ColorSetter(CloudDrives.this);
     DropboxHelper dbx = new DropboxHelper(CloudDrives.this);
     GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
+    BoxHelper box = new BoxHelper(CloudDrives.this);
     SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
-    Button linkDropbox, linkGDrive, linkExchange;
-    TextView gDriveTitle, dropboxTitle, exchangeTitle;
+    Button linkDropbox, linkGDrive, linkExchange, linkBox;
+    TextView gDriveTitle, dropboxTitle, exchangeTitle, boxTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -93,11 +95,11 @@ public class CloudDrives extends AppCompatActivity {
                 boolean isIn;
                 if (new ManageModule().isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
                 else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
-                if (isIn){
+                if (isIn) {
                     checkDialog().show();
                 } else {
-                    if (dbx.isLinked()){
-                        if (dbx.unlink()){
+                    if (dbx.isLinked()) {
+                        if (dbx.unlink()) {
                             linkDropbox.setText(getString(R.string.login_button));
                         }
                     } else {
@@ -105,6 +107,19 @@ public class CloudDrives extends AppCompatActivity {
                     }
                 }
                 prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+            }
+        });
+
+        linkBox = (Button) findViewById(R.id.linkBox);
+        linkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (box.isLogged()) {
+                    box.logout();
+                    linkBox.setText(getString(R.string.login_button));
+                } else {
+                    box.authMultiple();
+                }
             }
         });
 
@@ -228,6 +243,12 @@ public class CloudDrives extends AppCompatActivity {
             linkGDrive.setText(getString(R.string.logout_button));
         } else {
             linkGDrive.setText(getString(R.string.login_button));
+        }
+
+        if (box.isLogged()){
+            linkBox.setText(getString(R.string.logout_button));
+        } else {
+            linkBox.setText(getString(R.string.login_button));
         }
 
         TasksData data = new TasksData(CloudDrives.this);

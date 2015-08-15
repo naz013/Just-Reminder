@@ -8,12 +8,14 @@ import android.provider.ContactsContract;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
 
@@ -21,11 +23,11 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
     DataBase db;
     Contacts mContacts;
     public final SimpleDateFormat[] birthdayFormats = {
-            new SimpleDateFormat("yyyy-MM-dd"),
-            new SimpleDateFormat("yyyyMMdd"),
-            new SimpleDateFormat("yyyy.MM.dd"),
-            new SimpleDateFormat("yy.MM.dd"),
-            new SimpleDateFormat("yy/MM/dd"),
+            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
+            new SimpleDateFormat("yyyyMMdd", Locale.getDefault()),
+            new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()),
+            new SimpleDateFormat("yy.MM.dd", Locale.getDefault()),
+            new SimpleDateFormat("yy/MM/dd", Locale.getDefault()),
     };
 
     public CheckBirthdaysAsync(Context context){
@@ -62,7 +64,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
             String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
             mContacts = new Contacts(mContext);
             Cursor cursor = db.getEvents();
-            ArrayList<Integer> types = new ArrayList<Integer>();
+            ArrayList<Integer> types = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()){
                 do{
                     int tp = cursor.getInt(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
@@ -76,7 +78,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
                     String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                     String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                     int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                    String number = mContacts.get_Number(name, mContext);
+                    String number = Contacts.get_Number(name, mContext);
                     String email = mContacts.getMail(id);
                     Calendar calendar = Calendar.getInstance();
                     for (SimpleDateFormat f : birthdayFormats) {
@@ -87,7 +89,8 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
                                 if (!types.contains(id)) {
-                                    db.insertEvent(name, id, birthday, day, month, number, email);
+                                    db.insertEvent(name, id, birthday, day, month, number,
+                                            SyncHelper.generateID());
                                 }
                             }
                         } catch (Exception e) {

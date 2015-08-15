@@ -2,10 +2,7 @@ package com.cray.software.justreminder.note;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Build;
-import android.widget.Toast;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -51,8 +48,7 @@ public class Note {
             try {
                 File file = sHelp.createNote(note, date, uuID, color, imageByte, style);
                 if (!file.exists() || !file.canRead()) {
-                    res = false;
-                    return res;
+                    return false;
                 } else {
                     res = true;
                     Telephony.sendMail(file, context);

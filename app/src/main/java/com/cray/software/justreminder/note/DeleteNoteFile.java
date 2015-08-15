@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -42,15 +43,17 @@ public class DeleteNoteFile extends AsyncTask<String, Void, Boolean> {
                 if (file.exists()) {
                     file.delete();
                 }
+                sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD_BOX_TMP);
+                file = new File(sdPathDr, exportFileName);
+                if (file.exists()) {
+                    file.delete();
+                }
 
                 boolean isConnected = SyncHelper.isConnected(ctx);
-                DropboxHelper dbx = new DropboxHelper(ctx);
                 if (isConnected) {
-                    dbx.deleteNote(uuID);
-                }
-                GDriveHelper gdx = new GDriveHelper(ctx);
-                if (isConnected) {
-                    gdx.deleteNote(uuID);
+                    new DropboxHelper(ctx).deleteNote(uuID);
+                    new GDriveHelper(ctx).deleteNote(uuID);
+                    new BoxHelper(ctx).deleteNoteFile(uuID);
                 }
             }
         }

@@ -5,7 +5,7 @@
     <string name="action_settings">"Impostazioni"</string>
     <string name="drawer_active_reminder">Reminders</string>
     <string name="drawer_archive_reminder">Trash</string>
-    <string name="copyright">"2014-2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2015 \u00A9 Nazar Suhovich"</string>
     <string name="button_close">"Chiudi"</string>
     <string name="menu_send_feedback">"Invia un feedback"</string>
     <string name="tast_hint">"Tasks"</string>
@@ -654,4 +654,11 @@
     <string name="contact_group_explanation">Select contacts to enable follow reminder for it.</string>
     <string name="string_delete_selected">Delete selected</string>
     <string name="string_selected">selected</string>
+    <string name="message_sync_birthdays">Syncing birthdays...</string>
+    <string name="message_sync_notes">Syncing notes...</string>
+    <string name="message_sync_reminders">Syncing reminders...</string>
+    <string name="string_getting_birthdays">Restoring birthdays...</string>
+    <string name="string_backup_birthdays">Backup birthdays</string>
+    <string name="string_backup_birthdays_explanation">Check, to enable backing up birthdays when sync reminders</string>
+    <string name="simple_m_letter">m</string>
 </resources>

@@ -71,7 +71,7 @@ public class DataBase {
                     Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY + " VARCHAR(255), " +
                     Constants.ContactConstants.COLUMN_CONTACT_DAY + " INTEGER, " +
                     Constants.ContactConstants.COLUMN_CONTACT_MONTH + " INTEGER, " +
-                    Constants.ContactConstants.COLUMN_CONTACT_PHOTO_ID + " VARCHAR(255), " +
+                    Constants.ContactConstants.COLUMN_CONTACT_UUID + " VARCHAR(255), " +
                     Constants.ContactConstants.COLUMN_CONTACT_VAR + " VARCHAR(255) " +
                     ");";
 
@@ -661,7 +661,8 @@ public class DataBase {
         return db.query(CONTACTS_TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public long insertEvent (String name, int contact_id, String birthday, int day, int month, String number, String email) {
+    public long insertEvent (String name, int contact_id, String birthday, int day, int month,
+                             String number, String uuId) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.ContactConstants.COLUMN_CONTACT_NAME, name);
@@ -670,20 +671,19 @@ public class DataBase {
         cv.put(Constants.ContactConstants.COLUMN_CONTACT_DAY, day);
         cv.put(Constants.ContactConstants.COLUMN_CONTACT_MONTH, month);
         cv.put(Constants.ContactConstants.COLUMN_CONTACT_NUMBER, number);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_MAIL, email);
+        cv.put(Constants.ContactConstants.COLUMN_CONTACT_UUID, uuId);
         //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(CONTACTS_TABLE_NAME, null, cv);
     }
 
-    public boolean updateFullEvent(long rowId, String name, int contact_id, String birthday, int day, int month, String number, String mail, int photo_id){
+    public boolean updateFullEvent(long rowId, String name, int contact_id, String birthday, int day,
+                                   int month, String number){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.ContactConstants.COLUMN_CONTACT_NAME, name);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_ID, contact_id);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_NUMBER, number);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_MAIL, mail);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY, birthday);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_PHOTO_ID, photo_id);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_DAY, day);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_MONTH, month);
         return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
@@ -696,12 +696,10 @@ public class DataBase {
         return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateOtherInformationEvent(long rowId, String number, String mail, int photo_id){
+    public boolean updateOtherInformationEvent(long rowId, String uuId){
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_NUMBER, number);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_MAIL, mail);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_PHOTO_ID, photo_id);
+        args.put(Constants.ContactConstants.COLUMN_CONTACT_UUID, uuId);
         return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

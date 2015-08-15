@@ -1,5 +1,6 @@
 package com.hexrain.design.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -156,6 +157,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Reminder.toggle(id, ReminderPreviewFragment.this);
+                loadData();
             }
         });
 

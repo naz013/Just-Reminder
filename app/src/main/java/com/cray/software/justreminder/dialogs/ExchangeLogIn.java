@@ -110,8 +110,7 @@ public class ExchangeLogIn extends AppCompatActivity {
             e.printStackTrace();
         }
         if (service.getUrl() == null){
-            Toast.makeText(ExchangeLogIn.this,
-                    getString(R.string.string_exchange_connection_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(ExchangeLogIn.this, "Connection error", Toast.LENGTH_LONG).show();
             return;
         }
 

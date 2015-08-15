@@ -25,6 +25,7 @@ import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -191,13 +192,14 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             } else {
                 int contactId = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                 if (number != null) {
-                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, number, null, 0);
+                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, number);
                 } else
-                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, null, null, 0);
+                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, null);
 
                 finish();
             }
         } else {
+            String uuId = SyncHelper.generateID();
             if (contactCheck.isChecked()) {
                 String contact = birthName.getText().toString();
                 if (contact.matches("")) {
@@ -205,16 +207,16 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 } else {
                     int id = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                     if (number != null) {
-                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, number, null);
+                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, number, uuId);
                     } else
-                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, null, null);
+                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, null, uuId);
 
                     finish();
                 }
             } else {
                 String contact = birthName.getText().toString();
                 if (!contact.matches("")) {
-                    db.insertEvent(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, null);
+                    db.insertEvent(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, uuId);
                     finish();
                 } else {
                     birthName.setError(getString(R.string.empty_field_error));

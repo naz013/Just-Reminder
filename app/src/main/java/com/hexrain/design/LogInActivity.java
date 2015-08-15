@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -26,12 +25,12 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -51,11 +50,9 @@ import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.api.services.tasks.model.TaskLists;
 
-import org.json.JSONException;
-
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -277,6 +274,7 @@ public class LogInActivity extends Activity {
         Context mContext;
         CircularProgress mProgress;
         TextView mText;
+        boolean isChecked = false;
 
         public LocalSync(Context context, CircularProgress progress, TextView textView){
             this.mContext = context;
@@ -288,6 +286,7 @@ public class LogInActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgress.setVisibility(View.VISIBLE);
+            isChecked = checkBox.isChecked();
         }
 
         @Override
@@ -306,32 +305,18 @@ public class LogInActivity extends Activity {
             Looper.prepare();
             DataBase DB = new DataBase(mContext);
             DB.open();
-            SyncHelper sHelp = new SyncHelper(mContext);
+            IOHelper ioHelper = new IOHelper(mContext);
 
             publishProgress(getString(R.string.string_getting_groups));
-            if (sHelp.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-                if (sdPathDr.exists()){
-                    File[] files = sdPathDr.listFiles();
-                    final int x = files.length;
-                    if (x > 0) {
-                        try {
-                            sHelp.importGroup(null, null);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+            ioHelper.restoreGroup(false);
 
             Cursor cat = DB.queryCategories();
             if (cat == null || cat.getCount() == 0){
                 long time = System.currentTimeMillis();
-                String defUiID = sHelp.generateID();
+                String defUiID = SyncHelper.generateID();
                 DB.addCategory("General", time, defUiID, 5);
-                DB.addCategory("Work", time, sHelp.generateID(), 3);
-                DB.addCategory("Personal", time, sHelp.generateID(), 0);
+                DB.addCategory("Work", time, SyncHelper.generateID(), 3);
+                DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
                 Cursor c = DB.queryGroup();
                 if (c != null && c.moveToFirst()){
                     do {
@@ -341,32 +326,20 @@ public class LogInActivity extends Activity {
                 if (c != null) c.close();
             }
 
-            //export & import reminders
+            //import reminders
             publishProgress(getString(R.string.string_getting_reminders));
+            ioHelper.restoreReminder(false);
 
-            if (sHelp.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
-                if (sdPathDr.exists()){
-                    File[] files = sdPathDr.listFiles();
-                    final int x = files.length;
-                    if (x > 0) {
-                        try {
-                            sHelp.importReminderFromJSON(null, null);
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            //export & import notes
+            //import notes
             publishProgress(getString(R.string.string_getting_notes));
-            try {
-                sHelp.importNotes(null, null);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
+            ioHelper.restoreNote(false);
+
+            //import birthdays
+            if (isChecked) {
+                publishProgress(getString(R.string.string_getting_birthdays));
+                ioHelper.restoreBirthday(false);
             }
+
             DB.close();
             return null;
         }
@@ -379,12 +352,14 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
                 new ImportBirthdays(LogInActivity.this).execute();
             } else {
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
@@ -398,6 +373,7 @@ public class LogInActivity extends Activity {
         Context mContext;
         CircularProgress mProgress;
         TextView mText;
+        boolean isChecked = false;
 
         public SyncTask(Context context, CircularProgress progress, TextView textView){
             this.mContext = context;
@@ -409,6 +385,7 @@ public class LogInActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             mProgress.setVisibility(View.VISIBLE);
+            isChecked = checkBox.isChecked();
         }
 
         @Override
@@ -427,27 +404,19 @@ public class LogInActivity extends Activity {
             Looper.prepare();
             DataBase DB = new DataBase(mContext);
             DB.open();
-            SyncHelper sHelp = new SyncHelper(mContext);
-            boolean isConnected = SyncHelper.isConnected(mContext);
-            DropboxHelper dbx = new DropboxHelper(mContext);
-            GDriveHelper gdx = new GDriveHelper(mContext);
+
+            IOHelper ioHelper = new IOHelper(mContext);
+
             publishProgress(getString(R.string.string_getting_groups));
-            if (isConnected){
-                dbx.downloadGroupFromCloud();
-                try {
-                    gdx.loadGroupsFromDrive();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            ioHelper.restoreGroup(true);
 
             Cursor cat = DB.queryCategories();
             if (cat == null || cat.getCount() == 0){
                 long time = System.currentTimeMillis();
-                String defUiID = sHelp.generateID();
+                String defUiID = SyncHelper.generateID();
                 DB.addCategory("General", time, defUiID, 5);
-                DB.addCategory("Work", time, sHelp.generateID(), 3);
-                DB.addCategory("Personal", time, sHelp.generateID(), 0);
+                DB.addCategory("Work", time, SyncHelper.generateID(), 3);
+                DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
                 Cursor c = DB.queryGroup();
                 if (c != null && c.moveToFirst()){
                     do {
@@ -457,28 +426,20 @@ public class LogInActivity extends Activity {
                 if (c != null) c.close();
             }
 
-            //export & import reminders
+            //import reminders
             publishProgress(getString(R.string.string_getting_reminders));
+            ioHelper.restoreReminder(true);
 
-            if (isConnected) {
-                dbx.downloadFromCloud();
-                try {
-                    gdx.loadFileFromDrive();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            //export & import notes
+            //import notes
             publishProgress(getString(R.string.string_getting_notes));
-            if (isConnected) {
-                dbx.downloadNoteFromCloud();
-                try {
-                    gdx.loadNoteFromDrive();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            ioHelper.restoreNote(true);
+
+            //import birthdays
+            if (isChecked) {
+                publishProgress(getString(R.string.string_getting_birthdays));
+                ioHelper.restoreBirthday(true);
             }
+
             DB.close();
 
             //getting Google Tasks
@@ -594,12 +555,14 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
                 new ImportBirthdays(LogInActivity.this).execute();
             } else {
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
                 sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
@@ -629,12 +592,16 @@ public class LogInActivity extends Activity {
             ContentResolver cr = getContentResolver(); //getContnetResolver()
             DataBase db = new DataBase(mContext);
             db.open();
+            ArrayList<String> names = new ArrayList<>();
+            ArrayList<Integer> ids = new ArrayList<>();
             if (db.getCountEvents() > 0){
                 Cursor c = db.getEvents();
                 if (c != null && c.moveToFirst()){
                     do {
-                        long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                        db.deleteEvent(id);
+                        int id = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
+                        String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
+                        ids.add(id);
+                        names.add(name);
                     } while (c.moveToNext());
                     c.close();
                 }
@@ -669,23 +636,25 @@ public class LogInActivity extends Activity {
                         String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = cc.get_Number(name, mContext);
+                        String number = Contacts.get_Number(name, mContext);
                         String email = cc.getMail(id);
-                        Calendar calendar = Calendar.getInstance();
-                        for (SimpleDateFormat f : birthdayFormats) {
-                            try {
-                                date = f.parse(birthday);
-                                if (date != null) {
-                                    calendar.setTime(date);
-                                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                    int month = calendar.get(Calendar.MONTH);
-                                    db.insertEvent(name, id, birthday, day, month, number, email);
+                        if (!names.contains(name) && !ids.contains(id)) {
+                            Calendar calendar = Calendar.getInstance();
+                            for (SimpleDateFormat f : birthdayFormats) {
+                                try {
+                                    date = f.parse(birthday);
+                                    if (date != null) {
+                                        calendar.setTime(date);
+                                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                                        int month = calendar.get(Calendar.MONTH);
+                                        db.insertEvent(name, id, birthday, day, month, number,
+                                                SyncHelper.generateID());
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         }
-
                     }
                 }
                 birthdayCur.close();

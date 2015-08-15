@@ -1193,7 +1193,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeTaskExport.setChecked(true);
             }
 
-            repeatMinutesSeek.setProgress(repeat);
+            if (repeat < repeatMinutesSeek.getMax()) repeatMinutesSeek.setProgress(repeat);
+            repeatMinutes.setText(String.valueOf(repeat));
 
             taskField.setText(text);
         }
@@ -3627,7 +3628,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         String type = getTaskType();
         long time = getAfterTime();
         if (time == 0) return;
-        int repeat = repeatMinutesSeek.getProgress();
+        int repeat = Integer.parseInt(repeatMinutes.getText().toString());
 
         DB.open();
         final Calendar c = Calendar.getInstance();

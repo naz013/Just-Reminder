@@ -27,7 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class GDriveHelper {
@@ -85,7 +84,7 @@ public class GDriveHelper {
             for (com.google.api.services.drive.model.File f : fileList) {
                 String fileTitle = f.getTitle();
 
-                if (fileTitle.trim().endsWith(Constants.FILE_NAME)) {
+                if (fileTitle.trim().endsWith(Constants.FILE_NAME_REMINDER)) {
                     i += 1;
                 }
             }
@@ -112,7 +111,7 @@ public class GDriveHelper {
                     com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
                     fileMetadata.setTitle(file.getName());
                     fileMetadata.setDescription("Reminder Backup");
-                    fileMetadata.setParents(Arrays.asList(new ParentReference().setId(folderId)));
+                    fileMetadata.setParents(Collections.singletonList(new ParentReference().setId(folderId)));
 
                     FileContent mediaContent = new FileContent("application/json", file);
 
@@ -145,7 +144,7 @@ public class GDriveHelper {
                     com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
                     fileMetadata.setTitle(file.getName());
                     fileMetadata.setDescription("Note Backup");
-                    fileMetadata.setParents(Arrays.asList(new ParentReference().setId(folderId)));
+                    fileMetadata.setParents(Collections.singletonList(new ParentReference().setId(folderId)));
 
                     FileContent mediaContent = new FileContent("text/plain", file);
 
@@ -178,7 +177,40 @@ public class GDriveHelper {
                     com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
                     fileMetadata.setTitle(file.getName());
                     fileMetadata.setDescription("Group Backup");
-                    fileMetadata.setParents(Arrays.asList(new ParentReference().setId(folderId)));
+                    fileMetadata.setParents(Collections.singletonList(new ParentReference().setId(folderId)));
+
+                    FileContent mediaContent = new FileContent("text/plain", file);
+
+                    deleteGroup(file.getName());
+
+                    com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
+                    MediaHttpUploader uploader = insert.getMediaHttpUploader();
+                    uploader.setDirectUploadEnabled(true);
+                    insert.execute();
+                }
+            }
+        }
+    }
+
+    public void saveBirthToDrive() throws IOException {
+        if (isLinked()) {
+            prefs = new SharedPrefs(ctx);
+            authorize();
+            String folderId = getFolderId();
+            if (folderId == null){
+                com.google.api.services.drive.model.File destFolder = createFolder();
+                folderId = destFolder.getId();
+            }
+
+            File sdPath = Environment.getExternalStorageDirectory();
+            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
+            File[] files = sdPathDr.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
+                    fileMetadata.setTitle(file.getName());
+                    fileMetadata.setDescription("Birthday Backup");
+                    fileMetadata.setParents(Collections.singletonList(new ParentReference().setId(folderId)));
 
                     FileContent mediaContent = new FileContent("text/plain", file);
 
@@ -222,7 +254,7 @@ public class GDriveHelper {
                         throw new IOException("Unable to create parent directory");
                     }
 
-                    if (title.endsWith(Constants.FILE_NAME)) {
+                    if (title.endsWith(Constants.FILE_NAME_REMINDER)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
@@ -361,6 +393,62 @@ public class GDriveHelper {
         }
     }
 
+    public void loadBirthFromDrive() throws IOException {
+        if (isLinked()) {
+            prefs = new SharedPrefs(ctx);
+            authorize();
+            File sdPath = Environment.getExternalStorageDirectory();
+            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD_GDRIVE_TMP);
+            //deleteFolders();
+            Drive.Files.List request;
+            try {
+                request = m_client.files().list().setQ("mimeType = 'text/plain'"); // .setQ("mimeType=\"text/plain\"");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+            do {
+                FileList files;
+                try {
+                    files = request.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getItems();
+                for (com.google.api.services.drive.model.File f : fileList) {
+                    String title = f.getTitle();
+                    if (!sdPathDr.exists() && !sdPathDr.mkdirs()) {
+                        throw new IOException("Unable to create parent directory");
+                    }
+
+                    if (title.endsWith(Constants.FILE_NAME_BIRTHDAY)) {
+                        File file = new File(sdPathDr, title);
+                        if (!file.exists()) {
+                            try {
+                                file.createNewFile();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        OutputStream out = new FileOutputStream(file);
+
+                        MediaHttpDownloader downloader =
+                                new MediaHttpDownloader(m_transport, m_client.getRequestFactory().getInitializer());
+                        downloader.setDirectDownloadEnabled(true);
+                        downloader.download(new GenericUrl(f.getDownloadUrl()), out);
+                        try {
+                            new SyncHelper(ctx).importBirthday(file.toString(), title);
+                        } catch (IOException | JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+                request.setPageToken(files.getNextPageToken());
+            } while (request.getPageToken() != null && request.getPageToken().length() >= 0);
+        }
+    }
+
     public void deleteFile (String title){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -383,7 +471,7 @@ public class GDriveHelper {
                 for (com.google.api.services.drive.model.File f : fileList) {
                     String fileTitle = f.getTitle();
 
-                    if (fileTitle.endsWith(Constants.FILE_NAME) && fileTitle.contains(title)) {
+                    if (fileTitle.endsWith(Constants.FILE_NAME_REMINDER) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {
@@ -454,6 +542,41 @@ public class GDriveHelper {
                     String fileTitle = f.getTitle();
 
                     if (fileTitle.endsWith(Constants.FILE_NAME_GROUP) && fileTitle.contains(title)) {
+                        try {
+                            m_client.files().delete(f.getId()).execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                request.setPageToken(files.getNextPageToken());
+            } while (request.getPageToken() != null && request.getPageToken().length() >= 0);
+        }
+    }
+
+    public void deleteBirth (String title){
+        if (isLinked()) {
+            prefs = new SharedPrefs(ctx);
+            authorize();
+            Drive.Files.List request = null;
+            try {
+                request = m_client.files().list().setQ("mimeType = 'text/plain'");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            do {
+                FileList files;
+                try {
+                    files = request.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+                }
+                ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getItems();
+                for (com.google.api.services.drive.model.File f : fileList) {
+                    String fileTitle = f.getTitle();
+
+                    if (fileTitle.endsWith(Constants.FILE_NAME_BIRTHDAY) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {

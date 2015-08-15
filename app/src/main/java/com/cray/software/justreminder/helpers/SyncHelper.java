@@ -11,8 +11,8 @@ import android.util.Log;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
-import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
@@ -33,8 +33,13 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class SyncHelper {
@@ -50,7 +55,6 @@ public class SyncHelper {
     }
 
     public SyncHelper(){
-
     }
 
     public void exportGroups() throws JSONException, IOException {
@@ -76,6 +80,53 @@ public class SyncHelper {
                         sdPathDr.mkdirs();
                     }
                     String exportFileName = uuID + Constants.FILE_NAME_GROUP;
+
+                    File file = new File(sdPathDr, exportFileName);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    FileWriter  fw = new FileWriter(file);
+                    fw.write(jObjectData.toString());
+                    fw.close();
+                } else Log.i("reminder-info", "Couldn't find external storage!");
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        dataBase.close();
+    }
+
+    public void exportBirthdays() throws JSONException, IOException {
+        DataBase dataBase = new DataBase(sContext);
+        dataBase.open();
+        Cursor c = dataBase.getEvents();
+        if (c != null && c.moveToFirst()){
+            do {
+                String title = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
+                String date = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
+                String number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
+                String uuID = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID));
+                String mail = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_MAIL));
+                int conId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
+                JSONObject jObjectData = new JSONObject();
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME),
+                        title != null ? encrypt(title) : encrypt(" "));
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY), encrypt(date));
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER),
+                        number != null ? encrypt(number) : encrypt(" "));
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_UUID),
+                        uuID != null ? encrypt(uuID) : encrypt(generateID()));
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL),
+                        mail != null ? encrypt(mail) : encrypt(" "));
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID),
+                        encrypt(String.valueOf(conId)));
+
+                if (isSdPresent()) {
+                    File sdPath = Environment.getExternalStorageDirectory();
+                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
+                    if (!sdPathDr.exists()) {
+                        sdPathDr.mkdirs();
+                    }
+                    String exportFileName = uuID + Constants.FILE_NAME_BIRTHDAY;
 
                     File file = new File(sdPathDr, exportFileName);
                     if (file.exists()) {
@@ -153,7 +204,7 @@ public class SyncHelper {
                         if (!sdPathDr.exists()) {
                             sdPathDr.mkdirs();
                         }
-                        String exportFileName = uuID + Constants.FILE_NAME;
+                        String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
 
                         File file = new File(sdPathDr, exportFileName);
                         if (file.exists()) {
@@ -1015,6 +1066,146 @@ public class SyncHelper {
             DB.addCategory(title, date, uuID, color);
         }
         if (cf != null) cf.close();
+    }
+
+    public void importBirthday(String file, String fileNameR) throws IOException, JSONException {
+        if (isSdPresent()){
+            DB = new DataBase(sContext);
+            DB.open();
+            List<String> namesPass = new ArrayList<>();
+            Cursor e = DB.getEvents();
+            while (e.moveToNext()) {
+                for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                    namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
+                }
+            }
+            e.close();
+            if (file != null){
+                int pos = fileNameR.lastIndexOf(".");
+                String fileNameS = fileNameR.substring(0, pos);
+                if (!namesPass.contains(fileNameS)) {
+                    FileInputStream stream = new FileInputStream(file);
+                    Writer writer = new StringWriter();
+                    char[] buffer = new char[1024];
+                    try {
+                        BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(stream, "UTF-8")
+                        );
+                        int n;
+                        while ((n = reader.read(buffer)) != -1) {
+                            writer.write(buffer, 0, n);
+                        }
+                    } finally {
+                        stream.close();
+                    }
+                    String jsonText = writer.toString();
+                    JSONObject jsonObj = new JSONObject(jsonText);
+                    importBirthObject(jsonObj);
+                }
+            } else {
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
+                File[] files = sdPathDr.listFiles();
+                int f = files.length;
+                if (f > 0) {
+                    for (File file1 : files) {
+                        String fileName = file1.getName();
+                        int pos = fileName.lastIndexOf(".");
+                        String fileLoc = sdPathDr + "/" + fileName;
+                        String fileNameS = fileName.substring(0, pos);
+                        if (!namesPass.contains(fileNameS)) {
+                            FileInputStream stream = new FileInputStream(fileLoc);
+                            Writer writer = new StringWriter();
+                            char[] buffer = new char[1024];
+                            try {
+                                BufferedReader reader = new BufferedReader(
+                                        new InputStreamReader(stream, "UTF-8")
+                                );
+                                int n;
+                                while ((n = reader.read(buffer)) != -1) {
+                                    writer.write(buffer, 0, n);
+                                }
+                            } finally {
+                                stream.close();
+                            }
+                            String jsonText = writer.toString();
+                            JSONObject jsonObj = new JSONObject(jsonText);
+                            importBirthObject(jsonObj);
+                        }
+                    }
+                }
+                DB.close();
+            }
+        }
+    }
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+    private void importBirthObject(JSONObject jsonObj) throws JSONException {
+        String name = null;
+        String key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME);
+        if (!jsonObj.isNull(key)) {
+            name = decrypt(jsonObj.getString(key));
+        }
+        String date = null;
+        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY);
+        if (!jsonObj.isNull(key)) {
+            date = decrypt(jsonObj.getString(key));
+        }
+        String number = null;
+        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER);
+        if (!jsonObj.isNull(key)) {
+            number = decrypt(jsonObj.getString(key));
+        }
+        String mail = null;
+        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL);
+        if (!jsonObj.isNull(key)) {
+            mail = decrypt(jsonObj.getString(key));
+        }
+        String uuID = null;
+        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_UUID);
+        if (!jsonObj.isNull(key)) {
+            uuID = decrypt(jsonObj.getString(key));
+        }
+        String id = null;
+        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID);
+        if (!jsonObj.isNull(key)) {
+            id = decrypt(jsonObj.getString(key));
+        }
+        int conId = 0;
+        if (id != null) {
+            conId = Integer.parseInt(id);
+        }
+        int day = 0;
+        int month = 0;
+        try {
+            Date d = format.parse(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(d);
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+            month = calendar.get(Calendar.MONTH);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        DB = new DataBase(sContext);
+        DB.open();
+        Cursor cf = DB.getEvents();
+        if (cf != null && cf.moveToFirst()) {
+            List<String> namesPass = new ArrayList<>();
+            List<String> numbers = new ArrayList<>();
+            while (cf.moveToNext()) {
+                for (cf.moveToFirst(); !cf.isAfterLast(); cf.moveToNext()) {
+                    namesPass.add(cf.getString(cf.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME)));
+                    numbers.add(cf.getString(cf.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER)));
+                }
+            }
+            if (!namesPass.contains(name) && !numbers.contains(number)) {
+                DB.insertEvent(name, conId, date, day, month, number, uuID);
+            }
+        } else {
+            DB.insertEvent(name, conId, date, day, month, number, uuID);
+        }
+        DB.close();
     }
 
     public void scanFoldersForJSON() throws IOException, JSONException {

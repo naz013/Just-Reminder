@@ -1,0 +1,77 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:minHeight="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:elevation="@dimen/toolbar_elevation"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/navContainer"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/navSpinner"
+            android:layout_width="match_parent"
+            android:gravity="center|left"
+            android:layout_gravity="center|left"
+            android:layout_height="?attr/actionBarSize"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+            <com.cray.software.justreminder.views.FloatingEditText
+                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                app:floating_edit_text_color="@color/colorWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/task_message"
+                android:textSize="23sp"
+                android:maxLength="300"
+                android:textColorHint="@color/colorSemiTrWhite"
+                android:textColor="@color/colorWhite"
+                android:hint="@string/tast_hint"
+                android:maxHeight="72dp"
+                android:singleLine="false"
+                android:inputType="textMultiLine"
+                android:layout_toLeftOf="@+id/insertVoice"
+                android:layout_gravity="center_horizontal" >
+                <requestFocus/>
+                </com.cray.software.justreminder.views.FloatingEditText>
+
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/insertVoice"
+                android:layout_marginLeft="10dp"
+                style="?android:buttonBarButtonStyle"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_mic_white_24dp"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/category"
+            android:textSize="18sp"
+            android:padding="2dp"
+            android:textColor="@color/colorWhite"
+            android:drawableLeft="@drawable/ic_local_offer_white_24dp"
+            android:drawablePadding="30dp"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>

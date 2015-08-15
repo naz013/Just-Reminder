@@ -10,6 +10,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -99,6 +100,37 @@ public class ViewUtils {
         } else {
             v.setVisibility(View.GONE);
         }
+    }
+
+    public static void zoom(View view, int pos, int number){
+        ScaleAnimation animation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(200);
+        animation.setFillAfter(true);
+        animation.setStartOffset(pos * number * 20 + 100);
+        animation.setInterpolator(new DecelerateInterpolator());
+        view.startAnimation(animation);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    public static void zoom(View view, long duration){
+        ScaleAnimation animation = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(duration);
+        animation.setFillAfter(true);
+        animation.setInterpolator(new DecelerateInterpolator());
+        view.startAnimation(animation);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    public static void zoomOut(View view, long duration){
+        ScaleAnimation animation = new ScaleAnimation(1.0f, 0.0f, 1.0f, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(duration);
+        animation.setFillAfter(true);
+        animation.setInterpolator(new DecelerateInterpolator());
+        view.startAnimation(animation);
+        view.setVisibility(View.GONE);
     }
 
     public static void expand(final View v) {
