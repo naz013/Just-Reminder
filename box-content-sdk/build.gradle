@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 22
+    buildToolsVersion '23.0.0'
 
     defaultConfig {
         minSdkVersion 15
@@ -27,5 +27,3 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.eclipsesource.minimal-json:minimal-json:0.9.1'
 }
-
-//apply from: '../maven_push.gradle'

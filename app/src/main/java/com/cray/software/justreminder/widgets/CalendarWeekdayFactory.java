@@ -10,7 +10,7 @@ import android.widget.RemoteViewsService;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.roomorama.caldroid.CalendarHelper;
+import com.hexrain.flextcal.FlextHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
         }
 
         for (int i = 0; i < 7; i++) {
-            Date date = CalendarHelper.convertDateTimeToDate(nextDay);
+            Date date = FlextHelper.convertDateTimeToDate(nextDay);
             weekdays.add(fmt.format(date).toUpperCase());
             nextDay = nextDay.plusDays(1);
         }

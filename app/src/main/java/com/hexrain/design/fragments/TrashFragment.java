@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -241,7 +242,7 @@ public class TrashFragment extends Fragment {
             }
 
             @Override
-            public void onItemClicked(int position) {
+            public void onItemClicked(int position, SwitchCompat check) {
                 Reminder.edit(provider.getItem(position).getId(), getActivity());
             }
 

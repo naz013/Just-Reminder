@@ -6,10 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -326,11 +329,22 @@ public class ActiveFragment extends Fragment {
             }
 
             @Override
-            public void onItemClicked(int position) {
+            public void onItemClicked(int position, SwitchCompat check) {
                 sPrefs = new SharedPrefs(getActivity());
                 if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
-                    startActivity(new Intent(getActivity(), ReminderPreviewFragment.class)
-                            .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
+                        intent.putExtra(Constants.EDIT_ID, provider.getItem(position).getId());
+                        String transitionName = "switch";
+                        ActivityOptionsCompat options =
+                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                                        getActivity(), check, transitionName);
+                        getActivity().startActivity(intent, options.toBundle());
+                    } else {
+                        getActivity().startActivity(
+                                new Intent(getActivity(), ReminderPreviewFragment.class)
+                                        .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+                    }
                 } else {
                     if (Reminder.toggle(provider.getItem(position).getId(), getActivity())){
                         loaderAdapter(null);

@@ -33,6 +33,9 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.ManageModule;
+import com.hexrain.flextcal.ImageCheck;
+import com.hexrain.flextcal.LoadAsync;
+import com.squareup.picasso.Picasso;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 
@@ -43,7 +46,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
-    ImageView basket;
+    ImageView basket, image;
     TextView archiveScreen, activeScreen, geoScreen, calendar,
             manageBackup, notes, helpTranslate, googleTasks, moreApps, templates, places,
             categories;
@@ -88,6 +91,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         rootView.findViewById(R.id.drawerBg).setBackgroundColor(new ColorSetter(getActivity()).getBackgroundStyle());
 
         Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+
+        image = (ImageView) rootView.findViewById(R.id.image);
 
         appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
@@ -488,6 +493,11 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                         .putExtra(Constants.ITEM_ID_INTENT, 1));
             }
         }
+
+        ImageCheck imageCheck = new ImageCheck(getActivity());
+        if (imageCheck.isImage(13)){
+            Picasso.with(getActivity()).load(imageCheck.getImage(13)).resize(1920, 1080).into(image);
+        } else new LoadAsync(getActivity(), 13);
 
         if (mCallbacks != null)
             mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);

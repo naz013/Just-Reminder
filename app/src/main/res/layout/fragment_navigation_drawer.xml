@@ -27,7 +27,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/material"/>
+                    android:adjustViewBounds="true"
+                    android:id="@+id/image"/>
 
                 <TextView
                     android:layout_width="match_parent"

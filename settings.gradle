@@ -1,2 +1,2 @@
-include ':app', ':lvl', ':swipe_actions', ':photoPreview', ':fab'
+include ':app', ':lvl', ':swipe_actions', ':photoPreview', ':fab', ':box-content-sdk', ':liveSDK', ':flextcal'
 include ':calDroid'

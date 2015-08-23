@@ -1,6 +1,5 @@
 package com.hexrain.design.fragments;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -39,7 +38,6 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ItemData;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -50,6 +48,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -236,11 +235,15 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
         if (ids == R.id.action_delete) {
             Reminder.delete(id, ReminderPreviewFragment.this);
-            finish();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAfterTransition();
+            } else finish();
             return true;
         }
         if (ids == android.R.id.home){
-            finish();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAfterTransition();
+            } else finish();
         }
         if (ids == R.id.action_make_copy){
             db = new DataBase(this);

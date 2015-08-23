@@ -3186,7 +3186,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         alertDialog.setMessage(getString(R.string.gps_text));
 
         alertDialog.setPositiveButton(getString(R.string.action_settings), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
@@ -3628,7 +3628,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         String type = getTaskType();
         long time = getAfterTime();
         if (time == 0) return;
-        int repeat = Integer.parseInt(repeatMinutes.getText().toString());
+        int repeat = 0;
+        try {
+            repeat = Integer.parseInt(repeatMinutes.getText().toString());
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+        }
 
         DB.open();
         final Calendar c = Calendar.getInstance();

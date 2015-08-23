@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    buildToolsVersion '23.0.0'
     defaultConfig {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
@@ -101,7 +101,7 @@ dependencies {
     compile 'com.google.apis:google-api-services-drive:v2-rev149-1.19.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-tasks:v1-rev41-1.19.1' exclude module: 'httpclient'
     compile project(':lvl')
-    compile project(':calDroid')
+    //compile project(':calDroid')
     compile project(':swipe_actions')
     compile project(':photoPreview')
     compile 'com.google.android.gms:play-services:7.5.0'
@@ -116,4 +116,5 @@ dependencies {
     compile project(':fab')
     compile project(':box-content-sdk')
     compile project(':liveSDK')
+    compile project(':flextcal')
 }

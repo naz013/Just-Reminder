@@ -95,8 +95,9 @@ import com.hexrain.design.fragments.PlacesFragment;
 import com.hexrain.design.fragments.TasksFragment;
 import com.hexrain.design.fragments.TemplatesFragment;
 import com.hexrain.design.fragments.TrashFragment;
-import com.roomorama.caldroid.CaldroidFragment;
-import com.roomorama.caldroid.CaldroidListener;
+import com.hexrain.flextcal.FlextCal;
+import com.hexrain.flextcal.FlextHelper;
+import com.hexrain.flextcal.FlextListener;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -104,8 +105,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
+
+import hirondelle.date4j.DateTime;
 
 public class ScreenManager extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -727,8 +731,9 @@ public class ScreenManager extends AppCompatActivity
 
     private void replace(Fragment fragment, String tag){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
+        //ft.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
         ft.replace(R.id.container, fragment, tag);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commitAllowingStateLoss();
         mTag = tag;
         sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LAST_FRAGMENT, tag);
@@ -845,39 +850,34 @@ public class ScreenManager extends AppCompatActivity
     }
 
     Date eventsDate = null;
-    CaldroidFragment calendarView;
+    FlextCal calendarView;
 
     private void showMonth(){
-        calendarView = new CaldroidFragment();
+        calendarView = new FlextCal();
         Bundle args = new Bundle();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
-        args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
+        args.putInt(FlextCal.MONTH, cal.get(Calendar.MONTH) + 1);
+        args.putInt(FlextCal.YEAR, cal.get(Calendar.YEAR));
         sPrefs = new SharedPrefs(this);
         if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 0) {
-            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.SUNDAY);
+            args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.SUNDAY);
         } else {
-            args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.MONDAY);
+            args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
-        args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
+        args.putBoolean(FlextCal.SIX_WEEKS_IN_CALENDAR, true);
+        args.putBoolean(FlextCal.ENABLE_IMAGES, true);
         calendarView.setArguments(args);
-        calendarView.setMinDate(null);
-        calendarView.setMaxDate(null);
+        calendarView.setBackgroundForToday(cSetter.colorCurrentCalendar());
 
-        eventsDate = cal.getTime();
         replace(calendarView, mTag);
 
-        final CaldroidListener listener = new CaldroidListener() {
+        final FlextListener listener = new FlextListener() {
 
             @Override
-            public void onSelectDate(Date date, View view) {
+            public void onClickDate(Date date, View view) {
                 eventsDate = date;
                 onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
-            }
-
-            @Override
-            public void onChangeMonth(int month, int year) {
             }
 
             @Override
@@ -892,6 +892,11 @@ public class ScreenManager extends AppCompatActivity
                 long dateMills = calendar.getTimeInMillis();
                 startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
                         .putExtra("date", dateMills));
+            }
+
+            @Override
+            public void onMonthChanged(int month, int year) {
+
             }
 
             @Override
@@ -1051,7 +1056,7 @@ public class ScreenManager extends AppCompatActivity
         if (!db.isOpen()) db.open();
         sPrefs = new SharedPrefs(this);
         boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-        ArrayList<Date> dates = new ArrayList<>();
+        HashMap<DateTime, String> dates = new HashMap<>();
         dates.clear();
         Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()){
@@ -1065,6 +1070,7 @@ public class ScreenManager extends AppCompatActivity
                 int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 long afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 if ((type.startsWith(Constants.TYPE_SKYPE) ||
@@ -1081,7 +1087,8 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(TimeUtil.getDate(year, month, day));
+                        Date date = TimeUtil.getDate(year, month, day);
+                        dates.put(FlextHelper.convertDateToDateTime(date), task);
                         int days = 0;
                         if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
                             do {
@@ -1091,7 +1098,8 @@ public class ScreenManager extends AppCompatActivity
                                 day = calendar.get(Calendar.DAY_OF_MONTH);
                                 month = calendar.get(Calendar.MONTH);
                                 year = calendar.get(Calendar.YEAR);
-                                dates.add(TimeUtil.getDate(year, month, day));
+                                date = TimeUtil.getDate(year, month, day);
+                                dates.put(FlextHelper.convertDateToDateTime(date), task);
                             } while (days < Configs.MAX_DAYS_COUNT);
                         }
                     }
@@ -1103,7 +1111,8 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(TimeUtil.getDate(year, month, day));
+                        Date date = TimeUtil.getDate(year, month, day);
+                        dates.put(FlextHelper.convertDateToDateTime(date), task);
                     }
                     int days = 0;
                     if (isFeature){
@@ -1116,7 +1125,8 @@ public class ScreenManager extends AppCompatActivity
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
                                 int year = calendar.get(Calendar.YEAR);
-                                dates.add(TimeUtil.getDate(year, month, day));
+                                Date date = TimeUtil.getDate(year, month, day);
+                                dates.put(FlextHelper.convertDateToDateTime(date), task);
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -1128,7 +1138,8 @@ public class ScreenManager extends AppCompatActivity
                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
-                        dates.add(TimeUtil.getDate(year, month, day));
+                        Date date = TimeUtil.getDate(year, month, day);
+                        dates.put(FlextHelper.convertDateToDateTime(date), task);
                     }
                     int days = 1;
                     if (isFeature){
@@ -1139,7 +1150,8 @@ public class ScreenManager extends AppCompatActivity
                             int day = calendar.get(Calendar.DAY_OF_MONTH);
                             int month = calendar.get(Calendar.MONTH);
                             int year = calendar.get(Calendar.YEAR);
-                            dates.add(TimeUtil.getDate(year, month, day));
+                            Date date = TimeUtil.getDate(year, month, day);
+                            dates.put(FlextHelper.convertDateToDateTime(date), task);
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
@@ -1150,10 +1162,9 @@ public class ScreenManager extends AppCompatActivity
         }
         db.close();
 
-        for (int i = 0; i < dates.size(); i++) {
-            if (calendarView != null) {
-                calendarView.setBackgroundResourceForDate(cSetter.colorReminderCalendar(), dates.get(i));
-            }
+        if (calendarView != null) {
+            calendarView.setBackgroundResourceForEventOne(cSetter.colorReminderCalendar());
+            calendarView.setTaskForEventOne(dates);
         }
     }
 
@@ -1162,11 +1173,12 @@ public class ScreenManager extends AppCompatActivity
     private void loadEvents(){
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
-        ArrayList<Date> dates = new ArrayList<>();
+        HashMap<DateTime, String> dates = new HashMap<>();
         Cursor c = db.getEvents();
         if (c != null && c.moveToFirst()){
             do {
                 String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
+                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                 Date date = null;
                 try {
                     date = format.parse(birthday);
@@ -1188,10 +1200,10 @@ public class ScreenManager extends AppCompatActivity
                     Date prevDate = TimeUtil.getDate(year - 1, month, day);
                     Date nextDate = TimeUtil.getDate(year + 1, month, day);
                     Date nextTwoDate = TimeUtil.getDate(year + 2, month, day);
-                    dates.add(bdDate);
-                    dates.add(prevDate);
-                    dates.add(nextDate);
-                    dates.add(nextTwoDate);
+                    dates.put(FlextHelper.convertDateToDateTime(bdDate), name);
+                    dates.put(FlextHelper.convertDateToDateTime(prevDate), name);
+                    dates.put(FlextHelper.convertDateToDateTime(nextDate), name);
+                    dates.put(FlextHelper.convertDateToDateTime(nextTwoDate), name);
                 }
             } while (c.moveToNext());
         }
@@ -1200,10 +1212,9 @@ public class ScreenManager extends AppCompatActivity
         }
         db.close();
 
-        for (int i = 0; i < dates.size(); i++) {
-            if (calendarView != null) {
-                calendarView.setBackgroundResourceForDate(cSetter.colorBirthdayCalendar(), dates.get(i));
-            }
+        if (calendarView != null) {
+            calendarView.setBackgroundResourceForEventTwo(cSetter.colorBirthdayCalendar());
+            calendarView.setTaskForEventTwo(dates);
         }
     }
 

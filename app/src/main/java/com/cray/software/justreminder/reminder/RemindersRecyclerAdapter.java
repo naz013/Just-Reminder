@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -35,23 +36,23 @@ import java.util.Date;
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder>
         implements SwipeableItemAdapter<RemindersRecyclerAdapter.ViewHolder> {
 
-    Context mContext;
-    TimeCount mCount;
-    Contacts mContacts;
-    SharedPrefs prefs;
-    ColorSetter cs;
-    ReminderDataProvider provider;
-    Typeface typeface;
+    private Context mContext;
+    private TimeCount mCount;
+    private SharedPrefs prefs;
+    private ColorSetter cs;
+    private ReminderDataProvider provider;
+    private Typeface typeface;
     private EventListener mEventListener;
+    private boolean isDark;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
-        mContacts = new Contacts(context);
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         typeface = AssetsUtil.getLightTypeface(context);
+        isDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         setHasStableIds(true);
     }
 
@@ -65,13 +66,15 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
-                bgRes = R.drawable.bg_swipe_item_neutral;
+                //bgRes = R.drawable.bg_swipe_item_neutral;
                 break;
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
-                bgRes = R.drawable.bg_swipe_item_left;
+                if (isDark) bgRes = R.drawable.bg_swipe_item_left;
+                else bgRes = R.drawable.bg_swipe_item_left_dark;
                 break;
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
-                bgRes = R.drawable.bg_swipe_item_right;
+                if (isDark) bgRes = R.drawable.bg_swipe_item_right;
+                else bgRes = R.drawable.bg_swipe_item_right_dark;
                 break;
         }
 
@@ -129,7 +132,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         void onItemSwitched(int position);
 
-        void onItemClicked(int position);
+        void onItemClicked(int position, SwitchCompat check);
 
         void onItemLongClicked(int position);
     }
@@ -138,14 +141,14 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
-        //FrameLayout card;
+        CardView card;
         SwitchCompat check;
         ImageView taskIcon, leftTimeIcon;
         ViewGroup container;
 
         public ViewHolder(View v) {
             super(v);
-            //card = (FrameLayout) v.findViewById(R.id.card);
+            card = (CardView) v.findViewById(R.id.card);
             leftTime = (TextView) v.findViewById(R.id.remainingTime);
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
@@ -197,6 +200,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
         boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+
+        holder.card.setCardBackgroundColor(cs.getCardStyle());
 
         final ReminderDataProvider.ReminderItem item = provider.getData().get(position);
         String title = item.getTitle();
@@ -383,7 +388,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position);
+                if (mEventListener != null) mEventListener.onItemClicked(position, holder.check);
             }
         });
 
