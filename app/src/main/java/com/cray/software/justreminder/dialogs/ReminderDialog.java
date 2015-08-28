@@ -38,6 +38,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -76,7 +77,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sPrefs = new SharedPrefs(ReminderDialog.this);
-        boolean isFull = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE);
+        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -107,10 +108,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
         buttonDelayFor = (FloatingActionButton) findViewById(R.id.buttonDelayFor);
         buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor,
                 buttonNotification, buttonEdit);
-        int mins = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+        int mins = sPrefs.loadInt(Prefs.DELAY_TIME);
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
         if (isDark){
@@ -143,16 +144,16 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             remCount = r.getInt(r.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
             color = r.getInt(r.getColumnIndex(Constants.COLUMN_LED_COLOR));
         }
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE, type);
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT, task);
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER, num);
+        sPrefs.savePrefs(Prefs.REMINDER_TYPE, type);
+        sPrefs.savePrefs(Prefs.REMINDER_TEXT, task);
+        sPrefs.savePrefs(Prefs.REMINDER_NUMBER, num);
 
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
         if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                 type.matches(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_SKYPE_VIDEO) ||
                 type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-            String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
             if (!type.startsWith(Constants.TYPE_SKYPE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
                 long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
@@ -167,21 +168,21 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             remText.setText(task + "\n" + name + "\n" + number);
         } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) ||
                 type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_SKYPE_CHAT)){
-            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
                 if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
                 else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
             } else {
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.GONE);
                 buttonDelay.setVisibility(View.GONE);
                 buttonDelayFor.setVisibility(View.GONE);
             }
         } else if (type.matches(Constants.TYPE_APPLICATION)){
-            String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
             PackageManager packageManager = getPackageManager();
             ApplicationInfo applicationInfo = null;
             try {
@@ -193,7 +194,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
             else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-            String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
             remText.setText(number);
             buttonCall.setVisibility(View.VISIBLE);
             if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
@@ -278,7 +279,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             public void onClick(View v) {
                 notifier.discardNotification(id);
                 delay.setAlarm(ReminderDialog.this, 1, id);
-                int inTime = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+                int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
                 DB.setDelay(id, inTime);
                 Reminder.backup(ReminderDialog.this);
                 repeater.cancelAlarm(ReminderDialog.this, id);
@@ -299,9 +300,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 notifier.discardNotification(id);
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER).trim();
-                String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
-                String task = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER).trim();
+                String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
+                String task = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
                 if (typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     sendSMS(number, task, melody);
@@ -329,12 +330,12 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 }
             }
         });
-        String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
-        String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
-        boolean autoLaunch = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_APPLICATION_AUTO_LAUNCH);
+        String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
+        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
+        boolean autoLaunch = sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
         if (typePrefs.matches(Constants.TYPE_MESSAGE) || typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
+            if (sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
                 sendSMS(number, task, melody);
             } else {
                 if (task == null || task.matches("")) showReminder(num, 1, id, melody, color);
@@ -355,14 +356,14 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             else showReminder(task, 1, id, melody, color);
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT)) {
+        if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
             repeater.setAlarm(ReminderDialog.this, id);
         }
 
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TTS)) {
+        if (sPrefs.loadBoolean(Prefs.TTS)) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
             try {
@@ -407,7 +408,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     private void showReminder(final String taskN, int i, long itemId, String melodyN, int colorN){
         sPrefs = new SharedPrefs(ReminderDialog.this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TTS)) {
+        if (!sPrefs.loadBoolean(Prefs.TTS)) {
             notifier.showReminder(taskN, i, itemId, melodyN, colorN);
         } else {
             notifier.showTTSNotification(taskN, itemId, colorN);
@@ -416,7 +417,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     public void wakeScreen() {
         sPrefs = new SharedPrefs(ReminderDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS)) {
+        if (sPrefs.loadBoolean(Prefs.WAKE_STATUS)) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn = pm.isScreenOn();
             if (!isScreenOn) {
@@ -547,7 +548,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 sPrefs = new SharedPrefs(ReminderDialog.this);
-                String text = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
+                String text = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         remText.setText(getString(R.string.dialog_message_sent));
@@ -666,7 +667,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     public void onBackPressed() {
         notifier.discardMedia();
         if (new SharedPrefs(ReminderDialog.this)
-                .loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
+                .loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             repeater.cancelAlarm(ReminderDialog.this, id);
             removeFlags();

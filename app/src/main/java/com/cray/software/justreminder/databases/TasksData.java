@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.ExchangeConstants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 
 public class TasksData {
@@ -328,7 +329,7 @@ public class TasksData {
     public Cursor getTasks() throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
         String order = null;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";
@@ -389,7 +390,7 @@ public class TasksData {
     public Cursor getTasks(String listId) throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
         String order = null;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";

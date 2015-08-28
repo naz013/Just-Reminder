@@ -21,6 +21,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.hexrain.design.fragments.NotePreviewFragment;
 
 import java.util.ArrayList;
@@ -75,11 +76,11 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
             } else viewHolder.image.setImageDrawable(null);
         } else viewHolder.image.setImageDrawable(null);
 
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = syncHelper.decrypt(title);
         }
         viewHolder.note.setText(title);
-        viewHolder.note.setTextSize(prefs.loadInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE) + 12);
+        viewHolder.note.setTextSize(prefs.loadInt(Prefs.TEXT_SIZE) + 12);
 
         viewHolder.image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +103,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     }
 
     private void onItemClick(long id, ImageView imageView){
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
+        if (prefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Intent intent = new Intent(cContext, NotePreviewFragment.class);
                 intent.putExtra(Constants.EDIT_ID, id);
@@ -130,7 +131,7 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
-            image = (ImageView) itemLayoutView.findViewById(R.id.image);
+            image = (ImageView) itemLayoutView.findViewById(R.id.imageView);
             note = (TextView) itemLayoutView.findViewById(R.id.note);
             noteBackground = (LinearLayout) itemLayoutView.findViewById(R.id.noteBackground);
         }

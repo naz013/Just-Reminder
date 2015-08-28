@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 
 public class ColorPicker extends Activity implements View.OnClickListener {
 
@@ -31,7 +31,7 @@ public class ColorPicker extends Activity implements View.OnClickListener {
         setContentView(R.layout.color_picker_layout);
 
         themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
-        isPro = new ManageModule().isPro();
+        isPro = Module.isPro();
         if (isPro) themeGroupPro.setVisibility(View.VISIBLE);
 
         red_checkbox = (ImageButton) findViewById(R.id.red_checkbox);

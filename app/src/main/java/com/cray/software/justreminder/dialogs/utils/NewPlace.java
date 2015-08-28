@@ -24,6 +24,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -76,7 +77,7 @@ public class NewPlace extends AppCompatActivity {
         placeName = (FloatingEditText) findViewById(R.id.placeName);
         googleMap = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         sPrefs = new SharedPrefs(NewPlace.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
             googleMap.getMap().setMapType(GoogleMap.MAP_TYPE_NORMAL);
         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
@@ -90,7 +91,7 @@ public class NewPlace extends AppCompatActivity {
         }
 
         clearField = (ImageButton) findViewById(R.id.clearButton);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             clearField.setImageResource(R.drawable.ic_clear_white_24dp);
         } else clearField.setImageResource(R.drawable.ic_clear_grey600_24dp);
         clearField.setOnClickListener(new View.OnClickListener() {

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class SelectVolume extends Activity {
 
@@ -32,15 +32,15 @@ public class SelectVolume extends Activity {
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         sPrefs = new SharedPrefs(SelectVolume.this);
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY)));
+        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.VOLUME)));
 
         volumeImage = (ImageView) findViewById(R.id.volumeImage);
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
-        int n = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_VOLUME);
+        int n = sPrefs.loadInt(Prefs.VOLUME);
         radiusBar.setProgress(n);
         radiusValue.setText(String.valueOf(n));
         setValue(n);
@@ -49,7 +49,7 @@ public class SelectVolume extends Activity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 radiusValue.setText(String.valueOf(i));
                 setValue(i);
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_VOLUME, i);
+                sPrefs.saveInt(Prefs.VOLUME, i);
             }
 
             @Override

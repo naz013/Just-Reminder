@@ -13,36 +13,64 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/useContacts"
+        android:id="@+id/birthReminder"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:clickable="true">
+        android:clickable="true"
+        android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/birthdays_option"
-            android:paddingRight="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:clickable="false"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
-            android:layout_toLeftOf="@+id/contactsSwitch"
-            android:textSize="@dimen/settings_text_size_primary" />
+            android:orientation="vertical"
+            android:layout_toLeftOf="@+id/birthReminderCheck">
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/contactsSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/settings_birthday_reminder_title"
+                android:textSize="@dimen/settings_text_size_primary"
+                android:layout_marginBottom="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/settings_text_size_secondary"
+                android:text="@string/settings_birthday_reminder_explanation"
+                android:paddingBottom="10dp" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/birthReminderCheck"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginRight="5dp"
             android:clickable="false"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/import_birth_from_facebook"
+        android:id="@+id/birthImport"
+        android:paddingRight="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/settings_text_size_primary" />
 
     <View
         android:layout_width="fill_parent"
@@ -68,13 +96,11 @@
                 android:gravity="center_vertical"
                 android:text="@string/widget_birthdays_title"
                 android:textSize="@dimen/settings_text_size_primary"
-                android:id="@+id/text6"
                 android:layout_marginBottom="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/settings_text_size_secondary"
-                android:id="@+id/text7"
                 android:text="@string/widget_birthdays_explanation"
                 android:paddingBottom="10dp" />
 
@@ -115,13 +141,11 @@
                 android:gravity="center_vertical"
                 android:text="@string/days_to_title"
                 android:textSize="@dimen/settings_text_size_primary"
-                android:id="@+id/text"
                 android:layout_marginBottom="5dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/settings_text_size_secondary"
-                android:id="@+id/text1"
                 android:text="@string/days_to_explanation"
                 android:paddingBottom="10dp" />
 
@@ -163,7 +187,6 @@
                 android:text="@string/birthday_reminder_time"
                 android:paddingRight="15dp"
                 android:paddingTop="15dp"
-                android:id="@+id/text2"
                 android:textSize="@dimen/settings_text_size_primary"
                 android:paddingBottom="15dp"/>
 
@@ -176,6 +199,125 @@
             android:layout_marginRight="5dp"
             android:textSize="@dimen/settings_text_size_primary"
             android:text="12:00"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/backupBirth"
+        android:layout_width="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:visibility="visible"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toLeftOf="@+id/backupBirthCheck">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/string_backup_birthdays"
+                android:textSize="@dimen/settings_text_size_primary"
+                android:layout_marginBottom="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/settings_text_size_secondary"
+                android:text="@string/string_backup_birthdays_explanation"
+                android:paddingBottom="10dp" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/backupBirthCheck"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"
+            android:clickable="false"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:visibility="visible"
+        android:background="@android:color/darker_gray"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/birthdayNotifContainer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/birthday_settings_notification"
+                android:id="@+id/birthdayNotification"
+                android:paddingRight="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/settings_text_size_primary" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/useContacts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/birthdays_option"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:clickable="false"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@+id/contactsSwitch"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/contactsSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:clickable="false"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
 
@@ -233,55 +375,6 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
 
-    <RelativeLayout
-        android:id="@+id/backupBirth"
-        android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:visibility="visible"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/backupBirthCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:id="@+id/text9"
-                android:text="@string/string_backup_birthdays"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/text10"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/string_backup_birthdays_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/backupBirthCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:visibility="visible"
-        android:background="@android:color/darker_gray"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -302,39 +395,5 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/birthdayNotifContainer">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/birthday_settings_notification"
-            android:id="@+id/birthdayNotification"
-            android:paddingRight="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/settings_text_size_primary" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
 </LinearLayout>
     </ScrollView>

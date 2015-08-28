@@ -18,6 +18,7 @@ import com.cray.software.justreminder.interfaces.TasksConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
@@ -104,7 +105,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
         rView.setTextViewText(R.id.task, name);
 
-        SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM");
+        SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
         String notes = mData.get(i).getNote();
         if (notes != null && !notes.matches("")) rView.setTextViewText(R.id.note, notes);

@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.SetBirthdays;
 
 import java.util.Calendar;
@@ -29,7 +29,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        is24 = new SharedPrefs(getActivity()).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        is24 = new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT);
         // create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute, is24);
     }
@@ -53,13 +53,13 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
         c.set(Calendar.MINUTE, minute);
         SharedPrefs sPrefs = new SharedPrefs(mActivity.getApplicationContext());
-        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR, hourOfDay);
-        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE, minute);
+        sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_HOUR, hourOfDay);
+        sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_MINUTE, minute);
         mActivity.startService(new Intent(mActivity.getApplicationContext(), SetBirthdays.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         mListener.onTimePicked(c);
     }
 
-    public static interface TimePickedListener {
-        public void onTimePicked(Calendar time);
+    public interface TimePickedListener {
+        void onTimePicked(Calendar time);
     }
 }

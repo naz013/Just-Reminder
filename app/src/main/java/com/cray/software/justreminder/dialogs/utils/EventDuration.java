@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class EventDuration extends Activity {
 
@@ -36,16 +36,16 @@ public class EventDuration extends Activity {
         titleDialog.setText(getString(R.string.event_duration_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION)));
+        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.EVENT_DURATION)));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(120);
-        radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION));
+        radiusBar.setProgress(sPrefs.loadInt(Prefs.EVENT_DURATION));
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 radiusValue.setText(String.valueOf(i));
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION, i);
+                sPrefs.saveInt(Prefs.EVENT_DURATION, i);
             }
 
             @Override

@@ -14,6 +14,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MapType extends Activity{
 
@@ -42,7 +43,7 @@ public class MapType extends Activity{
         musicList.setAdapter(aa);
 
         sPrefs = new SharedPrefs(MapType.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
         int position;
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
             position = 0;
@@ -65,16 +66,17 @@ public class MapType extends Activity{
                 int selectedPosition = musicList.getCheckedItemPosition();
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(MapType.this);
+                    String prefs = Prefs.MAP_TYPE;
                     if (selectedPosition == 0){
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_NORMAL);
+                        sPrefs.savePrefs(prefs, Constants.MAP_TYPE_NORMAL);
                     } else if (selectedPosition == 1){
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_SATELLITE);
+                        sPrefs.savePrefs(prefs, Constants.MAP_TYPE_SATELLITE);
                     } else if (selectedPosition == 2){
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_HYBRID);
+                        sPrefs.savePrefs(prefs, Constants.MAP_TYPE_HYBRID);
                     } else if (selectedPosition == 3){
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_TERRAIN);
+                        sPrefs.savePrefs(prefs, Constants.MAP_TYPE_TERRAIN);
                     } else {
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_NORMAL);
+                        sPrefs.savePrefs(prefs, Constants.MAP_TYPE_NORMAL);
                     }
                     finish();
                 } else {

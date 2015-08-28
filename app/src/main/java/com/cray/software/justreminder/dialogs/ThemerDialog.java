@@ -6,25 +6,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 
 public class ThemerDialog extends AppCompatActivity {
 
-    RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
+    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
             yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
             deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
-    RadioGroup themeGroup;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    Toolbar toolbar;
+    private SharedPrefs sPrefs;
+    private ColorSetter cs;
+    private Toolbar toolbar;
+    private int prevId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,106 +46,113 @@ public class ThemerDialog extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        red_checkbox = (RadioButton) findViewById(R.id.red_checkbox);
-        violet_checkbox = (RadioButton) findViewById(R.id.violet_checkbox);
-        green_checkbox = (RadioButton) findViewById(R.id.green_checkbox);
-        light_green_checkbox = (RadioButton) findViewById(R.id.light_green_checkbox);
-        blue_checkbox = (RadioButton) findViewById(R.id.blue_checkbox);
-        light_blue_checkbox = (RadioButton) findViewById(R.id.light_blue_checkbox);
-        yellow_checkbox = (RadioButton) findViewById(R.id.yellow_checkbox);
-        orange_checkbox = (RadioButton) findViewById(R.id.orange_checkbox);
-        grey_checkbox = (RadioButton) findViewById(R.id.grey_checkbox);
-        pink_checkbox = (RadioButton) findViewById(R.id.pink_checkbox);
-        sand_checkbox = (RadioButton) findViewById(R.id.sand_checkbox);
-        brown_checkbox = (RadioButton) findViewById(R.id.brown_checkbox);
+        red_checkbox = (ImageButton) findViewById(R.id.red_checkbox);
+        violet_checkbox = (ImageButton) findViewById(R.id.violet_checkbox);
+        green_checkbox = (ImageButton) findViewById(R.id.green_checkbox);
+        light_green_checkbox = (ImageButton) findViewById(R.id.light_green_checkbox);
+        blue_checkbox = (ImageButton) findViewById(R.id.blue_checkbox);
+        light_blue_checkbox = (ImageButton) findViewById(R.id.light_blue_checkbox);
+        yellow_checkbox = (ImageButton) findViewById(R.id.yellow_checkbox);
+        orange_checkbox = (ImageButton) findViewById(R.id.orange_checkbox);
+        grey_checkbox = (ImageButton) findViewById(R.id.grey_checkbox);
+        pink_checkbox = (ImageButton) findViewById(R.id.pink_checkbox);
+        sand_checkbox = (ImageButton) findViewById(R.id.sand_checkbox);
+        brown_checkbox = (ImageButton) findViewById(R.id.brown_checkbox);
 
-        deepPurple = (RadioButton) findViewById(R.id.deepPurple);
-        indigoCheckbox = (RadioButton) findViewById(R.id.indigoCheckbox);
-        limeCheckbox = (RadioButton) findViewById(R.id.limeCheckbox);
-        deepOrange = (RadioButton) findViewById(R.id.deepOrange);
+        deepPurple = (ImageButton) findViewById(R.id.deepPurple);
+        indigoCheckbox = (ImageButton) findViewById(R.id.indigoCheckbox);
+        limeCheckbox = (ImageButton) findViewById(R.id.limeCheckbox);
+        deepOrange = (ImageButton) findViewById(R.id.deepOrange);
 
-        themeGroup = (RadioGroup) findViewById(R.id.themeGroup);
-        if (new ManageModule().isPro()) {
-            deepPurple.setVisibility(View.VISIBLE);
-            indigoCheckbox.setVisibility(View.VISIBLE);
-            limeCheckbox.setVisibility(View.VISIBLE);
-            deepOrange.setVisibility(View.VISIBLE);
-        }
+        LinearLayout themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
+        if (Module.isPro()) {
+            themeGroupPro.setVisibility(View.VISIBLE);
+        } else themeGroupPro.setVisibility(View.GONE);
 
-        themeGroup.clearCheck();
-        themeGroup.setOnCheckedChangeListener(listener1);
+        setOnClickListener(red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
+                blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
+                pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, deepOrange, indigoCheckbox,
+                limeCheckbox);
 
         setUpRadio();
     }
 
-    private RadioGroup.OnCheckedChangeListener listener1 = new RadioGroup.OnCheckedChangeListener() {
+    private void setOnClickListener(View... views){
+        for (View view : views){
+            view.setOnClickListener(listener);
+        }
+    }
+
+    private View.OnClickListener listener = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (checkedId != -1) {
-                themeColorSwitch(group.getCheckedRadioButtonId());
-            }
+        public void onClick(View v) {
+            themeColorSwitch(v.getId());
         }
     };
 
-    public void setUpRadio(){
+    private void setUpRadio(){
         sPrefs = new SharedPrefs(ThemerDialog.this);
-        String loaded = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loaded = sPrefs.loadPrefs(Prefs.THEME);
         switch (loaded) {
             case "1":
-                red_checkbox.setChecked(true);
+                red_checkbox.setSelected(true);
                 break;
             case "2":
-                violet_checkbox.setChecked(true);
+                violet_checkbox.setSelected(true);
                 break;
             case "3":
-                light_green_checkbox.setChecked(true);
+                light_green_checkbox.setSelected(true);
                 break;
             case "4":
-                green_checkbox.setChecked(true);
+                green_checkbox.setSelected(true);
                 break;
             case "5":
-                light_blue_checkbox.setChecked(true);
+                light_blue_checkbox.setSelected(true);
                 break;
             case "6":
-                blue_checkbox.setChecked(true);
+                blue_checkbox.setSelected(true);
                 break;
             case "7":
-                yellow_checkbox.setChecked(true);
+                yellow_checkbox.setSelected(true);
                 break;
             case "8":
-                orange_checkbox.setChecked(true);
+                orange_checkbox.setSelected(true);
                 break;
             case "9":
-                grey_checkbox.setChecked(true);
+                grey_checkbox.setSelected(true);
                 break;
             case "10":
-                pink_checkbox.setChecked(true);
+                pink_checkbox.setSelected(true);
                 break;
             case "11":
-                sand_checkbox.setChecked(true);
+                sand_checkbox.setSelected(true);
                 break;
             case "12":
-                brown_checkbox.setChecked(true);
+                brown_checkbox.setSelected(true);
                 break;
             case "13":
-                deepPurple.setChecked(true);
+                deepPurple.setSelected(true);
                 break;
             case "14":
-                deepOrange.setChecked(true);
+                deepOrange.setSelected(true);
                 break;
             case "15":
-                limeCheckbox.setChecked(true);
+                limeCheckbox.setSelected(true);
                 break;
             case "16":
-                indigoCheckbox.setChecked(true);
+                indigoCheckbox.setSelected(true);
                 break;
             default:
-                green_checkbox.setChecked(true);
+                green_checkbox.setSelected(true);
                 break;
         }
     }
 
     private void themeColorSwitch(int radio){
+        if (radio == prevId) return;
+        prevId = radio;
+        disableAll();
+        setSelected(radio);
         switch (radio){
             case R.id.red_checkbox:
                 saveColor("1");
@@ -203,15 +210,38 @@ public class ThemerDialog extends AppCompatActivity {
         }
     }
 
-    void saveColor(String string) {
+    private void setSelected(int radio) {
+        findViewById(radio).setSelected(true);
+    }
+
+    private void disableAll() {
+        red_checkbox.setSelected(false);
+        violet_checkbox.setSelected(false);
+        green_checkbox.setSelected(false);
+        light_green_checkbox.setSelected(false);
+        blue_checkbox.setSelected(false);
+        light_blue_checkbox.setSelected(false);
+        yellow_checkbox.setSelected(false);
+        orange_checkbox.setSelected(false);
+        grey_checkbox.setSelected(false);
+        pink_checkbox.setSelected(false);
+        sand_checkbox.setSelected(false);
+        brown_checkbox.setSelected(false);
+        deepOrange.setSelected(false);
+        deepPurple.setSelected(false);
+        limeCheckbox.setSelected(false);
+        indigoCheckbox.setSelected(false);
+    }
+
+    private void saveColor(String string) {
         sPrefs = new SharedPrefs(ThemerDialog.this);
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_THEME, string);
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+        sPrefs.savePrefs(Prefs.THEME, string);
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
     }
 
     @Override
     public void onBackPressed() {
-        if (new SharedPrefs(ThemerDialog.this).loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)) {
+        if (new SharedPrefs(ThemerDialog.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
             new Notifier(ThemerDialog.this).recreatePermanent();
         }
         finish();
@@ -221,7 +251,7 @@ public class ThemerDialog extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (new SharedPrefs(ThemerDialog.this).loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)) {
+                if (new SharedPrefs(ThemerDialog.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
                     new Notifier(ThemerDialog.this).recreatePermanent();
                 }
                 finish();

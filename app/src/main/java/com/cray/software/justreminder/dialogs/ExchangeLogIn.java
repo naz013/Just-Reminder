@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ExchangeLogIn extends AppCompatActivity {
 
@@ -61,7 +61,7 @@ public class ExchangeLogIn extends AppCompatActivity {
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         title = (TextView) findViewById(R.id.title);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_white, 0, 0, 0);
         } else {
             title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_grey, 0, 0, 0);

@@ -16,6 +16,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -104,7 +105,7 @@ public class GeolocationFragment extends Fragment {
 
         googleMap = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.markersMap)).getMap();
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){

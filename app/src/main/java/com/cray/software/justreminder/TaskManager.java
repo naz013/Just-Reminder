@@ -30,11 +30,11 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -198,7 +198,7 @@ public class TaskManager extends AppCompatActivity {
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         timeField.setText(TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
         dateYearField.setText(String.valueOf(myYear));
@@ -281,7 +281,7 @@ public class TaskManager extends AppCompatActivity {
 
     private void saveTask() {
         sPrefs = new SharedPrefs(this);
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
             editField.setError(getString(R.string.empty_field_error));
@@ -337,7 +337,7 @@ public class TaskManager extends AppCompatActivity {
         DataBase DB = new DataBase(TaskManager.this);
         DB.open();
         SyncHelper sHelp = new SyncHelper(TaskManager.this);
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         Cursor cf = DB.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
@@ -440,7 +440,7 @@ public class TaskManager extends AppCompatActivity {
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                new SharedPrefs(TaskManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+                new SharedPrefs(TaskManager.this).loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -453,7 +453,7 @@ public class TaskManager extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             timeField.setText(TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 

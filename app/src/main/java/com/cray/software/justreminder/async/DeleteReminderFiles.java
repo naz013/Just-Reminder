@@ -2,13 +2,8 @@ package com.cray.software.justreminder.async;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import com.cray.software.justreminder.helpers.IOHelper;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
-
-import java.io.File;
 
 public class DeleteReminderFiles extends AsyncTask<Void, Void, Void> {
 

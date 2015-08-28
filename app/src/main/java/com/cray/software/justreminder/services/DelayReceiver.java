@@ -10,6 +10,7 @@ import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.Calendar;
 
@@ -39,7 +40,7 @@ public class DelayReceiver extends BroadcastReceiver {
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
         intent.putExtra(Constants.WINDOW_INTENT, window);
         sPrefs = new SharedPrefs(context);
-        int inTime = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+        int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();

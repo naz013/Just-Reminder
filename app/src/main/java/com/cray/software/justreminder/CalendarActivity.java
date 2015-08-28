@@ -32,7 +32,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -99,7 +99,7 @@ public class CalendarActivity extends AppCompatActivity {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
                 showEvents(cal.getTime());
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+                sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
             }
         });
 
@@ -129,7 +129,7 @@ public class CalendarActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mainMenu.isExpanded()) mainMenu.collapse();
 
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS))
+                if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
                     Toast.makeText(CalendarActivity.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
                 else {
                     addBirthday();
@@ -163,19 +163,19 @@ public class CalendarActivity extends AppCompatActivity {
         if (dateMills != 0){
             cal.setTimeInMillis(dateMills);
             showEvents(cal.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             cal.setTimeInMillis(System.currentTimeMillis());
             showEvents(cal.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 
     public void startVoiceRecognitionActivity() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         sPrefs = new SharedPrefs(this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE));
+        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
         try {
@@ -200,8 +200,10 @@ public class CalendarActivity extends AppCompatActivity {
 
     private void addBirthday() {
         sPrefs = new SharedPrefs(CalendarActivity.this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS)) Toast.makeText(CalendarActivity.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
-        else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
+        if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
+            Toast.makeText(CalendarActivity.this, getString(R.string.calendar_birthday_info),
+                    Toast.LENGTH_LONG).show();
+        } else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
     }
 
     ArrayList<PagerItem> pagerData = new ArrayList<>();
@@ -217,16 +219,16 @@ public class CalendarActivity extends AppCompatActivity {
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         sPrefs = new SharedPrefs(getApplicationContext());
-        int hour = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-        int minute = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
-        boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-        boolean isRemindersEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR);
+        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
         db = new DataBase(CalendarActivity.this);
         if (!db.isOpen()) db.open();
 
         EventsDataProvider provider = new EventsDataProvider();
-        Cursor c = db.getEvents();
+        Cursor c = db.getBirthdays();
         provider.setBirthdays(c);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
@@ -329,11 +331,11 @@ public class CalendarActivity extends AppCompatActivity {
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             calendar.setTimeInMillis(System.currentTimeMillis());
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 

@@ -47,6 +47,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -204,7 +205,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
     }
 
     private void setDrawables() {
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_white_24dp, 0, 0, 0);
             type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
             group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
@@ -383,7 +384,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 else doneStr = null;
 
                 typeStr = ReminderUtils.getTypeString(mContext, type);
-                boolean is24 = new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+                boolean is24 = new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
                 if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
                     if (type.matches(Constants.TYPE_CALL) ||
@@ -510,7 +511,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     if (googleMap != null) {
                         final GoogleMap mMap = googleMap.getMap();
                         SharedPrefs prefs = new SharedPrefs(mContext);
-                        String type = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+                        String type = prefs.loadPrefs(Prefs.MAP_TYPE);
                         if (type.matches(Constants.MAP_TYPE_NORMAL)) {
                             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)) {
@@ -688,7 +689,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 if (itemData.getNoteId() > 0){
                     notesContainer.setVisibility(View.VISIBLE);
                     String note = itemData.getNoteText();
-                    if (new SharedPrefs(mContext).loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+                    if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
                         note = new SyncHelper().decrypt(note);
                     }
                     noteText.setText(note);

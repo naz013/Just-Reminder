@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class RateDialog extends Activity {
 
@@ -37,7 +37,7 @@ public class RateDialog extends Activity {
         buttonRate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_RATE_SHOW, true);
+                sharedPrefs.saveBoolean(Prefs.RATE_SHOW, true);
                 launchMarket();
                 finish();
             }
@@ -47,8 +47,8 @@ public class RateDialog extends Activity {
         rateLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_RATE_SHOW, false);
-                sharedPrefs.saveInt(Constants.APP_UI_PREFERENCES_APP_RUNS_COUNT, 0);
+                sharedPrefs.saveBoolean(Prefs.RATE_SHOW, false);
+                sharedPrefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
                 finish();
             }
         });
@@ -57,7 +57,7 @@ public class RateDialog extends Activity {
         rateNever.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_RATE_SHOW, true);
+                sharedPrefs.saveBoolean(Prefs.RATE_SHOW, true);
                 finish();
             }
         });

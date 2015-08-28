@@ -27,6 +27,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
@@ -144,7 +145,7 @@ public class QuickAddReminder extends AppCompatActivity implements
             }
         });
         timeField.setText(TimeUtil.getTime(c.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
@@ -218,7 +219,7 @@ public class QuickAddReminder extends AppCompatActivity implements
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                new SharedPrefs(QuickAddReminder.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+                new SharedPrefs(QuickAddReminder.this).loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -231,7 +232,7 @@ public class QuickAddReminder extends AppCompatActivity implements
             c.set(Calendar.MINUTE, minute);
 
             timeField.setText(TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 
@@ -254,8 +255,8 @@ public class QuickAddReminder extends AppCompatActivity implements
         if (cf != null) cf.close();
         long id;
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-        boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+        boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+        boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         if (isCalendar || isStock) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);

@@ -63,7 +63,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
             String[] selectionArgs = null;
             String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
             mContacts = new Contacts(mContext);
-            Cursor cursor = db.getEvents();
+            Cursor cursor = db.getBirthdays();
             ArrayList<Integer> types = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()){
                 do{
@@ -89,7 +89,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
                                 if (!types.contains(id)) {
-                                    db.insertEvent(name, id, birthday, day, month, number,
+                                    db.addBirthday(name, id, birthday, day, month, number,
                                             SyncHelper.generateID());
                                 }
                             }

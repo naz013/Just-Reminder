@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class DelayTime extends Activity {
 
@@ -36,16 +36,16 @@ public class DelayTime extends Activity {
         titleDialog.setText(getString(R.string.delay_dialog_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME)));
+        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.DELAY_TIME)));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(60);
-        radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME));
+        radiusBar.setProgress(sPrefs.loadInt(Prefs.DELAY_TIME));
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 radiusValue.setText(String.valueOf(i));
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_DELAY_TIME, i);
+                sPrefs.saveInt(Prefs.DELAY_TIME, i);
             }
 
             @Override

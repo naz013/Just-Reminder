@@ -27,44 +27,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:adjustViewBounds="true"
                     android:id="@+id/image"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="25sp"
-                    android:layout_toLeftOf="@+id/prefsButton"
                     android:textColor="@color/colorWhite"
                     android:id="@+id/appNameBanner"
                     android:text="@string/app_name"
                     android:gravity="center"/>
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/prefsButton"
-                    android:layout_alignParentRight="true"
-                    style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_settings_white_24dp"/>
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/feedButton"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_send_white_24dp"/>
-
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/helpButton"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_help_white_24dp"/>
 
             </RelativeLayout>
 
@@ -224,7 +196,23 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_delete_white_24dp"
+                android:drawableLeft="@drawable/ic_delete_grey600_24dp"
+                android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
+                android:visibility="visible"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:id="@+id/settings"
+                android:text="@string/action_settings"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:drawableLeft="@drawable/ic_settings_grey600_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -232,6 +220,32 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
+
+            <TextView
+                android:id="@+id/feed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/menu_send_feedback"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <TextView
+                android:id="@+id/help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/settings_help_point"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
 
             <TextView
                 android:id="@+id/helpTranslate"

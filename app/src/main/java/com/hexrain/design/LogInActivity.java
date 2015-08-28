@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -31,11 +32,13 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.IOHelper;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -109,7 +112,7 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 boolean isIn;
-                if (new ManageModule().isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
+                if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
                 else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
                 if (isIn) {
                     checkDialog().show();
@@ -122,18 +125,72 @@ public class LogInActivity extends Activity {
         connectGDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                        new String[]{"com.google"}, false, null, null, null, null);
-                startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                if (new Permissions(LogInActivity.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                } else {
+                    new Permissions(LogInActivity.this).requestPermission(LogInActivity.this,
+                            new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                    Permissions.WRITE_EXTERNAL}, 103);
+                }
             }
         });
 
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                Permissions permissions = new Permissions(LogInActivity.this);
+                if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                        permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                    new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                } else {
+                    permissions.requestPermission(LogInActivity.this,
+                            new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 101);
+                }
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                } else {
+                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    finish();
+                }
+                break;
+            case 102:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new ImportBirthdays(LogInActivity.this).execute();
+                } else {
+                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    finish();
+                }
+                break;
+            case 103:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                } else {
+                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    finish();
+                }
+                break;
+            case 104:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                } else {
+                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    finish();
+                }
+                break;
+        }
     }
 
     @Override
@@ -147,15 +204,29 @@ public class LogInActivity extends Activity {
                 connectDropbox.setEnabled(false);
                 connectGDrive.setEnabled(false);
                 skipButton.setEnabled(false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
-                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+                Permissions permissions = new Permissions(LogInActivity.this);
+                if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                        permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                    new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                } else {
+                    permissions.requestPermission(LogInActivity.this,
+                            new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+                }
             }
         } else {
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
-            new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            Permissions permissions = new Permissions(LogInActivity.this);
+            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            } else {
+                permissions.requestPermission(LogInActivity.this,
+                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+            }
         }
     }
 
@@ -179,7 +250,7 @@ public class LogInActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i;
                         PackageManager manager = getPackageManager();
-                        if (new ManageModule().isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
+                        if (Module.isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
                         else i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
                         i.addCategory(Intent.CATEGORY_LAUNCHER);
                         startActivity(i);
@@ -188,7 +259,7 @@ public class LogInActivity extends Activity {
                 .setNegativeButton(getString(R.string.dialog_button_delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        if (new ManageModule().isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
+                        if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
                         else intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
                         startActivity(intent);
                     }
@@ -250,21 +321,35 @@ public class LogInActivity extends Activity {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
+            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
             progressMesage.setText(getString(R.string.string_successfully_logged));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
-            new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            Permissions permissions = new Permissions(LogInActivity.this);
+            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            } else {
+                permissions.requestPermission(LogInActivity.this,
+                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+            }
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
+            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
-            new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            Permissions permissions = new Permissions(LogInActivity.this);
+            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+            } else {
+                permissions.requestPermission(LogInActivity.this,
+                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+            }
             progressMesage.setText(getString(R.string.string_successfully_logged));
         }
     }
@@ -348,18 +433,23 @@ public class LogInActivity extends Activity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (checkBox.isChecked()) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
-                new ImportBirthdays(LogInActivity.this).execute();
+                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+                if (new Permissions(mContext).checkPermission(Permissions.READ_CONTACTS)) {
+                    new ImportBirthdays(LogInActivity.this).execute();
+                } else {
+                    new Permissions(mContext).requestPermission(LogInActivity.this,
+                            new String[]{Permissions.READ_CONTACTS}, 102);
+                }
             } else {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
@@ -551,18 +641,23 @@ public class LogInActivity extends Activity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (checkBox.isChecked()) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
-                new ImportBirthdays(LogInActivity.this).execute();
+                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+                if (new Permissions(mContext).checkPermission(Permissions.READ_CONTACTS)) {
+                    new ImportBirthdays(LogInActivity.this).execute();
+                } else {
+                    new Permissions(mContext).requestPermission(LogInActivity.this,
+                            new String[]{Permissions.READ_CONTACTS}, 102);
+                }
             } else {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
@@ -594,8 +689,8 @@ public class LogInActivity extends Activity {
             db.open();
             ArrayList<String> names = new ArrayList<>();
             ArrayList<Integer> ids = new ArrayList<>();
-            if (db.getCountEvents() > 0){
-                Cursor c = db.getEvents();
+            if (db.getCountBirthdays() > 0){
+                Cursor c = db.getBirthdays();
                 if (c != null && c.moveToFirst()){
                     do {
                         int id = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
@@ -647,7 +742,7 @@ public class LogInActivity extends Activity {
                                         calendar.setTime(date);
                                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                                         int month = calendar.get(Calendar.MONTH);
-                                        db.insertEvent(name, id, birthday, day, month, number,
+                                        db.addBirthday(name, id, birthday, day, month, number,
                                                 SyncHelper.generateID());
                                     }
                                 } catch (Exception e) {

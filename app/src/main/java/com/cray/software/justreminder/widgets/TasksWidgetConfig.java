@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -24,7 +23,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +47,6 @@ public class TasksWidgetConfig extends AppCompatActivity {
 
     LinearLayout headerBg, widgetBg;
     TextView note, widgetTitle, task, taskDate;
-    ImageView image;
     ImageButton tasksCount;
     SeekBar alphaSeek;
     Spinner headerBgColor, widgetBgSpinner;
@@ -101,7 +99,6 @@ public class TasksWidgetConfig extends AppCompatActivity {
         task = (TextView) findViewById(R.id.task);
         taskDate = (TextView) findViewById(R.id.taskDate);
         widgetTitle = (TextView) findViewById(R.id.widgetTitle);
-        image = (ImageView) findViewById(R.id.image);
         tasksCount = (ImageButton) findViewById(R.id.tasksCount);
 
         alphaSeek = (SeekBar) findViewById(R.id.alphaSeek);
@@ -159,7 +156,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
         });
 
         headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
-        isPro = new ManageModule().isPro();
+        isPro = Module.isPro();
         List<String> spinnerArray = new ArrayList<>();
         String[] colorsArray = getResources().getStringArray(R.array.colors_list);
         Collections.addAll(spinnerArray, colorsArray);
@@ -169,7 +166,8 @@ public class TasksWidgetConfig extends AppCompatActivity {
             spinnerArray.add(getString(R.string.color_lime));
             spinnerArray.add(getString(R.string.color_indigo));
         }
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, spinnerArray);
         headerBgColor.setAdapter(spinnerArrayAdapter);
         headerBgColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -7,7 +7,8 @@ import android.graphics.drawable.Drawable;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.Utils;
 
 public class ColorSetter {
@@ -57,9 +58,9 @@ public class ColorSetter {
 
     public int colorSetter(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             switch (loadedColor) {
                 case "1":
                     color = getColor(R.color.colorRed);
@@ -161,7 +162,7 @@ public class ColorSetter {
 
     public int colorBirthdayCalendar(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
         int color;
         switch (loadedColor) {
             case "1":
@@ -209,7 +210,7 @@ public class ColorSetter {
 
     public int colorReminderCalendar(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
         int color;
         switch (loadedColor) {
             case "1":
@@ -257,7 +258,7 @@ public class ColorSetter {
 
     public int colorCurrentCalendar(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_CURRENT_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
         int color;
         switch (loadedColor) {
             case "1":
@@ -309,9 +310,9 @@ public class ColorSetter {
 
     public Drawable toggleDrawable(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         Drawable color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             switch (loadedColor) {
                 case "1":
                     color = getDrawable(R.drawable.toggle_red);
@@ -413,9 +414,9 @@ public class ColorSetter {
 
     public int colorStatus(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             switch (loadedColor) {
                 case "1":
                     color = getColor(R.color.colorRedDark);
@@ -517,9 +518,9 @@ public class ColorSetter {
 
     public int colorChooser(){
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             switch (loadedColor) {
                 case "1":
                     color = getColor(R.color.colorRedLight);
@@ -622,9 +623,9 @@ public class ColorSetter {
     public int getStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
-        boolean isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
-        if (new ManageModule().isPro()) {
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        if (Module.isPro()) {
             if (isDark) {
                 switch (loadedColor) {
                     case "1":
@@ -827,7 +828,7 @@ public class ColorSetter {
     public int getNewStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = R.style.HomeDarkActionbar;
         } else color = R.style.HomeWhiteActionbar;
         return color;
@@ -836,7 +837,7 @@ public class ColorSetter {
     public int getSpinnerStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.grey_dark_x);
         } else color = getColor(R.color.colorWhite);
         return color;
@@ -845,10 +846,10 @@ public class ColorSetter {
     public int getDialogStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
-        boolean isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         sPrefs = new SharedPrefs(cContext);
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             if (isDark) {
                 switch (loadedColor) {
                     case "1":
@@ -1051,7 +1052,7 @@ public class ColorSetter {
     public int getFullscreenStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = R.style.HomeDarkFullscreen;
         } else id = R.style.HomeWhiteFullscreen;
         return id;
@@ -1060,7 +1061,7 @@ public class ColorSetter {
     public int getBackgroundStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = getColor(R.color.grey_dark_x);
         } else id = getColor(R.color.colorWhite);
         return id;
@@ -1069,7 +1070,7 @@ public class ColorSetter {
     public int getStatusBarStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = getColor(R.color.grey_dark_x);
         } else id = getColor(R.color.colorGreyDark);
         return id;
@@ -1078,16 +1079,25 @@ public class ColorSetter {
     public int getCardStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.grey_x);
         } else color = getColor(R.color.colorWhite);
+        return color;
+    }
+
+    public int getCardDrawableStyle(){
+        int color;
+        sPrefs = new SharedPrefs(cContext);
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+            color = R.drawable.card_bg_dark;
+        } else color = R.drawable.card_bg;
         return color;
     }
 
     public int getRequestOrientation(){
         int i;
         sPrefs = new SharedPrefs(cContext);
-        String prefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_SCREEN);
+        String prefs = sPrefs.loadPrefs(Prefs.SCREEN);
         if (prefs.matches(Constants.SCREEN_PORTRAIT)){
             i = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         } else if (prefs.matches(Constants.SCREEN_LANDSCAPE)){
@@ -1101,9 +1111,9 @@ public class ColorSetter {
     public int[] getMarkerRadiusStyle(){
         int borderColor;
         int overlayColor;
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             sPrefs = new SharedPrefs(cContext);
-            int loaded = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_MARKER_STYLE);
+            int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (loaded == 1) {
                 borderColor = R.color.colorRedLight;
                 overlayColor = R.color.colorRedDark;
@@ -1153,9 +1163,9 @@ public class ColorSetter {
 
     public int getMarkerStyle(){
         int color;
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             sPrefs = new SharedPrefs(cContext);
-            int loaded = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_MARKER_STYLE);
+            int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (loaded == 1) {
                 color = R.drawable.flat_red;
             } else if (loaded == 2) {
@@ -1191,7 +1201,7 @@ public class ColorSetter {
 
     public int getNoteColor(int position){
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             if (position == 0) {
                 color = R.color.colorRed;
             } else if (position == 1) {
@@ -1261,7 +1271,7 @@ public class ColorSetter {
 
     public int getCategoryIndicator(int position){
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             if (position == 0) {
                 color = R.drawable.circle_red;
             } else if (position == 1) {
@@ -1331,7 +1341,7 @@ public class ColorSetter {
 
     public int getNoteDarkColor(int position){
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             if (position == R.color.colorRed) {
                 color = getColor(R.color.colorRedDark);
             } else if (position == R.color.colorViolet) {
@@ -1401,7 +1411,7 @@ public class ColorSetter {
 
     public int getNoteLightColor(int position){
         int color;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             if (position == R.color.colorRed) {
                 color = getColor(R.color.colorRedLight);
             } else if (position == R.color.colorViolet) {

@@ -25,7 +25,7 @@ import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
@@ -120,7 +120,7 @@ public class EventsFragment extends Fragment {
         showEvents(cal.getTime());
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
-        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+        sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         return rootView;
     }
 
@@ -156,11 +156,11 @@ public class EventsFragment extends Fragment {
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             calendar.setTimeInMillis(System.currentTimeMillis());
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 0);
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 
@@ -254,16 +254,16 @@ public class EventsFragment extends Fragment {
             calendar.setTimeInMillis(System.currentTimeMillis());
 
             SharedPrefs sPrefs = new SharedPrefs(getActivity());
-            int hour = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-            int minute = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
-            boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-            boolean isRemindersEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR);
+            int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+            int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+            boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+            boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
             DataBase db = new DataBase(getActivity());
             if (!db.isOpen()) db.open();
 
             EventsDataProvider provider = new EventsDataProvider();
-            Cursor c = db.getEvents();
+            Cursor c = db.getBirthdays();
             provider.setBirthdays(c);
             provider.setTime(hour, minute);
             if (isRemindersEnabled) {

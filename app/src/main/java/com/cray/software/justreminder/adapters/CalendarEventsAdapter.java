@@ -14,10 +14,9 @@ import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,7 +76,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
         eventText.setTypeface(typeface);
         TextView eventNumber = (TextView) convertView.findViewById(R.id.eventNumber);
         eventNumber.setTypeface(typeface);
-        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         EventsDataProvider.EventsItem item = mDatas.get(position);
 

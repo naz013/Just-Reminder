@@ -21,6 +21,7 @@ import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.utils.LocationUtil;
@@ -91,7 +92,7 @@ public class PlacesList extends AppCompatActivity {
 
     private void loadPlaces(){
         db.open();
-        boolean isDark = new SharedPrefs(this).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean isDark = new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 PlacesList.this,
                 isDark ? R.layout.list_item_simple_card_dark : R.layout.list_item_simple_card,

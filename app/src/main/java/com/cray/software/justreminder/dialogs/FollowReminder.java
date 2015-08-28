@@ -27,6 +27,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
@@ -149,8 +150,7 @@ public class FollowReminder extends AppCompatActivity implements
 
         exportCheck = (CheckBox) findViewById(R.id.exportCheck);
         exportCheck.setVisibility(View.GONE);
-        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))){
+        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
             exportCheck.setVisibility(View.VISIBLE);
         }
 
@@ -169,7 +169,7 @@ public class FollowReminder extends AppCompatActivity implements
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, spinnerArray);
         afterTime.setAdapter(spinnerArrayAdapter);
 
-        is24Hour = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        is24Hour = sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         //Calculate custom time
         customDate.setText(TimeUtil.dateFormat.format(c.getTime()));
@@ -289,13 +289,12 @@ public class FollowReminder extends AppCompatActivity implements
         }
         if (cf != null) cf.close();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                prefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) {
+        if (prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || prefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
             ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, startTime, id,
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK));
+                    sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR),
+                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
         } else {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
                     0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);

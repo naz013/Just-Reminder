@@ -19,7 +19,8 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.hexrain.design.ScreenManager;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class SplashScreen extends Activity{
 
         textView = (TextView) findViewById(R.id.textView);
         String name;
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             name = getString(R.string.app_name_pro);
         } else name = getString(R.string.app_name);
         textView.setText(name.toUpperCase());
@@ -60,23 +61,23 @@ public class SplashScreen extends Activity{
         if(!settingsUI.exists()){
             appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor uiEd = appUISettings.edit();
-            uiEd.putString(Constants.APP_UI_PREFERENCES_THEME, "6");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_CURRENT_COLOR, "1");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR, "3");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR, "5");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_MAP_TYPE, Constants.MAP_TYPE_NORMAL);
-            uiEd.putString(Constants.APP_UI_PREFERENCES_SCREEN, Constants.SCREEN_AUTO);
-            uiEd.putString(Constants.APP_UI_PREFERENCES_DRIVE_USER, Constants.DRIVE_USER_NONE);
-            uiEd.putString(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS, 25);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE, 1);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_TRACK_TIME, 1);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME, 10);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE, 4);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_VOLUME, 25);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+            uiEd.putString(Prefs.THEME, "6");
+            uiEd.putString(Prefs.CURRENT_COLOR, "1");
+            uiEd.putString(Prefs.BIRTHDAY_COLOR, "3");
+            uiEd.putString(Prefs.REMINDERS_COLOR, "5");
+            uiEd.putString(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
+            uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
+            uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
+            uiEd.putString(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
+            uiEd.putInt(Prefs.LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+            uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+            uiEd.putInt(Prefs.LOCATION_RADIUS, 25);
+            uiEd.putInt(Prefs.TRACK_DISTANCE, 1);
+            uiEd.putInt(Prefs.TRACK_TIME, 1);
+            uiEd.putInt(Prefs.QUICK_NOTE_REMINDER_TIME, 10);
+            uiEd.putInt(Prefs.TEXT_SIZE, 4);
+            uiEd.putInt(Prefs.VOLUME, 25);
+            uiEd.putInt(Prefs.LAST_CALENDAR_VIEW, 1);
 
             String localeCheck = Locale.getDefault().toString().toLowerCase();
             String url;
@@ -86,59 +87,60 @@ public class SplashScreen extends Activity{
                 url = Constants.LANGUAGE_RU;
             } else url = Constants.LANGUAGE_EN;
 
-            uiEd.putString(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, url);
-            uiEd.putString(Constants.APP_UI_PREFERENCES_TIME_MORNING, "7:0");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_TIME_DAY, "12:0");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_TIME_EVENING, "19:0");
-            uiEd.putString(Constants.APP_UI_PREFERENCES_TIME_NIGHT, "23:0");
+            uiEd.putString(Prefs.VOICE_LANGUAGE, url);
+            uiEd.putString(Prefs.TIME_MORNING, "7:0");
+            uiEd.putString(Prefs.TIME_DAY, "12:0");
+            uiEd.putString(Prefs.TIME_EVENING, "19:0");
+            uiEd.putString(Prefs.TIME_NIGHT, "23:0");
 
-            uiEd.putString(Constants.APP_UI_PREFERENCES_TTS_LOCALE, Language.ENGLISH);
+            uiEd.putString(Prefs.TTS_LOCALE, Language.ENGLISH);
 
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_START_DAY, 1);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY, 0);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL, 15);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_APP_RUNS_COUNT, 0);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_DELAY_TIME, 5);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION, 30);
-            uiEd.putInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME, 10);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_RATE_SHOW, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_IS_CREATE_SHOWN, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_IS_CALENDAR_SHOWN, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_IS_LIST_SHOWN, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_HIDE_TRANSLATION_MENU, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_TTS, false);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, true);
-            uiEd.putBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
+            uiEd.putInt(Prefs.START_DAY, 1);
+            uiEd.putInt(Prefs.DAYS_TO_BIRTHDAY, 0);
+            uiEd.putInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
+            uiEd.putInt(Prefs.APP_RUNS_COUNT, 0);
+            uiEd.putInt(Prefs.DELAY_TIME, 5);
+            uiEd.putInt(Prefs.EVENT_DURATION, 30);
+            uiEd.putInt(Prefs.MISSED_CALL_TIME, 10);
+            uiEd.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
+            uiEd.putBoolean(Prefs.RATE_SHOW, false);
+            uiEd.putBoolean(Prefs.IS_CREATE_SHOWN, false);
+            uiEd.putBoolean(Prefs.IS_CALENDAR_SHOWN, false);
+            uiEd.putBoolean(Prefs.IS_LIST_SHOWN, false);
+            uiEd.putBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+            uiEd.putBoolean(Prefs.BIRTHDAY_REMINDER, true);
+            uiEd.putBoolean(Prefs.USE_DARK_THEME, false);
+            uiEd.putBoolean(Prefs.EXPORT_TO_CALENDAR, false);
+            uiEd.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+            uiEd.putBoolean(Prefs.INFINITE_VIBRATION, false);
+            uiEd.putBoolean(Prefs.NOTIFICATION_REPEAT, false);
+            uiEd.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+            uiEd.putBoolean(Prefs.QUICK_NOTE_REMINDER, false);
+            uiEd.putBoolean(Prefs.NOTE_ENCRYPT, true);
+            uiEd.putBoolean(Prefs.SYNC_NOTES, true);
+            uiEd.putBoolean(Prefs.ANIMATIONS, true);
+            uiEd.putBoolean(Prefs.AUTO_LANGUAGE, true);
+            uiEd.putBoolean(Prefs.EXPORT_TO_STOCK, false);
+            uiEd.putBoolean(Prefs.HIDE_TRANSLATION_MENU, false);
+            uiEd.putBoolean(Prefs.REMINDERS_IN_CALENDAR, true);
+            uiEd.putBoolean(Prefs.IS_24_TIME_FORMAT, true);
+            uiEd.putBoolean(Prefs.UNLOCK_DEVICE, false);
+            uiEd.putBoolean(Prefs.CALENDAR_FEATURE_TASKS, true);
+            uiEd.putBoolean(Prefs.MISSED_CALL_REMINDER, false);
+            uiEd.putBoolean(Prefs.QUICK_SMS, false);
+            uiEd.putBoolean(Prefs.FOLLOW_REMINDER, false);
+            uiEd.putBoolean(Prefs.TTS, false);
+            uiEd.putBoolean(Prefs.EXTENDED_BUTTON, true);
+            uiEd.putBoolean(Prefs.ITEM_PREVIEW, true);
+            uiEd.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
 
-            if (new ManageModule().isPro()) {
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_STATUS, false);
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_STATUS, false);
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_USE_GLOBAL, true);
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_INFINITE_VIBRATION, false);
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_VIBRATION_STATUS, false);
-                uiEd.putBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_WAKE_STATUS, false);
+            if (Module.isPro()) {
+                uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
+                uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
+                uiEd.putBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
+                uiEd.putBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
+                uiEd.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
+                uiEd.putBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
             }
             uiEd.commit();
         }
@@ -169,7 +171,7 @@ public class SplashScreen extends Activity{
         if (!prefs.loadBoolean("isGenB")){
             DataBase db = new DataBase(this);
             db.open();
-            Cursor c = db.getEvents();
+            Cursor c = db.getBirthdays();
             if (c != null && c.moveToFirst()){
                 do {
                     String id = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID));
@@ -191,7 +193,7 @@ public class SplashScreen extends Activity{
         checkPrefs();
 
         sPrefs = new SharedPrefs(SplashScreen.this);
-        if (isFirstTime() && !sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG)) {
+        if (isFirstTime() && !sPrefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
             startActivity(new Intent(SplashScreen.this, StartHelp.class));
         } else {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
@@ -204,26 +206,26 @@ public class SplashScreen extends Activity{
 
     private void checkPrefs(){
         sPrefs = new SharedPrefs(SplashScreen.this);
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_CURRENT_COLOR)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_CURRENT_COLOR, "5");
+        if (!sPrefs.isString(Prefs.CURRENT_COLOR)){
+            sPrefs.savePrefs(Prefs.CURRENT_COLOR, "5");
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_LIST_ORDER)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
+        if (!sPrefs.isString(Prefs.LIST_ORDER)){
+            sPrefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR, "2");
+        if (!sPrefs.isString(Prefs.BIRTHDAY_COLOR)){
+            sPrefs.savePrefs(Prefs.BIRTHDAY_COLOR, "2");
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR, "5");
+        if (!sPrefs.isString(Prefs.REMINDERS_COLOR)){
+            sPrefs.savePrefs(Prefs.REMINDERS_COLOR, "5");
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SCREEN)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_SCREEN, Constants.SCREEN_AUTO);
+        if (!sPrefs.isString(Prefs.SCREEN)){
+            sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_DRIVE_USER)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, Constants.DRIVE_USER_NONE);
+        if (!sPrefs.isString(Prefs.DRIVE_USER)){
+            sPrefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TTS_LOCALE)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TTS_LOCALE, Language.ENGLISH);
+        if (!sPrefs.isString(Prefs.TTS_LOCALE)){
+            sPrefs.savePrefs(Prefs.TTS_LOCALE, Language.ENGLISH);
         }
         String localeCheck = Locale.getDefault().toString().toLowerCase();
         String url;
@@ -232,198 +234,201 @@ public class SplashScreen extends Activity{
         } else if (localeCheck.startsWith("ru")) {
             url = Constants.LANGUAGE_RU;
         } else url = Constants.LANGUAGE_EN;
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, url);
+        if (!sPrefs.isString(Prefs.VOICE_LANGUAGE)){
+            sPrefs.savePrefs(Prefs.VOICE_LANGUAGE, url);
         }
 
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TIME_MORNING)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_MORNING, "7:0");
+        if (!sPrefs.isString(Prefs.TIME_MORNING)){
+            sPrefs.savePrefs(Prefs.TIME_MORNING, "7:0");
         }
 
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TIME_DAY)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_DAY, "12:0");
+        if (!sPrefs.isString(Prefs.TIME_DAY)){
+            sPrefs.savePrefs(Prefs.TIME_DAY, "12:0");
         }
 
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TIME_EVENING)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_EVENING, "19:0");
+        if (!sPrefs.isString(Prefs.TIME_EVENING)){
+            sPrefs.savePrefs(Prefs.TIME_EVENING, "19:0");
         }
 
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TIME_NIGHT)){
-            sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_NIGHT, "23:0");
+        if (!sPrefs.isString(Prefs.TIME_NIGHT)){
+            sPrefs.savePrefs(Prefs.TIME_NIGHT, "23:0");
         }
 
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY, 0);
+        if (!sPrefs.isString(Prefs.DAYS_TO_BIRTHDAY)){
+            sPrefs.saveInt(Prefs.DAYS_TO_BIRTHDAY, 0);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME, 10);
+        if (!sPrefs.isString(Prefs.QUICK_NOTE_REMINDER_TIME)){
+            sPrefs.saveInt(Prefs.QUICK_NOTE_REMINDER_TIME, 10);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TEXT_SIZE)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE, 4);
+        if (!sPrefs.isString(Prefs.TEXT_SIZE)){
+            sPrefs.saveInt(Prefs.TEXT_SIZE, 4);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_START_DAY)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_START_DAY, 1);
+        if (!sPrefs.isString(Prefs.START_DAY)){
+            sPrefs.saveInt(Prefs.START_DAY, 1);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR, 12);
+        if (!sPrefs.isString(Prefs.BIRTHDAY_REMINDER_HOUR)){
+            sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_HOUR, 12);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE, 0);
+        if (!sPrefs.isString(Prefs.BIRTHDAY_REMINDER_MINUTE)){
+            sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_MINUTE, 0);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE, 1);
+        if (!sPrefs.isString(Prefs.TRACK_DISTANCE)){
+            sPrefs.saveInt(Prefs.TRACK_DISTANCE, 1);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TRACK_TIME)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TRACK_TIME, 1);
+        if (!sPrefs.isString(Prefs.TRACK_TIME)){
+            sPrefs.saveInt(Prefs.TRACK_TIME, 1);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_APP_RUNS_COUNT)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_APP_RUNS_COUNT, 0);
+        if (!sPrefs.isString(Prefs.APP_RUNS_COUNT)){
+            sPrefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW, 1);
+        if (!sPrefs.isString(Prefs.LAST_CALENDAR_VIEW)){
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_DELAY_TIME)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_DELAY_TIME, 5);
+        if (!sPrefs.isString(Prefs.DELAY_TIME)){
+            sPrefs.saveInt(Prefs.DELAY_TIME, 5);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_EVENT_DURATION)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION, 30);
+        if (!sPrefs.isString(Prefs.EVENT_DURATION)){
+            sPrefs.saveInt(Prefs.EVENT_DURATION, 30);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL, 15);
+        if (!sPrefs.isString(Prefs.NOTIFICATION_REPEAT_INTERVAL)){
+            sPrefs.saveInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_VOLUME)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_VOLUME, 25);
+        if (!sPrefs.isString(Prefs.VOLUME)){
+            sPrefs.saveInt(Prefs.VOLUME, 25);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME)){
-            sPrefs.saveInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME, 10);
+        if (!sPrefs.isString(Prefs.MISSED_CALL_TIME)){
+            sPrefs.saveInt(Prefs.MISSED_CALL_TIME, 10);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_RATE_SHOW)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_RATE_SHOW, false);
+        if (!sPrefs.isString(Prefs.RATE_SHOW)){
+            sPrefs.saveBoolean(Prefs.RATE_SHOW, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE, true);
+        if (!sPrefs.isString(Prefs.AUTO_LANGUAGE)){
+            sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER, false);
+        if (!sPrefs.isString(Prefs.QUICK_NOTE_REMINDER)){
+            sPrefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SYNC_NOTES)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES, true);
+        if (!sPrefs.isString(Prefs.SYNC_NOTES)){
+            sPrefs.saveBoolean(Prefs.SYNC_NOTES, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR, false);
+        if (!sPrefs.isString(Prefs.REMINDERS_IN_CALENDAR)){
+            sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_TTS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TTS, false);
+        if (!sPrefs.isString(Prefs.TTS)){
+            sPrefs.saveBoolean(Prefs.TTS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_ANIMATIONS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, true);
+        if (!sPrefs.isString(Prefs.ANIMATIONS)){
+            sPrefs.saveBoolean(Prefs.ANIMATIONS, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS, true);
+        if (!sPrefs.isString(Prefs.SYNC_BIRTHDAYS)){
+            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT, true);
+        if (!sPrefs.isString(Prefs.NOTE_ENCRYPT)){
+            sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CONTACTS_IMPORT_DIALOG, false);
+        if (!sPrefs.isString(Prefs.CONTACTS_IMPORT_DIALOG)){
+            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_USE_CONTACTS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_CONTACTS, false);
+        if (!sPrefs.isString(Prefs.CONTACT_BIRTHDAYS)){
+            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SILENT_SMS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS, false);
+        if (!sPrefs.isString(Prefs.BIRTHDAY_REMINDER)){
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, true);
+        if (!sPrefs.isString(Prefs.SILENT_SMS)){
+            sPrefs.saveBoolean(Prefs.SILENT_SMS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, true);
+        if (!sPrefs.isString(Prefs.EXTENDED_BUTTON)){
+            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS, false);
+        if (!sPrefs.isString(Prefs.ITEM_PREVIEW)){
+            sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_WEAR_NOTIFICATION)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WEAR_NOTIFICATION, false);
+        if (!sPrefs.isString(Prefs.WIDGET_BIRTHDAYS)){
+            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK, false);
+        if (!sPrefs.isString(Prefs.WEAR_NOTIFICATION)){
+            sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_SILENT_SMS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_SILENT_SMS, false);
+        if (!sPrefs.isString(Prefs.EXPORT_TO_STOCK)){
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME, false);
+        if (!sPrefs.isString(Prefs.BIRTHDAY_SILENT_SMS)){
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_SILENT_SMS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR, false);
+        if (!sPrefs.isString(Prefs.USE_DARK_THEME)){
+            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_CHECK_BIRTHDAYS, false);
+        if (!sPrefs.isString(Prefs.EXPORT_TO_CALENDAR)){
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION, false);
+        if (!sPrefs.isString(Prefs.AUTO_CHECK_BIRTHDAYS)){
+            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_AUTO_BACKUP)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, false);
+        if (!sPrefs.isString(Prefs.INFINITE_VIBRATION)){
+            sPrefs.saveBoolean(Prefs.INFINITE_VIBRATION, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD, false);
+        if (!sPrefs.isString(Prefs.AUTO_BACKUP)){
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT, false);
+        if (!sPrefs.isString(Prefs.SMART_FOLD)){
+            sPrefs.saveBoolean(Prefs.SMART_FOLD, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_HIDE_TRANSLATION_MENU)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_HIDE_TRANSLATION_MENU, false);
+        if (!sPrefs.isString(Prefs.NOTIFICATION_REPEAT)){
+            sPrefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT, true);
+        if (!sPrefs.isString(Prefs.HIDE_TRANSLATION_MENU)){
+            sPrefs.saveBoolean(Prefs.HIDE_TRANSLATION_MENU, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE, false);
+        if (!sPrefs.isString(Prefs.IS_24_TIME_FORMAT)){
+            sPrefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, true);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS, false);
+        if (!sPrefs.isString(Prefs.UNLOCK_DEVICE)){
+            sPrefs.saveBoolean(Prefs.UNLOCK_DEVICE, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER, false);
+        if (!sPrefs.isString(Prefs.CALENDAR_FEATURE_TASKS)){
+            sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_QUICK_SMS)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS, false);
+        if (!sPrefs.isString(Prefs.MISSED_CALL_REMINDER)){
+            sPrefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, false);
         }
-        if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER)){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER, false);
+        if (!sPrefs.isString(Prefs.QUICK_SMS)){
+            sPrefs.saveBoolean(Prefs.QUICK_SMS, false);
+        }
+        if (!sPrefs.isString(Prefs.FOLLOW_REMINDER)){
+            sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, false);
         }
 
-        if (new ManageModule().isPro()) {
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_LED_STATUS)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_LED_STATUS, false);
+        if (Module.isPro()) {
+            if (!sPrefs.isString(Prefs.LED_STATUS)) {
+                sPrefs.saveBoolean(Prefs.LED_STATUS, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_LED_COLOR)) {
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+            if (!sPrefs.isString(Prefs.LED_COLOR)) {
+                sPrefs.saveInt(Prefs.LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_STATUS)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_STATUS, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_LED_STATUS)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_COLOR)) {
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_LED_COLOR)) {
+                sPrefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_VIBRATION_STATUS)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_VIBRATION_STATUS, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_VIBRATION_STATUS)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_SOUND_STATUS)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_SOUND_STATUS, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_SOUND_STATUS)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_SOUND_STATUS, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_WAKE_STATUS)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_WAKE_STATUS, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_WAKE_STATUS)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_INFINITE_SOUND)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_INFINITE_SOUND, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_INFINITE_SOUND)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_BIRTHDAY_INFINITE_VIBRATION)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_INFINITE_VIBRATION, false);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_INFINITE_VIBRATION)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
             }
-            if (!sPrefs.isString(Constants.APP_UI_PREFERENCES_USE_GLOBAL)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_GLOBAL, true);
+            if (!sPrefs.isString(Prefs.BIRTHDAY_USE_GLOBAL)) {
+                sPrefs.saveBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
             }
         }
     }

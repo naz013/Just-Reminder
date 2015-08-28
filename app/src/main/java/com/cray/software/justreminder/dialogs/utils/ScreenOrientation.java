@@ -14,6 +14,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ScreenOrientation extends Activity{
 
@@ -47,7 +48,7 @@ public class ScreenOrientation extends Activity{
                 android.R.layout.simple_list_item_single_choice, types);
         musicList.setAdapter(adapter);
 
-        String prefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_SCREEN);
+        String prefs = sPrefs.loadPrefs(Prefs.SCREEN);
         if (prefs.matches(Constants.SCREEN_AUTO)) {
             musicList.setItemChecked(0, true);
         } else if (prefs.matches(Constants.SCREEN_PORTRAIT)){
@@ -64,11 +65,11 @@ public class ScreenOrientation extends Activity{
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(ScreenOrientation.this);
                     if (selectedPosition == 0){
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_SCREEN, Constants.SCREEN_AUTO);
+                        sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);
                     } else if (selectedPosition == 1) {
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_SCREEN, Constants.SCREEN_PORTRAIT);
+                        sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_PORTRAIT);
                     } else if (selectedPosition == 2) {
-                        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_SCREEN, Constants.SCREEN_LANDSCAPE);
+                        sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_LANDSCAPE);
                     }
                     finish();
                 } else {

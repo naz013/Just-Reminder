@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.CalendarContract;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -29,7 +29,7 @@ public class CalendarManager {
 
     public void addEvent(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ctx);
-        String m_selectedCalendarId = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_CALENDAR_ID);
+        String m_selectedCalendarId = sPrefs.loadPrefs(Prefs.CALENDAR_ID);
         int i = 0;
         if (m_selectedCalendarId != null){
             try{
@@ -43,7 +43,7 @@ public class CalendarManager {
             ContentValues values = new ContentValues();
             values.put(CalendarContract.Events.DTSTART, startTime);
             values.put(CalendarContract.Events.DTEND, startTime +
-                    (60 * 1000 * sPrefs.loadInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION)));
+                    (60 * 1000 * sPrefs.loadInt(Prefs.EVENT_DURATION)));
             if (summary != null) {
                 values.put(CalendarContract.Events.TITLE, summary);
             }
@@ -52,12 +52,7 @@ public class CalendarManager {
             values.put(CalendarContract.Events.ALL_DAY, 0);
             values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED);
             values.put(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.event_description));
-            Uri l_eventUri;
-            if (Build.VERSION.SDK_INT >= 8) {
-                l_eventUri = Uri.parse("content://com.android.calendar/events");
-            } else {
-                l_eventUri = Uri.parse("content://calendar/events");
-            }
+            Uri l_eventUri = Uri.parse("content://com.android.calendar/events");
             Uri event;
             try {
                 event = cr.insert(l_eventUri, values);
@@ -80,10 +75,10 @@ public class CalendarManager {
         if (c != null && c.moveToFirst()){
             do {
                 long mID = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                String uri = c.getString(c.getColumnIndex(Constants.COLUMN_DELETE_URI));
-                Uri eventUri = Uri.parse(uri);
+                long eventId = c.getLong(c.getColumnIndex(Constants.COLUMN_EVENT_ID));
                 ContentResolver cr = ctx.getContentResolver();
-                cr.delete(eventUri, null, null);
+                cr.delete(CalendarContract.Events.CONTENT_URI,
+                        CalendarContract.Events._ID + "='" + eventId + "'", null);
                 db.deleteCalendarEvent(mID);
             } while (c.moveToNext());
         }
@@ -96,7 +91,7 @@ public class CalendarManager {
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTime +
-                        (60 * 1000 * sPrefs.loadInt(Constants.APP_UI_PREFERENCES_EVENT_DURATION)))
+                        (60 * 1000 * sPrefs.loadInt(Prefs.EVENT_DURATION)))
                 .putExtra(CalendarContract.Events.TITLE, summary)
                 .putExtra(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.event_description));
         ctx.startActivity(intent);
@@ -131,6 +126,35 @@ public class CalendarManager {
         else return ids;
     }
 
+    public ArrayList<CalendarItem> getCalendarsList() {
+        ArrayList<CalendarItem> ids = new ArrayList<>();
+        ids.clear();
+        Uri uri = CalendarContract.Calendars.CONTENT_URI;
+        String[] mProjection = new String[] {
+                CalendarContract.Calendars._ID,                           // 0
+                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
+                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
+                CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
+        };
+        Cursor c = null;
+        try {
+            c = ctx.getContentResolver().query(uri, mProjection, null, null, null);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        if (c != null && c.moveToFirst()) {
+            do {
+                String mID = c.getString(c.getColumnIndex(mProjection[0]));
+                String title = c.getString(c.getColumnIndex(mProjection[2]));
+                ids.add(new CalendarItem(title, mID));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+
+        if (ids.size() == 0) return null;
+        else return ids;
+    }
+
     public String getCalendarName(String id) {
         String mName = null;
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
@@ -154,5 +178,115 @@ public class CalendarManager {
         if (c != null) c.close();
 
         return mName;
+    }
+
+    public ArrayList<EventItem> getEvents(String id){
+        ArrayList<EventItem> list = new ArrayList<>();
+
+        long currTime = System.currentTimeMillis();
+
+        ContentResolver contentResolver = ctx.getContentResolver();
+        Cursor c = contentResolver.query(CalendarContract.Events.CONTENT_URI,
+                new String[]{CalendarContract.Events.TITLE,
+                        CalendarContract.Events.DESCRIPTION,
+                        CalendarContract.Events.DTSTART,
+                        CalendarContract.Events.DTEND,
+                        CalendarContract.Events.RRULE,
+                        CalendarContract.Events.RDATE,
+                        CalendarContract.Events._ID,
+                        CalendarContract.Events.CALENDAR_ID,
+                        CalendarContract.Events.ALL_DAY},
+                CalendarContract.Events.CALENDAR_ID + "='" + id + "'",
+                null, "dtstart ASC");
+        if (c != null && c.moveToFirst()){
+            do {
+                String title = c.getString(c.getColumnIndex(CalendarContract.Events.TITLE));
+                String description = c.getString(c.getColumnIndex(CalendarContract.Events.DESCRIPTION));
+                String rrule = c.getString(c.getColumnIndex(CalendarContract.Events.RRULE));
+                String rDate = c.getString(c.getColumnIndex(CalendarContract.Events.RDATE));
+                int calendarId = c.getInt(c.getColumnIndex(CalendarContract.Events.CALENDAR_ID));
+                int allDay = c.getInt(c.getColumnIndex(CalendarContract.Events.ALL_DAY));
+                long dtStart = c.getLong(c.getColumnIndex(CalendarContract.Events.DTSTART));
+                long dtEnd = c.getLong(c.getColumnIndex(CalendarContract.Events.DTEND));
+                long eventID = c.getLong(c.getColumnIndex(CalendarContract.Events._ID));
+                if (dtStart >= currTime)
+                list.add(new EventItem(title, description, rrule, rDate,
+                        calendarId, allDay, dtStart, dtEnd, eventID));
+            } while (c.moveToNext());
+        }
+        return list;
+    }
+
+    public class EventItem{
+        private String title, description, rrule, rDate;
+        private int calendarID, allDay;
+        private long dtStart, dtEnd, id;
+
+        public EventItem(String title, String description, String rrule, String rDate, int calendarID,
+                         int allDay, long dtStart, long dtEnd, long id){
+            this.title = title;
+            this.description = description;
+            this.rrule = rrule;
+            this.rDate = rDate;
+            this.calendarID = calendarID;
+            this.allDay = allDay;
+            this.dtStart = dtStart;
+            this.dtEnd = dtEnd;
+            this.id = id;
+        }
+
+        public String getTitle(){
+            return title;
+        }
+
+        public String getDescription(){
+            return description;
+        }
+
+        public String getRrule(){
+            return rrule;
+        }
+
+        public String getrDate(){
+            return rDate;
+        }
+
+        public int getCalendarID(){
+            return calendarID;
+        }
+
+        public int getAllDay(){
+            return allDay;
+        }
+
+        public long getDtStart(){
+            return dtStart;
+        }
+
+        public long getDtEnd(){
+            return dtEnd;
+        }
+
+        public long getId(){
+            return id;
+        }
+    }
+
+    public class CalendarItem{
+
+        private String name, id;
+
+        public CalendarItem(String name, String id){
+            this.name = name;
+            this.id = id;
+        }
+
+        public String getName(){
+            return name;
+        }
+
+        public String getId(){
+            return id;
+        }
     }
 }

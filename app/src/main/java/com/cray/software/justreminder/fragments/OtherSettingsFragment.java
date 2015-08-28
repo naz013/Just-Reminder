@@ -17,7 +17,7 @@ import com.cray.software.justreminder.ThanksDialog;
 import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.RateDialog;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 
 public class OtherSettingsFragment extends Fragment {
 
@@ -96,7 +96,7 @@ public class OtherSettingsFragment extends Fragment {
                 final Intent emailIntent = new Intent( Intent.ACTION_SEND);
                 emailIntent.setType("plain/text");
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
-                if (new ManageModule().isPro()){
+                if (Module.isPro()){
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
                 } else {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");

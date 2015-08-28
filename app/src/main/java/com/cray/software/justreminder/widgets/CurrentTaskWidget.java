@@ -17,6 +17,7 @@ import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class CurrentTaskWidget extends AppWidgetProvider {
 
@@ -44,7 +45,7 @@ public class CurrentTaskWidget extends AppWidgetProvider {
     public static void updateWidget(Context context, AppWidgetManager appWidgetManager,
                                     SharedPreferences sp, int widgetID){
         Calendar cal = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMMM yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault());
         dateFormat.setCalendar(cal);
         String date = dateFormat.format(cal.getTime());
 

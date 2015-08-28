@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +23,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
@@ -146,8 +146,8 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         ImageView leftTimeIcon = (ImageView) convertView.findViewById(R.id.leftTime);
         leftTimeIcon.setVisibility(View.VISIBLE);
 
-        CardView card = (CardView) convertView.findViewById(R.id.card);
-        card.setCardBackgroundColor(cs.getCardStyle());
+        //CardView card = (CardView) convertView.findViewById(R.id.card);
+        //card.setCardBackgroundColor(cs.getCardStyle());
 
         if (isDone == 1){
             check.setChecked(false);
@@ -157,7 +157,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
         reminder_type.setText(ReminderUtils.getTypeString(context, type));
 
-        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         if (type.startsWith(Constants.TYPE_MONTHDAY)){
             taskTitle.setText(title);

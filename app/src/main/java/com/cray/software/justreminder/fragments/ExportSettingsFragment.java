@@ -25,7 +25,7 @@ import com.cray.software.justreminder.dialogs.utils.SelectCalendar;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
 
         exportToCalendarCheck = (CheckBox) rootView.findViewById(R.id.exportToCalendarCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        exportToCalendarCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR));
+        exportToCalendarCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR));
 
         eventDuration = (TextView) rootView.findViewById(R.id.eventDuration);
         eventDuration.setOnClickListener(this);
@@ -71,13 +71,13 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         autoBackup.setOnClickListener(this);
 
         autoBackupCheck = (CheckBox) rootView.findViewById(R.id.autoBackupCheck);
-        autoBackupCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP));
+        autoBackupCheck.setChecked(sPrefs.loadBoolean(Prefs.AUTO_BACKUP));
 
         exportToStock = (RelativeLayout) rootView.findViewById(R.id.exportToStock);
         exportToStock.setOnClickListener(this);
 
         exportToStockCheck = (CheckBox) rootView.findViewById(R.id.exportToStockCheck);
-        exportToStockCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK));
+        exportToStockCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
 
         checkEnabling();
 
@@ -87,10 +87,10 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     private void stockChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (exportToStockCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK, false);
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
             exportToStockCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK, true);
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, true);
             exportToStockCheck.setChecked(true);
         }
     }
@@ -98,10 +98,10 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     private void autoBackupChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (autoBackupCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, false);
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, false);
             autoBackupCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP, true);
+            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
             autoBackupCheck.setChecked(true);
         }
     }
@@ -119,7 +119,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     private void exportToCalendarChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (exportToCalendarCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR, false);
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, false);
             exportToCalendarCheck.setChecked(false);
             eventDuration.setEnabled(false);
             selectCalendar.setEnabled(false);
@@ -127,7 +127,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         } else {
             ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
             if (i != null && i.size() > 0) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR, true);
+                sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
                 exportToCalendarCheck.setChecked(true);
                 eventDuration.setEnabled(true);
                 selectCalendar.setEnabled(true);

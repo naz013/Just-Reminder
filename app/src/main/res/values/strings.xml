@@ -376,7 +376,7 @@
     <string name="delete_file_settings_title">Delete backup</string>
     <string name="delete_file_settings_explanation">Check to enable deleting backup file when delete note</string>
     <string name="edit_reminder_toast">The reminder time is outdated. Open to edit</string>
-    <string name="export_check_title">Export event to Calendar</string>
+    <string name="export_check_title">Add event to Calendar</string>
     <string name="changes_settings_title">Changes</string>
     <string name="voice_widget_title">Voice control</string>
     <string name="note_saved_toast">Note saved!</string>
@@ -394,7 +394,7 @@
     <string name="time_evening_title">Evening</string>
     <string name="time_day_title">Day</string>
     <string name="time_morning_title">Morning</string>
-    <string name="export_to_calendar_settings">Export event to system calendar</string>
+    <string name="export_to_calendar_settings">Add event to system calendar</string>
     <string name="export_to_calendar_settings_explanation">Check to enable exporting event to stock calendar, if You don\'t have Google Calendar</string>
     <string name="custom_melody_title">Melody</string>
     <string name="selected_melody_string">"Selected melody "</string>
@@ -663,5 +663,18 @@
     <string name="string_backup_birthdays">Backup birthdays</string>
     <string name="string_backup_birthdays_explanation">Check, to enable backing up birthdays when sync reminders</string>
     <string name="simple_m_letter">m</string>
+    <string name="settings_events_import">Import events</string>
+    <string name="string_auto_check">Automatically check for new events</string>
+    <string name="string_no_action_selected">You don\'t select any action!</string>
+    <string name="string_no_calendar_selected">You don\'t select calendar for events!</string>
+    <string name="string_no_birthday_calendar_selected">You don\'t select calendar for birthdays!</string>
+    <string name="string_no_events_found">No events found</string>
+    <string name="simple_imported">"Imported "</string>
+    <string name="simple_event">" event"</string>
+    <string name="char_s_with_point">s.</string>
+    <string name="string_trash_cleared">Trash cleared.</string>
+    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
+    <string name="settings_birthday_reminder_title">Birthday reminder</string>
 
 </resources>

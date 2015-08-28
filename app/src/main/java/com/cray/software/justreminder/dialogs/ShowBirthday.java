@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -21,9 +22,11 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -55,7 +58,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
         sPrefs = new SharedPrefs(ShowBirthday.this);
-        boolean isFull = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE);
+        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -90,7 +93,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         buttonSend = (FloatingActionButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(this);
 
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonSend);
         if (isDark){
             buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
@@ -107,7 +110,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         contacts = new Contacts(ShowBirthday.this);
 
         DB.open();
-        Cursor c = DB.getEvent(id);
+        Cursor c = DB.getBirthday(id);
         if (c != null && c.moveToFirst()){
             contactId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
             name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
@@ -166,11 +169,11 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     private void wakeScreen() {
         boolean wake;
         sPrefs = new SharedPrefs(ShowBirthday.this);
-        if (new ManageModule().isPro()){
-            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_GLOBAL)){
-                wake = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_BIRTHDAY_WAKE_STATUS);
-            } else wake = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS);
-        } else wake = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS);
+        if (Module.isPro()){
+            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                wake = sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
+            } else wake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+        } else wake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
 
         if (wake) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -195,6 +198,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         int year = calendar.get(Calendar.YEAR);
         switch (v.getId()){
             case R.id.buttonOk:
@@ -207,21 +211,64 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
                 break;
             case R.id.buttonCall:
                 notifier.discardNotification();
-                Telephony.makeCall(number, ShowBirthday.this);
-                DB.open();
-                DB.setShown(id, String.valueOf(year));
-                removeFlags();
-                notifier.recreatePermanent();
-                finish();
+                if (new Permissions(ShowBirthday.this).checkPermission(Permissions.CALL_PHONE)) {
+                    Telephony.makeCall(number, ShowBirthday.this);
+                    DB.open();
+                    DB.setShown(id, String.valueOf(year));
+                    removeFlags();
+                    notifier.recreatePermanent();
+                    finish();
+                } else {
+                    new Permissions(ShowBirthday.this).requestPermission(ShowBirthday.this,
+                            new String[]{Permissions.CALL_PHONE}, 104);
+                }
                 break;
             case R.id.buttonSend:
                 notifier.discardNotification();
-                Telephony.sendSms(number, ShowBirthday.this);
-                DB.open();
-                DB.setShown(id, String.valueOf(year));
-                removeFlags();
-                notifier.recreatePermanent();
-                finish();
+                if (new Permissions(ShowBirthday.this).checkPermission(Permissions.SEND_SMS)) {
+                    Telephony.sendSms(number, ShowBirthday.this);
+                    DB.open();
+                    DB.setShown(id, String.valueOf(year));
+                    removeFlags();
+                    notifier.recreatePermanent();
+                    finish();
+                } else {
+                    new Permissions(ShowBirthday.this).requestPermission(ShowBirthday.this,
+                            new String[]{Permissions.SEND_SMS}, 103);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int year = calendar.get(Calendar.YEAR);
+        switch (requestCode){
+            case 103:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Telephony.sendSms(number, ShowBirthday.this);
+                    DB.open();
+                    DB.setShown(id, String.valueOf(year));
+                    removeFlags();
+                    notifier.recreatePermanent();
+                    finish();
+                } else {
+                    new Permissions(ShowBirthday.this).showInfo(ShowBirthday.this, Permissions.SEND_SMS);
+                }
+                break;
+            case 104:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Telephony.makeCall(number, ShowBirthday.this);
+                    DB.open();
+                    DB.setShown(id, String.valueOf(year));
+                    removeFlags();
+                    notifier.recreatePermanent();
+                    finish();
+                } else {
+                    new Permissions(ShowBirthday.this).showInfo(ShowBirthday.this, Permissions.CALL_PHONE);
+                }
                 break;
         }
     }
@@ -230,7 +277,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     public void onBackPressed() {
         notifier.discardMedia();
         sPrefs = new SharedPrefs(ShowBirthday.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
+        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, id);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);

@@ -15,7 +15,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 
@@ -62,8 +62,8 @@ public class SelectCalendar extends Activity{
                 int selectedPosition = musicList.getCheckedItemPosition();
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(SelectCalendar.this);
-                    sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_CALENDAR_NAME, names.get(selectedPosition));
-                    sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_CALENDAR_ID, ids.get(selectedPosition));
+                    sPrefs.savePrefs(Prefs.CALENDAR_NAME, names.get(selectedPosition));
+                    sPrefs.savePrefs(Prefs.CALENDAR_ID, ids.get(selectedPosition));
                     finish();
                 } else {
                     Toast.makeText(

@@ -290,8 +290,10 @@ public class FlextGridAdapter extends BaseAdapter {
 			// Customize for today
 			if (dateTime.equals(getToday())) {
                 if (backgroundForToday != 0) {
-                    cellView.setTextColor(backgroundForToday);
-                }
+                    cellView.setTextColor(resources.getColor(backgroundForToday));
+                } else {
+					cellView.setTextColor(resources.getColor(android.R.color.holo_red_light));
+				}
 			} else {
 				cellView.setBackgroundResource(android.R.color.transparent);
 			}

@@ -9,6 +9,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.ShowBirthday;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.Calendar;
 
@@ -31,13 +32,13 @@ public class CheckBirthdays extends IntentService{
             public void run() {
                 Looper.prepare();
                 sharedPrefs = new SharedPrefs(getApplicationContext());
-                int days = sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY);
-                int hourC = sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-                int minuteC= sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
+                int days = sharedPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY);
+                int hourC = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+                int minuteC= sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
                 long currentTime = getCurrentDate(days, hourC, minuteC);
                 db = new DataBase(getApplicationContext());
                 db.open();
-                Cursor c = db.getEvents();
+                Cursor c = db.getBirthdays();
                 if (c != null && c.moveToFirst()){
                     do {
                         Calendar cal = Calendar.getInstance();
@@ -52,14 +53,16 @@ public class CheckBirthdays extends IntentService{
                             if (birthValue == currentTime && (!year.matches(String.valueOf(mYear)))) {
                                 Intent resultIntent = new Intent(getApplicationContext(), ShowBirthday.class);
                                 resultIntent.putExtra("id", id);
-                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                                 getApplicationContext().startActivity(resultIntent);
                             }
                         } else {
                             if (birthValue == currentTime) {
                                 Intent resultIntent = new Intent(getApplicationContext(), ShowBirthday.class);
                                 resultIntent.putExtra("id", id);
-                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                                 getApplicationContext().startActivity(resultIntent);
                             }
                         }
@@ -86,7 +89,7 @@ public class CheckBirthdays extends IntentService{
     private long getBirthdayValue(int month, int day, int hour, int minute) {
         long time;
         sharedPrefs = new SharedPrefs(getApplicationContext());
-        int days = sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_DAYS_TO_BIRTHDAY);
+        int days = sharedPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY);
         Calendar cal = Calendar.getInstance();
         cal.getTimeInMillis();
         int year = cal.get(Calendar.YEAR);

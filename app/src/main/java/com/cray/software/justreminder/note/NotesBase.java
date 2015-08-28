@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class NotesBase {
     private static final String DB_NAME = "notes_base";
@@ -136,7 +137,7 @@ public class NotesBase {
     public Cursor getNotes() throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_NOTES_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.NOTES_ORDER);
         String order = null;
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
             order = Constants.COLUMN_DATE + " ASC";

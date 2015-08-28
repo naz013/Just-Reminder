@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class CurrentTaskWidgetConfig extends AppCompatActivity {
 
@@ -189,7 +190,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         listItemCard = (LinearLayout) findViewById(R.id.listItemCard);
 
         Calendar cal = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMMM yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMMM yyyy", Locale.getDefault());
         dateFormat.setCalendar(cal);
         String date = dateFormat.format(cal.getTime());
         widgetDate.setText(date);
@@ -213,7 +214,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         });
 
         headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
-        isPro = new ManageModule().isPro();
+        isPro = Module.isPro();
         List<String> spinnerArray = new ArrayList<>();
         String[] colorsArray = getResources().getStringArray(R.array.colors_list);
         Collections.addAll(spinnerArray, colorsArray);
@@ -223,7 +224,8 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             spinnerArray.add(getString(R.string.color_lime));
             spinnerArray.add(getString(R.string.color_indigo));
         }
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, spinnerArray);
         headerBgColor.setAdapter(spinnerArrayAdapter);
         headerBgColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

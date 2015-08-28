@@ -21,8 +21,9 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
@@ -139,7 +140,7 @@ public class TaskListManager extends AppCompatActivity {
         themeGroup2 = (RadioGroup) findViewById(R.id.themeGroup2);
         themeGroup3 = (RadioGroup) findViewById(R.id.themeGroup3);
         themeGroupPro = (RadioGroup) findViewById(R.id.themeGroupPro);
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             themeGroupPro.setVisibility(View.VISIBLE);
         }
 
@@ -157,7 +158,7 @@ public class TaskListManager extends AppCompatActivity {
 
     private void saveTaskList() {
         sPrefs = new SharedPrefs(this);
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
         String listName = editField.getText().toString();
         if (listName.matches("")) {
             editField.setError(getString(R.string.empty_field_error));
@@ -346,7 +347,7 @@ public class TaskListManager extends AppCompatActivity {
     };
 
     private void colorSwitch(int checkId) {
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             switch (checkId) {
                 case R.id.red_checkbox:
                     setColor(0);
@@ -449,7 +450,7 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     public void setUpRadio(){
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             switch (color) {
                 case 0:
                     red_checkbox.setChecked(true);

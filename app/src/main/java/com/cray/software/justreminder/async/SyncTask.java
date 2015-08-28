@@ -12,8 +12,9 @@ import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import org.json.JSONException;
@@ -84,14 +85,14 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
         //export & import notes
         SharedPrefs prefs = new SharedPrefs(tContext);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES)) {
+        if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
             publishProgress(tContext.getString(R.string.message_sync_notes));
             ioHelper.backupNote(true);
             ioHelper.restoreNote(true);
         }
 
         //export & import birthdays
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS)) {
+        if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(tContext.getString(R.string.message_sync_birthdays));
             ioHelper.backupBirthday(true);
             ioHelper.restoreBirthday(true);
@@ -112,7 +113,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         super.onPostExecute(aVoid);
         builder.setContentTitle(tContext.getString(R.string.sync_end_message));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             builder.setContentText(tContext.getString(R.string.app_name_pro));
         } else builder.setContentText(tContext.getString(R.string.app_name));
         builder.setWhen(System.currentTimeMillis());

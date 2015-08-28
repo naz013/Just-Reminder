@@ -20,6 +20,7 @@ import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -105,7 +106,7 @@ public class TemplatesFragment extends Fragment {
     private void loadTemplates(){
         db = new DataBase(getActivity());
         db.open();
-        boolean isDark = new SharedPrefs(getActivity()).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean isDark = new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 getActivity(),
                 isDark ? R.layout.list_item_simple_card_dark : R.layout.list_item_simple_card,

@@ -6,7 +6,7 @@ import android.os.IBinder;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class SetBirthdays extends Service {
 
@@ -24,10 +24,10 @@ public class SetBirthdays extends Service {
         alarmReceiver.cancelAlarm(getApplicationContext(), 210);
         db = new DataBase(getApplicationContext());
         db.open();
-        if (db.getCountEvents() > 0) {
+        if (db.getCountBirthdays() > 0) {
             sharedPrefs = new SharedPrefs(getApplicationContext());
-            int hour = sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-            int minute = sharedPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
+            int hour = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+            int minute = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             alarmReceiver.setBirthdaysAlarm(getApplicationContext(), hour, minute);
             stopSelf();
         } else stopSelf();

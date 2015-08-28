@@ -240,7 +240,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="10dp"
                             android:src="@drawable/note_widget_preview"
-                            android:id="@+id/image"/>
+                            android:id="@+id/imageView"/>
 
                         <TextView
                             android:layout_width="match_parent"

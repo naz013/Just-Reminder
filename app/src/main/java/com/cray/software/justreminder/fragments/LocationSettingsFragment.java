@@ -19,9 +19,8 @@ import com.cray.software.justreminder.dialogs.utils.MarkerStyle;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.dialogs.utils.TrackerOption;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
-import com.hexrain.design.ScreenManager;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 
 public class LocationSettingsFragment extends Fragment implements View.OnClickListener {
 
@@ -49,7 +48,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         notificationOption.setOnClickListener(this);
 
         notifCheck = (CheckBox) rootView.findViewById(R.id.notifCheck);
-        notifCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION));
+        notifCheck.setChecked(sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION));
 
         radius = (RelativeLayout) rootView.findViewById(R.id.radius);
         radius.setOnClickListener(this);
@@ -66,9 +65,9 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         widgetDistance.setOnClickListener(this);
 
         widgetDistanceCheck = (CheckBox) rootView.findViewById(R.id.widgetDistanceCheck);
-        widgetDistanceCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WIDGET_DISTANCE));
+        widgetDistanceCheck.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_DISTANCE));
 
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             markerStyleContainer = (RelativeLayout) rootView.findViewById(R.id.markerStyleContainer);
             markerStyleContainer.setVisibility(View.VISIBLE);
 
@@ -82,10 +81,10 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     private void distanceChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (widgetDistanceCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_DISTANCE, false);
+            sPrefs.saveBoolean(Prefs.WIDGET_DISTANCE, false);
             widgetDistanceCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WIDGET_DISTANCE, true);
+            sPrefs.saveBoolean(Prefs.WIDGET_DISTANCE, true);
             widgetDistanceCheck.setChecked(true);
         }
     }
@@ -93,10 +92,10 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     private void notificationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (notifCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION, false);
+            sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, false);
             notifCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION, true);
+            sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, true);
             notifCheck.setChecked(true);
         }
     }
@@ -106,7 +105,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         super.onResume();
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        radiusText.setText(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS) + getString(R.string.meter));
+        radiusText.setText(sPrefs.loadInt(Prefs.LOCATION_RADIUS) + getString(R.string.meter));
     }
 
     @Override

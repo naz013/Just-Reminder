@@ -1,22 +1,8 @@
 package com.cray.software.justreminder.reminder;
 
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.Build;
-import android.telephony.SmsManager;
-import android.view.View;
-import android.widget.Toast;
-
-import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.Utils;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.io.File;
 

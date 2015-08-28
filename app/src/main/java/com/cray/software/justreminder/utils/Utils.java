@@ -1,17 +1,11 @@
 package com.cray.software.justreminder.utils;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class Utils {
 

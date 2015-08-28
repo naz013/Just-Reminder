@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -32,10 +31,13 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.hexrain.flextcal.ImageCheck;
 import com.hexrain.flextcal.LoadAsync;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 
@@ -49,9 +51,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     ImageView basket, image;
     TextView archiveScreen, activeScreen, geoScreen, calendar,
             manageBackup, notes, helpTranslate, googleTasks, moreApps, templates, places,
-            categories;
+            categories, prefsButton, feedButton, helpButton;
     TextView appNameBanner;
-    ImageButton prefsButton, feedButton, helpButton;
     RelativeLayout ads_container;
     private View mFragmentContainerView;
 
@@ -97,17 +98,26 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
         String appName;
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             appName = getString(R.string.app_name_pro);
         } else {
             appName = getString(R.string.app_name);
         }
         appNameBanner.setText(appName.toUpperCase());
 
-        prefsButton = (ImageButton) rootView.findViewById(R.id.prefsButton);
+        ImageCheck imageCheck = new ImageCheck(getActivity());
+        if (imageCheck.isImage(13)){
+            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+            Picasso.with(getActivity()).load(new File(imageCheck.getImage(13))).into(image);
+        } else {
+            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorBlack));
+            new LoadAsync(getActivity(), 13).execute();
+        }
+
+        prefsButton = (TextView) rootView.findViewById(R.id.settings);
         prefsButton.setOnClickListener(this);
 
-        helpButton = (ImageButton) rootView.findViewById(R.id.helpButton);
+        helpButton = (TextView) rootView.findViewById(R.id.help);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +125,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         });
 
-        feedButton = (ImageButton) rootView.findViewById(R.id.feedButton);
+        feedButton = (TextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
 
         geoScreen = (TextView) rootView.findViewById(R.id.geoScreen);
@@ -193,7 +203,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryTemplates();
-        if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS)){
+        if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
         if (!DB.isOpen()) DB.open();
@@ -211,12 +221,15 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         archiveScreen.setTypeface(typeface);
         manageBackup.setTypeface(typeface);
         googleTasks.setTypeface(typeface);
+        prefsButton.setTypeface(typeface);
+        feedButton.setTypeface(typeface);
+        helpButton.setTypeface(typeface);
 
 
-        if (!new ManageModule().isPro()){
+        if (!Module.isPro()){
             ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             basket = (ImageView) rootView.findViewById(R.id.basket);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+            if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else basket.setImageResource(R.drawable.market_icon);
 
@@ -249,7 +262,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     private void loadMenu() {
         SharedPrefs prefs = new SharedPrefs(getActivity());
-        if (!prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (!prefs.loadBoolean(Prefs.USE_DARK_THEME)){
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_grey600_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_grey600_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_grey600_24dp, 0, 0, 0);
@@ -260,6 +273,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_grey600_24dp, 0, 0, 0);
             places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_grey600_24dp, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_grey600_24dp, 0, 0, 0);
+            prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_grey600_24dp, 0, 0, 0);
         } else {
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_white_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white_24dp, 0, 0, 0);
@@ -271,6 +285,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_white_24dp, 0, 0, 0);
             places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_white_24dp, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
+            prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_white_24dp, 0, 0, 0);
         }
     }
 
@@ -434,14 +449,14 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
                 disableItem(ScreenManager.FRAGMENT_ACTIVE);
                 break;
-            case R.id.prefsButton:
+            case R.id.settings:
                 selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
                 break;
-            case R.id.feedButton:
+            case R.id.feed:
                 final Intent emailIntent = new Intent( Intent.ACTION_SEND);
                 emailIntent.setType("plain/text");
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
-                if (new ManageModule().isPro()){
+                if (Module.isPro()){
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
                 } else {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
@@ -462,7 +477,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 break;
             case R.id.calendar:
                 SharedPrefs sPrefs = new SharedPrefs(getActivity());
-                if (sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_CALENDAR_VIEW) == 1) {
+                if (sPrefs.loadInt(Prefs.LAST_CALENDAR_VIEW) == 1) {
                     selectItem(ScreenManager.ACTION_CALENDAR, true);
                     disableItem(ScreenManager.ACTION_CALENDAR);
                 } else {
@@ -481,23 +496,18 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_HIDE_TRANSLATION_MENU)) {
+        if (sPrefs.loadBoolean(Prefs.HIDE_TRANSLATION_MENU)) {
             helpTranslate.setVisibility(View.GONE);
         }
 
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         if (DB.getCountActive() > 0){
-            if (isListFirstTime() && sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_THANKS_SHOWN)){
+            if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
                 startActivity(new Intent(getActivity(), HelpOverflow.class)
                         .putExtra(Constants.ITEM_ID_INTENT, 1));
             }
         }
-
-        ImageCheck imageCheck = new ImageCheck(getActivity());
-        if (imageCheck.isImage(13)){
-            Picasso.with(getActivity()).load(imageCheck.getImage(13)).resize(1920, 1080).into(image);
-        } else new LoadAsync(getActivity(), 13);
 
         if (mCallbacks != null)
             mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);

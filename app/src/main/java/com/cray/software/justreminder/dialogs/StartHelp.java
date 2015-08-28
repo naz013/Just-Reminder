@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.fragments.StartFragment;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.Utils;
 import com.hexrain.design.LogInActivity;
 
 public class StartHelp extends FragmentActivity implements View.OnClickListener {

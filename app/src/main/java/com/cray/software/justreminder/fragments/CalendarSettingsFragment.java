@@ -15,15 +15,16 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.CalendarStyle;
+import com.cray.software.justreminder.dialogs.utils.EventsImport;
 import com.cray.software.justreminder.dialogs.utils.FirstDay;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class CalendarSettingsFragment extends Fragment implements View.OnClickListener {
 
     SharedPrefs sPrefs;
-    TextView startDay, text1, text2;
+    TextView startDay, text1, text2, eventsImport;
     RelativeLayout themeColor, selectedColor, reminderColor, reminderInCalendar, featureReminders;
     View themeColorSwitcher, selectedColorSwitcher, reminderColorSwitcher;
     CheckBox reminderInCalendarCheck, featureRemindersCheck;
@@ -40,7 +41,9 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         }
 
         startDay = (TextView) rootView.findViewById(R.id.startDay);
+        eventsImport = (TextView) rootView.findViewById(R.id.eventsImport);
         startDay.setOnClickListener(this);
+        eventsImport.setOnClickListener(this);
 
         themeColor = (RelativeLayout) rootView.findViewById(R.id.themeColor);
         themeColorSwitcher = rootView.findViewById(R.id.themeColorSwitcher);
@@ -60,7 +63,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         reminderInCalendar.setOnClickListener(this);
 
         reminderInCalendarCheck = (CheckBox) rootView.findViewById(R.id.reminderInCalendarCheck);
-        reminderInCalendarCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR));
+        reminderInCalendarCheck.setChecked(sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR));
 
         reminderColor = (RelativeLayout) rootView.findViewById(R.id.reminderColor);
         reminderColor.setOnClickListener(this);
@@ -72,7 +75,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         featureReminders.setOnClickListener(this);
 
         featureRemindersCheck = (CheckBox) rootView.findViewById(R.id.featureRemindersCheck);
-        featureRemindersCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS));
+        featureRemindersCheck.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS));
 
         reminderColor();
         checkEnabling();
@@ -83,10 +86,10 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     private void featureChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (featureRemindersCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS, false);
+            sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, false);
             featureRemindersCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS, true);
+            sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, true);
             featureRemindersCheck.setChecked(true);
         }
 
@@ -96,10 +99,10 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     private void remindersChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (reminderInCalendarCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR, false);
+            sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
             reminderInCalendarCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR, true);
+            sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, true);
             reminderInCalendarCheck.setChecked(true);
         }
         checkEnabling();
@@ -139,7 +142,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void reminderColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
         switch (loadedColor) {
             case "1":
                 reminderColorSwitcher.setBackgroundResource(R.drawable.drawable_red);
@@ -185,7 +188,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void currentColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_CURRENT_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
         switch (loadedColor) {
             case "1":
                 themeColorSwitcher.setBackgroundResource(R.drawable.drawable_red);
@@ -231,7 +234,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void birthdayColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR);
+        String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
         switch (loadedColor) {
             case "1":
                 selectedColorSwitcher.setBackgroundResource(R.drawable.drawable_red);
@@ -306,6 +309,11 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
                 break;
             case R.id.featureReminders:
                 featureChange();
+                break;
+            case R.id.eventsImport:
+                getActivity().getApplicationContext()
+                        .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
         }
     }

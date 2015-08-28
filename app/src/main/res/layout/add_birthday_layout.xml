@@ -30,39 +30,33 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/birthday_name_hint"
                 android:id="@+id/birthName"
+                style="@android:style/Widget.TextView"
                 android:singleLine="true"
+                android:background="@android:color/transparent"
                 android:textSize="@dimen/add_birthday_text_size_primary"
-                android:layout_marginTop="@dimen/view_margin_top"
+                android:padding="20dp"
                 android:inputType="textPersonName"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/button"
+                android:background="@color/grey_dark"/>
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/view_margin_top"
-                android:textSize="@dimen/add_birthday_text_size_primary"
+                android:layout_height="72dp"
                 android:gravity="center"
-                android:layout_gravity="center"
-                android:text="@string/choose_date_title"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/add_birthday_parent_margin_top"
-                android:id="@+id/birthDateWrapper"
-                android:clickable="true"
-                android:padding="3dp"
+                android:id="@+id/birthDate"
                 android:background="?android:attr/selectableItemBackground"
-                android:orientation="horizontal">
+                android:textSize="@dimen/add_birthday_text_size_primary"
+                android:text="25/05/1985"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:id="@+id/birthDate"
-                    android:textSize="@dimen/add_birthday_text_size_primary"
-                    android:text="25/05/1985"/>
-
-            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/button"
+                android:background="@color/grey_dark"/>
 
             <CheckBox
                 android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import android.util.Log;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -98,7 +99,7 @@ public class SyncHelper {
     public void exportBirthdays() throws JSONException, IOException {
         DataBase dataBase = new DataBase(sContext);
         dataBase.open();
-        Cursor c = dataBase.getEvents();
+        Cursor c = dataBase.getBirthdays();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
@@ -232,7 +233,7 @@ public class SyncHelper {
         if (image != null) {
             jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
         } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-        if (new SharedPrefs(sContext).loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+        if (new SharedPrefs(sContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
         } else {
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
@@ -279,7 +280,7 @@ public class SyncHelper {
                 if (image != null) {
                     jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
                 } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-                if (new SharedPrefs(sContext).loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+                if (new SharedPrefs(sContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
                     jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
                     jObjectData.put(Constants.COLUMN_NOTE, note);
                 } else {
@@ -406,7 +407,7 @@ public class SyncHelper {
             image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
         }
         SharedPrefs prefs = new SharedPrefs(sContext);
-        if (!prefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+        if (!prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             note = decrypt(note);
         }
         long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
@@ -1073,7 +1074,7 @@ public class SyncHelper {
             DB = new DataBase(sContext);
             DB.open();
             List<String> namesPass = new ArrayList<>();
-            Cursor e = DB.getEvents();
+            Cursor e = DB.getBirthdays();
             while (e.moveToNext()) {
                 for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                     namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
@@ -1189,7 +1190,7 @@ public class SyncHelper {
         }
         DB = new DataBase(sContext);
         DB.open();
-        Cursor cf = DB.getEvents();
+        Cursor cf = DB.getBirthdays();
         if (cf != null && cf.moveToFirst()) {
             List<String> namesPass = new ArrayList<>();
             List<String> numbers = new ArrayList<>();
@@ -1200,10 +1201,10 @@ public class SyncHelper {
                 }
             }
             if (!namesPass.contains(name) && !numbers.contains(number)) {
-                DB.insertEvent(name, conId, date, day, month, number, uuID);
+                DB.addBirthday(name, conId, date, day, month, number, uuID);
             }
         } else {
-            DB.insertEvent(name, conId, date, day, month, number, uuID);
+            DB.addBirthday(name, conId, date, day, month, number, uuID);
         }
         DB.close();
     }

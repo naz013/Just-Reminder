@@ -30,7 +30,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.CustomCursorAdapter;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -123,7 +124,7 @@ public class ActiveFragment extends Fragment {
         emptyItem.setVisibility(View.VISIBLE);
 
         emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_notifications_white_24dp);
         } else {
             emptyImage.setImageResource(R.drawable.ic_notifications_grey600_24dp);
@@ -155,7 +156,7 @@ public class ActiveFragment extends Fragment {
 
         loaderAdapter(null);
 
-        if (!new ManageModule().isPro()) {
+        if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
 
@@ -204,7 +205,7 @@ public class ActiveFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!new ManageModule().isPro()){
+        if (!new Module().isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -214,7 +215,7 @@ public class ActiveFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -224,7 +225,7 @@ public class ActiveFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.pause();
             }
@@ -331,13 +332,13 @@ public class ActiveFragment extends Fragment {
             @Override
             public void onItemClicked(int position, SwitchCompat check) {
                 sPrefs = new SharedPrefs(getActivity());
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW)) {
+                if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
                         intent.putExtra(Constants.EDIT_ID, provider.getItem(position).getId());
                         String transitionName = "switch";
                         ActivityOptionsCompat options =
-                                ActivityOptionsCompat.makeSceneTransitionAnimation((Activity)
+                                ActivityOptionsCompat.makeSceneTransitionAnimation(
                                         getActivity(), check, transitionName);
                         getActivity().startActivity(intent, options.toBundle());
                     } else {
@@ -432,13 +433,13 @@ public class ActiveFragment extends Fragment {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(getActivity());
                 if (item == 0) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_A_Z);
+                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_A_Z);
                 } else if (item == 1) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_Z_A);
+                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_Z_A);
                 } else if (item == 2) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
+                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
                 } else if (item == 3) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A);
+                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A);
                 }
                 dialog.dismiss();
                 loaderAdapter(null);

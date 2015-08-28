@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TrackerOption extends Activity {
 
@@ -31,11 +31,11 @@ public class TrackerOption extends Activity {
         sPrefs = new SharedPrefs(TrackerOption.this);
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) + getString(R.string.meter));
+        radiusValue.setText(sPrefs.loadInt(Prefs.TRACK_DISTANCE) + getString(R.string.meter));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(99);
-        radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) - 1);
+        radiusBar.setProgress(sPrefs.loadInt(Prefs.TRACK_DISTANCE) - 1);
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -54,11 +54,11 @@ public class TrackerOption extends Activity {
         });
 
         timeValue = (TextView) findViewById(R.id.timeValue);
-        timeValue.setText(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) + getString(R.string.seconds_string));
+        timeValue.setText(sPrefs.loadInt(Prefs.TRACK_TIME) + getString(R.string.seconds_string));
 
         timeBar = (SeekBar) findViewById(R.id.timeBar);
         timeBar.setMax(29);
-        timeBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) - 1);
+        timeBar.setProgress(sPrefs.loadInt(Prefs.TRACK_TIME) - 1);
         timeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -81,8 +81,8 @@ public class TrackerOption extends Activity {
             @Override
             public void onClick(View v) {
                 sPrefs = new SharedPrefs(TrackerOption.this);
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE, radiusBar.getProgress() + 1);
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TRACK_TIME, timeBar.getProgress() + 1);
+                sPrefs.saveInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
+                sPrefs.saveInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
                 finish();
             }
         });

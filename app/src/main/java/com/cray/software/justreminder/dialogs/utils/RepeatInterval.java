@@ -13,6 +13,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class RepeatInterval extends Activity {
 
@@ -42,26 +43,26 @@ public class RepeatInterval extends Activity {
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
         if (index == 2){
-            radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME)));
+            radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.MISSED_CALL_TIME)));
         } else {
-            radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL)));
+            radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL)));
         }
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(60);
         if (index == 2){
-            radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME));
+            radiusBar.setProgress(sPrefs.loadInt(Prefs.MISSED_CALL_TIME));
         } else {
-            radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL));
+            radiusBar.setProgress(sPrefs.loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL));
         }
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 radiusValue.setText(String.valueOf(i));
                 if (index == 2){
-                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME, i);
+                    sPrefs.saveInt(Prefs.MISSED_CALL_TIME, i);
                 } else {
-                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL, i);
+                    sPrefs.saveInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, i);
                 }
             }
 

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class FirstDay extends Activity{
@@ -40,13 +40,13 @@ public class FirstDay extends Activity{
 
         String[] days = new String[]{getString(R.string.start_day_sunday), getString(R.string.start_day_monday)};
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(FirstDay.this,
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(FirstDay.this,
                 android.R.layout.simple_list_item_single_choice, days);
         musicList.setAdapter(adapter);
 
         sPrefs = new SharedPrefs(FirstDay.this);
-        if (sPrefs.isString(Constants.APP_UI_PREFERENCES_START_DAY)) {
-            int position = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY);
+        if (sPrefs.isString(Prefs.START_DAY)) {
+            int position = sPrefs.loadInt(Prefs.START_DAY);
             musicList.setItemChecked(position, true);
         }
 
@@ -58,11 +58,11 @@ public class FirstDay extends Activity{
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(FirstDay.this);
                     if (selectedPosition == 0) {
-                        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_START_DAY, 0);
+                        sPrefs.saveInt(Prefs.START_DAY, 0);
                         new UpdatesHelper(FirstDay.this).updateCalendarWidget();
                         finish();
                     } else {
-                        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_START_DAY, 1);
+                        sPrefs.saveInt(Prefs.START_DAY, 1);
                         new UpdatesHelper(FirstDay.this).updateCalendarWidget();
                         finish();
                     }

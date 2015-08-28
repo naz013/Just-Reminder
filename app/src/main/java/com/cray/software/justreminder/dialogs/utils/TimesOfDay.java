@@ -14,7 +14,7 @@ import android.widget.TimePicker;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.text.ParseException;
@@ -64,10 +64,10 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         morningTime = (TextView) findViewById(R.id.morningTime);
         morningTime.setOnClickListener(this);
 
-        String morning = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_MORNING);
-        String day = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_DAY);
-        String evening = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_EVENING);
-        String night = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_NIGHT);
+        String morning = prefs.loadPrefs(Prefs.TIME_MORNING);
+        String day = prefs.loadPrefs(Prefs.TIME_DAY);
+        String evening = prefs.loadPrefs(Prefs.TIME_EVENING);
+        String night = prefs.loadPrefs(Prefs.TIME_NIGHT);
 
         Date date = null;
         try {
@@ -76,10 +76,11 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         morningHour = calendar.get(Calendar.HOUR_OF_DAY);
         morningMinute = calendar.get(Calendar.MINUTE);
-        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         morningTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
 
         try {
@@ -87,7 +88,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        calendar.setTime(date);
+        if (date != null) calendar.setTime(date);
         dayHour = calendar.get(Calendar.HOUR_OF_DAY);
         dayMinute = calendar.get(Calendar.MINUTE);
         dayTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
@@ -97,7 +98,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        calendar.setTime(date);
+        if (date != null) calendar.setTime(date);
         eveningHour = calendar.get(Calendar.HOUR_OF_DAY);
         eveningMinute = calendar.get(Calendar.MINUTE);
         eveningTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
@@ -107,7 +108,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        calendar.setTime(date);
+        if (date != null) calendar.setTime(date);
         nightHour = calendar.get(Calendar.HOUR_OF_DAY);
         nightMinute = calendar.get(Calendar.MINUTE);
         nightTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
@@ -131,15 +132,15 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 morningHour = hourOfDay;
                 morningMinute = minute;
                 String time = morningHour + ":" + morningMinute;
-                prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_MORNING, time);
+                prefs.savePrefs(Prefs.TIME_MORNING, time);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
 
                 morningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             }
-        }, morningHour, morningMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        }, morningHour, morningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
 }
 
     protected Dialog dayDialog() {
@@ -149,15 +150,15 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 dayHour = hourOfDay;
                 dayMinute = minute;
                 String time = dayHour + ":" + dayMinute;
-                prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_DAY, time);
+                prefs.savePrefs(Prefs.TIME_DAY, time);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
 
                 dayTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             }
-        }, dayHour, dayMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        }, dayHour, dayMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog nightDialog() {
@@ -167,15 +168,15 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 nightHour = hourOfDay;
                 nightMinute = minute;
                 String time = nightHour + ":" + nightMinute;
-                prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_NIGHT, time);
+                prefs.savePrefs(Prefs.TIME_NIGHT, time);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
 
                 nightTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             }
-        }, nightHour, nightMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        }, nightHour, nightMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog eveningDialog() {
@@ -185,15 +186,15 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
                 eveningHour = hourOfDay;
                 eveningMinute = minute;
                 String time = eveningHour + ":" + eveningMinute;
-                prefs.savePrefs(Constants.APP_UI_PREFERENCES_TIME_EVENING, time);
+                prefs.savePrefs(Prefs.TIME_EVENING, time);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
 
                 eveningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             }
-        }, eveningHour, eveningMinute, prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        }, eveningHour, eveningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     @Override

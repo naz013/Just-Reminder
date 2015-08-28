@@ -44,12 +44,19 @@
                 android:inputType="textMultiLine"
                 android:layout_gravity="center_horizontal" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/button"
+                android:background="@color/grey_dark"/>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginBottom="@dimen/create_margin"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
@@ -97,9 +104,16 @@
                     android:id="@+id/timeField" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/button"
+                android:background="@color/grey_dark"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/create_margin"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -156,12 +170,19 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_above="@+id/button"
+                android:background="@color/grey_dark"/>
+
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:visibility="gone"
+                android:layout_marginTop="@dimen/create_margin"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
                 android:text="@string/add_to_google_tasks"

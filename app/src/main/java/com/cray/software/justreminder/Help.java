@@ -8,11 +8,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.webkit.WebView;
-import android.widget.EditText;
 
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.Locale;
@@ -47,7 +46,7 @@ public class Help extends AppCompatActivity {
         findViewById(R.id.windowBg).setBackgroundColor(cSetter.getBackgroundStyle());
 
         SharedPrefs prefs = new SharedPrefs(Help.this);
-        boolean isDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         helpView = (WebView) findViewById(R.id.helpView);
         String localeCheck = Locale.getDefault().toString().toLowerCase();

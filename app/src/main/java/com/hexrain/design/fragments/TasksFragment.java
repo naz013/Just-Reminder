@@ -33,6 +33,7 @@ import com.cray.software.justreminder.datas.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
@@ -164,8 +165,8 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
         super.onResume();
 
         SharedPrefs sPrefs = new SharedPrefs(activity);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED)) {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TASK_CHANGED, false);
+        if (sPrefs.loadBoolean(Prefs.TASK_CHANGED)) {
+            sPrefs.saveBoolean(Prefs.TASK_CHANGED, false);
             if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
         }
     }
@@ -182,15 +183,15 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(activity);
                 if (item == 0) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_DEFAULT);
+                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DEFAULT);
                 } else if (item == 1) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_DATE_A_Z);
+                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_A_Z);
                 } else if (item == 2) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_DATE_Z_A);
+                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_Z_A);
                 } else if (item == 3) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
+                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
                 } else if (item == 4) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
+                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
                 }
                 dialog.dismiss();
                 loadData();
@@ -272,7 +273,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
         }
         if (c != null) c.close();
 
-        int pos = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LAST_LIST);
+        int pos = sPrefs.loadInt(Prefs.LAST_LIST);
 
         if (taskListDatum.size() > pos) setList(pos, 0);
         else setList(0, 0);
@@ -301,7 +302,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             if (mCallbacks != null) mCallbacks.onListIdChanged(idS);
         }
         SharedPrefs sPrefs = new SharedPrefs(activity);
-        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LAST_LIST, position);
+        sPrefs.saveInt(Prefs.LAST_LIST, position);
         getActivity().invalidateOptionsMenu();
 
         if (i != 0) {

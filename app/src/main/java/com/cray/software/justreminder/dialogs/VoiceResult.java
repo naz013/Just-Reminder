@@ -21,6 +21,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
@@ -84,7 +85,7 @@ public class VoiceResult extends Activity {
         leftTime.setVisibility(View.VISIBLE);
 
         SharedPrefs prefs = new SharedPrefs(VoiceResult.this);
-        boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean mDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white : R.drawable.round_view_black);
 
         String title = null;

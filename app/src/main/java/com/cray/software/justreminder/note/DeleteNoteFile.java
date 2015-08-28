@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 
-import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -53,7 +52,7 @@ public class DeleteNoteFile extends AsyncTask<String, Void, Boolean> {
                 if (isConnected) {
                     new DropboxHelper(ctx).deleteNote(uuID);
                     new GDriveHelper(ctx).deleteNote(uuID);
-                    new BoxHelper(ctx).deleteNoteFile(uuID);
+                    //new BoxHelper(ctx).deleteNoteFile(uuID);
                 }
             }
         }

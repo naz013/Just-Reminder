@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -21,6 +21,7 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -52,7 +53,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         typeface = AssetsUtil.getLightTypeface(context);
-        isDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         setHasStableIds(true);
     }
 
@@ -66,7 +67,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
-                //bgRes = R.drawable.bg_swipe_item_neutral;
+                if (isDark) bgRes = R.drawable.bg_swipe_item_neutral_dark;
+                else bgRes = R.drawable.bg_swipe_item_neutral;
                 break;
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
                 if (isDark) bgRes = R.drawable.bg_swipe_item_left;
@@ -83,8 +85,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public int onSwipeItem(ViewHolder holder, int position, int result) {
-        Log.d(Constants.LOG_TAG, "onSwipeItem(position = " + position + ", result = " + result + ")");
-
         switch (result) {
             // swipe right
             case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
@@ -141,18 +141,20 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
-        CardView card;
+        //CardView card;
         SwitchCompat check;
         ImageView taskIcon, leftTimeIcon;
         ViewGroup container;
+        RelativeLayout background;
 
         public ViewHolder(View v) {
             super(v);
-            card = (CardView) v.findViewById(R.id.card);
+            //card = (CardView) v.findViewById(R.id.card);
             leftTime = (TextView) v.findViewById(R.id.remainingTime);
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
             taskIcon = (ImageView) v.findViewById(R.id.taskIcon);
+            background = (RelativeLayout) v.findViewById(R.id.background);
             taskTitle = (TextView) v.findViewById(R.id.taskText);
 
             taskTitle.setText("");
@@ -198,10 +200,10 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        boolean mDark = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
-        boolean is24 = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        boolean mDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
-        holder.card.setCardBackgroundColor(cs.getCardStyle());
+        //holder.card.setCardBackgroundColor(cs.getCardStyle());
 
         final ReminderDataProvider.ReminderItem item = provider.getData().get(position);
         String title = item.getTitle();
@@ -223,7 +225,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.reminder_type.setTypeface(typeface);
         holder.reminder_phone.setTypeface(typeface);
         holder.repeatInterval.setTypeface(typeface);
-        holder.container.setBackgroundColor(cs.getCardStyle());
+        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
         holder.repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white :
                 R.drawable.round_view_black);
@@ -234,8 +236,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.check.setChecked(true);
         }
 
-        holder.taskIcon.setBackgroundResource(cs.getCategoryIndicator(categoryColor));
-        if (item.getSelected()) holder.taskIcon.setBackgroundResource(R.drawable.list_selector);
+        holder.taskIcon.setImageDrawable(Utils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
+        //if (item.getSelected()) holder.taskIcon.setBackgroundResource(R.drawable.list_selector);
         holder.taskTitle.setText(title);
         holder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
 
@@ -368,7 +370,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.leftTimeIcon.setVisibility(View.GONE);
         }
 
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)){
+        if (prefs.loadBoolean(Prefs.ANIMATIONS)) {
             holder.leftTimeIcon.setVisibility(View.GONE);
             holder.repeatInterval.setVisibility(View.GONE);
             holder.taskIcon.setVisibility(View.GONE);
@@ -376,11 +378,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             boolean prev = false;
             if (type.matches(Constants.TYPE_CALL) || type.startsWith(Constants.TYPE_APPLICATION) ||
                     type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_TIME) ||
-                    type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)){
+                    type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)) {
                 ViewUtils.zoom(holder.repeatInterval, position, 2);
                 prev = true;
             }
-            if (archived == 0){
+            if (archived == 0) {
                 ViewUtils.zoom(holder.leftTimeIcon, position, prev ? 3 : 2);
             }
         }

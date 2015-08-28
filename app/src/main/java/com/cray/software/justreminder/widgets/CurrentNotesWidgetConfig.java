@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,7 +97,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
         widgetBg = (LinearLayout) findViewById(R.id.widgetBg);
         note = (TextView) findViewById(R.id.note);
         widgetTitle = (TextView) findViewById(R.id.widgetTitle);
-        image = (ImageView) findViewById(R.id.image);
+        image = (ImageView) findViewById(R.id.imageView);
         tasksCount = (ImageButton) findViewById(R.id.tasksCount);
 
         alphaSeek = (SeekBar) findViewById(R.id.alphaSeek);
@@ -155,7 +155,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
         });
 
         headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
-        isPro = new ManageModule().isPro();
+        isPro = Module.isPro();
         List<String> spinnerArray = new ArrayList<>();
         String[] colorsArray = getResources().getStringArray(R.array.colors_list);
         Collections.addAll(spinnerArray, colorsArray);
@@ -165,7 +165,8 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
             spinnerArray.add(getString(R.string.color_lime));
             spinnerArray.add(getString(R.string.color_indigo));
         }
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, spinnerArray);
         headerBgColor.setAdapter(spinnerArrayAdapter);
         headerBgColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

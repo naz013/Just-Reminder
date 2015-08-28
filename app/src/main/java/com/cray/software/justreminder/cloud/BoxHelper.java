@@ -1,38 +1,15 @@
 package com.cray.software.justreminder.cloud;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-
-import com.box.androidsdk.content.BoxApiFile;
-import com.box.androidsdk.content.BoxApiFolder;
-import com.box.androidsdk.content.BoxApiSearch;
-import com.box.androidsdk.content.BoxConfig;
-import com.box.androidsdk.content.BoxException;
-import com.box.androidsdk.content.auth.BoxAuthentication;
-import com.box.androidsdk.content.models.BoxFile;
-import com.box.androidsdk.content.models.BoxFolder;
-import com.box.androidsdk.content.models.BoxItem;
-import com.box.androidsdk.content.models.BoxJsonObject;
-import com.box.androidsdk.content.models.BoxList;
-import com.box.androidsdk.content.models.BoxListItems;
-import com.box.androidsdk.content.models.BoxSession;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.FileConfig;
 
-import org.json.JSONException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-public class BoxHelper implements BoxAuthentication.AuthListener {
+public class BoxHelper
+        //implements BoxAuthentication.AuthListener
+{
 
     Context mContext;
-    BoxSession session;
+    //BoxSession session;
 
     static final String USER = "user_bbb";
     static final String FOLDER = "Just_Reminder";
@@ -41,40 +18,40 @@ public class BoxHelper implements BoxAuthentication.AuthListener {
     public BoxHelper (Context context){
         this.mContext = context;
         isAuth = false;
-        BoxConfig.CLIENT_ID = "5hu6faodwsrjndvddvsfxf8r5kujhtkp";
+        /*BoxConfig.CLIENT_ID = "5hu6faodwsrjndvddvsfxf8r5kujhtkp";
         BoxConfig.CLIENT_SECRET = "MPQBkQcytLGEcZirThiR4LLab0VPevzl";
-        BoxConfig.REDIRECT_URL = "https://craysoftware.wordpress.com/";
+        BoxConfig.REDIRECT_URL = "https://craysoftware.wordpress.com/";*/
         if (isLogged()) authWithId();
     }
 
     public void auth(){
-        session = new BoxSession(mContext);
+        /*session = new BoxSession(mContext);
         session.setSessionAuthListener(this);
-        session.authenticate();
+        session.authenticate();*/
     }
 
     public void authMultiple(){
-        session = new BoxSession(mContext, null);
+        /*session = new BoxSession(mContext, null);
         session.setSessionAuthListener(this);
-        session.authenticate();
+        session.authenticate();*/
     }
 
     public void authWithId(){
-        String user = new SharedPrefs(mContext).loadPrefs(USER);
+        /*String user = new SharedPrefs(mContext).loadPrefs(USER);
         if (user != null) user = new SyncHelper(mContext).decrypt(user);
         session = new BoxSession(mContext, user);
         session.setSessionAuthListener(this);
-        session.authenticate();
+        session.authenticate();*/
     }
 
-    private void saveCredentials(BoxAuthentication.BoxAuthenticationInfo info){
+    /*private void saveCredentials(BoxAuthentication.BoxAuthenticationInfo info){
         if (session != null){
             SharedPrefs prefs = new SharedPrefs(mContext);
             String userID = info.getUser().getId();
             Log.d(Constants.LOG_TAG, "User is " + userID);
             prefs.savePrefs(USER, new SyncHelper(mContext).encrypt(userID));
         }
-    }
+    }*/
 
     public boolean isLogged(){
         String user = new SharedPrefs(mContext).loadPrefs(USER);
@@ -83,7 +60,7 @@ public class BoxHelper implements BoxAuthentication.AuthListener {
     }
 
     public void disconnect(){
-        if (session != null) session.logout();
+        //if (session != null) session.logout();
     }
 
     public void logout(){
@@ -93,28 +70,28 @@ public class BoxHelper implements BoxAuthentication.AuthListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                BoxAuthentication.getInstance().logoutAllUsers(mContext);
+                //BoxAuthentication.getInstance().logoutAllUsers(mContext);
             }
         });
     }
 
     public void uploadReminder() {
-        upload(Constants.DIR_SD);
+        //upload(Constants.DIR_SD);
     }
 
     public void uploadNote() {
-        upload(Constants.DIR_NOTES_SD);
+        //upload(Constants.DIR_NOTES_SD);
     }
 
     public void uploadGroup() {
-        upload(Constants.DIR_GROUP_SD);
+        //upload(Constants.DIR_GROUP_SD);
     }
 
     public void uploadBirthday() {
-        upload(Constants.DIR_BIRTHDAY_SD);
+        //upload(Constants.DIR_BIRTHDAY_SD);
     }
 
-    private void upload(String path){
+    /*private void upload(String path){
         if (isLogged()) {
             if (!isAuth) authWithId();
             Log.d(Constants.LOG_TAG, "Auth complete");
@@ -390,5 +367,5 @@ public class BoxHelper implements BoxAuthentication.AuthListener {
     @Override
     public void onLoggedOut(BoxAuthentication.BoxAuthenticationInfo info, Exception ex) {
         isAuth = false;
-    }
+    }*/
 }

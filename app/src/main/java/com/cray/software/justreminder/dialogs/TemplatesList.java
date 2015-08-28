@@ -16,14 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -97,7 +98,7 @@ public class TemplatesList extends AppCompatActivity {
 
     private void loadTemplates(){
         db.open();
-        boolean isDark = new SharedPrefs(this).loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean isDark = new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME);
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 TemplatesList.this,
                 isDark ? R.layout.list_item_simple_card_dark : R.layout.list_item_simple_card,

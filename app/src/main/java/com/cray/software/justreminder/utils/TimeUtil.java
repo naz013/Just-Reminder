@@ -26,7 +26,8 @@ public class TimeUtil {
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         int yearOfBirth = calendar.get(Calendar.YEAR);
 
         Calendar calendar1 = Calendar.getInstance();

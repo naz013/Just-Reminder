@@ -19,6 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class ListSounds extends Activity{
         }
 
         int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_VOLUME);
+        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         log1 = (float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -109,7 +110,7 @@ public class ListSounds extends Activity{
                     sPrefs = new SharedPrefs(ListSounds.this);
                     String prefs;
                     if (id == 3) {
-                        prefs = Constants.BIRTHDAY_CUSTOM_SOUND_FILE;
+                        prefs = Prefs.BIRTHDAY_CUSTOM_SOUND_FILE;
                     } else {
                         prefs = Constants.CUSTOM_SOUND_FILE;
                     }

@@ -38,6 +38,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.note.Note;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.reminder.Telephony;
@@ -126,11 +127,11 @@ public class NotesManager extends AppCompatActivity {
                             case R.id.action_reminder:
                                 if (!isReminderAttached()) {
                                     setDateTime();
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                                         ViewUtils.expand(remindContainer);
                                     } else remindContainer.setVisibility(View.VISIBLE);
                                 } else {
-                                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                                         ViewUtils.collapse(remindContainer);
                                     } else remindContainer.setVisibility(View.GONE);
                                 }
@@ -153,7 +154,7 @@ public class NotesManager extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.create_note);
 
         taskField = (FloatingEditText) findViewById(R.id.task_message);
-        taskField.setTextSize(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE) + 12);
+        taskField.setTextSize(sPrefs.loadInt(Prefs.TEXT_SIZE) + 12);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -167,8 +168,8 @@ public class NotesManager extends AppCompatActivity {
         imageContainer = (RelativeLayout) findViewById(R.id.imageContainer);
         color = cSetter.getNoteColor(8);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
-            ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
+        if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
+            ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Prefs.ANIMATIONS));
         } else layoutContainer.setVisibility(View.VISIBLE);
 
         Typeface typeface = AssetsUtil.getLightTypeface(this);
@@ -231,7 +232,7 @@ public class NotesManager extends AppCompatActivity {
         discardReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                     ViewUtils.collapse(remindContainer);
                 } else remindContainer.setVisibility(View.GONE);
             }
@@ -242,7 +243,7 @@ public class NotesManager extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isImageAttached()) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                         ViewUtils.collapse(imageContainer);
                     } else imageContainer.setVisibility(View.GONE);
                     image = null;
@@ -273,7 +274,7 @@ public class NotesManager extends AppCompatActivity {
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ViewUtils.hide(NotesManager.this, mFab, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
+                ViewUtils.hide(NotesManager.this, mFab, sPrefs.loadBoolean(Prefs.ANIMATIONS));
                 return false;
             }
         });
@@ -294,7 +295,7 @@ public class NotesManager extends AppCompatActivity {
             Cursor c = DB.getNote(id);
             if (c != null && c.moveToFirst()){
                 String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+                if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
                     note = new SyncHelper(NotesManager.this).decrypt(note);
                 }
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
@@ -308,7 +309,7 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                         ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
@@ -358,7 +359,7 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                         ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
@@ -378,7 +379,7 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                         ViewUtils.expand(imageContainer);
                     } else imageContainer.setVisibility(View.VISIBLE);
                 }
@@ -455,7 +456,7 @@ public class NotesManager extends AppCompatActivity {
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
 
         remindTime.setText(TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
     }
 
     private boolean isReminderAttached(){
@@ -489,13 +490,13 @@ public class NotesManager extends AppCompatActivity {
         }
         DB.open();
         if (id != 0){
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
                 DB.updateNote(id, sHelp.encrypt(note), date, color, uuID, image, style);
             } else {
                 DB.updateNote(id, note, date, color, uuID, image, style);
             }
         } else {
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
                 id = DB.saveNote(sHelp.encrypt(note), date, color, uuID, image, style);
             } else {
                 id = DB.saveNote(note, date, color, uuID, image, style);
@@ -559,7 +560,7 @@ public class NotesManager extends AppCompatActivity {
 
     private void setImages(){
         sPrefs = new SharedPrefs(NotesManager.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             discardReminder.setImageResource(R.drawable.ic_clear_white_24dp);
         } else {
             discardReminder.setImageResource(R.drawable.ic_clear_grey600_24dp);
@@ -622,7 +623,7 @@ public class NotesManager extends AppCompatActivity {
                         image = outputStream.toByteArray();
                         noteImage.setImageBitmap(bitmapImage);
                         if (!isImageAttached()) {
-                            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                            if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                                 ViewUtils.expand(imageContainer);
                             } else imageContainer.setVisibility(View.VISIBLE);
                         }
@@ -637,7 +638,7 @@ public class NotesManager extends AppCompatActivity {
                         image = outputStream.toByteArray();
                         noteImage.setImageBitmap(cameraImage);
                         if (!isImageAttached()) {
-                            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                            if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
                                 ViewUtils.expand(imageContainer);
                             } else imageContainer.setVisibility(View.VISIBLE);
                         }
@@ -713,7 +714,7 @@ public class NotesManager extends AppCompatActivity {
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -726,7 +727,7 @@ public class NotesManager extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             remindTime.setText(TimeUtil.getTime(c.getTime(),
-                    new SharedPrefs(NotesManager.this).loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    new SharedPrefs(NotesManager.this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 
@@ -739,7 +740,7 @@ public class NotesManager extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (mFab.getVisibility() == View.GONE){
-            ViewUtils.show(NotesManager.this, mFab, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
+            ViewUtils.show(NotesManager.this, mFab, sPrefs.loadBoolean(Prefs.ANIMATIONS));
             return;
         }
 

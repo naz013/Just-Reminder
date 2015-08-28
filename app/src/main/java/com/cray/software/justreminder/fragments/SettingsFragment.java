@@ -14,7 +14,7 @@ public class SettingsFragment extends ListFragment {
     OnHeadlineSelectedListener mCallback;
 
     public interface OnHeadlineSelectedListener {
-        public void onArticleSelected(int position);
+        void onArticleSelected(int position);
     }
 
     @Override

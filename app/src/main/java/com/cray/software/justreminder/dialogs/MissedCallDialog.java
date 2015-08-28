@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,8 +21,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.MissedCallAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -32,25 +35,26 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import java.util.Calendar;
 
 public class MissedCallDialog extends Activity {
-    FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor,
+    private FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor,
             buttonNotification, buttonEdit;
-    TextView remText;
-    RoundImageView contactPhoto;
-    LinearLayout single_container;
-    MissedCallAlarm alarm = new MissedCallAlarm();
-    long id;
-    SharedPrefs sPrefs;
-    ColorSetter cs = new ColorSetter(MissedCallDialog.this);
-    Notifier notifier = new Notifier(MissedCallDialog.this);
-    DataBase db = new DataBase(MissedCallDialog.this);
+    private TextView remText;
+    private RoundImageView contactPhoto;
+    private LinearLayout single_container;
+    private MissedCallAlarm alarm = new MissedCallAlarm();
+    private long id;
+    private SharedPrefs sPrefs;
+    private ColorSetter cs = new ColorSetter(MissedCallDialog.this);
+    private Notifier notifier = new Notifier(MissedCallDialog.this);
+    private DataBase db = new DataBase(MissedCallDialog.this);
 
-    boolean isDark = false;
+    private boolean isDark = false;
+    private String number;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sPrefs = new SharedPrefs(MissedCallDialog.this);
-        boolean isFull = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE);
+        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -71,7 +75,7 @@ public class MissedCallDialog extends Activity {
 
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
-        final String number = res.getStringExtra("number");
+        number = res.getStringExtra("number");
         long time = res.getLongExtra("time", 0);
 
         String name = Contacts.getContactNameFromNumber(number, MissedCallDialog.this);
@@ -93,7 +97,7 @@ public class MissedCallDialog extends Activity {
         contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
         if (isDark){
             buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
@@ -111,7 +115,7 @@ public class MissedCallDialog extends Activity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
             remText.setText(name + "\n" + number + "\n\n" + "\n" + "\n" + getString(R.string.string_last_called) +
                     "\n" + formattedTime);
@@ -166,13 +170,33 @@ public class MissedCallDialog extends Activity {
                 notifier.discardNotification(id);
                 db.open();
                 db.deleteMissedCall(id);
-                Telephony.makeCall(number, MissedCallDialog.this);
-                removeFlags();
-                finish();
+                if (new Permissions(MissedCallDialog.this).checkPermission(Permissions.CALL_PHONE)) {
+                    Telephony.makeCall(number, MissedCallDialog.this);
+                    removeFlags();
+                    finish();
+                } else {
+                    new Permissions(MissedCallDialog.this).requestPermission(MissedCallDialog.this,
+                            new String[]{Permissions.CALL_PHONE}, 104);
+                }
             }
         });
 
         notifier.showMissedReminder(name == null || name.matches("") ? number : name, id);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode){
+            case 104:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Telephony.makeCall(number, MissedCallDialog.this);
+                    removeFlags();
+                    finish();
+                } else {
+                    new Permissions(MissedCallDialog.this).showInfo(MissedCallDialog.this, Permissions.CALL_PHONE);
+                }
+                break;
+        }
     }
 
     private void colorify(FloatingActionButton... fab){
@@ -189,7 +213,7 @@ public class MissedCallDialog extends Activity {
 
     public void wakeScreen() {
         sPrefs = new SharedPrefs(MissedCallDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS)) {
+        if (sPrefs.loadBoolean(Prefs.WAKE_STATUS)) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn = pm.isScreenOn();
             if (!isScreenOn) {
@@ -227,7 +251,7 @@ public class MissedCallDialog extends Activity {
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
+        if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
         } else {

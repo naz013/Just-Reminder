@@ -20,6 +20,7 @@ import com.cray.software.justreminder.dialogs.utils.ContactGroups;
 import com.cray.software.justreminder.dialogs.utils.RepeatInterval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ExtraSettingsFragment extends Fragment implements View.OnClickListener {
 
@@ -45,7 +46,7 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         missed.setOnClickListener(this);
 
         missedCheck = (CheckBox) rootView.findViewById(R.id.missedCheck);
-        missedCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER));
+        missedCheck.setChecked(sPrefs.loadBoolean(Prefs.MISSED_CALL_REMINDER));
 
         missedTime = (LinearLayout) rootView.findViewById(R.id.missedTime);
         missedTime.setOnClickListener(this);
@@ -62,13 +63,13 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         quickSMS.setOnClickListener(this);
 
         quickSMSCheck = (CheckBox) rootView.findViewById(R.id.quickSMSCheck);
-        quickSMSCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS));
+        quickSMSCheck.setChecked(sPrefs.loadBoolean(Prefs.QUICK_SMS));
 
         followReminder = (RelativeLayout) rootView.findViewById(R.id.followReminder);
         followReminder.setOnClickListener(this);
 
         followReminderCheck = (CheckBox) rootView.findViewById(R.id.followReminderCheck);
-        followReminderCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER));
+        followReminderCheck.setChecked(sPrefs.loadBoolean(Prefs.FOLLOW_REMINDER));
 
         checkMissedEnabling();
         checkQuickEnabling();
@@ -92,10 +93,10 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
     private void missedChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (missedCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER, false);
+            sPrefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, false);
             missedCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER, true);
+            sPrefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, true);
             missedCheck.setChecked(true);
         }
         checkMissedEnabling();
@@ -120,10 +121,10 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
     private void quickChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (quickSMSCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS, false);
+            sPrefs.saveBoolean(Prefs.QUICK_SMS, false);
             quickSMSCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS, true);
+            sPrefs.saveBoolean(Prefs.QUICK_SMS, true);
             quickSMSCheck.setChecked(true);
         }
         checkQuickEnabling();
@@ -132,10 +133,10 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
     private void followChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (followReminderCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER, false);
+            sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, false);
             followReminderCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER, true);
+            sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, true);
             followReminderCheck.setChecked(true);
         }
         checkFollow();

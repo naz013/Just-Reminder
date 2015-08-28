@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class NoteReminderTime extends Activity {
 
@@ -36,12 +36,12 @@ public class NoteReminderTime extends Activity {
         titleDialog.setText(getString(R.string.note_reminder_time_dialog));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME))
+        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME))
                 + getString(R.string.string_minute));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(120);
-        radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME));
+        radiusBar.setProgress(sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME));
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -69,7 +69,7 @@ public class NoteReminderTime extends Activity {
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME, radiusBar.getProgress());
+                sPrefs.saveInt(Prefs.QUICK_NOTE_REMINDER_TIME, radiusBar.getProgress());
                 finish();
             }
         });

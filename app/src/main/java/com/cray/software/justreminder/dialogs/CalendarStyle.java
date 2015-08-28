@@ -6,24 +6,26 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class CalendarStyle extends AppCompatActivity {
-    RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
+    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
             yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox;
-    RadioGroup themeGroup;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    Toolbar toolbar;
-    int i;
+    private LinearLayout themeGroupPro;
+    private SharedPrefs sPrefs;
+    private ColorSetter cs;
+    private Toolbar toolbar;
+    private int i;
+    private int prevId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,86 +54,96 @@ public class CalendarStyle extends AppCompatActivity {
         else if (i == 3) toolbar.setTitle(getString(R.string.reminders_color_title));
         else toolbar.setTitle(getString(R.string.current_color_title));
 
-        red_checkbox = (RadioButton) findViewById(R.id.red_checkbox);
-        violet_checkbox = (RadioButton) findViewById(R.id.violet_checkbox);
-        green_checkbox = (RadioButton) findViewById(R.id.green_checkbox);
-        light_green_checkbox = (RadioButton) findViewById(R.id.light_green_checkbox);
-        blue_checkbox = (RadioButton) findViewById(R.id.blue_checkbox);
-        light_blue_checkbox = (RadioButton) findViewById(R.id.light_blue_checkbox);
-        yellow_checkbox = (RadioButton) findViewById(R.id.yellow_checkbox);
-        orange_checkbox = (RadioButton) findViewById(R.id.orange_checkbox);
-        grey_checkbox = (RadioButton) findViewById(R.id.grey_checkbox);
-        pink_checkbox = (RadioButton) findViewById(R.id.pink_checkbox);
-        sand_checkbox = (RadioButton) findViewById(R.id.sand_checkbox);
-        brown_checkbox = (RadioButton) findViewById(R.id.brown_checkbox);
+        red_checkbox = (ImageButton) findViewById(R.id.red_checkbox);
+        violet_checkbox = (ImageButton) findViewById(R.id.violet_checkbox);
+        green_checkbox = (ImageButton) findViewById(R.id.green_checkbox);
+        light_green_checkbox = (ImageButton) findViewById(R.id.light_green_checkbox);
+        blue_checkbox = (ImageButton) findViewById(R.id.blue_checkbox);
+        light_blue_checkbox = (ImageButton) findViewById(R.id.light_blue_checkbox);
+        yellow_checkbox = (ImageButton) findViewById(R.id.yellow_checkbox);
+        orange_checkbox = (ImageButton) findViewById(R.id.orange_checkbox);
+        grey_checkbox = (ImageButton) findViewById(R.id.grey_checkbox);
+        pink_checkbox = (ImageButton) findViewById(R.id.pink_checkbox);
+        sand_checkbox = (ImageButton) findViewById(R.id.sand_checkbox);
+        brown_checkbox = (ImageButton) findViewById(R.id.brown_checkbox);
 
-        themeGroup = (RadioGroup) findViewById(R.id.themeGroup);
+        themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
+        themeGroupPro.setVisibility(View.GONE);
 
-        themeGroup.clearCheck();
-        themeGroup.setOnCheckedChangeListener(listener1);
+        setOnClickListener(red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
+                blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
+                pink_checkbox, sand_checkbox, brown_checkbox);
 
         setUpRadio();
     }
 
-    private RadioGroup.OnCheckedChangeListener listener1 = new RadioGroup.OnCheckedChangeListener() {
+    private void setOnClickListener(View... views){
+        for (View view : views){
+            view.setOnClickListener(listener);
+        }
+    }
+
+    private View.OnClickListener listener = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (checkedId != -1) {
-                themeColorSwitch(group.getCheckedRadioButtonId());
-            }
+        public void onClick(View v) {
+            themeColorSwitch(v.getId());
         }
     };
 
-    public void setUpRadio(){
+    private void setUpRadio(){
         sPrefs = new SharedPrefs(CalendarStyle.this);
         String loaded;
-        if (i == 2) loaded = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR);
-        else if (i == 3) loaded = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR);
-        else loaded = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_CURRENT_COLOR);
+        if (i == 2) loaded = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
+        else if (i == 3) loaded = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
+        else loaded = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
         switch (loaded) {
             case "1":
-                red_checkbox.setChecked(true);
+                red_checkbox.setSelected(true);
                 break;
             case "2":
-                violet_checkbox.setChecked(true);
+                violet_checkbox.setSelected(true);
                 break;
             case "3":
-                light_green_checkbox.setChecked(true);
+                light_green_checkbox.setSelected(true);
                 break;
             case "4":
-                green_checkbox.setChecked(true);
+                green_checkbox.setSelected(true);
                 break;
             case "5":
-                light_blue_checkbox.setChecked(true);
+                light_blue_checkbox.setSelected(true);
                 break;
             case "6":
-                blue_checkbox.setChecked(true);
+                blue_checkbox.setSelected(true);
                 break;
             case "7":
-                yellow_checkbox.setChecked(true);
+                yellow_checkbox.setSelected(true);
                 break;
             case "8":
-                orange_checkbox.setChecked(true);
+                orange_checkbox.setSelected(true);
                 break;
             case "9":
-                grey_checkbox.setChecked(true);
+                grey_checkbox.setSelected(true);
                 break;
             case "10":
-                pink_checkbox.setChecked(true);
+                pink_checkbox.setSelected(true);
                 break;
             case "11":
-                sand_checkbox.setChecked(true);
+                sand_checkbox.setSelected(true);
                 break;
             case "12":
-                brown_checkbox.setChecked(true);
+                brown_checkbox.setSelected(true);
                 break;
             default:
-                green_checkbox.setChecked(true);
+                green_checkbox.setSelected(true);
                 break;
         }
     }
 
     private void themeColorSwitch(int radio){
+        if (radio == prevId) return;
+        prevId = radio;
+        disableAll();
+        setSelected(radio);
         switch (radio){
             case R.id.red_checkbox:
                 saveColor("1");
@@ -172,18 +184,37 @@ public class CalendarStyle extends AppCompatActivity {
         }
     }
 
+    private void setSelected(int radio) {
+        findViewById(radio).setSelected(true);
+    }
+
+    private void disableAll() {
+        red_checkbox.setSelected(false);
+        violet_checkbox.setSelected(false);
+        green_checkbox.setSelected(false);
+        light_green_checkbox.setSelected(false);
+        blue_checkbox.setSelected(false);
+        light_blue_checkbox.setSelected(false);
+        yellow_checkbox.setSelected(false);
+        orange_checkbox.setSelected(false);
+        grey_checkbox.setSelected(false);
+        pink_checkbox.setSelected(false);
+        sand_checkbox.setSelected(false);
+        brown_checkbox.setSelected(false);
+    }
+
     void saveColor(String string) {
         sPrefs = new SharedPrefs(CalendarStyle.this);
-        if (i == 2) sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_BIRTHDAY_COLOR, string);
-        else if (i == 3) sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDERS_COLOR, string);
-        else sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_CURRENT_COLOR, string);
+        if (i == 2) sPrefs.savePrefs(Prefs.BIRTHDAY_COLOR, string);
+        else if (i == 3) sPrefs.savePrefs(Prefs.REMINDERS_COLOR, string);
+        else sPrefs.savePrefs(Prefs.CURRENT_COLOR, string);
 
         new UpdatesHelper(CalendarStyle.this).updateCalendarWidget();
     }
 
     @Override
     public void onBackPressed() {
-        if (new SharedPrefs(CalendarStyle.this).loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)) {
+        if (new SharedPrefs(CalendarStyle.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
             new Notifier(CalendarStyle.this).recreatePermanent();
         }
         finish();
@@ -193,7 +224,7 @@ public class CalendarStyle extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (new SharedPrefs(CalendarStyle.this).loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION)) {
+                if (new SharedPrefs(CalendarStyle.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
                     new Notifier(CalendarStyle.this).recreatePermanent();
                 }
                 finish();

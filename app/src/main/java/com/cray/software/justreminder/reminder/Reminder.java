@@ -19,6 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -60,12 +61,12 @@ public class Reminder {
             }
             long nextDate = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
             SharedPrefs sPrefs = new SharedPrefs(context);
-            boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-            boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+            boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+            boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
             if (type.startsWith(Constants.TYPE_MONTHDAY))
                 nextDate = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
 
-            if (isCalendar || isStock && exp == 1) {
+            if ((isCalendar || isStock) && exp == 1) {
                 ReminderUtils.exportToCalendar(context, text, nextDate, id, isCalendar, isStock);
             }
         }
@@ -74,7 +75,7 @@ public class Reminder {
     }
 
     public static void backup(Context context){
-        if (new SharedPrefs(context).loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_BACKUP)){
+        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new BackupTask(context).execute();
         }
     }
@@ -217,8 +218,8 @@ public class Reminder {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 }
-                boolean isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-                boolean isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
+                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
                 if (type.startsWith(Constants.TYPE_APPLICATION) || type.matches(Constants.TYPE_CALL) ||
                         type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_REMINDER) ||
                         type.startsWith(Constants.TYPE_SKYPE)){

@@ -13,6 +13,7 @@ import com.cray.software.justreminder.dialogs.QuickSMS;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class CallReceiver extends BroadcastReceiver {
     Context mContext;
@@ -49,7 +50,7 @@ public class CallReceiver extends BroadcastReceiver {
                         prev_state = state;
                         //Answered Call which is ended
                         //Start quick contact reminder window
-                        boolean isFollow = prefs.loadBoolean(Constants.APP_UI_PREFERENCES_FOLLOW_REMINDER);
+                        boolean isFollow = prefs.loadBoolean(Prefs.FOLLOW_REMINDER);
                         if (incoming_nr != null && isFollow ) {
                             String contact = Contacts.getContactNameFromNumber(incoming_nr, mContext);
                             //boolean isEnabled = prefs.loadBoolean(contact);
@@ -57,7 +58,8 @@ public class CallReceiver extends BroadcastReceiver {
                                 mContext.startActivity(new Intent(mContext, FollowReminder.class)
                                         .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
                                         .putExtra(Constants.SELECTED_RADIUS, startCallTime)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                                Intent.FLAG_ACTIVITY_SINGLE_TOP));
                             //}
                             break;
                         }
@@ -69,7 +71,7 @@ public class CallReceiver extends BroadcastReceiver {
                         if (currTime - startCallTime >= 1000 * 10){
                             //missed call
                             //Set missed call reminder
-                            if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_MISSED_CALL_REMINDER) &&
+                            if (prefs.loadBoolean(Prefs.MISSED_CALL_REMINDER) &&
                                     incoming_nr != null){
                                 DataBase db = new DataBase(mContext);
                                 db.open();
@@ -101,7 +103,7 @@ public class CallReceiver extends BroadcastReceiver {
                         } else {
                             //rejected call
                             //Show quick SMS sending window
-                            if (incoming_nr != null && prefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_SMS)) {
+                            if (incoming_nr != null && prefs.loadBoolean(Prefs.QUICK_SMS)) {
                                 DataBase db = new DataBase(mContext);
                                 db.open();
                                 Cursor c = db.queryTemplates();
@@ -109,7 +111,8 @@ public class CallReceiver extends BroadcastReceiver {
                                 if (c != null) size = c.getCount();
                                 if (size > 0) {
                                     mContext.startActivity(new Intent(mContext, QuickSMS.class)
-                                            .putExtra(Constants.ITEM_ID_INTENT, incoming_nr).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                            .putExtra(Constants.ITEM_ID_INTENT, incoming_nr)
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                 }
                                 break;
                             }

@@ -19,6 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class LedColor extends Activity{
 
@@ -104,8 +105,8 @@ public class LedColor extends Activity{
                     if (id != 4) {
                         sPrefs = new SharedPrefs(LedColor.this);
                         String prefs;
-                        if (id == 3) prefs = Constants.APP_UI_PREFERENCES_BIRTHDAY_LED_COLOR;
-                        else prefs = Constants.APP_UI_PREFERENCES_LED_COLOR;
+                        if (id == 3) prefs = Prefs.BIRTHDAY_LED_COLOR;
+                        else prefs = Prefs.LED_COLOR;
                         if (selectedPosition == 0) {
                             sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_WHITE);
                         } else if (selectedPosition == 1) {

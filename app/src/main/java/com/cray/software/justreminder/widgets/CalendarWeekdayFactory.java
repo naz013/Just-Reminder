@@ -9,7 +9,7 @@ import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.hexrain.flextcal.FlextHelper;
 
 import java.text.SimpleDateFormat;
@@ -49,7 +49,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
         DateTime sunday = new DateTime(2013, 2, 17, 0, 0, 0, 0);
         DateTime nextDay = sunday.plusDays(startDayOfWeek - SUNDAY);
         SharedPrefs prefs = new SharedPrefs(context);
-        if (prefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 1){
+        if (prefs.loadInt(Prefs.START_DAY) == 1){
             nextDay = nextDay.plusDays(1);
         }
 

@@ -63,7 +63,7 @@ public class BirthdaysList extends Fragment{
                 if (customAdapter.getItem(position).toString().matches("birthday")) {
                     DataBase db = new DataBase(getActivity());
                     db.open();
-                    db.deleteEvent(id);
+                    db.deleteBirthday(id);
                     datas.remove(position);
                     loaderAdapter(datas);
                     Toast.makeText(getActivity(), getString(R.string.swipe_delete), Toast.LENGTH_SHORT).show();

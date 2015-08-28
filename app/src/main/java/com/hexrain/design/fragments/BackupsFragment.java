@@ -38,6 +38,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
 import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -175,7 +176,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         navIds = new ArrayList<>();
         navIds.clear();
         sPrefs = new SharedPrefs(getActivity());
-        boolean isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
             navSpinner.add(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_white_24dp));
             navIds.add(Constants.LOCAL_INT);

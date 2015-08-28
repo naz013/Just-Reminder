@@ -25,7 +25,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.RemindersRecyclerAdapter;
@@ -108,7 +109,7 @@ public class TrashFragment extends Fragment {
         emptyItem.setVisibility(View.VISIBLE);
 
         emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_delete_white_24dp);
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_grey600_24dp);
@@ -126,7 +127,7 @@ public class TrashFragment extends Fragment {
             }
         });*/
 
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
 
@@ -176,7 +177,7 @@ public class TrashFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loaderAdapter();
-        if (!new ManageModule().isPro()){
+        if (!new Module().isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -185,7 +186,7 @@ public class TrashFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -195,7 +196,7 @@ public class TrashFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.pause();
             }
@@ -318,9 +319,12 @@ public class TrashFragment extends Fragment {
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                removeReminder(rowId);
+                Reminder.delete(rowId, getActivity());
             }while (c.moveToNext());
         }
         if (c != null) c.close();
+        Toast.makeText(getActivity(), getString(R.string.string_trash_cleared),
+                Toast.LENGTH_SHORT).show();
+        loaderAdapter();
     }
 }

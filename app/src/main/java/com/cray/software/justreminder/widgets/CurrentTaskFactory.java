@@ -18,11 +18,10 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -102,7 +101,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         time = String.format("%.5f", longi);
                     } else {
                         boolean is24 = new SharedPrefs(context)
-                                .loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+                                .loadBoolean(Prefs.IS_24_TIME_FORMAT);
                         if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -133,7 +132,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         if(c != null) c.close();
 
         SharedPrefs prefs = new SharedPrefs(context);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_WIDGET_BIRTHDAYS)) {
+        if (prefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS)) {
             int mDay;
             int mMonth;
             int n = 0;
@@ -141,7 +140,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);
-                Cursor cursor = db.getEvents(mDay, mMonth);
+                Cursor cursor = db.getBirthdays(mDay, mMonth);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
@@ -182,8 +181,8 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
         String task = data.get(i).getName();
         Contacts contacts = new Contacts(context);
-        if (task == null || task.matches("")) task = contacts
-                .getContactNameFromNumber(data.get(i).getNumber(), context);
+        if (task == null || task.matches("")) task = Contacts.getContactNameFromNumber(
+                data.get(i).getNumber(), context);
         rView.setTextViewText(R.id.taskText, task);
         rView.setTextColor(R.id.taskText, itemTextColor);
 

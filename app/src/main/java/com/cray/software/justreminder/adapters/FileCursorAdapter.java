@@ -15,9 +15,9 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -103,7 +103,7 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
         calendar.setTimeInMillis(lastModifiedS);
         Date date1 = calendar.getTime();
 
-        boolean is24 = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT);
+        boolean is24 = sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         lastModified.setText(TimeUtil.getDateTime(date1, is24));
         task.setText(title);

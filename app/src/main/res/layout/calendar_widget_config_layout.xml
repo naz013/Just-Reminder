@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Custom style"
-            android:id="@+id/custom"/>
+            android:id="@+id/customRadio"/>
 
         <RadioButton
             android:layout_width="wrap_content"

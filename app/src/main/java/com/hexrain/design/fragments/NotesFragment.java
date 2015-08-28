@@ -24,8 +24,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.note.Note;
 import com.cray.software.justreminder.note.NoteItem;
 import com.cray.software.justreminder.note.NotesBase;
@@ -121,7 +122,7 @@ public class NotesFragment extends Fragment implements SyncListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)) {
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_event_note_white_24dp);
         } else {
             emptyImage.setImageResource(R.drawable.ic_event_note_grey600_24dp);
@@ -129,7 +130,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
 
-        if (!new ManageModule().isPro()) {
+        if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
 
@@ -180,7 +181,7 @@ public class NotesFragment extends Fragment implements SyncListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!new ManageModule().isPro()){
+        if (!new Module().isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -193,7 +194,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
     @Override
     public void onDestroy() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -203,7 +204,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
     @Override
     public void onPause() {
-        if (!new ManageModule().isPro()) {
+        if (!new Module().isPro()) {
             if (adView != null) {
                 adView.pause();
             }
@@ -222,13 +223,13 @@ public class NotesFragment extends Fragment implements SyncListener {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(getActivity());
                 if (item == 0) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_NOTES_ORDER, Constants.ORDER_DATE_A_Z);
+                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_A_Z);
                 } else if (item == 1) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_NOTES_ORDER, Constants.ORDER_DATE_Z_A);
+                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_Z_A);
                 } else if (item == 2) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_NOTES_ORDER, Constants.ORDER_NAME_A_Z);
+                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_A_Z);
                 } else if (item == 3) {
-                    prefs.savePrefs(Constants.APP_UI_PREFERENCES_NOTES_ORDER, Constants.ORDER_NAME_Z_A);
+                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_Z_A);
                 }
                 dialog.dismiss();
                 loaderAdapter();

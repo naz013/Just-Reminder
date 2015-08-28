@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
@@ -506,7 +507,7 @@ public class DataBase {
     public Cursor queryGroup(String categoty) throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
         String order = null;
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
             order = Constants.COLUMN_FEATURE_TIME + " ASC";
@@ -527,7 +528,7 @@ public class DataBase {
     public Cursor queryGroup() throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
         String order;
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
             order = Constants.COLUMN_FEATURE_TIME + " ASC";
@@ -554,7 +555,7 @@ public class DataBase {
     public Cursor getActiveReminders() throws SQLException {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
         String order;
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
             order = Constants.COLUMN_FEATURE_TIME + " ASC";
@@ -628,7 +629,7 @@ public class DataBase {
 
     // Contacts birthdays database
 
-    public int getCountEvents() throws SQLException {
+    public int getCountBirthdays() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + Constants.ContactConstants.COLUMN_CONTACT_ID + " FROM " + CONTACTS_TABLE_NAME;
         Cursor cursor = db.rawQuery(countQuery, null);
@@ -637,12 +638,12 @@ public class DataBase {
         return cnt;
     }
 
-    public boolean deleteEvent(long rowId) {
+    public boolean deleteBirthday(long rowId) {
         openGuard();
         return db.delete(CONTACTS_TABLE_NAME, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getEvents(int day, int month) throws SQLException {
+    public Cursor getBirthdays(int day, int month) throws SQLException {
         openGuard();
         return db.query(CONTACTS_TABLE_NAME, null,
                 Constants.ContactConstants.COLUMN_CONTACT_DAY  + "='" + day + "'" +
@@ -650,19 +651,19 @@ public class DataBase {
                 + month + "'", null, null, null, null, null);
     }
 
-    public Cursor getEvent(long rowId) throws SQLException {
+    public Cursor getBirthday(long rowId) throws SQLException {
         openGuard();
         return db.query(CONTACTS_TABLE_NAME, null, Constants.ContactConstants.COLUMN_ID  +
                 "=" + rowId, null, null, null, null, null);
     }
 
-    public Cursor getEvents() throws SQLException {
+    public Cursor getBirthdays() throws SQLException {
         openGuard();
         return db.query(CONTACTS_TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public long insertEvent (String name, int contact_id, String birthday, int day, int month,
-                             String number, String uuId) {
+    public long addBirthday(String name, int contact_id, String birthday, int day, int month,
+                            String number, String uuId) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.ContactConstants.COLUMN_CONTACT_NAME, name);
@@ -778,8 +779,8 @@ public class DataBase {
 
     public Cursor getCalendarEvent(long id) throws SQLException {
         openGuard();
-        return db.query(EVENTS_TABLE_NAME, null, Constants.COLUMN_ID  +
-                        "=" + id, null, null, null, null, null);
+        return db.query(EVENTS_TABLE_NAME, null, Constants.COLUMN_ID +
+                "=" + id, null, null, null, null, null);
     }
 
     public Cursor getCalendarEvents(long id) throws SQLException {
@@ -787,6 +788,11 @@ public class DataBase {
         return db.query(EVENTS_TABLE_NAME, null,
                 Constants.COLUMN_REMINDER_ID  +
                         "='" + id + "'", null, null, null, null, null);
+    }
+
+    public Cursor getCalendarEvents() throws SQLException {
+        openGuard();
+        return db.query(EVENTS_TABLE_NAME, null, null, null, null, null, null, null);
     }
 
     public boolean deleteCalendarEvent(long rowId) {

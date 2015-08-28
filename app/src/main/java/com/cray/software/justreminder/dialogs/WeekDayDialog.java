@@ -36,6 +36,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -76,7 +77,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        boolean isFull = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE);
+        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -115,10 +116,10 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
         sPrefs = new SharedPrefs(WeekDayDialog.this);
 
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor,
                 buttonNotification, buttonEdit);
-        int mins = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+        int mins = sPrefs.loadInt(Prefs.DELAY_TIME);
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
         if (isDark){
@@ -151,14 +152,14 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             finish();
         }
 
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE, type);
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT, task);
-        sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER, num);
+        sPrefs.savePrefs(Prefs.REMINDER_TYPE, type);
+        sPrefs.savePrefs(Prefs.REMINDER_TEXT, task);
+        sPrefs.savePrefs(Prefs.REMINDER_NUMBER, num);
 
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
         if (type.matches(Constants.TYPE_WEEKDAY_CALL) || type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
-            String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
             contactPhoto.setVisibility(View.VISIBLE);
             long conID = Contacts.getContactIDFromNumber(number, WeekDayDialog.this);
             Bitmap photo = Contacts.getPhoto(this, conID);
@@ -169,14 +170,14 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             }
             remText.setText(task + "\n" + number);
         } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) || type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
-            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+            if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
                 if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
                 else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
             } else {
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.GONE);
                 buttonDelay.setVisibility(View.GONE);
@@ -259,7 +260,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 Reminder.generate(id, WeekDayDialog.this);
                 repeater.cancelAlarm(WeekDayDialog.this, id);
                 delay.setAlarm(WeekDayDialog.this, 2, id);
-                int inTime = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+                int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
                 DB.setDelay(id, inTime);
                 removeFlags();
                 Reminder.backup(WeekDayDialog.this);
@@ -273,7 +274,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 Reminder.generate(id, WeekDayDialog.this);
                 repeater.cancelAlarm(WeekDayDialog.this, id);
                 sPrefs = new SharedPrefs(WeekDayDialog.this);
-                if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION)) {
+                if (!sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION)) {
                     notifier.discardNotification(id);
                 }
                 showDialog();
@@ -286,9 +287,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 notifier.discardNotification(id);
                 repeater.cancelAlarm(WeekDayDialog.this, id);
                 Reminder.generate(id, WeekDayDialog.this);
-                String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
-                String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
-                String task = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
+                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
+                String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
+                String task = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
                 if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                     sendSMS(number, task, melody);
                 } else {
@@ -303,11 +304,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 }
             }
         });
-        String number = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_NUMBER);
-        String typePrefs = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TYPE);
-        String text = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
+        String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
+        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
+        String text = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
         if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS)) {
+            if (sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
                 sendSMS(number, text, melody);
             } else {
                 showNotification(text, 1, id, melody, color);
@@ -316,14 +317,14 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             showNotification(text, 1, id, melody, color);
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT)) {
+        if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
             repeater.setAlarm(WeekDayDialog.this, id);
         }
 
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TTS)) {
+        if (sPrefs.loadBoolean(Prefs.TTS)) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
             try {
@@ -361,7 +362,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
     private void showNotification(final String taskN, int i, long itemId, String melodyN, int colorN){
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TTS)) {
+        if (!sPrefs.loadBoolean(Prefs.TTS)) {
             notifier.showNotification(taskN, i, itemId, melodyN, colorN);
         } else {
             notifier.showTTSNotification(taskN, itemId, colorN);
@@ -386,7 +387,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
     public void wakeScreen() {
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS)) {
+        if (sPrefs.loadBoolean(Prefs.WAKE_STATUS)) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn = pm.isScreenOn();
             if (!isScreenOn) {
@@ -499,7 +500,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 sPrefs = new SharedPrefs(WeekDayDialog.this);
-                String text = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_REMINDER_TEXT);
+                String text = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         remText.setText(getString(R.string.dialog_message_sent));
@@ -599,7 +600,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     public void onBackPressed() {
         notifier.discardMedia();
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)){
+        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             repeater.cancelAlarm(WeekDayDialog.this, id);
             removeFlags();

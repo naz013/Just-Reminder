@@ -9,6 +9,7 @@ import android.content.Intent;
 import com.cray.software.justreminder.dialogs.MissedCallDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MissedCallAlarm extends BroadcastReceiver {
     private AlarmManager alarmMgr;
@@ -34,7 +35,7 @@ public class MissedCallAlarm extends BroadcastReceiver {
         intent.putExtra("time", timeStamp);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
         SharedPrefs prefs = new SharedPrefs(context);
-        int time = prefs.loadInt(Constants.APP_UI_PREFERENCES_MISSED_CALL_TIME);
+        int time = prefs.loadInt(Prefs.MISSED_CALL_TIME);
         long mills = 1000 * 60;
         Integer i = (int) (long) id;
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);

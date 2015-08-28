@@ -17,6 +17,7 @@ import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.LocationUtil;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class CheckPosition extends IntentService {
                 DB = new DataBase(getApplicationContext());
                 tc = new TimeCount(getApplicationContext());
                 SharedPrefs sPrefs = new SharedPrefs(getApplicationContext());
-                boolean isEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TRACKING_NOTIFICATION);
+                boolean isEnabled = sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION);
                 DB.open();
                 Cursor c = DB.queryGroup();
                 if (c != null && c.moveToFirst()) {
@@ -63,7 +64,8 @@ public class CheckPosition extends IntentService {
                     } while (c.moveToNext());
                     if (types.contains(Constants.TYPE_LOCATION) || types.contains(Constants.TYPE_LOCATION_CALL) ||
                             types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
-                            types.contains(Constants.TYPE_LOCATION_OUT) || types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
+                            types.contains(Constants.TYPE_LOCATION_OUT) ||
+                            types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
                             types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                         c.moveToFirst();
                         do {
@@ -82,7 +84,7 @@ public class CheckPosition extends IntentService {
                                 int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                                 int shown = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                                 int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-                                int stockRadius = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS);
+                                int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
                                 if (radius == -1) radius = stockRadius;
                                 if (isDone != 1) {
                                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {

@@ -6,6 +6,7 @@ import android.os.Environment;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.media.MediaHttpDownloader;
@@ -47,7 +48,7 @@ public class GDriveHelper {
     public void authorize(){
         prefs = new SharedPrefs(ctx);
         m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(DriveScopes.DRIVE));
-        m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER)));
+        m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         m_client = new com.google.api.services.drive.Drive.Builder(
                 m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
                 .build();
@@ -55,12 +56,12 @@ public class GDriveHelper {
 
     public boolean isLinked(){
         prefs = new SharedPrefs(ctx);
-        return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER)).matches(".*@.*");
+        return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     public void unlink(){
         prefs = new SharedPrefs(ctx);
-        prefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, Constants.DRIVE_USER_NONE);
+        prefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
     }
 
     public int countFiles(){

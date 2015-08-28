@@ -20,6 +20,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class SoundType extends Activity{
         musicList.setAdapter(adapter);
 
         if (id == 3){
-            if (sPrefs.loadBoolean(Constants.BIRTHDAY_CUSTOM_SOUND)) {
+            if (sPrefs.loadBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND)) {
                 musicList.setItemChecked(1, true);
             } else {
                 musicList.setItemChecked(0, true);
@@ -82,7 +83,7 @@ public class SoundType extends Activity{
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(SoundType.this);
                     String prefs;
-                    if (id == 3) prefs = Constants.BIRTHDAY_CUSTOM_SOUND;
+                    if (id == 3) prefs = Prefs.BIRTHDAY_CUSTOM_SOUND;
                     else prefs = Constants.CUSTOM_SOUND;
                     if (selectedPosition == 0) {
                         sPrefs.saveBoolean(prefs, false);

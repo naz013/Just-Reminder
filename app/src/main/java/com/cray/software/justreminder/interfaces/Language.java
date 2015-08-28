@@ -20,7 +20,7 @@ public class Language {
     public Locale getLocale(Context context){
         Locale res = null;
         SharedPrefs sPrefs = new SharedPrefs(context);
-        switch (sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_TTS_LOCALE)){
+        switch (sPrefs.loadPrefs(Prefs.TTS_LOCALE)){
             case ENGLISH:
                 res = Locale.ENGLISH;
                 break;

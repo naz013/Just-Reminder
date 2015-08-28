@@ -32,10 +32,10 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.ExchangeConstants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -93,7 +93,7 @@ public class CloudDrives extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 boolean isIn;
-                if (new ManageModule().isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
+                if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
                 else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
                 if (isIn) {
                     checkDialog().show();
@@ -106,7 +106,7 @@ public class CloudDrives extends AppCompatActivity {
                         dbx.startLink();
                     }
                 }
-                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+                prefs.saveBoolean(Prefs.UI_CHANGED, true);
             }
         });
 
@@ -150,7 +150,7 @@ public class CloudDrives extends AppCompatActivity {
                             new String[]{"com.google"}, false, null, null, null, null);
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
                 }
-                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+                prefs.saveBoolean(Prefs.UI_CHANGED, true);
             }
         });
 
@@ -175,7 +175,7 @@ public class CloudDrives extends AppCompatActivity {
                 } else {
                     startActivity(new Intent(CloudDrives.this, ExchangeLogIn.class));
                 }
-                prefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+                prefs.saveBoolean(Prefs.UI_CHANGED, true);
             }
         });
 
@@ -215,7 +215,7 @@ public class CloudDrives extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i;
                         PackageManager manager = getPackageManager();
-                        if (new ManageModule().isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
+                        if (Module.isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
                         else i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
                         i.addCategory(Intent.CATEGORY_LAUNCHER);
                         startActivity(i);
@@ -224,7 +224,7 @@ public class CloudDrives extends AppCompatActivity {
                 .setNegativeButton(getString(R.string.dialog_button_delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        if (new ManageModule().isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
+                        if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
                         else intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
                         startActivity(intent);
                     }
@@ -263,7 +263,7 @@ public class CloudDrives extends AppCompatActivity {
 
     private void setImage(){
         SharedPrefs sPrefs = new SharedPrefs(CloudDrives.this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (!sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             dropboxTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.dropbox_icon, 0, 0, 0);
             gDriveTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_grey, 0, 0, 0);
             exchangeTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_grey, 0, 0, 0);
@@ -358,11 +358,11 @@ public class CloudDrives extends AppCompatActivity {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            prefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
+            prefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
             new GetTasksListsAsync(CloudDrives.this, null).execute();
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            prefs.savePrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
+            prefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
             new GetTasksListsAsync(CloudDrives.this, null).execute();
         }
     }

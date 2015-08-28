@@ -15,6 +15,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TargetRadius extends Activity {
 
@@ -39,7 +40,7 @@ public class TargetRadius extends Activity {
         Intent intent = getIntent();
         i = intent.getIntExtra("item", 0);
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        progressInt = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS);
+        progressInt = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
         radiusValue.setText(progressInt + getString(R.string.meter));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
@@ -110,7 +111,7 @@ public class TargetRadius extends Activity {
             public void onClick(View v) {
                 if (i == 0) {
                     sPrefs = new SharedPrefs(TargetRadius.this);
-                    sPrefs.saveInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS, radiusBar.getProgress());
+                    sPrefs.saveInt(Prefs.LOCATION_RADIUS, radiusBar.getProgress());
                     finish();
                 } else {
                     Intent intent = new Intent();

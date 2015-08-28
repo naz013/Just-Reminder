@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TextSize extends Activity {
 
@@ -37,11 +37,11 @@ public class TextSize extends Activity {
         titleDialog.setText(getString(R.string.text_size_dialog_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE) + 12));
+        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.TEXT_SIZE) + 12));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(18);
-        radiusBar.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE));
+        radiusBar.setProgress(sPrefs.loadInt(Prefs.TEXT_SIZE));
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -69,7 +69,7 @@ public class TextSize extends Activity {
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sPrefs.saveInt(Constants.APP_UI_PREFERENCES_TEXT_SIZE, radiusBar.getProgress());
+                sPrefs.saveInt(Prefs.TEXT_SIZE, radiusBar.getProgress());
                 finish();
             }
         });

@@ -20,6 +20,7 @@ import com.cray.software.justreminder.dialogs.ThemerDialog;
 import com.cray.software.justreminder.dialogs.utils.ScreenOrientation;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -59,19 +60,19 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
         useDarkStyleCheck = (CheckBox) rootView.findViewById(R.id.useDarkStyleCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        useDarkStyleCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME));
+        useDarkStyleCheck.setChecked(sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
 
         use24Time = (RelativeLayout) rootView.findViewById(R.id.use24Time);
         use24Time.setOnClickListener(this);
 
         use24TimeCheck = (CheckBox) rootView.findViewById(R.id.use24TimeCheck);
-        use24TimeCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        use24TimeCheck.setChecked(sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
 
         smartFold = (RelativeLayout) rootView.findViewById(R.id.smartFold);
         smartFold.setOnClickListener(this);
 
         smartFoldCheck = (CheckBox) rootView.findViewById(R.id.smartFoldCheck);
-        smartFoldCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD));
+        smartFoldCheck.setChecked(sPrefs.loadBoolean(Prefs.SMART_FOLD));
 
         screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
         screenOrientation.setOnClickListener(this);
@@ -80,13 +81,13 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearEnable.setOnClickListener(this);
 
         wearEnableCheck = (CheckBox) rootView.findViewById(R.id.wearEnableCheck);
-        wearEnableCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WEAR_NOTIFICATION));
+        wearEnableCheck.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
 
         animations = (RelativeLayout) rootView.findViewById(R.id.animations);
         animations.setOnClickListener(this);
 
         animationsCheck = (CheckBox) rootView.findViewById(R.id.animationsCheck);
-        animationsCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS));
+        animationsCheck.setChecked(sPrefs.loadBoolean(Prefs.ANIMATIONS));
 
         wearable = (RelativeLayout) rootView.findViewById(R.id.wearable);
         wearable.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +98,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         });
 
         wearableCheck = (CheckBox) rootView.findViewById(R.id.wearableCheck);
-        wearableCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WEARABLE));
+        wearableCheck.setChecked(sPrefs.loadBoolean(Prefs.WEARABLE));
 
         extendedButton = (RelativeLayout) rootView.findViewById(R.id.extendedButton);
         extendedButton.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +109,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         });
 
         extendedButtonCheck = (CheckBox) rootView.findViewById(R.id.extendedButtonCheck);
-        extendedButtonCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON));
+        extendedButtonCheck.setChecked(sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON));
 
         itemPreview = (RelativeLayout) rootView.findViewById(R.id.itemPreview);
         itemPreview.setOnClickListener(new View.OnClickListener() {
@@ -119,54 +120,54 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         });
 
         itemPreviewCheck = (CheckBox) rootView.findViewById(R.id.itemPreviewCheck);
-        itemPreviewCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW));
+        itemPreviewCheck.setChecked(sPrefs.loadBoolean(Prefs.ITEM_PREVIEW));
         return rootView;
     }
 
     private void itemPreviewChange() {
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (itemPreviewCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, false);
+            sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, false);
             itemPreviewCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ITEM_PREVIEW, true);
+            sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
             itemPreviewCheck.setChecked(true);
         }
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
     }
 
     private void extendedChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (extendedButtonCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, false);
+            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, false);
             extendedButtonCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_EXTENDED_BUTTON, true);
+            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, true);
             extendedButtonCheck.setChecked(true);
         }
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
     }
 
     private void useDarkStyleChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (useDarkStyleCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME, false);
+            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
             useDarkStyleCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME, true);
+            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, true);
             useDarkStyleCheck.setChecked(true);
         }
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
         getActivity().recreate();
     }
 
     private void _24Change (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (use24TimeCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT, false);
+            sPrefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, false);
             use24TimeCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT, true);
+            sPrefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, true);
             use24TimeCheck.setChecked(true);
         }
 
@@ -176,10 +177,10 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private void wearChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wearEnableCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WEAR_NOTIFICATION, false);
+            sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, false);
             wearEnableCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WEAR_NOTIFICATION, true);
+            sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, true);
             wearEnableCheck.setChecked(true);
         }
     }
@@ -187,10 +188,10 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private void wearableChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wearableCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WEARABLE, false);
+            sPrefs.saveBoolean(Prefs.WEARABLE, false);
             wearableCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WEARABLE, true);
+            sPrefs.saveBoolean(Prefs.WEARABLE, true);
             wearableCheck.setChecked(true);
             GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                     .addApi(Wearable.API)
@@ -219,22 +220,22 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private void animationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (animationsCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, false);
+            sPrefs.saveBoolean(Prefs.ANIMATIONS, false);
             animationsCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS, true);
+            sPrefs.saveBoolean(Prefs.ANIMATIONS, true);
             animationsCheck.setChecked(true);
         }
-        sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UI_CHANGED, true);
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
     }
 
     private void smartFoldChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (smartFoldCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD, false);
+            sPrefs.saveBoolean(Prefs.SMART_FOLD, false);
             smartFoldCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD, true);
+            sPrefs.saveBoolean(Prefs.SMART_FOLD, true);
             smartFoldCheck.setChecked(true);
         }
     }
@@ -271,7 +272,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
     private void themeView(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_THEME);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         switch (loadedColor) {
             case "1":
                 themeColorSwitcher.setBackgroundResource(R.drawable.drawable_red);

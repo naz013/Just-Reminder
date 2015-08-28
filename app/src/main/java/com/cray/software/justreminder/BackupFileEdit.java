@@ -64,6 +64,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
@@ -154,10 +155,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        isAnimation = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS);
-        isCalendar = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR);
-        isStock = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK);
-        isDark = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME);
+        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
+        isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+        isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -170,7 +171,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         toolbar.setVisibility(View.GONE);
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+        if (isAnimation) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -245,8 +246,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     public void startVoiceRecognitionActivity() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
-        if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE));
+        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
         try {
@@ -330,7 +331,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
         timeField.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDays = (EditText) findViewById(R.id.repeatDays);
@@ -369,7 +370,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             timeField.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             dateField.setText(dayStr + "/" + monthStr);
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(repCode);
@@ -415,8 +416,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
-        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK))){
+        if ((isCalendar || isStock)){
             monthDayExport.setVisibility(View.VISIBLE);
         }
 
@@ -441,7 +441,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
         monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
@@ -458,7 +458,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (isAnimation) {
                         ViewUtils.expand(monthDayActionLayout);
                     } else action_layout.setVisibility(View.VISIBLE);
                     monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
@@ -484,7 +484,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                         }
                     });
                 } else {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (isAnimation) {
                         ViewUtils.collapse(monthDayActionLayout);
                     } else monthDayActionLayout.setVisibility(View.GONE);
                     taskField.setHint(getString(R.string.tast_hint));
@@ -528,7 +528,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             monthDayField.setText(dayStr);
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
@@ -580,9 +580,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     mLocList = new CurrentLocation();
                     SharedPrefs prefs = new SharedPrefs(getApplicationContext());
                     long time;
-                    time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000);
+                    time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000);
                     int distance;
-                    distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE);
+                    distance = prefs.loadInt(Prefs.TRACK_DISTANCE);
                     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
                     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
                 }
@@ -627,7 +627,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
         weekTimeField.setText(TimeUtil.getTime(c.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         weekTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         mondayCheck = (ToggleButton) findViewById(R.id.mondayCheck);
@@ -705,7 +705,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             c.set(Calendar.MINUTE, myMinute);
 
             weekTimeField.setText(TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             taskField.setText(text);
 
             setCheckForDays(weekdays);
@@ -782,7 +782,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         deleteButton = (ImageButton) findViewById(R.id.deleteButton);
         sPrefs = new SharedPrefs(this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME))
+        if (isDark)
             deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
         else deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -966,7 +966,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         skypeTime = (TextView) findViewById(R.id.skypeTime);
         skypeTime.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         skypeTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1025,7 +1025,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             skypeDate.setText(dayStr + "/" + monthStr);
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatSkype.setProgress(repCode);
             repeatDaysSkype.setText(String.valueOf(repCode));
         }
@@ -1054,7 +1054,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         pickApplication = (ImageButton) findViewById(R.id.pickApplication);
         pickApplication.setVisibility(View.GONE);
         sPrefs = new SharedPrefs(BackupFileEdit.this);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (isDark){
             pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
         } else pickApplication.setImageResource(R.drawable.ic_launch_grey600_24dp);
 
@@ -1108,7 +1108,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         appTime = (TextView) findViewById(R.id.appTime);
         appTime.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         appTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1153,7 +1153,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 try {
                     applicationInfo = packageManager.getApplicationInfo(selectedPackage, 0);
                 } catch (final PackageManager.NameNotFoundException ignored) {}
-                final String title = (String)((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
+                final String title = (String)((applicationInfo != null) ?
+                        packageManager.getApplicationLabel(applicationInfo) : "???");
                 applicationName.setText(title);
             }
 
@@ -1177,7 +1178,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             appDate.setText(dayStr + "/" + monthStr);
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatApp.setProgress(repCode);
             repeatDaysApp.setText(String.valueOf(repCode));
         }
@@ -1243,7 +1244,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         callTime = (TextView) findViewById(R.id.callTime);
         callTime.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         callTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1292,7 +1293,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             callDate.setText(dayStr + "/" + monthStr);
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatCallInt.setProgress(repCode);
             repeatDaysCall.setText(String.valueOf(repCode));
         }
@@ -1358,7 +1359,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         messageTime = (TextView) findViewById(R.id.messageTime);
         messageTime.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         messageTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1407,7 +1408,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             messageDate.setText(dayStr + "/" + monthStr);
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(TimeUtil.getTime(cal.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatMessageInt.setProgress(repCode);
             repeatDaysMessage.setText(String.valueOf(repCode));
         }
@@ -1504,7 +1505,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (isAnimation) {
                         Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
                         delayLayout.startAnimation(slide);
                         delayLayout.setVisibility(View.VISIBLE);
@@ -1521,7 +1522,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         zoomOut = (ImageButton) findViewById(R.id.zoomOut);
         layers = (ImageButton) findViewById(R.id.layers);
         mapButton = (ImageButton) findViewById(R.id.mapButton);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (isDark){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButton.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
@@ -1749,7 +1750,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
         locationTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
         locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         locationTimeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1807,7 +1808,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
         googleMap = fragment.getMap();
         sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
@@ -1873,7 +1874,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 cal.set(Calendar.MINUTE, myMinute);
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                 locationDateField.setText(dayStr + "/" + monthStr);
                 locationDateYearField.setText(String.valueOf(myYear));
                 attackDelay.setChecked(true);
@@ -1949,7 +1950,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+                    if (isAnimation) {
                         Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
                         delayLayoutOut.startAnimation(slide);
                         delayLayoutOut.setVisibility(View.VISIBLE);
@@ -1962,7 +1963,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         if (attachDelayOut.isChecked()) {
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_ANIMATIONS)) {
+            if (isAnimation) {
                 ViewUtils.expand(delayLayoutOut);
             } else delayLayoutOut.setVisibility(View.VISIBLE);
         }
@@ -1978,7 +1979,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         zoomOutOut.setBackgroundColor(cSetter.getBackgroundStyle());
         layersOut.setBackgroundColor(cSetter.getBackgroundStyle());
         myLocationOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (isDark){
             cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
             zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
@@ -2093,7 +2094,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
         if (pointRadius.getProgress() == 0)
-            pointRadius.setProgress(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LOCATION_RADIUS));
+            pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
 
         cardSearchOut = (AutoCompleteTextView) findViewById(R.id.cardSearchOut);
         cardSearchOut.setThreshold(3);
@@ -2208,7 +2209,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
         locationOutTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
         locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         locationOutTimeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2266,7 +2267,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapOut);
         mapOut = fragment.getMap();
         sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_MAP_TYPE);
+        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
         if (type.matches(Constants.MAP_TYPE_NORMAL)){
             mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
@@ -2343,7 +2344,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 cal.set(Calendar.MINUTE, myMinute);
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
-                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                        sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                 locationOutDateField.setText(dayStr + "/" + monthStr);
                 locationOutDateYearField.setText(String.valueOf(myYear));
                 attachDelayOut.setChecked(true);
@@ -3365,7 +3366,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     protected Dialog timeDialog() {
-        return new TimePickerDialog(this, myCallBack, myHour, myMinute, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+        return new TimePickerDialog(this, myCallBack, myHour, myMinute,
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -3378,7 +3380,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             c.set(Calendar.MINUTE, minute);
 
             String formattedTime = TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT));
+                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
 
             if (isMonthDayAttached()){
                 monthDayTimeField.setText(formattedTime);
@@ -3461,8 +3463,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         public void onStatusChanged(String provider, int status, Bundle extras) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
             } else {
@@ -3474,8 +3476,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         public void onProviderEnabled(String provider) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
             } else {
@@ -3487,8 +3489,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         public void onProviderDisabled(String provider) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Constants.APP_UI_PREFERENCES_TRACK_DISTANCE) * 2;
+            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
             if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
             } else {

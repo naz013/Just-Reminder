@@ -379,7 +379,7 @@
     <string name="delete_file_settings_title">Удалять резервную копию</string>
     <string name="delete_file_settings_explanation">Отметьте, чтобы включить удаление резервной копии при удалении заметки</string>
     <string name="edit_reminder_toast">Время напоминания прошло. Откройте, чтобы редактировать</string>
-    <string name="export_check_title">Экспортировать событие в Календарь</string>
+    <string name="export_check_title">Добавить событие в Календарь</string>
     <string name="changes_settings_title">Изменения</string>
     <string name="voice_widget_title">Голосовое управление</string>
     <string name="note_saved_toast">Заметка сохранена!</string>
@@ -397,7 +397,7 @@
     <string name="time_evening_title">Вечер</string>
     <string name="time_day_title">День</string>
     <string name="time_morning_title">Утро</string>
-    <string name="export_to_calendar_settings">Экспортировать событие в системный календарь</string>
+    <string name="export_to_calendar_settings">Добавить событие в системный календарь</string>
     <string name="export_to_calendar_settings_explanation">Отметьте, чтобы включить экспорт события в системный календарь, если у Вас нету Календаря Google</string>
     <string name="custom_melody_title">Мелодия</string>
     <string name="selected_melody_string">"Выбрано мелодию "</string>
@@ -644,7 +644,7 @@
     <string name="string_generating_events">Генерирую события…</string>
     <string name="interval_day">Eжедневно</string>
     <string name="string_swipe_left_or_right">Потяните влево или вправо чтобы выбрать тему.</string>
-    <string name="string_address">Адрес...</string>
+    <string name="string_address">Адрес…</string>
     <string name="string_place_out">Place out</string>
     <string name="string_current_location">Текущее место</string>
     <string name="string_map_point">Место на карте</string>
@@ -654,11 +654,24 @@
     <string name="contact_group_explanation">Выберите контакты для того, чтобы включить последующие напоминания для них.</string>
     <string name="string_delete_selected">Delete selected</string>
     <string name="string_selected">selected</string>
-    <string name="message_sync_birthdays">Синхронизация дней рождения...</string>
-    <string name="message_sync_notes">Синхронизация заметок...</string>
-    <string name="message_sync_reminders">Синхронизация напоминаний...</string>
-    <string name="string_getting_birthdays">Восстановление дней рождений...</string>
+    <string name="message_sync_birthdays">Синхронизация дней рождения…</string>
+    <string name="message_sync_notes">Синхронизация заметок…</string>
+    <string name="message_sync_reminders">Синхронизация напоминаний…</string>
+    <string name="string_getting_birthdays">Восстановление дней рождений…</string>
     <string name="string_backup_birthdays">Синхронизация дней рождений</string>
     <string name="string_backup_birthdays_explanation">Отметьте, чтобы включить синхронизацию дней рождений при синхронизации напоминаний</string>
-    <string name="simple_m_letter">m</string>
+    <string name="simple_m_letter">м</string>
+    <string name="settings_events_import">Импортировать события</string>
+    <string name="string_auto_check">Автоматически проверять на наличие новых событий</string>
+    <string name="string_no_action_selected">Вы не выбрали никаких действий!</string>
+    <string name="string_no_calendar_selected">Вы не выбрали календарь для событий!</string>
+    <string name="string_no_birthday_calendar_selected">Вы не выбрали календарь для дней рождений!</string>
+    <string name="string_no_events_found">Не найдено никаких событий</string>
+    <string name="simple_imported">"Импортировано "</string>
+    <string name="simple_event">" событий"</string>
+    <string name="char_s_with_point">.</string>
+    <string name="string_trash_cleared">Все события удалены из корзины.</string>
+    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
+    <string name="settings_birthday_reminder_title">Birthday reminder</string>
 </resources>

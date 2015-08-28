@@ -18,7 +18,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -117,7 +117,7 @@ public class CategoryManager extends AppCompatActivity {
         themeGroup2 = (RadioGroup) findViewById(R.id.themeGroup2);
         themeGroup3 = (RadioGroup) findViewById(R.id.themeGroup3);
         themeGroupPro = (RadioGroup) findViewById(R.id.themeGroupPro);
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             themeGroupPro.setVisibility(View.VISIBLE);
         }
 
@@ -144,8 +144,7 @@ public class CategoryManager extends AppCompatActivity {
         if (id != 0){
             db.updateCategory(id, text, System.currentTimeMillis(), color);
         } else {
-            SyncHelper helper = new SyncHelper(CategoryManager.this);
-            db.addCategory(text, System.currentTimeMillis(), helper.generateID(), color);
+            db.addCategory(text, System.currentTimeMillis(), SyncHelper.generateID(), color);
         }
         db.close();
         finish();
@@ -232,7 +231,7 @@ public class CategoryManager extends AppCompatActivity {
     };
 
     private void colorSwitch(int checkId) {
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             switch (checkId) {
                 case R.id.red_checkbox:
                     setColor(0);
@@ -330,7 +329,7 @@ public class CategoryManager extends AppCompatActivity {
     }
 
     public void setUpRadio(){
-        if (new ManageModule().isPro()) {
+        if (Module.isPro()) {
             switch (color) {
                 case 0:
                     red_checkbox.setChecked(true);

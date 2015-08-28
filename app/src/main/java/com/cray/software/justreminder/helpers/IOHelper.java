@@ -7,6 +7,7 @@ import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import org.json.JSONException;
 
@@ -52,7 +53,7 @@ public class IOHelper {
         if (isConnected){
             new DropboxHelper(context).deleteFile(name);
             new GDriveHelper(context).deleteFile(name);
-            new BoxHelper(context).deleteFile(name);
+            //new BoxHelper(context).deleteFile(name);
         }
     }
 
@@ -61,10 +62,10 @@ public class IOHelper {
         backupReminder(true);
 
         SharedPrefs prefs = new SharedPrefs(context);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_NOTES)){
+        if (prefs.loadBoolean(Prefs.SYNC_NOTES)){
             backupNote(true);
         }
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_SYNC_BIRTHDAYS)){
+        if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)){
             backupBirthday(true);
         }
     }
@@ -110,7 +111,7 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).downloadGroup();
+            //new BoxHelper(context).downloadGroup();
         }
     }
 
@@ -155,7 +156,7 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).downloadReminder();
+            //new BoxHelper(context).downloadReminder();
         }
     }
 
@@ -189,7 +190,7 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).downloadNote();
+            //new BoxHelper(context).downloadNote();
         }
     }
 
@@ -223,7 +224,7 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).downloadBirthday();
+            //new BoxHelper(context).downloadBirthday();
         }
     }
 }

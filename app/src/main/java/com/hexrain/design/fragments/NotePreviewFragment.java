@@ -37,6 +37,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.note.DeleteNoteFile;
 import com.cray.software.justreminder.note.Note;
 import com.cray.software.justreminder.note.NotesBase;
@@ -138,8 +139,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                     return 0;
                 }
                 else {
-                    int alpha = (int)  ((255.0 / maxDist) * scrollY);
-                    return alpha;
+                    return (int)  ((255.0 / maxDist) * scrollY);
                 }
             }
         });
@@ -245,7 +245,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         sPrefs = new SharedPrefs(NotePreviewFragment.this);
         if (c != null && c.moveToFirst()){
             new Notifier(this)
-                    .showNoteNotification((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT) ?
+                    .showNoteNotification((sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT) ?
                             new SyncHelper(this).decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
                             c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))), mParam1);
         }
@@ -287,7 +287,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         if (c != null && c.moveToFirst()){
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
             SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
                 note = new SyncHelper(NotePreviewFragment.this).decrypt(note);
             }
             noteText.setText(note);
@@ -314,7 +314,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 img = imgB;
                 imageView.setImageBitmap(imgB);
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = (int) QuickReturnUtils.dp2px(this, 256);
+                params.height = QuickReturnUtils.dp2px(this, 256);
                 imageView.setLayoutParams(params);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
                 toolbar.setBackgroundColor(getResources().getColor(color));
@@ -322,7 +322,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             } else {
                 imageView.setBackgroundColor(cSetter.getNoteLightColor(color));
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = (int) QuickReturnUtils.dp2px(this, 56);
+                params.height = QuickReturnUtils.dp2px(this, 56);
                 imageView.setLayoutParams(params);
                 imageView.setVisibility(View.INVISIBLE);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.noteText);
@@ -341,7 +341,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                     if (feature != 0) calendar.setTimeInMillis(feature);
 
                     reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
-                            sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_IS_24_TIME_FORMAT)));
+                            sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                     reminderContainer.setVisibility(View.VISIBLE);
                 }
             }

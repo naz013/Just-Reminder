@@ -7,6 +7,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
@@ -28,7 +29,7 @@ public class Note {
         if (c != null && c.moveToFirst()) {
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
             SharedPrefs sPrefs = new SharedPrefs(context);
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)) {
+            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)) {
                 note = sHelp.decrypt(note);
             }
             Calendar calendar1 = Calendar.getInstance();

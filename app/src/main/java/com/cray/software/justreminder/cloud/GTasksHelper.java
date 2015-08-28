@@ -7,6 +7,7 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -44,13 +45,13 @@ public class GTasksHelper {
     public void authorize(){
         prefs = new SharedPrefs(ctx);
         m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(TasksScopes.TASKS));
-        m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER)));
+        m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         service = new Tasks.Builder(m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME).build();
     }
 
     public boolean isLinked(){
         prefs = new SharedPrefs(ctx);
-        return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Constants.APP_UI_PREFERENCES_DRIVE_USER)).matches(".*@.*");
+        return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     public void insertTask(String taskTitle, String listId, long time, String note, long localId) throws IOException {

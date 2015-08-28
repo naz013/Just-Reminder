@@ -14,6 +14,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -65,7 +66,7 @@ public class VoiceLanguage extends Activity{
 
         final SharedPrefs prefs = new SharedPrefs(VoiceLanguage.this);
         int i;
-        String language = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE);
+        String language = prefs.loadPrefs(Prefs.VOICE_LANGUAGE);
         if (language.matches(Constants.LANGUAGE_EN)){
             i = en;
         } else if (language.matches(Constants.LANGUAGE_RU)){
@@ -91,17 +92,17 @@ public class VoiceLanguage extends Activity{
                 int selected = musicList.getCheckedItemPosition();
                 if (selected != -1) {
                     if (localeCheck.startsWith("uk")) {
-                        if (selected == 0) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (selected == 1) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 2) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
                     } else if (localeCheck.startsWith("ru")) {
-                        if (selected == 0) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_RU);
-                        if (selected == 1) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 2) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
                     } else {
-                        if (selected == 0) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 1) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (selected == 2) prefs.savePrefs(Constants.APP_UI_PREFERENCES_VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
                     }
                     finish();
                 } else {

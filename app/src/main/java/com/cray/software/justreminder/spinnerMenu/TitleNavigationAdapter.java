@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 
@@ -85,7 +85,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
 
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME)){
+        if (prefs.loadBoolean(Prefs.USE_DARK_THEME)){
             txtTitle.setTextColor(context.getResources().getColor(R.color.colorWhite));
         } else txtTitle.setTextColor(context.getResources().getColor(R.color.colorBlack));
         txtTitle.setText(spinnerNavItem.get(position).getTitle());

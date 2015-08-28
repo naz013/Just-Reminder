@@ -13,6 +13,7 @@ import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.SplashScreen;
 import com.cray.software.justreminder.VoiceHelp;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.BirthdaysVoiceList;
@@ -1927,8 +1928,8 @@ public class Recognizer {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
             id = DB.insertReminder(task, Constants.TYPE_TIME,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
@@ -1960,8 +1961,8 @@ public class Recognizer {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
             id = DB.insertReminder(task, Constants.TYPE_REMINDER,
                     dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
                     0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
@@ -2351,7 +2352,7 @@ public class Recognizer {
         boolean isTomorrow;
         boolean isWeekDay;
         SharedPrefs prefs = new SharedPrefs(ctx);
-        String mTime = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_NIGHT);
+        String mTime = prefs.loadPrefs(Prefs.TIME_NIGHT);
         Date date = null;
         try {
             date = mFormat.parse(mTime);
@@ -2501,7 +2502,7 @@ public class Recognizer {
         boolean isTomorrow;
         boolean isWeekDay;
         SharedPrefs prefs = new SharedPrefs(ctx);
-        String mTime = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_DAY);
+        String mTime = prefs.loadPrefs(Prefs.TIME_DAY);
         Date date = null;
         try {
             date = mFormat.parse(mTime);
@@ -2650,7 +2651,7 @@ public class Recognizer {
         boolean isTomorrow;
         boolean isWeekDay;
         SharedPrefs prefs = new SharedPrefs(ctx);
-        String mTime = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_MORNING);
+        String mTime = prefs.loadPrefs(Prefs.TIME_MORNING);
         Date date = null;
         try {
             date = mFormat.parse(mTime);
@@ -2803,7 +2804,7 @@ public class Recognizer {
         boolean isTomorrow;
         boolean isWeekDay;
         SharedPrefs prefs = new SharedPrefs(ctx);
-        String mTime = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_TIME_EVENING);
+        String mTime = prefs.loadPrefs(Prefs.TIME_EVENING);
         Date date = null;
         try {
             date = mFormat.parse(mTime);
@@ -2987,7 +2988,7 @@ public class Recognizer {
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);
-                Cursor cursor = db.getEvents(mDay, mMonth);
+                Cursor cursor = db.getBirthdays(mDay, mMonth);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
@@ -3071,13 +3072,13 @@ public class Recognizer {
         String uuID = sHelp.generateID();
         NotesBase db = new NotesBase(ctx);
         db.open();
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+        if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             db.saveNote(sHelp.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
         } else {
             db.saveNote(res, date, cs.getNoteColor(12), uuID, null, 5);
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER)){
+        if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
             DB = new DataBase(ctx);
             DB.open();
             Cursor cf = DB.queryCategories();
@@ -3087,8 +3088,8 @@ public class Recognizer {
             }
             if (cf != null) cf.close();
             long id = DB.insertReminder(res, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
-                    0, sPrefs.loadInt(Constants.APP_UI_PREFERENCES_QUICK_NOTE_REMINDER_TIME),
-                    0, 0, 0, sHelp.generateID(), null, 0, null, 0, 0, 0, categoryId);
+                    0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME),
+                    0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
             alarm.setAlarm(ctx, id);
             DB.updateReminderDateTime(id);
             new UpdatesHelper(ctx).updateWidget();
@@ -3117,7 +3118,7 @@ public class Recognizer {
         }
 
         Contacts contacts = new Contacts(ctx);
-        String number = contacts.get_Number(user, ctx);
+        String number = Contacts.get_Number(user, ctx);
 
         if (keyStr.matches(".*send .* to .* at [0-9][0-9]?(:? ?)[0-9]?[0-9]? .*")) {
             indexStart = keyStr.lastIndexOf("send ");
@@ -3162,7 +3163,7 @@ public class Recognizer {
                         DB = new DataBase(ctx);
                         DB.open();
                         sHelp = new SyncHelper(ctx);
-                        String uuID = sHelp.generateID();
+                        String uuID = SyncHelper.generateID();
                         sPrefs = new SharedPrefs(ctx);
                         long id;
                         Cursor cf = DB.queryCategories();
@@ -3171,8 +3172,8 @@ public class Recognizer {
                             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         }
                         if (cf != null) cf.close();
-                        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+                        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
                             id = DB.insertReminder(text, Constants.TYPE_MESSAGE,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
                                     1, null, 0, 0, 0, categoryId);
@@ -3221,7 +3222,7 @@ public class Recognizer {
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
 
         Contacts contacts = new Contacts(ctx);
-        String number = contacts.get_Number(user, ctx);
+        String number = Contacts.get_Number(user, ctx);
 
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
         /*if (keyStr.matches(".*(p|a?m).*") && locale){
@@ -3248,7 +3249,7 @@ public class Recognizer {
                         DB = new DataBase(ctx);
                         DB.open();
                         sHelp = new SyncHelper(ctx);
-                        String uuID = sHelp.generateID();
+                        String uuID = SyncHelper.generateID();
                         sPrefs = new SharedPrefs(ctx);
                         long id;
                         Cursor cf = DB.queryCategories();
@@ -3257,8 +3258,8 @@ public class Recognizer {
                             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         }
                         if (cf != null) cf.close();
-                        if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                                sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+                        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
                             id = DB.insertReminder(user, Constants.TYPE_CALL,
                                     currentDay, currentMonth, currentYear, hour, minute, 0, number,
                                     0, 0, 0, 0, 0, uuID, null,
@@ -3329,7 +3330,7 @@ public class Recognizer {
                         }
                         if (cf != null) cf.close();
                         sHelp = new SyncHelper(ctx);
-                        String uuID = sHelp.generateID();
+                        String uuID = SyncHelper.generateID();
                         long id = DB.insertReminder(res, Constants.TYPE_WEEKDAY, 0, 0, 0,
                                 hour, minute, 0, null, 0, 0, 0, 0, 0, uuID, weekdays, 0, null, 0, 0,
                                 0, categoryId);
@@ -3390,7 +3391,7 @@ public class Recognizer {
                 DB = new DataBase(ctx);
                 DB.open();
                 sHelp = new SyncHelper(ctx);
-                String uuID = sHelp.generateID();
+                String uuID = SyncHelper.generateID();
                 sPrefs = new SharedPrefs(ctx);
                 long id;
                 Cursor cf = DB.queryCategories();
@@ -3399,8 +3400,8 @@ public class Recognizer {
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 }
                 if (cf != null) cf.close();
-                if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+                if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                        sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
                     id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 1,
@@ -3434,7 +3435,7 @@ public class Recognizer {
                 DB = new DataBase(ctx);
                 DB.open();
                 sHelp = new SyncHelper(ctx);
-                String uuID = sHelp.generateID();
+                String uuID = SyncHelper.generateID();
                 sPrefs = new SharedPrefs(ctx);
                 long id;
                 Cursor cf = DB.queryCategories();
@@ -3443,8 +3444,8 @@ public class Recognizer {
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 }
                 if (cf != null) cf.close();
-                if ((sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR) ||
-                        sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)) && export) {
+                if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                        sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
                     id = DB.insertReminder(res, Constants.TYPE_TIME,
                             currentDay, currentMonth, currentYear, currentHour,
                             currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
@@ -3533,10 +3534,10 @@ public class Recognizer {
 
     private void exportToCalendar(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ctx);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_CALENDAR)){
+        if (sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR)){
             new CalendarManager(ctx).addEvent(summary, startTime, id);
         }
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_EXPORT_TO_STOCK)){
+        if (sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)){
             new CalendarManager(ctx).addEventToStock(summary, startTime);
         }
     }

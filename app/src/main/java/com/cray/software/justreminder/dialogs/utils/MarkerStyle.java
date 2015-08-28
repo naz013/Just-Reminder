@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MarkerStyle extends Activity implements View.OnClickListener{
     TextView themeClose;
@@ -131,7 +131,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
 
     public void setUpRadio(){
         sPrefs = new SharedPrefs(MarkerStyle.this);
-        int loaded = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_MARKER_STYLE);
+        int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
         if (loaded == 1){
             red_flat.setChecked(true);
         } else if (loaded == 2){
@@ -204,7 +204,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
 
     void saveColor(int style) {
         sPrefs = new SharedPrefs(MarkerStyle.this);
-        sPrefs.saveInt(Constants.APP_UI_PREFERENCES_MARKER_STYLE, style);
+        sPrefs.saveInt(Prefs.MARKER_STYLE, style);
     }
 
     @Override

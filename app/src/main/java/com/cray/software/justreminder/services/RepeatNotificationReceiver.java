@@ -18,7 +18,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
     }
 
     public void setAlarm(Context context, long id) {
-        int repeat = new SharedPrefs(context).loadInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL);
+        int repeat = new SharedPrefs(context).loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL);
         int minutes = repeat * 1000 * 60;
         Intent intent = new Intent(context, RepeatNotificationReceiver.class);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
@@ -97,7 +98,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         builder.setAutoCancel(false);
         builder.setPriority(5);
         sPrefs = new SharedPrefs(ctx);
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SMART_FOLD)) {
+        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
             if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
                 Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -106,7 +107,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 builder.setContentIntent(intent);
             }
         }
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             builder.setContentText(ctx.getString(R.string.app_name_pro));
         } else builder.setContentText(ctx.getString(R.string.app_name));
 
@@ -127,12 +128,12 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         }
 
         int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_VOLUME);
+        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         if (i == 1) {
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SOUND_STATUS)) {
-                if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND)) {
+            if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+                if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) {
                     mMediaPlayer = new MediaPlayer();
                     try {
                         mMediaPlayer.setDataSource(ctx, soundUri);
@@ -140,7 +141,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                     mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND)) mMediaPlayer.setLooping(true);
+                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
                     else mMediaPlayer.setLooping(false);
 
                     mMediaPlayer.setVolume(1-log1, 1-log1);
@@ -163,7 +164,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                     mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND)) mMediaPlayer.setLooping(true);
+                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
                     else mMediaPlayer.setLooping(false);
 
                     mMediaPlayer.setVolume(1-log1, 1-log1);
@@ -184,21 +185,21 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
             }
         }
 
-        if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_VIBRATION_STATUS)){
+        if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
             long[] pattern;
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION)){
+            if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
             } else {
                 pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
             }
             builder.setVibrate(pattern);
         }
-        if (new ManageModule().isPro()){
-            if (sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_LED_STATUS)){
+        if (Module.isPro()){
+            if (sPrefs.loadBoolean(Prefs.LED_STATUS)){
                 if (color != 0) {
                     builder.setLights(color, 500, 1000);
                 } else {
-                    builder.setLights(sPrefs.loadInt(Constants.APP_UI_PREFERENCES_LED_COLOR), 500, 1000);
+                    builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
                 }
             }
         }

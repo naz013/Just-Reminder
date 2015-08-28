@@ -9,6 +9,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ReminderUtils;
 
 import java.util.ArrayList;
@@ -239,7 +240,7 @@ public class ReminderDataProvider {
 
     public void sort(){
         SharedPrefs prefs = new SharedPrefs(context);
-        String orderPrefs = prefs.loadPrefs(Constants.APP_UI_PREFERENCES_LIST_ORDER);
+        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
         ArrayList<ReminderItem> list = new ArrayList<>();
         list.clear();
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){

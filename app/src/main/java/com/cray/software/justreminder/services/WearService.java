@@ -70,8 +70,7 @@ public class WearService extends Service implements DataApi.DataListener,
         Log.d(Constants.LOG_TAG, "data received");
         for (DataEvent event: dataEventBuffer) {
 
-            Log.d("[DEBUG] DeviceService - onDataChanged",
-                    "Event received: " + event.getDataItem().getUri());
+            Log.d("[DEBUG] DeviceService ", "Event received: " + event.getDataItem().getUri());
 
             String eventUri = event.getDataItem().getUri().toString();
 

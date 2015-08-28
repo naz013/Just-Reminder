@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion '23.0.0'
     defaultConfig {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 96
         versionName '4.0b'
         multiDexEnabled true
@@ -92,7 +92,6 @@ repositories {
     jcenter()
 }
 
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.apis:google-api-services-calendar:v3-rev88-1.19.0' exclude module: 'httpclient'
@@ -101,20 +100,20 @@ dependencies {
     compile 'com.google.apis:google-api-services-drive:v2-rev149-1.19.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-tasks:v1-rev41-1.19.1' exclude module: 'httpclient'
     compile project(':lvl')
-    //compile project(':calDroid')
     compile project(':swipe_actions')
     compile project(':photoPreview')
-    compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'com.android.support:cardview-v7:22.2.1'
-    compile 'com.android.support:support-v4:22.2.1'
+    compile project(':fab')
+    //compile project(':box-content-sdk')
+    //compile project(':liveSDK')
+    compile project(':flextcal')
+    compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'com.android.support:cardview-v7:23.0.0'
+    compile 'com.android.support:support-v4:23.0.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.3'
     compile 'jp.wasabeef:recyclerview-animators:1.2.1@aar'
-    compile project(':fab')
-    compile project(':box-content-sdk')
-    compile project(':liveSDK')
-    compile project(':flextcal')
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
 }

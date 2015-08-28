@@ -17,7 +17,7 @@ import com.cray.software.justreminder.datas.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -80,7 +80,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         while (weekdayOfFirstDate > 0) {
             SharedPrefs prefs = new SharedPrefs(context);
             int temp = startDayOfWeek;
-            if (prefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 1){
+            if (prefs.loadInt(Prefs.START_DAY) == 1){
                 temp = startDayOfWeek + 1;
             }
 
@@ -138,15 +138,15 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         int currentYear;
 
         SharedPrefs sPrefs = new SharedPrefs(context);
-        int hour = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_HOUR);
-        int minute = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_BIRTHDAY_REMINDER_MINUTE);
-        boolean isFeature = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_CALENDAR_FEATURE_TASKS);
-        boolean isRemindersEnabled = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_REMINDERS_IN_CALENDAR);
+        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
         DataBase db = new DataBase(context);
         if (!db.isOpen()) db.open();
         WidgetDataProvider provider = new WidgetDataProvider();
-        Cursor c = db.getEvents();
+        Cursor c = db.getBirthdays();
         provider.setBirthdays(c);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {

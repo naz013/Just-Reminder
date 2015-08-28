@@ -20,7 +20,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.hexrain.flextcal.FlextHelper;
 
 import java.text.SimpleDateFormat;
@@ -149,7 +149,7 @@ public class CalendarThemeFragment extends Fragment{
             DateTime sunday = new DateTime(2013, 2, 17, 0, 0, 0, 0);
             DateTime nextDay = sunday.plusDays(startDayOfWeek - SUNDAY);
             SharedPrefs prefs = new SharedPrefs(context);
-            if (prefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 1){
+            if (prefs.loadInt(Prefs.START_DAY) == 1){
                 nextDay = nextDay.plusDays(1);
             }
 
@@ -246,7 +246,7 @@ public class CalendarThemeFragment extends Fragment{
             while (weekdayOfFirstDate > 0) {
                 SharedPrefs prefs = new SharedPrefs(context);
                 int temp = startDayOfWeek;
-                if (prefs.loadInt(Constants.APP_UI_PREFERENCES_START_DAY) == 1){
+                if (prefs.loadInt(Prefs.START_DAY) == 1){
                     temp = startDayOfWeek + 1;
                 }
 

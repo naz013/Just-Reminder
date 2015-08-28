@@ -223,6 +223,7 @@
 
         <receiver android:name=".services.AlarmReceiver" />
         <receiver android:name=".services.BirthdayCheckAlarm" />
+        <receiver android:name=".services.EventsCheckAlarm" />
         <receiver android:name=".services.PositionDelayReceiver" />
         <receiver android:name=".services.WeekDayReceiver" />
         <receiver android:name=".services.MonthDayReceiver" />
@@ -549,6 +550,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".dialogs.utils.EventsImport"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".dialogs.utils.SelectMelody"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog" >
@@ -830,7 +838,6 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/HomeWhiteFullscreen" >
         </activity>
-
         <activity
             android:name="com.hexrain.design.ScreenManager"
             android:configChanges="keyboardHidden|orientation|keyboard"
@@ -839,7 +846,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.box.androidsdk.content.auth.OAuthActivity"
             android:label="Accounts" >

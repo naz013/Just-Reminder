@@ -27,6 +27,7 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -45,7 +46,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
     EditText birthName, phone;
     Button pickContact;
-    RelativeLayout contactLayout, birthDateWrapper;
+    RelativeLayout contactLayout;
     LinearLayout container;
     TextView birthDate;
     CheckBox contactCheck;
@@ -83,9 +84,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         birthName = (EditText) findViewById(R.id.birthName);
         birthDate = (TextView) findViewById(R.id.birthDate);
         phone = (EditText) findViewById(R.id.phone);
-
-        birthDateWrapper = (RelativeLayout) findViewById(R.id.birthDateWrapper);
-        birthDateWrapper.setOnClickListener(this);
+        birthDate.setOnClickListener(this);
 
         container = (LinearLayout) findViewById(R.id.container);
 
@@ -108,7 +107,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         if (id != 0) {
             db = new DataBase(AddBirthday.this);
             db.open();
-            Cursor c = db.getEvent(id);
+            Cursor c = db.getBirthday(id);
             String dateStr = null;
             String name = null;
             if (c != null && c.moveToFirst()) {
@@ -146,7 +145,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         birthDate.setText(format.format(calendar.getTime()));
 
         pickContact = (Button) findViewById(R.id.pickContact);
-        ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_USE_DARK_THEME));
+        ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         contactLayout.setOnClickListener(this);
 
         mFab = new FloatingActionButton(AddBirthday.this);
@@ -172,7 +171,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.birthDateWrapper:
+            case R.id.birthDate:
                 dateDialog();
                 break;
             case R.id.contactLayout:
@@ -207,16 +206,16 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 } else {
                     int id = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                     if (number != null) {
-                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, number, uuId);
+                        db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, number, uuId);
                     } else
-                        db.insertEvent(contact, id, birthDate.getText().toString(), myDay, myMonth, null, uuId);
+                        db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, null, uuId);
 
                     finish();
                 }
             } else {
                 String contact = birthName.getText().toString();
                 if (!contact.matches("")) {
-                    db.insertEvent(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, uuId);
+                    db.addBirthday(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, uuId);
                     finish();
                 } else {
                     birthName.setError(getString(R.string.empty_field_error));

@@ -378,7 +378,7 @@
     <string name="delete_file_settings_title">"Backup löschen"</string>
     <string name="delete_file_settings_explanation">"Überprüfen Sie Backup-Datei löschen aktivieren, wenn Hinweis Lösch"</string>
     <string name="edit_reminder_toast">"Die Erinnerungszeit ist überholt. Öffnen Sie zum Bearbeiten"</string>
-    <string name="export_check_title">"Veranstaltungen exportieren in Kalender"</string>
+    <string name="export_check_title">In neuen Veranstaltung in Kalender</string>
     <string name="changes_settings_title">"Änderungen"</string>
     <string name="voice_widget_title">"Sprachsteuerung"</string>
     <string name="note_saved_toast">"Hinweis gerettet!"</string>
@@ -396,7 +396,7 @@
     <string name="time_evening_title">"Abends"</string>
     <string name="time_day_title">"Tag"</string>
     <string name="time_morning_title">"Morgens"</string>
-    <string name="export_to_calendar_settings">"Veranstaltungen exportieren in Systemkalender"</string>
+    <string name="export_to_calendar_settings">Veranstaltung hinzufügen, um die Systemkalender</string>
     <string name="export_to_calendar_settings_explanation">"Check exportieren Event Aktienkalender zu aktivieren, wenn Sie nicht über Google Calendar"</string>
     <string name="custom_melody_title">"Melodie"</string>
     <string name="selected_melody_string">"Selected Melodie"</string>
@@ -661,4 +661,17 @@
     <string name="string_backup_birthdays">Sicherungskopie Geburtstage</string>
     <string name="string_backup_birthdays_explanation">Überprüfen Sie, Sichern Geburtstage zu ermöglichen, wenn Sync-Mahnungen</string>
     <string name="simple_m_letter">m</string>
+    <string name="settings_events_import">Veranstaltungen Import</string>
+    <string name="string_auto_check">Automatisch nach neuen Veranstaltungen</string>
+    <string name="string_no_action_selected">Sie haben noch keine Aktion auswählen!</string>
+    <string name="string_no_calendar_selected">Sie können Kalender für Veranstaltungen auswählen!</string>
+    <string name="string_no_birthday_calendar_selected">Sie können Kalender für Geburtstage wählen!</string>
+    <string name="string_no_events_found">Keine Termine gefunden</string>
+    <string name="simple_imported">"Importiert "</string>
+    <string name="simple_event">" Veranstaltung"</string>
+    <string name="char_s_with_point">en.</string>
+    <string name="string_trash_cleared">Abfalleimer gelöscht.</string>
+    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
+    <string name="settings_birthday_reminder_title">Birthday reminder</string>
 </resources>

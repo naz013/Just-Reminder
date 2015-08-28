@@ -19,7 +19,7 @@ import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.utils.TimesOfDay;
 import com.cray.software.justreminder.dialogs.utils.VoiceLanguage;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 public class VoiceSettingsFragment extends Fragment {
 
@@ -48,7 +48,7 @@ public class VoiceSettingsFragment extends Fragment {
 
         autoLanguageCheck = (CheckBox) rootView.findViewById(R.id.autoLanguageCheck);
         SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        boolean auto = sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE);
+        boolean auto = sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE);
         autoLanguageCheck.setChecked(auto);
 
         voiceLanguage = (TextView) rootView.findViewById(R.id.voiceLanguage);
@@ -104,11 +104,11 @@ public class VoiceSettingsFragment extends Fragment {
     private void languageChange (){
         SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (autoLanguageCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE, false);
+            sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, false);
             autoLanguageCheck.setChecked(false);
             voiceLanguage.setEnabled(true);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_AUTO_LANGUAGE, true);
+            sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, true);
             autoLanguageCheck.setChecked(true);
             voiceLanguage.setEnabled(false);
         }

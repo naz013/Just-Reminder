@@ -15,8 +15,8 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 
@@ -75,12 +75,12 @@ public class SelectLocale extends Activity{
                 if (position == 6) locale = Language.POLISH;
                 if (position == 7) locale = Language.RUSSIAN;
                 if (position == 8) locale = Language.SPANISH;
-                sPrefs.savePrefs(Constants.APP_UI_PREFERENCES_TTS_LOCALE, locale);
+                sPrefs.savePrefs(Prefs.TTS_LOCALE, locale);
             }
         });
 
         int position = 1;
-        String locale = sPrefs.loadPrefs(Constants.APP_UI_PREFERENCES_TTS_LOCALE);
+        String locale = sPrefs.loadPrefs(Prefs.TTS_LOCALE);
         if (locale.matches(Language.ENGLISH)) position = 0;
         if (locale.matches(Language.FRENCH)) position = 1;
         if (locale.matches(Language.GERMAN)) position = 2;

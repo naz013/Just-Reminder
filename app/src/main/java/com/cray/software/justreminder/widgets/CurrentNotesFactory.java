@@ -11,6 +11,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -100,14 +101,14 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         if (byteImage != null){
             Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
             if (photo != null){
-                rView.setImageViewBitmap(R.id.image, photo);
-            } else rView.setViewVisibility(R.id.image, View.GONE);
-        } else rView.setViewVisibility(R.id.image, View.GONE);
+                rView.setImageViewBitmap(R.id.imageView, photo);
+            } else rView.setViewVisibility(R.id.imageView, View.GONE);
+        } else rView.setViewVisibility(R.id.imageView, View.GONE);
 
         SharedPrefs prefs = new SharedPrefs(context);
         SyncHelper helper = new SyncHelper(context);
         String title = note.get(i);
-        if (prefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTE_ENCRYPT)){
+        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = helper.decrypt(title);
         }
 
@@ -116,7 +117,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra(Constants.EDIT_ID, ids.get(i));
         rView.setOnClickFillInIntent(R.id.note, fillInIntent);
-        rView.setOnClickFillInIntent(R.id.image, fillInIntent);
+        rView.setOnClickFillInIntent(R.id.imageView, fillInIntent);
         rView.setOnClickFillInIntent(R.id.noteBackground, fillInIntent);
         return rView;
     }

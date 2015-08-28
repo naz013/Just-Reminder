@@ -23,7 +23,7 @@
     <string name="geo_fragment">Локації</string>
     <string name="load_contats">Завантаження списку контактів</string>
     <string name="loading_wait">Будь ласка, зачекайте…</string>
-    <string name="contact_dialog_title">Виберіть контакт</string>
+    <string name="contact_dialog_title">Оберіть контакт</string>
     <string name="meter"> м</string>
     <string name="disable_notif_title">Повідомлення про відстань до пункту призначення</string>
     <string name="disable_notif_description">Відмітьте, щоб увімкнути повідомлення про відстань</string>
@@ -83,7 +83,7 @@
     <string name="notification_settings">Повідомлення</string>
     <string name="location_settings">Місце знаходження</string>
     <string name="other_settings">Інше</string>
-    <string name="first_day_dialog_title">Виберіть перший день тижня</string>
+    <string name="first_day_dialog_title">Оберіть перший день тижня</string>
     <string name="start_day_sunday">Неділя</string>
     <string name="start_day_monday">Понеділок</string>
     <string name="days_to_dialog_title">Днів до Дня Народження</string>
@@ -102,7 +102,7 @@
     <string name="empty_field_error">Не повинно бути пустим</string>
     <string name="birthday_reminder_time">Нагадувати про ДН о:</string>
     <string name="years_string"> р.</string>
-    <string name="choose_date_title">Виберіть дату народження:</string>
+    <string name="choose_date_title">Оберіть дату народження:</string>
     <string name="select_contact_button">Вибрати контакт</string>
     <string name="import_dialog_button_yes">Так</string>
     <string name="import_dialog_button_no">Ні</string>
@@ -345,7 +345,7 @@
     <string name="image_dialog_title">Виберіть джерело зображення</string>
     <string name="image_dialog_gallery">Галерея</string>
     <string name="image_dialog_camera">Камера</string>
-    <string name="choose_picture_title">Виберіть зображення</string>
+    <string name="choose_picture_title">Оберіть зображення</string>
     <string name="settings_encrypt_title">Шифрувати нотатки</string>
     <string name="settings_encrypt_explanation">Відмітьте, щоб шифрувати нотатки</string>
     <string name="settings_note_reminder_title">Нагадування швидкої нотатки</string>
@@ -375,11 +375,11 @@
     <string name="delete_all_dialog_message">Ви дійсно хочете видалити всі нотатки?</string>
     <string name="delete_note_dialog_title">Видалити нотатку</string>
     <string name="delete_note_dialog_message">Ви дійсно хочете видалити цю нотатку?</string>
-    <string name="font_style_dialog_title">Виберіть стиль шрифту</string>
+    <string name="font_style_dialog_title">Оберіть стиль шрифту</string>
     <string name="delete_file_settings_title">Видаляти резервну копію</string>
     <string name="delete_file_settings_explanation">Відмітьте, щоб увімкнути видалення резервної копії нотатки</string>
     <string name="edit_reminder_toast">Час нагадування пройшов. Відкрийте, щоб редагувати</string>
-    <string name="export_check_title">Експортувати подію в Календар</string>
+    <string name="export_check_title">Додати подію в Календар</string>
     <string name="changes_settings_title">Зміни</string>
     <string name="voice_widget_title">Голосове управління</string>
     <string name="note_saved_toast">Нотатка збережена!</string>
@@ -397,7 +397,7 @@
     <string name="time_evening_title">Вечір</string>
     <string name="time_day_title">День</string>
     <string name="time_morning_title">Ранок</string>
-    <string name="export_to_calendar_settings">Експортувати подію в системний календар</string>
+    <string name="export_to_calendar_settings">Додати подію в системний календар</string>
     <string name="export_to_calendar_settings_explanation">Відмітьте, щоб увімкнути експорт події в системний календар, якщо у Вас немає Календаря Google</string>
     <string name="custom_melody_title">Мелодія</string>
     <string name="selected_melody_string">"Обрано мелодію "</string>
@@ -644,7 +644,7 @@
     <string name="string_generating_events">Генерую події…</string>
     <string name="interval_day">Щоденно</string>
     <string name="string_swipe_left_or_right">Потягніть вліво або вправо, щоб обрати тему.</string>
-    <string name="string_address">Адреса...</string>
+    <string name="string_address">Адреса…</string>
     <string name="string_place_out">Place out</string>
     <string name="string_map_point">Місце на карті</string>
     <string name="string_selected_radius">Радіус %s</string>
@@ -654,11 +654,24 @@
     <string name="contact_group_explanation">Оберіть контакти для того, щоб увімкнути наступні нагадування для них.</string>
     <string name="string_delete_selected">Delete selected</string>
     <string name="string_selected">selected</string>
-    <string name="message_sync_birthdays">Синхронізація днів народження...</string>
-    <string name="message_sync_notes">Синхронізація нотаток...</string>
-    <string name="message_sync_reminders">Синхронізація нагадувань...</string>
-    <string name="string_getting_birthdays">Відновлення днів народжень...</string>
+    <string name="message_sync_birthdays">Синхронізація днів народження…</string>
+    <string name="message_sync_notes">Синхронізація нотаток…</string>
+    <string name="message_sync_reminders">Синхронізація нагадувань…</string>
+    <string name="string_getting_birthdays">Відновлення днів народжень…</string>
     <string name="string_backup_birthdays">Синхронізація днів народжень</string>
     <string name="string_backup_birthdays_explanation">Відмітьте, щоб увімкнути синхронізацію ДН при синхронізації нагадувань</string>
-    <string name="simple_m_letter">m</string>
+    <string name="simple_m_letter">м</string>
+    <string name="settings_events_import">Імпортувати події</string>
+    <string name="string_auto_check">Автоматично перевіряти на наявність нових подій</string>
+    <string name="string_no_action_selected">Ви не відмітили жодного пункту!</string>
+    <string name="string_no_calendar_selected">Ви не вибрали календар для подій!</string>
+    <string name="string_no_birthday_calendar_selected">Ви не вибрали календар для днів народжень!</string>
+    <string name="string_no_events_found">Не знайдено нових подій</string>
+    <string name="simple_imported">"Імпортовано "</string>
+    <string name="simple_event">" подій"</string>
+    <string name="char_s_with_point">.</string>
+    <string name="string_trash_cleared">Корзина очищена.</string>
+    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
+    <string name="settings_birthday_reminder_title">Birthday reminder</string>
 </resources>

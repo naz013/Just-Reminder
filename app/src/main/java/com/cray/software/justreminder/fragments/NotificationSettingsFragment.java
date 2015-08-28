@@ -24,7 +24,8 @@ import com.cray.software.justreminder.dialogs.utils.SoundType;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.modules.ManageModule;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
 
@@ -65,19 +66,19 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         wakeScreenOption.setOnClickListener(this);
 
         wakeScreenCheck = (CheckBox) rootView.findViewById(R.id.wakeScreenCheck);
-        wakeScreenCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS));
+        wakeScreenCheck.setChecked(sPrefs.loadBoolean(Prefs.WAKE_STATUS));
 
         unlockScreen = (RelativeLayout) rootView.findViewById(R.id.unlockScreen);
         unlockScreen.setOnClickListener(this);
 
         unlockScreenCheck = (CheckBox) rootView.findViewById(R.id.unlockScreenCheck);
-        unlockScreenCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE));
+        unlockScreenCheck.setChecked(sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE));
 
         silentSMSOption = (RelativeLayout) rootView.findViewById(R.id.silentSMSOption);
         silentSMSOption.setOnClickListener(this);
 
         silentSMSCheck = (CheckBox) rootView.findViewById(R.id.silentSMSCheck);
-        silentSMSCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS));
+        silentSMSCheck.setChecked(sPrefs.loadBoolean(Prefs.SILENT_SMS));
 
         delayFor = (RelativeLayout) rootView.findViewById(R.id.delayFor);
         delayFor.setOnClickListener(this);
@@ -88,7 +89,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         repeatNotificationOption.setOnClickListener(this);
 
         repeatNotificationCheck = (CheckBox) rootView.findViewById(R.id.repeatNotificationCheck);
-        repeatNotificationCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT));
+        repeatNotificationCheck.setChecked(sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT));
 
         repeatInterval = (RelativeLayout) rootView.findViewById(R.id.repeatInterval);
         repeatInterval.setOnClickListener(this);
@@ -101,14 +102,14 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         autoLaunch.setOnClickListener(this);
 
         autoLaunchCheck = (CheckBox) rootView.findViewById(R.id.autoLaunchCheck);
-        autoLaunchCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_APPLICATION_AUTO_LAUNCH));
+        autoLaunchCheck.setChecked(sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH));
 
         notificationDismiss = (RelativeLayout) rootView.findViewById(R.id.notificationDismiss);
         notificationDismiss.setOnClickListener(this);
 
         notificationDismissCheck = (CheckBox) rootView.findViewById(R.id.notificationDismissCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        notificationDismissCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REMOVE));
+        notificationDismissCheck.setChecked(sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE));
 
         sText = (TextView) rootView.findViewById(R.id.sText);
         sText1 = (TextView) rootView.findViewById(R.id.sText1);
@@ -117,13 +118,13 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         permanentNotification.setOnClickListener(this);
 
         permanentNotificationCheck = (CheckBox) rootView.findViewById(R.id.permanentNotificationCheck);
-        permanentNotificationCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION));
+        permanentNotificationCheck.setChecked(sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION));
 
         statusIcon = (RelativeLayout) rootView.findViewById(R.id.statusIcon);
         statusIcon.setOnClickListener(this);
 
         statusIconCheck = (CheckBox) rootView.findViewById(R.id.statusIconCheck);
-        statusIconCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_ICON));
+        statusIconCheck.setChecked(sPrefs.loadBoolean(Prefs.STATUS_BAR_ICON));
 
         vibrationOption = (RelativeLayout) rootView.findViewById(R.id.vibrationOption);
         vibrationOption.setOnClickListener(this);
@@ -132,19 +133,19 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         vText1 = (TextView) rootView.findViewById(R.id.vText1);
 
         vibrationCheck = (CheckBox) rootView.findViewById(R.id.vibrationCheck);
-        vibrationCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_VIBRATION_STATUS));
+        vibrationCheck.setChecked(sPrefs.loadBoolean(Prefs.VIBRATION_STATUS));
 
         infiniteVibrateOption = (RelativeLayout) rootView.findViewById(R.id.infiniteVibrateOption);
         infiniteVibrateOption.setOnClickListener(this);
 
         infiniteVibrateCheck = (CheckBox) rootView.findViewById(R.id.infiniteVibrateCheck);
-        infiniteVibrateCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION));
+        infiniteVibrateCheck.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION));
 
         soundOption = (RelativeLayout) rootView.findViewById(R.id.soundOption);
         soundOption.setOnClickListener(this);
 
         soundCheck = (CheckBox) rootView.findViewById(R.id.soundCheck);
-        soundCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_SOUND_STATUS));
+        soundCheck.setChecked(sPrefs.loadBoolean(Prefs.SOUND_STATUS));
 
         chooseSound = (LinearLayout) rootView.findViewById(R.id.chooseSound);
         chooseSound.setOnClickListener(this);
@@ -159,7 +160,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         infiniteSoundOption.setOnClickListener(this);
 
         infiniteSoundCheck = (CheckBox) rootView.findViewById(R.id.infiniteSoundCheck);
-        infiniteSoundCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND));
+        infiniteSoundCheck.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
 
         tts = (RelativeLayout) rootView.findViewById(R.id.tts);
         tts.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +171,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         });
 
         ttsCheck = (CheckBox) rootView.findViewById(R.id.ttsCheck);
-        ttsCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_TTS));
+        ttsCheck.setChecked(sPrefs.loadBoolean(Prefs.TTS));
 
         locale = (TextView) rootView.findViewById(R.id.locale);
         locale.setOnClickListener(new View.OnClickListener() {
@@ -192,7 +193,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         checkTTS();
 
-        if (new ManageModule().isPro()){
+        if (Module.isPro()){
             lewWrapper = (RelativeLayout) rootView.findViewById(R.id.lewWrapper);
             lewWrapper.setVisibility(View.VISIBLE);
             led = (RelativeLayout) rootView.findViewById(R.id.led);
@@ -204,7 +205,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             });
 
             ledCheck = (CheckBox) rootView.findViewById(R.id.ledCheck);
-            ledCheck.setChecked(sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_LED_STATUS));
+            ledCheck.setChecked(sPrefs.loadBoolean(Prefs.LED_STATUS));
 
             lewColorWrapper = (LinearLayout) rootView.findViewById(R.id.lewColorWrapper);
             lewColorWrapper.setVisibility(View.VISIBLE);
@@ -286,11 +287,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void vibrationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (vibrationCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_VIBRATION_STATUS, false);
+            sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, false);
             vibrationCheck.setChecked(false);
             checkVibrate();
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_VIBRATION_STATUS, true);
+            sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, true);
             vibrationCheck.setChecked(true);
             checkVibrate();
         }
@@ -299,10 +300,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void infiniteVibrationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteVibrateCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION, false);
+            sPrefs.saveBoolean(Prefs.INFINITE_VIBRATION, false);
             infiniteVibrateCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_VIBRATION, true);
+            sPrefs.saveBoolean(Prefs.INFINITE_VIBRATION, true);
             infiniteVibrateCheck.setChecked(true);
         }
     }
@@ -310,10 +311,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void ttsChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ttsCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TTS, false);
+            sPrefs.saveBoolean(Prefs.TTS, false);
             ttsCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_TTS, true);
+            sPrefs.saveBoolean(Prefs.TTS, true);
             ttsCheck.setChecked(true);
             getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -324,10 +325,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void soundChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (soundCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SOUND_STATUS, false);
+            sPrefs.saveBoolean(Prefs.SOUND_STATUS, false);
             soundCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SOUND_STATUS, true);
+            sPrefs.saveBoolean(Prefs.SOUND_STATUS, true);
             soundCheck.setChecked(true);
         }
     }
@@ -335,11 +336,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void infiniteSoundChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteSoundCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND, false);
+            sPrefs.saveBoolean(Prefs.INFINITE_SOUND, false);
             infiniteSoundCheck.setChecked(false);
         } else {
-            if (!sPrefs.loadBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT)) {
-                sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND, true);
+            if (!sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
+                sPrefs.saveBoolean(Prefs.INFINITE_SOUND, true);
                 infiniteSoundCheck.setChecked(true);
             }
         }
@@ -348,11 +349,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void iconChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (statusIconCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_ICON, false);
+            sPrefs.saveBoolean(Prefs.STATUS_BAR_ICON, false);
             statusIconCheck.setChecked(false);
             new Notifier(getActivity()).recreatePermanent();
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_ICON, true);
+            sPrefs.saveBoolean(Prefs.STATUS_BAR_ICON, true);
             statusIconCheck.setChecked(true);
             new Notifier(getActivity()).recreatePermanent();
         }
@@ -361,11 +362,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void notificationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (permanentNotificationCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION, false);
+            sPrefs.saveBoolean(Prefs.STATUS_BAR_NOTIFICATION, false);
             permanentNotificationCheck.setChecked(false);
             new Notifier(getActivity()).hidePermanent();
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_STATUS_BAR_NOTIFICATION, true);
+            sPrefs.saveBoolean(Prefs.STATUS_BAR_NOTIFICATION, true);
             permanentNotificationCheck.setChecked(true);
             new Notifier(getActivity()).recreatePermanent();
         }
@@ -374,10 +375,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void notificationDismissChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (notificationDismissCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REMOVE, false);
+            sPrefs.saveBoolean(Prefs.NOTIFICATION_REMOVE, false);
             notificationDismissCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REMOVE, true);
+            sPrefs.saveBoolean(Prefs.NOTIFICATION_REMOVE, true);
             notificationDismissCheck.setChecked(true);
         }
     }
@@ -399,8 +400,8 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void showDays(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         int days;
-        if (sPrefs.isString(Constants.APP_UI_PREFERENCES_DELAY_TIME)) {
-            days = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_DELAY_TIME);
+        if (sPrefs.isString(Prefs.DELAY_TIME)) {
+            days = sPrefs.loadInt(Prefs.DELAY_TIME);
         } else days = 0;
         delayForText.setText(String.valueOf(days));
     }
@@ -408,8 +409,8 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void showRepeat(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         int days;
-        if (sPrefs.isString(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL)) {
-            days = sPrefs.loadInt(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT_INTERVAL);
+        if (sPrefs.isString(Prefs.NOTIFICATION_REPEAT_INTERVAL)) {
+            days = sPrefs.loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL);
         } else days = 0;
         repeatIntervalText.setText(String.valueOf(days));
     }
@@ -417,10 +418,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void ledChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ledCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_LED_STATUS, false);
+            sPrefs.saveBoolean(Prefs.LED_STATUS, false);
             ledCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_LED_STATUS, true);
+            sPrefs.saveBoolean(Prefs.LED_STATUS, true);
             ledCheck.setChecked(true);
         }
         checkEnabling();
@@ -429,10 +430,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void silentSMSChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (silentSMSCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS, false);
+            sPrefs.saveBoolean(Prefs.SILENT_SMS, false);
             silentSMSCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_SILENT_SMS, true);
+            sPrefs.saveBoolean(Prefs.SILENT_SMS, true);
             silentSMSCheck.setChecked(true);
         }
     }
@@ -440,10 +441,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void autoLaunchChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (autoLaunchCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_APPLICATION_AUTO_LAUNCH, false);
+            sPrefs.saveBoolean(Prefs.APPLICATION_AUTO_LAUNCH, false);
             autoLaunchCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_APPLICATION_AUTO_LAUNCH, true);
+            sPrefs.saveBoolean(Prefs.APPLICATION_AUTO_LAUNCH, true);
             autoLaunchCheck.setChecked(true);
         }
     }
@@ -465,10 +466,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void wakeChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wakeScreenCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS, false);
+            sPrefs.saveBoolean(Prefs.WAKE_STATUS, false);
             wakeScreenCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_WAKE_STATUS, true);
+            sPrefs.saveBoolean(Prefs.WAKE_STATUS, true);
             wakeScreenCheck.setChecked(true);
         }
     }
@@ -476,10 +477,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void unlockChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (unlockScreenCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE, false);
+            sPrefs.saveBoolean(Prefs.UNLOCK_DEVICE, false);
             unlockScreenCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_UNLOCK_DEVICE, true);
+            sPrefs.saveBoolean(Prefs.UNLOCK_DEVICE, true);
             unlockScreenCheck.setChecked(true);
         }
     }
@@ -487,12 +488,12 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void repeatChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (repeatNotificationCheck.isChecked()){
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT, false);
+            sPrefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, false);
             repeatNotificationCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_NOTIFICATION_REPEAT, true);
+            sPrefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, true);
             repeatNotificationCheck.setChecked(true);
-            sPrefs.saveBoolean(Constants.APP_UI_PREFERENCES_INFINITE_SOUND, false);
+            sPrefs.saveBoolean(Prefs.INFINITE_SOUND, false);
         }
         checkRepeat();
         checkInfinite();
