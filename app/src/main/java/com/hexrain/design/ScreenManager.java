@@ -96,6 +96,7 @@ import com.hexrain.design.fragments.TasksFragment;
 import com.hexrain.design.fragments.TemplatesFragment;
 import com.hexrain.design.fragments.TrashFragment;
 import com.hexrain.flextcal.FlextCal;
+import com.hexrain.flextcal.FlextData;
 import com.hexrain.flextcal.FlextHelper;
 import com.hexrain.flextcal.FlextListener;
 
@@ -866,10 +867,9 @@ public class ScreenManager extends AppCompatActivity
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
         args.putBoolean(FlextCal.SIX_WEEKS_IN_CALENDAR, true);
-        args.putBoolean(FlextCal.ENABLE_IMAGES, true);
+        args.putBoolean(FlextCal.ENABLE_IMAGES, sPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.colorCurrentCalendar());
-
         replace(calendarView, mTag);
 
         final FlextListener listener = new FlextListener() {
@@ -1054,8 +1054,9 @@ public class ScreenManager extends AppCompatActivity
         if (!db.isOpen()) db.open();
         sPrefs = new SharedPrefs(this);
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        HashMap<DateTime, String> dates = new HashMap<>();
+        HashMap<DateTime, FlextData> dates = new HashMap<>();
         dates.clear();
+        int res = cSetter.colorReminderCalendar();
         Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()){
             do {
@@ -1086,7 +1087,7 @@ public class ScreenManager extends AppCompatActivity
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
                         Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
+                        dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                         int days = 0;
                         if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
                             do {
@@ -1097,7 +1098,7 @@ public class ScreenManager extends AppCompatActivity
                                 month = calendar.get(Calendar.MONTH);
                                 year = calendar.get(Calendar.YEAR);
                                 date = TimeUtil.getDate(year, month, day);
-                                dates.put(FlextHelper.convertDateToDateTime(date), task);
+                                dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                             } while (days < Configs.MAX_DAYS_COUNT);
                         }
                     }
@@ -1110,7 +1111,7 @@ public class ScreenManager extends AppCompatActivity
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
                         Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
+                        dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                     }
                     int days = 0;
                     if (isFeature){
@@ -1124,7 +1125,7 @@ public class ScreenManager extends AppCompatActivity
                                 int month = calendar.get(Calendar.MONTH);
                                 int year = calendar.get(Calendar.YEAR);
                                 Date date = TimeUtil.getDate(year, month, day);
-                                dates.put(FlextHelper.convertDateToDateTime(date), task);
+                                dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -1137,7 +1138,7 @@ public class ScreenManager extends AppCompatActivity
                         int month = calendar.get(Calendar.MONTH);
                         int year = calendar.get(Calendar.YEAR);
                         Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
+                        dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                     }
                     int days = 1;
                     if (isFeature){
@@ -1149,7 +1150,7 @@ public class ScreenManager extends AppCompatActivity
                             int month = calendar.get(Calendar.MONTH);
                             int year = calendar.get(Calendar.YEAR);
                             Date date = TimeUtil.getDate(year, month, day);
-                            dates.put(FlextHelper.convertDateToDateTime(date), task);
+                            dates.put(FlextHelper.convertDateToDateTime(date), new FlextData(task, res));
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
@@ -1161,7 +1162,6 @@ public class ScreenManager extends AppCompatActivity
         db.close();
 
         if (calendarView != null) {
-            calendarView.setBackgroundResourceForEventOne(cSetter.colorReminderCalendar());
             calendarView.setTaskForEventOne(dates);
         }
     }
@@ -1171,7 +1171,8 @@ public class ScreenManager extends AppCompatActivity
     private void loadEvents(){
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
-        HashMap<DateTime, String> dates = new HashMap<>();
+        HashMap<DateTime, FlextData> dates = new HashMap<>();
+        int res = cSetter.colorBirthdayCalendar();
         Cursor c = db.getBirthdays();
         if (c != null && c.moveToFirst()){
             do {
@@ -1198,10 +1199,10 @@ public class ScreenManager extends AppCompatActivity
                     Date prevDate = TimeUtil.getDate(year - 1, month, day);
                     Date nextDate = TimeUtil.getDate(year + 1, month, day);
                     Date nextTwoDate = TimeUtil.getDate(year + 2, month, day);
-                    dates.put(FlextHelper.convertDateToDateTime(bdDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(prevDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(nextDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(nextTwoDate), name);
+                    dates.put(FlextHelper.convertDateToDateTime(bdDate), new FlextData(name, res));
+                    dates.put(FlextHelper.convertDateToDateTime(prevDate), new FlextData(name, res));
+                    dates.put(FlextHelper.convertDateToDateTime(nextDate), new FlextData(name, res));
+                    dates.put(FlextHelper.convertDateToDateTime(nextTwoDate), new FlextData(name, res));
                 }
             } while (c.moveToNext());
         }
@@ -1211,7 +1212,6 @@ public class ScreenManager extends AppCompatActivity
         db.close();
 
         if (calendarView != null) {
-            calendarView.setBackgroundResourceForEventTwo(cSetter.colorBirthdayCalendar());
             calendarView.setTaskForEventTwo(dates);
         }
     }

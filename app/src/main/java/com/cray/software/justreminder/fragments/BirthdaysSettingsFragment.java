@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.dialogs.utils.BirthdayImport;
 import com.cray.software.justreminder.dialogs.utils.DaysTo;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -90,6 +91,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
         birthImport = (TextView) rootView.findViewById(R.id.birthImport);
         birthImport.setOnClickListener(this);
+        birthImport.setVisibility(View.GONE);
 
         birthReminder = (RelativeLayout) rootView.findViewById(R.id.birthReminder);
         birthReminder.setOnClickListener(this);
@@ -284,6 +286,11 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.birthReminder:
                 birthCheck();
+                break;
+            case R.id.birthImport:
+                getActivity().getApplicationContext()
+                        .startActivity(new Intent(getActivity().getApplicationContext(), BirthdayImport.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.contactsScan:
                 new checkBirthdays(getActivity()).execute();

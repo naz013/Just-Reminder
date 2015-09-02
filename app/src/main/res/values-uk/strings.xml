@@ -671,7 +671,9 @@
     <string name="simple_event">" подій"</string>
     <string name="char_s_with_point">.</string>
     <string name="string_trash_cleared">Корзина очищена.</string>
-    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
-    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
-    <string name="settings_birthday_reminder_title">Birthday reminder</string>
+    <string name="import_birth_from_facebook">Імпортувати дні народження з Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Відмітьте, щоб увімкнути нагадування про дні народження</string>
+    <string name="settings_birthday_reminder_title">Нагадування про дні народження</string>
+    <string name="settings_bg_image_explanation">Відмітьте, щоб увімкнути фонове зображення в календарі</string>
+    <string name="settings_bg_image_title">Фонове зображення</string>
 </resources>

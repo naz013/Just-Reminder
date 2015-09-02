@@ -75,8 +75,8 @@ public class LogInActivity extends Activity {
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
-    String MARKET_APP_JUSTREMINDER = "com.cray.software.justreminder";
-    String MARKET_APP_JUSTREMINDER_PRO = "com.cray.software.justreminderpro";
+    public static final String MARKET_APP_JUSTREMINDER = "com.cray.software.justreminder";
+    public static final String MARKET_APP_JUSTREMINDER_PRO = "com.cray.software.justreminderpro";
 
     String accountName;
     private Context ctx = this;

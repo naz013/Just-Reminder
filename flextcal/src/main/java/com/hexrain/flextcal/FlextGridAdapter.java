@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import hirondelle.date4j.DateTime;
 
@@ -44,7 +45,7 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected SharedPreferences prefs;
 
     protected int backgroundForEventOne, backgroundForEventTwo, backgroundForToday = 0;
-    protected HashMap<DateTime, String> textMapForEventOne, textMapForEventTwo;
+    protected HashMap<DateTime, FlextData> textMapForEventOne, textMapForEventTwo;
 
 	/**
 	 * caldroidData belongs to Caldroid
@@ -173,14 +174,23 @@ public class FlextGridAdapter extends BaseAdapter {
 		startDayOfWeek = (Integer) caldroidData.get(FlextCal.START_DAY_OF_WEEK);
 		sixWeeksInCalendar = (Boolean) caldroidData.get(FlextCal.SIX_WEEKS_IN_CALENDAR);
 
-        backgroundForEventOne = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_EVENT_ONE_);
-        backgroundForEventTwo = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_EVENT_TWO_);
         backgroundForToday = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TODAY_);
 
-        textMapForEventOne = (HashMap<DateTime, String>) caldroidData
+        textMapForEventOne = (HashMap<DateTime, FlextData>) caldroidData
                 .get(FlextCal._TEXT_FOR_EVENT_ONE);
-        textMapForEventTwo = (HashMap<DateTime, String>) caldroidData
+        textMapForEventTwo = (HashMap<DateTime, FlextData>) caldroidData
                 .get(FlextCal._TEXT_FOR_EVENT_TWO);
+
+		if (textMapForEventOne != null && textMapForEventOne.size() > 0) {
+            Map.Entry<DateTime, FlextData> entry = textMapForEventOne.entrySet().iterator().next();
+            DateTime first = entry.getKey();
+			backgroundForEventOne = textMapForEventOne.get(first).getResource();
+		}
+        if (textMapForEventTwo != null && textMapForEventTwo.size() > 0) {
+            Map.Entry<DateTime, FlextData> entry = textMapForEventTwo.entrySet().iterator().next();
+            DateTime first = entry.getKey();
+            backgroundForEventTwo = textMapForEventTwo.get(first).getResource();
+        }
 
 		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year,
 				startDayOfWeek, sixWeeksInCalendar);
@@ -194,25 +204,20 @@ public class FlextGridAdapter extends BaseAdapter {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void setCustomResources(DateTime dateTime, View backgroundView, TextView textView, TextView task1, TextView task2) {
+	protected void setCustomResources(DateTime dateTime, TextView task1, TextView task2) {
 		// Set custom background resource
-		task1.setTextColor(resources.getColor(backgroundForEventOne));
-		task2.setTextColor(resources.getColor(backgroundForEventTwo));
-		if (textMapForEventOne != null) {
-			// Get background resource for the dateTime
 
+		if (textMapForEventOne != null) {
 			// Set it
 			if (textMapForEventOne.containsKey(dateTime)) {
-				task1.setText(textMapForEventOne.get(dateTime));
+				task1.setText(textMapForEventOne.get(dateTime).getTask());
 			}
 		}
 
         if (textMapForEventTwo != null) {
-            // Get background resource for the dateTime
-
             // Set it
             if (textMapForEventTwo.containsKey(dateTime))
-                task2.setText(textMapForEventTwo.get(dateTime));
+                task2.setText(textMapForEventTwo.get(dateTime).getTask());
         }
 	}
 
@@ -237,72 +242,34 @@ public class FlextGridAdapter extends BaseAdapter {
 		DateTime dateTime = this.datetimeList.get(position);
 
 		// Set color of the dates in previous / next month
-		if (dateTime.getMonth() != month) {
+		boolean notCurrent = dateTime.getMonth() != month;
+		if (notCurrent) {
 			cellView.setTextColor(resources.getColor(android.R.color.darker_gray));
-		}
-
-		boolean shouldResetDiabledView = false;
-		boolean shouldResetSelectedView = false;
-
-		// Customize for disabled dates and date outside min/max dates
-		if ((minDateTime != null && dateTime.lt(minDateTime))
-				|| (maxDateTime != null && dateTime.gt(maxDateTime))
-				|| (disableDates != null && disableDatesMap
-						.containsKey(dateTime))) {
-
-            if (isDark) {
-                cellView.setTextColor(resources.getColor(android.R.color.darker_gray));
-            } else {
-                cellView.setTextColor(resources.getColor(android.R.color.darker_gray));
-            }
-
-			if (FlextCal.disabledBackgroundDrawable == -1) {
-				cellView.setBackgroundResource(android.R.color.transparent);
-			} else {
-				cellView.setBackgroundResource(FlextCal.disabledBackgroundDrawable);
-			}
-
-			if (dateTime.equals(getToday())) {
-				cellView.setTextColor(resources.getColor(android.R.color.holo_red_light));
-			}
-		} else {
-			shouldResetDiabledView = true;
 		}
 
 		// Customize for selected dates
 		if (selectedDates != null && selectedDatesMap.containsKey(dateTime)) {
-			/*if (FlextCal.selectedBackgroundDrawable != -1) {
-				//cellView.setBackgroundResource(FlextCal.selectedBackgroundDrawable);
+			if (isDark) {
+				cellView.setTextColor(resources.getColor(android.R.color.white));
 			} else {
-				//cellView.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light));
-			}*/
-
-            if (isDark) {
-                cellView.setTextColor(resources.getColor(android.R.color.white));
-            } else {
-                cellView.setTextColor(resources.getColor(android.R.color.black));
-            }
-		} else {
-			shouldResetSelectedView = true;
+				cellView.setTextColor(resources.getColor(android.R.color.black));
+			}
 		}
 
-		if (shouldResetDiabledView && shouldResetSelectedView) {
-			// Customize for today
-			if (dateTime.equals(getToday())) {
-                if (backgroundForToday != 0) {
-                    cellView.setTextColor(resources.getColor(backgroundForToday));
-                } else {
-					cellView.setTextColor(resources.getColor(android.R.color.holo_red_light));
-				}
+		if (dateTime.equals(getToday())) {
+			if (backgroundForToday != 0) {
+				cellView.setTextColor(resources.getColor(backgroundForToday));
 			} else {
-				cellView.setBackgroundResource(android.R.color.transparent);
+				cellView.setTextColor(resources.getColor(android.R.color.holo_red_light));
 			}
+		} else {
+			cellView.setBackgroundResource(android.R.color.transparent);
 		}
 
 		cellView.setText("" + dateTime.getDay());
 
 		// Set custom color if required
-		setCustomResources(dateTime, cellView, cellView, task1, task2);
+		if (!notCurrent) setCustomResources(dateTime, task1, task2);
 	}
 
 	@Override
@@ -333,9 +300,9 @@ public class FlextGridAdapter extends BaseAdapter {
         TextView cellView = (TextView) view.findViewById(R.id.textView);
         TextView task1 = (TextView) view.findViewById(R.id.task1);
         TextView task2 = (TextView) view.findViewById(R.id.task2);
-
+		task1.setTextColor(resources.getColor(backgroundForEventOne));
+		task2.setTextColor(resources.getColor(backgroundForEventTwo));
 		customizeTextView(position, cellView, task1, task2);
-
 		return view;
 	}
 }

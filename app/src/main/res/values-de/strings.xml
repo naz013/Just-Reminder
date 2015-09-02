@@ -644,7 +644,7 @@
     <string name="string_generating_events">Generieren von Ereignissen…</string>
     <string name="interval_day">Täglich</string>
     <string name="string_swipe_left_or_right">Streichen Sie nach links oder rechts, um Thema auswählen.</string>
-    <string name="string_address">Adresse...</string>
+    <string name="string_address">Adresse…</string>
     <string name="string_place_out">Place out</string>
     <string name="string_current_location">Gegenwärtige Platz</string>
     <string name="string_map_point">Karte Punkt</string>
@@ -654,10 +654,10 @@
     <string name="contact_group_explanation">Wählen Sie Kontakte aus, um Folge Erinnerung für sie zu aktivieren.</string>
     <string name="string_delete_selected">Delete selected</string>
     <string name="string_selected">selected</string>
-    <string name="message_sync_birthdays">Synchronisieren Geburtstage...</string>
-    <string name="message_sync_notes">Synchronisieren von Notizen...</string>
-    <string name="message_sync_reminders">Synchronisieren Mahnungen...</string>
-    <string name="string_getting_birthdays">Wiederherstellen Geburtstage...</string>
+    <string name="message_sync_birthdays">Synchronisieren Geburtstage…</string>
+    <string name="message_sync_notes">Synchronisieren von Notizen…</string>
+    <string name="message_sync_reminders">Synchronisieren Mahnungen…</string>
+    <string name="string_getting_birthdays">Wiederherstellen Geburtstage…</string>
     <string name="string_backup_birthdays">Sicherungskopie Geburtstage</string>
     <string name="string_backup_birthdays_explanation">Überprüfen Sie, Sichern Geburtstage zu ermöglichen, wenn Sync-Mahnungen</string>
     <string name="simple_m_letter">m</string>
@@ -671,7 +671,9 @@
     <string name="simple_event">" Veranstaltung"</string>
     <string name="char_s_with_point">en.</string>
     <string name="string_trash_cleared">Abfalleimer gelöscht.</string>
-    <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
-    <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
-    <string name="settings_birthday_reminder_title">Birthday reminder</string>
+    <string name="import_birth_from_facebook">Import Geburtstage aus Facebook</string>
+    <string name="settings_birthday_reminder_explanation">Überprüfen Sie, Erinnerung für Geburtstage aktivieren</string>
+    <string name="settings_birthday_reminder_title">Geburtstagserinnerung</string>
+    <string name="settings_bg_image_explanation">Überprüfen Sie, Hintergrundbild im Kalender aktivieren</string>
+    <string name="settings_bg_image_title">Hintergrundbildes</string>
 </resources>

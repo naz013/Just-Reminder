@@ -141,7 +141,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
-        //CardView card;
         SwitchCompat check;
         ImageView taskIcon, leftTimeIcon;
         ViewGroup container;
@@ -149,7 +148,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         public ViewHolder(View v) {
             super(v);
-            //card = (CardView) v.findViewById(R.id.card);
             leftTime = (TextView) v.findViewById(R.id.remainingTime);
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);

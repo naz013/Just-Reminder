@@ -43,7 +43,7 @@ import hirondelle.date4j.DateTime;
  * Use the {@link FlextCal#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FlextCal extends Fragment implements MonthListener{
+public class FlextCal extends Fragment {
 
     /**
      * Weekday conventions
@@ -128,8 +128,6 @@ public class FlextCal extends Fragment implements MonthListener{
      */
     public final static String _MIN_DATE_TIME = "_minDateTime";
     public final static String _MAX_DATE_TIME = "_maxDateTime";
-    public final static String _BACKGROUND_FOR_EVENT_ONE_ = "_backgroundForEventOne";
-    public final static String _BACKGROUND_FOR_EVENT_TWO_ = "_backgroundForEventTwo";
     public final static String _BACKGROUND_FOR_TODAY_ = "_backgroundForToday";
     public final static String _TEXT_FOR_EVENT_ONE = "_taskForEventOne";
     public final static String _TEXT_FOR_EVENT_TWO = "_taskForEventTwo";
@@ -159,9 +157,9 @@ public class FlextCal extends Fragment implements MonthListener{
      */
     protected HashMap<String, Object> extraData = new HashMap<>();
 
-    protected int backgroundForEventOne, backgroundForEventTwo, backgroundForToday = 0;
-    protected HashMap<DateTime, String> textMapForEventOne = new HashMap<>();
-    protected HashMap<DateTime, String> textMapForEventTwo = new HashMap<>();
+    protected int backgroundForToday = 0;
+    protected HashMap<DateTime, FlextData> textMapForEventOne = new HashMap<>();
+    protected HashMap<DateTime, FlextData> textMapForEventTwo = new HashMap<>();
 
     protected int startDayOfWeek = SUNDAY;
 
@@ -255,8 +253,6 @@ public class FlextCal extends Fragment implements MonthListener{
                 sixWeeksInCalendar);
 
         // Extra maps
-        caldroidData.put(_BACKGROUND_FOR_EVENT_ONE_, backgroundForEventOne);
-        caldroidData.put(_BACKGROUND_FOR_EVENT_TWO_, backgroundForEventTwo);
         caldroidData.put(_BACKGROUND_FOR_TODAY_, backgroundForToday);
         caldroidData.put(_TEXT_FOR_EVENT_ONE, textMapForEventOne);
         caldroidData.put(_TEXT_FOR_EVENT_TWO, textMapForEventTwo);
@@ -289,31 +285,21 @@ public class FlextCal extends Fragment implements MonthListener{
         this.backgroundForToday = backgroundForToday;
     }
 
-    public void setBackgroundResourceForEventOne(
-            int backgroundForDateMap) {
-        this.backgroundForEventOne = backgroundForDateMap;
-    }
-
-    public void setBackgroundResourceForEventTwo(
-            int backgroundForDateMap) {
-        this.backgroundForEventTwo = backgroundForDateMap;
-    }
-
-    public void setTaskForEventOne(String task, Date date){
+    public void setTaskForEventOne(FlextData task, Date date){
         this.textMapForEventOne.put(FlextHelper.convertDateToDateTime(date), task);
     }
 
-    public void setTaskForEventOne(HashMap<DateTime, String> map){
+    public void setTaskForEventOne(HashMap<DateTime, FlextData> map){
         if (map != null) {
             textMapForEventOne.putAll(map);
         }
     }
 
-    public void setTaskForEventTwo(String task, Date date){
+    public void setTaskForEventTwo(FlextData task, Date date){
         textMapForEventTwo.put(FlextHelper.convertDateToDateTime(date), task);
     }
 
-    public void setTaskForEventTwo(HashMap<DateTime, String> map){
+    public void setTaskForEventTwo(HashMap<DateTime, FlextData> map){
         if (map != null) {
             textMapForEventTwo.putAll(map);
         }
@@ -359,8 +345,6 @@ public class FlextCal extends Fragment implements MonthListener{
         bundle.putBoolean(ENABLE_IMAGES, enableImage);
         bundle.putBoolean(ENABLE_ANIMATIONS, enableAnimation);
         bundle.putInt(START_DAY_OF_WEEK, startDayOfWeek);
-        bundle.putInt(_BACKGROUND_FOR_EVENT_ONE_, backgroundForEventOne);
-        bundle.putInt(_BACKGROUND_FOR_EVENT_TWO_, backgroundForEventTwo);
         bundle.putBoolean(SIX_WEEKS_IN_CALENDAR, sixWeeksInCalendar);
 
         return bundle;
@@ -471,7 +455,6 @@ public class FlextCal extends Fragment implements MonthListener{
         // Notify listener
         if (caldroidListener != null) {
             caldroidListener.onMonthChanged(month, year);
-            this.onMonthSelect(month);
         }
 
         refreshView();
@@ -717,6 +700,15 @@ public class FlextCal extends Fragment implements MonthListener{
                 monthYearFormatter, millis, millis, MONTH_YEAR_FLAG).toString();
 
         monthTitleTextView.setText(monthTitle);
+
+        if (image != null && enableImage) {
+            ImageCheck check = new ImageCheck(getActivity());
+            if (check.isImage(month - 1)){
+                Picasso.with(getActivity()).load(new File(check.getImage(month - 1))).into(image);
+            } else {
+                new LoadAsync(getActivity(), month - 1).execute();
+            }
+        }
     }
 
     /**
@@ -965,7 +957,7 @@ public class FlextCal extends Fragment implements MonthListener{
             titleCard.setCardBackgroundColor(color.getColor(R.color.colorWhite));
         }
 
-        image = (KenBurnsView) view.findViewById(R.id.image);
+        image = (KenBurnsView) view.findViewById(R.id.imageView);
 
         monthTitleTextView = (TextView) view.findViewById(R.id.monthYear);
 
@@ -984,18 +976,6 @@ public class FlextCal extends Fragment implements MonthListener{
         }
 
         return view;
-    }
-
-    @Override
-    public void onMonthSelect(int month) {
-        if (image != null && enableImage) {
-            ImageCheck check = new ImageCheck(getActivity());
-            if (check.isImage(month)){
-                Picasso.with(getActivity()).load(new File(check.getImage(month))).into(image);
-            } else {
-                new LoadAsync(getActivity(), month).execute();
-            }
-        }
     }
 
     public class DatePageChangeListener implements ViewPager.OnPageChangeListener {
@@ -1093,7 +1073,6 @@ public class FlextCal extends Fragment implements MonthListener{
 
             if (position == currentPage) {
                 // Refresh current adapter
-
                 currentAdapter.setAdapterDateTime(currentDateTime);
                 currentAdapter.notifyDataSetChanged();
 
@@ -1118,7 +1097,6 @@ public class FlextCal extends Fragment implements MonthListener{
                 nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
                         0, 0, 0, DateTime.DayOverflow.LastDay));
                 nextAdapter.notifyDataSetChanged();
-
             }
             // Swipe left
             else {

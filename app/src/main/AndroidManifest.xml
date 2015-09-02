@@ -146,6 +146,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".dialogs.utils.BirthdayImport"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".dialogs.QuickSMS"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
@@ -846,10 +853,5 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.box.androidsdk.content.auth.OAuthActivity"
-            android:label="Accounts" >
-        </activity>
     </application>
-
 </manifest>

@@ -25,9 +25,10 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     SharedPrefs sPrefs;
     TextView startDay, text1, text2, eventsImport;
-    RelativeLayout themeColor, selectedColor, reminderColor, reminderInCalendar, featureReminders;
+    RelativeLayout themeColor, selectedColor, reminderColor, reminderInCalendar, featureReminders,
+            bgImage;
     View themeColorSwitcher, selectedColorSwitcher, reminderColorSwitcher;
-    CheckBox reminderInCalendarCheck, featureRemindersCheck;
+    CheckBox reminderInCalendarCheck, featureRemindersCheck, bgImageCheck;
     ActionBar ab;
 
     @Override
@@ -69,13 +70,19 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         reminderColor.setOnClickListener(this);
         reminderColorSwitcher = rootView.findViewById(R.id.reminderColorSwitcher);
         text1 = (TextView) rootView.findViewById(R.id.text1);
-        text2 = (TextView) rootView.findViewById(R.id.text2);
+        text2 = (TextView) rootView.findViewById(R.id.textView2);
 
         featureReminders = (RelativeLayout) rootView.findViewById(R.id.featureReminders);
         featureReminders.setOnClickListener(this);
 
         featureRemindersCheck = (CheckBox) rootView.findViewById(R.id.featureRemindersCheck);
         featureRemindersCheck.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS));
+
+        bgImage = (RelativeLayout) rootView.findViewById(R.id.bgImage);
+        bgImage.setOnClickListener(this);
+
+        bgImageCheck = (CheckBox) rootView.findViewById(R.id.bgImageCheck);
+        bgImageCheck.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
 
         reminderColor();
         checkEnabling();
@@ -91,6 +98,19 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         } else {
             sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, true);
             featureRemindersCheck.setChecked(true);
+        }
+
+        new UpdatesHelper(getActivity()).updateCalendarWidget();
+    }
+
+    private void imageCheck (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (bgImageCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.CALENDAR_IMAGE, false);
+            bgImageCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.CALENDAR_IMAGE, true);
+            bgImageCheck.setChecked(true);
         }
 
         new UpdatesHelper(getActivity()).updateCalendarWidget();
@@ -309,6 +329,9 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
                 break;
             case R.id.featureReminders:
                 featureChange();
+                break;
+            case R.id.bgImage:
+                imageCheck();
                 break;
             case R.id.eventsImport:
                 getActivity().getApplicationContext()

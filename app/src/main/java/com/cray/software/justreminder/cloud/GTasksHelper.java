@@ -127,7 +127,7 @@ public class GTasksHelper {
     }
 
     public void updateTaskStatus(String status, String listId, String taskId) throws IOException {
-        if (isLinked()) {
+        if (isLinked() && taskId != null && listId != null) {
             prefs = new SharedPrefs(ctx);
             authorize();
             Task task = service.tasks().get(listId, taskId).execute();
@@ -142,7 +142,7 @@ public class GTasksHelper {
     }
 
     public void deleteTask(String listId, String taskId) throws IOException {
-        if (isLinked()) {
+        if (isLinked() && taskId != null && listId != null) {
             prefs = new SharedPrefs(ctx);
             authorize();
             service.tasks().delete(listId, taskId).execute();
@@ -150,7 +150,7 @@ public class GTasksHelper {
     }
 
     public void updateTask(String text, String listId, String taskId, String note, long time) throws IOException {
-        if (isLinked()) {
+        if (isLinked() && taskId != null && listId != null) {
             prefs = new SharedPrefs(ctx);
             authorize();
             Task task = service.tasks().get(listId, taskId).execute();
@@ -167,7 +167,7 @@ public class GTasksHelper {
 
     public List<Task> getTasks(String listId){
         List<Task> taskLists = new ArrayList<>();
-        if (isLinked()) {
+        if (isLinked() && listId != null) {
             prefs = new SharedPrefs(ctx);
             authorize();
             try {

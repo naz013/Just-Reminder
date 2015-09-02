@@ -8,7 +8,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,9 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,6 +40,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
 import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
+import com.cray.software.justreminder.views.PaperButton;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -68,12 +68,13 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     FilesDataBase filesDataBase = new FilesDataBase(getActivity());
 
     LinearLayout localLayout, cloudLayout, container, cloudContainer, googleContainer, googleLayout;
-    TextView localCount, cloudUser, cloudCount, backupText, backupFilesText, cloudText,
-            usedSpace, freeSpace, cloudFiles, googleUser, googleSpace, googleFreeSpace,
-            googleText, googleCount, googleFiles;
-    Button deleteAllButton, deleteAllCloudButton, googleDeleteAllCloudButton;
+    TextView localCount, cloudUser, cloudCount, backupText, cloudText,
+            usedSpace, freeSpace, googleUser, googleSpace, googleFreeSpace,
+            googleText, googleCount;
     ListView filesList, filesCloudList, filesGoogleList;
     PieGraph usedSizeGraph, googleSizeGraph;
+    PaperButton deleteAllButton, backupFilesText, cloudFiles, googleFiles, deleteAllCloudButton,
+            googleDeleteAllCloudButton;
 
     Typeface typefaceLight, typefaceMedium, typefaceThin;
     boolean isDropboxDeleted = false, isGoogleDeleted = false, isLocalDeleted = false;
@@ -231,12 +232,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         cloudLayout = (LinearLayout) rootView.findViewById(R.id.cloudLayout);
         cloudLayout.setVisibility(View.VISIBLE);
 
-        CardView card1 = (CardView) rootView.findViewById(R.id.card1);
-        CardView card2 = (CardView) rootView.findViewById(R.id.card2);
-        CardView card3 = (CardView) rootView.findViewById(R.id.card3);
-        card1.setCardBackgroundColor(cSetter.getCardStyle());
-        card2.setCardBackgroundColor(cSetter.getCardStyle());
-        card3.setCardBackgroundColor(cSetter.getCardStyle());
+        RelativeLayout card1 = (RelativeLayout) rootView.findViewById(R.id.card1);
+        RelativeLayout card2 = (RelativeLayout) rootView.findViewById(R.id.card2);
+        RelativeLayout card3 = (RelativeLayout) rootView.findViewById(R.id.card3);
+        card1.setBackgroundResource(cSetter.getCardDrawableStyle());
+        card2.setBackgroundResource(cSetter.getCardDrawableStyle());
+        card3.setBackgroundResource(cSetter.getCardDrawableStyle());
 
         cloudUser = (TextView) rootView.findViewById(R.id.cloudUser);
         cloudUser.setTypeface(typefaceThin);
@@ -255,8 +256,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         freeSpace = (TextView) rootView.findViewById(R.id.freeSpace);
         freeSpace.setTypeface(typefaceThin);
 
-        cloudFiles = (TextView) rootView.findViewById(R.id.cloudFiles);
-        cloudFiles.setTypeface(typefaceLight);
+        cloudFiles = (PaperButton) rootView.findViewById(R.id.cloudFiles);
         cloudFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -276,7 +276,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        deleteAllCloudButton = (Button) rootView.findViewById(R.id.deleteAllCloudButton);
+        deleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.deleteAllCloudButton);
         deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -289,12 +289,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         syncHelper = new SyncHelper(getActivity());
-                        if (syncHelper.isSdPresent()){
+                        if (syncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
                             String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
                             File file = new File(sdPathDr, exportFileName);
-                            if (file.exists()){
+                            if (file.exists()) {
                                 file.delete();
                             }
                         }
@@ -309,7 +309,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
         });
-        deleteAllCloudButton.setTypeface(typefaceLight);
 
         filesCloudList = (ListView) rootView.findViewById(R.id.filesCloudList);
         filesCloudList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -447,12 +446,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleLayout = (LinearLayout) rootView.findViewById(R.id.googleLayout);
         googleLayout.setVisibility(View.VISIBLE);
 
-        CardView card4 = (CardView) rootView.findViewById(R.id.card4);
-        CardView card5 = (CardView) rootView.findViewById(R.id.card5);
-        CardView card6 = (CardView) rootView.findViewById(R.id.card6);
-        card4.setCardBackgroundColor(cSetter.getCardStyle());
-        card5.setCardBackgroundColor(cSetter.getCardStyle());
-        card6.setCardBackgroundColor(cSetter.getCardStyle());
+        RelativeLayout card4 = (RelativeLayout) rootView.findViewById(R.id.card4);
+        RelativeLayout card5 = (RelativeLayout) rootView.findViewById(R.id.card5);
+        RelativeLayout card6 = (RelativeLayout) rootView.findViewById(R.id.card6);
+        card4.setBackgroundResource(cSetter.getCardDrawableStyle());
+        card5.setBackgroundResource(cSetter.getCardDrawableStyle());
+        card6.setBackgroundResource(cSetter.getCardDrawableStyle());
 
         googleUser = (TextView) rootView.findViewById(R.id.googleUser);
         googleUser.setTypeface(typefaceThin);
@@ -471,8 +470,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleFreeSpace = (TextView) rootView.findViewById(R.id.googleFreeSpace);
         googleFreeSpace.setTypeface(typefaceThin);
 
-        googleFiles = (TextView) rootView.findViewById(R.id.googleFiles);
-        googleFiles.setTypeface(typefaceLight);
+        googleFiles = (PaperButton) rootView.findViewById(R.id.googleFiles);
         googleFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -492,7 +490,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        googleDeleteAllCloudButton = (Button) rootView.findViewById(R.id.googleDeleteAllCloudButton);
+        googleDeleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.googleDeleteAllCloudButton);
         googleDeleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -525,7 +523,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
         });
-        googleDeleteAllCloudButton.setTypeface(typefaceLight);
 
         filesGoogleList = (ListView) rootView.findViewById(R.id.filesGoogleList);
         filesGoogleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -767,8 +764,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         localLayout = (LinearLayout) rootView.findViewById(R.id.localLayout);
         localLayout.setVisibility(View.VISIBLE);
 
-        CardView card7 = (CardView) rootView.findViewById(R.id.card7);
-        card7.setCardBackgroundColor(cSetter.getCardStyle());
+        RelativeLayout card7 = (RelativeLayout) rootView.findViewById(R.id.card7);
+        card7.setBackgroundResource(cSetter.getCardDrawableStyle());
 
         localCount = (TextView) rootView.findViewById(R.id.localCount);
         localCount.setTypeface(typefaceMedium);
@@ -776,8 +773,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         backupText = (TextView) rootView.findViewById(R.id.backupText);
         backupText.setTypeface(typefaceThin);
 
-        backupFilesText = (TextView) rootView.findViewById(R.id.backupFilesText);
-        backupFilesText.setTypeface(typefaceLight);
+        backupFilesText = (PaperButton) rootView.findViewById(R.id.backupFilesText);
         backupFilesText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -800,7 +796,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        deleteAllButton = (Button) rootView.findViewById(R.id.deleteAllButton);
+        deleteAllButton = (PaperButton) rootView.findViewById(R.id.deleteAllButton);
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -843,7 +839,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
             }
         });
-        deleteAllButton.setTypeface(typefaceLight);
 
         syncHelper = new SyncHelper(getActivity());
         if (syncHelper.isSdPresent()) {

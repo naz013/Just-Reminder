@@ -103,6 +103,7 @@ public class Prefs {
     public static final String UI_CHANGED = "ui_changed";
     public static final String TASK_CHANGED = "task_changed";
     public static final String LAST_FRAGMENT = "last_fragment";
+    public static final String CALENDAR_IMAGE = "calendar_image";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";

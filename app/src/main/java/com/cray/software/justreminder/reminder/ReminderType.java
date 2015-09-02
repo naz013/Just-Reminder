@@ -1,23 +1,75 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.database.Cursor;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class ReminderType {
 
     private Context context;
+    private int view;
+    private String type;
 
     public ReminderType(Context context){
         this.context = context;
+        this.type = "";
     }
 
-    public View inflateView(int layout, ViewGroup container, LayoutInflater inflater){
-        return inflater.inflate(layout, container, false);
+    public void inflateView(int view){
+        this.view = view;
+    }
+
+    public DataItem getItem(long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+            int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+            int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+            int mySeconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
+            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
+            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+            int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+            String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+
+            c.close();
+            db.close();
+
+            return new DataItem(text, type, weekdays, melody, catId, uuId,
+                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
+                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due);
+        } else return null;
+    }
+
+    public int getView(){
+        return view;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getType(){
+        return type;
     }
 
     public long save(DataItem item){
@@ -31,6 +83,7 @@ public class ReminderType {
                 item.getCategoryId());
         db.updateReminderDateTime(id);
         db.close();
+        updateViews();
         return id;
     }
 
@@ -44,5 +97,11 @@ public class ReminderType {
                 item.getRadius(), item.getColor(), item.getCode(), item.getCategoryId());
         db.updateReminderDateTime(id);
         db.close();
+        updateViews();
+    }
+
+    private void updateViews(){
+        new Notifier(context).recreatePermanent();
+        new UpdatesHelper(context).updateWidget();
     }
 }

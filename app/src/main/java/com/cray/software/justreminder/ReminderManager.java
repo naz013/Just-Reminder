@@ -80,7 +80,14 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.DataItem;
+import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.LocationType;
+import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderType;
+import com.cray.software.justreminder.reminder.TimerType;
+import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -96,7 +103,6 @@ import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -120,9 +126,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         SeekBar.OnSeekBarChangeListener, AdapterView.OnItemSelectedListener, View.OnTouchListener,
         DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
 
-    LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout, message_layout,
-            weekday_layout, action_layout, skype_layout, application_layout, monthDayLayout;
-    LinearLayout callDateRing, dateRing, messageDateRing;
+    LinearLayout callDateRing, dateRing, messageDateRing, action_layout;
     FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
     TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
             messageDate, messageYearDate, messageTime, weekTimeField;
@@ -146,7 +150,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     ProgressDialog pd;
     DataBase DB = new DataBase(ReminderManager.this);
 
-    AlarmReceiver alarm = new AlarmReceiver();
     boolean isGPSEnabled = false, isNetworkEnabled = false, isDelayed = false;
     protected LocationManager locationManager;
 
@@ -166,11 +169,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     Spinner spinner;
     FloatingEditText taskField;
     TextView category;
-    FloatingActionButton mFab, mHelp;
+    FloatingActionButton mFab;
 
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     public static final int MENU_ITEM_DELETE = 12;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
+
+    private ReminderType remControl = new ReminderType(this);
+    private DataItem item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,6 +243,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
+        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+        findViewById(R.id.windowBackground).setOnTouchListener(this);
+
         DB.open();
         Cursor cf = DB.queryCategories();
         if (cf != null && cf.moveToFirst()) {
@@ -266,10 +276,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }, 500);
         } else toolbar.setVisibility(View.VISIBLE);
 
-        layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
-        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        findViewById(R.id.windowBackground).setOnTouchListener(this);
-
         mFab = new FloatingActionButton(ReminderManager.this);
         mFab.setColorNormal(cSetter.colorSetter());
         mFab.setColorPressed(cSetter.colorChooser());
@@ -289,35 +295,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mFab.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_NORMAL);
         mFab.setIcon(R.drawable.ic_done_white_24dp);
 
-        mHelp = new FloatingActionButton(ReminderManager.this);
-        mHelp.setColorNormal(cSetter.colorSetter());
-        mHelp.setColorPressed(cSetter.colorChooser());
-        mHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showHelp();
-            }
-        });
-        mHelp.setSize(FloatingActionButton.SIZE_MINI);
-        mHelp.setIcon(R.drawable.ic_help_white_24dp);
-
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
         wrapper.addView(mFab);
-        //wrapper.addView(mHelp);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
-       /* params = (RelativeLayout.LayoutParams) mHelp.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);*/
-
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
         int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
         if (i != 0){
-            alarm.cancelAlarm(ReminderManager.this, id);
+            new AlarmReceiver().cancelAlarm(ReminderManager.this, id);
             new WeekDayReceiver().cancelAlarm(ReminderManager.this, id);
             new MonthDayReceiver().cancelAlarm(ReminderManager.this, id);
             new DelayReceiver().cancelAlarm(ReminderManager.this, id);
@@ -328,14 +317,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         spinner.setSelection(sPrefs.loadInt(Prefs.LAST_USED_REMINDER));
 
         if (id != 0){
-            DB.open();
-            Cursor c = DB.getReminder(id);
-            if (c != null && c.moveToNext()) {
-                type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-                ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
-                melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            item = remControl.getItem(id);
+            if (item != null) {
+                type = item.getType();
+                radius = item.getRadius();
+                ledColor = item.getColor();
+                melody = item.getWeekdays();
+                String catId = item.getCategoryId();
                 if (radius == 0) radius = -1;
 
                 if (catId != null && !catId.matches("")) categoryId = catId;
@@ -349,7 +337,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (cf != null) cf.close();
                 }
             }
-            if (c != null) c.close();
+
             if (type.matches(Constants.TYPE_REMINDER)) {
                 spinner.setSelection(0);
             } else if (type.matches(Constants.TYPE_TIME)){
@@ -376,7 +364,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
 
         loadPlaces();
-        clearForm();
+        clearViews();
+    }
+
+    private void clearViews() {
+        findViewById(R.id.by_date_layout).setVisibility(View.GONE);
+        findViewById(R.id.call_layout).setVisibility(View.GONE);
+        findViewById(R.id.weekday_layout).setVisibility(View.GONE);
+        findViewById(R.id.message_layout).setVisibility(View.GONE);
+        findViewById(R.id.after_time_layout).setVisibility(View.GONE);
+        findViewById(R.id.geolocationlayout).setVisibility(View.GONE);
+        findViewById(R.id.skype_layout).setVisibility(View.GONE);
+        findViewById(R.id.application_layout).setVisibility(View.GONE);
+        findViewById(R.id.monthDayLayout).setVisibility(View.GONE);
+        findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
     }
 
     private void showHelp() {
@@ -545,8 +546,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
+        LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         ViewUtils.fadeInAnimation(by_date_layout, isAnimation);
+
+        DateType dateType = new DateType(this, Constants.TYPE_REMINDER);
+        dateType.inflateView(R.id.by_date_layout);
+        remControl = dateType;
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -620,24 +625,21 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text = "";
             int repCode = 0;
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
+                repCode = item.getRepCode();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 dateExport.setChecked(true);
@@ -676,8 +678,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         ViewUtils.fadeInAnimation(monthDayLayout, isAnimation);
+
+        MonthdayType dateType = new MonthdayType(this);
+        dateType.inflateView(R.id.monthDayLayout);
+        remControl = dateType;
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -785,22 +791,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (monthDayAttachAction.isChecked()) ViewUtils.showOver(monthDayActionLayout, isAnimation);
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text = "";
             String number = "";
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                number = item.getNumber();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 monthDayExport.setChecked(true);
@@ -899,8 +902,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         cSetter = new ColorSetter(ReminderManager.this);
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
+
+        LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
         ViewUtils.fadeInAnimation(weekday_layout, isAnimation);
+
+        WeekdayType dateType = new WeekdayType(this);
+        dateType.inflateView(R.id.weekday_layout);
+        remControl = dateType;
 
         weekExport = (CheckBox) findViewById(R.id.weekExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
@@ -1001,25 +1009,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (attachAction.isChecked()) ViewUtils.showOver(action_layout, isAnimation);
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor x = DB.getReminder(id);
             String text = "";
             String type = "";
             String weekdays = "";
             String number = "";
             int exp = 0;
             int expTasks = 0;
-            if (x != null && x.moveToFirst()) {
-                myHour = x.getInt(x.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = x.getInt(x.getColumnIndex(Constants.COLUMN_MINUTE));
-                exp = x.getInt(x.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = x.getInt(x.getColumnIndex(Constants.COLUMN_SYNC_CODE));
-                text = x.getString(x.getColumnIndex(Constants.COLUMN_TEXT));
-                type = x.getString(x.getColumnIndex(Constants.COLUMN_TYPE));
-                weekdays = x.getString(x.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                number = x.getString(x.getColumnIndex(Constants.COLUMN_NUMBER));
+            if (item != null) {
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                exp = item.getExport();
+                expTasks = item.getCode();
+                text = item.getTitle();
+                type = item.getType();
+                weekdays = item.getWeekdays();
+                number = item.getNumber();
             }
-            if (x != null) x.close();
 
             if (exp == 1){
                 weekExport.setChecked(true);
@@ -1097,8 +1102,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         cSetter = new ColorSetter(ReminderManager.this);
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
+        LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
         ViewUtils.fadeInAnimation(after_time_layout, isAnimation);
+
+        TimerType dateType = new TimerType(this);
+        dateType.inflateView(R.id.after_time_layout);
+        remControl = dateType;
 
         timeExport = (CheckBox) findViewById(R.id.timeExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
@@ -1179,19 +1188,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text = "";
             int  exp = 0, expTasks = 0, repeat = 0;
             long afterTime = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
-                repeat = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            if (item != null){
+                text = item.getTitle();
+                afterTime = item.getRepMinute();
+                exp = item.getExport();
+                expTasks = item.getCode();
+                repeat = item.getRepCode();
             }
-            if (c != null) c.close();
 
             generateString(afterTime);
 
@@ -1253,8 +1259,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachSkype(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
+        LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
         ViewUtils.fadeInAnimation(skype_layout, isAnimation);
+
+        DateType dateType = new DateType(this, Constants.TYPE_SKYPE);
+        dateType.inflateView(R.id.skype_layout);
+        remControl = dateType;
 
         skypeUser = (EditText) findViewById(R.id.skypeUser);
 
@@ -1347,26 +1357,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysSkype.setText(String.valueOf(repeatSkype.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text="", number="", type="";
             int repCode = 0;
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                type = item.getType();
+                number = item.getNumber();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
+                repCode = item.getRepCode();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 skypeExport.setChecked(true);
@@ -1417,8 +1424,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachApplication(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
+        LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
         ViewUtils.fadeInAnimation(application_layout, isAnimation);
+
+        DateType dateType = new DateType(this, Constants.TYPE_APPLICATION);
+        dateType.inflateView(R.id.application_layout);
+        remControl = dateType;
 
         browseLink = (EditText) findViewById(R.id.browseLink);
         browseLink.setVisibility(View.GONE);
@@ -1541,26 +1552,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysApp.setText(String.valueOf(repeatApp.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text="", number="", type="";
             int repCode = 0;
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                type = item.getType();
+                number = item.getNumber();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
+                repCode = item.getRepCode();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 appExport.setChecked(true);
@@ -1614,8 +1622,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachCall(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
+        LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
         ViewUtils.fadeInAnimation(call_layout, isAnimation);
+
+        DateType dateType = new DateType(this, Constants.TYPE_CALL);
+        dateType.inflateView(R.id.call_layout);
+        remControl = dateType;
 
         addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
         addNumberButton.setOnClickListener(new View.OnClickListener() {
@@ -1701,25 +1713,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysCall.setText(String.valueOf(repeatCallInt.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text="", number="";
             int repCode = 0;
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                number = item.getNumber();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
+                repCode = item.getRepCode();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 callExport.setChecked(true);
@@ -1755,8 +1764,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachMessage(){
         taskField.setHint(getString(R.string.message_field_hint));
 
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
+        LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
         ViewUtils.fadeInAnimation(message_layout, isAnimation);
+
+        DateType dateType = new DateType(this, Constants.TYPE_MESSAGE);
+        dateType.inflateView(R.id.message_layout);
+        remControl = dateType;
 
         addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
         addMessageNumberButton.setOnClickListener(new View.OnClickListener() {
@@ -1843,25 +1856,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysMessage.setText(String.valueOf(repeatMessageInt.getProgress()));
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text="", number="";
             int repCode = 0;
             int exp = 0;
             int expTasks = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            if (item != null){
+                text = item.getTitle();
+                number = item.getNumber();
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
+                repCode = item.getRepCode();
+                exp = item.getExport();
+                expTasks = item.getCode();
             }
-            if (c != null) c.close();
 
             if (exp == 1){
                 messageExport.setChecked(true);
@@ -1969,8 +1979,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachLocation() {
         taskField.setHint(getString(R.string.tast_hint));
 
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
+        LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
         ViewUtils.fadeInAnimation(geolocationlayout, isAnimation);
+
+        LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION);
+        dateType.inflateView(R.id.geolocationlayout);
+        remControl = dateType;
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
         specsContainer = (ScrollView) findViewById(R.id.specsContainer);
@@ -2391,23 +2405,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text = "", number = null, remType = "";
             double latitude = 0, longitude = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                remType = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            if (item != null){
+                text = item.getTitle();
+                number = item.getNumber();
+                remType = item.getType();
+                latitude = item.getPlace()[0];
+                longitude = item.getPlace()[1];
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
             }
-            if (c != null) c.close();
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
                 if (myDay < 10) dayStr = "0" + myDay;
@@ -2458,8 +2469,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     ImageButton mapButtonOut, cardClearOut, zoomOutOut, layersOut, addNumberButtonLocationOut,
             myLocationOut;
-    LinearLayout layersContainerOut, actionLocationOut, locationOutLayout, delayLayoutOut,
-            locationOutDateRing;
+    LinearLayout layersContainerOut, actionLocationOut, delayLayoutOut, locationOutDateRing;
     RelativeLayout mapContainerOut;
     ScrollView specsContainerOut;
     AutoCompleteTextView cardSearchOut;
@@ -2484,8 +2494,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.tast_hint));
 
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
         ViewUtils.fadeInAnimation(locationOutLayout, isAnimation);
+
+        LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION_OUT);
+        dateType.inflateView(R.id.locationOutLayout);
+        remControl = dateType;
 
         delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
@@ -2887,23 +2901,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
 
         if (id != 0 && isSame()) {
-            DB.open();
-            Cursor c = DB.getReminder(id);
             String text = "", number = null, remType = "";
             double latitude = 0, longitude = 0;
-            if (c != null && c.moveToFirst()){
-                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                remType = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            if (item != null){
+                text = item.getTitle();
+                number = item.getNumber();
+                remType = item.getType();
+                latitude = item.getPlace()[0];
+                longitude = item.getPlace()[1];
+                myHour = item.getHour();
+                myMinute = item.getMinute();
+                myDay = item.getDay();
+                myMonth = item.getMonth();
+                myYear = item.getYear();
             }
-            if (c != null) c.close();
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
                 if (myDay < 10) dayStr = "0" + myDay;
@@ -2953,152 +2964,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void detachDateReminder(){
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        ViewUtils.fadeOutAnimation(by_date_layout, isAnimation);
-    }
-
-    private void detachWeekDayReminder(){
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        ViewUtils.fadeOutAnimation(weekday_layout, isAnimation);
-    }
-
-    private void detachTimeReminder(){
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        ViewUtils.fadeOutAnimation(after_time_layout, isAnimation);
-    }
-
-    private void detachSkype(){
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        ViewUtils.fadeOutAnimation(skype_layout, isAnimation);
-    }
-
-    private void detachApplication(){
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        ViewUtils.fadeOutAnimation(application_layout, isAnimation);
-    }
-
-    private void detachCall(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        ViewUtils.fadeOutAnimation(call_layout, isAnimation);
-    }
-
-    private void detachMessage(){
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        ViewUtils.fadeOutAnimation(message_layout, isAnimation);
-    }
-
-    private void detachLocation(){
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        ViewUtils.fadeOutAnimation(geolocationlayout, isAnimation);
-    }
-
-    private void detachMonthDay(){
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        ViewUtils.fadeOutAnimation(monthDayLayout, isAnimation);
-    }
-
-    private void detachLocationOut(){
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        ViewUtils.fadeOutAnimation(locationOutLayout, isAnimation);
-        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
-    }
-
-    private boolean isDateReminderAttached(){
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        return by_date_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isWeekDayReminderAttached(){
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        return weekday_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isTimeReminderAttached(){
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        return after_time_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isSkypeAttached(){
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        return skype_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isApplicationAttached(){
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        return application_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isCallAttached(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        return call_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isMessageAttached(){
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        return message_layout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLocationAttached(){
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        return geolocationlayout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isMonthDayAttached(){
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        return monthDayLayout.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLocationOutAttached(){
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        return locationOutLayout.getVisibility() == View.VISIBLE;
-    }
-
-    private void clearForm(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        call_layout.setVisibility(View.GONE);
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        weekday_layout.setVisibility(View.GONE);
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        by_date_layout.setVisibility(View.GONE);
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        after_time_layout.setVisibility(View.GONE);
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        geolocationlayout.setVisibility(View.GONE);
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        message_layout.setVisibility(View.GONE);
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        skype_layout.setVisibility(View.GONE);
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        application_layout.setVisibility(View.GONE);
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        monthDayLayout.setVisibility(View.GONE);
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        locationOutLayout.setVisibility(View.GONE);
+    private void detachCurrentView(){
+        if (remControl.getView() != 0) {
+            ViewUtils.fadeOutAnimation(findViewById(remControl.getView()), isAnimation);
+        }
     }
 
     private String getTaskType(){
-        String type="";
-        if (isDateReminderAttached()){
-            type = Constants.TYPE_REMINDER;
-        } else if (isTimeReminderAttached()){
-            type = Constants.TYPE_TIME;
-        } else if (isCallAttached()){
-            type = Constants.TYPE_CALL;
-        } else if (isMessageAttached()){
-            type = Constants.TYPE_MESSAGE;
-        } else if (isLocationAttached()){
-            if (attachLocationAction.isChecked()){
-                if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
-                else type = Constants.TYPE_LOCATION_MESSAGE;
-            } else type = Constants.TYPE_LOCATION;
-        } else if (isLocationOutAttached()){
-            if (attachLocationOutAction.isChecked()){
-                if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
-                else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
-            } else type = Constants.TYPE_LOCATION_OUT;
-        }
-        return type;
+        return remControl.getType();
     }
 
     private void pickApplications(final ProgressDialog pd) {
@@ -3222,81 +3095,122 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void saveTask(){
-        if (isLocationAttached() || isLocationOutAttached()){
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (isGPSEnabled || isNetworkEnabled) {
-                if (isLocationOutAttached()){
-                    if (attachLocationOutAction.isChecked() && !checkNumber()) addLocationOut();
-                    else if (attachLocationOutAction.isChecked() && checkNumber())
-                        phoneNumberLocationOut.setError(getString(R.string.number_error));
-                    else addLocationOut();
+        save();
+    }
+
+    private void save() {
+        DataItem item = getData();
+        if (item == null) return;
+        if (id != 0){
+            remControl.save(id, item);
+        } else {
+            remControl.save(item);
+        }
+        finish();
+    }
+
+    private boolean isLocationAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().startsWith(Constants.TYPE_LOCATION);
+    }
+
+    private boolean isLocationOutAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT);
+    }
+
+    private boolean isDateReminderAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_REMINDER);
+    }
+
+    private boolean isTimeReminderAttached() {
+        return remControl instanceof TimerType;
+    }
+
+    private boolean isCallAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_CALL);
+    }
+
+    private boolean isSkypeAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().startsWith(Constants.TYPE_SKYPE);
+    }
+
+    private boolean isApplicationAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().startsWith(Constants.TYPE_APPLICATION);
+    }
+
+    private boolean isWeekDayReminderAttached() {
+        return remControl instanceof WeekdayType;
+    }
+
+    private boolean isMessageAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_MESSAGE);
+    }
+
+    private boolean isMonthDayAttached() {
+        return remControl instanceof MonthdayType;
+    }
+
+    private String getType(){
+        String type = null;
+        if (remControl instanceof MonthdayType){
+            if (monthDayAttachAction.isChecked()){
+                if (monthDayCallCheck.isChecked()){
+                    if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                    else type = Constants.TYPE_MONTHDAY_CALL;
                 } else {
-                    if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
-                    else if (attachLocationAction.isChecked() && checkNumber())
-                        phoneNumberLocation.setError(getString(R.string.number_error));
-                    else addLocation();
+                    if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                    else type = Constants.TYPE_MONTHDAY_MESSAGE;
                 }
             } else {
-                showSettingsAlert();
+                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
+                else type = Constants.TYPE_MONTHDAY;
             }
+        } else if (remControl instanceof WeekdayType){
+            if (attachAction.isChecked()){
+                if (callCheck.isChecked()){
+                    type = Constants.TYPE_WEEKDAY_CALL;
+                } else type = Constants.TYPE_WEEKDAY_MESSAGE;
+            } else {
+                type = Constants.TYPE_WEEKDAY;
+            }
+        } else if (remControl instanceof LocationType){
+            if (remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT)){
+                if (attachLocationOutAction.isChecked()){
+                    if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
+                    else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
+                } else type = Constants.TYPE_LOCATION_OUT;
+            } else {
+                if (attachLocationAction.isChecked()){
+                    if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
+                    else type = Constants.TYPE_LOCATION_MESSAGE;
+                } else type = Constants.TYPE_LOCATION;
+            }
+        } else if (remControl instanceof TimerType) {
+            type = remControl.getType();
         } else {
-            if (isDateReminderAttached()) {
-                saveDateTask();
-            } else if (isTimeReminderAttached()) {
-                saveTimeTask();
-            } else if (isCallAttached()){
-                if (!checkNumber()) {
-                    saveCallTask();
+            if (isSkypeAttached()){
+                if (skypeCall.isChecked()){
+                    type = Constants.TYPE_SKYPE;
+                } else if (skypeVideo.isChecked()){
+                    type = Constants.TYPE_SKYPE_VIDEO;
                 } else {
-                    phoneNumber.setError(getString(R.string.number_error));
-                }
-            } else if (isSkypeAttached()){
-                if (!checkNumber()) {
-                    saveSkypeTask();
-                } else {
-                    skypeUser.setError(getString(R.string.number_error));
+                    type = Constants.TYPE_SKYPE_CHAT;
                 }
             } else if (isApplicationAttached()){
-                if (!checkApplication()) {
-                    saveAppTask();
+                if (application.isChecked()){
+                    type = Constants.TYPE_APPLICATION;
                 } else {
-                    if (browser.isChecked()){
-                        browseLink.setError(getString(R.string.empty_field_error));
-                    } else if (application.isChecked()){
-                        Toast.makeText(ReminderManager.this, getString(R.string.not_selected_application_message), Toast.LENGTH_SHORT).show();
-                    }
+                    type = Constants.TYPE_APPLICATION_BROWSER;
                 }
-            } else if (isWeekDayReminderAttached()) {
-                if (!checkNumber()) {
-                    saveWeekTask();
-                } else {
-                    weekPhoneNumber.setError(getString(R.string.number_error));
-                }
-            } else if (isMessageAttached()){
-                if (!checkNumber()) {
-                    if (!checkMessage()){
-                        saveMessageTask();
-                    } else {
-                        taskField.setError(getString(R.string.message_empty_error));
-                    }
-                } else {
-                    messageNumber.setError(getString(R.string.number_error));
-                }
-            } else if (isMonthDayAttached()) {
-                if (!checkNumber()) {
-                    saveMonthTask();
-                } else {
-                    monthDayPhoneNumber.setError(getString(R.string.number_error));
-                }
-            }
+            } else type = remControl.getType();
         }
-        new Notifier(ReminderManager.this).recreatePermanent();
-        new UpdatesHelper(ReminderManager.this).updateWidget();
-        finish();
+        return type;
     }
 
     private String getWeekTaskType(){
@@ -3350,164 +3264,194 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return type;
     }
 
-    private void saveWeekTask() {
+    private DataItem getData() {
         String task = taskField.getText().toString().trim();
         if (task.matches("")) {
             taskField.setError(getString(R.string.empty_field_error));
-            return;
+            return null;
         }
-        String type = getWeekTaskType();
-        String number = null;
-        if (attachAction.isChecked()) {
-            number = weekPhoneNumber.getText().toString().trim();
+        String type = getType();
+        Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
+        String weekdays = null;
+        if (isWeekDayReminderAttached()) {
+            interval = new Interval(ReminderManager.this);
+            weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
+                    thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
+            if (weekdays.matches(Constants.NOTHING_CHECKED)) {
+                Toast.makeText(ReminderManager.this, getString(R.string.weekday_nothing_checked), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+        if (checkNumber()) return null;
+        String number = getNumber();
+        if (isApplicationAttached()){
+            if (application.isChecked()){
+                number = selectedPackage;
+                if (number == null){
+                    Toast.makeText(ReminderManager.this,
+                            getString(R.string.dont_selected_application_message), Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+            } else if (browser.isChecked()){
+                number = browseLink.getText().toString().trim();
+                if (number == null || number.matches("") || number.matches(".*https?://")) return null;
+                if (!number.startsWith("http://") && !number.startsWith("https://"))
+                    number = "http://" + number;
+            }
+        }
+        Log.d(Constants.LOG_TAG, "Task number " + (number != null ? number : "no number"));
+        String uuId = SyncHelper.generateID();
+
+        Double latitude = 0.0;
+        Double longitude = 0.0;
+        if (isLocationAttached() || isLocationOutAttached()){
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            if (!isGPSEnabled && !isNetworkEnabled) {
+               showSettingsAlert();
+                return null;
+            }
+            LatLng dest = null;
+            boolean isNull = false;
+            try {
+                dest = destination.getPosition();
+            } catch (NullPointerException e){
+                isNull = true;
+            }
+            if (isNull) {
+                Toast.makeText(ReminderManager.this, getString(R.string.point_warning),
+                        Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+            latitude = dest.latitude;
+            longitude = dest.longitude;
+        }
+        Log.d(Constants.LOG_TAG, "Place coords " + latitude + "," + longitude);
+
+        if (isTimeReminderAttached()){
+            final Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+            myYear = c.get(Calendar.YEAR);
+            myMonth = c.get(Calendar.MONTH);
+            myDay = c.get(Calendar.DAY_OF_MONTH);
+            myHour = c.get(Calendar.HOUR_OF_DAY);
+            myMinute = c.get(Calendar.MINUTE);
+            mySeconds = c.get(Calendar.SECOND);
         }
 
-        interval = new Interval(ReminderManager.this);
-        String repeat = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
-                thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-        if (repeat.matches(Constants.NOTHING_CHECKED)) {
-            Toast.makeText(ReminderManager.this, getString(R.string.weekday_nothing_checked), Toast.LENGTH_SHORT).show();
-            return;
+        int repeat = getRepeat();
+        Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
+
+        int sync = getSyncCode();
+        Log.d(Constants.LOG_TAG, "Task sync code " + sync);
+
+        long repMinute = 0;
+        if (isTimeReminderAttached()){
+            repMinute = getAfterTime();
+            if (repMinute == 0) return null;
+        }
+        Log.d(Constants.LOG_TAG, "Task after minute " + repMinute);
+
+        int export = getExportCode();
+        Log.d(Constants.LOG_TAG, "Task export code " + export);
+
+        if (isMonthDayAttached()){
+            if (type != null && type.endsWith("_last")) myDay = 0;
         }
 
-        DB.open();
-        long weekTime = ReminderUtils.getWeekTime(myHour, myMinute, repeat);
-        int syncCode = ReminderUtils.getSyncCode(weekTaskExport);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && weekExport.isChecked()){
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, 0,
-                        0, 0, 0, 0, repeat, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, weekTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, 0,
-                        0, 0, 0, 0, repeat, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && weekTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, weekTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            new WeekDayReceiver().setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && weekExport.isChecked()) {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                        number, 0, 0, 0, 0, 0, uuID, repeat, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, weekTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                        number, 0, 0, 0, 0, 0, uuID, repeat, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && weekTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, weekTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            new WeekDayReceiver().setAlarm(ReminderManager.this, idN);
-        }
+        long due = getDue(weekdays, repMinute);
+        Log.d(Constants.LOG_TAG, "Task due " + due);
+
+        return new DataItem(task, type, weekdays, melody, categoryId, uuId,
+                new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
+                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due);
     }
 
-    private void saveSkypeTask() {
-        String task = taskField.getText().toString().trim();
-        String type = getSkypeTaskType();
-        String number = skypeUser.getText().toString().trim();
-
-        int repeat = Integer.parseInt(repeatDaysSkype.getText().toString().trim());
-
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(skypeTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && skypeExport.isChecked()){
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && skypeTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && skypeExport.isChecked()) {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
-                        uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
-                        uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && skypeTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
+    private int getExportCode() {
+        if (isStock || isCalendar){
+            if (isMonthDayAttached()) return monthDayExport.isChecked() ? 1 : 0;
+            else if (isWeekDayReminderAttached()) return weekExport.isChecked() ? 1 : 0;
+            else if (isTimeReminderAttached()) return timeExport.isChecked() ? 1 : 0;
+            else if (isCallAttached()) return callExport.isChecked() ? 1 : 0;
+            else if (isMessageAttached()) return messageExport.isChecked() ? 1 : 0;
+            else if (isSkypeAttached()) return skypeExport.isChecked() ? 1 : 0;
+            else if (isApplicationAttached()) return appExport.isChecked() ? 1 : 0;
+            else if (isDateReminderAttached()) return dateExport.isChecked() ? 1 : 0;
+            else return 0;
+        } else return 0;
     }
 
-    private void saveAppTask() {
-        String task = taskField.getText().toString().trim();
-        String type = getAppTaskType();
-        String number = null;
-        if (application.isChecked()){
-            number = selectedPackage;
-            if (number == null){
-                Toast.makeText(ReminderManager.this,
-                        getString(R.string.dont_selected_application_message), Toast.LENGTH_SHORT).show();
-                return;
-            }
-        } else if (browser.isChecked()){
-            number = browseLink.getText().toString().trim();
-            if (!number.startsWith("http://") && !number.startsWith("https://"))
-                number = "http://" + number;
-        }
+    private long getDue(String weekdays, long time) {
+        if (isWeekDayReminderAttached()){
+            return ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
+        } else if (isMonthDayAttached()){
+            return ReminderUtils.getMonthTime(myHour, myMinute, myDay);
+        } else if (isTimeReminderAttached()){
+            return ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time);
+        } else return ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+    }
 
-        int repeat = Integer.parseInt(repeatDaysApp.getText().toString().trim());
+    private int getSyncCode() {
+        if (isWeekDayReminderAttached()){
+            return ReminderUtils.getSyncCode(weekTaskExport);
+        } else if (isSkypeAttached()){
+            return ReminderUtils.getSyncCode(skypeTaskExport);
+        } else if (isApplicationAttached()){
+            return ReminderUtils.getSyncCode(appTaskExport);
+        } else if (isMonthDayAttached()){
+            return ReminderUtils.getSyncCode(monthDayTaskExport);
+        } else if (isCallAttached()){
+            return ReminderUtils.getSyncCode(callTaskExport);
+        } else if (isMessageAttached()){
+            return ReminderUtils.getSyncCode(messageTaskExport);
+        } else if (isTimeReminderAttached()){
+            return ReminderUtils.getSyncCode(timeTaskExport);
+        } else if (isDateReminderAttached()){
+            return ReminderUtils.getSyncCode(dateTaskExport);
+        } else return 0;
+    }
 
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(appTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && appExport.isChecked()){
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
+    private int getRepeat() {
+        if (isSkypeAttached()){
+            return Integer.parseInt(repeatDaysSkype.getText().toString().trim());
+        } else if (isApplicationAttached()){
+            return Integer.parseInt(repeatDaysApp.getText().toString().trim());
+        } else if (isDateReminderAttached()){
+            return Integer.parseInt(repeatDays.getText().toString().trim());
+        } else if (isTimeReminderAttached()){
+            try {
+                return Integer.parseInt(repeatMinutes.getText().toString());
+            } catch (NumberFormatException e){
+                e.printStackTrace();
+                return 0;
             }
-            if (gtx.isLinked() && appTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && appExport.isChecked()) {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
-                        uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
-                        uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && appTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, task, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
+        } else if (isCallAttached()){
+            return Integer.parseInt(repeatDaysCall.getText().toString().trim());
+        } else if (isMessageAttached()){
+            return Integer.parseInt(repeatDaysMessage.getText().toString().trim());
+        } else return 0;
+    }
+
+    private String getNumber() {
+        if (isCallAttached()) {
+            return phoneNumber.getText().toString().trim();
+        } else if (isSkypeAttached()){
+            return skypeUser.getText().toString().trim();
+        } else if (isMessageAttached()){
+            return messageNumber.getText().toString().trim();
+        } else if (isLocationAttached() && attachLocationAction.isChecked()){
+            return phoneNumberLocation.getText().toString().trim();
+        } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
+            return weekPhoneNumber.getText().toString().trim();
+        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
+            return monthDayPhoneNumber.getText().toString().trim();
+        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
+            return phoneNumberLocationOut.getText().toString().trim();
+        } else return null;
     }
 
     private boolean checkApplication(){
@@ -3518,186 +3462,52 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private boolean checkNumber(){
         if (isCallAttached()) {
-            return phoneNumber.getText().toString().trim().matches("");
+            boolean is = phoneNumber.getText().toString().trim().matches("");
+            if (is) {
+                phoneNumber.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isSkypeAttached()){
-            return skypeUser.getText().toString().trim().matches("");
+            boolean is = skypeUser.getText().toString().trim().matches("");
+            if (is) {
+                skypeUser.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isMessageAttached()){
-            return messageNumber.getText().toString().trim().matches("");
+            boolean is = messageNumber.getText().toString().trim().matches("");
+            if (is) {
+                messageNumber.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isLocationAttached() && attachLocationAction.isChecked()){
-            return phoneNumberLocation.getText().toString().trim().matches("");
+            boolean is = phoneNumberLocation.getText().toString().trim().matches("");
+            if (is) {
+                phoneNumberLocation.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
-            return weekPhoneNumber.getText().toString().trim().matches("");
+            boolean is = weekPhoneNumber.getText().toString().trim().matches("");
+            if (is) {
+                weekPhoneNumber.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
-            return monthDayPhoneNumber.getText().toString().trim().matches("");
+            boolean is = monthDayPhoneNumber.getText().toString().trim().matches("");
+            if (is) {
+                monthDayPhoneNumber.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
-            return phoneNumberLocationOut.getText().toString().trim().matches("");
+            boolean is = phoneNumberLocationOut.getText().toString().trim().matches("");
+            if (is) {
+                phoneNumberLocationOut.setError(getString(R.string.empty_field_error));
+                return true;
+            } else return false;
         } else return false;
     }
 
     private boolean checkMessage(){
         return taskField.getText().toString().trim().matches("");
-    }
-
-    private void saveMonthTask(){
-        String text = taskField.getText().toString().trim();
-        if (text.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-
-        String type = getMonthTaskType();
-        String number = null;
-        if (monthDayAttachAction.isChecked()) {
-            number = monthDayPhoneNumber.getText().toString().trim();
-        }
-
-        int day = myDay;
-        if (type.endsWith("_last")) day = 0;
-
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(monthDayTaskExport);
-        long startTime = ReminderUtils.getMonthTime(myHour, myMinute, day);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && monthDayExport.isChecked()){
-                DB.updateReminder(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
-                        0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, text, type, day, 0, 0, myHour, myMinute, 0, number, 0,
-                        0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            new MonthDayReceiver().setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && monthDayExport.isChecked()) {
-                idN = DB.insertReminder(text, type, day, 0, 0, myHour, myMinute, 0, number,
-                        0, 0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(text, type, day, 0, 0, myHour, myMinute, 0, number,
-                        0, 0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            new MonthDayReceiver().setAlarm(ReminderManager.this, idN);
-        }
-    }
-
-    private void saveDateTask(){
-        String text = taskField.getText().toString().trim();
-        if (text.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
-
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(dateTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && dateExport.isChecked()){
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat,
-                        0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null, repeat,
-                        0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && dateTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && dateExport.isChecked()) {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                        repeat, 0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                        repeat, 0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && dateTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
-    }
-
-    private void saveTimeTask(){
-        String text = taskField.getText().toString().trim();
-        if (text.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        long time = getAfterTime();
-        if (time == 0) return;
-        int repeat = 0;
-        try {
-            repeat = Integer.parseInt(repeatMinutes.getText().toString());
-        } catch (NumberFormatException e){
-            e.printStackTrace();
-        }
-
-        DB.open();
-        final Calendar c = Calendar.getInstance();
-        myYear = c.get(Calendar.YEAR);
-        myMonth = c.get(Calendar.MONTH);
-        myDay = c.get(Calendar.DAY_OF_MONTH);
-        myHour = c.get(Calendar.HOUR_OF_DAY);
-        myMinute = c.get(Calendar.MINUTE);
-        mySeconds = c.get(Calendar.SECOND);
-        int syncCode = ReminderUtils.getSyncCode(timeTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && timeExport.isChecked()) {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, repeat, time,
-                        0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null, repeat, time,
-                        0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && timeTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && timeExport.isChecked()) {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
-                        repeat, time, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, null,
-                        repeat, time, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && timeTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
     }
 
     private long getAfterTime() {
@@ -3715,215 +3525,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             res = (hour * h) + (minute * m) + (sec * s);
         } else Toast.makeText(this, R.string.string_timer_warming, Toast.LENGTH_SHORT).show();
         return res;
-    }
-
-    private void saveCallTask(){
-        String text = taskField.getText().toString().trim();
-        String type = getTaskType();
-        String number = phoneNumber.getText().toString().trim();
-        int repeat = Integer.parseInt(repeatDaysCall.getText().toString().trim());
-
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(callTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && callExport.isChecked()) {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
-                        repeat, 0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
-                        repeat, 0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && callTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && callExport.isChecked()) {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && callTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
-    }
-
-    private void saveMessageTask(){
-        String text = taskField.getText().toString().trim();
-        if (text.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        String number = messageNumber.getText().toString().trim();
-        int repeat = Integer.parseInt(repeatDaysMessage.getText().toString().trim());
-
-        DB.open();
-        int syncCode = ReminderUtils.getSyncCode(messageTaskExport);
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        if (id != 0) {
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && messageExport.isChecked()) {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-            } else {
-                DB.updateReminder(id, text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && messageTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, id);
-            }
-            DB.updateReminderDateTime(id);
-            alarm.setAlarm(ReminderManager.this, id);
-        } else {
-            String uuID = SyncHelper.generateID();
-            long idN;
-            if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && messageExport.isChecked()) {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, uuID, null, 1, melody, 0, ledColor, syncCode, categoryId);
-                ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
-            } else {
-                idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat,
-                        0, 0, 0, 0, uuID, null, 0, melody, 0, ledColor, syncCode, categoryId);
-            }
-            if (gtx.isLinked() && messageTaskExport.isChecked()){
-                ReminderUtils.exportToTasks(this, text, startTime, idN);
-            }
-            DB.updateReminderDateTime(idN);
-            alarm.setAlarm(ReminderManager.this, idN);
-        }
-    }
-
-    PositionDelayReceiver positionDelayReceiver = new PositionDelayReceiver();
-
-    private void addLocation(){
-        String task = taskField.getText().toString().trim();
-        if (task.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        String number = null;
-        if (attachLocationAction.isChecked()) number = phoneNumberLocation.getText().toString().trim();
-        LatLng dest = null;
-        boolean isNull = false;
-        try {
-            dest = destination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
-        }
-        if (isNull) {
-            Toast.makeText(ReminderManager.this, getString(R.string.point_warning),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Double latitude = dest.latitude;
-        Double longitude = dest.longitude;
-        DB.open();
-        if (id != 0) {
-            if (attackDelay.isChecked()) {
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
-                        0, 0, 0, latitude, longitude, null, 0, melody, radius, ledColor, 0, categoryId);
-                positionDelayReceiver.setDelay(ReminderManager.this, id);
-                DB.updateReminderDateTime(id);
-            } else {
-                DB.updateReminder(id, task, type, 0, 0, 0, 0, 0, 0, number, 0, 0, 0, latitude,
-                        longitude, null, 0, melody, radius, ledColor, 0, categoryId);
-                DB.updateReminderDateTime(id);
-                startService(new Intent(ReminderManager.this, GeolocationService.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        } else {
-            String uuID = SyncHelper.generateID();
-            if (attackDelay.isChecked()) {
-                long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                        number, 0, 0, 0, latitude, longitude, uuID, null, 0, melody, radius, ledColor, 0, categoryId);
-                positionDelayReceiver.setDelay(ReminderManager.this, newIds);
-                DB.updateReminderDateTime(newIds);
-            } else {
-                long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number, 0, 0, 0, latitude,
-                        longitude, uuID, null, 0, melody, radius, ledColor, 0, categoryId);
-                DB.updateReminderDateTime(ids);
-                startService(new Intent(ReminderManager.this, GeolocationService.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        }
-    }
-
-    private void addLocationOut(){
-        String task = taskField.getText().toString().trim();
-        if (task.matches("")){
-            taskField.setError(getString(R.string.empty_field_error));
-            return;
-        }
-        String type = getTaskType();
-        String number = null;
-        if (attachLocationOutAction.isChecked())
-            number = phoneNumberLocationOut.getText().toString().trim();
-        LatLng dest = null;
-        boolean isNull = false;
-        try {
-            dest = destination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
-        }
-        int techRadius = pointRadius.getProgress();
-        if (isNull){
-            Toast.makeText(ReminderManager.this, getString(R.string.point_warning),
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Double latitude = dest.latitude;
-        Double longitude = dest.longitude;
-        DB.open();
-        if (id != 0) {
-            if (attachDelayOut.isChecked()){
-                DB.updateReminder(id, task, type, myDay, myMonth, myYear, myHour, myMinute, 0, number,
-                        0, 0, 0, latitude, longitude, null, 0, melody, techRadius, ledColor, 0,
-                        categoryId);
-                positionDelayReceiver.setDelay(ReminderManager.this, id);
-                DB.updateReminderDateTime(id);
-            } else {
-                DB.updateReminder(id, task, type, 0, 0, 0, 0, 0, 0, number,
-                        0, 0, 0, latitude, longitude, null, 0, melody, techRadius, ledColor, 0,
-                        categoryId);
-                DB.updateReminderDateTime(id);
-                startService(new Intent(ReminderManager.this, GeolocationService.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        } else {
-            String uuID = SyncHelper.generateID();
-            if (attachDelayOut.isChecked()){
-                long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                        number, 0, 0, 0, latitude, longitude, uuID, null, 0, melody, techRadius,
-                        ledColor, 0, categoryId);
-                positionDelayReceiver.setDelay(ReminderManager.this, newIds);
-                DB.updateReminderDateTime(newIds);
-            } else {
-                long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
-                        0, 0, 0, latitude, longitude, uuID, null, 0, melody, techRadius, ledColor, 0,
-                        categoryId);
-                DB.updateReminderDateTime(ids);
-                startService(new Intent(ReminderManager.this, GeolocationService.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        }
     }
 
     @Override
@@ -3994,16 +3595,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void detachLayout(){
-        if (isDateReminderAttached()) detachDateReminder();
-        if (isTimeReminderAttached()) detachTimeReminder();
-        if (isCallAttached()) detachCall();
-        if (isMessageAttached()) detachMessage();
-        if (isLocationAttached()) detachLocation();
-        if (isWeekDayReminderAttached()) detachWeekDayReminder();
-        if (isSkypeAttached()) detachSkype();
-        if (isApplicationAttached()) detachApplication();
-        if (isMonthDayAttached()) detachMonthDay();
-        if (isLocationOutAttached()) detachLocationOut();
+        detachCurrentView();
     }
 
     protected void dateDialog() {
@@ -4189,11 +3781,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             type.matches(Constants.TYPE_TIME) ||
                             type.matches(Constants.TYPE_CALL) ||
                             type.matches(Constants.TYPE_MESSAGE)) {
-                        alarm.setAlarm(ReminderManager.this, id);
+                        new AlarmReceiver().setAlarm(ReminderManager.this, id);
                     } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                         new MonthDayReceiver().setAlarm(ReminderManager.this, id);
                     } else if (type.startsWith(Constants.TYPE_LOCATION) && isDelayed) {
-                        positionDelayReceiver.setDelay(ReminderManager.this, id);
+                        new PositionDelayReceiver().setDelay(ReminderManager.this, id);
                     }
                 }
             }
@@ -4708,7 +4300,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             double currentLong = location.getLongitude();
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = taskField.getText().toString().trim();
-            if (text == null || text.matches("")) text = _Location;
+            if (text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 mapOut.clear();
