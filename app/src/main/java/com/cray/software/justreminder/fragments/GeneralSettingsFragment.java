@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.ThemerDialog;
 import com.cray.software.justreminder.dialogs.utils.ScreenOrientation;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -271,61 +272,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     }
 
     private void themeView(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = new SharedPrefs(getActivity());
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
-        switch (loadedColor) {
-            case "1":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_red);
-                break;
-            case "2":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_violet);
-                break;
-            case "3":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_green_light);
-                break;
-            case "4":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_green);
-                break;
-            case "5":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_blue_light);
-                break;
-            case "6":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_blue);
-                break;
-            case "7":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_yellow);
-                break;
-            case "8":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_orange);
-                break;
-            case "9":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_grey);
-                break;
-            case "10":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_pink);
-                break;
-            case "11":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_teal);
-                break;
-            case "12":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_brown);
-                break;
-            case "13":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_deep_purple);
-                break;
-            case "14":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_deep_orange);
-                break;
-            case "15":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_lime);
-                break;
-            case "16":
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_indigo);
-                break;
-            default:
-                themeColorSwitcher.setBackgroundResource(R.drawable.drawable_blue);
-                break;
-        }
+        themeColorSwitcher.setBackgroundResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
     }
 
     @Override

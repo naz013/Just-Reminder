@@ -202,7 +202,27 @@ public class ColorSetter {
                 color = R.color.colorBrown;
                 break;
             default:
-                color = R.color.colorBlue;
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = R.color.colorDeepPurple;
+                            break;
+                        case "14":
+                            color = R.color.colorDeepOrange;
+                            break;
+                        case "15":
+                            color = R.color.colorLime;
+                            break;
+                        case "16":
+                            color = R.color.colorIndigo;
+                            break;
+                        default:
+                            color = R.color.colorGreen;
+                            break;
+                    }
+                } else {
+                    color = R.color.colorGreen;
+                }
                 break;
         }
         return color;
@@ -250,7 +270,27 @@ public class ColorSetter {
                 color = R.color.colorBrown;
                 break;
             default:
-                color = R.color.colorGreen;
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = R.color.colorDeepPurple;
+                            break;
+                        case "14":
+                            color = R.color.colorDeepOrange;
+                            break;
+                        case "15":
+                            color = R.color.colorLime;
+                            break;
+                        case "16":
+                            color = R.color.colorIndigo;
+                            break;
+                        default:
+                            color = R.color.colorGreen;
+                            break;
+                    }
+                } else {
+                    color = R.color.colorGreen;
+                }
                 break;
         }
         return color;
@@ -298,10 +338,88 @@ public class ColorSetter {
                 color = R.color.colorBrown;
                 break;
             default:
-                color = R.color.colorGreen;
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = R.color.colorDeepPurple;
+                            break;
+                        case "14":
+                            color = R.color.colorDeepOrange;
+                            break;
+                        case "15":
+                            color = R.color.colorLime;
+                            break;
+                        case "16":
+                            color = R.color.colorIndigo;
+                            break;
+                        default:
+                            color = R.color.colorGreen;
+                            break;
+                    }
+                } else {
+                    color = R.color.colorGreen;
+                }
                 break;
         }
         return color;
+    }
+
+    public int getIndicator(String color){
+        int drawable;
+        switch (color) {
+            case "1":
+                drawable = R.drawable.drawable_red;
+                break;
+            case "2":
+                drawable = R.drawable.drawable_violet;
+                break;
+            case "3":
+                drawable = R.drawable.drawable_green_light;
+                break;
+            case "4":
+                drawable = R.drawable.drawable_green;
+                break;
+            case "5":
+                drawable = R.drawable.drawable_blue_light;
+                break;
+            case "6":
+                drawable = R.drawable.drawable_blue;
+                break;
+            case "7":
+                drawable = R.drawable.drawable_yellow;
+                break;
+            case "8":
+                drawable = R.drawable.drawable_orange;
+                break;
+            case "9":
+                drawable = R.drawable.drawable_grey;
+                break;
+            case "10":
+                drawable = R.drawable.drawable_pink;
+                break;
+            case "11":
+                drawable = R.drawable.drawable_teal;
+                break;
+            case "12":
+                drawable = R.drawable.drawable_brown;
+                break;
+            case "13":
+                drawable = R.drawable.drawable_deep_purple;
+                break;
+            case "14":
+                drawable = R.drawable.drawable_deep_orange;
+                break;
+            case "15":
+                drawable = R.drawable.drawable_lime;
+                break;
+            case "16":
+                drawable = R.drawable.drawable_indigo;
+                break;
+            default:
+                drawable = R.drawable.drawable_blue;
+                break;
+        }
+        return drawable;
     }
 
     private Drawable getDrawable(int i){

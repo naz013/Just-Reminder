@@ -59,7 +59,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        String type = mDatas.get(position).getType();
+        EventsDataProvider.Type type = mDatas.get(position).getInn();
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_events, null);
         }
@@ -80,7 +80,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
 
         EventsDataProvider.EventsItem item = mDatas.get(position);
 
-        if (type.matches("birthday")) {
+        if (type == EventsDataProvider.Type.birthday) {
             eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorBirthdayCalendar()));
             eventType.setText(mContext.getString(R.string.birthday_text));
             String title = item.getName();

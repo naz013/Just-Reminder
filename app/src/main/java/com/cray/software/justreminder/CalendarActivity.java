@@ -314,7 +314,10 @@ public class CalendarActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return BirthdaysList.newInstance(position, datas.get(position).getDatas());
+            BirthdaysList fragment = new BirthdaysList();
+            fragment.setData(datas.get(position).getDatas());
+            fragment.setPageNumber(position);
+            return fragment;
         }
 
         @Override

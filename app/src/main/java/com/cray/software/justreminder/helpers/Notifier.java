@@ -47,9 +47,8 @@ public class Notifier {
         this.ctx = context;
     }
 
-    public void showTTSNotification(final String task, long itemId, int color){
+    public void showTTSNotification(final String task, String typePrefs, long itemId, int color){
         sPrefs = new SharedPrefs(ctx);
-        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
         builder = new NotificationCompat.Builder(ctx);
         builder.setContentTitle(task);
         if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
@@ -182,9 +181,9 @@ public class Notifier {
         }
     }
 
-    public void showReminder(final String task, int i, long itemId, String melody, int color){
+    public void showReminder(final String task, String type, int i, long itemId, String melody,
+                             int color){
         sPrefs = new SharedPrefs(ctx);
-        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);
@@ -224,7 +223,7 @@ public class Notifier {
             app = ctx.getString(R.string.app_name_pro);
         } else app = ctx.getString(R.string.app_name);
         builder.setContentText(app);
-        builder.setSmallIcon(Utils.getIcon(typePrefs));
+        builder.setSmallIcon(Utils.getIcon(type));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
@@ -475,9 +474,8 @@ public class Notifier {
         }
     }
 
-    public void showNotification(String task, int i, long itemId, String melody, int color){
+    public void showNotification(String task, String typePrefs, int i, long itemId, String melody, int color){
         sPrefs = new SharedPrefs(ctx);
-        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);

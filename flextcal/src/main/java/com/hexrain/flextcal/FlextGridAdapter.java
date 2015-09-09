@@ -44,7 +44,7 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected boolean isDark = false;
 	protected SharedPreferences prefs;
 
-    protected int backgroundForEventOne, backgroundForEventTwo, backgroundForToday = 0;
+    protected int backgroundForEventOne = -1, backgroundForEventTwo = -1, backgroundForToday = -1;
     protected HashMap<DateTime, FlextData> textMapForEventOne, textMapForEventTwo;
 
 	/**
@@ -300,8 +300,8 @@ public class FlextGridAdapter extends BaseAdapter {
         TextView cellView = (TextView) view.findViewById(R.id.textView);
         TextView task1 = (TextView) view.findViewById(R.id.task1);
         TextView task2 = (TextView) view.findViewById(R.id.task2);
-		task1.setTextColor(resources.getColor(backgroundForEventOne));
-		task2.setTextColor(resources.getColor(backgroundForEventTwo));
+		if (backgroundForEventOne != -1) task1.setTextColor(resources.getColor(backgroundForEventOne));
+		if (backgroundForEventTwo != -1) task2.setTextColor(resources.getColor(backgroundForEventTwo));
 		customizeTextView(position, cellView, task1, task2);
 		return view;
 	}

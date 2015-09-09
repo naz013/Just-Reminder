@@ -111,17 +111,11 @@ public class Prefs {
     public static final String BIRTHDAY_SOUND_STATUS = "birthday_sound_status";
     public static final String BIRTHDAY_WAKE_STATUS = "birthday_wake_status";
     public static final String BIRTHDAY_INFINITE_SOUND = "birthday_infinite_sound";
-    public static final String BIRTHDAY_SILENT_SMS = "birthday_silent_sms";
     public static final String BIRTHDAY_LED_STATUS = "birthday_led_status";
     public static final String BIRTHDAY_LED_COLOR = "birthday_led_color";
     public static final String BIRTHDAY_INFINITE_VIBRATION = "birthday_infinite_vibration";
     public final static String BIRTHDAY_CUSTOM_SOUND = "birthday_custom_sound";
     public final static String BIRTHDAY_CUSTOM_SOUND_FILE = "birthday_sound_file";
-
-    public static final String REMINDER_TYPE = "rem_type";
-    public static final String REMINDER_TEXT = "rem_text";
-    public static final String REMINDER_NUMBER = "rem_number";
-
     public static final String CONTACTS_IMPORT_DIALOG = "contacts_imported";
     public static final String RATE_SHOW = "show_rate";
     public static final String APP_RUNS_COUNT = "app_runs";

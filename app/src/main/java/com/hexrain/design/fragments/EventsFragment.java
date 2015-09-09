@@ -2,7 +2,6 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +25,7 @@ import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
+import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -117,7 +118,7 @@ public class EventsFragment extends Fragment {
         cal.setTimeInMillis(System.currentTimeMillis());
 
         if (dateMills != 0) cal.setTimeInMillis(dateMills);
-        showEvents(cal.getTime());
+        //showEvents(cal.getTime());
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
         sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
@@ -151,16 +152,13 @@ public class EventsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        sPrefs = new SharedPrefs(getActivity());
         Calendar calendar = Calendar.getInstance();
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             calendar.setTimeInMillis(System.currentTimeMillis());
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 
@@ -168,22 +166,21 @@ public class EventsFragment extends Fragment {
     int targetPosition = -1;
 
     private void showEvents(Date date) {
+        long diff = System.currentTimeMillis();
         pagerData.clear();
-        ProgressDialog dialog = new ProgressDialog(getActivity(), ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage(getActivity().getString(R.string.string_generating_events));
-        dialog.setCancelable(false);
-        dialog.setIndeterminate(true);
-        dialog.show();
         try {
-            pagerData = new LoadAsync(dialog).execute(date).get();
+            pagerData = new LoadAsync().execute(date).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        } finally {
-            if (dialog != null && dialog.isShowing()) dialog.dismiss();
         }
+        diff = System.currentTimeMillis() - diff;
+        Log.d(Constants.LOG_TAG, "Async time " + diff);
+        diff = System.currentTimeMillis();
         final MyFragmentPagerAdapter pagerAdapter =
                 new MyFragmentPagerAdapter(getChildFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
+        diff = System.currentTimeMillis() - diff;
+        Log.d(Constants.LOG_TAG, "Set adapter time " + diff);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -224,7 +221,10 @@ public class EventsFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return BirthdaysList.newInstance(position, datas.get(position).getDatas());
+            BirthdaysList fragment = new BirthdaysList();
+            fragment.setData(datas.get(position).getDatas());
+            fragment.setPageNumber(position);
+            return fragment;
         }
 
         @Override
@@ -235,16 +235,11 @@ public class EventsFragment extends Fragment {
 
     private class LoadAsync extends AsyncTask<Date, Void, ArrayList<PagerItem>>{
 
-        ProgressDialog dialog;
-
-        public LoadAsync(ProgressDialog dialog) {
-            this.dialog = dialog;
-        }
-
         @Override
         protected ArrayList<PagerItem> doInBackground(Date... params) {
             Date date = params[0];
             ArrayList<PagerItem> data = new ArrayList<>();
+            long diff = System.currentTimeMillis();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             int targetDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -293,13 +288,9 @@ public class EventsFragment extends Fragment {
                 position++;
                 calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
             }
+            diff = System.currentTimeMillis() - diff;
+            Log.d(Constants.LOG_TAG, "Async time inside " + diff);
             return data;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<PagerItem> pagerItems) {
-            super.onPostExecute(pagerItems);
-            if (dialog != null && dialog.isShowing()) dialog.dismiss();
         }
     }
 }

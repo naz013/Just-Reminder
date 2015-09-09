@@ -68,7 +68,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     UpdatesHelper updatesHelper;
 
     Notifier notifier = new Notifier(WeekDayDialog.this);
-    String melody, num;
+    String melody, number, type;
     TextToSpeech tts;
     int currVolume;
     boolean isDark = false;
@@ -138,11 +138,10 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
         DB.open();
         Cursor r = DB.getReminder(id);
-        String type = "";
         if (r != null && r.moveToFirst()) {
             task = r.getString(r.getColumnIndex(Constants.COLUMN_TEXT));
             type = r.getString(r.getColumnIndex(Constants.COLUMN_TYPE));
-            num = r.getString(r.getColumnIndex(Constants.COLUMN_NUMBER));
+            number = r.getString(r.getColumnIndex(Constants.COLUMN_NUMBER));
             melody = r.getString(r.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
             repCode = r.getInt(r.getColumnIndex(Constants.COLUMN_REPEAT));
             remCount = r.getLong(r.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
@@ -152,14 +151,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             finish();
         }
 
-        sPrefs.savePrefs(Prefs.REMINDER_TYPE, type);
-        sPrefs.savePrefs(Prefs.REMINDER_TEXT, task);
-        sPrefs.savePrefs(Prefs.REMINDER_NUMBER, num);
-
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
         if (type.matches(Constants.TYPE_WEEKDAY_CALL) || type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
-            String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
             contactPhoto.setVisibility(View.VISIBLE);
             long conID = Contacts.getContactIDFromNumber(number, WeekDayDialog.this);
             Bitmap photo = Contacts.getPhoto(this, conID);
@@ -171,13 +165,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             remText.setText(task + "\n" + number);
         } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) || type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
             if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
-                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
                 if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
                 else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
             } else {
-                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.GONE);
                 buttonDelay.setVisibility(View.GONE);
@@ -247,7 +239,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 DB.setDelay(id, 0);
                 removeFlags();
                 if ((task == null || task.trim().matches("")) &&
-                        (num != null && !num.trim().matches(""))) notifier.showReminderNotification(num, id);
+                        (number != null && !number.trim().matches("")))
+                    notifier.showReminderNotification(number, id);
                 else notifier.showReminderNotification(task, id);
                 finish();
             }
@@ -287,10 +280,8 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 notifier.discardNotification(id);
                 repeater.cancelAlarm(WeekDayDialog.this, id);
                 Reminder.generate(id, WeekDayDialog.this);
-                String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
-                String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
-                String task = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
-                if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
+                if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
+                        type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                     sendSMS(number, task, melody);
                 } else {
                     Telephony.makeCall(number, WeekDayDialog.this);
@@ -298,23 +289,22 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 Reminder.backup(WeekDayDialog.this);
                 removeFlags();
                 DB.setDelay(id, 0);
-                if (!typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || !typePrefs.matches(Constants.TYPE_MONTHDAY_MESSAGE)
-                        || !typePrefs.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)) {
+                if (!type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
+                        !type.matches(Constants.TYPE_MONTHDAY_MESSAGE)
+                        || !type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)) {
                     finish();
                 }
             }
         });
-        String number = sPrefs.loadPrefs(Prefs.REMINDER_NUMBER);
-        String typePrefs = sPrefs.loadPrefs(Prefs.REMINDER_TYPE);
-        String text = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
-        if (typePrefs.matches(Constants.TYPE_WEEKDAY_MESSAGE) || typePrefs.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
+        if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
+                type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
             if (sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
-                sendSMS(number, text, melody);
+                sendSMS(number, task, melody);
             } else {
-                showNotification(text, 1, id, melody, color);
+                showNotification(1);
             }
         } else {
-            showNotification(text, 1, id, melody, color);
+            showNotification(1);
         }
 
         if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
@@ -360,12 +350,12 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
     }
 
-    private void showNotification(final String taskN, int i, long itemId, String melodyN, int colorN){
+    private void showNotification(int i){
         sPrefs = new SharedPrefs(WeekDayDialog.this);
         if (!sPrefs.loadBoolean(Prefs.TTS)) {
-            notifier.showNotification(taskN, i, itemId, melodyN, colorN);
+            notifier.showNotification(task, type, i, id, melody, color);
         } else {
-            notifier.showTTSNotification(taskN, itemId, colorN);
+            notifier.showTTSNotification(task, type, id, color);
         }
     }
 
@@ -500,17 +490,16 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 sPrefs = new SharedPrefs(WeekDayDialog.this);
-                String text = sPrefs.loadPrefs(Prefs.REMINDER_TEXT);
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         remText.setText(getString(R.string.dialog_message_sent));
-                        notifier.showNotification(text, 1, id, melody, color);
+                        notifier.showNotification(task, type, 1, id, melody, color);
                         if (buttonCall.getVisibility() == View.VISIBLE) {
                             buttonCall.setVisibility(View.GONE);
                         }
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        notifier.showNotification(text, 0, id, melody, color);
+                        notifier.showNotification(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -519,7 +508,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        notifier.showNotification(text, 0, id, melody, color);
+                        notifier.showNotification(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -528,7 +517,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        notifier.showNotification(text, 0, id, melody, color);
+                        notifier.showNotification(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -537,7 +526,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        notifier.showNotification(text, 0, id, melody, color);
+                        notifier.showNotification(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(Utils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));

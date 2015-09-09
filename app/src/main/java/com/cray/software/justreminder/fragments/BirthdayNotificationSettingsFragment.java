@@ -29,13 +29,12 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     ActionBar ab;
     LinearLayout chooseSound, lewColorWrapper, chooseLedColor;
     RelativeLayout vibrationOption, soundOption, wakeScreenOption,
-            infiniteSoundOption, silentSMSOption, globalOption, infiniteVibrateOption;
+            infiniteSoundOption, globalOption, infiniteVibrateOption;
     RelativeLayout lewWrapper, led;
     TextView showMelody;
     TextView textLed2, textLed3, vText, vText1;
-    TextView textB, textB1, textB2, textB3, textB4, textB5, textB6, textB7, textB8, textB9,
-            textB10, textB11, textB12;
-    CheckBox vibrationCheck, soundCheck, wakeScreenCheck, infiniteSoundCheck, silentSMSCheck, ledCheck,
+    TextView textB, textB1, textB2, textB3, textB4, textB5, textB6, textB7, textB10, textB11, textB12;
+    CheckBox vibrationCheck, soundCheck, wakeScreenCheck, infiniteSoundCheck, ledCheck,
             globalCheck, infiniteVibrateCheck;
 
     @Override
@@ -98,12 +97,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         infiniteSoundCheck = (CheckBox) rootView.findViewById(R.id.infiniteSoundCheck);
         infiniteSoundCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND));
 
-        silentSMSOption = (RelativeLayout) rootView.findViewById(R.id.silentSMSOption);
-        silentSMSOption.setOnClickListener(this);
-
-        silentSMSCheck = (CheckBox) rootView.findViewById(R.id.silentSMSCheck);
-        silentSMSCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_SILENT_SMS));
-
         lewWrapper = (RelativeLayout) rootView.findViewById(R.id.lewWrapper);
         lewWrapper.setVisibility(View.VISIBLE);
         led = (RelativeLayout) rootView.findViewById(R.id.led);
@@ -142,8 +135,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         textB5 = (TextView) rootView.findViewById(R.id.textB5);
         textB6 = (TextView) rootView.findViewById(R.id.textB6);
         textB7 = (TextView) rootView.findViewById(R.id.textB7);
-        textB8 = (TextView) rootView.findViewById(R.id.textB8);
-        textB9 = (TextView) rootView.findViewById(R.id.textB9);
         textB10 = (TextView) rootView.findViewById(R.id.textB10);
         textB11 = (TextView) rootView.findViewById(R.id.textB11);
         textB12 = (TextView) rootView.findViewById(R.id.textB12);
@@ -180,8 +171,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             wakeScreenCheck.setEnabled(false);
             infiniteSoundOption.setEnabled(false);
             infiniteSoundCheck.setEnabled(false);
-            silentSMSOption.setEnabled(false);
-            silentSMSCheck.setEnabled(false);
             lewWrapper.setEnabled(false);
             led.setEnabled(false);
             ledCheck.setEnabled(false);
@@ -197,8 +186,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             textB5.setEnabled(false);
             textB6.setEnabled(false);
             textB7.setEnabled(false);
-            textB8.setEnabled(false);
-            textB9.setEnabled(false);
             textB10.setEnabled(false);
             textB11.setEnabled(false);
             textB12.setEnabled(false);
@@ -217,8 +204,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             wakeScreenCheck.setEnabled(true);
             infiniteSoundOption.setEnabled(true);
             infiniteSoundCheck.setEnabled(true);
-            silentSMSOption.setEnabled(true);
-            silentSMSCheck.setEnabled(true);
             lewWrapper.setEnabled(true);
             led.setEnabled(true);
             ledCheck.setEnabled(true);
@@ -234,8 +219,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             textB5.setEnabled(true);
             textB6.setEnabled(true);
             textB7.setEnabled(true);
-            textB8.setEnabled(true);
-            textB9.setEnabled(true);
             textB10.setEnabled(true);
             textB11.setEnabled(true);
             textB12.setEnabled(true);
@@ -292,17 +275,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             sPrefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, true);
             ledCheck.setChecked(true);
             checkEnabling();
-        }
-    }
-
-    private void silentSMSChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (silentSMSCheck.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_SILENT_SMS, false);
-            silentSMSCheck.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_SILENT_SMS, true);
-            silentSMSCheck.setChecked(true);
         }
     }
 
@@ -402,9 +374,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         switch (v.getId()) {
             case R.id.globalOption:
                 globalChange();
-                break;
-            case R.id.silentSMSOption:
-                silentSMSChange();
                 break;
             case R.id.vibrationOption:
                 vibrationChange();

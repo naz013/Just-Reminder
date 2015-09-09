@@ -1919,7 +1919,7 @@ public class Recognizer {
         DB = new DataBase(ctx);
         DB.open();
         sHelp = new SyncHelper(ctx);
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         sPrefs = new SharedPrefs(ctx);
         long id;
         Cursor cf = DB.queryCategories();
@@ -1952,7 +1952,7 @@ public class Recognizer {
         DB = new DataBase(ctx);
         DB.open();
         sHelp = new SyncHelper(ctx);
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         sPrefs = new SharedPrefs(ctx);
         long id;
         Cursor cf = DB.queryCategories();
@@ -3018,7 +3018,8 @@ public class Recognizer {
                         .putExtra("years", years));
             } else {
                 Toast.makeText(mContext, mContext.getString(R.string.birthdays_string_first) + " " +
-                        days + " " + mContext.getString(R.string.birthdays_string_second), Toast.LENGTH_SHORT);
+                        days + " " + mContext.getString(R.string.birthdays_string_second),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }

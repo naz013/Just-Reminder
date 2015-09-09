@@ -15,22 +15,22 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class CalendarStyle extends AppCompatActivity {
-    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
-            yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox;
-    private LinearLayout themeGroupPro;
+    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
+            blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
+            pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
+            deepOrange;
     private SharedPrefs sPrefs;
-    private ColorSetter cs;
-    private Toolbar toolbar;
     private int i;
     private int prevId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(CalendarStyle.this);
+        ColorSetter cs = new ColorSetter(CalendarStyle.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -39,7 +39,7 @@ public class CalendarStyle extends AppCompatActivity {
 
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -67,12 +67,20 @@ public class CalendarStyle extends AppCompatActivity {
         sand_checkbox = (ImageButton) findViewById(R.id.sand_checkbox);
         brown_checkbox = (ImageButton) findViewById(R.id.brown_checkbox);
 
-        themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
-        themeGroupPro.setVisibility(View.GONE);
+        deepPurple = (ImageButton) findViewById(R.id.deepPurple);
+        indigoCheckbox = (ImageButton) findViewById(R.id.indigoCheckbox);
+        limeCheckbox = (ImageButton) findViewById(R.id.limeCheckbox);
+        deepOrange = (ImageButton) findViewById(R.id.deepOrange);
+
+        LinearLayout themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
+        if (Module.isPro()) {
+            themeGroupPro.setVisibility(View.VISIBLE);
+        } else themeGroupPro.setVisibility(View.GONE);
 
         setOnClickListener(red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
                 blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
-                pink_checkbox, sand_checkbox, brown_checkbox);
+                pink_checkbox, sand_checkbox, brown_checkbox, limeCheckbox, deepOrange, deepPurple,
+                indigoCheckbox);
 
         setUpRadio();
     }
@@ -133,6 +141,18 @@ public class CalendarStyle extends AppCompatActivity {
             case "12":
                 brown_checkbox.setSelected(true);
                 break;
+            case "13":
+                deepPurple.setSelected(true);
+                break;
+            case "14":
+                deepOrange.setSelected(true);
+                break;
+            case "15":
+                limeCheckbox.setSelected(true);
+                break;
+            case "16":
+                indigoCheckbox.setSelected(true);
+                break;
             default:
                 green_checkbox.setSelected(true);
                 break;
@@ -181,6 +201,18 @@ public class CalendarStyle extends AppCompatActivity {
             case R.id.brown_checkbox:
                 saveColor("12");
                 break;
+            case R.id.deepPurple:
+                saveColor("13");
+                break;
+            case R.id.deepOrange:
+                saveColor("14");
+                break;
+            case R.id.limeCheckbox:
+                saveColor("15");
+                break;
+            case R.id.indigoCheckbox:
+                saveColor("16");
+                break;
         }
     }
 
@@ -201,6 +233,10 @@ public class CalendarStyle extends AppCompatActivity {
         pink_checkbox.setSelected(false);
         sand_checkbox.setSelected(false);
         brown_checkbox.setSelected(false);
+        deepPurple.setSelected(false);
+        deepOrange.setSelected(false);
+        limeCheckbox.setSelected(false);
+        indigoCheckbox.setSelected(false);
     }
 
     void saveColor(String string) {

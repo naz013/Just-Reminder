@@ -31,11 +31,18 @@ public class BirthdaysList extends Fragment{
     static final String ARGUMENT_PAGE_DATA = "arg_page_data";
     int pageNumber;
 
-    public static BirthdaysList newInstance(int page, ArrayList<EventsDataProvider.EventsItem> datas) {
+    public void setData(ArrayList<EventsDataProvider.EventsItem> datas){
+        this.datas = datas;
+    }
+
+    public void setPageNumber(int number){
+        this.pageNumber = number;
+    }
+
+    public static BirthdaysList newInstance(int page) {
         BirthdaysList pageFragment = new BirthdaysList();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
-        arguments.putParcelableArrayList(ARGUMENT_PAGE_DATA, datas);
         pageFragment.setArguments(arguments);
         return pageFragment;
     }
@@ -45,8 +52,6 @@ public class BirthdaysList extends Fragment{
         super.onCreate(savedInstanceState);
 
         Bundle intent = getArguments();
-        datas = intent.getParcelableArrayList(ARGUMENT_PAGE_DATA);
-        pageNumber = intent.getInt(ARGUMENT_PAGE_NUMBER);
     }
 
     @Override

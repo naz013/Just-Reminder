@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,11 +36,6 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import java.util.Calendar;
 
 public class MissedCallDialog extends Activity {
-    private FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor,
-            buttonNotification, buttonEdit;
-    private TextView remText;
-    private RoundImageView contactPhoto;
-    private LinearLayout single_container;
     private MissedCallAlarm alarm = new MissedCallAlarm();
     private long id;
     private SharedPrefs sPrefs;
@@ -80,21 +76,21 @@ public class MissedCallDialog extends Activity {
 
         String name = Contacts.getContactNameFromNumber(number, MissedCallDialog.this);
 
-        single_container = (LinearLayout) findViewById(R.id.single_container);
+        LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
-        buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
-        buttonCancel = (FloatingActionButton) findViewById(R.id.buttonCancel);
-        buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
-        buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
+        FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
+        FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
+        FloatingActionButton buttonCancel = (FloatingActionButton) findViewById(R.id.buttonCancel);
+        FloatingActionButton buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
+        FloatingActionButton buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
         buttonDelay.setVisibility(View.GONE);
-        buttonDelayFor = (FloatingActionButton) findViewById(R.id.buttonDelayFor);
+        FloatingActionButton buttonDelayFor = (FloatingActionButton) findViewById(R.id.buttonDelayFor);
         buttonDelayFor.setVisibility(View.GONE);
-        buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
+        FloatingActionButton buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
         buttonNotification.setVisibility(View.GONE);
         buttonEdit.setVisibility(View.GONE);
-        contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
@@ -111,7 +107,7 @@ public class MissedCallDialog extends Activity {
             buttonNotification.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_favorite_white_24dp));
         }
 
-        remText = (TextView) findViewById(R.id.remText);
+        TextView remText = (TextView) findViewById(R.id.remText);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
@@ -185,7 +181,8 @@ public class MissedCallDialog extends Activity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         switch (requestCode){
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){

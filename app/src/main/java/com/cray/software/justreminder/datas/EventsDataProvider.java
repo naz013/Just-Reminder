@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -64,18 +65,20 @@ public class EventsDataProvider {
 
     public ArrayList<EventsItem> getMatches(int day, int month, int year){
         ArrayList<EventsItem> res = new ArrayList<>();
+        long start = System.currentTimeMillis();
         for (EventsItem item : data){
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
             Type type = item.getInn();
-            if (type == Type.birthday){
-                if (mDay == day && mMonth == month) res.add(item);
-            }
-            if (type == Type.reminder){
+            if (type == Type.birthday && mDay == day && mMonth == month){
+                res.add(item);
+            } else {
                 if (mDay == day && mMonth == month && mYear == year) res.add(item);
             }
         }
+        long diff = System.currentTimeMillis() - start;
+        Log.d(Constants.LOG_TAG, "Search time " + diff);
         return res;
     }
 
@@ -126,6 +129,7 @@ public class EventsDataProvider {
     }
 
     public void loadReminders(){
+        long start = System.currentTimeMillis();
         if (s != null && s.moveToFirst()) {
             do {
                 int myHour = s.getInt(s.getColumnIndex(Constants.COLUMN_HOUR));
@@ -242,6 +246,8 @@ public class EventsDataProvider {
                 }
             } while (s.moveToNext());
         }
+        long diff = System.currentTimeMillis() - start;
+        Log.d(Constants.LOG_TAG, "Calculate time " + diff);
     }
 
     public class EventsItem implements Parcelable{

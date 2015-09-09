@@ -655,9 +655,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, myHour);
-            calendar.set(Calendar.MINUTE, myMinute);
+            cal.set(Calendar.HOUR_OF_DAY, myHour);
+            cal.set(Calendar.MINUTE, myMinute);
 
             taskField.setText(text);
             timeField.setText(TimeUtil.getTime(cal.getTime(), sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));

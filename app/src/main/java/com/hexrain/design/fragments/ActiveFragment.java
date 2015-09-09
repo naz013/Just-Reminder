@@ -323,8 +323,8 @@ public class ActiveFragment extends Fragment {
             }
 
             @Override
-            public void onItemSwitched(int position) {
-                if (Reminder.toggle(provider.getItem(position).getId(), getActivity())){
+            public void onItemSwitched(boolean position) {
+                if (position){
                     loaderAdapter(null);
                 }
             }

@@ -235,6 +235,20 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 R.drawable.simple_settings_button, "Teal", 0, 0, 0));
 
         list.add(new ThemeItem(getResColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorIndigo, R.color.colorGrey,
+                getResColor(R.color.colorWhite), R.color.colorWhite,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Indigo", 0, 0, 0));
+
+        list.add(new ThemeItem(getResColor(R.color.colorBlack), R.color.colorWhite,
+                R.color.colorLime, R.color.colorGrey,
+                getResColor(R.color.colorWhite), R.color.colorWhite,
+                R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
+                R.drawable.simple_plus_button, R.drawable.simple_voice_button,
+                R.drawable.simple_settings_button, "Lime", 0, 0, 0));
+
+        list.add(new ThemeItem(getResColor(R.color.colorBlack), R.color.colorWhite,
                 R.color.colorBlueDark, R.color.colorGrey,
                 getResColor(R.color.colorWhite), R.color.colorWhite,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,

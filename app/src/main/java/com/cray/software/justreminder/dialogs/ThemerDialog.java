@@ -18,9 +18,10 @@ import com.cray.software.justreminder.modules.Module;
 
 public class ThemerDialog extends AppCompatActivity {
 
-    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
-            yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
-            deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
+    private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
+            blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
+            pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
+            deepOrange;
     private SharedPrefs sPrefs;
     private ColorSetter cs;
     private Toolbar toolbar;
@@ -143,7 +144,7 @@ public class ThemerDialog extends AppCompatActivity {
                 indigoCheckbox.setSelected(true);
                 break;
             default:
-                green_checkbox.setSelected(true);
+                blue_checkbox.setSelected(true);
                 break;
         }
     }

@@ -357,9 +357,6 @@ public class SplashScreen extends Activity{
         if (!sPrefs.isString(Prefs.EXPORT_TO_STOCK)){
             sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
         }
-        if (!sPrefs.isString(Prefs.BIRTHDAY_SILENT_SMS)){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_SILENT_SMS, false);
-        }
         if (!sPrefs.isString(Prefs.USE_DARK_THEME)){
             sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
         }

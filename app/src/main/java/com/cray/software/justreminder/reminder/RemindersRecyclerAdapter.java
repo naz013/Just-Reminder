@@ -130,7 +130,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
         void onItemRemoved(int position);
 
-        void onItemSwitched(int position);
+        void onItemSwitched(boolean position);
 
         void onItemClicked(int position, SwitchCompat check);
 
@@ -403,7 +403,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mEventListener != null) mEventListener.onItemSwitched(position);
+                if (Reminder.toggle(provider.getItem(position).getId(), mContext)) {
+                    if (mEventListener != null) mEventListener.onItemSwitched(true);
+                } else {
+                    holder.check.setChecked(false);
+                }
             }
         });
 

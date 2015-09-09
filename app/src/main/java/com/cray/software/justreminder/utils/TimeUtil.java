@@ -8,11 +8,11 @@ import java.util.Locale;
 
 public class TimeUtil {
 
-    public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
-    public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a", Locale.getDefault());
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-    public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
-    public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a", Locale.getDefault());
+    public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+    public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a");
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+    public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
+    public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a");
 
     public TimeUtil(){}
 

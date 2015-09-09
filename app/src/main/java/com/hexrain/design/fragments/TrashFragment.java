@@ -177,7 +177,7 @@ public class TrashFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loaderAdapter();
-        if (!new Module().isPro()){
+        if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -186,7 +186,7 @@ public class TrashFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -196,7 +196,7 @@ public class TrashFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.pause();
             }
@@ -239,7 +239,7 @@ public class TrashFragment extends Fragment {
             }
 
             @Override
-            public void onItemSwitched(int position) {
+            public void onItemSwitched(boolean position) {
             }
 
             @Override
