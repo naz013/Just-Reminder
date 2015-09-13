@@ -91,7 +91,8 @@ public class Constants {
     public final static String CUSTOM_SOUND_FILE = "sound_file";
 
     public final static String DIR_SD = "backup";
-    public final static String DIR_IMAGE_CASHE = "img";
+    public final static String DIR_IMAGE_CACHE = "img";
+    public final static String DIR_PREFS = "preferences";
     public final static String DIR_NOTES_SD = "notes";
     public final static String DIR_GROUP_SD = "groups";
     public final static String DIR_BIRTHDAY_SD = "birthdays";

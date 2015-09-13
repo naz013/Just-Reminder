@@ -61,7 +61,7 @@ public class Prefs {
     public static final String TRACK_TIME = "tracking_time";
     public static final String TRACK_DISTANCE = "tracking_distance";
     public static final String NOTE_ENCRYPT = "note_encrypt";
-    public static final String TEXT_SIZE= "text_size";
+    public static final String TEXT_SIZE = "text_size";
     public static final String QUICK_NOTE_REMINDER = "quick_note_reminder";
     public static final String QUICK_NOTE_REMINDER_TIME = "quick_note_reminder_time";
     public static final String SYNC_NOTES = "sync_notes";
@@ -104,6 +104,7 @@ public class Prefs {
     public static final String TASK_CHANGED = "task_changed";
     public static final String LAST_FRAGMENT = "last_fragment";
     public static final String CALENDAR_IMAGE = "calendar_image";
+    public static final String EXPORT_SETTINGS = "export_settings";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";
@@ -121,6 +122,9 @@ public class Prefs {
     public static final String APP_RUNS_COUNT = "app_runs";
     public static final String BIRTHDAY_REMINDER_HOUR = "reminder_hour";
     public static final String BIRTHDAY_REMINDER_MINUTE = "reminder_minute";
+    public static final String BIRTHDAY_TTS = "birthday_tts";
+    public static final String BIRTHDAY_TTS_LOCALE = "birthday_tts_locale";
+
     public static final String IS_CREATE_SHOWN = "create_showcase";
     public static final String IS_CALENDAR_SHOWN = "calendar_showcase";
     public static final String IS_LIST_SHOWN = "list_showcase";

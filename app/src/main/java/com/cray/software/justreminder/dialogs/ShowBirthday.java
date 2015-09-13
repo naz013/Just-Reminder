@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -8,9 +9,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -25,6 +30,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Telephony;
@@ -37,7 +43,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 
-public class ShowBirthday extends Activity implements View.OnClickListener {
+public class ShowBirthday extends Activity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
     DataBase DB;
     RoundImageView contactPhoto;
@@ -51,7 +57,12 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     String name, number, birthDate;
     ColorSetter cs = new ColorSetter(ShowBirthday.this);
     Notifier notifier = new Notifier(ShowBirthday.this);
+    TextToSpeech tts;
     boolean isDark = false;
+    boolean isGlobal = false;
+    int currVolume;
+
+    private static final int MY_DATA_CHECK_CODE = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +163,20 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         wakeScreen();
 
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
+
+        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
+        if (!isGlobal && sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
+            Intent checkTTSIntent = new Intent();
+            checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+            try {
+                startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+            } catch (ActivityNotFoundException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     private void colorify(FloatingActionButton... fab){
@@ -241,7 +266,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int year = calendar.get(Calendar.YEAR);
@@ -285,5 +310,34 @@ public class ShowBirthday extends Activity implements View.OnClickListener {
         } else {
             Toast.makeText(getApplicationContext(), getString(R.string.must_click_message), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onInit(int status) {
+        sPrefs = new SharedPrefs(ShowBirthday.this);
+        if(status == TextToSpeech.SUCCESS){
+            int result = tts.setLanguage(new Language().getLocale(ShowBirthday.this, true));
+            if(result == TextToSpeech.LANG_MISSING_DATA ||
+                    result == TextToSpeech.LANG_NOT_SUPPORTED){
+                Log.e("error", "This Language is not supported");
+            } else{
+                if (name != null && !name.matches("")) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                    int amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                    am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        tts.speak(name, TextToSpeech.QUEUE_FLUSH, null, null);
+                    } else {
+                        tts.speak(name, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                }
+            }
+        } else
+            Log.e("error", "Initialization Failed!");
     }
 }

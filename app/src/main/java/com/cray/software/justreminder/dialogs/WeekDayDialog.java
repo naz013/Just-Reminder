@@ -602,7 +602,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     public void onInit(int status) {
         sPrefs = new SharedPrefs(WeekDayDialog.this);
         if(status == TextToSpeech.SUCCESS){
-            int result = tts.setLanguage(new Language().getLocale(WeekDayDialog.this));
+            int result = tts.setLanguage(new Language().getLocale(WeekDayDialog.this, false));
             if(result == TextToSpeech.LANG_MISSING_DATA ||
                     result == TextToSpeech.LANG_NOT_SUPPORTED){
                 Log.e("error", "This Language is not supported");

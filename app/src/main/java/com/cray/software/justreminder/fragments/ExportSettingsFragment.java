@@ -32,8 +32,9 @@ import java.util.ArrayList;
 
 public class ExportSettingsFragment extends Fragment implements View.OnClickListener {
 
-    RelativeLayout exportToCalendar, autoBackup, exportToStock, exportTasks;
-    CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck;
+    RelativeLayout exportToCalendar, autoBackup, exportToStock, exportTasks, syncSettings;
+    CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
+            syncSettingsCheck;
     TextView eventDuration, selectCalendar, clouds, clean;
     SharedPrefs sPrefs;
     ActionBar ab;
@@ -79,9 +80,26 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         exportToStockCheck = (CheckBox) rootView.findViewById(R.id.exportToStockCheck);
         exportToStockCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
 
+        syncSettings = (RelativeLayout) rootView.findViewById(R.id.syncSettings);
+        syncSettings.setOnClickListener(this);
+
+        syncSettingsCheck = (CheckBox) rootView.findViewById(R.id.syncSettingsCheck);
+        syncSettingsCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS));
+
         checkEnabling();
 
         return rootView;
+    }
+
+    private void prefsChange (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (syncSettingsCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, false);
+            syncSettingsCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, true);
+            syncSettingsCheck.setChecked(true);
+        }
     }
 
     private void stockChange (){
@@ -180,6 +198,9 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 break;
             case R.id.clean:
                 cleanFolders();
+                break;
+            case R.id.syncSettings:
+                prefsChange();
                 break;
         }
     }

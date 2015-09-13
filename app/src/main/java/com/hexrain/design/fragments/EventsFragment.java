@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +21,6 @@ import com.cray.software.justreminder.datas.PagerItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -162,7 +160,6 @@ public class EventsFragment extends Fragment {
     int targetPosition = -1;
 
     private void showEvents(Date date) {
-        long diff = System.currentTimeMillis();
         pagerData.clear();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -212,12 +209,9 @@ public class EventsFragment extends Fragment {
             position++;
             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
         }
-        Log.d(Constants.LOG_TAG, "Async time " + (System.currentTimeMillis() - diff));
-        diff = System.currentTimeMillis();
         final CalendarPagerAdapter pagerAdapter =
                 new CalendarPagerAdapter(getChildFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
-        Log.d(Constants.LOG_TAG, "Set adapter time " + (System.currentTimeMillis() - diff));
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -245,6 +239,5 @@ public class EventsFragment extends Fragment {
         });
 
         pager.setCurrentItem(targetPosition);
-        Log.d(Constants.LOG_TAG, "Set adapter end " + (System.currentTimeMillis() - diff));
     }
 }

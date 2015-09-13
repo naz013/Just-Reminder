@@ -108,6 +108,9 @@ public class ActiveFragment extends Fragment {
             case R.id.action_filter:
                 filterDialog();
                 return true;
+            case R.id.action_exit:
+                getActivity().finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

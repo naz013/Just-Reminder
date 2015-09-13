@@ -17,10 +17,10 @@ public class Language {
     public static final String RUSSIAN = "ru";
     public static final String SPANISH = "es";
 
-    public Locale getLocale(Context context){
+    public Locale getLocale(Context context, boolean birth){
         Locale res = null;
         SharedPrefs sPrefs = new SharedPrefs(context);
-        switch (sPrefs.loadPrefs(Prefs.TTS_LOCALE)){
+        switch (sPrefs.loadPrefs(birth ? Prefs.BIRTHDAY_TTS_LOCALE : Prefs.TTS_LOCALE)){
             case ENGLISH:
                 res = Locale.ENGLISH;
                 break;

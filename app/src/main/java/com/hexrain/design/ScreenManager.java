@@ -1551,4 +1551,12 @@ public class ScreenManager extends AppCompatActivity
             new GetTasksListsAsync(this, null).execute();
         }
     }
+
+    @Override
+    protected void onStop() {
+        if (new SharedPrefs(this).loadBoolean(Prefs.EXPORT_SETTINGS)){
+            new SharedPrefs(this).savePrefsBackup();
+        }
+        super.onStop();
+    }
 }

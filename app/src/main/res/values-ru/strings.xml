@@ -676,4 +676,7 @@
     <string name="settings_bg_image_explanation">Отметьте, чтобы включить фоновое изображение в календаре</string>
     <string name="settings_bg_image_title">Фоновое изображение</string>
     <string name="settings_birthday_reminder_explanation">Отметьте, чтобы включить напоминания о днях рождения</string>
+    <string name="settings_backup_title">Резервная копия настроек</string>
+    <string name="settings_backup_explanation">Отметьте, чтобы включить создание резервной копии настроек на карте памяти</string>
+    <string name="exit">Выход</string>
 </resources>

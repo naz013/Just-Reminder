@@ -1386,7 +1386,7 @@ public class SyncHelper {
         return UUID.randomUUID().toString();
     }
 
-    public boolean isSdPresent() {
+    public static boolean isSdPresent() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 

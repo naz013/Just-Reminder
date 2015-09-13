@@ -676,4 +676,7 @@
     <string name="settings_birthday_reminder_title">Нагадування про дні народження</string>
     <string name="settings_bg_image_explanation">Відмітьте, щоб увімкнути фонове зображення в календарі</string>
     <string name="settings_bg_image_title">Фонове зображення</string>
+    <string name="settings_backup_explanation">Відмітьте, щоб увімкнути створення резервної копії налаштувань на карті пам\'яті</string>
+    <string name="settings_backup_title">Резервна копія налаштувань</string>
+    <string name="exit">Вихід</string>
 </resources>

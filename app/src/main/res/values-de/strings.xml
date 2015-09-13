@@ -676,4 +676,7 @@
     <string name="settings_birthday_reminder_title">Geburtstagserinnerung</string>
     <string name="settings_bg_image_explanation">Überprüfen Sie, Hintergrundbild im Kalender aktivieren</string>
     <string name="settings_bg_image_title">Hintergrundbildes</string>
+    <string name="settings_backup_title">Backup-Einstellungen</string>
+    <string name="settings_backup_explanation">Überprüfen Sie die Einstellungen Backup auf SD-Karte aktivieren</string>
+    <string name="exit">Ausgang</string>
 </resources>

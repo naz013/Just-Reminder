@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
+import com.cray.software.justreminder.dialogs.utils.SelectLocale;
 import com.cray.software.justreminder.dialogs.utils.SoundType;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -28,14 +29,14 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     SharedPrefs sPrefs;
     ActionBar ab;
     LinearLayout chooseSound, lewColorWrapper, chooseLedColor;
-    RelativeLayout vibrationOption, soundOption, wakeScreenOption,
-            infiniteSoundOption, globalOption, infiniteVibrateOption;
+    RelativeLayout vibrationOption, soundOption, wakeScreenOption, infiniteSoundOption,
+            globalOption, infiniteVibrateOption, tts;
     RelativeLayout lewWrapper, led;
-    TextView showMelody;
-    TextView textLed2, textLed3, vText, vText1;
+    TextView showMelody, locale;
+    TextView textLed2, textLed3, vText, vText1, textC1, textC;
     TextView textB, textB1, textB2, textB3, textB4, textB5, textB6, textB7, textB10, textB11, textB12;
     CheckBox vibrationCheck, soundCheck, wakeScreenCheck, infiniteSoundCheck, ledCheck,
-            globalCheck, infiniteVibrateCheck;
+            globalCheck, infiniteVibrateCheck, ttsCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,6 +140,32 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         textB11 = (TextView) rootView.findViewById(R.id.textB11);
         textB12 = (TextView) rootView.findViewById(R.id.textB12);
 
+        textC = (TextView) rootView.findViewById(R.id.textC);
+        textC1 = (TextView) rootView.findViewById(R.id.textC1);
+
+        tts = (RelativeLayout) rootView.findViewById(R.id.tts);
+        tts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ttsChange();
+            }
+        });
+
+        ttsCheck = (CheckBox) rootView.findViewById(R.id.ttsCheck);
+        ttsCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS));
+
+        locale = (TextView) rootView.findViewById(R.id.locale);
+        locale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
+                        .putExtra("tts", 1)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
+
+        checkTTS();
+
         setUpEnables();
         checkEnabling();
 
@@ -189,6 +216,11 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             textB10.setEnabled(false);
             textB11.setEnabled(false);
             textB12.setEnabled(false);
+            textC.setEnabled(false);
+            textC1.setEnabled(false);
+            tts.setEnabled(false);
+            ttsCheck.setEnabled(false);
+            locale.setEnabled(false);
             infiniteVibrateOption.setEnabled(false);
             infiniteVibrateCheck.setEnabled(false);
             vText.setEnabled(false);
@@ -222,11 +254,39 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             textB10.setEnabled(true);
             textB11.setEnabled(true);
             textB12.setEnabled(true);
+            textC.setEnabled(true);
+            textC1.setEnabled(true);
+            tts.setEnabled(true);
+            ttsCheck.setEnabled(true);
+            locale.setEnabled(true);
             infiniteVibrateOption.setEnabled(true);
             infiniteVibrateCheck.setEnabled(true);
             vText.setEnabled(true);
             vText1.setEnabled(true);
         }
+    }
+
+    private void checkTTS(){
+        if (ttsCheck.isChecked()){
+            locale.setEnabled(true);
+        } else {
+            locale.setEnabled(false);
+        }
+    }
+
+    private void ttsChange (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (ttsCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, false);
+            ttsCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, true);
+            ttsCheck.setChecked(true);
+            getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
+                    .putExtra("tts", 1)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
+        checkTTS();
     }
 
     private void checkEnabling(){

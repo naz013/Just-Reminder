@@ -667,7 +667,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     public void onInit(int status) {
         sPrefs = new SharedPrefs(ReminderDialog.this);
         if(status == TextToSpeech.SUCCESS){
-            int result = tts.setLanguage(new Language().getLocale(ReminderDialog.this));
+            int result = tts.setLanguage(new Language().getLocale(ReminderDialog.this, false));
             if(result == TextToSpeech.LANG_MISSING_DATA ||
                     result == TextToSpeech.LANG_NOT_SUPPORTED){
                 Log.e("error", "This Language is not supported");
@@ -689,6 +689,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 }
             }
         } else
-            Log.e("error", "Initilization Failed!");
+            Log.e("error", "Initialization Failed!");
     }
 }

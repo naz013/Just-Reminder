@@ -22,4 +22,8 @@
         android:title="@string/simple_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_exit"
+        android:title="@string/exit"
+        app:showAsAction="never" />
 </menu>

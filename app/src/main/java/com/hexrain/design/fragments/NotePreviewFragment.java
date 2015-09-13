@@ -159,7 +159,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                     _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
                     File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CASHE);
+                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }

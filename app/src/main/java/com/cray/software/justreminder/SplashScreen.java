@@ -33,7 +33,6 @@ public class SplashScreen extends Activity{
     ColorSetter cs = new ColorSetter(SplashScreen.this);
 
     public static final String APP_UI_PREFERENCES = "ui_settings";
-    SharedPreferences appUISettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +56,16 @@ public class SplashScreen extends Activity{
         splashBg.setBackgroundColor(cs.colorSetter());
 
         sPrefs = new SharedPrefs(SplashScreen.this);
+        if (SyncHelper.isSdPresent()){
+            sPrefs.loadPrefsFromFile();
+        }
+        initPrefs();
+    }
+
+    private void initPrefs() {
         File settingsUI = new File("/data/data/" + getPackageName() + "/shared_prefs/" + APP_UI_PREFERENCES + ".xml");
         if(!settingsUI.exists()){
-            appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor uiEd = appUISettings.edit();
             uiEd.putString(Prefs.THEME, "6");
             uiEd.putString(Prefs.CURRENT_COLOR, "1");
