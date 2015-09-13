@@ -78,7 +78,6 @@ public class EventsDataProvider {
             }
         }
         long diff = System.currentTimeMillis() - start;
-        Log.d(Constants.LOG_TAG, "Search time " + diff);
         return res;
     }
 

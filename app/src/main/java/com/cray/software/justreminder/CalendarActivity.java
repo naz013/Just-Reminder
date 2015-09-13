@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.PagerItem;
@@ -265,7 +266,7 @@ public class CalendarActivity extends AppCompatActivity {
         pager.setVisibility(View.VISIBLE);
 
         progress.setVisibility(View.GONE);
-        MyFragmentPagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), pagerData);
+        CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getSupportFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -301,29 +302,6 @@ public class CalendarActivity extends AppCompatActivity {
 
         currentEvent.setClickable(false);
         title.setText(getString(R.string.birthdays_dialog_title));
-    }
-
-    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-
-        ArrayList<PagerItem> datas;
-
-        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<PagerItem> datas) {
-            super(fm);
-            this.datas = datas;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            BirthdaysList fragment = new BirthdaysList();
-            fragment.setData(datas.get(position).getDatas());
-            fragment.setPageNumber(position);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return datas.size();
-        }
     }
 
     @Override

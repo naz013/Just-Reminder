@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.EventsDataProvider;
+import com.cray.software.justreminder.datas.PagerItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -26,12 +26,12 @@ public class BirthdaysList extends Fragment{
     ListView contactsList;
     CalendarEventsAdapter customAdapter;
     ColorSetter cs;
-    ArrayList<EventsDataProvider.EventsItem> datas;
+    ArrayList<PagerItem> datas;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_PAGE_DATA = "arg_page_data";
     int pageNumber;
 
-    public void setData(ArrayList<EventsDataProvider.EventsItem> datas){
+    public void setData(ArrayList<PagerItem> datas){
         this.datas = datas;
     }
 
@@ -50,7 +50,6 @@ public class BirthdaysList extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle intent = getArguments();
     }
 
@@ -70,7 +69,7 @@ public class BirthdaysList extends Fragment{
                     db.open();
                     db.deleteBirthday(id);
                     datas.remove(position);
-                    loaderAdapter(datas);
+                    loaderAdapter();
                     Toast.makeText(getActivity(), getString(R.string.swipe_delete), Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -90,13 +89,13 @@ public class BirthdaysList extends Fragment{
             }
         });
 
-        loaderAdapter(datas);
+        loaderAdapter();
 
         return view;
     }
 
-    public void loaderAdapter(ArrayList<EventsDataProvider.EventsItem> calendarDatas){
-        customAdapter = new CalendarEventsAdapter(getActivity(), calendarDatas);
+    public void loaderAdapter(){
+        customAdapter = new CalendarEventsAdapter(getActivity(), datas.get(pageNumber).getDatas());
         contactsList.setAdapter(customAdapter);
     }
 }

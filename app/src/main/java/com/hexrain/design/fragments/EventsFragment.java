@@ -3,11 +3,8 @@ package com.hexrain.design.fragments;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.PagerItem;
-import com.cray.software.justreminder.dialogs.BirthdaysList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -34,7 +31,6 @@ import com.hexrain.design.ScreenManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 public class EventsFragment extends Fragment {
 
@@ -168,19 +164,60 @@ public class EventsFragment extends Fragment {
     private void showEvents(Date date) {
         long diff = System.currentTimeMillis();
         pagerData.clear();
-        try {
-            pagerData = new LoadAsync().execute(date).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int targetDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int targetMonth = calendar.get(Calendar.MONTH);
+        int targetYear = calendar.get(Calendar.YEAR);
+
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
+
+        DataBase db = new DataBase(getActivity());
+        if (!db.isOpen()) db.open();
+
+        EventsDataProvider provider = new EventsDataProvider();
+        Cursor c = db.getBirthdays();
+        provider.setBirthdays(c);
+        provider.setTime(hour, minute);
+        if (isRemindersEnabled) {
+            Cursor s = db.getActiveReminders();
+            provider.setReminders(s);
+            provider.setFeature(isFeature);
         }
-        diff = System.currentTimeMillis() - diff;
-        Log.d(Constants.LOG_TAG, "Async time " + diff);
+        provider.fillArray();
+
+        int position = 0;
+        targetPosition = -1;
+        while (position < Configs.MAX_DAYS_COUNT) {
+            int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            int mMonth = calendar.get(Calendar.MONTH);
+            int mYear = calendar.get(Calendar.YEAR);
+
+            ArrayList<EventsDataProvider.EventsItem> datas =
+                    provider.getMatches(mDay, mMonth, mYear);
+
+            if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
+                targetPosition = position;
+                pagerData.add(new PagerItem(datas, position, 1, mDay, mMonth, mYear));
+            } else {
+                pagerData.add(new PagerItem(datas, position, 0, mDay, mMonth, mYear));
+            }
+
+            position++;
+            calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+        }
+        Log.d(Constants.LOG_TAG, "Async time " + (System.currentTimeMillis() - diff));
         diff = System.currentTimeMillis();
-        final MyFragmentPagerAdapter pagerAdapter =
-                new MyFragmentPagerAdapter(getChildFragmentManager(), pagerData);
+        final CalendarPagerAdapter pagerAdapter =
+                new CalendarPagerAdapter(getChildFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
-        diff = System.currentTimeMillis() - diff;
-        Log.d(Constants.LOG_TAG, "Set adapter time " + diff);
+        Log.d(Constants.LOG_TAG, "Set adapter time " + (System.currentTimeMillis() - diff));
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -208,89 +245,6 @@ public class EventsFragment extends Fragment {
         });
 
         pager.setCurrentItem(targetPosition);
-    }
-
-    private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
-
-        ArrayList<PagerItem> datas;
-
-        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<PagerItem> datas) {
-            super(fm);
-            this.datas = datas;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            BirthdaysList fragment = new BirthdaysList();
-            fragment.setData(datas.get(position).getDatas());
-            fragment.setPageNumber(position);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return datas.size();
-        }
-    }
-
-    private class LoadAsync extends AsyncTask<Date, Void, ArrayList<PagerItem>>{
-
-        @Override
-        protected ArrayList<PagerItem> doInBackground(Date... params) {
-            Date date = params[0];
-            ArrayList<PagerItem> data = new ArrayList<>();
-            long diff = System.currentTimeMillis();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            int targetDay = calendar.get(Calendar.DAY_OF_MONTH);
-            int targetMonth = calendar.get(Calendar.MONTH);
-            int targetYear = calendar.get(Calendar.YEAR);
-
-            calendar.setTimeInMillis(System.currentTimeMillis());
-
-            SharedPrefs sPrefs = new SharedPrefs(getActivity());
-            int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-            int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
-            boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-            boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
-
-            DataBase db = new DataBase(getActivity());
-            if (!db.isOpen()) db.open();
-
-            EventsDataProvider provider = new EventsDataProvider();
-            Cursor c = db.getBirthdays();
-            provider.setBirthdays(c);
-            provider.setTime(hour, minute);
-            if (isRemindersEnabled) {
-                Cursor s = db.getActiveReminders();
-                provider.setReminders(s);
-                provider.setFeature(isFeature);
-            }
-            provider.fillArray();
-
-            int position = 0;
-            targetPosition = -1;
-            while (position < Configs.MAX_DAYS_COUNT) {
-                int mDay = calendar.get(Calendar.DAY_OF_MONTH);
-                int mMonth = calendar.get(Calendar.MONTH);
-                int mYear = calendar.get(Calendar.YEAR);
-
-                ArrayList<EventsDataProvider.EventsItem> datas =
-                        provider.getMatches(mDay, mMonth, mYear);
-
-                if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
-                    targetPosition = position;
-                    data.add(new PagerItem(datas, position, 1, mDay, mMonth, mYear));
-                } else {
-                    data.add(new PagerItem(datas, position, 0, mDay, mMonth, mYear));
-                }
-
-                position++;
-                calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
-            }
-            diff = System.currentTimeMillis() - diff;
-            Log.d(Constants.LOG_TAG, "Async time inside " + diff);
-            return data;
-        }
+        Log.d(Constants.LOG_TAG, "Set adapter end " + (System.currentTimeMillis() - diff));
     }
 }
