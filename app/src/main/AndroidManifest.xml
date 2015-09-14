@@ -410,6 +410,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".dialogs.utils.PermissionsList"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/HomeWhiteDialog" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".dialogs.utils.DaysTo"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog" >

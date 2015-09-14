@@ -678,5 +678,18 @@
     <string name="settings_bg_image_title">Фонове зображення</string>
     <string name="settings_backup_explanation">Відмітьте, щоб увімкнути створення резервної копії налаштувань на карті пам\'яті</string>
     <string name="settings_backup_title">Резервна копія налаштувань</string>
-    <string name="exit">Вихід</string>
+    <string name="exit">Вийти</string>
+    <string name="permissions">Дозволи</string>
+    <string name="add_permission">Додати дозвіл</string>
+    <string name="course_location">Приблизне місцезнаходження</string>
+    <string name="fine_location">Точне місцезнаходження</string>
+    <string name="get_accounts">Отримувати облікові записи</string>
+    <string name="read_phone_state">Читати стан телефону</string>
+    <string name="read_calendar">Читати календар</string>
+    <string name="write_calendar">Записувати в календар</string>
+    <string name="read_contacts">Читати контакти</string>
+    <string name="read_external_storage">Читати зовнішнє сховище</string>
+    <string name="write_external_storage">Записувати на зовнішнє сховище</string>
+    <string name="send_sms">Надсилати SMS</string>
+    <string name="call_phone">Виконувати дзвінки</string>
 </resources>

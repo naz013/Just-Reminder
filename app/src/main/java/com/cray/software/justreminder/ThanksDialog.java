@@ -28,17 +28,21 @@ public class ThanksDialog extends AppCompatActivity {
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
+        int code = getIntent().getIntExtra("int", 0);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_security_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.thanks_settings_title));
+        if (code == 1) getSupportActionBar().setTitle(getString(R.string.permissions));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         helpView = (WebView) findViewById(R.id.helpView);
         String url = "file:///android_asset/files/LICENSE.html";
+        if (code == 1) url = "file:///android_asset/files/permissions.html";
         helpView.loadUrl(url);
 
         searchEdit = (EditText) findViewById(R.id.searchEdit);

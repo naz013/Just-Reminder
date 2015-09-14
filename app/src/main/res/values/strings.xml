@@ -682,6 +682,19 @@
     <string name="settings_backup_title">Backup settings</string>
     <string name="settings_backup_explanation">Check to enable settings backup on SD card</string>
     <string name="exit">Exit</string>
+    <string name="permissions">Permissions</string>
+    <string name="add_permission">Add permission</string>
+    <string name="course_location">Course Location</string>
+    <string name="fine_location">Fine Location</string>
+    <string name="call_phone">Call Phone</string>
+    <string name="get_accounts">Get Accounts</string>
+    <string name="read_phone_state">Read Phone State</string>
+    <string name="read_calendar">Read Calendar</string>
+    <string name="write_calendar">Write Calendar</string>
+    <string name="read_contacts">Read contacts</string>
+    <string name="read_external_storage">Read External Storage</string>
+    <string name="write_external_storage">Write External Storage</string>
+    <string name="send_sms">Send SMS</string>
     <integer name="com_vk_sdk_AppId">5052869</integer>
 
 </resources>

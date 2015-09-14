@@ -679,4 +679,17 @@
     <string name="settings_backup_title">Backup-Einstellungen</string>
     <string name="settings_backup_explanation">Überprüfen Sie die Einstellungen Backup auf SD-Karte aktivieren</string>
     <string name="exit">Ausgang</string>
+    <string name="permissions">Permissions</string>
+    <string name="add_permission">Fügen Sie die Erlaubnis</string>
+    <string name="course_location">Kursort</string>
+    <string name="fine_location">Bildende Location</string>
+    <string name="call_phone">Anruf Telefon</string>
+    <string name="get_accounts">Holen Konten</string>
+    <string name="read_phone_state">Telefonstatus lesen</string>
+    <string name="read_calendar">Lesen Sie Kalender</string>
+    <string name="write_calendar">Write Kalender</string>
+    <string name="read_contacts">Lesen Kontakte</string>
+    <string name="read_external_storage">Lesen Sie External Storage</string>
+    <string name="write_external_storage">Schreiben Sie External Storage</string>
+    <string name="send_sms">SMS senden</string>
 </resources>

@@ -679,4 +679,17 @@
     <string name="settings_backup_title">Резервная копия настроек</string>
     <string name="settings_backup_explanation">Отметьте, чтобы включить создание резервной копии настроек на карте памяти</string>
     <string name="exit">Выход</string>
+    <string name="permissions">Разрешения</string>
+    <string name="course_location">Приблизительное местоположение</string>
+    <string name="fine_location">Точное местоположение</string>
+    <string name="call_phone">Телефонный звонок</string>
+    <string name="get_accounts">Получать учетные записи</string>
+    <string name="read_phone_state">Читать состояние телефона</string>
+    <string name="read_calendar">Читать календарь</string>
+    <string name="write_calendar">Записывать в календарь</string>
+    <string name="read_external_storage">Читать внешнее хранилище</string>
+    <string name="write_external_storage">Записывать во внешнее хранилище</string>
+    <string name="send_sms">Отправлять SMS</string>
+    <string name="add_permission">Добавить разрешение</string>
+    <string name="read_contacts">Читать контакты</string>
 </resources>
