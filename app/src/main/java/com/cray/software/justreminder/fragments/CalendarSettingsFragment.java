@@ -2,7 +2,9 @@ package com.cray.software.justreminder.fragments;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import com.cray.software.justreminder.dialogs.CalendarStyle;
 import com.cray.software.justreminder.dialogs.utils.EventsImport;
 import com.cray.software.justreminder.dialogs.utils.FirstDay;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -215,9 +218,34 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
                 imageCheck();
                 break;
             case R.id.eventsImport:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                importEvents();
+                break;
+        }
+    }
+
+    private void importEvents() {
+        Permissions permissions = new Permissions(getActivity());
+        if (permissions.checkPermission(Permissions.READ_CALENDAR)) {
+            getActivity().getApplicationContext()
+                    .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        } else {
+            permissions.requestPermission(getActivity(), new String[]{Permissions.READ_CALENDAR,
+                    Permissions.WRITE_CALENDAR}, 101);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    getActivity().getApplicationContext()
+                            .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                } else {
+                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_CALENDAR);
+                }
                 break;
         }
     }

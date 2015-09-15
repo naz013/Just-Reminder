@@ -18,12 +18,23 @@ package com.hexrain.flextcal;
  */
 public class FlextData {
 
-    private String task;
-    private int resource;
+    private String task, birth;
 
-    public FlextData(String task, int resource){
+    public FlextData(){
+
+    }
+
+    public FlextData(String task, String birth){
         this.task = task;
-        this.resource = resource;
+        this.birth = birth;
+    }
+
+    public String getBirth(){
+        return birth;
+    }
+
+    public void setBirth(String birth){
+        this.birth = birth;
     }
 
     public String getTask(){
@@ -32,13 +43,5 @@ public class FlextData {
 
     public void setTask(String task){
         this.task = task;
-    }
-
-    public int getResource(){
-        return resource;
-    }
-
-    public void setResource(int resource){
-        this.resource = resource;
     }
 }

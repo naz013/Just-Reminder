@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,10 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 import hirondelle.date4j.DateTime;
 
@@ -129,8 +133,9 @@ public class FlextCal extends Fragment {
     public final static String _MIN_DATE_TIME = "_minDateTime";
     public final static String _MAX_DATE_TIME = "_maxDateTime";
     public final static String _BACKGROUND_FOR_TODAY_ = "_backgroundForToday";
-    public final static String _TEXT_FOR_EVENT_ONE = "_taskForEventOne";
-    public final static String _TEXT_FOR_EVENT_TWO = "_taskForEventTwo";
+    public final static String _BACKGROUND_FOR_ONE_ = "_backgroundForOne";
+    public final static String _BACKGROUND_FOR_TWO_ = "_backgroundForTwo";
+    public final static String _TEXT_FOR_EVENTS_ = "_taskForEvents";
 
     /**
      * datePagerAdapters hold 4 adapters, meant to be reused
@@ -157,9 +162,8 @@ public class FlextCal extends Fragment {
      */
     protected HashMap<String, Object> extraData = new HashMap<>();
 
-    protected int backgroundForToday = 0;
-    protected HashMap<DateTime, FlextData> textMapForEventOne = new HashMap<>();
-    protected HashMap<DateTime, FlextData> textMapForEventTwo = new HashMap<>();
+    protected int backgroundForToday = 0, bgForEventOne = 0, bgForEventTwo = 0;
+    protected HashMap<DateTime, FlextData> textMapForEvents = new HashMap<>();
 
     protected int startDayOfWeek = SUNDAY;
 
@@ -254,8 +258,9 @@ public class FlextCal extends Fragment {
 
         // Extra maps
         caldroidData.put(_BACKGROUND_FOR_TODAY_, backgroundForToday);
-        caldroidData.put(_TEXT_FOR_EVENT_ONE, textMapForEventOne);
-        caldroidData.put(_TEXT_FOR_EVENT_TWO, textMapForEventTwo);
+        caldroidData.put(_BACKGROUND_FOR_ONE_, bgForEventOne);
+        caldroidData.put(_BACKGROUND_FOR_TWO_, bgForEventTwo);
+        caldroidData.put(_TEXT_FOR_EVENTS_, textMapForEvents);
 
         return caldroidData;
     }
@@ -285,23 +290,43 @@ public class FlextCal extends Fragment {
         this.backgroundForToday = backgroundForToday;
     }
 
-    public void setTaskForEventOne(FlextData task, Date date){
-        this.textMapForEventOne.put(FlextHelper.convertDateToDateTime(date), task);
+    public void setBackgroundForOne(int backgroundForOne){
+        this.bgForEventOne = backgroundForOne;
     }
 
-    public void setTaskForEventOne(HashMap<DateTime, FlextData> map){
-        if (map != null) {
-            textMapForEventOne.putAll(map);
+    public void setBackgroundForTwo(int backgroundForTwo){
+        this.bgForEventTwo = backgroundForTwo;
+    }
+
+    private Map<DateTime, String> eventsOneList = new HashMap<>();
+    private Map<DateTime, String> eventsTwoList = new HashMap<>();
+    private Set<DateTime> set = new TreeSet<>();
+
+    public void setTextForEventOne(Map<DateTime, String> map){
+        this.eventsOneList = map;
+    }
+
+    public void setTextForEventTwo(Map<DateTime, String> map){
+        this.eventsTwoList = map;
+    }
+
+    public void populateData(){
+        if (textMapForEvents != null) textMapForEvents.clear();
+        if (eventsOneList != null) {
+            for (DateTime time : eventsOneList.keySet()){
+                set.add(time);
+            }
         }
-    }
-
-    public void setTaskForEventTwo(FlextData task, Date date){
-        textMapForEventTwo.put(FlextHelper.convertDateToDateTime(date), task);
-    }
-
-    public void setTaskForEventTwo(HashMap<DateTime, FlextData> map){
-        if (map != null) {
-            textMapForEventTwo.putAll(map);
+        if (eventsTwoList != null) {
+            for (DateTime time : eventsTwoList.keySet()){
+                set.add(time);
+            }
+        }
+        for (DateTime time : set){
+            FlextData item = new FlextData();
+            if (eventsOneList.containsKey(time)) item.setTask(eventsOneList.get(time));
+            if (eventsTwoList.containsKey(time)) item.setBirth(eventsTwoList.get(time));
+            textMapForEvents.put(time, item);
         }
     }
 
@@ -703,10 +728,10 @@ public class FlextCal extends Fragment {
 
         if (image != null && enableImage) {
             ImageCheck check = new ImageCheck(getActivity());
-            if (check.isImage(month - 1)){
-                Picasso.with(getActivity()).load(new File(check.getImage(month - 1))).into(image);
+            if (check.isImage(month)){
+                Picasso.with(getActivity()).load(new File(check.getImage(month))).into(image);
             } else {
-                new LoadAsync(getActivity(), month - 1).execute();
+                new LoadAsync(getActivity(), month).execute();
             }
         }
     }

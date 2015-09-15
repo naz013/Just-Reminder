@@ -12,7 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import hirondelle.date4j.DateTime;
 
@@ -45,7 +44,7 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected SharedPreferences prefs;
 
     protected int backgroundForEventOne = -1, backgroundForEventTwo = -1, backgroundForToday = -1;
-    protected HashMap<DateTime, FlextData> textMapForEventOne, textMapForEventTwo;
+    protected HashMap<DateTime, FlextData> textMapForEvents;
 
 	/**
 	 * caldroidData belongs to Caldroid
@@ -175,22 +174,11 @@ public class FlextGridAdapter extends BaseAdapter {
 		sixWeeksInCalendar = (Boolean) caldroidData.get(FlextCal.SIX_WEEKS_IN_CALENDAR);
 
         backgroundForToday = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TODAY_);
+		backgroundForEventOne = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_ONE_);
+		backgroundForEventTwo = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TWO_);
 
-        textMapForEventOne = (HashMap<DateTime, FlextData>) caldroidData
-                .get(FlextCal._TEXT_FOR_EVENT_ONE);
-        textMapForEventTwo = (HashMap<DateTime, FlextData>) caldroidData
-                .get(FlextCal._TEXT_FOR_EVENT_TWO);
-
-		if (textMapForEventOne != null && textMapForEventOne.size() > 0) {
-            Map.Entry<DateTime, FlextData> entry = textMapForEventOne.entrySet().iterator().next();
-            DateTime first = entry.getKey();
-			backgroundForEventOne = textMapForEventOne.get(first).getResource();
-		}
-        if (textMapForEventTwo != null && textMapForEventTwo.size() > 0) {
-            Map.Entry<DateTime, FlextData> entry = textMapForEventTwo.entrySet().iterator().next();
-            DateTime first = entry.getKey();
-            backgroundForEventTwo = textMapForEventTwo.get(first).getResource();
-        }
+        textMapForEvents = (HashMap<DateTime, FlextData>) caldroidData
+                .get(FlextCal._TEXT_FOR_EVENTS_);
 
 		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year,
 				startDayOfWeek, sixWeeksInCalendar);
@@ -207,18 +195,13 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected void setCustomResources(DateTime dateTime, TextView task1, TextView task2) {
 		// Set custom background resource
 
-		if (textMapForEventOne != null) {
+		if (textMapForEvents != null) {
 			// Set it
-			if (textMapForEventOne.containsKey(dateTime)) {
-				task1.setText(textMapForEventOne.get(dateTime).getTask());
+			if (textMapForEvents.containsKey(dateTime)) {
+				task1.setText(textMapForEvents.get(dateTime).getTask());
+				task2.setText(textMapForEvents.get(dateTime).getBirth());
 			}
 		}
-
-        if (textMapForEventTwo != null) {
-            // Set it
-            if (textMapForEventTwo.containsKey(dateTime))
-                task2.setText(textMapForEventTwo.get(dateTime).getTask());
-        }
 	}
 
 	/**

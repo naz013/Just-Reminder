@@ -26,7 +26,7 @@ import com.cray.software.justreminder.modules.Module;
  *
  * Helper class for checking app permissions on Android 6.0 Marshmallow and above.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+@TargetApi(Build.VERSION_CODES.M)
 public class Permissions {
 
     private Context context;
@@ -53,7 +53,8 @@ public class Permissions {
     }
 
     public boolean checkPermission(String permission) {
-        return !Module.isMarshmallow() || context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED;
+        if (!Module.isMarshmallow()) return true;
+        return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     public void requestPermission(Activity activity, String[] permission, int requestCode){

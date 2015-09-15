@@ -49,7 +49,9 @@ public class PermissionsList extends Activity{
         });
 
         TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
-        musicDialogOk.setVisibility(View.GONE);
+        musicDialogOk.setVisibility(View.INVISIBLE);
+
+        load();
     }
 
     private void load(){

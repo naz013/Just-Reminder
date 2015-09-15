@@ -94,8 +94,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
         ArrayList<String> spinnerArray = new ArrayList<>();
         spinnerArray.add(getString(R.string.select_calendar_settings_title));
-        for (CalendarManager.CalendarItem item : list){
-            spinnerArray.add(item.getName());
+        if (list != null && list.size() > 0) {
+            for (CalendarManager.CalendarItem item : list) {
+                spinnerArray.add(item.getName());
+            }
         }
 
         ArrayAdapter<String> spinnerArrayAdapter =

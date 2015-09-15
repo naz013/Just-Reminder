@@ -1,7 +1,6 @@
 package com.hexrain.flextcal;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Environment;
 
 import java.io.File;
