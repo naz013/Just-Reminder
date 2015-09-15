@@ -414,7 +414,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                     }
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
+
                             }
                         }
                     }

@@ -155,8 +155,8 @@ public class SharedPrefs {
                 SharedPreferences pref =
                         pContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
                 Map<String, ?> list = pref.getAll();
-                list.remove(Prefs.DRIVE_USER);
-                list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
+                if (list.containsKey(Prefs.DRIVE_USER)) list.remove(Prefs.DRIVE_USER);
+                if (list.containsKey(Prefs.CONTACTS_IMPORT_DIALOG)) list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
                 output.writeObject(list);
             } catch (IOException e) {
                 e.printStackTrace();
