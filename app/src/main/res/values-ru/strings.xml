@@ -673,7 +673,7 @@
     <string name="string_trash_cleared">Все события удалены из корзины.</string>
     <string name="import_birth_from_facebook">Импортировать дни рождения с Facebook</string>
     <string name="settings_birthday_reminder_title">Напоминание о днях рождения</string>
-    <string name="settings_bg_image_explanation">Отметьте, чтобы включить фоновое изображение в календаре</string>
+    <string name="settings_bg_image_explanation">Отметьте, чтобы включить фоновое изображение в календаре. Приложение загрузит дополнительные данные через WiFi (~ 50Mb)</string>
     <string name="settings_bg_image_title">Фоновое изображение</string>
     <string name="settings_birthday_reminder_explanation">Отметьте, чтобы включить напоминания о днях рождения</string>
     <string name="settings_backup_title">Резервная копия настроек</string>

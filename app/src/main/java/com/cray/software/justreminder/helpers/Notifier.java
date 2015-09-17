@@ -202,15 +202,22 @@ public class Notifier {
             }
         }
 
+        Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
+        notificationIntent.putExtra("int", 1);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
         builder = new NotificationCompat.Builder(ctx);
         builder.setContentTitle(task);
-        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
+        builder.setContentIntent(intent);
+        /*if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
             Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             builder.setContentIntent(intent);
-        }
+        }*/
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){

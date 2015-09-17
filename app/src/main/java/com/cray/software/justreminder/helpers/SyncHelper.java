@@ -1107,8 +1107,7 @@ public class SyncHelper {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
                 File[] files = sdPathDr.listFiles();
-                int f = files.length;
-                if (f > 0) {
+                if (files != null && files.length > 0) {
                     for (File file1 : files) {
                         String fileName = file1.getName();
                         int pos = fileName.lastIndexOf(".");

@@ -674,7 +674,7 @@
     <string name="import_birth_from_facebook">Імпортувати дні народження з Facebook</string>
     <string name="settings_birthday_reminder_explanation">Відмітьте, щоб увімкнути нагадування про дні народження</string>
     <string name="settings_birthday_reminder_title">Нагадування про дні народження</string>
-    <string name="settings_bg_image_explanation">Відмітьте, щоб увімкнути фонове зображення в календарі</string>
+    <string name="settings_bg_image_explanation">Відмітьте, щоб увімкнути фонове зображення в календарі. Буде завантажено додаткові дані через WiFi (~ 50Mb)</string>
     <string name="settings_bg_image_title">Фонове зображення</string>
     <string name="settings_backup_explanation">Відмітьте, щоб увімкнути створення резервної копії налаштувань на карті пам\'яті</string>
     <string name="settings_backup_title">Резервна копія налаштувань</string>

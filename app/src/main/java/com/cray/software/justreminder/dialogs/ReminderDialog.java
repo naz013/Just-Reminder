@@ -70,7 +70,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     Notifier notifier = new Notifier(ReminderDialog.this);
     TextToSpeech tts;
     boolean isDark = false;
-    int currVolume;
+    int currVolume, isReminder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +97,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        isReminder = res.getIntExtra("int", 0);
         single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
@@ -322,19 +323,19 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         boolean autoLaunch = sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
         if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                 type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-            if (sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
+            if (sPrefs.loadBoolean(Prefs.SILENT_SMS) && isReminder != 1) {
                 sendSMS(number, task, melody);
             } else {
                 if (task == null || task.matches("")) showReminder(1);
                 else showReminder(1);
             }
         } else if (type.matches(Constants.TYPE_APPLICATION)){
-            if (autoLaunch) openApplication(number);
+            if (autoLaunch && isReminder != 1) openApplication(number);
 
             if (task == null || task.matches("")) showReminder(1);
             else showReminder(1);
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-            if (autoLaunch) openLink(number);
+            if (autoLaunch && isReminder != 1) openLink(number);
 
             if (task == null || task.matches("")) showReminder(1);
             else showReminder(1);
@@ -396,7 +397,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private void showReminder(int i){
         sPrefs = new SharedPrefs(ReminderDialog.this);
         if (!sPrefs.loadBoolean(Prefs.TTS)) {
-            notifier.showReminder(task, type, i, id, melody, color);
+            if (isReminder == 1) notifier.showReminder(task, type, 0, id, melody, color);
+            else notifier.showReminder(task, type, i, id, melody, color);
         } else {
             notifier.showTTSNotification(task, type, id, color);
         }

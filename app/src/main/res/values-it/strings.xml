@@ -674,7 +674,7 @@
     <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
     <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
     <string name="settings_birthday_reminder_title">Birthday reminder</string>
-    <string name="settings_bg_image_explanation">Check to enable background image in calendar</string>
+    <string name="settings_bg_image_explanation">Check to enable background image in calendar. Application will load additional data via WiFi (~ 50Mb)</string>
     <string name="settings_bg_image_title">Background image</string>
     <string name="settings_backup_title">Backup settings</string>
     <string name="settings_backup_explanation">Check to enable settings backup on SD card</string>
