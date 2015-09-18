@@ -25,7 +25,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -59,11 +58,13 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
+import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -78,13 +79,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,54 +89,47 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
+        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener,
+        MapListener {
 
-    LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout, message_layout,
+    private LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout, message_layout,
             weekday_layout, action_layout, skype_layout, application_layout, monthDayLayout;
-    LinearLayout callDateRing, dateRing, messageDateRing;
-    FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
-    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
+    private FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
+    private TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
             messageDate, messageYearDate, messageTime, weekTimeField;
-    ImageButton insertVoice, pickApplication;
-    ImageButton addNumberButton, addMessageNumberButton, weekAddNumberButton;
-    SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
+    private ImageButton addNumberButton, addMessageNumberButton, weekAddNumberButton;
+    private SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
 
-    Spinner placesList;
-    ArrayList<String> spinnerArray = null;
-    LinearLayout layoutContainer, delayLayout;
-    CheckBox attackDelay;
+    private LinearLayout delayLayout;
+    private CheckBox attackDelay;
 
-    int myHour = 0;
-    int myMinute = 0;
-    int mySeconds = 0;
-    int myYear = 0;
-    int myMonth = 0;
-    int myDay = 1;
-    String uuID = "";
+    private MapFragment map;
 
-    ProgressDialog pd;
-    DataBase DB = new DataBase(BackupFileEdit.this);
-    FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
+    private int myHour = 0;
+    private int myMinute = 0;
+    private int myYear = 0;
+    private int myMonth = 0;
+    private int myDay = 1;
+    private String uuID = "";
 
-    AlarmReceiver alarm = new AlarmReceiver();
-    boolean isGPSEnabled = false, isNetworkEnabled = false;
+    private ProgressDialog pd;
+    private DataBase DB = new DataBase(BackupFileEdit.this);
+    private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
+
+    private AlarmReceiver alarm = new AlarmReceiver();
+    private boolean isGPSEnabled = false, isNetworkEnabled = false;
     protected LocationManager locationManager;
 
-    ColorSetter cSetter = new ColorSetter(BackupFileEdit.this);
-    SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
-    Interval interval = new Interval(BackupFileEdit.this);
-    GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
+    private ColorSetter cSetter = new ColorSetter(BackupFileEdit.this);
+    private SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
+    private GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
 
-    private GoogleMap googleMap;
-    private Marker destination;
+    private long id;
+    private String type, selectedPackage = null;
+    private Toolbar toolbar;
+    private FloatingEditText taskField;
 
-    long id;
-    String type, selectedPackage = null;
-    Toolbar toolbar;
-    FloatingEditText taskField;
-    Spinner spinner;
-
-    public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
+    private  static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
 
     @Override
@@ -166,7 +154,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
 
         taskField = (FloatingEditText) findViewById(R.id.task_message);
-        spinner = (Spinner) findViewById(R.id.navSpinner);
+        Spinner spinner = (Spinner) findViewById(R.id.navSpinner);
         spinner.setVisibility(View.INVISIBLE);
 
         toolbar.setVisibility(View.GONE);
@@ -182,10 +170,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }, 500);
         } else toolbar.setVisibility(View.VISIBLE);
 
-        layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
+        LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        insertVoice = (ImageButton) findViewById(R.id.insertVoice);
+        map = new MapFragment();
+        map.enableTouch(true);
+        map.setListener(this);
+
+        ImageButton insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,7 +189,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
 
         clearForm();
-        loadPlaces();
 
         if (id != 0){
             fdb.open();
@@ -260,25 +251,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void loadPlaces(){
-        DB.open();
-        Cursor c = DB.queryPlaces();
-        spinnerArray = new ArrayList<>();
-        spinnerArray.clear();
-        spinnerArray.add(getString(R.string.other_settings));
-        if (c != null && c.moveToFirst()){
-            do {
-                String namePlace = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
-                spinnerArray.add(namePlace);
-
-            } while (c.moveToNext());
-        } else spinnerArray.clear();
-
-        if (c != null) c.close();
-    }
-
-    CheckBox dateTaskExport;
-    EditText repeatDays;
+    private CheckBox dateTaskExport;
+    private EditText repeatDays;
 
     private void attachDateReminder(){
         by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
@@ -291,7 +265,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        dateRing = (LinearLayout) findViewById(R.id.dateRing);
+        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
         dateRing.setOnClickListener(this);
 
         dateField = (TextView) findViewById(R.id.dateField);
@@ -378,12 +352,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
-    LinearLayout monthDayActionLayout;
-    TextView monthDayField, monthDayTimeField;
-    RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    ImageButton monthDayAddNumberButton;
-    FloatingEditText monthDayPhoneNumber;
+    private CheckBox monthDayTaskExport;
+    private CheckBox monthDayAttachAction;
+    private LinearLayout monthDayActionLayout;
+    private TextView monthDayField, monthDayTimeField;
+    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    private ImageButton monthDayAddNumberButton;
+    private FloatingEditText monthDayPhoneNumber;
 
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -415,7 +390,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-        monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
+        CheckBox monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
         if ((isCalendar || isStock)){
             monthDayExport.setVisibility(View.VISIBLE);
         }
@@ -598,9 +573,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    RadioButton callCheck, messageCheck;
-    CheckBox attachAction, weekTaskExport;
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    private RadioButton callCheck, messageCheck;
+    private CheckBox attachAction, weekTaskExport;
 
     private void attachWeekDayReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
@@ -757,13 +732,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else sundayCheck.setChecked(false);
     }
 
-    CheckBox timeTaskExport;
-    TextView hoursView, minutesView, secondsView;
-    ImageButton deleteButton;
-    EditText repeatMinutes;
-    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
-    String timeString = "000000";
-    SeekBar repeatMinutesSeek;
+    private CheckBox timeTaskExport;
+    private TextView hoursView, minutesView, secondsView;
+    private ImageButton deleteButton;
+    private EditText repeatMinutes;
+    private String timeString = "000000";
 
     private void attachTimeReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
@@ -804,16 +777,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         updateTimeView();
 
-        b1 = (Button) findViewById(R.id.b1);
-        b2 = (Button) findViewById(R.id.b2);
-        b3 = (Button) findViewById(R.id.b3);
-        b4 = (Button) findViewById(R.id.b4);
-        b5 = (Button) findViewById(R.id.b5);
-        b6 = (Button) findViewById(R.id.b6);
-        b7 = (Button) findViewById(R.id.b7);
-        b8 = (Button) findViewById(R.id.b8);
-        b9 = (Button) findViewById(R.id.b9);
-        b0 = (Button) findViewById(R.id.b0);
+        Button b1 = (Button) findViewById(R.id.b1);
+        Button b2 = (Button) findViewById(R.id.b2);
+        Button b3 = (Button) findViewById(R.id.b3);
+        Button b4 = (Button) findViewById(R.id.b4);
+        Button b5 = (Button) findViewById(R.id.b5);
+        Button b6 = (Button) findViewById(R.id.b6);
+        Button b7 = (Button) findViewById(R.id.b7);
+        Button b8 = (Button) findViewById(R.id.b8);
+        Button b9 = (Button) findViewById(R.id.b9);
+        Button b0 = (Button) findViewById(R.id.b0);
         b1.setId(101);
         b2.setId(102);
         b3.setId(103);
@@ -838,7 +811,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatMinutes = (EditText) findViewById(R.id.repeatMinutes);
         repeatMinutes.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
+        SeekBar repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
         repeatMinutesSeek.setOnSeekBarChangeListener(this);
         repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
 
@@ -894,12 +867,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    CheckBox skypeTaskExport;
-    EditText skypeUser, repeatDaysSkype;
-    RadioButton skypeCall, skypeVideo, skypeChat;
-    LinearLayout skypeDateRing;
-    TextView skypeDate, skypeYearDate, skypeTime;
-    SeekBar repeatSkype;
+    private CheckBox skypeTaskExport;
+    private EditText skypeUser, repeatDaysSkype;
+    private RadioButton skypeCall;
+    private RadioButton skypeVideo;
+    private TextView skypeDate, skypeYearDate, skypeTime;
 
     private void attachSkype(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -912,7 +884,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skypeCall = (RadioButton) findViewById(R.id.skypeCall);
         skypeVideo = (RadioButton) findViewById(R.id.skypeVideo);
         skypeCall.setChecked(true);
-        skypeChat = (RadioButton) findViewById(R.id.skypeChat);
+        RadioButton skypeChat = (RadioButton) findViewById(R.id.skypeChat);
         skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -928,7 +900,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        skypeDateRing = (LinearLayout) findViewById(R.id.skypeDateRing);
+        LinearLayout skypeDateRing = (LinearLayout) findViewById(R.id.skypeDateRing);
         skypeDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -978,7 +950,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
         repeatDaysSkype.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
+        SeekBar repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
         repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysSkype.setText(String.valueOf(repeatSkype.getProgress()));
@@ -1031,13 +1003,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    CheckBox appTaskExport;
-    EditText browseLink, repeatDaysApp;
-    RadioButton application, browser;
-    LinearLayout appDateRing;
-    TextView appDate, appYearDate, appTime, applicationName;
-    SeekBar repeatApp;
-    RelativeLayout applicationLayout;
+    private CheckBox appTaskExport;
+    private EditText browseLink, repeatDaysApp;
+    private RadioButton application, browser;
+    private TextView appDate, appYearDate, appTime, applicationName;
 
     private void attachApplication(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1047,11 +1016,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         browseLink = (EditText) findViewById(R.id.browseLink);
         browseLink.setVisibility(View.GONE);
-        applicationLayout = (RelativeLayout) findViewById(R.id.applicationLayout);
+        RelativeLayout applicationLayout = (RelativeLayout) findViewById(R.id.applicationLayout);
         applicationLayout.setVisibility(View.VISIBLE);
         applicationName = (TextView) findViewById(R.id.applicationName);
 
-        pickApplication = (ImageButton) findViewById(R.id.pickApplication);
+        ImageButton pickApplication = (ImageButton) findViewById(R.id.pickApplication);
         pickApplication.setVisibility(View.GONE);
         sPrefs = new SharedPrefs(BackupFileEdit.this);
         if (isDark){
@@ -1070,7 +1039,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        appDateRing = (LinearLayout) findViewById(R.id.appDateRing);
+        LinearLayout appDateRing = (LinearLayout) findViewById(R.id.appDateRing);
         appDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1120,7 +1089,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
         repeatDaysApp.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatApp = (SeekBar) findViewById(R.id.repeatApp);
+        SeekBar repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
         repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysApp.setText(String.valueOf(repeatApp.getProgress()));
@@ -1184,8 +1153,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    CheckBox callTaskExport;
-    EditText repeatDaysCall;
+    private CheckBox callTaskExport;
+    private EditText repeatDaysCall;
 
     private void attachCall(){
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
@@ -1211,7 +1180,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        callDateRing = (LinearLayout) findViewById(R.id.callDateRing);
+        LinearLayout callDateRing = (LinearLayout) findViewById(R.id.callDateRing);
         callDateRing.setOnClickListener(this);
 
         callTaskExport = (CheckBox) findViewById(R.id.callTaskExport);
@@ -1299,8 +1268,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    CheckBox messageTaskExport;
-    EditText repeatDaysMessage;
+    private CheckBox messageTaskExport;
+    private EditText repeatDaysMessage;
 
     private void attachMessage(){
         message_layout = (LinearLayout) findViewById(R.id.message_layout);
@@ -1326,7 +1295,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        messageDateRing = (LinearLayout) findViewById(R.id.messageDateRing);
+        LinearLayout messageDateRing = (LinearLayout) findViewById(R.id.messageDateRing);
         messageDateRing.setOnClickListener(this);
 
         messageTaskExport = (CheckBox) findViewById(R.id.messageTaskExport);
@@ -1414,14 +1383,28 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    LinearLayout locationDateRing;
-    TextView locationDateField, locationDateYearField, locationTimeField;
-    AutoCompleteTextView searchField;
-    ImageButton clearField;
-    List<Address> foundPlaces;
-    ArrayAdapter<String> adapter;
-    GeocoderTask task;
-    ArrayList<String> namesList;
+    private TextView locationDateField, locationDateYearField, locationTimeField;
+    private AutoCompleteTextView searchField;
+    private ImageButton clearField;
+    private List<Address> foundPlaces;
+    private ArrayAdapter<String> adapter;
+    private GeocoderTask task;
+    private ArrayList<String> namesList;
+    private LatLng curPlace;
+
+    @Override
+    public void place(LatLng place) {
+        curPlace = place;
+        if (isLocationOutAttached()) mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
+    }
+
+    @Override
+    public void onZoomOutClick() {
+        if (isLocationAttached()) {
+            ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
+            ViewUtils.fadeInAnimation(specsContainer, isAnimation);
+        }
+    }
 
     private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 
@@ -1458,35 +1441,22 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
                 adapter = new ArrayAdapter<>(
                         BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
-                if (isLocationAttached()){
-                    if (isMapVisible()) cardSearch.setAdapter(adapter);
-                    else searchField.setAdapter(adapter);
-                }
-                if (isLocationOutAttached()){
-                    if (isMapOutVisible()) cardSearchOut.setAdapter(adapter);
-                }
-
+                searchField.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
         }
     }
 
-    ImageButton mapButton, cardClear, zoomOut, layers, addNumberButtonLocation;
-    LinearLayout layersContainer, actionLocation;
-    RelativeLayout mapContainer;
-    ScrollView specsContainer;
-    AutoCompleteTextView cardSearch;
-    TextView typeNormal, typeSatellite, typeHybrid, typeTerrain;
-    CheckBox attachLocationAction;
-    RadioButton callCheckLocation, messageCheckLocation;
-    FloatingEditText phoneNumberLocation;
+    private ImageButton addNumberButtonLocation;
+    private LinearLayout actionLocation;
+    private RelativeLayout mapContainer;
+    private ScrollView specsContainer;
+    private CheckBox attachLocationAction;
+    private RadioButton callCheckLocation, messageCheckLocation;
+    private FloatingEditText phoneNumberLocation;
 
     private boolean isMapVisible(){
         return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLayersVisible(){
-        return layersContainer != null && layersContainer.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocation() {
@@ -1495,7 +1465,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
         specsContainer = (ScrollView) findViewById(R.id.specsContainer);
-        layersContainer = (LinearLayout) findViewById(R.id.layersContainer);
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
@@ -1518,10 +1487,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         clearField = (ImageButton) findViewById(R.id.clearButton);
-        cardClear = (ImageButton) findViewById(R.id.cardClear);
-        zoomOut = (ImageButton) findViewById(R.id.zoomOut);
-        layers = (ImageButton) findViewById(R.id.layers);
-        mapButton = (ImageButton) findViewById(R.id.mapButton);
+        ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
         if (isDark){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButton.setImageResource(R.drawable.ic_map_white_24dp);
@@ -1535,12 +1501,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 searchField.setText("");
             }
         });
-        cardClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardSearch.setText("");
-            }
-        });
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1548,59 +1508,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 ViewUtils.fadeInAnimation(mapContainer, isAnimation);
             }
         });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
-                ViewUtils.fadeInAnimation(specsContainer, isAnimation);
-            }
-        });
-        layers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                else ViewUtils.showOver(layersContainer, isAnimation);
-            }
-        });
-
-        typeNormal = (TextView) findViewById(R.id.typeNormal);
-        typeSatellite = (TextView) findViewById(R.id.typeSatellite);
-        typeHybrid = (TextView) findViewById(R.id.typeHybrid);
-        typeTerrain = (TextView) findViewById(R.id.typeTerrain);
-        typeNormal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeSatellite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeHybrid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeTerrain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
 
         searchField = (AutoCompleteTextView) findViewById(R.id.searchField);
-        cardSearch = (AutoCompleteTextView) findViewById(R.id.cardSearch);
         searchField.setThreshold(3);
-        cardSearch.setThreshold(3);
         adapter = new ArrayAdapter<>(
                 BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
         adapter.setNotifyOnChange(true);
@@ -1629,55 +1539,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                googleMap.clear();
+                curPlace = pos;
                 String title = taskField.getText().toString().trim();
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
-        cardSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        cardSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                googleMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                if (map != null) map.addMarker(pos, title, true);
             }
         });
 
@@ -1735,7 +1602,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
+        LinearLayout locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
         locationDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1759,90 +1626,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         locationDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
         locationDateYearField.setText(String.valueOf(myYear));
-
-        placesList = (Spinner) findViewById(R.id.placesList);
-        placesList.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesList.setVisibility(View.GONE);
-        } else {
-            placesList.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesList.setAdapter(spinnerArrayAdapter);
-            placesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (position > 0){
-                        String placeName = spinnerArray.get(position);
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            googleMap.clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            destination = googleMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        }
-
-        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
-        googleMap = fragment.getMap();
-        sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        googleMap.setMyLocationEnabled(true);
-        if (googleMap.getMyLocation() != null) {
-            double lat = googleMap.getMyLocation().getLatitude();
-            double lon = googleMap.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                googleMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-            }
-        });
 
         if (id != 0) {
             fdb.open();
@@ -1899,37 +1682,25 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
             }
         }
     }
 
-    ImageButton mapButtonOut, cardClearOut, zoomOutOut, layersOut, addNumberButtonLocationOut,
-            myLocationOut;
-    LinearLayout layersContainerOut, actionLocationOut, locationOutLayout, delayLayoutOut,
-            locationOutDateRing;
-    RelativeLayout mapContainerOut;
-    ScrollView specsContainerOut;
-    AutoCompleteTextView cardSearchOut;
-    TextView typeNormalOut, typeSatelliteOut, typeHybridOut, typeTerrainOut, locationOutDateField,
-            locationOutDateYearField, locationOutTimeField, currentLocation, mapLocation, radiusMark;
-    CheckBox attachLocationOutAction, attachDelayOut;
-    RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    FloatingEditText phoneNumberLocationOut;
-    CardView cardOut;
-    GoogleMap mapOut;
-    Spinner placesListOut;
-    SeekBar pointRadius;
+    private ImageButton addNumberButtonLocationOut;
+    private LinearLayout actionLocationOut;
+    private LinearLayout locationOutLayout;
+    private LinearLayout delayLayoutOut;
+    private RelativeLayout mapContainerOut;
+    private ScrollView specsContainerOut;
+    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
+            mapLocation, radiusMark;
+    private CheckBox attachLocationOutAction, attachDelayOut;
+    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    private FloatingEditText phoneNumberLocationOut;
 
     private boolean isMapOutVisible(){
         return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLayersOutVisible(){
-        return layersContainerOut != null && layersContainerOut.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocationOut() {
@@ -1940,7 +1711,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
-        layersContainerOut = (LinearLayout) findViewById(R.id.layersContainerOut);
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
@@ -1968,105 +1738,18 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             } else delayLayoutOut.setVisibility(View.VISIBLE);
         }
 
-        cardOut = (CardView) findViewById(R.id.cardOut);
-        cardOut.setCardBackgroundColor(cSetter.getCardStyle());
-
-        cardClearOut = (ImageButton) findViewById(R.id.cardClearOut);
-        zoomOutOut = (ImageButton) findViewById(R.id.zoomOutOut);
-        layersOut = (ImageButton) findViewById(R.id.layersOut);
-        mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
-        myLocationOut = (ImageButton) findViewById(R.id.myLocationOut);
-        zoomOutOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        layersOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        myLocationOut.setBackgroundColor(cSetter.getBackgroundStyle());
+        ImageButton mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
         if (isDark){
-            cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
-            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
-            layersOut.setImageResource(R.drawable.ic_layers_white_24dp);
-            myLocationOut.setImageResource(R.drawable.ic_my_location_white_24dp);
-            layersContainerOut.setBackgroundResource(R.drawable.popup_dark);
         } else {
-            cardClearOut.setImageResource(R.drawable.ic_backspace_grey600_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
-            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
-            layersOut.setImageResource(R.drawable.ic_layers_grey600_24dp);
-            myLocationOut.setImageResource(R.drawable.ic_my_location_grey600_24dp);
-            layersContainerOut.setBackgroundResource(R.drawable.popup);
         }
 
-        cardClearOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardSearchOut.setText("");
-            }
-        });
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
                 ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
-            }
-        });
-        zoomOutOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
-                ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
-            }
-        });
-        layersOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                else ViewUtils.showOver(layersContainerOut, isAnimation);
-            }
-        });
-        myLocationOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                Location location = mapOut.getMyLocation();
-                if (location != null){
-                    double lat = location.getLatitude();
-                    double lon = location.getLongitude();
-                    LatLng pos = new LatLng(lat, lon);
-                    mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-                }
-            }
-        });
-
-        typeNormalOut = (TextView) findViewById(R.id.typeNormalOut);
-        typeSatelliteOut = (TextView) findViewById(R.id.typeSatelliteOut);
-        typeHybridOut = (TextView) findViewById(R.id.typeHybridOut);
-        typeTerrainOut = (TextView) findViewById(R.id.typeTerrainOut);
-        typeNormalOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeSatelliteOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeHybridOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeTerrainOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                layersContainerOut.setVisibility(View.GONE);
             }
         });
 
@@ -2076,7 +1759,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapCheck.setOnCheckedChangeListener(this);
         currentCheck.setChecked(true);
 
-        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
+        SeekBar pointRadius = (SeekBar) findViewById(R.id.pointRadius);
         pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -2095,50 +1778,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         if (pointRadius.getProgress() == 0)
             pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-
-        cardSearchOut = (AutoCompleteTextView) findViewById(R.id.cardSearchOut);
-        cardSearchOut.setThreshold(3);
-        adapter = new ArrayAdapter<>(
-                BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
-        cardSearchOut.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        cardSearchOut.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                mapOut.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
 
         actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
         actionLocationOut.setVisibility(View.GONE);
@@ -2194,7 +1833,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
+        LinearLayout locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
         locationOutDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2219,99 +1858,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationOutDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
         locationOutDateYearField.setText(String.valueOf(myYear));
 
-        placesListOut = (Spinner) findViewById(R.id.placesListOut);
-        placesListOut.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesListOut.setVisibility(View.GONE);
-        } else {
-            placesListOut.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesListOut.setAdapter(spinnerArrayAdapter);
-            placesListOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (position > 0){
-                        String placeName = spinnerArray.get(position);
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            mapOut.clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            destination = mapOut.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        }
-
-        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapOut);
-        mapOut = fragment.getMap();
-        sPrefs = new SharedPrefs(BackupFileEdit.this);
-        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        mapOut.setMyLocationEnabled(true);
-        if (mapOut.getMyLocation() != null) {
-            double lat = mapOut.getMyLocation().getLatitude();
-            double lon = mapOut.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        mapOut.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                mapOut.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-            }
-        });
-
-        if (destination != null) {
-            LatLng latLng = destination.getPosition();
-            destination = mapOut.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(destination.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                    .draggable(true));
-            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-            mapLocation.setText(LocationUtil.getAddress(latLng.latitude, latLng.longitude));
+        if (curPlace != null) {
+            if (map != null) map.addMarker(curPlace, null, true);
+            mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
         if (id != 0) {
@@ -2369,10 +1918,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                LatLng pos = new LatLng(latitude, longitude);
+                if (map != null) map.addMarker(pos, text, true);
+                mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
                 mapCheck.setChecked(true);
             }
         }
@@ -2750,7 +2298,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             number = weekPhoneNumber.getText().toString().trim();
         }
 
-        interval = new Interval(BackupFileEdit.this);
+        Interval interval = new Interval(BackupFileEdit.this);
         String repeat = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(),
                 wednesdayCheck.isChecked(), thursdayCheck.isChecked(), fridayCheck.isChecked(),
                 saturdayCheck.isChecked(), sundayCheck.isChecked());
@@ -2985,7 +2533,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myDay = c.get(Calendar.DAY_OF_MONTH);
         myHour = c.get(Calendar.HOUR_OF_DAY);
         myMinute = c.get(Calendar.MINUTE);
-        mySeconds = c.get(Calendar.SECOND);
+        int mySeconds = c.get(Calendar.SECOND);
 
         if (isUID(uuID)){
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
@@ -3100,7 +2648,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    PositionDelayReceiver positionDelayReceiver = new PositionDelayReceiver();
+    private PositionDelayReceiver positionDelayReceiver = new PositionDelayReceiver();
 
     private void addLocation(){
         String task = taskField.getText().toString().trim();
@@ -3113,10 +2661,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (attachLocationAction.isChecked()) number = phoneNumberLocation.getText().toString().trim();
         LatLng dest = null;
         boolean isNull = false;
-        try {
-            dest = destination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
+        if (curPlace != null) {
+            dest = curPlace;
+            isNull = false;
         }
 
         if (isNull){
@@ -3166,11 +2713,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         String number = null;
         if (attachLocationOutAction.isChecked()) number = phoneNumberLocationOut.getText().toString().trim();
         LatLng dest = null;
-        boolean isNull = false;
-        try {
-            dest = destination.getPosition();
-        } catch (NullPointerException e){
-            isNull = true;
+        boolean isNull = true;
+        if (curPlace != null) {
+            dest = curPlace;
+            isNull = false;
         }
 
         if (isNull){
@@ -3426,19 +2972,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
-        if (isLayersVisible()) {
-            ViewUtils.hideOver(layersContainer, isAnimation);
-            return;
-        }
-        if (isLayersOutVisible()) {
-            ViewUtils.hideOver(layersContainerOut, isAnimation);
-            return;
-        }
+        if (map != null && !map.onBackPressed()) return;
         finish();
     }
 
-    LocationManager mLocationManager;
-    LocationListener mLocList;
+    private LocationManager mLocationManager;
+    private LocationListener mLocList;
 
     public class CurrentLocation implements LocationListener {
 
@@ -3446,16 +2985,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         public void onLocationChanged(Location location) {
             double currentLat = location.getLatitude();
             double currentLong = location.getLongitude();
+            curPlace = new LatLng(currentLat, currentLong);
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = taskField.getText().toString().trim();
             if (text == null || text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(new LatLng(currentLat, currentLong))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLong), 13));
+                if (map != null) {
+                    map.addMarker(new LatLng(currentLat, currentLong), text, true);
+                    map.moveCamera(new LatLng(currentLat, currentLong));
+                }
             }
         }
 

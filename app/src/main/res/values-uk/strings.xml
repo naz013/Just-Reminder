@@ -692,4 +692,8 @@
     <string name="write_external_storage">Записувати на зовнішнє сховище</string>
     <string name="send_sms">Надсилати SMS</string>
     <string name="call_phone">Виконувати дзвінки</string>
+    <string name="clear_search_field">Clear search field</string>
+    <string name="close_map">Close map</string>
+    <string name="change_map_layer">Change map layer</string>
+    <string name="show_my_location">Show my location</string>
 </resources>

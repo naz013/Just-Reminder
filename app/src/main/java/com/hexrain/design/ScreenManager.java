@@ -731,7 +731,6 @@ public class ScreenManager extends AppCompatActivity
 
     private void replace(Fragment fragment, String tag){
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        //ft.setCustomAnimations(R.anim.fragment_enter, R.anim.fragment_exit);
         ft.replace(R.id.container, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commitAllowingStateLoss();

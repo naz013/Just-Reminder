@@ -13,16 +13,11 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -30,8 +25,8 @@ import java.util.ArrayList;
 
 public class GeolocationFragment extends Fragment {
 
-    ListView geoTasks;
-    private static GoogleMap googleMap;
+    private ListView geoTasks;
+    private MapFragment googleMap;
     private MarkersCursorAdapter markersCursorAdapter;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
@@ -90,12 +85,13 @@ public class GeolocationFragment extends Fragment {
                 long i = markersCursorAdapter.getItemId(position);
                 if (i != 0) {
                     DataBase DB = new DataBase(getActivity());
-                    if (!DB.isOpen())DB.open();
+                    if (!DB.isOpen()) DB.open();
                     Cursor c = DB.getReminder(i);
                     if (c != null && c.moveToFirst()) {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                new LatLng(c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE)),
-                                        c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE))), 13));
+                        if (googleMap != null) {
+                            googleMap.moveCamera(new LatLng(c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE)),
+                                    c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE))));
+                        }
                     }
                     if (c != null) c.close();
                     DB.close();
@@ -103,21 +99,12 @@ public class GeolocationFragment extends Fragment {
             }
         });
 
-        googleMap = ((SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.markersMap)).getMap();
-        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-        googleMap.setMyLocationEnabled(true);
+        googleMap = ((MapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.markersMap));
+        googleMap.enableTouch(false);
+        googleMap.enableCloseButton(false);
+
+        loadMarkers();
         return rootView;
     }
 
@@ -146,6 +133,7 @@ public class GeolocationFragment extends Fragment {
     }
 
     private void loadMarkers(){
+        if (googleMap != null) googleMap.clear();
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryGroup();
@@ -156,25 +144,15 @@ public class GeolocationFragment extends Fragment {
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                if (longitude != 0 && latitude != 0 && isDone != 1) {
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .title(task)
-                            .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
+                if (longitude != 0 && latitude != 0) {
+                    if (googleMap != null) {
+                        googleMap.addMarker(new LatLng(latitude, longitude), task, false);
+                    }
                 }
             } while (c.moveToNext());
-            if (googleMap.getMyLocation() != null) {
-                double lat = googleMap.getMyLocation().getLatitude();
-                double lon = googleMap.getMyLocation().getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
         } else {
-            if (googleMap.getMyLocation() != null) {
-                double lat = googleMap.getMyLocation().getLatitude();
-                double lon = googleMap.getMyLocation().getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            if (googleMap != null) {
+                googleMap.moveToMyLocation();
             }
         }
         if (c != null) c.close();

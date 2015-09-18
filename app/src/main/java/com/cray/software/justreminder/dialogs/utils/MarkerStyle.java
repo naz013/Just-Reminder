@@ -15,7 +15,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 public class MarkerStyle extends Activity implements View.OnClickListener{
     TextView themeClose;
     RadioButton red_flat, green_flat, blue_flat, yellow_flat, red_simple, green_simple, blue_simple, yellow_simple,
-            red_round, orange_round, green_round, blue_round;
+            red_round, orange_round, green_round, blue_round, deep_purple, deep_orange, indigo, lime;
     RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroup4;
     SharedPrefs sPrefs;
     ColorSetter cs;
@@ -42,6 +42,10 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
         orange_round = (RadioButton) findViewById(R.id.orange_round);
         green_round = (RadioButton) findViewById(R.id.green_round);
         blue_round = (RadioButton) findViewById(R.id.blue_round);
+        deep_purple = (RadioButton) findViewById(R.id.deep_purple);
+        deep_orange = (RadioButton) findViewById(R.id.deep_orange);
+        indigo = (RadioButton) findViewById(R.id.indigo);
+        lime = (RadioButton) findViewById(R.id.lime);
 
         themeGroup = (RadioGroup) findViewById(R.id.themeGroup);
         themeGroup2 = (RadioGroup) findViewById(R.id.themeGroup2);
@@ -156,6 +160,14 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
             green_round.setChecked(true);
         } else if (loaded == 12){
             blue_round.setChecked(true);
+        } else if (loaded == 13){
+            deep_purple.setChecked(true);
+        } else if (loaded == 14){
+            deep_orange.setChecked(true);
+        } else if (loaded == 15){
+            indigo.setChecked(true);
+        } else if (loaded == 16){
+            lime.setChecked(true);
         } else {
             blue_flat.setChecked(true);
         }
@@ -198,6 +210,18 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
                 break;
             case R.id.blue_round:
                 saveColor(12);
+                break;
+            case R.id.deep_purple:
+                saveColor(13);
+                break;
+            case R.id.deep_orange:
+                saveColor(14);
+                break;
+            case R.id.indigo:
+                saveColor(15);
+                break;
+            case R.id.lime:
+                saveColor(16);
                 break;
         }
     }

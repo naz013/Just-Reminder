@@ -28,8 +28,9 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -70,6 +71,7 @@ import com.cray.software.justreminder.dialogs.utils.LedColor;
 import com.cray.software.justreminder.dialogs.utils.SelectApplication;
 import com.cray.software.justreminder.dialogs.utils.SelectMelody;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
+import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -78,6 +80,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DataItem;
@@ -105,13 +108,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +121,7 @@ import java.util.List;
 
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, AdapterView.OnItemSelectedListener, View.OnTouchListener,
-        DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener {
+        DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener, MapListener {
 
     LinearLayout callDateRing, dateRing, messageDateRing, action_layout;
     FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
@@ -134,8 +131,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
     ImageButton insertVoice, pickApplication;
 
-    Spinner placesList;
-    ArrayList<String> spinnerArray = null;
     LinearLayout layoutContainer, delayLayout, navContainer;
     CheckBox attackDelay;
     CheckBox timeExport, messageExport, dateExport, callExport, weekExport;
@@ -157,9 +152,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
     Interval interval = new Interval(ReminderManager.this);
     GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
-
-    private GoogleMap googleMap;
-    private Marker destination;
 
     long id;
     String categoryId;
@@ -227,6 +219,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
         spinner = (Spinner) findViewById(R.id.navSpinner);
         taskField = (FloatingEditText) findViewById(R.id.task_message);
+        taskField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (map != null) map.setTask(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,6 +242,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 startVoiceRecognitionActivity();
             }
         });
+
+        map = new MapFragment();
+        map.enableTouch(true);
+        map.setListener(this);
 
         category = (TextView) findViewById(R.id.category);
         category.setOnClickListener(new View.OnClickListener() {
@@ -362,8 +374,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 spinner.setSelection(0);
             }
         }
-
-        loadPlaces();
         clearViews();
     }
 
@@ -522,22 +532,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (spinner.getSelectedItemPosition() == 8 && type.startsWith(Constants.TYPE_MONTHDAY)) is = true;
         if (spinner.getSelectedItemPosition() == 9 && type.startsWith(Constants.TYPE_LOCATION_OUT)) is = true;
         return is;
-    }
-
-    private void loadPlaces(){
-        DB.open();
-        Cursor c = DB.queryPlaces();
-        spinnerArray = new ArrayList<>();
-        spinnerArray.clear();
-        spinnerArray.add(getString(R.string.other_settings));
-        if (c != null && c.moveToFirst()){
-            do {
-                String namePlace = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
-                spinnerArray.add(namePlace);
-
-            } while (c.moveToNext());
-        } else spinnerArray.clear();
-        if (c != null) c.close();
     }
 
     CheckBox dateTaskExport;
@@ -886,6 +880,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (mapCheck.isChecked()) {
                     currentCheck.setChecked(false);
                     ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
+                    replace(map, R.id.mapContainerOut);
                     ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
                     if (mLocList != null) mLocationManager.removeUpdates(mLocList);
                 }
@@ -1908,6 +1903,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     ArrayAdapter<String> adapter;
     GeocoderTask task;
     ArrayList<String> namesList;
+    private LatLng curPlace;
+
+    @Override
+    public void place(LatLng place) {
+        curPlace = place;
+        if (isLocationOutAttached()) mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
+    }
+
+    @Override
+    public void onZoomOutClick() {
+        if (isLocationAttached()) {
+            ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
+            ViewUtils.fadeInAnimation(specsContainer, isAnimation);
+        }
+        if (isLocationOutAttached()) {
+            ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
+            ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
+        }
+    }
 
     private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 
@@ -1945,34 +1959,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 adapter = new ArrayAdapter<>(
                         ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
                 if (isLocationAttached()){
-                    if (isMapVisible()) cardSearch.setAdapter(adapter);
-                    else searchField.setAdapter(adapter);
-                }
-                if (isLocationOutAttached()){
-                    if (isMapOutVisible()) cardSearchOut.setAdapter(adapter);
+                    searchField.setAdapter(adapter);
                 }
                 adapter.notifyDataSetChanged();
             }
         }
     }
 
-    ImageButton mapButton, cardClear, zoomOut, layers, addNumberButtonLocation, myLocation;
-    LinearLayout layersContainer, actionLocation;
+    ImageButton mapButton, addNumberButtonLocation;
+    LinearLayout actionLocation;
     RelativeLayout mapContainer;
     ScrollView specsContainer;
-    AutoCompleteTextView cardSearch;
-    TextView typeNormal, typeSatellite, typeHybrid, typeTerrain;
     CheckBox attachLocationAction;
     RadioButton callCheckLocation, messageCheckLocation;
     FloatingEditText phoneNumberLocation;
-    CardView card;
+    MapFragment map;
 
     private boolean isMapVisible(){
         return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLayersVisible(){
-        return layersContainer != null && layersContainer.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocation() {
@@ -1986,10 +1990,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         remControl = dateType;
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
-        specsContainer = (ScrollView) findViewById(R.id.specsContainer);
-        layersContainer = (LinearLayout) findViewById(R.id.layersContainer);
-        layersContainer.setVisibility(View.GONE);
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
+        specsContainer = (ScrollView) findViewById(R.id.specsContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
 
@@ -2015,36 +2017,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else delayLayout.setVisibility(View.VISIBLE);
         }
 
-        card = (CardView) findViewById(R.id.card);
-        card.setCardBackgroundColor(cSetter.getCardStyle());
-
         clearField = (ImageButton) findViewById(R.id.clearButton);
-        cardClear = (ImageButton) findViewById(R.id.cardClear);
-        zoomOut = (ImageButton) findViewById(R.id.zoomOut);
-        layers = (ImageButton) findViewById(R.id.layers);
         mapButton = (ImageButton) findViewById(R.id.mapButton);
-        myLocation = (ImageButton) findViewById(R.id.myLocation);
-
-        zoomOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        layers.setBackgroundColor(cSetter.getBackgroundStyle());
-        myLocation.setBackgroundColor(cSetter.getBackgroundStyle());
 
         if (isDark){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
-            cardClear.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButton.setImageResource(R.drawable.ic_map_white_24dp);
-            zoomOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
-            layers.setImageResource(R.drawable.ic_layers_white_24dp);
-            myLocation.setImageResource(R.drawable.ic_my_location_white_24dp);
-            layersContainer.setBackgroundResource(R.drawable.popup_dark);
         } else {
             clearField.setImageResource(R.drawable.ic_backspace_grey600_24dp);
-            cardClear.setImageResource(R.drawable.ic_backspace_grey600_24dp);
             mapButton.setImageResource(R.drawable.ic_map_grey600_24dp);
-            zoomOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
-            layers.setImageResource(R.drawable.ic_layers_grey600_24dp);
-            myLocation.setImageResource(R.drawable.ic_my_location_grey600_24dp);
-            layersContainer.setBackgroundResource(R.drawable.popup);
         }
 
         clearField.setOnClickListener(new View.OnClickListener() {
@@ -2053,85 +2034,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 searchField.setText("");
             }
         });
-        cardClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardSearch.setText("");
-            }
-        });
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainer, isAnimation);
+                replace(map, R.id.mapContainer);
                 ViewUtils.fadeInAnimation(mapContainer, isAnimation);
-            }
-        });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
-                ViewUtils.fadeInAnimation(specsContainer, isAnimation);
-            }
-        });
-        layers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                else ViewUtils.showOver(layersContainer, isAnimation);
-            }
-        });
-        myLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                Location location = googleMap.getMyLocation();
-                if (location != null){
-                    double lat = location.getLatitude();
-                    double lon = location.getLongitude();
-                    LatLng pos = new LatLng(lat, lon);
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-                }
-            }
-        });
-
-        typeNormal = (TextView) findViewById(R.id.typeNormal);
-        typeSatellite = (TextView) findViewById(R.id.typeSatellite);
-        typeHybrid = (TextView) findViewById(R.id.typeHybrid);
-        typeTerrain = (TextView) findViewById(R.id.typeTerrain);
-        typeNormal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeSatellite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeHybrid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                layersContainer.setVisibility(View.GONE);
-            }
-        });
-        typeTerrain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                layersContainer.setVisibility(View.GONE);
             }
         });
 
         searchField = (AutoCompleteTextView) findViewById(R.id.searchField);
-        cardSearch = (AutoCompleteTextView) findViewById(R.id.cardSearch);
         searchField.setThreshold(3);
-        cardSearch.setThreshold(3);
         adapter = new ArrayAdapter<>(
                 ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
         adapter.setNotifyOnChange(true);
@@ -2160,56 +2073,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                googleMap.clear();
+                curPlace = pos;
                 String title = taskField.getText().toString().trim();
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
-
-        cardSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        cardSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                googleMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                if (map != null) map.addMarker(pos, title, true);
             }
         });
 
@@ -2303,106 +2172,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
         locationDateYearField.setText(String.valueOf(myYear));
 
-        placesList = (Spinner) findViewById(R.id.placesList);
-        placesList.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesList.setVisibility(View.GONE);
-        } else {
-            placesList.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesList.setAdapter(spinnerArrayAdapter);
-            placesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                    if (position > 0){
-                        String placeName = spinnerArray.get(position);
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            googleMap.clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            destination = googleMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                }
-            });
-        }
-
-        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.map);
-        googleMap = fragment.getMap();
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        sPrefs = new SharedPrefs(ReminderManager.this);
-        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        googleMap.setMyLocationEnabled(true);
-        if (googleMap.getMyLocation() != null) {
-            double lat = googleMap.getMyLocation().getLatitude();
-            double lon = googleMap.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if(!spinnerArray.isEmpty()){
-                    placesList.setSelection(0);
-                }
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                googleMap.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-            }
-        });
-
-        if (destination != null) {
-            googleMap.clear();
-            destination = googleMap.addMarker(new MarkerOptions()
-                    .position(destination.getPosition())
-                    .title(destination.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                    .draggable(true));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 13));
-        }
-
         if (id != 0 && isSame()) {
             String text = "", number = null, remType = "";
             double latitude = 0, longitude = 0;
@@ -2456,38 +2225,31 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
-                googleMap.clear();
-                destination = googleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13));
+                if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
             }
         }
     }
 
-    ImageButton mapButtonOut, cardClearOut, zoomOutOut, layersOut, addNumberButtonLocationOut,
-            myLocationOut;
-    LinearLayout layersContainerOut, actionLocationOut, delayLayoutOut, locationOutDateRing;
+    private void replace(Fragment fragment, int container){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(container, fragment, null);
+        ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        ft.commitAllowingStateLoss();
+    }
+
+    ImageButton addNumberButtonLocationOut, mapButtonOut;
+    LinearLayout actionLocationOut, delayLayoutOut, locationOutDateRing;
     RelativeLayout mapContainerOut;
     ScrollView specsContainerOut;
-    AutoCompleteTextView cardSearchOut;
-    TextView typeNormalOut, typeSatelliteOut, typeHybridOut, typeTerrainOut, locationOutDateField,
-            locationOutDateYearField, locationOutTimeField, currentLocation, mapLocation, radiusMark;
+    TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
+            mapLocation, radiusMark;
     CheckBox attachLocationOutAction, attachDelayOut;
     RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
     FloatingEditText phoneNumberLocationOut;
-    CardView cardOut;
-    GoogleMap mapOut;
-    Spinner placesListOut;
     SeekBar pointRadius;
 
     private boolean isMapOutVisible(){
         return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
-    }
-
-    private boolean isLayersOutVisible(){
-        return layersContainerOut != null && layersContainerOut.getVisibility() == View.VISIBLE;
     }
 
     private void attachLocationOut() {
@@ -2502,8 +2264,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
-        layersContainerOut = (LinearLayout) findViewById(R.id.layersContainerOut);
-        layersContainerOut.setVisibility(View.GONE);
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
@@ -2529,112 +2289,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 ViewUtils.expand(delayLayoutOut);
             } else delayLayoutOut.setVisibility(View.VISIBLE);
         }
-
-        cardOut = (CardView) findViewById(R.id.cardOut);
-        cardOut.setCardBackgroundColor(cSetter.getCardStyle());
-
-        cardClearOut = (ImageButton) findViewById(R.id.cardClearOut);
-        zoomOutOut = (ImageButton) findViewById(R.id.zoomOutOut);
-        layersOut = (ImageButton) findViewById(R.id.layersOut);
         mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
-        myLocationOut = (ImageButton) findViewById(R.id.myLocationOut);
-        zoomOutOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        layersOut.setBackgroundColor(cSetter.getBackgroundStyle());
-        myLocationOut.setBackgroundColor(cSetter.getBackgroundStyle());
         if (isDark){
-            cardClearOut.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
-            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp);
-            layersOut.setImageResource(R.drawable.ic_layers_white_24dp);
-            myLocationOut.setImageResource(R.drawable.ic_my_location_white_24dp);
-            layersContainerOut.setBackgroundResource(R.drawable.popup_dark);
         } else {
-            cardClearOut.setImageResource(R.drawable.ic_backspace_grey600_24dp);
             mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
-            zoomOutOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
-            layersOut.setImageResource(R.drawable.ic_layers_grey600_24dp);
-            myLocationOut.setImageResource(R.drawable.ic_my_location_grey600_24dp);
-            layersContainerOut.setBackgroundResource(R.drawable.popup);
         }
 
-        cardClearOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardSearchOut.setText("");
-            }
-        });
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
+                replace(map, R.id.mapContainerOut);
                 ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
                 mapCheck.setChecked(true);
             }
         });
-        zoomOutOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
-                ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
-            }
-        });
-        layersOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                else ViewUtils.showOver(layersContainerOut, isAnimation);
-            }
-        });
-        myLocationOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                Location location = mapOut.getMyLocation();
-                if (location != null){
-                    double lat = location.getLatitude();
-                    double lon = location.getLongitude();
-                    LatLng pos = new LatLng(lat, lon);
-                    mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-                }
-            }
-        });
-
-        typeNormalOut = (TextView) findViewById(R.id.typeNormalOut);
-        typeSatelliteOut = (TextView) findViewById(R.id.typeSatelliteOut);
-        typeHybridOut = (TextView) findViewById(R.id.typeHybridOut);
-        typeTerrainOut = (TextView) findViewById(R.id.typeTerrainOut);
         currentLocation = (TextView) findViewById(R.id.currentLocation);
         mapLocation = (TextView) findViewById(R.id.mapLocation);
         radiusMark = (TextView) findViewById(R.id.radiusMark);
-        typeNormalOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeSatelliteOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeHybridOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
-        typeTerrainOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                layersContainerOut.setVisibility(View.GONE);
-            }
-        });
 
         currentCheck = (RadioButton) findViewById(R.id.currentCheck);
         mapCheck = (RadioButton) findViewById(R.id.mapCheck);
@@ -2661,50 +2334,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
         if (pointRadius.getProgress() == 0)
             pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-
-        cardSearchOut = (AutoCompleteTextView) findViewById(R.id.cardSearchOut);
-        cardSearchOut.setThreshold(3);
-        adapter = new ArrayAdapter<>(
-                ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
-        cardSearchOut.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        cardSearchOut.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                mapOut.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = pos.toString();
-                }
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-            }
-        });
 
         actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
         actionLocationOut.setVisibility(View.GONE);
@@ -2796,107 +2425,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationOutDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
         locationOutDateYearField.setText(String.valueOf(myYear));
 
-        placesListOut = (Spinner) findViewById(R.id.placesListOut);
-        placesListOut.setBackgroundColor(cSetter.getSpinnerStyle());
-        if (spinnerArray.isEmpty()){
-            placesListOut.setVisibility(View.GONE);
-        } else {
-            placesListOut.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            placesListOut.setAdapter(spinnerArrayAdapter);
-            placesListOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                    if (position > 0){
-                        String placeName = spinnerArray.get(position);
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            mapOut.clear();
-                            String title = taskField.getText().toString().trim();
-                            if (title.matches("")) {
-                                title = latLng.toString();
-                            }
-                            destination = mapOut.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .title(title)
-                                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                                    .draggable(true));
-
-                            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        }
-                        if (c != null) c.close();
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                    if (isLayersOutVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                }
-            });
-        }
-
-        MapFragment fragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapOut);
-        mapOut = fragment.getMap();
-        mapOut.getUiSettings().setMyLocationButtonEnabled(false);
-        sPrefs = new SharedPrefs(ReminderManager.this);
-        String type = sPrefs.loadPrefs(Prefs.MAP_TYPE);
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
-            mapOut.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-        } else {
-            mapOut.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        }
-
-        mapOut.setMyLocationEnabled(true);
-        if (mapOut.getMyLocation() != null) {
-            double lat = mapOut.getMyLocation().getLatitude();
-            double lon = mapOut.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-        }
-        mapOut.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if(!spinnerArray.isEmpty()){
-                    placesListOut.setSelection(0);
-                }
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainerOut, isAnimation);
-                mapOut.clear();
-                String title = taskField.getText().toString().trim();
-                if (title.matches("")) {
-                    title = latLng.toString();
-                }
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(title)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                        .draggable(true));
-                mapLocation.setText(LocationUtil.getAddress(latLng.latitude, latLng.longitude));
-            }
-        });
-
-        if (destination != null) {
-            LatLng latLng = destination.getPosition();
-            mapOut.clear();
-            destination = mapOut.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(destination.getTitle())
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
-                    .draggable(true));
-            mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-            mapLocation.setText(LocationUtil.getAddress(latLng.latitude, latLng.longitude));
+        if (curPlace != null) {
+            if (map != null) map.addMarker(curPlace, null, true);
+            mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
         if (id != 0 && isSame()) {
@@ -2952,12 +2483,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
-                mapOut.clear();
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13));
+                LatLng pos = new LatLng(latitude, longitude);
+                if (map != null) map.addMarker(pos, text, true);
+                mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
                 mapCheck.setChecked(true);
             }
         }
@@ -3314,11 +2842,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 return null;
             }
             LatLng dest = null;
-            boolean isNull = false;
-            try {
-                dest = destination.getPosition();
-            } catch (NullPointerException e){
-                isNull = true;
+            boolean isNull = true;
+            if (curPlace != null) {
+                dest = curPlace;
+                isNull = false;
             }
             if (isNull) {
                 Toast.makeText(ReminderManager.this, getString(R.string.point_warning),
@@ -3720,14 +3247,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onBackPressed() {
-        if (isLayersVisible()) {
-            ViewUtils.hideOver(layersContainer, isAnimation);
-            return;
-        }
-        if (isLayersOutVisible()) {
-            ViewUtils.hideOver(layersContainerOut, isAnimation);
-            return;
-        }
+        if (map != null && !map.onBackPressed()) return;
+
         if (mFab.getVisibility() == View.GONE){
             ViewUtils.show(ReminderManager.this, mFab, isAnimation);
             return;
@@ -4297,17 +3818,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         public void onLocationChanged(Location location) {
             double currentLat = location.getLatitude();
             double currentLong = location.getLongitude();
+            curPlace = new LatLng(currentLat, currentLong);
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = taskField.getText().toString().trim();
             if (text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
-                mapOut.clear();
-                destination = mapOut.addMarker(new MarkerOptions()
-                        .position(new LatLng(currentLat, currentLong))
-                        .title(text)
-                        .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle())));
-                mapOut.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLat, currentLong), 13));
+                if (map != null) {
+                    map.addMarker(new LatLng(currentLat, currentLong), text, true);
+                    map.moveCamera(new LatLng(currentLat, currentLong));
+                }
             }
         }
 

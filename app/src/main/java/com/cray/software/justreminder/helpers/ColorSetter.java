@@ -1285,34 +1285,42 @@ public class ColorSetter {
             sPrefs = new SharedPrefs(cContext);
             int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (loaded == 1) {
-                color = R.drawable.flat_red;
+                color = R.drawable.marker_red;
             } else if (loaded == 2) {
-                color = R.drawable.flat_green;
+                color = R.drawable.marker_green;
             } else if (loaded == 3) {
-                color = R.drawable.marker;
+                color = R.drawable.marker_blue;
             } else if (loaded == 4) {
-                color = R.drawable.flat_yellow;
+                color = R.drawable.marker_yellow;
             } else if (loaded == 5) {
-                color = R.drawable.simple_red;
+                color = R.drawable.marker_green_light;
             } else if (loaded == 6) {
-                color = R.drawable.simple_green;
+                color = R.drawable.marker_blue_light;
             } else if (loaded == 7) {
-                color = R.drawable.simple_blue;
+                color = R.drawable.marker_grey;
             } else if (loaded == 8) {
-                color = R.drawable.simple_yellow;
+                color = R.drawable.marker_violet;
             } else if (loaded == 9) {
-                color = R.drawable.round_red;
+                color = R.drawable.marker_brown;
             } else if (loaded == 10) {
-                color = R.drawable.round_orange;
+                color = R.drawable.marker_orange;
             } else if (loaded == 11) {
-                color = R.drawable.round_green;
+                color = R.drawable.marker_pink;
             } else if (loaded == 12) {
-                color = R.drawable.round_blue;
+                color = R.drawable.marker_teal;
+            } else if (loaded == 13) {
+                color = R.drawable.marker_deep_purple;
+            } else if (loaded == 14) {
+                color = R.drawable.marker_deep_orange;
+            } else if (loaded == 15) {
+                color = R.drawable.marker_indigo;
+            } else if (loaded == 16) {
+                color = R.drawable.marker_lime;
             } else {
-                color = R.drawable.marker;
+                color = R.drawable.marker_blue;
             }
         } else {
-            color = R.drawable.marker;
+            color = R.drawable.marker_blue;
         }
         return color;
     }
