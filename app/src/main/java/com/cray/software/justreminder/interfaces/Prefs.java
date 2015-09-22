@@ -17,6 +17,8 @@ package com.cray.software.justreminder.interfaces;
  *
  */
 public class Prefs {
+    public static final String TECH_ONE = "RanGuide";
+
     public static final String EVENTS_CALENDAR = "events_calendar";
     public static final String BIRTH_CALENDAR = "birth_calendar";
     public static final String AUTO_CHECK_FOR_EVENTS = "auto_events";
@@ -48,6 +50,7 @@ public class Prefs {
     public static final String MARKER_STYLE = "marker_style";
     public static final String INFINITE_VIBRATION = "infinite_vibration";
     public static final String AUTO_BACKUP = "auto_backup";
+    public static final String AUTO_BACKUP_INTERVAL = "auto_backup_interval";
     public static final String SMART_FOLD = "smart_fold";
     public static final String NOTIFICATION_REPEAT = "notification_repeat";
     public static final String NOTIFICATION_REPEAT_INTERVAL = "notification_repeat_interval";

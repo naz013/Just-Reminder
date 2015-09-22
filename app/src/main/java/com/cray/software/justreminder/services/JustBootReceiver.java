@@ -26,6 +26,12 @@ public class JustBootReceiver extends BroadcastReceiver {
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS)){
             new BirthdayCheckAlarm().setAlarm(context);
         }
+        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS)){
+            new EventsCheckAlarm().setAlarm(context);
+        }
+        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
+            new AutoSyncAlarm().setAlarm(context);
+        }
         DB = new DataBase(context);
         DB.open();
         if (DB.getCount() != 0){

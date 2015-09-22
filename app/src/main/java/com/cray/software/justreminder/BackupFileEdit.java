@@ -24,6 +24,8 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -1468,6 +1470,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
+        replace(map, R.id.mapContainer);
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1714,6 +1717,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
+        replace(map, R.id.mapContainerOut);
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1750,6 +1754,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
                 ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
+                mapCheck.setChecked(true);
             }
         });
 
@@ -1924,6 +1929,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 mapCheck.setChecked(true);
             }
         }
+    }
+
+    private void replace(Fragment fragment, int container){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(container, fragment, null);
+        ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        ft.commitAllowingStateLoss();
     }
 
     private boolean isDateReminderAttached(){

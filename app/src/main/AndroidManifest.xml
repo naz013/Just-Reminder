@@ -230,6 +230,7 @@
 
         <receiver android:name=".services.AlarmReceiver" />
         <receiver android:name=".services.BirthdayCheckAlarm" />
+        <receiver android:name=".services.AutoSyncAlarm" />
         <receiver android:name=".services.EventsCheckAlarm" />
         <receiver android:name=".services.PositionDelayReceiver" />
         <receiver android:name=".services.WeekDayReceiver" />

@@ -108,6 +108,7 @@ public class SplashScreen extends Activity{
             uiEd.putInt(Prefs.DELAY_TIME, 5);
             uiEd.putInt(Prefs.EVENT_DURATION, 30);
             uiEd.putInt(Prefs.MISSED_CALL_TIME, 10);
+            uiEd.putInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
             uiEd.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
             uiEd.putBoolean(Prefs.RATE_SHOW, false);
             uiEd.putBoolean(Prefs.IS_CREATE_SHOWN, false);
@@ -282,6 +283,9 @@ public class SplashScreen extends Activity{
         if (!sPrefs.isString(Prefs.TRACK_DISTANCE)){
             sPrefs.saveInt(Prefs.TRACK_DISTANCE, 1);
         }
+        if (!sPrefs.isString(Prefs.AUTO_BACKUP_INTERVAL)){
+            sPrefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
+        }
         if (!sPrefs.isString(Prefs.TRACK_TIME)){
             sPrefs.saveInt(Prefs.TRACK_TIME, 1);
         }
@@ -442,10 +446,10 @@ public class SplashScreen extends Activity{
 
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        boolean ranBefore = preferences.getBoolean("RanGuide", false);
+        boolean ranBefore = preferences.getBoolean(Prefs.TECH_ONE, false);
         if (!ranBefore) {
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("RanGuide", true);
+            editor.putBoolean(Prefs.TECH_ONE, true);
             editor.commit();
         }
         return !ranBefore;

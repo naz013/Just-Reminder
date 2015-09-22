@@ -1325,6 +1325,46 @@ public class ColorSetter {
         return color;
     }
 
+    public int getMarkerStyle(int marker){
+        int color;
+        if (marker == 1) {
+            color = R.drawable.marker_red;
+        } else if (marker == 2) {
+            color = R.drawable.marker_green;
+        } else if (marker == 3) {
+            color = R.drawable.marker_blue;
+        } else if (marker == 4) {
+            color = R.drawable.marker_yellow;
+        } else if (marker == 5) {
+            color = R.drawable.marker_green_light;
+        } else if (marker == 6) {
+            color = R.drawable.marker_blue_light;
+        } else if (marker == 7) {
+            color = R.drawable.marker_grey;
+        } else if (marker == 8) {
+            color = R.drawable.marker_violet;
+        } else if (marker == 9) {
+            color = R.drawable.marker_brown;
+        } else if (marker == 10) {
+            color = R.drawable.marker_orange;
+        } else if (marker == 11) {
+            color = R.drawable.marker_pink;
+        } else if (marker == 12) {
+            color = R.drawable.marker_teal;
+        } else if (marker == 13) {
+            color = R.drawable.marker_deep_purple;
+        } else if (marker == 14) {
+            color = R.drawable.marker_deep_orange;
+        } else if (marker == 15) {
+            color = R.drawable.marker_indigo;
+        } else if (marker == 16) {
+            color = R.drawable.marker_lime;
+        } else {
+            color = R.drawable.marker_blue;
+        }
+        return color;
+    }
+
     public int getNoteColor(int position){
         int color;
         if (Module.isPro()){

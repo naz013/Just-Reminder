@@ -208,7 +208,7 @@ public class ActiveFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!new Module().isPro()){
+        if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -218,7 +218,7 @@ public class ActiveFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -228,7 +228,7 @@ public class ActiveFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.pause();
             }

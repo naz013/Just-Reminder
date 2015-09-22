@@ -692,8 +692,13 @@
     <string name="send_sms">Отправлять SMS</string>
     <string name="add_permission">Добавить разрешение</string>
     <string name="read_contacts">Читать контакты</string>
-    <string name="clear_search_field">Clear search field</string>
-    <string name="close_map">Close map</string>
-    <string name="change_map_layer">Change map layer</string>
-    <string name="show_my_location">Show my location</string>
+    <string name="clear_search_field">Очистить поиск</string>
+    <string name="close_map">Закрыть карту</string>
+    <string name="change_map_layer">Сменить слой карты</string>
+    <string name="show_my_location">Показать мое местоположение</string>
+    <string name="auto_sync_interval">Интервал синхронизации</string>
+    <string name="one_hour">1 час</string>
+    <string name="six_hours">6 часов</string>
+    <string name="twelve_hours">12 часов</string>
+    <string name="one_day">1 день</string>
 </resources>

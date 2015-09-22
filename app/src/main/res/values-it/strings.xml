@@ -696,4 +696,9 @@
     <string name="close_map">Close map</string>
     <string name="change_map_layer">Change map layer</string>
     <string name="show_my_location">Show my location</string>
+    <string name="auto_sync_interval">Auto synchronization interval</string>
+    <string name="one_hour">1 hour</string>
+    <string name="six_hours">6 hours</string>
+    <string name="twelve_hours">12 hours</string>
+    <string name="one_day">1 day</string>
 </resources>

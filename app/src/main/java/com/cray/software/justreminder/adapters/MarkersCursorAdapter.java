@@ -1,53 +1,51 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.datas.MarkerItem;
 
-public class MarkersCursorAdapter extends CursorAdapter implements Filterable {
+import java.util.ArrayList;
+
+public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
 
     LayoutInflater inflater;
-    private Cursor c;
     Context context;
+    private ArrayList<MarkerItem> data;
 
     @SuppressWarnings("deprecation")
-    public MarkersCursorAdapter(Context context, Cursor c) {
-        super(context, c);
+    public MarkersCursorAdapter(Context context, ArrayList<MarkerItem> data) {
         this.context = context;
+        this.data = data;
         inflater = LayoutInflater.from(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.c = c;
-        c.moveToFirst();
-    }
-
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return inflater.inflate(R.layout.list_item_current, null);
     }
 
     @Override
     public long getItemId(int position) {
-        Cursor cursor = getCursor();
-        cursor.moveToPosition(position);
-        return cursor.getLong(cursor.getColumnIndex("_id"));
+        return 0;
+    }
+
+    @Override
+    public int getCount() {
+        return data.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return super.getItem(position);
+        return data.get(position);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        c.moveToPosition(position);
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_geo, null);
         }
@@ -55,21 +53,25 @@ public class MarkersCursorAdapter extends CursorAdapter implements Filterable {
         TextView taskTitle = (TextView) convertView.findViewById(R.id.taskText);
         TextView latitude = (TextView) convertView.findViewById(R.id.latitude);
         TextView longitude = (TextView) convertView.findViewById(R.id.longitude);
+        ImageView markerIcon = (ImageView) convertView.findViewById(R.id.markerIcon);
 
-        String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+        MarkerItem item = data.get(position);
 
-        double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-        double longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+        String title = item.getTitle();
+
+        double lat = item.getPosition().latitude;
+        double longi = item.getPosition().longitude;
 
         taskTitle.setText(title);
-        latitude.setText(String.valueOf(lat));
-        longitude.setText(String.valueOf(longi));
+        latitude.setText(String.format("%.5f", lat));
+        longitude.setText(String.format("%.5f", longi));
+        markerIcon.setImageResource(item.getIcon());
 
         return convertView;
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-
+    public Filter getFilter() {
+        return null;
     }
 }

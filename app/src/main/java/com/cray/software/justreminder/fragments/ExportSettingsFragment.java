@@ -26,6 +26,7 @@ import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.services.AutoSyncAlarm;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     RelativeLayout exportToCalendar, autoBackup, exportToStock, exportTasks, syncSettings;
     CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
             syncSettingsCheck;
-    TextView eventDuration, selectCalendar, clouds, clean;
+    TextView eventDuration, selectCalendar, clouds, clean, syncInterval;
     SharedPrefs sPrefs;
     ActionBar ab;
 
@@ -68,6 +69,9 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         clean = (TextView) rootView.findViewById(R.id.clean);
         clean.setOnClickListener(this);
 
+        syncInterval = (TextView) rootView.findViewById(R.id.syncInterval);
+        syncInterval.setOnClickListener(this);
+
         autoBackup = (RelativeLayout) rootView.findViewById(R.id.autoBackup);
         autoBackup.setOnClickListener(this);
 
@@ -87,6 +91,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         syncSettingsCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS));
 
         checkEnabling();
+        checkBackup();
 
         return rootView;
     }
@@ -118,10 +123,18 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         if (autoBackupCheck.isChecked()){
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, false);
             autoBackupCheck.setChecked(false);
+            new AutoSyncAlarm().cancelAlarm(getActivity());
         } else {
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
             autoBackupCheck.setChecked(true);
+            new AutoSyncAlarm().setAlarm(getActivity());
         }
+        checkBackup();
+    }
+
+    private void checkBackup(){
+        if (autoBackupCheck.isChecked())syncInterval.setEnabled(true);
+        else syncInterval.setEnabled(false);
     }
 
     private void checkEnabling(){
@@ -202,7 +215,38 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             case R.id.syncSettings:
                 prefsChange();
                 break;
+            case R.id.syncInterval:
+                chooseInterval();
+                break;
         }
+    }
+
+    private void chooseInterval() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(true);
+        builder.setTitle(getActivity().getString(R.string.auto_sync_interval));
+        final CharSequence[] items = {getString(R.string.one_hour),
+                getString(R.string.six_hours),
+                getString(R.string.twelve_hours),
+                getString(R.string.one_day)};
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                SharedPrefs prefs = new SharedPrefs(getActivity());
+                if (item == 0) {
+                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 1);
+                } else if (item == 1) {
+                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
+                } else if (item == 2) {
+                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 12);
+                } else if (item == 3) {
+                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 24);
+                }
+                new AutoSyncAlarm().setAlarm(getActivity());
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void DeleteRecursive(File fileOrDirectory) {

@@ -95,6 +95,20 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         }
     }
 
+    public void addMarker(LatLng pos, String title, boolean clear, int markerStyle){
+        if (map != null) {
+            if (clear) map.clear();
+            if (title == null || title.matches("")) title = pos.toString();
+            lastPos = pos;
+            if (listener != null) listener.place(pos);
+            map.addMarker(new MarkerOptions()
+                    .position(pos)
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(markerStyle))
+                    .draggable(clear));
+        }
+    }
+
     public void moveCamera(LatLng pos){
         if (map != null) map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
     }
@@ -133,7 +147,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        final SharedPrefs sPrefs = new SharedPrefs(getActivity());
         cSetter = new ColorSetter(getActivity());
 
         isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
@@ -255,6 +269,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             @Override
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
                 ViewUtils.hideOver(layersContainer, isAnimation);
             }
         });
@@ -262,6 +277,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             @Override
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_SATELLITE);
                 ViewUtils.hideOver(layersContainer, isAnimation);
             }
         });
@@ -269,6 +285,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             @Override
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_HYBRID);
                 ViewUtils.hideOver(layersContainer, isAnimation);
             }
         });
@@ -276,6 +293,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             @Override
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_TERRAIN);
                 ViewUtils.hideOver(layersContainer, isAnimation);
             }
         });

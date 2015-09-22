@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.MarkerItem;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -22,6 +23,7 @@ import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GeolocationFragment extends Fragment {
 
@@ -52,33 +54,12 @@ public class GeolocationFragment extends Fragment {
 
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
 
+        googleMap = ((MapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.markersMap));
+        googleMap.enableTouch(false);
+        googleMap.enableCloseButton(false);
+
         geoTasks = (ListView) rootView.findViewById(R.id.geoTasks);
-        DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen())DB.open();
-        if (DB.getCount() == 0){
-            geoTasks.setVisibility(View.GONE);
-        } else {
-            Cursor c = DB.queryGroup();
-            if (c != null && c.moveToFirst()){
-                ArrayList<String> types = new ArrayList<>();
-                do{
-                    String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                    types.add(tp);
-                } while (c.moveToNext());
-                if (types.contains(Constants.TYPE_LOCATION) ||
-                        types.contains(Constants.TYPE_LOCATION_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                    geoTasks.setVisibility(View.VISIBLE);
-                } else {
-                    geoTasks.setVisibility(View.GONE);
-                }
-            }
-            if (c != null) c.close();
-        }
-        DB.close();
         geoTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -98,13 +79,6 @@ public class GeolocationFragment extends Fragment {
                 }
             }
         });
-
-        googleMap = ((MapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.markersMap));
-        googleMap.enableTouch(false);
-        googleMap.enableCloseButton(false);
-
-        loadMarkers();
         return rootView;
     }
 
@@ -128,7 +102,6 @@ public class GeolocationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loaderAdapter();
         loadMarkers();
     }
 
@@ -137,19 +110,25 @@ public class GeolocationFragment extends Fragment {
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryGroup();
+        Random random = new Random();
         if (c != null && c.moveToFirst()){
             ColorSetter cSetter = new ColorSetter(getActivity());
+            ArrayList<MarkerItem> list = new ArrayList<>();
             do {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 if (longitude != 0 && latitude != 0) {
+                    int rand = random.nextInt(16-2)+1;
+                    int marker = cSetter.getMarkerStyle(rand);
+                    list.add(new MarkerItem(task, new LatLng(latitude, longitude), marker));
                     if (googleMap != null) {
-                        googleMap.addMarker(new LatLng(latitude, longitude), task, false);
+                        googleMap.addMarker(new LatLng(latitude, longitude), task, false, marker);
                     }
                 }
             } while (c.moveToNext());
+            loaderAdapter(list);
         } else {
             if (googleMap != null) {
                 googleMap.moveToMyLocation();
@@ -159,11 +138,13 @@ public class GeolocationFragment extends Fragment {
         DB.close();
     }
 
-    public void loaderAdapter(){
-        DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
-        markersCursorAdapter = new MarkersCursorAdapter(getActivity(), DB.getMarkers());
-        geoTasks.setAdapter(markersCursorAdapter);
-        DB.close();
+    public void loaderAdapter(ArrayList<MarkerItem> list){
+        if (list.size() > 0) {
+            markersCursorAdapter = new MarkersCursorAdapter(getActivity(), list);
+            geoTasks.setAdapter(markersCursorAdapter);
+            geoTasks.setVisibility(View.VISIBLE);
+        } else {
+            geoTasks.setVisibility(View.GONE);
+        }
     }
 }

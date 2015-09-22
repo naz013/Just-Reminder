@@ -692,8 +692,13 @@
     <string name="write_external_storage">Записувати на зовнішнє сховище</string>
     <string name="send_sms">Надсилати SMS</string>
     <string name="call_phone">Виконувати дзвінки</string>
-    <string name="clear_search_field">Clear search field</string>
-    <string name="close_map">Close map</string>
-    <string name="change_map_layer">Change map layer</string>
-    <string name="show_my_location">Show my location</string>
+    <string name="clear_search_field">Очистити поле пошуку</string>
+    <string name="close_map">Закрити карту</string>
+    <string name="change_map_layer">Змінити шар карти</string>
+    <string name="show_my_location">Показати моє місцезнаходження</string>
+    <string name="auto_sync_interval">Інтервал синхронізації</string>
+    <string name="one_hour">1 година</string>
+    <string name="six_hours">6 годин</string>
+    <string name="twelve_hours">12 годин</string>
+    <string name="one_day">1 день</string>
 </resources>

@@ -692,8 +692,13 @@
     <string name="read_external_storage">Lesen Sie External Storage</string>
     <string name="write_external_storage">Schreiben Sie External Storage</string>
     <string name="send_sms">SMS senden</string>
-    <string name="clear_search_field">Clear search field</string>
-    <string name="close_map">Close map</string>
-    <string name="change_map_layer">Change map layer</string>
-    <string name="show_my_location">Show my location</string>
+    <string name="clear_search_field">Klar Suchfeld</string>
+    <string name="close_map">Karte schließen</string>
+    <string name="change_map_layer">Ändern Kartenlayer</string>
+    <string name="show_my_location">Zeigen Sie meinen Standort</string>
+    <string name="auto_sync_interval">Automatische Synchronisation interval</string>
+    <string name="one_hour">1 Stunde</string>
+    <string name="six_hours">6 Stunden</string>
+    <string name="twelve_hours">12 Stunden</string>
+    <string name="one_day">1 Tag</string>
 </resources>

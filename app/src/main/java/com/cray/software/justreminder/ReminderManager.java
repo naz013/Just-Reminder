@@ -28,8 +28,6 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -242,10 +240,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 startVoiceRecognitionActivity();
             }
         });
-
-        map = new MapFragment();
-        map.enableTouch(true);
-        map.setListener(this);
 
         category = (TextView) findViewById(R.id.category);
         category.setOnClickListener(new View.OnClickListener() {
@@ -880,7 +874,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (mapCheck.isChecked()) {
                     currentCheck.setChecked(false);
                     ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                    replace(map, R.id.mapContainerOut);
                     ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
                     if (mLocList != null) mLocationManager.removeUpdates(mLocList);
                 }
@@ -1995,6 +1988,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
 
+        map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        map.setListener(this);
+        map.enableTouch(true);
+
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -2038,7 +2035,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainer, isAnimation);
-                replace(map, R.id.mapContainer);
                 ViewUtils.fadeInAnimation(mapContainer, isAnimation);
             }
         });
@@ -2174,7 +2170,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text = "", number = null, remType = "";
-            double latitude = 0, longitude = 0;
+            double latitude = 0.0, longitude = 0.0;
             if (item != null){
                 text = item.getTitle();
                 number = item.getNumber();
@@ -2223,18 +2219,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 attachLocationAction.setChecked(false);
             }
 
-            taskField.setText(text);
-            if (longitude != 0 && latitude != 0) {
-                if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
-            }
-        }
-    }
+            Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
 
-    private void replace(Fragment fragment, int container){
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(container, fragment, null);
-        ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        ft.commitAllowingStateLoss();
+            taskField.setText(text);
+            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
+        }
     }
 
     ImageButton addNumberButtonLocationOut, mapButtonOut;
@@ -2247,6 +2236,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
     FloatingEditText phoneNumberLocationOut;
     SeekBar pointRadius;
+    MapFragment mapOut;
 
     private boolean isMapOutVisible(){
         return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
@@ -2267,6 +2257,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
+
+        mapOut = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapOut);
+        mapOut.setListener(this);
+        mapOut.enableTouch(true);
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2300,7 +2294,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                replace(map, R.id.mapContainerOut);
                 ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
                 mapCheck.setChecked(true);
             }
@@ -2426,7 +2419,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationOutDateYearField.setText(String.valueOf(myYear));
 
         if (curPlace != null) {
-            if (map != null) map.addMarker(curPlace, null, true);
+            if (mapOut != null) mapOut.addMarker(curPlace, null, true);
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -2481,13 +2474,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 attachLocationOutAction.setChecked(false);
             }
 
+            Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
+
             taskField.setText(text);
-            if (longitude != 0 && latitude != 0) {
-                LatLng pos = new LatLng(latitude, longitude);
-                if (map != null) map.addMarker(pos, text, true);
-                mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
-                mapCheck.setChecked(true);
-            }
+            LatLng pos = new LatLng(latitude, longitude);
+            if (mapOut != null) mapOut.addMarker(pos, text, true);
+            mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
+            mapCheck.setChecked(true);
         }
     }
 
@@ -2792,11 +2785,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private DataItem getData() {
-        String task = taskField.getText().toString().trim();
-        if (task.matches("")) {
-            taskField.setError(getString(R.string.empty_field_error));
-            return null;
-        }
         String type = getType();
         Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
         String weekdays = null;
@@ -2806,6 +2794,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
             if (weekdays.matches(Constants.NOTHING_CHECKED)) {
                 Toast.makeText(ReminderManager.this, getString(R.string.weekday_nothing_checked), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+        String task = taskField.getText().toString().trim();
+        if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
+                type.matches(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
+                type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+
+        } else {
+            if (task.matches("")) {
+                taskField.setError(getString(R.string.empty_field_error));
                 return null;
             }
         }
@@ -2891,6 +2890,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         long due = getDue(weekdays, repMinute);
         Log.d(Constants.LOG_TAG, "Task due " + due);
+
+        if (isLocationAttached() || isLocationOutAttached()){
+            if (isLocationAttached() && !attackDelay.isChecked()) {
+                myDay = 0;
+                myMonth = 0;
+                myYear = 0;
+                myHour = 0;
+                myMinute = 0;
+            }
+            if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
+                myDay = 0;
+                myMonth = 0;
+                myYear = 0;
+                myHour = 0;
+                myMinute = 0;
+            }
+        }
 
         return new DataItem(task, type, weekdays, melody, categoryId, uuId,
                 new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
@@ -3248,6 +3264,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackPressed() {
         if (map != null && !map.onBackPressed()) return;
+        if (mapOut != null && !mapOut.onBackPressed()) return;
 
         if (mFab.getVisibility() == View.GONE){
             ViewUtils.show(ReminderManager.this, mFab, isAnimation);
@@ -3824,9 +3841,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
-                if (map != null) {
-                    map.addMarker(new LatLng(currentLat, currentLong), text, true);
-                    map.moveCamera(new LatLng(currentLat, currentLong));
+                if (mapOut != null) {
+                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true);
+                    mapOut.moveCamera(new LatLng(currentLat, currentLong));
                 }
             }
         }

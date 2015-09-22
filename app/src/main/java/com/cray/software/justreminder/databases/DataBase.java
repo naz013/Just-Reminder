@@ -598,7 +598,6 @@ public class DataBase {
                 + Constants.TYPE_LOCATION_OUT + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
                 + Constants.TYPE_LOCATION_OUT_CALL + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
                 + Constants.TYPE_LOCATION_OUT_MESSAGE + "'" + " AND "+ Constants.COLUMN_ARCHIVED + "='"
-                + 0 + "'" + " AND "+ Constants.COLUMN_IS_DONE + "='"
                 + 0 + "'", null, null, null, null, null);
     }
 
