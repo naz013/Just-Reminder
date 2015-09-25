@@ -20,4 +20,5 @@ import com.google.android.gms.maps.model.LatLng;
 public interface MapListener {
     void place(LatLng place);
     void onZoomOutClick();
+    void placeName(String name);
 }

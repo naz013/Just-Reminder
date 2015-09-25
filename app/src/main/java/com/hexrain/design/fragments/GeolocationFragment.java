@@ -58,6 +58,7 @@ public class GeolocationFragment extends Fragment {
                 .findFragmentById(R.id.markersMap));
         googleMap.enableTouch(false);
         googleMap.enableCloseButton(false);
+        googleMap.enablePlaceList(false);
 
         geoTasks = (ListView) rootView.findViewById(R.id.geoTasks);
         geoTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -122,9 +123,10 @@ public class GeolocationFragment extends Fragment {
                 if (longitude != 0 && latitude != 0) {
                     int rand = random.nextInt(16-2)+1;
                     int marker = cSetter.getMarkerStyle(rand);
-                    list.add(new MarkerItem(task, new LatLng(latitude, longitude), marker));
+                    LatLng pos = new LatLng(latitude, longitude);
+                    list.add(new MarkerItem(task, pos, marker));
                     if (googleMap != null) {
-                        googleMap.addMarker(new LatLng(latitude, longitude), task, false, marker);
+                        googleMap.addMarker(pos, task, false, marker, false);
                     }
                 }
             } while (c.moveToNext());

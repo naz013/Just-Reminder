@@ -95,7 +95,7 @@ public class CheckPosition extends IntentService {
                                         int roundedDistance = Math.round(distance);
                                         if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
                                             if (status == LocationUtil.ACTIVE){
-                                                if (roundedDistance <= radius) {
+                                                if (roundedDistance < radius) {
                                                     DB.setLocationStatus(id, LocationUtil.LOCKED);
                                                 }
                                             }

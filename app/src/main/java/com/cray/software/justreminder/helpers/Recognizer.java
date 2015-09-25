@@ -24,7 +24,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.RecognizerUtils;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.hexrain.design.ScreenManager;
 

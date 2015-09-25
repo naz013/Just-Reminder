@@ -139,7 +139,7 @@ public class SharedPrefs {
     }
 
     public void savePrefsBackup(){
-        if (new SyncHelper(pContext).isSdPresent()){
+        if (SyncHelper.isSdPresent()){
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_PREFS);
             if (!sdPathDr.exists()){
@@ -155,7 +155,6 @@ public class SharedPrefs {
                 SharedPreferences pref =
                         pContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
                 Map<String, ?> list = pref.getAll();
-                if (list.containsKey(Prefs.DRIVE_USER)) list.remove(Prefs.DRIVE_USER);
                 if (list.containsKey(Prefs.CONTACTS_IMPORT_DIALOG)) list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
                 output.writeObject(list);
             } catch (IOException e) {

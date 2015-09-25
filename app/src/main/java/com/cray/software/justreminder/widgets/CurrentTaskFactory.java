@@ -19,7 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
@@ -179,10 +179,12 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         float itemTextSize = sp.getFloat(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_SIZE + widgetID, 0);
         rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
 
-        String task = data.get(i).getName();
+        CalendarData item = data.get(i);
+
+        String task = item.getName();
         Contacts contacts = new Contacts(context);
         if (task == null || task.matches("")) task = Contacts.getContactNameFromNumber(
-                data.get(i).getNumber(), context);
+                item.getNumber(), context);
         rView.setTextViewText(R.id.taskText, task);
         rView.setTextColor(R.id.taskText, itemTextColor);
 
@@ -198,19 +200,19 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
         }
 
-        String number = data.get(i).getNumber();
+        String number = item.getNumber();
         if (number != null && !number.matches("")) {
             rView.setTextViewText(R.id.taskNumber, number);
             rView.setTextColor(R.id.taskNumber, itemTextColor);
         } else {
             rView.setViewVisibility(R.id.taskNumber, View.GONE);
         }
-        rView.setTextViewText(R.id.taskDate, data.get(i).getDayDate());
+        rView.setTextViewText(R.id.taskDate, item.getDayDate());
         rView.setTextColor(R.id.taskDate, itemTextColor);
-        rView.setTextViewText(R.id.taskTime, data.get(i).getTime());
+        rView.setTextViewText(R.id.taskTime, item.getTime());
         rView.setTextColor(R.id.taskTime, itemTextColor);
 
-        long id = data.get(i).getId();
+        long id = item.getId();
         if (id != 0) {
             Intent fillInIntent = new Intent();
             fillInIntent.putExtra(Constants.EDIT_ID, id);

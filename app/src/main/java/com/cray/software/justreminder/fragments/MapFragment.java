@@ -32,6 +32,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -53,7 +54,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     private boolean isAnimation = true;
     private boolean isTouch = true;
-    private boolean isDark = false;
     private String taskTitle;
     private LatLng lastPos;
 
@@ -81,7 +81,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         this.taskTitle = taskTitle;
     }
 
-    public void addMarker(LatLng pos, String title, boolean clear){
+    public void addMarker(LatLng pos, String title, boolean clear, boolean animate){
         if (map != null) {
             if (clear) map.clear();
             if (title == null || title.matches("")) title = pos.toString();
@@ -92,10 +92,11 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
                     .draggable(clear));
+            if (animate) animate(pos);
         }
     }
 
-    public void addMarker(LatLng pos, String title, boolean clear, int markerStyle){
+    public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate){
         if (map != null) {
             if (clear) map.clear();
             if (title == null || title.matches("")) title = pos.toString();
@@ -106,6 +107,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(markerStyle))
                     .draggable(clear));
+            if (animate) animate(pos);
         }
     }
 
@@ -113,12 +115,17 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         if (map != null) map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
     }
 
+    public void animate(LatLng latLng){
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+        if (map != null) map.animateCamera(update);
+    }
+
     public void moveToMyLocation(){
         if (map != null && map.getMyLocation() != null){
             double lat = map.getMyLocation().getLatitude();
             double lon = map.getMyLocation().getLongitude();
             LatLng pos = new LatLng(lat, lon);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+            animate(pos);
         }
     }
 
@@ -129,6 +136,11 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     public void enableCloseButton(boolean enable){
         if (enable) zoomOut.setVisibility(View.VISIBLE);
         else zoomOut.setVisibility(View.GONE);
+    }
+
+    public void enablePlaceList(boolean enable){
+        if (enable) placesList.setVisibility(View.VISIBLE);
+        else placesList.setVisibility(View.GONE);
     }
 
     public void clear(){
@@ -177,14 +189,13 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         placesList.setSelection(0);
                     }
                     if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                    addMarker(latLng, taskTitle, true);
+                    addMarker(latLng, taskTitle, true, true);
                 }
             }
         });
 
         if (lastPos != null) {
-            addMarker(lastPos, lastPos.toString(), true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastPos, 13));
+            addMarker(lastPos, lastPos.toString(), true, false);
         }
 
         CardView card = (CardView) rootView.findViewById(R.id.card);
@@ -212,7 +223,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         layers.setBackgroundColor(cSetter.getBackgroundStyle());
         myLocation.setBackgroundColor(cSetter.getBackgroundStyle());
 
-        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         if (isDark){
             cardClear.setImageResource(R.drawable.ic_clear_white_24dp);
@@ -256,7 +267,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                     double lat = location.getLatitude();
                     double lon = location.getLongitude();
                     LatLng pos = new LatLng(lat, lon);
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                    animate(pos);
                 }
             }
         });
@@ -329,10 +340,12 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                addMarker(pos, taskTitle, true);
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                addMarker(pos, taskTitle, true, true);
+                if (listener != null) listener.placeName(namesList.get(position));
             }
         });
+
+        loadPlaces();
 
         placesList = (Spinner) rootView.findViewById(R.id.placesList);
         placesList.setBackgroundColor(cSetter.getSpinnerStyle());
@@ -357,8 +370,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                             double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
                             double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
                             LatLng latLng = new LatLng(latitude, longitude);
-                            addMarker(latLng, taskTitle, true);
-                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                            addMarker(latLng, taskTitle, true, true);
                         }
                         if (c != null) c.close();
                     }

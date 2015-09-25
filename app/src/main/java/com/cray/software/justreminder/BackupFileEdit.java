@@ -24,8 +24,6 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -56,9 +54,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
+import com.cray.software.justreminder.datas.Item;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -75,7 +75,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -99,13 +99,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
     private TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
             messageDate, messageYearDate, messageTime, weekTimeField;
-    private ImageButton addNumberButton, addMessageNumberButton, weekAddNumberButton;
-    private SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
+    private ImageButton weekAddNumberButton;
 
     private LinearLayout delayLayout;
     private CheckBox attackDelay;
-
-    private MapFragment map;
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -119,7 +116,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
 
     private AlarmReceiver alarm = new AlarmReceiver();
-    private boolean isGPSEnabled = false, isNetworkEnabled = false;
     protected LocationManager locationManager;
 
     private ColorSetter cSetter = new ColorSetter(BackupFileEdit.this);
@@ -128,8 +124,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     private long id;
     private String type, selectedPackage = null;
+    private String categoryId;
+
     private Toolbar toolbar;
     private FloatingEditText taskField;
+    private TextView category;
 
     private  static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
@@ -172,12 +171,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }, 500);
         } else toolbar.setVisibility(View.VISIBLE);
 
+        category = (TextView) findViewById(R.id.category);
+        category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeCategory();
+            }
+        });
+
         LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
-        map = new MapFragment();
-        map.enableTouch(true);
-        map.setListener(this);
 
         ImageButton insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
@@ -234,6 +237,33 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 finish();
             }
         }
+    }
+
+    private void changeCategory() {
+        DB = new DataBase(this);
+        DB.open();
+        final ArrayList<Item> items = new ArrayList<>();
+        Cursor c = DB.queryCategories();
+        if (c != null && c.moveToFirst()){
+            do {
+                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                items.add(new Item(title, uuId));
+            } while (c.moveToNext());
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.string_select_category));
+        builder.setAdapter(new SimpleAdapter(BackupFileEdit.this,
+                DB.queryCategories()), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                category.setText(items.get(which).getTitle());
+                categoryId = items.get(which).getUuID();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void startVoiceRecognitionActivity() {
@@ -313,7 +343,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatDays = (EditText) findViewById(R.id.repeatDays);
         repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
+        SeekBar repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
@@ -1162,7 +1192,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         call_layout = (LinearLayout) findViewById(R.id.call_layout);
         ViewUtils.fadeInAnimation(call_layout, isAnimation);
 
-        addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
+        ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
         addNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1227,7 +1257,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
         repeatDaysCall.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
+        SeekBar repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
         repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysCall.setText(String.valueOf(repeatCallInt.getProgress()));
@@ -1277,7 +1307,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         message_layout = (LinearLayout) findViewById(R.id.message_layout);
         ViewUtils.fadeInAnimation(message_layout, isAnimation);
 
-        addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
+        ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
         addMessageNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1342,7 +1372,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
         repeatDaysMessage.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
+        SeekBar repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
         repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysMessage.setText(String.valueOf(repeatMessageInt.getProgress()));
@@ -1387,7 +1417,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     private TextView locationDateField, locationDateYearField, locationTimeField;
     private AutoCompleteTextView searchField;
-    private ImageButton clearField;
     private List<Address> foundPlaces;
     private ArrayAdapter<String> adapter;
     private GeocoderTask task;
@@ -1406,6 +1435,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
             ViewUtils.fadeInAnimation(specsContainer, isAnimation);
         }
+        if (isLocationOutAttached()) {
+            ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
+            ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
+        }
+    }
+
+    @Override
+    public void placeName(String name) {
+
     }
 
     private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
@@ -1456,6 +1494,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private CheckBox attachLocationAction;
     private RadioButton callCheckLocation, messageCheckLocation;
     private FloatingEditText phoneNumberLocation;
+    private MapFragment map;
 
     private boolean isMapVisible(){
         return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
@@ -1470,7 +1509,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
-        replace(map, R.id.mapContainer);
+        map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        map.setListener(this);
+        map.enableTouch(true);
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1489,7 +1530,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-        clearField = (ImageButton) findViewById(R.id.clearButton);
+        ImageButton clearField = (ImageButton) findViewById(R.id.clearButton);
         ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
         if (isDark){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
@@ -1547,7 +1588,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                if (map != null) map.addMarker(pos, title, true);
+                if (map != null) map.addMarker(pos, title, true, false);
             }
         });
 
@@ -1684,9 +1725,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
 
             taskField.setText(text);
-            if (longitude != 0 && latitude != 0) {
-                if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
-            }
+            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, true);
         }
     }
 
@@ -1701,6 +1740,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private CheckBox attachLocationOutAction, attachDelayOut;
     private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
     private FloatingEditText phoneNumberLocationOut;
+    private MapFragment mapOut;
 
     private boolean isMapOutVisible(){
         return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
@@ -1717,7 +1757,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
-        replace(map, R.id.mapContainerOut);
+
+        mapOut = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapOut);
+        mapOut.setListener(this);
+        mapOut.enableTouch(true);
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1864,7 +1907,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationOutDateYearField.setText(String.valueOf(myYear));
 
         if (curPlace != null) {
-            if (map != null) map.addMarker(curPlace, null, true);
+            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true);
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -1924,18 +1967,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
                 LatLng pos = new LatLng(latitude, longitude);
-                if (map != null) map.addMarker(pos, text, true);
+                if (mapOut != null) mapOut.addMarker(pos, text, true, true);
                 mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
                 mapCheck.setChecked(true);
             }
         }
-    }
-
-    private void replace(Fragment fragment, int container){
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(container, fragment, null);
-        ft.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        ft.commitAllowingStateLoss();
     }
 
     private boolean isDateReminderAttached(){
@@ -2173,9 +2209,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private void saveTask(){
         if (isLocationAttached() || isLocationOutAttached()){
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            isGPSEnabled = locationManager
+            boolean isGPSEnabled = locationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkEnabled = locationManager
+            boolean isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (isGPSEnabled || isNetworkEnabled) {
                 if (isLocationOutAttached()){
@@ -2243,8 +2279,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
-        new UpdatesHelper(BackupFileEdit.this).updateWidget();
-        finish();
     }
 
     private String getWeekTaskType(){
@@ -2326,12 +2360,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(task, type, 0, 0, 0, myHour, myMinute, 0, number,
                 0, 0, 0, 0, 0, uuID, repeat, 0, null, 0, -1, 0, categoryId);
         new WeekDayReceiver().setAlarm(BackupFileEdit.this, idN);
@@ -2341,6 +2376,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             ReminderUtils.exportToTasks(this, task, startTime, idN);
         }
         DB.close();
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void saveAppTask() {
@@ -2367,12 +2404,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
         alarm.setAlarm(BackupFileEdit.this, idN);
@@ -2383,6 +2421,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (gtx.isLinked() && appTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, task, startTime, idN);
         }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void saveSkypeTask() {
@@ -2402,12 +2442,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
         alarm.setAlarm(BackupFileEdit.this, idN);
@@ -2417,7 +2458,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
         if (gtx.isLinked() && skypeTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, task, startTime, idN);
-        }
+        }new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private boolean checkNumber(){
@@ -2477,12 +2519,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
         DB.updateReminderDateTime(idN);
@@ -2494,6 +2537,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             ReminderUtils.exportToTasks(this, text, startTime, id);
         }
         DB.updateReminderDateTime(id);
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void saveDateTask(){
@@ -2511,12 +2556,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
         alarm.setAlarm(BackupFileEdit.this, idN);
@@ -2526,6 +2572,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (gtx.isLinked() && dateTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, idN);
         }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void saveTimeTask(){
@@ -2553,12 +2601,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
                 null, 0, time, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
@@ -2569,6 +2618,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (gtx.isLinked() && timeTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, idN);
         }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private long getAfterTime() {
@@ -2606,12 +2657,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
         alarm.setAlarm(BackupFileEdit.this, idN);
@@ -2622,6 +2674,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (gtx.isLinked() && callTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, idN);
         }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void saveMessageTask(){
@@ -2642,12 +2696,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
         DB.updateReminderDateTime(idN);
@@ -2658,6 +2713,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (gtx.isLinked() && messageTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, idN);
         }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private PositionDelayReceiver positionDelayReceiver = new PositionDelayReceiver();
@@ -2672,7 +2729,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         String number = null;
         if (attachLocationAction.isChecked()) number = phoneNumberLocation.getText().toString().trim();
         LatLng dest = null;
-        boolean isNull = false;
+        boolean isNull = true;
         if (curPlace != null) {
             dest = curPlace;
             isNull = false;
@@ -2694,12 +2751,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         Double longitude = dest.longitude;
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
         if (attackDelay.isChecked()){
             long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
@@ -2713,6 +2771,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         DB.close();
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private void addLocationOut() {
@@ -2747,12 +2807,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         Double longitude = dest.longitude;
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
-        Cursor cf = DB.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
         }
-        if (cf != null) cf.close();
+
         if (attachDelayOut.isChecked()){
             long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
@@ -2766,6 +2828,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
         DB.close();
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private boolean isUID(String uuId){
@@ -2985,6 +3049,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
         if (map != null && !map.onBackPressed()) return;
+        if (mapOut != null && !mapOut.onBackPressed()) return;
         finish();
     }
 
@@ -3003,9 +3068,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (text == null || text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
-                if (map != null) {
-                    map.addMarker(new LatLng(currentLat, currentLong), text, true);
-                    map.moveCamera(new LatLng(currentLat, currentLong));
+                if (mapOut != null) {
+                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, false);
+                    mapOut.moveCamera(new LatLng(currentLat, currentLong));
                 }
             }
         }

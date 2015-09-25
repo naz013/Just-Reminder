@@ -289,7 +289,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         syncHelper = new SyncHelper(getActivity());
-                        if (syncHelper.isSdPresent()) {
+                        if (SyncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
                             String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
@@ -349,52 +349,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
                     switch (direction) {
                         case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-
-                                deleteFromDropbox(uuID);
-                                filesDataBase.deleteTask(itemId);
-                                isDropboxDeleted = true;
-                            }
+                            deleteFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_FAR_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-
-                                deleteFromDropbox(uuID);
-                                filesDataBase.deleteTask(itemId);
-                                isDropboxDeleted = true;
-                            }
+                            deleteFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                             if (itemId != 0) {
@@ -412,6 +370,31 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
         });
+    }
+
+    private void deleteFile(long itemId) {
+        if (itemId != 0) {
+            String uuID = "";
+            Cursor c = filesDataBase.getTask(itemId);
+            if (c != null && c.moveToFirst()){
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (c != null) c.close();
+            syncHelper = new SyncHelper(getActivity());
+            if (SyncHelper.isSdPresent()){
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
+                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
+                File file = new File(sdPathDr, exportFileName);
+                if (file.exists()){
+                    file.delete();
+                }
+            }
+
+            deleteFromDropbox(uuID);
+            filesDataBase.deleteTask(itemId);
+            isDropboxDeleted = true;
+        }
     }
 
     private void deleteFromDropbox(final String name){
@@ -503,7 +486,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         syncHelper = new SyncHelper(getActivity());
-                        if (syncHelper.isSdPresent()) {
+                        if (SyncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
                             String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
@@ -561,52 +544,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
                     switch (direction) {
                         case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-
-                                deleteFromGoogle(uuID);
-                                filesDataBase.deleteTask(itemId);
-                                isGoogleDeleted = true;
-                            }
+                            deleteGoogleFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_FAR_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-
-                                deleteFromGoogle(uuID);
-                                filesDataBase.deleteTask(itemId);
-                                isGoogleDeleted = true;
-                            }
+                            deleteGoogleFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                             if (itemId != 0) {
@@ -624,6 +565,31 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
         });
+    }
+
+    private void deleteGoogleFile(long itemId) {
+        if (itemId != 0) {
+            String uuID = "";
+            Cursor c = filesDataBase.getTask(itemId);
+            if (c != null && c.moveToFirst()){
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (c != null) c.close();
+            syncHelper = new SyncHelper(getActivity());
+            if (SyncHelper.isSdPresent()){
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
+                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
+                File file = new File(sdPathDr, exportFileName);
+                if (file.exists()){
+                    file.delete();
+                }
+            }
+
+            deleteFromGoogle(uuID);
+            filesDataBase.deleteTask(itemId);
+            isGoogleDeleted = true;
+        }
     }
 
     private void deleteFromGoogle(final String name){
@@ -784,7 +750,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     filesList.setVisibility(View.GONE);
                     container.setVisibility(View.VISIBLE);
                     syncHelper = new SyncHelper(getActivity());
-                    if (syncHelper.isSdPresent()) {
+                    if (SyncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
                         File[] files = sdPathDr.listFiles();
@@ -809,7 +775,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        if (syncHelper.isSdPresent()) {
+                        if (SyncHelper.isSdPresent()) {
                             File sdPath = Environment.getExternalStorageDirectory();
                             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
                             String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
@@ -827,7 +793,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (container.getVisibility() == View.GONE) {
                     filesList.setVisibility(View.GONE);
                     container.setVisibility(View.VISIBLE);
-                    if (syncHelper.isSdPresent()) {
+                    if (SyncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
                         File[] files = sdPathDr.listFiles();
@@ -841,7 +807,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         syncHelper = new SyncHelper(getActivity());
-        if (syncHelper.isSdPresent()) {
+        if (SyncHelper.isSdPresent()) {
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
             File[] files = sdPathDr.listFiles();
@@ -887,54 +853,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
                     switch (direction) {
                         case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-                                filesDataBase.deleteTask(itemId);
-                                fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                                        filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
-                                filesList.setAdapter(fileCursorAdapter);
-                                isLocalDeleted = true;
-                            }
+                            deleteLocalFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_FAR_LEFT:
-                            if (itemId != 0) {
-                                String uuID = "";
-                                Cursor c = filesDataBase.getTask(itemId);
-                                if (c != null && c.moveToFirst()){
-                                    uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                                }
-                                if (c != null) c.close();
-                                syncHelper = new SyncHelper(getActivity());
-                                if (syncHelper.isSdPresent()){
-                                    File sdPath = Environment.getExternalStorageDirectory();
-                                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                                    String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                                    File file = new File(sdPathDr, exportFileName);
-                                    if (file.exists()){
-                                        file.delete();
-                                    }
-                                }
-                                filesDataBase.deleteTask(itemId);
-                                fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                                        filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
-                                filesList.setAdapter(fileCursorAdapter);
-                                isLocalDeleted = true;
-                            }
+                            deleteLocalFile(itemId);
                             break;
                         case SwipeDirections.DIRECTION_NORMAL_RIGHT:
                             if (itemId != 0) {
@@ -952,6 +874,32 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
         });
+    }
+
+    private void deleteLocalFile(long itemId) {
+        if (itemId != 0) {
+            String uuID = "";
+            Cursor c = filesDataBase.getTask(itemId);
+            if (c != null && c.moveToFirst()){
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (c != null) c.close();
+            syncHelper = new SyncHelper(getActivity());
+            if (SyncHelper.isSdPresent()){
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
+                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
+                File file = new File(sdPathDr, exportFileName);
+                if (file.exists()){
+                    file.delete();
+                }
+            }
+            filesDataBase.deleteTask(itemId);
+            fileCursorAdapter = new FileCursorAdapter(getActivity(),
+                    filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
+            filesList.setAdapter(fileCursorAdapter);
+            isLocalDeleted = true;
+        }
     }
 
     public static String humanReadableByteCount(long bytes, boolean si) {

@@ -28,7 +28,6 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.util.Calendar;

@@ -10,7 +10,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.utils.ReminderUtils;
 
 import java.util.ArrayList;
 import java.util.List;

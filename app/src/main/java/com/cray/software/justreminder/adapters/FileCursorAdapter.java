@@ -3,11 +3,11 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filterable;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -16,19 +16,19 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class FileCursorAdapter extends CursorAdapter implements Filterable {
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     private Cursor c;
-    Context context;
-    Interval interval;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
+    private Context context;
+    private Interval interval;
+    private SharedPrefs sPrefs;
+    private ColorSetter cs;
 
     @SuppressWarnings("deprecation")
     public FileCursorAdapter(Context context, Cursor c) {
@@ -77,8 +77,8 @@ public class FileCursorAdapter extends CursorAdapter implements Filterable {
         TextView date = (TextView) convertView.findViewById(R.id.date);
         TextView time = (TextView) convertView.findViewById(R.id.time);
         TextView repeat = (TextView) convertView.findViewById(R.id.repeat);
-        CardView card = (CardView) convertView.findViewById(R.id.card);
-        card.setCardBackgroundColor(cs.getCardStyle());
+        RelativeLayout card = (RelativeLayout) convertView.findViewById(R.id.card);
+        card.setBackgroundResource(cs.getCardDrawableStyle());
 
         String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
         String fileNameS = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_NAME));

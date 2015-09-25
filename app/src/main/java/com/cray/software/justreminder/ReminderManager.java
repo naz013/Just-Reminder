@@ -100,7 +100,7 @@ import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
 import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -284,7 +284,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         mFab = new FloatingActionButton(ReminderManager.this);
         mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorChooser());
+        mFab.setColorPressed(cSetter.colorStatus());
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1916,6 +1916,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    @Override
+    public void placeName(String name) {
+
+    }
+
     private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 
         @Override
@@ -2074,7 +2079,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                if (map != null) map.addMarker(pos, title, true);
+                if (map != null) map.addMarker(pos, title, true, true);
             }
         });
 
@@ -2222,7 +2227,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
 
             taskField.setText(text);
-            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true);
+            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, false);
         }
     }
 
@@ -2419,7 +2424,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationOutDateYearField.setText(String.valueOf(myYear));
 
         if (curPlace != null) {
-            if (mapOut != null) mapOut.addMarker(curPlace, null, true);
+            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true);
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -2478,7 +2483,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             LatLng pos = new LatLng(latitude, longitude);
-            if (mapOut != null) mapOut.addMarker(pos, text, true);
+            if (mapOut != null) mapOut.addMarker(pos, text, true, true);
             mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
             mapCheck.setChecked(true);
         }
@@ -2677,7 +2682,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private String getType(){
-        String type = null;
+        String type;
         if (remControl instanceof MonthdayType){
             if (monthDayAttachAction.isChecked()){
                 if (monthDayCallCheck.isChecked()){
@@ -3842,8 +3847,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 if (mapOut != null) {
-                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true);
-                    mapOut.moveCamera(new LatLng(currentLat, currentLong));
+                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, true);
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.utils;
+package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

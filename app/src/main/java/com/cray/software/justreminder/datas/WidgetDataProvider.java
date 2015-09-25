@@ -6,7 +6,7 @@ import android.database.Cursor;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

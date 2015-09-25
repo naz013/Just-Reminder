@@ -28,43 +28,13 @@
             android:layout_marginRight="15dp"
             android:hint="@string/enter_name_hint" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:id="@+id/searchContainer"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_below="@+id/placeName"
-            android:layout_height="wrap_content">
-
-            <AutoCompleteTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search_hint"
-                android:textSize="@dimen/create_text_size_normal"
-                android:singleLine="true"
-                android:layout_toLeftOf="@+id/clearButton"
-                android:id="@+id/searchField"/>
-
-            <ImageButton
-                android:layout_width="@dimen/create_imagebutton_size"
-                android:layout_height="@dimen/create_imagebutton_size"
-                android:id="@+id/clearButton"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/ic_clear_grey600_24dp"/>
-
-        </RelativeLayout>
-
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
             android:clickable="true"
-            android:layout_below="@+id/searchContainer"
-            android:name="com.google.android.gms.maps.MapFragment"/>
+            android:layout_below="@+id/placeName"
+            android:name="com.cray.software.justreminder.fragments.MapFragment"/>
 
     </RelativeLayout>
 </LinearLayout>

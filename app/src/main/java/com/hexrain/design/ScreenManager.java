@@ -70,7 +70,7 @@ import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -841,10 +841,10 @@ public class ScreenManager extends AppCompatActivity
         boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (!isExtended) {
             mFab.setColorNormal(cSetter.colorSetter());
-            mFab.setColorPressed(cSetter.colorChooser());
+            mFab.setColorPressed(cSetter.colorStatus());
         } else {
             mainMenu.setButtonColorNormal(cSetter.colorSetter());
-            mainMenu.setButtonColorPressed(cSetter.colorChooser());
+            mainMenu.setButtonColorPressed(cSetter.colorStatus());
         }
     }
 

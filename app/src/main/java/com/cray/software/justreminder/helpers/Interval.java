@@ -64,6 +64,6 @@ public class Interval {
 
     public String getTimeInterval(int code){
         if (code == 0) return mContext.getString(R.string.interval_zero);
-        else return code + mContext.getString(R.string.simple_m_letter);
+        else return code + mContext.getString(R.string.string_minute);
     }
 }

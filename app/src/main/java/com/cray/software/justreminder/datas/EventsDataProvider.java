@@ -9,7 +9,7 @@ import android.util.Log;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -369,11 +369,13 @@ public class EventsDataProvider {
             type = in.readString();
             name = in.readString();
             number = in.readString();
+            time = in.readString();
             id = in.readLong();
             date = in.readLong();
             day = in.readInt();
             month = in.readInt();
             year = in.readInt();
+            inn = (Type) in.readValue(Type.class.getClassLoader());
         }
 
         @Override
@@ -386,11 +388,13 @@ public class EventsDataProvider {
             dest.writeString(type);
             dest.writeString(name);
             dest.writeString(number);
+            dest.writeString(time);
             dest.writeLong(id);
             dest.writeLong(date);
             dest.writeInt(day);
             dest.writeInt(month);
             dest.writeInt(year);
+            dest.writeValue(inn);
         }
     }
 }

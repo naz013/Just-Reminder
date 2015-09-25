@@ -24,6 +24,7 @@ public class MonthdayType extends ReminderType {
     public long save(DataItem item) {
         long id = super.save(item);
         startAlarm(id);
+        exportToServices(item, id);
         return id;
     }
 
@@ -31,6 +32,7 @@ public class MonthdayType extends ReminderType {
     public void save(long id, DataItem item) {
         super.save(id, item);
         startAlarm(id);
+        exportToServices(item, id);
     }
 
     private void startAlarm(long id) {

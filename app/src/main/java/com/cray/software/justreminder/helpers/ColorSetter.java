@@ -60,102 +60,64 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (Module.isPro()){
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRed);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorViolet);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreen);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreen);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlue);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlue);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellow);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrange);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGrey);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPink);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSand);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrown);
-                    break;
-                case "13":
-                    color = getColor(R.color.colorDeepPurple);
-                    break;
-                case "14":
-                    color = getColor(R.color.colorDeepOrange);
-                    break;
-                case "15":
-                    color = getColor(R.color.colorLime);
-                    break;
-                case "16":
-                    color = getColor(R.color.colorIndigo);
-                    break;
-                default:
-                    color = getColor(R.color.colorBlue);
-                    break;
-            }
-        } else {
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRed);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorViolet);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreen);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreen);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlue);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlue);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellow);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrange);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGrey);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPink);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSand);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrown);
-                    break;
-                default:
-                    color = getColor(R.color.colorBlue);
-                    break;
-            }
+        switch (loadedColor) {
+            case "1":
+                color = getColor(R.color.colorRed);
+                break;
+            case "2":
+                color = getColor(R.color.colorViolet);
+                break;
+            case "3":
+                color = getColor(R.color.colorLightCreen);
+                break;
+            case "4":
+                color = getColor(R.color.colorGreen);
+                break;
+            case "5":
+                color = getColor(R.color.colorLightBlue);
+                break;
+            case "6":
+                color = getColor(R.color.colorBlue);
+                break;
+            case "7":
+                color = getColor(R.color.colorYellow);
+                break;
+            case "8":
+                color = getColor(R.color.colorOrange);
+                break;
+            case "9":
+                color = getColor(R.color.colorGrey);
+                break;
+            case "10":
+                color = getColor(R.color.colorPink);
+                break;
+            case "11":
+                color = getColor(R.color.colorSand);
+                break;
+            case "12":
+                color = getColor(R.color.colorBrown);
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = getColor(R.color.colorDeepPurple);
+                            break;
+                        case "14":
+                            color = getColor(R.color.colorDeepOrange);
+                            break;
+                        case "15":
+                            color = getColor(R.color.colorLime);
+                            break;
+                        case "16":
+                            color = getColor(R.color.colorIndigo);
+                            break;
+                        default:
+                            color = getColor(R.color.colorBlue);
+                            break;
+                    }
+                } else color = getColor(R.color.colorBlue);
+                break;
         }
         return color;
     }
@@ -430,102 +392,64 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         Drawable color;
-        if (Module.isPro()){
-            switch (loadedColor) {
-                case "1":
-                    color = getDrawable(R.drawable.toggle_red);
-                    break;
-                case "2":
-                    color = getDrawable(R.drawable.toggle_violet);
-                    break;
-                case "3":
-                    color = getDrawable(R.drawable.toggle_green_light);
-                    break;
-                case "4":
-                    color = getDrawable(R.drawable.toggle_green);
-                    break;
-                case "5":
-                    color = getDrawable(R.drawable.toggle_blue_light);
-                    break;
-                case "6":
-                    color = getDrawable(R.drawable.toggle_blue);
-                    break;
-                case "7":
-                    color = getDrawable(R.drawable.toggle_yellow);
-                    break;
-                case "8":
-                    color = getDrawable(R.drawable.toggle_orange);
-                    break;
-                case "9":
-                    color = getDrawable(R.drawable.toggle_grey);
-                    break;
-                case "10":
-                    color = getDrawable(R.drawable.toggle_pink);
-                    break;
-                case "11":
-                    color = getDrawable(R.drawable.toggle_sand);
-                    break;
-                case "12":
-                    color = getDrawable(R.drawable.toggle_brown);
-                    break;
-                case "13":
-                    color = getDrawable(R.drawable.toggle_deep_purple);
-                    break;
-                case "14":
-                    color = getDrawable(R.drawable.toggle_deep_orange);
-                    break;
-                case "15":
-                    color = getDrawable(R.drawable.toggle_lime);
-                    break;
-                case "16":
-                    color = getDrawable(R.drawable.toggle_indigo);
-                    break;
-                default:
-                    color = getDrawable(R.drawable.toggle_blue);
-                    break;
-            }
-        } else {
-            switch (loadedColor) {
-                case "1":
-                    color = getDrawable(R.drawable.toggle_red);
-                    break;
-                case "2":
-                    color = getDrawable(R.drawable.toggle_violet);
-                    break;
-                case "3":
-                    color = getDrawable(R.drawable.toggle_green_light);
-                    break;
-                case "4":
-                    color = getDrawable(R.drawable.toggle_green);
-                    break;
-                case "5":
-                    color = getDrawable(R.drawable.toggle_blue_light);
-                    break;
-                case "6":
-                    color = getDrawable(R.drawable.toggle_blue);
-                    break;
-                case "7":
-                    color = getDrawable(R.drawable.toggle_yellow);
-                    break;
-                case "8":
-                    color = getDrawable(R.drawable.toggle_orange);
-                    break;
-                case "9":
-                    color = getDrawable(R.drawable.toggle_grey);
-                    break;
-                case "10":
-                    color = getDrawable(R.drawable.toggle_pink);
-                    break;
-                case "11":
-                    color = getDrawable(R.drawable.toggle_sand);
-                    break;
-                case "12":
-                    color = getDrawable(R.drawable.toggle_brown);
-                    break;
-                default:
-                    color = getDrawable(R.drawable.toggle_blue);
-                    break;
-            }
+        switch (loadedColor) {
+            case "1":
+                color = getDrawable(R.drawable.toggle_red);
+                break;
+            case "2":
+                color = getDrawable(R.drawable.toggle_violet);
+                break;
+            case "3":
+                color = getDrawable(R.drawable.toggle_green_light);
+                break;
+            case "4":
+                color = getDrawable(R.drawable.toggle_green);
+                break;
+            case "5":
+                color = getDrawable(R.drawable.toggle_blue_light);
+                break;
+            case "6":
+                color = getDrawable(R.drawable.toggle_blue);
+                break;
+            case "7":
+                color = getDrawable(R.drawable.toggle_yellow);
+                break;
+            case "8":
+                color = getDrawable(R.drawable.toggle_orange);
+                break;
+            case "9":
+                color = getDrawable(R.drawable.toggle_grey);
+                break;
+            case "10":
+                color = getDrawable(R.drawable.toggle_pink);
+                break;
+            case "11":
+                color = getDrawable(R.drawable.toggle_sand);
+                break;
+            case "12":
+                color = getDrawable(R.drawable.toggle_brown);
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = getDrawable(R.drawable.toggle_deep_purple);
+                            break;
+                        case "14":
+                            color = getDrawable(R.drawable.toggle_deep_orange);
+                            break;
+                        case "15":
+                            color = getDrawable(R.drawable.toggle_lime);
+                            break;
+                        case "16":
+                            color = getDrawable(R.drawable.toggle_indigo);
+                            break;
+                        default:
+                            color = getDrawable(R.drawable.toggle_blue);
+                            break;
+                    }
+                } else color = getDrawable(R.drawable.toggle_blue);
+                break;
         }
         return color;
     }
@@ -534,102 +458,64 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (Module.isPro()){
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRedDark);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorVioletDark);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreenDark);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreenDark);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlueDark);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlueDark);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellowDark);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrangeDark);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGreyDark);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPinkDark);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSandDark);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrownDark);
-                    break;
-                case "13":
-                    color = getColor(R.color.colorDeepPurpleDark);
-                    break;
-                case "14":
-                    color = getColor(R.color.colorDeepOrangeDark);
-                    break;
-                case "15":
-                    color = getColor(R.color.colorLimeDark);
-                    break;
-                case "16":
-                    color = getColor(R.color.colorIndigoDark);
-                    break;
-                default:
-                    color = getColor(R.color.colorBlueDark);
-                    break;
-            }
-        } else {
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRedDark);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorVioletDark);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreenDark);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreenDark);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlueDark);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlueDark);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellowDark);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrangeDark);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGreyDark);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPinkDark);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSandDark);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrownDark);
-                    break;
-                default:
-                    color = getColor(R.color.colorBlueDark);
-                    break;
-            }
+        switch (loadedColor) {
+            case "1":
+                color = getColor(R.color.colorRedDark);
+                break;
+            case "2":
+                color = getColor(R.color.colorVioletDark);
+                break;
+            case "3":
+                color = getColor(R.color.colorLightCreenDark);
+                break;
+            case "4":
+                color = getColor(R.color.colorGreenDark);
+                break;
+            case "5":
+                color = getColor(R.color.colorLightBlueDark);
+                break;
+            case "6":
+                color = getColor(R.color.colorBlueDark);
+                break;
+            case "7":
+                color = getColor(R.color.colorYellowDark);
+                break;
+            case "8":
+                color = getColor(R.color.colorOrangeDark);
+                break;
+            case "9":
+                color = getColor(R.color.colorGreyDark);
+                break;
+            case "10":
+                color = getColor(R.color.colorPinkDark);
+                break;
+            case "11":
+                color = getColor(R.color.colorSandDark);
+                break;
+            case "12":
+                color = getColor(R.color.colorBrownDark);
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = getColor(R.color.colorDeepPurpleDark);
+                            break;
+                        case "14":
+                            color = getColor(R.color.colorDeepOrangeDark);
+                            break;
+                        case "15":
+                            color = getColor(R.color.colorLimeDark);
+                            break;
+                        case "16":
+                            color = getColor(R.color.colorIndigoDark);
+                            break;
+                        default:
+                            color = getColor(R.color.colorBlueDark);
+                            break;
+                    }
+                } else color = getColor(R.color.colorBlueDark);
+                break;
         }
         return color;
     }
@@ -638,102 +524,64 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
-        if (Module.isPro()){
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRedLight);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorVioletLight);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreenLight);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreenLight);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlueLight);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlueLight);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellowLight);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrangeLight);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGreyLight);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPinkLight);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSandLight);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrownLight);
-                    break;
-                case "13":
-                    color = getColor(R.color.colorDeepPurpleLight);
-                    break;
-                case "14":
-                    color = getColor(R.color.colorDeepOrangeLight);
-                    break;
-                case "15":
-                    color = getColor(R.color.colorLimeLight);
-                    break;
-                case "16":
-                    color = getColor(R.color.colorIndigoLight);
-                    break;
-                default:
-                    color = getColor(R.color.colorRedLight);
-                    break;
-            }
-        } else {
-            switch (loadedColor) {
-                case "1":
-                    color = getColor(R.color.colorRedLight);
-                    break;
-                case "2":
-                    color = getColor(R.color.colorVioletLight);
-                    break;
-                case "3":
-                    color = getColor(R.color.colorLightCreenLight);
-                    break;
-                case "4":
-                    color = getColor(R.color.colorGreenLight);
-                    break;
-                case "5":
-                    color = getColor(R.color.colorLightBlueLight);
-                    break;
-                case "6":
-                    color = getColor(R.color.colorBlueLight);
-                    break;
-                case "7":
-                    color = getColor(R.color.colorYellowLight);
-                    break;
-                case "8":
-                    color = getColor(R.color.colorOrangeLight);
-                    break;
-                case "9":
-                    color = getColor(R.color.colorGreyLight);
-                    break;
-                case "10":
-                    color = getColor(R.color.colorPinkLight);
-                    break;
-                case "11":
-                    color = getColor(R.color.colorSandLight);
-                    break;
-                case "12":
-                    color = getColor(R.color.colorBrownLight);
-                    break;
-                default:
-                    color = getColor(R.color.colorRedLight);
-                    break;
-            }
+        switch (loadedColor) {
+            case "1":
+                color = getColor(R.color.colorRedLight);
+                break;
+            case "2":
+                color = getColor(R.color.colorVioletLight);
+                break;
+            case "3":
+                color = getColor(R.color.colorLightCreenLight);
+                break;
+            case "4":
+                color = getColor(R.color.colorGreenLight);
+                break;
+            case "5":
+                color = getColor(R.color.colorLightBlueLight);
+                break;
+            case "6":
+                color = getColor(R.color.colorBlueLight);
+                break;
+            case "7":
+                color = getColor(R.color.colorYellowLight);
+                break;
+            case "8":
+                color = getColor(R.color.colorOrangeLight);
+                break;
+            case "9":
+                color = getColor(R.color.colorGreyLight);
+                break;
+            case "10":
+                color = getColor(R.color.colorPinkLight);
+                break;
+            case "11":
+                color = getColor(R.color.colorSandLight);
+                break;
+            case "12":
+                color = getColor(R.color.colorBrownLight);
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (loadedColor) {
+                        case "13":
+                            color = getColor(R.color.colorDeepPurpleLight);
+                            break;
+                        case "14":
+                            color = getColor(R.color.colorDeepOrangeLight);
+                            break;
+                        case "15":
+                            color = getColor(R.color.colorLimeLight);
+                            break;
+                        case "16":
+                            color = getColor(R.color.colorIndigoLight);
+                            break;
+                        default:
+                            color = getColor(R.color.colorBlueLight);
+                            break;
+                    }
+                } else color = getColor(R.color.colorBlueLight);
+                break;
         }
         return color;
     }
@@ -743,201 +591,125 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        if (Module.isPro()) {
-            if (isDark) {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeDark_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeDark_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeDark_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeDark_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeDark_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeDark_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeDark_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeDark_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeDark_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeDark_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeDark_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeDark_Brown;
-                        break;
-                    case "13":
-                        id = R.style.HomeDark_DeepPurple;
-                        break;
-                    case "14":
-                        id = R.style.HomeDark_DeepOrange;
-                        break;
-                    case "15":
-                        id = R.style.HomeDark_Lime;
-                        break;
-                    case "16":
-                        id = R.style.HomeDark_Indigo;
-                        break;
-                    default:
-                        id = R.style.HomeDark_Blue;
-                        break;
-                }
-            } else {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeWhite_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeWhite_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeWhite_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeWhite_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeWhite_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeWhite_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeWhite_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeWhite_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeWhite_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeWhite_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeWhite_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeWhite_Brown;
-                        break;
-                    case "13":
-                        id = R.style.HomeWhite_DeepPurple;
-                        break;
-                    case "14":
-                        id = R.style.HomeWhite_DeepOrange;
-                        break;
-                    case "15":
-                        id = R.style.HomeWhite_Lime;
-                        break;
-                    case "16":
-                        id = R.style.HomeWhite_Indigo;
-                        break;
-                    default:
-                        id = R.style.HomeWhite_Blue;
-                        break;
-                }
+        if (isDark) {
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeDark_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeDark_Violet;
+                    break;
+                case "3":
+                    id = R.style.HomeDark_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeDark_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeDark_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeDark_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeDark_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeDark_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeDark_Grey;
+                    break;
+                case "10":
+                    id = R.style.HomeDark_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeDark_Sand;
+                    break;
+                case "12":
+                    id = R.style.HomeDark_Brown;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeDark_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeDark_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeDark_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeDark_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeDark_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeDark_Blue;
+                    break;
             }
         } else {
-            if (isDark) {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeDark_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeDark_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeDark_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeDark_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeDark_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeDark_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeDark_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeDark_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeDark_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeDark_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeDark_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeDark_Brown;
-                        break;
-                    default:
-                        id = R.style.HomeDark_Blue;
-                        break;
-                }
-            } else {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeWhite_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeWhite_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeWhite_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeWhite_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeWhite_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeWhite_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeWhite_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeWhite_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeWhite_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeWhite_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeWhite_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeWhite_Brown;
-                        break;
-                    default:
-                        id = R.style.HomeWhite_Blue;
-                        break;
-                }
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeWhite_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeWhite_Violet;
+                    break;
+                case "3":
+                    id = R.style.HomeWhite_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeWhite_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeWhite_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeWhite_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeWhite_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeWhite_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeWhite_Grey;
+                    break;
+                case "10":
+                    id = R.style.HomeWhite_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeWhite_Sand;
+                    break;
+                case "12":
+                    id = R.style.HomeWhite_Brown;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeWhite_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeWhite_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeWhite_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeWhite_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeWhite_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeWhite_Blue;
+                    break;
             }
         }
         return id;
@@ -966,202 +738,125 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        sPrefs = new SharedPrefs(cContext);
-        if (Module.isPro()) {
-            if (isDark) {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeDarkDialog_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeDarkDialog_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeDarkDialog_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeDarkDialog_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeDarkDialog_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeDarkDialog_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeDarkDialog_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeDarkDialog_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeDarkDialog_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeDarkDialog_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeDarkDialog_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeDarkDialog_Brown;
-                        break;
-                    case "13":
-                        id = R.style.HomeDarkDialog_DeepPurple;
-                        break;
-                    case "14":
-                        id = R.style.HomeDarkDialog_DeepOrange;
-                        break;
-                    case "15":
-                        id = R.style.HomeDarkDialog_Lime;
-                        break;
-                    case "16":
-                        id = R.style.HomeDarkDialog_Indigo;
-                        break;
-                    default:
-                        id = R.style.HomeDarkDialog_Blue;
-                        break;
-                }
-            } else {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeWhiteDialog_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeWhiteDialog_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeWhiteDialog_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeWhiteDialog_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeWhiteDialog_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeWhiteDialog_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeWhiteDialog_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeWhiteDialog_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeWhiteDialog_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeWhiteDialog_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeWhiteDialog_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeWhiteDialog_Brown;
-                        break;
-                    case "13":
-                        id = R.style.HomeWhiteDialog_DeepPurple;
-                        break;
-                    case "14":
-                        id = R.style.HomeWhiteDialog_DeepOrange;
-                        break;
-                    case "15":
-                        id = R.style.HomeWhiteDialog_Lime;
-                        break;
-                    case "16":
-                        id = R.style.HomeWhiteDialog_Indigo;
-                        break;
-                    default:
-                        id = R.style.HomeWhiteDialog_Blue;
-                        break;
-                }
+        if (isDark) {
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeDarkDialog_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeDarkDialog_Violet;
+                    break;
+                case "3":
+                    id = R.style.HomeDarkDialog_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeDarkDialog_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeDarkDialog_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeDarkDialog_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeDarkDialog_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeDarkDialog_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeDarkDialog_Grey;
+                    break;
+                case "10":
+                    id = R.style.HomeDarkDialog_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeDarkDialog_Sand;
+                    break;
+                case "12":
+                    id = R.style.HomeDarkDialog_Brown;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeDarkDialog_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeDarkDialog_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeDarkDialog_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeDarkDialog_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeDarkDialog_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeDarkDialog_Blue;
+                    break;
             }
         } else {
-            if (isDark) {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeDarkDialog_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeDarkDialog_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeDarkDialog_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeDarkDialog_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeDarkDialog_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeDarkDialog_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeDarkDialog_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeDarkDialog_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeDarkDialog_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeDarkDialog_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeDarkDialog_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeDarkDialog_Brown;
-                        break;
-                    default:
-                        id = R.style.HomeDarkDialog_Blue;
-                        break;
-                }
-            } else {
-                switch (loadedColor) {
-                    case "1":
-                        id = R.style.HomeWhiteDialog_Red;
-                        break;
-                    case "2":
-                        id = R.style.HomeWhiteDialog_Violet;
-                        break;
-                    case "3":
-                        id = R.style.HomeWhiteDialog_LightGreen;
-                        break;
-                    case "4":
-                        id = R.style.HomeWhiteDialog_Green;
-                        break;
-                    case "5":
-                        id = R.style.HomeWhiteDialog_LightBlue;
-                        break;
-                    case "6":
-                        id = R.style.HomeWhiteDialog_Blue;
-                        break;
-                    case "7":
-                        id = R.style.HomeWhiteDialog_Yellow;
-                        break;
-                    case "8":
-                        id = R.style.HomeWhiteDialog_Orange;
-                        break;
-                    case "9":
-                        id = R.style.HomeWhiteDialog_Grey;
-                        break;
-                    case "10":
-                        id = R.style.HomeWhiteDialog_Pink;
-                        break;
-                    case "11":
-                        id = R.style.HomeWhiteDialog_Sand;
-                        break;
-                    case "12":
-                        id = R.style.HomeWhiteDialog_Brown;
-                        break;
-                    default:
-                        id = R.style.HomeWhiteDialog_Blue;
-                        break;
-                }
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeWhiteDialog_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeWhiteDialog_Violet;
+                    break;
+                case "3":
+                    id = R.style.HomeWhiteDialog_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeWhiteDialog_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeWhiteDialog_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeWhiteDialog_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeWhiteDialog_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeWhiteDialog_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeWhiteDialog_Grey;
+                    break;
+                case "10":
+                    id = R.style.HomeWhiteDialog_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeWhiteDialog_Sand;
+                    break;
+                case "12":
+                    id = R.style.HomeWhiteDialog_Brown;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeWhiteDialog_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeWhiteDialog_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeWhiteDialog_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeWhiteDialog_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeWhiteDialog_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeWhiteDialog_Blue;
+                    break;
             }
         }
         return id;

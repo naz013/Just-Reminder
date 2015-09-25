@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -55,8 +53,9 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -68,11 +67,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public class ReminderPreviewFragment extends AppCompatActivity {
@@ -540,19 +537,11 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                                     .icon(BitmapDescriptorFactory.fromResource(new ColorSetter(mContext).getMarkerStyle())));
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
                         }
-                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                        try {
-                            List<Address> listAddresses = geocoder.getFromLocation(lat, lon, 1);
-                            if (null != listAddresses && listAddresses.size() > 0) {
-                                String _Location = listAddresses.get(0).getAddressLine(0);
-                                if (_Location != null && !_Location.matches("")) {
-                                    location.setText(_Location + "\n" + "("
-                                            + String.format("%.5f", lat) + ", " +
-                                            String.format("%.5f", lon) + ")");
-                                }
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        String _Location = LocationUtil.getAddress(mContext, lat, lon);
+                        if (_Location != null && !_Location.matches("")) {
+                            location.setText(_Location + "\n" + "("
+                                    + String.format("%.5f", lat) + ", " +
+                                    String.format("%.5f", lon) + ")");
                         }
                     }
                 }

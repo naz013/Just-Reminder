@@ -26,7 +26,6 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 

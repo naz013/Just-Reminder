@@ -291,11 +291,12 @@ public class TaskManager extends AppCompatActivity {
         String note = noteField.getText().toString().trim();
 
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.YEAR, myYear);
         calendar.set(Calendar.MONTH, myMonth);
         calendar.set(Calendar.DAY_OF_MONTH, myDay);
-        calendar.set(Calendar.HOUR, myHour);
-        calendar.set(Calendar.MINUTE, myMinute);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 

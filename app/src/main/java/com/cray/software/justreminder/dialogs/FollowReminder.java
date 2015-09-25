@@ -30,7 +30,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.ReminderUtils;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;

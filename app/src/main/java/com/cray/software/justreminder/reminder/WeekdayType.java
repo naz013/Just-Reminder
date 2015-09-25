@@ -17,6 +17,7 @@ public class WeekdayType extends ReminderType {
     public long save(DataItem item) {
         long id = super.save(item);
         startAlarm(id);
+        exportToServices(item, id);
         return id;
     }
 
@@ -28,5 +29,6 @@ public class WeekdayType extends ReminderType {
     public void save(long id, DataItem item) {
         super.save(id, item);
         startAlarm(id);
+        exportToServices(item, id);
     }
 }

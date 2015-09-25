@@ -23,7 +23,6 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.utils.ViewUtils;

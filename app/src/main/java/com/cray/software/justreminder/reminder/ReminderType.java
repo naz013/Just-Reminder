@@ -5,7 +5,9 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class ReminderType {
@@ -98,6 +100,14 @@ public class ReminderType {
         db.updateReminderDateTime(id);
         db.close();
         updateViews();
+    }
+
+    protected void exportToServices(DataItem item, long id){
+        SharedPrefs prefs = new SharedPrefs(context);
+        boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+        if (item.getExport() == 1) ReminderUtils.exportToCalendar(context, item.getTitle(), item.getDue(), id, calendar, stock);
+        if (item.getCode() == Constants.SYNC_GTASKS_ONLY) ReminderUtils.exportToTasks(context, item.getTitle(), item.getDue(), id);
     }
 
     private void updateViews(){

@@ -2,11 +2,18 @@ package com.cray.software.justreminder.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class LocationUtil {
     public static final int ACTIVE = 0;
@@ -35,5 +42,19 @@ public class LocationUtil {
     public static String getAddress(double currentLat, double currentLong){
         return String.format("%.5f", currentLat) + ", " +
                 String.format("%.5f", currentLong);
+    }
+
+    public static String getAddress(Context context, double lat, double lon){
+        String place = null;
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> listAddresses = geocoder.getFromLocation(lat, lon, 1);
+            if (null != listAddresses && listAddresses.size() > 0) {
+                place = listAddresses.get(0).getAddressLine(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return place;
     }
 }
