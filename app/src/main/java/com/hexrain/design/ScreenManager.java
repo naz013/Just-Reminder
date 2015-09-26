@@ -1023,8 +1023,13 @@ public class ScreenManager extends AppCompatActivity
         showRate();
 
         if (Module.isPro() && !sPrefs.loadBoolean(Prefs.THANKS_SHOWN) && hasChanges()) {
-            thanksDialog().show();
+            thanksDialog(false).show();
         }
+
+        if (Module.isBeta() && !sPrefs.loadBoolean(Prefs.BETA_SHOWN) && hasChanges()) {
+            thanksDialog(true).show();
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
@@ -1272,16 +1277,21 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    protected Dialog thanksDialog() {
+    protected Dialog thanksDialog(final boolean isBeta) {
         return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.thank_dialog_title))
-                .setMessage(getString(R.string.thank_dialog_message) + " " +
-                        getString(R.string.thank_dialog_greeting))
+                .setTitle(isBeta ? "BETA version!" : getString(R.string.thank_dialog_title))
+                .setMessage(isBeta ? "Remember it is BETA version, so application may contain errors!" : (getString(R.string.thank_dialog_message) + " " +
+                        getString(R.string.thank_dialog_greeting)))
                 .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        new SharedPrefs(ScreenManager.this)
-                                .saveBoolean(Prefs.THANKS_SHOWN, true);
+                        if (isBeta) {
+                            new SharedPrefs(ScreenManager.this)
+                                    .saveBoolean(Prefs.BETA_SHOWN, true);
+                        } else {
+                            new SharedPrefs(ScreenManager.this)
+                                    .saveBoolean(Prefs.THANKS_SHOWN, true);
+                        }
                     }
                 })
                 .setCancelable(false)

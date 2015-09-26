@@ -24,6 +24,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
@@ -104,10 +105,12 @@ public class GroupsFragment extends Fragment {
         final SwipeActionAdapter mAdapter = new SwipeActionAdapter(adapter);
         mAdapter.setListView(listView);
         mAdapter.setFixedBackgrounds(true);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
+        sPrefs = new SharedPrefs(getActivity());
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light);
         mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
             @Override
             public boolean hasActions(int position) {

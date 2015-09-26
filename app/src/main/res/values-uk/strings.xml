@@ -701,4 +701,6 @@
     <string name="six_hours">6 годин</string>
     <string name="twelve_hours">12 годин</string>
     <string name="one_day">1 день</string>
+    <string name="dropbox">Dropbox</string>
+    <string name="deleting">Deleting...</string>
 </resources>

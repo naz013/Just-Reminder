@@ -55,33 +55,42 @@ import java.util.concurrent.ExecutionException;
 
 public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    SharedPrefs sPrefs;
-    DropboxHelper dbx = new DropboxHelper(getActivity());
-    SyncHelper syncHelper;
-    ProgressDialog pd;
-    ColorSetter cSetter;
-    GDriveHelper gdx;
+    public static final int LOCAL_INT = 120;
+    public static final int DROPBOX_INT = 121;
+    public static final int GOOGLE_DRIVE_INT = 122;
 
-    private ArrayList<Integer> navIds;
+    private SharedPrefs sPrefs;
+    private DropboxHelper dbx = new DropboxHelper(getActivity());
+    private SyncHelper syncHelper;
+    private ProgressDialog pd;
+    private ColorSetter cSetter;
+    private GDriveHelper gdx;
 
-    FileCursorAdapter fileCursorAdapter;
-    FilesDataBase filesDataBase = new FilesDataBase(getActivity());
+    private ArrayList<Item> navIds = new ArrayList<>();
 
-    LinearLayout localLayout, cloudLayout, container, cloudContainer, googleContainer, googleLayout;
-    TextView localCount, cloudUser, cloudCount, backupText, cloudText,
-            usedSpace, freeSpace, googleUser, googleSpace, googleFreeSpace,
-            googleText, googleCount;
-    ListView filesList, filesCloudList, filesGoogleList;
-    PieGraph usedSizeGraph, googleSizeGraph;
-    PaperButton deleteAllButton, backupFilesText, cloudFiles, googleFiles, deleteAllCloudButton,
-            googleDeleteAllCloudButton;
+    private FileCursorAdapter fileCursorAdapter;
+    private FilesDataBase filesDataBase = new FilesDataBase(getActivity());
 
-    Typeface typefaceLight, typefaceMedium, typefaceThin;
-    boolean isDropboxDeleted = false, isGoogleDeleted = false, isLocalDeleted = false;
+    private LinearLayout localLayout, cloudLayout, container, cloudContainer, googleContainer, googleLayout;
+    private TextView localCount;
+    private TextView cloudUser;
+    private TextView cloudCount;
+    private TextView usedSpace;
+    private TextView freeSpace;
+    private TextView googleSpace;
+    private TextView googleFreeSpace;
+    private TextView googleCount;
+    private ListView filesList, filesCloudList, filesGoogleList;
+    private PieGraph usedSizeGraph;
 
-    Toolbar toolbar;
-    Spinner spinner;
-    View rootView;
+    private Typeface typefaceMedium;
+    private Typeface typefaceThin;
+    private boolean isDropboxDeleted = false;
+    private boolean isGoogleDeleted = false;
+
+    private Toolbar toolbar;
+    private Spinner spinner;
+    private View rootView;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -123,7 +132,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
 
-        typefaceLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typefaceLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         typefaceMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Medium.ttf");
         typefaceThin = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Thin.ttf");
 
@@ -172,39 +181,35 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void setNavigation(){
-        ArrayList<SpinnerItem> navSpinner = new ArrayList<>();
-        navSpinner.clear();
-        navIds = new ArrayList<>();
         navIds.clear();
         sPrefs = new SharedPrefs(getActivity());
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
-            navSpinner.add(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_white_24dp));
-            navIds.add(Constants.LOCAL_INT);
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_white_24dp), LOCAL_INT, R.drawable.ic_devices_white_24dp));
         } else {
-            navSpinner.add(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_grey600_24dp));
-            navIds.add(Constants.LOCAL_INT);
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_grey600_24dp), LOCAL_INT, R.drawable.ic_devices_white_24dp));
         }
         dbx = new DropboxHelper(getActivity());
         dbx.startSession();
         if (dbx.isLinked()){
             if (isDark) {
-                navSpinner.add(new SpinnerItem("Dropbox", R.drawable.dropbox_icon_white));
-                navIds.add(Constants.DROPBOX_INT);
+                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox), R.drawable.dropbox_icon_white), DROPBOX_INT, R.drawable.dropbox_icon_white));
             } else {
-                navSpinner.add(new SpinnerItem("Dropbox", R.drawable.dropbox_icon));
-                navIds.add(Constants.DROPBOX_INT);
+                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox), R.drawable.dropbox_icon), DROPBOX_INT, R.drawable.dropbox_icon_white));
             }
         }
         gdx = new GDriveHelper(getActivity());
         if (gdx.isLinked()) {
             if (isDark) {
-                navSpinner.add(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon_white));
-                navIds.add(Constants.GOOGLE_DRIVE_INT);
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon_white), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
             } else {
-                navSpinner.add(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon));
-                navIds.add(Constants.GOOGLE_DRIVE_INT);
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
             }
+        }
+
+        ArrayList<SpinnerItem> navSpinner = new ArrayList<>();
+        for (Item item : navIds){
+            navSpinner.add(item.getSpinnerItem());
         }
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getActivity(), navSpinner);
@@ -217,10 +222,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         final SwipeActionAdapter mAdapter = new SwipeActionAdapter(cursorAdapter);
         mAdapter.setListView(lv);
         mAdapter.setFixedBackgrounds(true);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
+        sPrefs = new SharedPrefs(getActivity());
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
+                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light);
         mAdapter.setSwipeActionListener(listener);
         lv.setAdapter(mAdapter);
     }
@@ -244,7 +251,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
         usedSizeGraph = (PieGraph) rootView.findViewById(R.id.usedSizeGraph);
 
-        cloudText = (TextView) rootView.findViewById(R.id.cloudText);
+        TextView cloudText = (TextView) rootView.findViewById(R.id.cloudText);
         cloudText.setTypeface(typefaceThin);
 
         cloudCount = (TextView) rootView.findViewById(R.id.cloudCount);
@@ -256,7 +263,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         freeSpace = (TextView) rootView.findViewById(R.id.freeSpace);
         freeSpace.setTypeface(typefaceThin);
 
-        cloudFiles = (PaperButton) rootView.findViewById(R.id.cloudFiles);
+        PaperButton cloudFiles = (PaperButton) rootView.findViewById(R.id.cloudFiles);
         cloudFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -276,7 +283,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        deleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.deleteAllCloudButton);
+        PaperButton deleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.deleteAllCloudButton);
         deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -287,19 +294,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     do {
                         String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        syncHelper = new SyncHelper(getActivity());
-                        if (SyncHelper.isSdPresent()) {
-                            File sdPath = Environment.getExternalStorageDirectory();
-                            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                            File file = new File(sdPathDr, exportFileName);
-                            if (file.exists()) {
-                                file.delete();
-                            }
-                        }
-                        deleteFromDropbox(uuID);
-                        filesDataBase.deleteTask(id);
+                        deleteFile(id);
                     }
                     while (c.moveToNext());
                 }
@@ -390,14 +385,14 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     file.delete();
                 }
             }
-
-            deleteFromDropbox(uuID);
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
+            deleteFromDropbox(uuID, pd);
             filesDataBase.deleteTask(itemId);
             isDropboxDeleted = true;
         }
     }
 
-    private void deleteFromDropbox(final String name){
+    private void deleteFromDropbox(final String name, final ProgressDialog progress){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -416,6 +411,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         fileCursorAdapter = new FileCursorAdapter(getActivity(),
                                 filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_DROPBOX));
                         filesCloudList.setAdapter(fileCursorAdapter);
+                        if (progress != null && progress.isShowing()) progress.dismiss();
                     }
                 });
             }
@@ -436,12 +432,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         card5.setBackgroundResource(cSetter.getCardDrawableStyle());
         card6.setBackgroundResource(cSetter.getCardDrawableStyle());
 
-        googleUser = (TextView) rootView.findViewById(R.id.googleUser);
+        TextView googleUser = (TextView) rootView.findViewById(R.id.googleUser);
         googleUser.setTypeface(typefaceThin);
 
-        googleSizeGraph = (PieGraph) rootView.findViewById(R.id.googleSizeGraph);
+        PieGraph googleSizeGraph = (PieGraph) rootView.findViewById(R.id.googleSizeGraph);
 
-        googleText = (TextView) rootView.findViewById(R.id.googleText);
+        TextView googleText = (TextView) rootView.findViewById(R.id.googleText);
         googleText.setTypeface(typefaceThin);
 
         googleCount = (TextView) rootView.findViewById(R.id.googleCount);
@@ -453,7 +449,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleFreeSpace = (TextView) rootView.findViewById(R.id.googleFreeSpace);
         googleFreeSpace.setTypeface(typefaceThin);
 
-        googleFiles = (PaperButton) rootView.findViewById(R.id.googleFiles);
+        PaperButton googleFiles = (PaperButton) rootView.findViewById(R.id.googleFiles);
         googleFiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -473,7 +469,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        googleDeleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.googleDeleteAllCloudButton);
+        PaperButton googleDeleteAllCloudButton = (PaperButton) rootView.findViewById(R.id.googleDeleteAllCloudButton);
         googleDeleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -484,19 +480,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     do {
                         String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        syncHelper = new SyncHelper(getActivity());
-                        if (SyncHelper.isSdPresent()) {
-                            File sdPath = Environment.getExternalStorageDirectory();
-                            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                            File file = new File(sdPathDr, exportFileName);
-                            if (file.exists()) {
-                                file.delete();
-                            }
-                        }
-                        deleteFromGoogle(uuID);
-                        filesDataBase.deleteTask(id);
+                        deleteGoogleFile(id);
                     }
                     while (c.moveToNext());
                 }
@@ -585,14 +569,14 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     file.delete();
                 }
             }
-
-            deleteFromGoogle(uuID);
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
+            deleteFromGoogle(uuID, pd);
             filesDataBase.deleteTask(itemId);
             isGoogleDeleted = true;
         }
     }
 
-    private void deleteFromGoogle(final String name){
+    private void deleteFromGoogle(final String name, final ProgressDialog progress){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -610,6 +594,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         fileCursorAdapter = new FileCursorAdapter(getActivity(),
                                 filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE));
                         filesGoogleList.setAdapter(fileCursorAdapter);
+                        if (progress != null && progress.isShowing()) progress.dismiss();
                     }
                 });
             }
@@ -736,10 +721,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         localCount = (TextView) rootView.findViewById(R.id.localCount);
         localCount.setTypeface(typefaceMedium);
 
-        backupText = (TextView) rootView.findViewById(R.id.backupText);
+        TextView backupText = (TextView) rootView.findViewById(R.id.backupText);
         backupText.setTypeface(typefaceThin);
 
-        backupFilesText = (PaperButton) rootView.findViewById(R.id.backupFilesText);
+        PaperButton backupFilesText = (PaperButton) rootView.findViewById(R.id.backupFilesText);
         backupFilesText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -762,7 +747,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
         });
 
-        deleteAllButton = (PaperButton) rootView.findViewById(R.id.deleteAllButton);
+        PaperButton deleteAllButton = (PaperButton) rootView.findViewById(R.id.deleteAllButton);
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -774,17 +759,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     do {
                         String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        if (SyncHelper.isSdPresent()) {
-                            File sdPath = Environment.getExternalStorageDirectory();
-                            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                            String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                            File file = new File(sdPathDr, exportFileName);
-                            if (file.exists()) {
-                                file.delete();
-                            }
-                        }
-                        filesDataBase.deleteTask(id);
+                        deleteLocalFile(id);
                     }
                     while (c.moveToNext());
                 }
@@ -898,7 +873,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             fileCursorAdapter = new FileCursorAdapter(getActivity(),
                     filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
             filesList.setAdapter(fileCursorAdapter);
-            isLocalDeleted = true;
+            boolean isLocalDeleted = true;
         }
     }
 
@@ -963,108 +938,52 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        int items = navIds.size();
-        if (items == 1){
+        if (position >= navIds.size()) return;
+        final Item item = navIds.get(position);
+        if (item.getId() == LOCAL_INT){
             detachLayout();
             attachLocal();
-            toolbar.setLogo(R.drawable.ic_devices_white_24dp);
-        } else if (items == 2){
-            switch (position){
-                case 0:
-                    detachLayout();
-                    attachLocal();
-                    toolbar.setLogo(R.drawable.ic_devices_white_24dp);
-                    break;
-                case 1:
-                    if (navIds.get(position) == Constants.DROPBOX_INT){
-                        new Thread(new Runnable() {
+            toolbar.setLogo(item.getLogo());
+        } else {
+            if (item.getId() == DROPBOX_INT){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final boolean isC = SyncHelper.isConnected(getActivity());
+                        getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                final boolean isC = SyncHelper.isConnected(getActivity());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isC) {
-                                            detachLayout();
-                                            attachDropbox();
-                                            toolbar.setLogo(R.drawable.dropbox_icon_white);
-                                        } else {
-                                            spinner.setSelection(0);
-                                        }
-                                    }
-                                });
+                                if (isC) {
+                                    detachLayout();
+                                    attachDropbox();
+                                    toolbar.setLogo(item.getLogo());
+                                } else {
+                                    spinner.setSelection(0);
+                                }
                             }
-                        }).start();
-                    } else if (navIds.get(position) == Constants.GOOGLE_DRIVE_INT){
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final boolean isC = SyncHelper.isConnected(getActivity());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isC) {
-                                            detachLayout();
-                                            attachGoogleDrive();
-                                            toolbar.setLogo(R.drawable.gdrive_icon_white);
-                                        } else {
-                                            spinner.setSelection(0);
-                                        }
-                                    }
-                                });
-                            }
-                        }).start();
+                        });
                     }
+                }).start();
             }
-        } else if (items == 3){
-            switch (position){
-                case 0:
-                    detachLayout();
-                    attachLocal();
-                    toolbar.setLogo(R.drawable.ic_devices_white_24dp);
-                    break;
-                case 1:
-                    if (navIds.get(position) == Constants.DROPBOX_INT){
-                        new Thread(new Runnable() {
+            if (item.getId() == GOOGLE_DRIVE_INT){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final boolean isC = SyncHelper.isConnected(getActivity());
+                        getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                final boolean isC = SyncHelper.isConnected(getActivity());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isC) {
-                                            detachLayout();
-                                            attachDropbox();
-                                            toolbar.setLogo(R.drawable.dropbox_icon_white);
-                                        } else {
-                                            spinner.setSelection(0);
-                                        }
-                                    }
-                                });
+                                if (isC) {
+                                    detachLayout();
+                                    attachGoogleDrive();
+                                    toolbar.setLogo(item.getLogo());
+                                } else {
+                                    spinner.setSelection(0);
+                                }
                             }
-                        }).start();
+                        });
                     }
-                case 2:
-                    if (navIds.get(position) == Constants.GOOGLE_DRIVE_INT){
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final boolean isC = SyncHelper.isConnected(getActivity());
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isC) {
-                                            detachLayout();
-                                            attachGoogleDrive();
-                                            toolbar.setLogo(R.drawable.gdrive_icon_white);
-                                        } else {
-                                            spinner.setSelection(0);
-                                        }
-                                    }
-                                });
-                            }
-                        }).start();
-                    }
+                }).start();
             }
         }
     }
@@ -1072,5 +991,28 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public class Item {
+        private SpinnerItem spinnerItem;
+        private int id, logo;
+
+        public Item(SpinnerItem spinnerItem, int id, int logo){
+            this.spinnerItem = spinnerItem;
+            this.id = id;
+            this.logo = logo;
+        }
+
+        public int getLogo() {
+            return logo;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public SpinnerItem getSpinnerItem() {
+            return spinnerItem;
+        }
     }
 }

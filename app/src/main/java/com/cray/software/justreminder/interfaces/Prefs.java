@@ -102,6 +102,7 @@ public class Prefs {
     public static final String EXTENDED_BUTTON = "extended_button";
     public static final String ITEM_PREVIEW = "item_preview";
     public static final String THANKS_SHOWN = "thanks_shown";
+    public static final String BETA_SHOWN = "beta_shown";
     public static final String LAST_CALENDAR_VIEW = "last_calendar_view";
     public static final String UI_CHANGED = "ui_changed";
     public static final String TASK_CHANGED = "task_changed";

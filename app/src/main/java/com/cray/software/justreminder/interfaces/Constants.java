@@ -157,10 +157,6 @@ public class Constants {
     public static final String LICENSE_DIALOG_KEY = "dialog_key";
     public static final String LICENSE_KEY = "license_key";
 
-    public static final int LOCAL_INT = 120;
-    public static final int DROPBOX_INT = 121;
-    public static final int GOOGLE_DRIVE_INT = 122;
-
     public static final int DIR_ID_EXTERNAL = 2;
     public static final int DIR_ID_DATA = 3;
 

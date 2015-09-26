@@ -13,18 +13,18 @@ import com.cray.software.justreminder.SettingsActivity;
 import com.cray.software.justreminder.SplashScreen;
 import com.cray.software.justreminder.VoiceHelp;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.BirthdaysVoiceList;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.dialogs.utils.SelectVolume;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.RecognizerUtils;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.hexrain.design.ScreenManager;
 
@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,14 +130,14 @@ public class Recognizer {
                     keyStr.matches("(jan|feb|mar|apr|ma|jun|jul|aug|sep|oct|nov|dec).* ([0-9][0-9]?) .*")){
                 unknownDate(keyStr, isWidget);
                 break;
-            } else if (keyStr.matches(".*кожн.* ([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*я?у?і?и?в? .*") ||
-                    keyStr.matches(".*кажд.* ([0-9]?[0-9]?) ?(мес|дн|год|нед|лет|ден).*а?ы?т?с?в?й?ь?я?и?ц?д? .*") ||
+            } else if (keyStr.matches(".*кожн.* ([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*(я|у|і|и|в)? .*") ||
+                    keyStr.matches(".*кажд.* ([0-9]?[0-9]?) ?(мес|дн|год|нед|лет|ден).*(а|ы|т|с|в|й|ь|я|и|ц|д)? .*") ||
                     keyStr.matches(".*every.* ([0-9]?[0-9]?) ?(day|month|week|year).*s? .*") ||
-                    keyStr.matches("що.* ?([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*я?у?і?и?в? .*")){
+                    keyStr.matches("що.* ?([0-9]?[0-9]?) ?(міс|дн|рок|тиж|рік|ден).*(я|у|і|и|в)? .*")){
                 unknownRepeat(keyStr, isWidget);
                 break;
-            } else if (keyStr.matches("через ([0-9]?[0-9]?) ?(хвил|годи|тижн|місяц|рок|рік)?.*я?у?і?и?в?н?ь? .*") ||
-                    keyStr.matches("через ([0-9]?[0-9]?) ?(минут|час|неде|месяц|год|дн|ден)?.*я?у?и?ы?в?т?ь?с?а?й?ю?д? .*") ||
+            } else if (keyStr.matches("через ([0-9]?[0-9]?) ?(хвил|годи|тижн|місяц|рок|рік)?.*(я|у|і|и|в|н|ь)? .*") ||
+                    keyStr.matches("через ([0-9]?[0-9]?) ?(минут|час|неде|месяц|год|дн|ден)?.*(я|у|и|ы|в|т|ь|с|а|й|ю|д)? .*") ||
                     keyStr.matches("after ([0-9]?[0-9]?) ?(minute|hour|week|month|year)?.*s? .*")){
                 unknownAfter(keyStr, isWidget);
                 break;
@@ -158,9 +159,9 @@ public class Recognizer {
                 // set date reminder
                 dateTask(keyStr, isWidget);
                 break;
-            } else if (keyStr.matches(".*remind .* after \\d\\d?\\d? (hour|minute)s?.*") ||
-                    keyStr.matches(".*нагадай?т?и? .* через \\d\\d?\\d? (годин|хвилин)и?у?.*") ||
-                    keyStr.matches(".*напомнит?ь? .* через \\d\\d?\\d? (час|минут)ы?о?в?у?.*")) {
+            } else if (keyStr.matches(".*remind .* after \\d+ (hour|minute)s?.*") ||
+                    keyStr.matches(".*нагадай?т?и? .* через \\d+ (годин|хвилин)и?у?.*") ||
+                    keyStr.matches(".*напомнит?ь? .* через \\d+ (час|минут)ы?о?в?у?.*")) {
                 // set time reminder
                 timeTask(keyStr, isWidget);
                 break;
@@ -188,9 +189,9 @@ public class Recognizer {
                 // save note
                 saveNote(keyStr);
                 break;
-            } else if (keyStr.matches(".*показати .* \\d\\d?\\d? .*") ||
-                    keyStr.matches(".*show .* \\d\\d?\\d? .*") ||
-                    keyStr.matches(".*показать .* \\d\\d?\\d? .*")){
+            } else if (keyStr.matches(".*показати .* \\d+ .*") ||
+                    keyStr.matches(".*show .* \\d+ .*") ||
+                    keyStr.matches(".*показать .* \\d+ .*")){
                 // show featured birthdays
                 showBirthdays(keyStr);
                 break;
@@ -274,8 +275,7 @@ public class Recognizer {
                 boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
 
                 if (isTimeValid && task != null) {
-                    long divider = 0;
-                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+                    long divider = RecognizerUtils.getLongIndexes(hoursPart);
 
                     long currTime = calendar.getTimeInMillis();
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
@@ -338,8 +338,7 @@ public class Recognizer {
                 boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
 
                 if (isTimeValid && task != null) {
-                    long divider = 0;
-                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+                    long divider = RecognizerUtils.getLongIndexes(hoursPart);
 
                     long currTime = calendar.getTimeInMillis();
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
@@ -443,8 +442,7 @@ public class Recognizer {
                 boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
 
                 if (isTimeValid && task != null) {
-                    long divider = 0;
-                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+                    long divider = RecognizerUtils.getLongIndexes(hoursPart);
 
                     long currTime = calendar.getTimeInMillis();
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
@@ -508,8 +506,7 @@ public class Recognizer {
                 boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
 
                 if (isTimeValid && task != null) {
-                    long divider = 0;
-                    if (isDecrement) divider = RecognizerUtils.getLongIndexes(hoursPart);
+                    long divider = RecognizerUtils.getLongIndexes(hoursPart);
 
                     long currTime = calendar.getTimeInMillis();
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
@@ -2005,14 +2002,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + overall.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2054,14 +2051,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + month.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2103,14 +2100,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + month.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2158,7 +2155,7 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + overall.length(), indexEnd).trim();
                     }
-                    int dayOfMonth = Integer.parseInt(date);
+                    int dayOfMonth = date != null ? Integer.parseInt(date) : 1;
                     int monthOfYear = RecognizerUtils.getMonthFromString(overall);
 
                     indexStart = keyStr.lastIndexOf(month);
@@ -2166,14 +2163,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + month.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2210,7 +2207,7 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + res.length(), indexEnd).trim();
                     }
-                    int dayOfMonth = Integer.parseInt(date);
+                    int dayOfMonth = date != null ? Integer.parseInt(date) : 1;
                     int monthOfYear = RecognizerUtils.getMonthFromString(month);
 
                     indexStart = keyStr.lastIndexOf(month);
@@ -2218,14 +2215,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + month.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2262,7 +2259,7 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + res.length(), indexEnd).trim();
                     }
-                    int dayOfMonth = Integer.parseInt(date);
+                    int dayOfMonth = date != null ? Integer.parseInt(date) : 1;
                     int monthOfYear = RecognizerUtils.getMonthFromString(month);
 
                     indexStart = keyStr.lastIndexOf(month);
@@ -2270,14 +2267,14 @@ public class Recognizer {
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + month.length(), indexEnd).trim();
                     }
-                    int hourOfDay = Integer.parseInt(date);
+                    int hourOfDay = date != null ? Integer.parseInt(date) : 1;
 
                     indexStart = keyStr.lastIndexOf(hourStr);
                     indexEnd = keyStr.lastIndexOf(minuteStr);
                     if (indexStart != -1) {
                         date = keyStr.substring(indexStart + hourStr.length(), indexEnd).trim();
                     }
-                    int minuteOfHour = Integer.parseInt(date);
+                    int minuteOfHour = date != null ? Integer.parseInt(date) : 1;
                     boolean isTimeValid = RecognizerUtils.isCorrectTime(hourOfDay, minuteOfHour);
                     boolean isDateValid = checkDate(dayOfMonth, monthOfYear);
                     if (isDateValid && isTimeValid){
@@ -2360,7 +2357,8 @@ public class Recognizer {
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         int mHour = calendar.get(Calendar.HOUR_OF_DAY);
         int mMinute = calendar.get(Calendar.MINUTE);
 
@@ -2510,7 +2508,8 @@ public class Recognizer {
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         int mHour = calendar.get(Calendar.HOUR_OF_DAY);
         int mMinute = calendar.get(Calendar.MINUTE);
 
@@ -2659,7 +2658,8 @@ public class Recognizer {
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         int mHour = calendar.get(Calendar.HOUR_OF_DAY);
         int mMinute = calendar.get(Calendar.MINUTE);
 
@@ -2812,7 +2812,8 @@ public class Recognizer {
             e.printStackTrace();
         }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (date != null) calendar.setTime(date);
         int mHour = calendar.get(Calendar.HOUR_OF_DAY);
         int mMinute = calendar.get(Calendar.MINUTE);
 
@@ -2949,7 +2950,7 @@ public class Recognizer {
     }
 
     private void showBirthdays(String keyStr) {
-        Pattern pattern = Pattern.compile("\\d\\d?\\d?");
+        Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(keyStr);
         if (matcher.find()) {
             String time = matcher.group().trim();
@@ -3024,24 +3025,27 @@ public class Recognizer {
         }
     }
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     private int getYears(String dateOfBirth){
-        int years;
+        int years = 0;
         Date date = null;
         try {
             date = format.parse(dateOfBirth);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        int yearOfBirth = calendar.get(Calendar.YEAR);
+        if (date != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.setTime(date);
+            int yearOfBirth = calendar.get(Calendar.YEAR);
 
-        Calendar calendar1 = Calendar.getInstance();
-        calendar1.getTimeInMillis();
-        int currentYear = calendar1.get(Calendar.YEAR);
-        years = currentYear - yearOfBirth;
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.getTimeInMillis();
+            int currentYear = calendar1.get(Calendar.YEAR);
+            years = currentYear - yearOfBirth;
+        }
         return years;
     }
 
@@ -3070,7 +3074,7 @@ public class Recognizer {
         int minute = calendar1.get(Calendar.MINUTE);
         String date = day + "-" + month + "-" + year;
 
-        String uuID = sHelp.generateID();
+        String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(ctx);
         db.open();
         if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){

@@ -4,18 +4,23 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,6 +30,7 @@ import android.widget.TimePicker;
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.Item;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -41,37 +47,44 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 
 public class TaskManager extends AppCompatActivity {
-    ColorSetter cSetter = new ColorSetter(TaskManager.this);
-    SharedPrefs sPrefs = new SharedPrefs(TaskManager.this);
+    private ColorSetter cSetter = new ColorSetter(TaskManager.this);
+    private SharedPrefs sPrefs = new SharedPrefs(TaskManager.this);
 
-    long id;
-    Toolbar toolbar;
-    FloatingEditText editField, noteField;
-    TextView listText, dateField, dateYearField, timeField;
-    LinearLayout dateRing, dueContainer, reminderContainer;
-    CheckBox reminderCheck, dueCheck;
+    private long id;
+    private Toolbar toolbar;
+    private FloatingEditText editField, noteField;
+    private TextView dateField;
+    private TextView dateYearField;
+    private TextView timeField;
+    private TextView listText;
+    private LinearLayout dueContainer;
+    private LinearLayout reminderContainer;
+    private CheckBox reminderCheck, dueCheck;
 
-    int color;
-    int myHour = 0;
-    int myMinute = 0;
-    int myYear = 0;
-    int myMonth = 0;
-    int myDay = 1;
-    String listId;
-    String taskId;
-    String action;
+    private int color;
+    private int myHour = 0;
+    private int myMinute = 0;
+    private int myYear = 0;
+    private int myMonth = 0;
+    private int myDay = 1;
+    private String listId;
+    private String taskId;
+    private String action;
 
-    TasksData data = new TasksData(TaskManager.this);
+    private TasksData data = new TasksData(TaskManager.this);
 
-    public static final int MENU_ITEM_DELETE = 12;
-    SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM", Locale.getDefault());
+    private static final int MENU_ITEM_DELETE = 12;
+    private SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM", Locale.getDefault());
 
-    FloatingActionButton mFab;
+    private FloatingActionButton mFab;
+
+    private ArrayList<Item> items = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +124,12 @@ public class TaskManager extends AppCompatActivity {
         editField = (FloatingEditText) findViewById(R.id.editField);
         noteField = (FloatingEditText) findViewById(R.id.noteField);
         listText = (TextView) findViewById(R.id.listText);
+        listText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectList();
+            }
+        });
         reminderCheck = (CheckBox) findViewById(R.id.reminderCheck);
         reminderCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -167,7 +186,7 @@ public class TaskManager extends AppCompatActivity {
         reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
         reminderContainer.setVisibility(View.GONE);
 
-        dateRing = (LinearLayout) findViewById(R.id.dateRing);
+        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
         dueContainer = (LinearLayout) findViewById(R.id.dueContainer);
         dueContainer.setVisibility(View.GONE);
         dateRing.setOnClickListener(new View.OnClickListener() {
@@ -277,6 +296,30 @@ public class TaskManager extends AppCompatActivity {
                 if (c != null) c.close();
             }
         }
+    }
+
+    private void selectList() {
+        Cursor c = data.getTasksLists();
+        if (c != null && c.moveToFirst()){
+            do {
+                String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
+                String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                items.add(new Item(listTitle, listId));
+            } while (c.moveToNext());
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.string_select_category));
+        builder.setAdapter(new SimpleAdapter(TaskManager.this,
+                data.getTasksLists()), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                listText.setText(items.get(which).getTitle());
+                listId = items.get(which).getUuID();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void saveTask() {
@@ -462,5 +505,71 @@ public class TaskManager extends AppCompatActivity {
     protected void onDestroy() {
         new UpdatesHelper(TaskManager.this).updateTasksWidget();
         super.onDestroy();
+    }
+
+    public class SimpleAdapter extends CursorAdapter {
+
+        LayoutInflater inflater;
+        private Cursor c;
+        Context cContext;
+        ColorSetter cs;
+
+        public SimpleAdapter(Context context, Cursor c) {
+            super(context, c);
+            this.cContext = context;
+            cs = new ColorSetter(context);
+            inflater = LayoutInflater.from(context);
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.c = c;
+            c.moveToFirst();
+        }
+
+        @Override
+        public int getCount() {
+            return c.getCount();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return super.getItem(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            Cursor cursor = getCursor();
+            cursor.moveToPosition(position);
+            return cursor.getLong(cursor.getColumnIndex("_id"));
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return inflater.inflate(R.layout.list_item_category_card, null);
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            c.moveToPosition(position);
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.list_item_category_card, null);
+            }
+
+            String text = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
+            int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
+
+            TextView textView = (TextView) convertView.findViewById(R.id.textView);
+            textView.setText(text);
+
+            CardView card = (CardView) convertView.findViewById(R.id.card);
+            card.setCardBackgroundColor(cs.getCardStyle());
+
+            convertView.findViewById(R.id.indicator).setVisibility(View.GONE);
+
+            return convertView;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
+        }
     }
 }

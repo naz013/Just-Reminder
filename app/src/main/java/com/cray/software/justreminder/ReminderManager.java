@@ -225,7 +225,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (map != null) map.setTask(s.toString());
+                if (map != null) map.setMarkerTitle(s.toString());
             }
 
             @Override

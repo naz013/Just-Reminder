@@ -9,6 +9,10 @@ public class Module {
         return BuildConfig.IS_PRO;
     }
 
+    public static boolean isBeta(){
+        return BuildConfig.IS_BETA;
+    }
+
     public static boolean isLollipop(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }

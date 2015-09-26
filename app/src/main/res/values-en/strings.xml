@@ -701,4 +701,6 @@
     <string name="six_hours">6 hours</string>
     <string name="twelve_hours">12 hours</string>
     <string name="one_day">1 day</string>
+    <string name="dropbox">Dropbox</string>
+    <string name="deleting">Deleting...</string>
 </resources>

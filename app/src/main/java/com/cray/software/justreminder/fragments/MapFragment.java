@@ -45,25 +45,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapFragment extends Fragment implements View.OnLongClickListener {
+
+    /**
+     * UI elements;
+     */
     private GoogleMap map;
     private LinearLayout layersContainer;
     private AutoCompleteTextView cardSearch;
     private Spinner placesList;
     private ImageButton zoomOut;
+
+    /**
+     * Array of user frequently used places;
+     */
     private ArrayList<String> spinnerArray = new ArrayList<>();
 
+    /**
+     * init variables and flags;
+     */
     private boolean isAnimation = true;
     private boolean isTouch = true;
-    private String taskTitle;
+    private String markerTitle;
     private LatLng lastPos;
 
+    /**
+     * UI helper class;
+     */
     private ColorSetter cSetter;
 
+    /**
+     * Array of place search results;
+     */
     private List<Address> foundPlaces;
     private ArrayAdapter<String> adapter;
     private GeocoderTask task;
     private ArrayList<String> namesList;
 
+    /**
+     * MapListener link;
+     */
     private MapListener listener;
 
     public static MapFragment newInstance() {
@@ -73,14 +93,29 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     public MapFragment() {
     }
 
+    /**
+     * Set listener for map fragment;
+     * @param listener listener for map fragment;
+     */
     public void setListener(MapListener listener){
         this.listener = listener;
     }
 
-    public void setTask(String taskTitle){
-        this.taskTitle = taskTitle;
+    /**
+     * Set title for markers;
+     * @param markerTitle marker title;
+     */
+    public void setMarkerTitle(String markerTitle){
+        this.markerTitle = markerTitle;
     }
 
+    /**
+     * Add marker to map;
+     * @param pos coordinates;
+     * @param title marker title;
+     * @param clear remove previous markers flag;
+     * @param animate animate to marker position;
+     */
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate){
         if (map != null) {
             if (clear) map.clear();
@@ -96,6 +131,14 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         }
     }
 
+    /**
+     * Add marker to map with custom marker icon;
+     * @param pos coordinates;
+     * @param title marker title;
+     * @param clear remove previous markers flag;
+     * @param markerStyle marker icon;
+     * @param animate animate to marker position;
+     */
     public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate){
         if (map != null) {
             if (clear) map.clear();
@@ -111,15 +154,26 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         }
     }
 
+    /**
+     * Move camera to coordinates;
+     * @param pos coordinates;
+     */
     public void moveCamera(LatLng pos){
         if (map != null) map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
     }
 
+    /**
+     * Move camera to coordinates with animation;
+     * @param latLng coordinates;
+     */
     public void animate(LatLng latLng){
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         if (map != null) map.animateCamera(update);
     }
 
+    /**
+     * Move camera to user current coordinates with animation;
+     */
     public void moveToMyLocation(){
         if (map != null && map.getMyLocation() != null){
             double lat = map.getMyLocation().getLatitude();
@@ -129,24 +183,56 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         }
     }
 
+    /**
+     * Move camera to user current coordinates with animation;
+     * @param animate animation flag;
+     */
+    public void moveToMyLocation(boolean animate){
+        if (map != null && map.getMyLocation() != null){
+            double lat = map.getMyLocation().getLatitude();
+            double lon = map.getMyLocation().getLongitude();
+            LatLng pos = new LatLng(lat, lon);
+            if (animate) animate(pos);
+        }
+    }
+
+    /**
+     * Enable/Disable on map click listener;
+     * @param isTouch flag;
+     */
     public void enableTouch(boolean isTouch){
         this.isTouch = isTouch;
     }
 
+    /**
+     * Enable/Disable close map button;
+     * @param enable flag;
+     */
     public void enableCloseButton(boolean enable){
         if (enable) zoomOut.setVisibility(View.VISIBLE);
         else zoomOut.setVisibility(View.GONE);
     }
 
+    /**
+     * Enable/Disable list of user frequently used places;
+     * @param enable flag;
+     */
     public void enablePlaceList(boolean enable){
         if (enable) placesList.setVisibility(View.VISIBLE);
         else placesList.setVisibility(View.GONE);
     }
 
+    /**
+     * Clear map;
+     */
     public void clear(){
         if (map != null) map.clear();
     }
 
+    /**
+     * On back pressed interface for map;
+     * @return
+     */
     public boolean onBackPressed(){
         if(isLayersVisible()) {
             ViewUtils.hideOver(layersContainer, isAnimation);
@@ -189,7 +275,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         placesList.setSelection(0);
                     }
                     if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                    addMarker(latLng, taskTitle, true, true);
+                    addMarker(latLng, markerTitle, true, true);
                 }
             }
         });
@@ -340,7 +426,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                addMarker(pos, taskTitle, true, true);
+                addMarker(pos, markerTitle, true, true);
                 if (listener != null) listener.placeName(namesList.get(position));
             }
         });
@@ -370,7 +456,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                             double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
                             double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
                             LatLng latLng = new LatLng(latitude, longitude);
-                            addMarker(latLng, taskTitle, true, true);
+                            addMarker(latLng, markerTitle, true, true);
                         }
                         if (c != null) c.close();
                     }

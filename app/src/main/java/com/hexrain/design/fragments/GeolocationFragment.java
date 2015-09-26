@@ -133,7 +133,7 @@ public class GeolocationFragment extends Fragment {
             loaderAdapter(list);
         } else {
             if (googleMap != null) {
-                googleMap.moveToMyLocation();
+                googleMap.moveToMyLocation(false);
             }
         }
         if (c != null) c.close();
