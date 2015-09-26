@@ -31,12 +31,14 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -53,7 +55,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     private LinearLayout layersContainer;
     private AutoCompleteTextView cardSearch;
     private Spinner placesList;
-    private ImageButton zoomOut;
+    private CardView card, card1, card2;
 
     /**
      * Array of user frequently used places;
@@ -66,7 +68,9 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     private boolean isAnimation = true;
     private boolean isTouch = true;
     private String markerTitle;
+    private int markerRadius = -1;
     private LatLng lastPos;
+    private float strokeWidth = 3f;
 
     /**
      * UI helper class;
@@ -74,7 +78,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     private ColorSetter cSetter;
 
     /**
-     * Array of place search results;
+     * Arrays of place search results;
      */
     private List<Address> foundPlaces;
     private ArrayAdapter<String> adapter;
@@ -95,7 +99,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Set listener for map fragment;
-     * @param listener listener for map fragment;
+     * @param listener listener for map fragment
      */
     public void setListener(MapListener listener){
         this.listener = listener;
@@ -103,20 +107,29 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Set title for markers;
-     * @param markerTitle marker title;
+     * @param markerTitle marker title
      */
     public void setMarkerTitle(String markerTitle){
         this.markerTitle = markerTitle;
     }
 
     /**
-     * Add marker to map;
-     * @param pos coordinates;
-     * @param title marker title;
-     * @param clear remove previous markers flag;
-     * @param animate animate to marker position;
+     * Set radius for marker;
+     * @param markerRadius radius for drawing circle around marker
      */
-    public void addMarker(LatLng pos, String title, boolean clear, boolean animate){
+    public void setMarkerRadius(int markerRadius){
+        this.markerRadius = markerRadius;
+    }
+
+    /**
+     * Add marker to map;
+     * @param pos coordinates
+     * @param title marker title
+     * @param clear remove previous markers flag
+     * @param animate animate to marker position
+     * @param radius radius for circle around marker
+     */
+    public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius){
         if (map != null) {
             if (clear) map.clear();
             if (title == null || title.matches("")) title = pos.toString();
@@ -127,19 +140,29 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                     .title(title)
                     .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
                     .draggable(clear));
+            if (radius != -1) {
+                int[] circleColors = cSetter.getMarkerRadiusStyle();
+                map.addCircle(new CircleOptions()
+                        .center(pos)
+                        .radius(radius)
+                        .strokeWidth(strokeWidth)
+                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+            }
             if (animate) animate(pos);
         }
     }
 
     /**
      * Add marker to map with custom marker icon;
-     * @param pos coordinates;
-     * @param title marker title;
-     * @param clear remove previous markers flag;
-     * @param markerStyle marker icon;
-     * @param animate animate to marker position;
+     * @param pos coordinates
+     * @param title marker title
+     * @param clear remove previous markers flag
+     * @param markerStyle marker icon
+     * @param animate animate to marker position
+     * @param radius radius for circle around marker
      */
-    public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate){
+    public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate, int radius){
         if (map != null) {
             if (clear) map.clear();
             if (title == null || title.matches("")) title = pos.toString();
@@ -148,15 +171,52 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             map.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
-                    .icon(BitmapDescriptorFactory.fromResource(markerStyle))
+                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
                     .draggable(clear));
+            if (radius != -1) {
+                int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
+                map.addCircle(new CircleOptions()
+                        .center(pos)
+                        .radius(radius)
+                        .strokeWidth(strokeWidth)
+                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+            }
             if (animate) animate(pos);
         }
     }
 
     /**
+     * Recreate last added marker with new circle radius;
+     * @param radius radius for a circle
+     */
+    public void recreateMarker(int radius){
+        markerRadius = radius;
+        if (map != null && lastPos != null) {
+            map.clear();
+            if (markerTitle == null || markerTitle.matches("")) markerTitle = lastPos.toString();
+            if (listener != null) listener.place(lastPos);
+            map.addMarker(new MarkerOptions()
+                    .position(lastPos)
+                    .title(markerTitle)
+                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle()))
+                    .draggable(true));
+            if (radius != -1) {
+                int[] circleColors = cSetter.getMarkerRadiusStyle();
+                map.addCircle(new CircleOptions()
+                        .center(lastPos)
+                        .radius(radius)
+                        .strokeWidth(strokeWidth)
+                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+            }
+            animate(lastPos);
+        }
+    }
+
+    /**
      * Move camera to coordinates;
-     * @param pos coordinates;
+     * @param pos coordinates
      */
     public void moveCamera(LatLng pos){
         if (map != null) map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
@@ -164,10 +224,10 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Move camera to coordinates with animation;
-     * @param latLng coordinates;
+     * @param latLng coordinates
      */
     public void animate(LatLng latLng){
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 13);
         if (map != null) map.animateCamera(update);
     }
 
@@ -185,7 +245,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Move camera to user current coordinates with animation;
-     * @param animate animation flag;
+     * @param animate animation flag
      */
     public void moveToMyLocation(boolean animate){
         if (map != null && map.getMyLocation() != null){
@@ -198,7 +258,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Enable/Disable on map click listener;
-     * @param isTouch flag;
+     * @param isTouch flag
      */
     public void enableTouch(boolean isTouch){
         this.isTouch = isTouch;
@@ -206,20 +266,30 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Enable/Disable close map button;
-     * @param enable flag;
+     * @param enable flag
      */
     public void enableCloseButton(boolean enable){
-        if (enable) zoomOut.setVisibility(View.VISIBLE);
-        else zoomOut.setVisibility(View.GONE);
+        if (enable) card1.setVisibility(View.VISIBLE);
+        else card1.setVisibility(View.GONE);
     }
 
     /**
      * Enable/Disable list of user frequently used places;
-     * @param enable flag;
+     * @param enable flag
      */
     public void enablePlaceList(boolean enable){
         if (enable) placesList.setVisibility(View.VISIBLE);
         else placesList.setVisibility(View.GONE);
+    }
+
+    /**
+     * Method that allows to hide all custom UI;
+     */
+    public void hideUi(){
+        card.setVisibility(View.GONE);
+        card1.setVisibility(View.GONE);
+        card2.setVisibility(View.GONE);
+        placesList.setVisibility(View.GONE);
     }
 
     /**
@@ -270,23 +340,23 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
                 if (isTouch) {
                     if (!spinnerArray.isEmpty()) {
                         placesList.setSelection(0);
                     }
-                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                    addMarker(latLng, markerTitle, true, true);
+                    addMarker(latLng, markerTitle, true, true, markerRadius);
                 }
             }
         });
 
         if (lastPos != null) {
-            addMarker(lastPos, lastPos.toString(), true, false);
+            addMarker(lastPos, lastPos.toString(), true, false, markerRadius);
         }
 
-        CardView card = (CardView) rootView.findViewById(R.id.card);
-        CardView card1 = (CardView) rootView.findViewById(R.id.card1);
-        CardView card2 = (CardView) rootView.findViewById(R.id.card2);
+        card = (CardView) rootView.findViewById(R.id.card);
+        card1 = (CardView) rootView.findViewById(R.id.card1);
+        card2 = (CardView) rootView.findViewById(R.id.card2);
         card.setCardBackgroundColor(cSetter.getCardStyle());
         card1.setCardBackgroundColor(cSetter.getCardStyle());
         card2.setCardBackgroundColor(cSetter.getCardStyle());
@@ -296,7 +366,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         layersContainer.setVisibility(View.GONE);
 
         ImageButton cardClear = (ImageButton) rootView.findViewById(R.id.cardClear);
-        zoomOut = (ImageButton) rootView.findViewById(R.id.zoomOut);
+        ImageButton zoomOut = (ImageButton) rootView.findViewById(R.id.zoomOut);
         ImageButton layers = (ImageButton) rootView.findViewById(R.id.layers);
         ImageButton myLocation = (ImageButton) rootView.findViewById(R.id.myLocation);
 
@@ -426,7 +496,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
-                addMarker(pos, markerTitle, true, true);
+                addMarker(pos, markerTitle, true, true, markerRadius);
                 if (listener != null) listener.placeName(namesList.get(position));
             }
         });
@@ -456,7 +526,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                             double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
                             double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
                             LatLng latLng = new LatLng(latitude, longitude);
-                            addMarker(latLng, markerTitle, true, true);
+                            addMarker(latLng, markerTitle, true, true, markerRadius);
                         }
                         if (c != null) c.close();
                     }

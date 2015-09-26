@@ -38,6 +38,7 @@ import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ItemData;
+import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
@@ -49,22 +50,17 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -303,10 +299,11 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
     public class loadAsync extends AsyncTask<Void, Void, String[]>{
 
-        Context mContext;
-        CircularProgress mProgress;
-        long mId;
+        private Context mContext;
+        private CircularProgress mProgress;
+        private long mId;
         private double lat = 0.0, lon = 0.0;
+        private int radius = -1;
 
         public loadAsync(Context context, CircularProgress circularProgress, long id){
             this.mContext = context;
@@ -346,6 +343,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+                radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
                 lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
@@ -504,45 +502,19 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     time.setVisibility(View.GONE);
                     repeat.setVisibility(View.GONE);
                     mapContainer.setVisibility(View.VISIBLE);
-                    MapFragment googleMap = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-                    if (googleMap != null) {
-                        final GoogleMap mMap = googleMap.getMap();
-                        SharedPrefs prefs = new SharedPrefs(mContext);
-                        String type = prefs.loadPrefs(Prefs.MAP_TYPE);
-                        if (type.matches(Constants.MAP_TYPE_NORMAL)) {
-                            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)) {
-                            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                        } else if (type.matches(Constants.MAP_TYPE_HYBRID)) {
-                            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)) {
-                            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                        } else {
-                            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                        }
-
-                        mMap.setMyLocationEnabled(true);
-                        if (mMap.getMyLocation() != null) {
-                            double lat = mMap.getMyLocation().getLatitude();
-                            double lon = mMap.getMyLocation().getLongitude();
-                            LatLng pos = new LatLng(lat, lon);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
-                        }
-
-                        if (lon != 0 && lat != 0) {
-                            LatLng pos = new LatLng(lat, lon);
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(pos)
-                                    .title(aVoid[1])
-                                    .icon(BitmapDescriptorFactory.fromResource(new ColorSetter(mContext).getMarkerStyle())));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
-                        }
-                        String _Location = LocationUtil.getAddress(mContext, lat, lon);
-                        if (_Location != null && !_Location.matches("")) {
-                            location.setText(_Location + "\n" + "("
-                                    + String.format("%.5f", lat) + ", " +
-                                    String.format("%.5f", lon) + ")");
-                        }
+                    MapFragment map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+                    map.enableTouch(false);
+                    map.hideUi();
+                    map.moveToMyLocation(true);
+                    if (lon != 0 && lat != 0) {
+                        LatLng pos = new LatLng(lat, lon);
+                        map.addMarker(pos, aVoid[1], true, true, radius);
+                    }
+                    String _Location = LocationUtil.getAddress(mContext, lat, lon);
+                    if (_Location != null && !_Location.matches("")) {
+                        location.setText(_Location + "\n" + "("
+                                + String.format("%.5f", lat) + ", " +
+                                String.format("%.5f", lon) + ")");
                     }
                 }
                 String numberStr = aVoid[5];

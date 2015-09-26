@@ -68,6 +68,7 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
@@ -75,7 +76,6 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -1509,9 +1509,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
+
         map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         map.setListener(this);
         map.enableTouch(true);
+        map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1588,7 +1590,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                if (map != null) map.addMarker(pos, title, true, false);
+                int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+                if (map != null) map.addMarker(pos, title, true, false, radius);
             }
         });
 
@@ -1725,7 +1728,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
 
             taskField.setText(text);
-            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, true);
+            int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
         }
     }
 
@@ -1761,6 +1765,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapOut = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapOut);
         mapOut.setListener(this);
         mapOut.enableTouch(true);
+        mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1907,7 +1912,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         locationOutDateYearField.setText(String.valueOf(myYear));
 
         if (curPlace != null) {
-            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true);
+            int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true, radius);
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -1967,7 +1973,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             if (longitude != 0 && latitude != 0) {
                 LatLng pos = new LatLng(latitude, longitude);
-                if (mapOut != null) mapOut.addMarker(pos, text, true, true);
+                int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+                if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
                 mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
                 mapCheck.setChecked(true);
             }
@@ -3069,7 +3076,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 if (mapOut != null) {
-                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, false);
+                    int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, false, radius);
                     mapOut.moveCamera(new LatLng(currentLat, currentLong));
                 }
             }

@@ -1279,8 +1279,8 @@ public class ScreenManager extends AppCompatActivity
 
     protected Dialog thanksDialog(final boolean isBeta) {
         return new AlertDialog.Builder(this)
-                .setTitle(isBeta ? "BETA version!" : getString(R.string.thank_dialog_title))
-                .setMessage(isBeta ? "Remember it is BETA version, so application may contain errors!" : (getString(R.string.thank_dialog_message) + " " +
+                .setTitle(isBeta ? getString(R.string.beta_version) : getString(R.string.thank_dialog_title))
+                .setMessage(isBeta ? getString(R.string.beta_version_message) : (getString(R.string.thank_dialog_message) + " " +
                         getString(R.string.thank_dialog_greeting)))
                 .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

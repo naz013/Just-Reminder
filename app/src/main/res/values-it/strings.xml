@@ -703,4 +703,6 @@
     <string name="one_day">1 day</string>
     <string name="dropbox">Dropbox</string>
     <string name="deleting">Deleting...</string>
+    <string name="beta_version">BETA version!</string>
+    <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
 </resources>

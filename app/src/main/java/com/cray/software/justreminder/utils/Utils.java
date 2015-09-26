@@ -17,7 +17,11 @@ public class Utils {
         }
     }
 
-    public static int getIcon(String typePrefs){
+    public static int getColor(Context context, int resource){
+        return context.getResources().getColor(resource);
+    }
+
+    public static int getIcon(String typePrefs) {
         int icon;
         if (typePrefs.matches(Constants.TYPE_CALL) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||

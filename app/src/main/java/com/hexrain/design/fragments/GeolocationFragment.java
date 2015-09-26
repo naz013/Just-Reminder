@@ -65,18 +65,9 @@ public class GeolocationFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 long i = markersCursorAdapter.getItemId(position);
-                if (i != 0) {
-                    DataBase DB = new DataBase(getActivity());
-                    if (!DB.isOpen()) DB.open();
-                    Cursor c = DB.getReminder(i);
-                    if (c != null && c.moveToFirst()) {
-                        if (googleMap != null) {
-                            googleMap.moveCamera(new LatLng(c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE)),
-                                    c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE))));
-                        }
-                    }
-                    if (c != null) c.close();
-                    DB.close();
+                MarkerItem item = (MarkerItem) markersCursorAdapter.getItem(position);
+                if (item != null && googleMap != null) {
+                    googleMap.animate(item.getPosition());
                 }
             }
         });
@@ -120,13 +111,14 @@ public class GeolocationFragment extends Fragment {
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+                int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 if (longitude != 0 && latitude != 0) {
                     int rand = random.nextInt(16-2)+1;
-                    int marker = cSetter.getMarkerStyle(rand);
                     LatLng pos = new LatLng(latitude, longitude);
-                    list.add(new MarkerItem(task, pos, marker));
+                    list.add(new MarkerItem(task, pos, rand, id));
                     if (googleMap != null) {
-                        googleMap.addMarker(pos, task, false, marker, false);
+                        googleMap.addMarker(pos, task, false, rand, false, radius);
                     }
                 }
             } while (c.moveToNext());

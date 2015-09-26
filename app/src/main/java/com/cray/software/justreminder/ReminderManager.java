@@ -1996,6 +1996,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         map.setListener(this);
         map.enableTouch(true);
+        map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2079,7 +2080,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                if (map != null) map.addMarker(pos, title, true, true);
+                if (map != null) map.addMarker(pos, title, true, true, radius);
             }
         });
 
@@ -2187,6 +2188,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 myDay = item.getDay();
                 myMonth = item.getMonth();
                 myYear = item.getYear();
+                radius = item.getRadius();
             }
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
@@ -2227,7 +2229,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
 
             taskField.setText(text);
-            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, false);
+            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
         }
     }
 
@@ -2266,6 +2268,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapOut = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapOut);
         mapOut.setListener(this);
         mapOut.enableTouch(true);
+        mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2424,7 +2427,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationOutDateYearField.setText(String.valueOf(myYear));
 
         if (curPlace != null) {
-            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true);
+            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true, radius);
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -2442,6 +2445,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 myDay = item.getDay();
                 myMonth = item.getMonth();
                 myYear = item.getYear();
+                radius = item.getRadius();
             }
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
@@ -2483,7 +2487,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             LatLng pos = new LatLng(latitude, longitude);
-            if (mapOut != null) mapOut.addMarker(pos, text, true, true);
+            if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
             mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
             mapCheck.setChecked(true);
         }
@@ -3719,6 +3723,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(ReminderManager.this,
                             getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter),
                             Toast.LENGTH_SHORT).show();
+                    if (isLocationAttached()) map.recreateMarker(radius);
+                    if (isLocationOutAttached()) mapOut.recreateMarker(radius);
                 }
             }
         }
@@ -3847,7 +3853,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 if (mapOut != null) {
-                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, true);
+                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, true, radius);
                 }
             }
         }

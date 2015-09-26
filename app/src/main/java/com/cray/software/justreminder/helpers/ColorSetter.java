@@ -21,6 +21,11 @@ public class ColorSetter {
         this.cContext = context;
     }
 
+    /**
+     * Method to get typeface by style code;
+     * @param style code of style
+     * @return
+     */
     public Typeface getTypeface(int style){
         if (style == 0) {
             typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Black.ttf");
@@ -53,7 +58,7 @@ public class ColorSetter {
     }
 
     private int getColor(int color){
-        return cContext.getResources().getColor(color);
+        return Utils.getColor(cContext, color);
     }
 
     public int colorSetter(){
@@ -922,56 +927,126 @@ public class ColorSetter {
     }
 
     public int[] getMarkerRadiusStyle(){
-        int borderColor;
-        int overlayColor;
+        int fillColor;
+        int strokeColor;
         if (Module.isPro()) {
             sPrefs = new SharedPrefs(cContext);
-            int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
-            if (loaded == 1) {
-                borderColor = R.color.colorRedLight;
-                overlayColor = R.color.colorRedDark;
-            } else if (loaded == 2) {
-                borderColor = R.color.colorGreenLight;
-                overlayColor = R.color.colorGreenDark;
-            } else if (loaded == 3) {
-                borderColor = R.color.colorBlueLight;
-                overlayColor = R.color.colorBlueDark;
-            } else if (loaded == 4) {
-                borderColor = R.color.colorYellowLight;
-                overlayColor = R.color.colorYellowDark;
-            } else if (loaded == 5) {
-                borderColor = R.color.colorRedLight;
-                overlayColor = R.color.colorRedDark;
-            } else if (loaded == 6) {
-                borderColor = R.color.colorGreenLight;
-                overlayColor = R.color.colorGreenDark;
-            } else if (loaded == 7) {
-                borderColor = R.color.colorBlueLight;
-                overlayColor = R.color.colorBlueDark;
-            } else if (loaded == 8) {
-                borderColor = R.color.colorYellowLight;
-                overlayColor = R.color.colorYellowDark;
-            } else if (loaded == 9) {
-                borderColor = R.color.colorRedLight;
-                overlayColor = R.color.colorRedDark;
-            } else if (loaded == 10) {
-                borderColor = R.color.colorOrangeLight;
-                overlayColor = R.color.colorOrangeDark;
-            } else if (loaded == 11) {
-                borderColor = R.color.colorGreenLight;
-                overlayColor = R.color.colorGreenDark;
-            } else if (loaded == 12) {
-                borderColor = R.color.colorBlueLight;
-                overlayColor = R.color.colorBlueDark;
+            int color = sPrefs.loadInt(Prefs.MARKER_STYLE);
+            if (color == 1) {
+                fillColor = R.color.colorRedTr;
+                strokeColor = R.color.colorRedDark;
+            } else if (color == 2) {
+                fillColor = R.color.colorGreenTr;
+                strokeColor = R.color.colorGreenDark;
+            } else if (color == 3) {
+                fillColor = R.color.colorBlueTr;
+                strokeColor = R.color.colorBlueDark;
+            } else if (color == 4) {
+                fillColor = R.color.colorYellowTr;
+                strokeColor = R.color.colorYellowDark;
+            } else if (color == 5) {
+                fillColor = R.color.colorLightCreenTr;
+                strokeColor = R.color.colorLightCreenDark;
+            } else if (color == 6) {
+                fillColor = R.color.colorLightBlueTr;
+                strokeColor = R.color.colorLightBlueDark;
+            } else if (color == 7) {
+                fillColor = R.color.colorGreyTr;
+                strokeColor = R.color.colorGreyDark;
+            } else if (color == 8) {
+                fillColor = R.color.colorVioletTr;
+                strokeColor = R.color.colorVioletDark;
+            } else if (color == 9) {
+                fillColor = R.color.colorBrownTr;
+                strokeColor = R.color.colorBrownDark;
+            } else if (color == 10) {
+                fillColor = R.color.colorOrangeTr;
+                strokeColor = R.color.colorOrangeDark;
+            } else if (color == 11) {
+                fillColor = R.color.colorPinkTr;
+                strokeColor = R.color.colorPinkDark;
+            } else if (color == 12) {
+                fillColor = R.color.colorSandTr;
+                strokeColor = R.color.colorSandDark;
+            } else if (color == 13) {
+                fillColor = R.color.colorDeepPurpleTr;
+                strokeColor = R.color.colorDeepPurpleDark;
+            } else if (color == 14) {
+                fillColor = R.color.colorDeepOrangeTr;
+                strokeColor = R.color.colorDeepOrangeDark;
+            } else if (color == 15) {
+                fillColor = R.color.colorIndigoTr;
+                strokeColor = R.color.colorIndigoDark;
+            } else if (color == 16) {
+                fillColor = R.color.colorLimeTr;
+                strokeColor = R.color.colorLimeDark;
             } else {
-                borderColor = R.color.colorBlueLight;
-                overlayColor = R.color.colorBlueDark;
+                fillColor = R.color.colorBlueTr;
+                strokeColor = R.color.colorBlueDark;
             }
         } else {
-            borderColor = R.color.colorBlueLight;
-            overlayColor = R.color.colorBlueDark;
+            fillColor = R.color.colorBlueTr;
+            strokeColor = R.color.colorBlueDark;
         }
-        return new int[]{borderColor, overlayColor};
+        return new int[]{fillColor, strokeColor};
+    }
+
+    public int[] getMarkerRadiusStyle(int color){
+        int fillColor;
+        int strokeColor;
+        if (color == 1) {
+            fillColor = R.color.colorRedTr;
+            strokeColor = R.color.colorRedDark;
+        } else if (color == 2) {
+            fillColor = R.color.colorGreenTr;
+            strokeColor = R.color.colorGreenDark;
+        } else if (color == 3) {
+            fillColor = R.color.colorBlueTr;
+            strokeColor = R.color.colorBlueDark;
+        } else if (color == 4) {
+            fillColor = R.color.colorYellowTr;
+            strokeColor = R.color.colorYellowDark;
+        } else if (color == 5) {
+            fillColor = R.color.colorLightCreenTr;
+            strokeColor = R.color.colorLightCreenDark;
+        } else if (color == 6) {
+            fillColor = R.color.colorLightBlueTr;
+            strokeColor = R.color.colorLightBlueDark;
+        } else if (color == 7) {
+            fillColor = R.color.colorGreyTr;
+            strokeColor = R.color.colorGreyDark;
+        } else if (color == 8) {
+            fillColor = R.color.colorVioletTr;
+            strokeColor = R.color.colorVioletDark;
+        } else if (color == 9) {
+            fillColor = R.color.colorBrownTr;
+            strokeColor = R.color.colorBrownDark;
+        } else if (color == 10) {
+            fillColor = R.color.colorOrangeTr;
+            strokeColor = R.color.colorOrangeDark;
+        } else if (color == 11) {
+            fillColor = R.color.colorPinkTr;
+            strokeColor = R.color.colorPinkDark;
+        } else if (color == 12) {
+            fillColor = R.color.colorSandTr;
+            strokeColor = R.color.colorSandDark;
+        } else if (color == 13) {
+            fillColor = R.color.colorDeepPurpleTr;
+            strokeColor = R.color.colorDeepPurpleDark;
+        } else if (color == 14) {
+            fillColor = R.color.colorDeepOrangeTr;
+            strokeColor = R.color.colorDeepOrangeDark;
+        } else if (color == 15) {
+            fillColor = R.color.colorIndigoTr;
+            strokeColor = R.color.colorIndigoDark;
+        } else if (color == 16) {
+            fillColor = R.color.colorLimeTr;
+            strokeColor = R.color.colorLimeDark;
+        } else {
+            fillColor = R.color.colorBlueTr;
+            strokeColor = R.color.colorBlueDark;
+        }
+        return new int[]{fillColor, strokeColor};
     }
 
     public int getMarkerStyle(){

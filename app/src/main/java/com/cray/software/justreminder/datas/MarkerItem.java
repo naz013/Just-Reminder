@@ -21,11 +21,17 @@ public class MarkerItem{
     private String title;
     private LatLng position;
     private int icon;
+    private long id;
 
-    public MarkerItem(String title, LatLng position, int icon){
+    public MarkerItem(String title, LatLng position, int icon, long id){
         this.position = position;
         this.title = title;
         this.icon = icon;
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getTitle(){

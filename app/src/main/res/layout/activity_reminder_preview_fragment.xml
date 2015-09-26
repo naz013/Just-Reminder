@@ -165,7 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:clickable="true"
-                android:name="com.google.android.gms.maps.MapFragment"/>
+                android:name="com.cray.software.justreminder.fragments.MapFragment"/>
 
             </LinearLayout>
 

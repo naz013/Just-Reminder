@@ -40,6 +40,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
 import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
@@ -61,7 +62,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private SharedPrefs sPrefs;
     private DropboxHelper dbx = new DropboxHelper(getActivity());
-    private SyncHelper syncHelper;
     private ProgressDialog pd;
     private ColorSetter cSetter;
     private GDriveHelper gdx;
@@ -87,6 +87,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private Typeface typefaceThin;
     private boolean isDropboxDeleted = false;
     private boolean isGoogleDeleted = false;
+    private boolean isAnimation = true;
 
     private Toolbar toolbar;
     private Spinner spinner;
@@ -178,6 +179,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             } else setNavigation();
         }
         new ScanTask(getActivity()).execute();
+
+        sPrefs = new SharedPrefs(getActivity());
+        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
     }
 
     private void setNavigation(){
@@ -268,15 +272,16 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void onClick(View view) {
                 if (filesCloudList.getVisibility() != View.VISIBLE) {
-                    filesCloudList.setVisibility(View.VISIBLE);
-                    cloudContainer.setVisibility(View.GONE);
+                    loadDropboxList();
+                    ViewUtils.collapse(cloudContainer);
+                    ViewUtils.fadeInAnimation(filesCloudList, isAnimation);
                 } else {
-                    filesCloudList.setVisibility(View.GONE);
+                    ViewUtils.fadeOutAnimation(filesCloudList, isAnimation);
                     if (isDropboxDeleted) {
                         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
                         loadInfo(pd);
                     } else {
-                        cloudContainer.setVisibility(View.VISIBLE);
+                        ViewUtils.expand(cloudContainer);
                         isDropboxDeleted = false;
                     }
                 }
@@ -315,6 +320,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         cloudContainer.setVisibility(View.GONE);
         loadInfo(pd);
+    }
+
+    private void loadDropboxList(){
         filesDataBase = new FilesDataBase(getActivity());
         filesDataBase.open();
         fileCursorAdapter = new FileCursorAdapter(getActivity(),
@@ -375,7 +383,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (c != null) c.close();
-            syncHelper = new SyncHelper(getActivity());
             if (SyncHelper.isSdPresent()){
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
@@ -454,15 +461,16 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void onClick(View view) {
                 if (filesGoogleList.getVisibility() != View.VISIBLE) {
-                    filesGoogleList.setVisibility(View.VISIBLE);
-                    googleContainer.setVisibility(View.GONE);
+                    loadGoogleList();
+                    ViewUtils.collapse(googleContainer);
+                    ViewUtils.fadeInAnimation(filesGoogleList, isAnimation);
                 } else {
-                    filesGoogleList.setVisibility(View.GONE);
+                    ViewUtils.fadeOutAnimation(filesGoogleList, isAnimation);
                     if (isGoogleDeleted) {
                         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
                         loadGoogleInfo(pd);
                     } else {
-                        googleContainer.setVisibility(View.VISIBLE);
+                        ViewUtils.expand(googleContainer);
                         isGoogleDeleted = false;
                     }
                 }
@@ -501,6 +509,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         googleContainer.setVisibility(View.GONE);
         loadGoogleInfo(pd);
+    }
+
+    private void loadGoogleList(){
         filesDataBase = new FilesDataBase(getActivity());
         filesDataBase.open();
         fileCursorAdapter = new FileCursorAdapter(getActivity(), filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE));
@@ -559,7 +570,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (c != null) c.close();
-            syncHelper = new SyncHelper(getActivity());
             if (SyncHelper.isSdPresent()){
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
@@ -729,20 +739,13 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void onClick(View view) {
                 if (filesList.getVisibility() != View.VISIBLE) {
-                    filesList.setVisibility(View.VISIBLE);
-                    container.setVisibility(View.GONE);
+                    loadLocalList();
+                    ViewUtils.collapse(container);
+                    ViewUtils.fadeInAnimation(filesList, isAnimation);
                 } else {
-                    filesList.setVisibility(View.GONE);
-                    container.setVisibility(View.VISIBLE);
-                    syncHelper = new SyncHelper(getActivity());
-                    if (SyncHelper.isSdPresent()) {
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        File[] files = sdPathDr.listFiles();
-                        localCount.setText(String.valueOf(files.length));
-                    } else {
-                        localCount.setText("0");
-                    }
+                    ViewUtils.fadeOutAnimation(filesList, isAnimation);
+                    ViewUtils.expand(container);
+                    showFilesCount();
                 }
             }
         });
@@ -753,7 +756,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View view) {
                 filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
-                syncHelper = new SyncHelper(getActivity());
                 Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL);
                 if (c != null && c.moveToFirst()) {
                     do {
@@ -766,32 +768,15 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (c != null) c.close();
 
                 if (container.getVisibility() == View.GONE) {
-                    filesList.setVisibility(View.GONE);
-                    container.setVisibility(View.VISIBLE);
-                    if (SyncHelper.isSdPresent()) {
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        File[] files = sdPathDr.listFiles();
-                        localCount.setText(String.valueOf(files.length));
-                    } else {
-                        localCount.setText("0");
-                    }
+                    ViewUtils.fadeOutAnimation(filesList, isAnimation);
+                    ViewUtils.expand(container);
+                    showFilesCount();
                 }
 
             }
         });
 
-        syncHelper = new SyncHelper(getActivity());
-        if (SyncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            File[] files = sdPathDr.listFiles();
-            if (files != null) {
-                localCount.setText(String.valueOf(files.length));
-            } else localCount.setText("0");
-        } else {
-            localCount.setText("0");
-        }
+        showFilesCount();
 
         filesList = (ListView) rootView.findViewById(R.id.filesList);
         filesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -800,6 +785,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 startActivity(new Intent(getActivity(), BackupFileEdit.class).putExtra(Constants.EDIT_ID, id));
             }
         });
+    }
+
+    private void loadLocalList(){
         filesDataBase = new FilesDataBase(getActivity());
         filesDataBase.open();
         fileCursorAdapter = new FileCursorAdapter(getActivity(),
@@ -851,6 +839,19 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
     }
 
+    private void showFilesCount() {
+        if (SyncHelper.isSdPresent()) {
+            File sdPath = Environment.getExternalStorageDirectory();
+            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
+            File[] files = sdPathDr.listFiles();
+            if (files != null) {
+                localCount.setText(String.valueOf(files.length));
+            } else localCount.setText("0");
+        } else {
+            localCount.setText("0");
+        }
+    }
+
     private void deleteLocalFile(long itemId) {
         if (itemId != 0) {
             String uuID = "";
@@ -859,7 +860,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (c != null) c.close();
-            syncHelper = new SyncHelper(getActivity());
             if (SyncHelper.isSdPresent()){
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
@@ -909,12 +909,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void detachLocal(){
         localLayout = (LinearLayout) rootView.findViewById(R.id.localLayout);
-        localLayout.setVisibility(View.GONE);
+        ViewUtils.collapse(localLayout);
     }
 
     private void detachDropbox(){
         cloudLayout = (LinearLayout) rootView.findViewById(R.id.cloudLayout);
-        cloudLayout.setVisibility(View.GONE);
+        ViewUtils.collapse(cloudLayout);
         usedSpace.setText("");
         freeSpace.setText("");
 
@@ -923,7 +923,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void detachGoogleDrive(){
         googleLayout = (LinearLayout) rootView.findViewById(R.id.googleLayout);
-        googleLayout.setVisibility(View.GONE);
+        ViewUtils.collapse(googleLayout);
         googleSpace.setText("");
         googleFreeSpace.setText("");
 
