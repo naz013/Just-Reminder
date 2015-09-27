@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -36,22 +35,22 @@ public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
         if (status){
             if (isConnected) {
                 try {
-                    helper.updateTaskStatus(Constants.TASKS_COMPLETE, listId, taskId);
+                    helper.updateTaskStatus(GTasksHelper.TASKS_COMPLETE, listId, taskId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, Constants.TASKS_COMPLETE);
+                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GTasksHelper.TASKS_COMPLETE);
             }
         } else {
             if (isConnected) {
                 try {
-                    helper.updateTaskStatus(Constants.TASKS_NEED_ACTION, listId, taskId);
+                    helper.updateTaskStatus(GTasksHelper.TASKS_NEED_ACTION, listId, taskId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, Constants.TASKS_NEED_ACTION);
+                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GTasksHelper.TASKS_NEED_ACTION);
             }
         }
         return null;

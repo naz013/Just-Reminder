@@ -57,10 +57,19 @@ public class ColorSetter {
         return typeface;
     }
 
+    /**
+     * Get color from resource.
+     * @param color resource.
+     * @return Color
+     */
     private int getColor(int color){
         return Utils.getColor(cContext, color);
     }
 
+    /**
+     * Get current theme primary color.
+     * @return Color
+     */
     public int colorSetter(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
@@ -127,6 +136,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get birthdays color for calendar.
+     * @return Color Resource
+     */
     public int colorBirthdayCalendar(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
@@ -195,6 +208,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get reminders color for calendar.
+     * @return Color Resource
+     */
     public int colorReminderCalendar(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
@@ -263,6 +280,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get current day color for calendar.
+     * @return Color Resource
+     */
     public int colorCurrentCalendar(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
@@ -389,10 +410,19 @@ public class ColorSetter {
         return drawable;
     }
 
+    /**
+     * Get drawable from resource.
+     * @param i resource.
+     * @return Drawable
+     */
     private Drawable getDrawable(int i){
         return Utils.getDrawable(cContext, i);
     }
 
+    /**
+     * Get style for ToggleButton.
+     * @return Drawable
+     */
     public Drawable toggleDrawable(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
@@ -459,6 +489,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get status bar color based on current application theme.
+     * @return Color
+     */
     public int colorStatus(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
@@ -525,6 +559,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get current theme light color.
+     * @return Color
+     */
     public int colorChooser(){
         sPrefs = new SharedPrefs(cContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
@@ -591,6 +629,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get theme for application based on user choice.
+     * @return Theme resource
+     */
     public int getStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
@@ -720,15 +762,10 @@ public class ColorSetter {
         return id;
     }
 
-    public int getNewStyle(){
-        int color;
-        sPrefs = new SharedPrefs(cContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            color = R.style.HomeDarkActionbar;
-        } else color = R.style.HomeWhiteActionbar;
-        return color;
-    }
-
+    /**
+     * Get style for spinner based on current theme.
+     * @return Color
+     */
     public int getSpinnerStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
@@ -738,6 +775,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get theme for dialog styled activity based on current application theme.
+     * @return Theme resource
+     */
     public int getDialogStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
@@ -867,6 +908,10 @@ public class ColorSetter {
         return id;
     }
 
+    /**
+     * Get theme for fullscreen activities.
+     * @return Theme resource
+     */
     public int getFullscreenStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
@@ -876,6 +921,10 @@ public class ColorSetter {
         return id;
     }
 
+    /**
+     * Get window background color based on current theme.
+     * @return Color
+     */
     public int getBackgroundStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
@@ -885,6 +934,10 @@ public class ColorSetter {
         return id;
     }
 
+    /**
+     * Get status bar color for reminder window based on current theme.
+     * @return Color
+     */
     public int getStatusBarStyle(){
         int id;
         sPrefs = new SharedPrefs(cContext);
@@ -894,6 +947,10 @@ public class ColorSetter {
         return id;
     }
 
+    /**
+     * Get background color for CardView based on current theme.
+     * @return Color
+     */
     public int getCardStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
@@ -903,6 +960,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get card-like background drawable based on current theme.
+     * @return Drawable resource
+     */
     public int getCardDrawableStyle(){
         int color;
         sPrefs = new SharedPrefs(cContext);
@@ -912,6 +973,10 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get screen orientation, depends on user settings.
+     * @return Integer
+     */
     public int getRequestOrientation(){
         int i;
         sPrefs = new SharedPrefs(cContext);
@@ -926,6 +991,10 @@ public class ColorSetter {
         return i;
     }
 
+    /**
+     * Get fill amd stroke color for drawing circle around marker on Google Map.
+     * @return
+     */
     public int[] getMarkerRadiusStyle(){
         int fillColor;
         int strokeColor;
@@ -991,6 +1060,11 @@ public class ColorSetter {
         return new int[]{fillColor, strokeColor};
     }
 
+    /**
+     * Get fill amd stroke color by marker color, for drawing circle around marker on Google Map.
+     * @param color marker color.
+     * @return
+     */
     public int[] getMarkerRadiusStyle(int color){
         int fillColor;
         int strokeColor;
@@ -1049,6 +1123,10 @@ public class ColorSetter {
         return new int[]{fillColor, strokeColor};
     }
 
+    /**
+     * Get marker icon, based on user settings.
+     * @return Drawable resource
+     */
     public int getMarkerStyle(){
         int color;
         if (Module.isPro()) {
@@ -1095,39 +1173,44 @@ public class ColorSetter {
         return color;
     }
 
-    public int getMarkerStyle(int marker){
+    /**
+     * Get marker icon by code.
+     * @param code code of marker icon.
+     * @return Drawable resource
+     */
+    public int getMarkerStyle(int code){
         int color;
-        if (marker == 1) {
+        if (code == 1) {
             color = R.drawable.marker_red;
-        } else if (marker == 2) {
+        } else if (code == 2) {
             color = R.drawable.marker_green;
-        } else if (marker == 3) {
+        } else if (code == 3) {
             color = R.drawable.marker_blue;
-        } else if (marker == 4) {
+        } else if (code == 4) {
             color = R.drawable.marker_yellow;
-        } else if (marker == 5) {
+        } else if (code == 5) {
             color = R.drawable.marker_green_light;
-        } else if (marker == 6) {
+        } else if (code == 6) {
             color = R.drawable.marker_blue_light;
-        } else if (marker == 7) {
+        } else if (code == 7) {
             color = R.drawable.marker_grey;
-        } else if (marker == 8) {
+        } else if (code == 8) {
             color = R.drawable.marker_violet;
-        } else if (marker == 9) {
+        } else if (code == 9) {
             color = R.drawable.marker_brown;
-        } else if (marker == 10) {
+        } else if (code == 10) {
             color = R.drawable.marker_orange;
-        } else if (marker == 11) {
+        } else if (code == 11) {
             color = R.drawable.marker_pink;
-        } else if (marker == 12) {
+        } else if (code == 12) {
             color = R.drawable.marker_teal;
-        } else if (marker == 13) {
+        } else if (code == 13) {
             color = R.drawable.marker_deep_purple;
-        } else if (marker == 14) {
+        } else if (code == 14) {
             color = R.drawable.marker_deep_orange;
-        } else if (marker == 15) {
+        } else if (code == 15) {
             color = R.drawable.marker_indigo;
-        } else if (marker == 16) {
+        } else if (code == 16) {
             color = R.drawable.marker_lime;
         } else {
             color = R.drawable.marker_blue;
@@ -1135,68 +1218,73 @@ public class ColorSetter {
         return color;
     }
 
-    public int getNoteColor(int position){
+    /**
+     * Get note primary color by code.
+     * @param code color code.
+     * @return Color resource
+     */
+    public int getNoteColor(int code){
         int color;
         if (Module.isPro()){
-            if (position == 0) {
+            if (code == 0) {
                 color = R.color.colorRed;
-            } else if (position == 1) {
+            } else if (code == 1) {
                 color = R.color.colorViolet;
-            } else if (position == 2) {
+            } else if (code == 2) {
                 color = R.color.colorGreen;
-            } else if (position == 3) {
+            } else if (code == 3) {
                 color = R.color.colorLightCreen;
-            } else if (position == 4) {
+            } else if (code == 4) {
                 color = R.color.colorBlue;
-            } else if (position == 5) {
+            } else if (code == 5) {
                 color = R.color.colorLightBlue;
-            } else if (position == 6) {
+            } else if (code == 6) {
                 color = R.color.colorYellow;
-            } else if (position == 7) {
+            } else if (code == 7) {
                 color = R.color.colorOrange;
-            } else if (position == 8) {
+            } else if (code == 8) {
                 color = R.color.colorGrey;
-            } else if (position == 9) {
+            } else if (code == 9) {
                 color = R.color.colorPink;
-            } else if (position == 10) {
+            } else if (code == 10) {
                 color = R.color.colorSand;
-            } else if (position == 11) {
+            } else if (code == 11) {
                 color = R.color.colorBrown;
-            } else if (position == 12) {
+            } else if (code == 12) {
                 color = R.color.colorDeepPurple;
-            } else if (position == 13) {
+            } else if (code == 13) {
                 color = R.color.colorDeepOrange;
-            } else if (position == 14) {
+            } else if (code == 14) {
                 color = R.color.colorLime;
-            } else if (position == 15) {
+            } else if (code == 15) {
                 color = R.color.colorIndigo;
             } else {
                 color = R.color.colorGrey;
             }
         } else {
-            if (position == 0) {
+            if (code == 0) {
                 color = R.color.colorRed;
-            } else if (position == 1) {
+            } else if (code == 1) {
                 color = R.color.colorViolet;
-            } else if (position == 2) {
+            } else if (code == 2) {
                 color = R.color.colorGreen;
-            } else if (position == 3) {
+            } else if (code == 3) {
                 color = R.color.colorLightCreen;
-            } else if (position == 4) {
+            } else if (code == 4) {
                 color = R.color.colorBlue;
-            } else if (position == 5) {
+            } else if (code == 5) {
                 color = R.color.colorLightBlue;
-            } else if (position == 6) {
+            } else if (code == 6) {
                 color = R.color.colorYellow;
-            } else if (position == 7) {
+            } else if (code == 7) {
                 color = R.color.colorOrange;
-            } else if (position == 8) {
+            } else if (code == 8) {
                 color = R.color.colorGrey;
-            } else if (position == 9) {
+            } else if (code == 9) {
                 color = R.color.colorPink;
-            } else if (position == 10) {
+            } else if (code == 10) {
                 color = R.color.colorSand;
-            } else if (position == 11) {
+            } else if (code == 11) {
                 color = R.color.colorBrown;
             } else {
                 color = R.color.colorGrey;
@@ -1205,68 +1293,73 @@ public class ColorSetter {
         return color;
     }
 
-    public int getCategoryIndicator(int position){
+    /**
+     * Get reminder group indicator by code.
+     * @param code indicator code.
+     * @return Drawable resource
+     */
+    public int getCategoryIndicator(int code){
         int color;
         if (Module.isPro()){
-            if (position == 0) {
+            if (code == 0) {
                 color = R.drawable.circle_red;
-            } else if (position == 1) {
+            } else if (code == 1) {
                 color = R.drawable.circle_violet;
-            } else if (position == 2) {
+            } else if (code == 2) {
                 color = R.drawable.circle_green;
-            } else if (position == 3) {
+            } else if (code == 3) {
                 color = R.drawable.circle_green_light;
-            } else if (position == 4) {
+            } else if (code == 4) {
                 color = R.drawable.circle_blue;
-            } else if (position == 5) {
+            } else if (code == 5) {
                 color = R.drawable.circle_blue_light;
-            } else if (position == 6) {
+            } else if (code == 6) {
                 color = R.drawable.circle_yellow;
-            } else if (position == 7) {
+            } else if (code == 7) {
                 color = R.drawable.circle_orange;
-            } else if (position == 8) {
+            } else if (code == 8) {
                 color = R.drawable.circle_grey;
-            } else if (position == 9) {
+            } else if (code == 9) {
                 color = R.drawable.circle_pink;
-            } else if (position == 10) {
+            } else if (code == 10) {
                 color = R.drawable.circle_teal;
-            } else if (position == 11) {
+            } else if (code == 11) {
                 color = R.drawable.circle_brown;
-            } else if (position == 12) {
+            } else if (code == 12) {
                 color = R.drawable.circle_deep_purple;
-            } else if (position == 13) {
+            } else if (code == 13) {
                 color = R.drawable.circle_deep_orange;
-            } else if (position == 14) {
+            } else if (code == 14) {
                 color = R.drawable.circle_lime;
-            } else if (position == 15) {
+            } else if (code == 15) {
                 color = R.drawable.circle_indigo;
             } else {
                 color = R.drawable.circle_blue;
             }
         } else {
-            if (position == 0) {
+            if (code == 0) {
                 color = R.drawable.circle_red;
-            } else if (position == 1) {
+            } else if (code == 1) {
                 color = R.drawable.circle_violet;
-            } else if (position == 2) {
+            } else if (code == 2) {
                 color = R.drawable.circle_green;
-            } else if (position == 3) {
+            } else if (code == 3) {
                 color = R.drawable.circle_green_light;
-            } else if (position == 4) {
+            } else if (code == 4) {
                 color = R.drawable.circle_blue;
-            } else if (position == 5) {
+            } else if (code == 5) {
                 color = R.drawable.circle_blue_light;
-            } else if (position == 6) {
+            } else if (code == 6) {
                 color = R.drawable.circle_yellow;
-            } else if (position == 7) {
+            } else if (code == 7) {
                 color = R.drawable.circle_orange;
-            } else if (position == 8) {
+            } else if (code == 8) {
                 color = R.drawable.circle_grey;
-            } else if (position == 9) {
+            } else if (code == 9) {
                 color = R.drawable.circle_pink;
-            } else if (position == 10) {
+            } else if (code == 10) {
                 color = R.drawable.circle_teal;
-            } else if (position == 11) {
+            } else if (code == 11) {
                 color = R.drawable.circle_brown;
             } else {
                 color = R.drawable.circle_blue;
@@ -1275,68 +1368,73 @@ public class ColorSetter {
         return color;
     }
 
-    public int getNoteDarkColor(int position){
+    /**
+     * Get note dark color by primary color.
+     * @param primary primary color.
+     * @return Color
+     */
+    public int getNoteDarkColor(int primary){
         int color;
         if (Module.isPro()){
-            if (position == R.color.colorRed) {
+            if (primary == R.color.colorRed) {
                 color = getColor(R.color.colorRedDark);
-            } else if (position == R.color.colorViolet) {
+            } else if (primary == R.color.colorViolet) {
                 color = getColor(R.color.colorVioletDark);
-            } else if (position == R.color.colorGreen) {
+            } else if (primary == R.color.colorGreen) {
                 color = getColor(R.color.colorGreenDark);
-            } else if (position == R.color.colorLightCreen) {
+            } else if (primary == R.color.colorLightCreen) {
                 color = getColor(R.color.colorLightCreenDark);
-            } else if (position == R.color.colorBlue) {
+            } else if (primary == R.color.colorBlue) {
                 color = getColor(R.color.colorBlueDark);
-            } else if (position == R.color.colorLightBlue) {
+            } else if (primary == R.color.colorLightBlue) {
                 color = getColor(R.color.colorLightBlueDark);
-            } else if (position == R.color.colorYellow) {
+            } else if (primary == R.color.colorYellow) {
                 color = getColor(R.color.colorYellowDark);
-            } else if (position == R.color.colorOrange) {
+            } else if (primary == R.color.colorOrange) {
                 color = getColor(R.color.colorOrangeDark);
-            } else if (position == R.color.colorGrey) {
+            } else if (primary == R.color.colorGrey) {
                 color = getColor(R.color.colorGreyDark);
-            } else if (position == R.color.colorPink) {
+            } else if (primary == R.color.colorPink) {
                 color = getColor(R.color.colorPinkDark);
-            } else if (position == R.color.colorSand) {
+            } else if (primary == R.color.colorSand) {
                 color = getColor(R.color.colorSandDark);
-            } else if (position == R.color.colorBrown) {
+            } else if (primary == R.color.colorBrown) {
                 color = getColor(R.color.colorBrownDark);
-            } else if (position == R.color.colorDeepPurple) {
+            } else if (primary == R.color.colorDeepPurple) {
                 color = getColor(R.color.colorDeepPurpleDark);
-            } else if (position == R.color.colorDeepOrange) {
+            } else if (primary == R.color.colorDeepOrange) {
                 color = getColor(R.color.colorDeepOrangeDark);
-            } else if (position == R.color.colorLime) {
+            } else if (primary == R.color.colorLime) {
                 color = getColor(R.color.colorLimeDark);
-            } else if (position == R.color.colorIndigo) {
+            } else if (primary == R.color.colorIndigo) {
                 color = getColor(R.color.colorIndigoDark);
             } else {
                 color = getColor(R.color.colorGreyDark);
             }
         } else {
-            if (position == R.color.colorRed) {
+            if (primary == R.color.colorRed) {
                 color = getColor(R.color.colorRedDark);
-            } else if (position == R.color.colorViolet) {
+            } else if (primary == R.color.colorViolet) {
                 color = getColor(R.color.colorVioletDark);
-            } else if (position == R.color.colorGreen) {
+            } else if (primary == R.color.colorGreen) {
                 color = getColor(R.color.colorGreenDark);
-            } else if (position == R.color.colorLightCreen) {
+            } else if (primary == R.color.colorLightCreen) {
                 color = getColor(R.color.colorLightCreenDark);
-            } else if (position == R.color.colorBlue) {
+            } else if (primary == R.color.colorBlue) {
                 color = getColor(R.color.colorBlueDark);
-            } else if (position == R.color.colorLightBlue) {
+            } else if (primary == R.color.colorLightBlue) {
                 color = getColor(R.color.colorLightBlueDark);
-            } else if (position == R.color.colorYellow) {
+            } else if (primary == R.color.colorYellow) {
                 color = getColor(R.color.colorYellowDark);
-            } else if (position == R.color.colorOrange) {
+            } else if (primary == R.color.colorOrange) {
                 color = getColor(R.color.colorOrangeDark);
-            } else if (position == R.color.colorGrey) {
+            } else if (primary == R.color.colorGrey) {
                 color = getColor(R.color.colorGreyDark);
-            } else if (position == R.color.colorPink) {
+            } else if (primary == R.color.colorPink) {
                 color = getColor(R.color.colorPinkDark);
-            } else if (position == R.color.colorSand) {
+            } else if (primary == R.color.colorSand) {
                 color = getColor(R.color.colorSandDark);
-            } else if (position == R.color.colorBrown) {
+            } else if (primary == R.color.colorBrown) {
                 color = getColor(R.color.colorBrownDark);
             } else {
                 color = getColor(R.color.colorGreyDark);
@@ -1345,68 +1443,73 @@ public class ColorSetter {
         return color;
     }
 
-    public int getNoteLightColor(int position){
+    /**
+     * Get note light color by primary color.
+     * @param primary primary color.
+     * @return Color
+     */
+    public int getNoteLightColor(int primary){
         int color;
         if (Module.isPro()){
-            if (position == R.color.colorRed) {
+            if (primary == R.color.colorRed) {
                 color = getColor(R.color.colorRedLight);
-            } else if (position == R.color.colorViolet) {
+            } else if (primary == R.color.colorViolet) {
                 color = getColor(R.color.colorVioletLight);
-            } else if (position == R.color.colorGreen) {
+            } else if (primary == R.color.colorGreen) {
                 color = getColor(R.color.colorGreenLight);
-            } else if (position == R.color.colorLightCreen) {
+            } else if (primary == R.color.colorLightCreen) {
                 color = getColor(R.color.colorLightCreenLight);
-            } else if (position == R.color.colorBlue) {
+            } else if (primary == R.color.colorBlue) {
                 color = getColor(R.color.colorBlueLight);
-            } else if (position == R.color.colorLightBlue) {
+            } else if (primary == R.color.colorLightBlue) {
                 color = getColor(R.color.colorLightBlueLight);
-            } else if (position == R.color.colorYellow) {
+            } else if (primary == R.color.colorYellow) {
                 color = getColor(R.color.colorYellowLight);
-            } else if (position == R.color.colorOrange) {
+            } else if (primary == R.color.colorOrange) {
                 color = getColor(R.color.colorOrangeLight);
-            } else if (position == R.color.colorGrey) {
+            } else if (primary == R.color.colorGrey) {
                 color = getColor(R.color.colorGreyLight);
-            } else if (position == R.color.colorPink) {
+            } else if (primary == R.color.colorPink) {
                 color = getColor(R.color.colorPinkLight);
-            } else if (position == R.color.colorSand) {
+            } else if (primary == R.color.colorSand) {
                 color = getColor(R.color.colorSandLight);
-            } else if (position == R.color.colorBrown) {
+            } else if (primary == R.color.colorBrown) {
                 color = getColor(R.color.colorBrownLight);
-            } else if (position == R.color.colorDeepPurple) {
+            } else if (primary == R.color.colorDeepPurple) {
                 color = getColor(R.color.colorDeepPurpleLight);
-            } else if (position == R.color.colorDeepOrange) {
+            } else if (primary == R.color.colorDeepOrange) {
                 color = getColor(R.color.colorDeepOrangeLight);
-            } else if (position == R.color.colorLime) {
+            } else if (primary == R.color.colorLime) {
                 color = getColor(R.color.colorLimeLight);
-            } else if (position == R.color.colorIndigo) {
+            } else if (primary == R.color.colorIndigo) {
                 color = getColor(R.color.colorIndigoLight);
             } else {
                 color = getColor(R.color.colorGreyLight);
             }
         } else {
-            if (position == R.color.colorRed) {
+            if (primary == R.color.colorRed) {
                 color = getColor(R.color.colorRedLight);
-            } else if (position == R.color.colorViolet) {
+            } else if (primary == R.color.colorViolet) {
                 color = getColor(R.color.colorVioletLight);
-            } else if (position == R.color.colorGreen) {
+            } else if (primary == R.color.colorGreen) {
                 color = getColor(R.color.colorGreenLight);
-            } else if (position == R.color.colorLightCreen) {
+            } else if (primary == R.color.colorLightCreen) {
                 color = getColor(R.color.colorLightCreenLight);
-            } else if (position == R.color.colorBlue) {
+            } else if (primary == R.color.colorBlue) {
                 color = getColor(R.color.colorBlueLight);
-            } else if (position == R.color.colorLightBlue) {
+            } else if (primary == R.color.colorLightBlue) {
                 color = getColor(R.color.colorLightBlueLight);
-            } else if (position == R.color.colorYellow) {
+            } else if (primary == R.color.colorYellow) {
                 color = getColor(R.color.colorYellowLight);
-            } else if (position == R.color.colorOrange) {
+            } else if (primary == R.color.colorOrange) {
                 color = getColor(R.color.colorOrangeLight);
-            } else if (position == R.color.colorGrey) {
+            } else if (primary == R.color.colorGrey) {
                 color = getColor(R.color.colorGreyLight);
-            } else if (position == R.color.colorPink) {
+            } else if (primary == R.color.colorPink) {
                 color = getColor(R.color.colorPinkLight);
-            } else if (position == R.color.colorSand) {
+            } else if (primary == R.color.colorSand) {
                 color = getColor(R.color.colorSandLight);
-            } else if (position == R.color.colorBrown) {
+            } else if (primary == R.color.colorBrown) {
                 color = getColor(R.color.colorBrownLight);
             } else {
                 color = getColor(R.color.colorGreyLight);

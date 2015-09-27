@@ -30,14 +30,16 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Google Drive API helper class.
+ */
 public class GDriveHelper {
 
-    Context ctx;
-    SharedPrefs prefs;
+    private Context ctx;
+    private SharedPrefs prefs;
 
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance();
-    private GoogleAccountCredential m_credential;
     private com.google.api.services.drive.Drive m_client;
     private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
 
@@ -45,25 +47,39 @@ public class GDriveHelper {
         this.ctx = context;
     }
 
+    /**
+     * Authorization method.
+     */
     public void authorize(){
         prefs = new SharedPrefs(ctx);
-        m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(DriveScopes.DRIVE));
+        GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(DriveScopes.DRIVE));
         m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         m_client = new com.google.api.services.drive.Drive.Builder(
                 m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
                 .build();
     }
 
+    /**
+     * Check if user has already login to Google Drive from this application.
+     * @return
+     */
     public boolean isLinked(){
         prefs = new SharedPrefs(ctx);
         return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
+    /**
+     * Logout from Drive on this application.
+     */
     public void unlink(){
         prefs = new SharedPrefs(ctx);
         prefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
     }
 
+    /**
+     * Count all backup files stored on Google Drive.
+     * @return
+     */
     public int countFiles(){
         authorize();
         int i = 0;
@@ -94,7 +110,11 @@ public class GDriveHelper {
         return i;
     }
 
-    public void saveFileToDrive() throws IOException {
+    /**
+     * Upload all reminder backup files stored on SD Card.
+     * @throws IOException
+     */
+    public void saveReminderToDrive() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -116,7 +136,7 @@ public class GDriveHelper {
 
                     FileContent mediaContent = new FileContent("application/json", file);
 
-                    deleteFile(file.getName());
+                    deleteReminder(file.getName());
 
                     com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();
@@ -127,6 +147,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Upload all note backup files stored on SD Card.
+     * @throws IOException
+     */
     public void saveNoteToDrive() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -160,6 +184,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Upload all group backup files stored on SD Card.
+     * @throws IOException
+     */
     public void saveGroupToDrive() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -193,6 +221,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Upload all birthday backup files stored on SD Card.
+     * @throws IOException
+     */
     public void saveBirthToDrive() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -226,7 +258,11 @@ public class GDriveHelper {
         }
     }
 
-    public void loadFileFromDrive() throws IOException {
+    /**
+     * Download on SD Card all reminder backup files stored on Google Drive.
+     * @throws IOException
+     */
+    public void downloadReminder() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -282,7 +318,11 @@ public class GDriveHelper {
         }
     }
 
-    public void loadNoteFromDrive() throws IOException {
+    /**
+     * Download on SD Card all note backup files stored on Google Drive.
+     * @throws IOException
+     */
+    public void downloadNote() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -338,7 +378,11 @@ public class GDriveHelper {
         }
     }
 
-    public void loadGroupsFromDrive() throws IOException {
+    /**
+     * Download on SD Card all group backup files stored on Google Drive.
+     * @throws IOException
+     */
+    public void downloadGroup() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -394,7 +438,11 @@ public class GDriveHelper {
         }
     }
 
-    public void loadBirthFromDrive() throws IOException {
+    /**
+     * Download on SD Card all birthday backup files stored on Google Drive.
+     * @throws IOException
+     */
+    public void downloadBirthday() throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -450,7 +498,11 @@ public class GDriveHelper {
         }
     }
 
-    public void deleteFile (String title){
+    /**
+     * Delete reminder backup file from Google Drive by file name.
+     * @param title file name.
+     */
+    public void deleteReminder(String title){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -485,6 +537,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Delete note backup file from Google Drive by file name.
+     * @param title file name.
+     */
     public void deleteNote (String title){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -520,6 +576,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Delete group backup file from Google Drive by file name.
+     * @param title file name.
+     */
     public void deleteGroup (String title){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -555,7 +615,11 @@ public class GDriveHelper {
         }
     }
 
-    public void deleteBirth (String title){
+    /**
+     * Delete birthday backup file from Google Drive by file name.
+     * @param title file name.
+     */
+    public void deleteBirthday(String title){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
             authorize();
@@ -590,6 +654,9 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Delete application folder from Google Drive.
+     */
     public void clean(){
         if (isLinked()) {
             prefs = new SharedPrefs(ctx);
@@ -627,6 +694,10 @@ public class GDriveHelper {
         }
     }
 
+    /**
+     * Get application folder identifier on Google Drive.
+     * @return
+     */
     private String getFolderId(){
         String id = null;
         Drive.Files.List request = null;
@@ -662,6 +733,11 @@ public class GDriveHelper {
         return id;
     }
 
+    /**
+     * Create application folder on Google Drive.
+     * @return
+     * @throws IOException
+     */
     private com.google.api.services.drive.model.File createFolder() throws IOException {
         com.google.api.services.drive.model.File folder = new com.google.api.services.drive.model.File();
         folder.setTitle("Just Reminder");

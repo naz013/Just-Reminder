@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -58,7 +59,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
                     String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                     String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                     long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                    if (checks.matches(Constants.TASKS_NEED_ACTION)) {
+                    if (checks.matches(GTasksHelper.TASKS_NEED_ACTION)) {
                         mData.add(new ListItems(title, mId, checks, taskId, date, listId, note));
                     }
                 }

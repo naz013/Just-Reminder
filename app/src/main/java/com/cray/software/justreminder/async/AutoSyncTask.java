@@ -3,18 +3,13 @@ package com.cray.software.justreminder.async;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import org.json.JSONException;

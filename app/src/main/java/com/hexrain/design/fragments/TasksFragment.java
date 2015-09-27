@@ -27,6 +27,7 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.TaskListAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.datas.TaskListData;
@@ -259,7 +260,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
         SharedPrefs sPrefs = new SharedPrefs(activity);
         taskListDatum = new ArrayList<>();
         taskListDatum.clear();
-        taskListDatum.add(new TaskListData(getString(R.string.string_all_tasks), 0, Constants.TASKS_ALL, 25));
+        taskListDatum.add(new TaskListData(getString(R.string.string_all_tasks), 0, GTasksHelper.TASKS_ALL, 25));
         DB = new TasksData(activity);
         DB.open();
         Cursor c = DB.getTasksLists();
@@ -351,7 +352,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             mList.setAdapter(adapter);
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
-        } else if (id.matches(Constants.TASKS_ALL)){
+        } else if (id.matches(GTasksHelper.TASKS_ALL)){
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
             DB.open();
@@ -431,7 +432,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             do {
                 long ids = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
                 String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                if (status.matches(Constants.TASKS_COMPLETE)){
+                if (status.matches(GTasksHelper.TASKS_COMPLETE)){
                     DB.deleteTask(ids);
                 }
             } while (c.moveToNext());

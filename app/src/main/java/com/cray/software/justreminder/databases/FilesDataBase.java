@@ -126,38 +126,17 @@ public class FilesDataBase {
 
     public Cursor queryGroup() throws SQLException {
         openGuard();
-        return db.query(ARCHIVE_TABLE_NAME, new String[] {Constants.COLUMN_ID, Constants.FilesConstants.COLUMN_FILE_NAME,
-                Constants.FilesConstants.COLUMN_FILE_TYPE, Constants.FilesConstants.COLUMN_FILE_LOCATION,
-                        Constants.FilesConstants.COLUMN_FILE_LAST_EDIT,
-                        Constants.COLUMN_TEXT, Constants.COLUMN_TYPE, Constants.COLUMN_DAY,
-                Constants.COLUMN_MONTH, Constants.COLUMN_YEAR, Constants.COLUMN_HOUR, Constants.COLUMN_MINUTE, Constants.COLUMN_SECONDS,
-                Constants.COLUMN_NUMBER, Constants.COLUMN_REPEAT, Constants.COLUMN_REMIND_TIME, Constants.COLUMN_REMINDERS_COUNT,
-                Constants.COLUMN_LATITUDE, Constants.COLUMN_LONGITUDE, Constants.COLUMN_TECH_VAR, Constants.COLUMN_WEEKDAYS}, null,
-                null, null, null, null);
+        return db.query(ARCHIVE_TABLE_NAME, null, null, null, null, null, null);
     }
 
     public Cursor getTask(long rowId) throws SQLException {
         openGuard();
-        return db.query(ARCHIVE_TABLE_NAME, new String[] {Constants.COLUMN_ID, Constants.FilesConstants.COLUMN_FILE_NAME,
-                        Constants.FilesConstants.COLUMN_FILE_TYPE, Constants.FilesConstants.COLUMN_FILE_LOCATION,
-                        Constants.FilesConstants.COLUMN_FILE_LAST_EDIT,
-                        Constants.COLUMN_TEXT, Constants.COLUMN_TYPE, Constants.COLUMN_DAY, Constants.COLUMN_MONTH,
-                Constants.COLUMN_YEAR, Constants.COLUMN_HOUR, Constants.COLUMN_MINUTE, Constants.COLUMN_SECONDS, Constants.COLUMN_NUMBER,
-                Constants.COLUMN_REPEAT, Constants.COLUMN_REMIND_TIME, Constants.COLUMN_REMINDERS_COUNT, Constants.COLUMN_LATITUDE,
-                Constants.COLUMN_LONGITUDE, Constants.COLUMN_TECH_VAR, Constants.COLUMN_WEEKDAYS},
-                Constants.COLUMN_ID  + "=" + rowId, null, null, null, null, null);
+        return db.query(ARCHIVE_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + rowId, null, null, null, null, null);
     }
 
     public Cursor getTask(String type) throws SQLException {
         openGuard();
-        return db.query(ARCHIVE_TABLE_NAME, new String[] {Constants.COLUMN_ID, Constants.FilesConstants.COLUMN_FILE_NAME,
-                        Constants.FilesConstants.COLUMN_FILE_TYPE, Constants.FilesConstants.COLUMN_FILE_LOCATION,
-                        Constants.FilesConstants.COLUMN_FILE_LAST_EDIT,
-                        Constants.COLUMN_TEXT, Constants.COLUMN_TYPE, Constants.COLUMN_DAY, Constants.COLUMN_MONTH,
-                        Constants.COLUMN_YEAR, Constants.COLUMN_HOUR, Constants.COLUMN_MINUTE, Constants.COLUMN_SECONDS, Constants.COLUMN_NUMBER,
-                        Constants.COLUMN_REPEAT, Constants.COLUMN_REMIND_TIME, Constants.COLUMN_REMINDERS_COUNT, Constants.COLUMN_LATITUDE,
-                        Constants.COLUMN_LONGITUDE, Constants.COLUMN_TECH_VAR, Constants.COLUMN_WEEKDAYS},
-                Constants.FilesConstants.COLUMN_FILE_TYPE +
+        return db.query(ARCHIVE_TABLE_NAME, null, Constants.FilesConstants.COLUMN_FILE_TYPE +
                         "='" + type + "'", null, null, null, null, null);
     }
 

@@ -32,7 +32,6 @@ public class TasksConstants {
     public static final String COLUMN_CODE = "code_column";
     public static final String COLUMN_LOCAL_ID = "local_id_column";
 
-
     //task constants
     public static final String UPDATE_TASK_LIST = "update_task_list";
     public static final String UPDATE_TASK = "update_task";
@@ -41,11 +40,13 @@ public class TasksConstants {
     public static final String DELETE_TASK_LIST = "delete_task_list";
     public static final String CLEAR_TASK_LIST = "clear_task_list";
     public static final String DELETE_TASK = "delete_task";
+    public static final String MOVE_TASK = "move_task";
     public static final String UPDATE_TASK_STATUS = "update_task_status";
 
     //task constants code
     public static final int UPDATE_LIST = 102;
     public static final int UPDATE = 103;
+    public static final int MOVE = 110;
     public static final int INSERT_LIST = 104;
     public static final int INSERT = 105;
     public static final int DELETE_LIST = 106;

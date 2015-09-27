@@ -21,6 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="70dp"
             android:orientation="vertical">
 
             <com.cray.software.justreminder.views.FloatingEditText
@@ -31,21 +32,35 @@
                 android:textSize="@dimen/create_text_size_secondary"
                 android:hint="@string/tast_hint"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:background="@android:color/transparent"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginRight="15dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_dark"/>
 
             <com.cray.software.justreminder.views.FloatingEditText
                 app:floating_edit_text_highlighted_color="?attr/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:id="@+id/noteField"
                 android:textSize="@dimen/create_text_size_secondary"
                 android:hint="@string/quick_note_hint"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginRight="15dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_dark"/>
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -84,6 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
 
@@ -119,6 +135,11 @@
                 </LinearLayout>
 
                 </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_dark"/>
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -162,26 +183,52 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
                     android:textSize="@dimen/create_text_size_primary"
                     android:layout_marginTop="10dp"
                     android:id="@+id/timeField" />
-
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_dark"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:clickable="false"
                 android:textAllCaps="true"
-                android:id="@+id/listText"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical"
-                android:textSize="@dimen/create_text_size_normal" />
+                android:textSize="@dimen/create_text_size_normal"
+                android:text="@string/string_list"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:textAllCaps="true"
+                android:id="@+id/listText"
+                android:text="Reminder"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:textSize="@dimen/create_text_size_primary"
+                android:layout_marginTop="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_dark"/>
 
         </LinearLayout>
 

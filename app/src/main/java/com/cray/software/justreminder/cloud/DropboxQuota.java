@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 
 import com.cray.software.justreminder.helpers.SyncHelper;
 
+/**
+ * Asynchronously get Dropbox used, shared and all space.
+ */
 public class DropboxQuota extends AsyncTask<Void, Void, Long[]> {
 
     DropboxHelper dbx;

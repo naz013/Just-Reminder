@@ -407,7 +407,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 dbx.startSession();
                 if (dbx.isLinked()){
                     if (SyncHelper.isConnected(getActivity())){
-                        dbx.deleteFile(name);
+                        dbx.deleteReminder(name);
                     }
                 }
 
@@ -593,7 +593,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 gdx = new GDriveHelper(getActivity());
                 if (gdx.isLinked()){
                     if (SyncHelper.isConnected(getActivity())){
-                        gdx.deleteFile(name + Constants.FILE_NAME_REMINDER);
+                        gdx.deleteReminder(name + Constants.FILE_NAME_REMINDER);
                     }
                 }
 
@@ -617,7 +617,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             public void run() {
                 gdx = new GDriveHelper(getActivity());
                 try {
-                    gdx.loadFileFromDrive();
+                    gdx.downloadReminder();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -650,7 +650,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void run() {
                 dbx = new DropboxHelper(getActivity());
-                dbx.downloadFromCloud();
+                dbx.downloadReminder();
 
                 String name = null;
                 try {

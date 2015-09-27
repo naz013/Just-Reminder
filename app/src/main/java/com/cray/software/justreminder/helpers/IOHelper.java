@@ -14,19 +14,25 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Backup files save, sync, delete helper class.
+ */
 public class IOHelper {
 
-    Context context;
-    boolean isConnected;
+    private Context context;
+    private boolean isConnected;
 
     public IOHelper (Context context){
         this.context = context;
         isConnected = SyncHelper.isConnected(context);
     }
 
+    /**
+     * Delete all local and cloud file copies.
+     * @param name file name.
+     */
     public void deleteReminder(String name){
-        SyncHelper syncHelper = new SyncHelper(context);
-        if (syncHelper.isSdPresent()) {
+        if (SyncHelper.isSdPresent()) {
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
             String exportFileName = name + Constants.FILE_NAME_REMINDER;
@@ -51,12 +57,15 @@ public class IOHelper {
             }
         }
         if (isConnected){
-            new DropboxHelper(context).deleteFile(name);
-            new GDriveHelper(context).deleteFile(name);
-            //new BoxHelper(context).deleteFile(name);
+            new DropboxHelper(context).deleteReminder(name);
+            new GDriveHelper(context).deleteReminder(name);
+            //new BoxHelper(context).deleteReminder(name);
         }
     }
 
+    /**
+     * Create backup files for reminders, groups, birthdays and notes.
+     */
     public void backup(){
         backupGroup(true);
         backupReminder(true);
@@ -70,6 +79,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Create backup files for groups.
+     * @param isCloud create cloud backup.
+     */
     public void backupGroup(boolean isCloud){
         try {
             new SyncHelper(context).exportGroups();
@@ -77,7 +90,7 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadGroupToCloud();
+            new DropboxHelper(context).uploadGroup();
             try {
                 new GDriveHelper(context).saveGroupToDrive();
             } catch (IOException e) {
@@ -87,9 +100,12 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Restore all groups from backup files.
+     * @param isCloud restore from cloud.
+     */
     public void restoreGroup(boolean isCloud){
-        SyncHelper sHelp = new SyncHelper(context);
-        if (sHelp.isSdPresent()) {
+        if (SyncHelper.isSdPresent()) {
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
             if (sdPathDr.exists()) {
@@ -97,7 +113,7 @@ public class IOHelper {
                 final int x = files.length;
                 if (x > 0) {
                     try {
-                        sHelp.importGroup(null, null);
+                        new SyncHelper(context).importGroup(null, null);
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
@@ -105,9 +121,9 @@ public class IOHelper {
             }
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadGroupFromCloud();
+            new DropboxHelper(context).downloadGroup();
             try {
-                new GDriveHelper(context).loadGroupsFromDrive();
+                new GDriveHelper(context).downloadGroup();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,6 +131,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Create backup files for reminder.
+     * @param isCloud create cloud backup.
+     */
     public void backupReminder(boolean isCloud){
         try {
             new SyncHelper(context).exportReminderToJSON();
@@ -122,9 +142,9 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadToCloud(null);
+            new DropboxHelper(context).uploadReminder(null);
             try {
-                new GDriveHelper(context).saveFileToDrive();
+                new GDriveHelper(context).saveReminderToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -132,9 +152,12 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Restore all reminder from backup files.
+     * @param isCloud restore from cloud.
+     */
     public void restoreReminder(boolean isCloud){
-        SyncHelper sHelp = new SyncHelper(context);
-        if (sHelp.isSdPresent()) {
+        if (SyncHelper.isSdPresent()) {
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
             if (sdPathDr.exists()) {
@@ -142,7 +165,7 @@ public class IOHelper {
                 final int x = files.length;
                 if (x > 0) {
                     try {
-                        sHelp.importReminderFromJSON(null, null);
+                        new SyncHelper(context).importReminderFromJSON(null, null);
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
@@ -150,9 +173,9 @@ public class IOHelper {
             }
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadFromCloud();
+            new DropboxHelper(context).downloadReminder();
             try {
-                new GDriveHelper(context).loadFileFromDrive();
+                new GDriveHelper(context).downloadReminder();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -160,6 +183,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Create backup files for notes.
+     * @param isCloud create cloud backup.
+     */
     public void backupNote(boolean isCloud){
         try {
             new SyncHelper(context).exportNotes();
@@ -167,7 +194,7 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadNoteToCloud();
+            new DropboxHelper(context).uploadNote();
             try {
                 new GDriveHelper(context).saveNoteToDrive();
             } catch (IOException e) {
@@ -177,6 +204,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Restore all notes from backup files.
+     * @param isCloud restore from cloud.
+     */
     public void restoreNote(boolean isCloud){
         try {
             new SyncHelper(context).importNotes(null, null);
@@ -184,9 +215,9 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadNoteFromCloud();
+            new DropboxHelper(context).downloadNote();
             try {
-                new GDriveHelper(context).loadNoteFromDrive();
+                new GDriveHelper(context).downloadNote();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,6 +225,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Create backup files for birthdays.
+     * @param isCloud create cloud backup.
+     */
     public void backupBirthday(boolean isCloud){
         try {
             new SyncHelper(context).exportBirthdays();
@@ -201,7 +236,7 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadBirthToCloud();
+            new DropboxHelper(context).uploadBirthday();
             try {
                 new GDriveHelper(context).saveBirthToDrive();
             } catch (IOException e) {
@@ -211,6 +246,10 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Restore all birthdays from backup files.
+     * @param isCloud restore from cloud.
+     */
     public void restoreBirthday(boolean isCloud){
         try {
             new SyncHelper(context).importBirthday(null, null);
@@ -218,9 +257,9 @@ public class IOHelper {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadBirthFromCloud();
+            new DropboxHelper(context).downloadBirthday();
             try {
-                new GDriveHelper(context).loadBirthFromDrive();
+                new GDriveHelper(context).downloadBirthday();
             } catch (IOException e) {
                 e.printStackTrace();
             }

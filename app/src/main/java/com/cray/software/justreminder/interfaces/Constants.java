@@ -50,9 +50,6 @@ public class Constants {
     public static final String COLUMN_EVENT_ID = "event_id";
 
     public static final String DRIVE_USER_NONE = "none";
-    public static final String TASKS_ALL = "all";
-    public static final String TASKS_NEED_ACTION = "needsAction";
-    public static final String TASKS_COMPLETE = "completed";
 
     public final static String BIRTHDAY_INTENT_ID = "birthday_intent_id";
 

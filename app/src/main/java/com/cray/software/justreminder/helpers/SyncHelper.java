@@ -44,12 +44,11 @@ import java.util.Locale;
 import java.util.UUID;
 
 public class SyncHelper {
-    Context sContext;
-    DataBase DB;
-    NotesBase db;
-    AlarmReceiver alarm = new AlarmReceiver();
-    WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
-    TimeCount timeCount;
+    private Context sContext;
+    private DataBase DB;
+    private NotesBase db;
+    private AlarmReceiver alarm = new AlarmReceiver();
+    private WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
 
     public SyncHelper(Context context){
         this.sContext = context;
@@ -872,7 +871,7 @@ public class SyncHelper {
             }
             if (cf != null) cf.close();
         }
-        timeCount = new TimeCount(sContext);
+        TimeCount timeCount = new TimeCount(sContext);
         long id;
         Integer i = (int) (long) count;
         if (type != null) {
@@ -925,7 +924,7 @@ public class SyncHelper {
                     }
                 }
             } else {
-                if (timeCount.getNextDate(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
+                if (timeCount.isNext(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
                     if (DB.getCount() == 0) {
                         id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,

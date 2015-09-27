@@ -57,16 +57,16 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
 
         boolean isConnected = SyncHelper.isConnected(tContext);
         if (isConnected) {
-            new DropboxHelper(tContext).uploadNoteToCloud();
+            new DropboxHelper(tContext).uploadNote();
             try {
                 new GDriveHelper(tContext).saveNoteToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             new BoxHelper(tContext).uploadNote();
-            new DropboxHelper(tContext).downloadNoteFromCloud();
+            new DropboxHelper(tContext).downloadNote();
             try {
-                new GDriveHelper(tContext).loadNoteFromDrive();
+                new GDriveHelper(tContext).downloadNote();
             } catch (IOException e) {
                 e.printStackTrace();
             }

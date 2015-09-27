@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.async.TaskAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.Item;
@@ -73,13 +74,15 @@ public class TaskManager extends AppCompatActivity {
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
-    private String listId;
+    private String listId = null;
+    private String initListId = null;
     private String taskId;
     private String action;
 
     private TasksData data = new TasksData(TaskManager.this);
 
     private static final int MENU_ITEM_DELETE = 12;
+    private static final int MENU_ITEM_MOVE = 14;
     private SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM", Locale.getDefault());
 
     private FloatingActionButton mFab;
@@ -110,8 +113,8 @@ public class TaskManager extends AppCompatActivity {
                             case MENU_ITEM_DELETE:
                                 deleteDialog();
                                 break;
-                            case R.id.action_add:
-                                saveTask();
+                            case MENU_ITEM_MOVE:
+                                selectList(true);
                                 break;
                         }
                         return true;
@@ -127,7 +130,7 @@ public class TaskManager extends AppCompatActivity {
         listText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectList();
+                selectList(false);
             }
         });
         reminderCheck = (CheckBox) findViewById(R.id.reminderCheck);
@@ -235,10 +238,10 @@ public class TaskManager extends AppCompatActivity {
                 data.open();
                 Cursor c = data.getDefaultTasksList();
                 if (c != null && c.moveToFirst()) {
-                    listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                     color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
                     String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    listText.setText(getString(R.string.string_list) + ": " + listTitle);
+                    listText.setText(listTitle);
                     setColor(color);
                 }
                 if (c != null) c.close();
@@ -246,10 +249,10 @@ public class TaskManager extends AppCompatActivity {
                 data.open();
                 Cursor c = data.getTasksList(tmp);
                 if (c != null && c.moveToFirst()) {
-                    listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                     color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
                     String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    listText.setText(getString(R.string.string_list) + ": " + listTitle);
+                    listText.setText(listTitle);
                     setColor(color);
                 }
                 if (c != null) c.close();
@@ -283,12 +286,12 @@ public class TaskManager extends AppCompatActivity {
                         dueCheck.setChecked(true);
                     }
 
-                    listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    Cursor x = data.getTasksList(listId);
+                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                    Cursor x = data.getTasksList(initListId);
                     if (x != null && x.moveToFirst()) {
                         color = x.getInt(x.getColumnIndex(TasksConstants.COLUMN_COLOR));
                         String listTitle = x.getString(x.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        listText.setText(getString(R.string.string_list) + ": " + listTitle);
+                        listText.setText(listTitle);
                         setColor(color);
                     }
                     if (x != null) x.close();
@@ -298,7 +301,16 @@ public class TaskManager extends AppCompatActivity {
         }
     }
 
-    private void selectList() {
+    private void moveTask(String listId) {
+        data.open();
+        data.updateTask(id, listId);
+        new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
+                0, null, id).execute();
+        data.close();
+        finish();
+    }
+
+    private void selectList(final boolean move) {
         Cursor c = data.getTasksLists();
         if (c != null && c.moveToFirst()){
             do {
@@ -308,14 +320,17 @@ public class TaskManager extends AppCompatActivity {
             } while (c.moveToNext());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.string_select_category));
+        builder.setTitle(getString(R.string.select_list));
         builder.setAdapter(new SimpleAdapter(TaskManager.this,
                 data.getTasksLists()), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                listText.setText(items.get(which).getTitle());
-                listId = items.get(which).getUuID();
+                if (move) moveTask(items.get(which).getUuID());
+                else {
+                    listText.setText(items.get(which).getTitle());
+                    listId = items.get(which).getUuID();
+                }
             }
         });
         AlertDialog alert = builder.create();
@@ -350,18 +365,26 @@ public class TaskManager extends AppCompatActivity {
         data.open();
         if (action.matches(TasksConstants.CREATE)){
             long localId = data.addTask(taskName, null, 0, false, due, null, null, note,
-                    null, null, null, 0, remId, listId, Constants.TASKS_NEED_ACTION, false);
-            new TaskAsync(TaskManager.this, taskName, listId, null, TasksConstants.INSERT_TASK,
+                    null, null, null, 0, remId, initListId, GTasksHelper.TASKS_NEED_ACTION, false);
+            new TaskAsync(TaskManager.this, taskName, initListId, null, TasksConstants.INSERT_TASK,
                     due, note, localId).execute();
         }
         if (action.matches(TasksConstants.EDIT)) {
             if (id != 0) {
-                data.updateTask(id, taskName, due, note, Constants.TASKS_NEED_ACTION, remId);
-                new TaskAsync(TaskManager.this, taskName, listId, taskId, TasksConstants.UPDATE_TASK,
-                        due, note, id).execute();
+                if (listId != null){
+                    data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId, listId);
+                    new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
+                            due, note, id).execute();
+                    new TaskAsync(TaskManager.this, taskName, listId, taskId, TasksConstants.MOVE_TASK,
+                            due, note, id).execute();
+                } else {
+                    data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId);
+                    new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
+                            due, note, id).execute();
+                }
             }
         }
-
+        if (data != null) data.close();
         finish();
     }
 
@@ -430,7 +453,7 @@ public class TaskManager extends AppCompatActivity {
             String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
             long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
             data.deleteTask(id);
-            new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.DELETE_TASK,
+            new TaskAsync(TaskManager.this, null, initListId, taskId, TasksConstants.DELETE_TASK,
                     0, null, id).execute();
         }
         if (c != null) c.close();
@@ -438,11 +461,9 @@ public class TaskManager extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.save_menu, menu);*/
         if (id != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task));
-            //menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, getString(R.string.string_move_to_list));
+            menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, getString(R.string.move_to_list));
         }
         return true;
     }

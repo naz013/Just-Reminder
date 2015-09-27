@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 
@@ -75,17 +74,17 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                         String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        if (status.matches(Constants.TASKS_COMPLETE) && listId != null && taskId != null) {
+                        if (status.matches(GTasksHelper.TASKS_COMPLETE) && listId != null && taskId != null) {
                             try {
-                                helper.updateTaskStatus(Constants.TASKS_COMPLETE, listId, taskId);
+                                helper.updateTaskStatus(GTasksHelper.TASKS_COMPLETE, listId, taskId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                             mData.delete(id);
                         }
-                        if (status.matches(Constants.TASKS_NEED_ACTION) && listId != null && taskId != null) {
+                        if (status.matches(GTasksHelper.TASKS_NEED_ACTION) && listId != null && taskId != null) {
                             try {
-                                helper.updateTaskStatus(Constants.TASKS_NEED_ACTION, listId, taskId);
+                                helper.updateTaskStatus(GTasksHelper.TASKS_NEED_ACTION, listId, taskId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -119,6 +118,22 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            mData.delete(id);
+                        }
+                    }
+                    if (code == TasksConstants.MOVE){
+                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
+                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
+                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
+                        long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
+                        if (listId != null && taskId != null) {
+                            try {
+                                helper.updateTask(title, listId, taskId, note, time);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            helper.moveTask(listId, taskId);
                             mData.delete(id);
                         }
                     }

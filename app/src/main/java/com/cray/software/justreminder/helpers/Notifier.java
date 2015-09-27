@@ -36,12 +36,12 @@ import java.util.Calendar;
 
 public class Notifier {
 
-    Context ctx;
-    NotificationManagerCompat mNotifyMgr;
-    NotificationCompat.Builder builder;
-    int NOT_ID = 0;
-    SharedPrefs sPrefs;
-    MediaPlayer mMediaPlayer;
+    private Context ctx;
+    private NotificationManagerCompat mNotifyMgr;
+    private NotificationCompat.Builder builder;
+    private int NOT_ID = 0;
+    private SharedPrefs sPrefs;
+    private MediaPlayer mMediaPlayer;
 
     public Notifier(Context context){
         this.ctx = context;

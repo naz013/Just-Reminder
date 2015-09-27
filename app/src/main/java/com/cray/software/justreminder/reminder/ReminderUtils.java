@@ -7,6 +7,7 @@ import android.widget.CheckBox;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.TaskAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -39,7 +40,7 @@ public class ReminderUtils {
     public static void exportToTasks(Context context, String summary, long startTime, long mId){
         long localId = new TasksData(context).addTask(summary, null, 0, false, startTime,
                 null, null, context.getString(R.string.string_task_from_just_reminder),
-                null, null, null, 0, mId, null, Constants.TASKS_NEED_ACTION, false);
+                null, null, null, 0, mId, null, GTasksHelper.TASKS_NEED_ACTION, false);
         new TaskAsync(context, summary, null, null, TasksConstants.INSERT_TASK, startTime,
                 context.getString(R.string.string_task_from_just_reminder), localId).execute();
     }

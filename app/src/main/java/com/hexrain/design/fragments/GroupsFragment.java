@@ -238,8 +238,8 @@ public class GroupsFragment extends Fragment {
                             file.delete();
                         }
                     }
-                    if (dbx.isLinked() && isInternet) dbx.deleteFile(remUUId);
-                    if (gdx.isLinked() && isInternet) gdx.deleteFile(uuId);
+                    if (dbx.isLinked() && isInternet) dbx.deleteReminder(remUUId);
+                    if (gdx.isLinked() && isInternet) gdx.deleteReminder(uuId);
                 } while (c.moveToNext());
             }
             return null;

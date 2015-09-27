@@ -202,36 +202,41 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
             }
             if (c != null) c.close();
-            if (type.matches(Constants.TYPE_REMINDER)) {
-                attachDateReminder();
-            } else if (type.matches(Constants.TYPE_TIME)){
-                attachTimeReminder();
-            } else if (type.matches(Constants.TYPE_CALL)){
-                attachCall();
-            } else if (type.matches(Constants.TYPE_MESSAGE)){
-                attachMessage();
-            } else if (type.startsWith(Constants.TYPE_LOCATION)){
-                if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
-                    attachLocation();
+            if (type != null) {
+                if (type.matches(Constants.TYPE_REMINDER)) {
+                    attachDateReminder();
+                } else if (type.matches(Constants.TYPE_TIME)) {
+                    attachTimeReminder();
+                } else if (type.matches(Constants.TYPE_CALL)) {
+                    attachCall();
+                } else if (type.matches(Constants.TYPE_MESSAGE)) {
+                    attachMessage();
+                } else if (type.startsWith(Constants.TYPE_LOCATION)) {
+                    if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
+                        attachLocation();
+                    } else {
+                        Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                    if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
+                        attachLocationOut();
+                    } else {
+                        Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
+                    attachWeekDayReminder();
+                } else if (type.startsWith(Constants.TYPE_SKYPE)) {
+                    attachSkype();
+                } else if (type.startsWith(Constants.TYPE_APPLICATION)) {
+                    attachApplication();
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                    attachMonthDay();
                 } else {
-                    Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BackupFileEdit.this, getString(R.string.file_error_message), Toast.LENGTH_SHORT).show();
                     finish();
                 }
-            } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
-                    attachLocationOut();
-                } else {
-                    Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            } else if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                attachWeekDayReminder();
-            } else if (type.startsWith(Constants.TYPE_SKYPE)){
-                attachSkype();
-            } else if (type.startsWith(Constants.TYPE_APPLICATION)){
-                attachApplication();
-            } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                attachMonthDay();
             } else {
                 Toast.makeText(BackupFileEdit.this, getString(R.string.file_error_message), Toast.LENGTH_SHORT).show();
                 finish();

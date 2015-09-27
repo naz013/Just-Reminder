@@ -6,7 +6,6 @@ import android.database.Cursor;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -27,14 +26,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Google Tasks API helper class;
+ */
 public class GTasksHelper {
 
-    Context ctx;
-    SharedPrefs prefs;
+    public static final String TASKS_ALL = "all";
+    public static final String TASKS_NEED_ACTION = "needsAction";
+    public static final String TASKS_COMPLETE = "completed";
+
+    private Context ctx;
+    private SharedPrefs prefs;
 
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance();
-    private GoogleAccountCredential m_credential;
     private Tasks service;
     private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
 
@@ -42,21 +47,36 @@ public class GTasksHelper {
         this.ctx = context;
     }
 
+    /**
+     * API authorization method;
+     */
     public void authorize(){
         prefs = new SharedPrefs(ctx);
-        m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(TasksScopes.TASKS));
+        GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(TasksScopes.TASKS));
         m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         service = new Tasks.Builder(m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME).build();
     }
 
+    /**
+     * Check if user has already login to Google Tasks;
+     * @return
+     */
     public boolean isLinked(){
         prefs = new SharedPrefs(ctx);
         return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
+    /**
+     * Add new task to selected task list or add task to Tasks default list;
+     * @param taskTitle title for a task.
+     * @param listId list identifier.
+     * @param time due time in milliseconds.
+     * @param note note for task.
+     * @param localId local identifier of task.
+     * @throws IOException
+     */
     public void insertTask(String taskTitle, String listId, long time, String note, long localId) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             Task task = new Task();
             task.setTitle(taskTitle);
@@ -126,13 +146,19 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Update status of task (needsAction or completed);
+     * @param status new status for a task (needsAction/completed)
+     * @param listId list identifier.
+     * @param taskId task identifier.
+     * @throws IOException
+     */
     public void updateTaskStatus(String status, String listId, String taskId) throws IOException {
         if (isLinked() && taskId != null && listId != null) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             Task task = service.tasks().get(listId, taskId).execute();
             task.setStatus(status);
-            if (status.matches(Constants.TASKS_NEED_ACTION)) {
+            if (status.matches(TASKS_NEED_ACTION)) {
                 task.setCompleted(Data.NULL_DATE_TIME);
             }
             task.setUpdated(new DateTime(System.currentTimeMillis()));
@@ -141,20 +167,33 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Delete selected task from task list
+     * @param listId list identifier.
+     * @param taskId task identifier.
+     * @throws IOException
+     */
     public void deleteTask(String listId, String taskId) throws IOException {
         if (isLinked() && taskId != null && listId != null) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             service.tasks().delete(listId, taskId).execute();
         }
     }
 
+    /**
+     * Update information of selected task
+     * @param text new title for a task.
+     * @param listId list identifier.
+     * @param taskId task identifier.
+     * @param note note for task.
+     * @param time due time (milliseconds).
+     * @throws IOException
+     */
     public void updateTask(String text, String listId, String taskId, String note, long time) throws IOException {
         if (isLinked() && taskId != null && listId != null) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             Task task = service.tasks().get(listId, taskId).execute();
-            task.setStatus(Constants.TASKS_NEED_ACTION);
+            task.setStatus(TASKS_NEED_ACTION);
             task.setTitle(text);
             task.setCompleted(Data.NULL_DATE_TIME);
             if (time != 0) task.setDue(new DateTime(time));
@@ -165,10 +204,14 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Get list of task items by task list id
+     * @param listId list identifier.
+     * @return List of tasks for selected list id.
+     */
     public List<Task> getTasks(String listId){
         List<Task> taskLists = new ArrayList<>();
         if (isLinked() && listId != null) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             try {
                 taskLists = service.tasks().list(listId).execute().getItems();
@@ -179,21 +222,28 @@ public class GTasksHelper {
         return taskLists;
     }
 
-    //Tasks list
-
+    /**
+     * Get all available task lists
+     * @return Task list object.
+     * @throws IOException
+     */
     public TaskLists getTaskLists() throws IOException {
         TaskLists taskLists = null;
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             taskLists = service.tasklists().list().execute();
         }
         return taskLists;
     }
 
+    /**
+     * Add new task list to Google Tasks
+     * @param listTitle list title.
+     * @param id local list id.
+     * @param color local list color.
+     */
     public void insertTasksList(String listTitle, long id, int color) {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             TaskList taskList = new TaskList();
             taskList.setTitle(listTitle);
@@ -212,9 +262,14 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Update information about task list
+     * @param listTitle new list title.
+     * @param listId list identifier.
+     * @throws IOException
+     */
     public void updateTasksList(final String listTitle, final String listId) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             TaskList taskList = service.tasklists().get(listId).execute();
             taskList.setTitle(listTitle);
@@ -223,9 +278,12 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Delete selected task list from Google Tasks
+     * @param listId list identifier.
+     */
     public void deleteTaskList (final String listId){
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             try {
                 service.tasklists().delete(listId).execute();
@@ -235,12 +293,31 @@ public class GTasksHelper {
         }
     }
 
+    /**
+     * Delete all completed tasks from selected task list
+     * @param listId list identifier.
+     */
     public void clearTaskList (final String listId){
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
             authorize();
             try {
                 service.tasks().clear(listId).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Move task to other task list
+     * @param listId list identifier.
+     * @param taskId task identifier.
+     */
+    public void moveTask (String listId, String taskId){
+        if (isLinked()) {
+            authorize();
+            try {
+                service.tasks().move(listId, taskId).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }

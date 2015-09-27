@@ -6,8 +6,8 @@ import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
 
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.interfaces.TasksConstants;
@@ -42,7 +42,7 @@ public class TasksFragment extends ListFragment implements SyncListener {
     private void loadData() {
         TasksData data = new TasksData(getActivity());
         data.open();
-        if (mId.matches(Constants.TASKS_ALL)){
+        if (mId.matches(GTasksHelper.TASKS_ALL)){
             ArrayList<ListItems> mData = new ArrayList<>();
             mData.clear();
             Cursor c = data.getTasks();

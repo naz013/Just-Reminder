@@ -46,6 +46,13 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
                 data.add(null, listId, TasksConstants.DELETE, 0, taskId, null, 0, 0, null);
             }
         }
+
+        if (taskType.matches(TasksConstants.MOVE_TASK)){
+            if (isConnected){
+                helper.moveTask(listId, taskId);
+            } else data.add(title, listId, TasksConstants.MOVE, 0, taskId, note, 0, time, null);
+        }
+
         if (taskType.matches(TasksConstants.UPDATE_TASK)){
             //update task
             if (isConnected) {
@@ -58,6 +65,7 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
                 data.add(title, listId, TasksConstants.UPDATE, 0, taskId, note, 0, time, null);
             }
         }
+
         if (taskType.matches(TasksConstants.INSERT_TASK)){
             //insert task
             if (isConnected) {

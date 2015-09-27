@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ListItems;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -127,7 +128,7 @@ public class TasksRecyclerAdapter extends BaseAdapter {
             holder.txtDate.setText(update);
         } else holder.txtDate.setVisibility(View.INVISIBLE);
 
-        if (mDataset.get(position).getStatus().matches(Constants.TASKS_COMPLETE)){
+        if (mDataset.get(position).getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             holder.checkBox.setChecked(true);
         } else holder.checkBox.setChecked(false);
 

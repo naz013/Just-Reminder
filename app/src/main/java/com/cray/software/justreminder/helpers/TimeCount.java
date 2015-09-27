@@ -14,26 +14,43 @@ import com.cray.software.justreminder.utils.Utils;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Helper class for working with date and time.
+ */
 public class TimeCount {
 
+    /**
+     * Millisecond constants.
+     */
     public final static long minute = 60 * 1000;
     public final static long hour = minute  * 60;
     public final static long halfDay = hour * 12;
     public final static long day = halfDay * 2;
-    Context mContext;
+
+    private Context mContext;
 
     public TimeCount(Context context){
         this.mContext = context;
     }
 
-    private Drawable getColor(int color){
-        return Utils.getDrawable(mContext, color);
+    /**
+     * Get drawable from resource.
+     * @param resource resource.
+     * @return Drawable
+     */
+    private Drawable getDrawable(int resource){
+        return Utils.getDrawable(mContext, resource);
     }
 
+    /**
+     * Get drawable indicator based on time difference.
+     * @param time target time.
+     * @return Drawable
+     */
     public Drawable getDifference(long time){
         Drawable color;
         if (time == 0) {
-            color = getColor(R.color.colorSemiTrGrayDark);
+            color = getDrawable(R.color.colorSemiTrGrayDark);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(System.currentTimeMillis());
@@ -41,28 +58,43 @@ public class TimeCount {
 
             long diff = time - currTime;
             if (isBetween(diff, 0, minute * 5)) {
-                color = getColor(R.drawable.drawable_red);
+                color = getDrawable(R.drawable.drawable_red);
             } else if (isBetween(diff, minute * 5, hour)) {
-                color = getColor(R.drawable.drawable_yellow);
+                color = getDrawable(R.drawable.drawable_yellow);
             } else if (isBetween(diff, hour, halfDay)) {
-                color = getColor(R.drawable.drawable_green);
+                color = getDrawable(R.drawable.drawable_green);
             } else if (isBetween(diff, halfDay, day)) {
-                color = getColor(R.drawable.drawable_blue);
+                color = getDrawable(R.drawable.drawable_blue);
             } else if ((diff > day)) {
-                color = getColor(R.drawable.drawable_indigo);
+                color = getDrawable(R.drawable.drawable_indigo);
             } else {
-                color = getColor(R.drawable.drawable_grey);
+                color = getDrawable(R.drawable.drawable_grey);
             }
         }
         return color;
     }
 
+    /**
+     * Get drawable indicator based on time parameters.
+     * @param weekdays reminder weekdays.
+     * @param year year.
+     * @param month month.
+     * @param dayOfMonth day.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param seconds seconds.
+     * @param inTime timer reminder time.
+     * @param repeatCode reminder repeat code.
+     * @param remCount number of reminder repeats.
+     * @param delay delay for reminder.
+     * @return Drawable
+     */
     public Drawable getDifference(String weekdays, int year, int month, int dayOfMonth, int hourOfDay,
                                   int minuteOfHour, int seconds, long inTime, int repeatCode,
                                   int remCount, int delay){
         Drawable color;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            color = getColor(R.color.colorSemiTrGrayDark);
+            color = getDrawable(R.color.colorSemiTrGrayDark);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(System.currentTimeMillis());
@@ -77,22 +109,27 @@ public class TimeCount {
             }
             long diff = newDbTime - currTime;
             if (isBetween(diff, 0, minute * 5)) {
-                color = getColor(R.drawable.drawable_red);
+                color = getDrawable(R.drawable.drawable_red);
             } else if (isBetween(diff, minute * 5, hour)) {
-                color = getColor(R.drawable.drawable_yellow);
+                color = getDrawable(R.drawable.drawable_yellow);
             } else if (isBetween(diff, hour, halfDay)) {
-                color = getColor(R.drawable.drawable_green);
+                color = getDrawable(R.drawable.drawable_green);
             } else if (isBetween(diff, halfDay, day)) {
-                color = getColor(R.drawable.drawable_blue);
+                color = getDrawable(R.drawable.drawable_blue);
             } else if ((diff > day)) {
-                color = getColor(R.drawable.drawable_indigo);
+                color = getDrawable(R.drawable.drawable_indigo);
             } else {
-                color = getColor(R.drawable.drawable_grey);
+                color = getDrawable(R.drawable.drawable_grey);
             }
         }
         return color;
     }
 
+    /**
+     * Get next date and time for milliseconds.
+     * @param timeLong time in milliseconds.
+     * @return [0 - date] [1 - time]
+     */
     public String[] getNextDateTime(long timeLong){
         String date;
         String time;
@@ -110,6 +147,20 @@ public class TimeCount {
         return new String[]{date, time};
     }
 
+    /**
+     * Get next date and time for time parameters.
+     * @param year year.
+     * @param month month.
+     * @param dayOfMonth day.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param seconds seconds.
+     * @param inTime timer reminder time.
+     * @param repeatCode reminder repeat code.
+     * @param remCount number of reminder repeats.
+     * @param delay delay for reminder.
+     * @return [0 - date] [1 - time]
+     */
     public String[] getNextDateTime(int year, int month, int dayOfMonth, int hourOfDay,
                                     int minuteOfHour, int seconds, long inTime, int repeatCode,
                                     int remCount, int delay){
@@ -131,6 +182,11 @@ public class TimeCount {
         return new String[]{date, time};
     }
 
+    /**
+     * Generate new due time for reminder.
+     * @param id reminder identifier.
+     * @return Due time
+     */
     public long generateDateTime(long id){
         DataBase db = new DataBase(mContext);
         int hourOfDay = 0;
@@ -180,6 +236,20 @@ public class TimeCount {
         return dateTime;
     }
 
+    /**
+     * Count due time in milliseconds for time parameters.
+     * @param year year.
+     * @param month month.
+     * @param dayOfMonth day.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param seconds seconds.
+     * @param inTime timer reminder time.
+     * @param repeatCode reminder repeat code.
+     * @param remCount number of reminder repeats.
+     * @param delay delay for reminder.
+     * @return Due time in milliseconds.
+     */
     public static long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
                              int seconds, long inTime, int repeatCode, int remCount, int delay){
         long date;
@@ -222,6 +292,11 @@ public class TimeCount {
         return date;
     }
 
+    /**
+     * Get remaining title for reminder.
+     * @param eventTime due time in milliseconds.
+     * @return Remaining String
+     */
     public String getRemaining(long eventTime){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -278,7 +353,12 @@ public class TimeCount {
         return result;
     }
 
-    public boolean getNextDate(long due) {
+    /**
+     * Check if time is actual.
+     * @param due time in milliseconds.
+     * @return
+     */
+    public boolean isNext(long due) {
         boolean nextDate = false;
         if (due == 0) {
             nextDate = true;
@@ -293,8 +373,21 @@ public class TimeCount {
         return nextDate;
     }
 
-    public boolean getNextDate(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
-                               long inTime, int repeatCode, int remCount) {
+    /**
+     * Check if time is actual.
+     * @param year year.
+     * @param month month.
+     * @param dayOfMonth day.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param seconds seconds.
+     * @param inTime timer reminder time.
+     * @param repeatCode reminder repeat code.
+     * @param remCount number of reminder repeats.
+     * @return
+     */
+    public boolean isNext(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
+                          long inTime, int repeatCode, int remCount) {
         boolean nextDate = false;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             nextDate = true;
@@ -311,6 +404,14 @@ public class TimeCount {
         return nextDate;
     }
 
+    /**
+     * Count next due time for weekday reminder type.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param weekdays weekday string.
+     * @param delay delay for reminder.
+     * @return Due time in milliseconds.
+     */
     public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour, String weekdays, int delay){
         long date;
         Calendar cc = Calendar.getInstance();
@@ -375,10 +476,22 @@ public class TimeCount {
         return res;
     }
 
+    /**
+     * Check if number is between two values.
+     * @param value target.
+     * @param min min number.
+     * @param max max number.
+     * @return
+     */
     private boolean isBetween(long value, long min, long max){
         return((value > min) && (value < max));
     }
 
+    /**
+     * Check if current days of week is selected for weekday reminder.
+     * @param repeat weekdays string.
+     * @return
+     */
     public static boolean isDay(String repeat){
         boolean res = false;
         Calendar calendar = Calendar.getInstance();
@@ -407,6 +520,14 @@ public class TimeCount {
         return res;
     }
 
+    /**
+     * Get next due time for MonthDay reminder type.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param dayOfMonth day.
+     * @param delay delay for reminder.
+     * @return Due time in milliseconds.
+     */
     public static long getNextMonthDayTime(int hourOfDay, int minuteOfHour, int dayOfMonth, int delay){
         if (dayOfMonth == 0){
             return getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
@@ -432,6 +553,13 @@ public class TimeCount {
         return newDbTime;
     }
 
+    /**
+     * Get next due time for MonthDay reminder type starts from selected date and time.
+     * @param dayOfMonth day.
+     * @param fromTime start time.
+     * @param multi step for next due.
+     * @return Due time in milliseconds.
+     */
     public static long getNextMonthDayTime(int dayOfMonth, long fromTime, int multi){
         if (dayOfMonth == 0){
             return getLastMonthDayTime(fromTime, multi);
@@ -445,6 +573,12 @@ public class TimeCount {
         return cc.getTimeInMillis();
     }
 
+    /**
+     * Get next due time for next last day of month.
+     * @param fromTime start time.
+     * @param multi step for calculating.
+     * @return Due time in milliseconds.
+     */
     public static long getLastMonthDayTime(long fromTime, int multi) {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
@@ -458,6 +592,13 @@ public class TimeCount {
         return cc.getTimeInMillis();
     }
 
+    /**
+     * Get next due time for next last day of month.
+     * @param hourOfDay hour.
+     * @param minuteOfHour minute.
+     * @param delay delay for reminder.
+     * @return Due time in milliseconds.
+     */
     public static long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
@@ -481,6 +622,11 @@ public class TimeCount {
         return newDbTime;
     }
 
+    /**
+     * Check if current day is same as is in reminder.
+     * @param dayOfMonth day.
+     * @return
+     */
     public static boolean isDay(int dayOfMonth){
         if (dayOfMonth == 0){
             return isLastDay();
@@ -490,6 +636,10 @@ public class TimeCount {
         return cc.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
     }
 
+    /**
+     * Check if current day is the last day in this month.
+     * @return
+     */
     public static boolean isLastDay(){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());

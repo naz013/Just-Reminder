@@ -35,6 +35,7 @@ import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ItemData;
@@ -618,7 +619,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         String update = full24Format.format(calendar.getTime());
                         taskDate.setText(update);
                     } else taskDate.setVisibility(View.INVISIBLE);
-                    if (itemData.getTaskStatus().matches(Constants.TASKS_COMPLETE)){
+                    if (itemData.getTaskStatus().matches(GTasksHelper.TASKS_COMPLETE)){
                         checkDone.setChecked(true);
                     } else checkDone.setChecked(false);
                     checkDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

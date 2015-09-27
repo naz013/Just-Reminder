@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 
 import com.cray.software.justreminder.helpers.SyncHelper;
 
+/**
+ * Asynchronously get Dropbox user name
+ */
 public class AccountInfo extends AsyncTask<Void, Void, String> {
 
     DropboxHelper dbx;

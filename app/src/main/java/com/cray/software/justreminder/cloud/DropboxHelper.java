@@ -28,16 +28,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * Dropbox API helper class.
+ */
 public class DropboxHelper {
 
-    Context ctx;
-    String dbxFolder = "JustReminder/";
-    String dbxNoteFolder = "Notes/";
-    String dbxGroupFolder = "Groups/";
-    String dbxBirthFolder = "Birthdays/";
+    private Context ctx;
+
+    private String dbxFolder = "JustReminder/";
+    private String dbxNoteFolder = "Notes/";
+    private String dbxGroupFolder = "Groups/";
+    private String dbxBirthFolder = "Birthdays/";
+
     private DropboxAPI<AndroidAuthSession> mDBApi;
-    DropboxAPI.DropboxFileInfo info;
-    DropboxAPI.Entry newEntry;
+    private DropboxAPI.DropboxFileInfo info;
+    private DropboxAPI.Entry newEntry;
 
     public static final String APP_KEY = "4zi1d414h0v8sxe";
     public static final String APP_SECRET = "aopehxo80oq8g5o";
@@ -51,16 +56,27 @@ public class DropboxHelper {
         this.ctx = context;
     }
 
+    /**
+     * Start connection to Dropbox.
+     */
     public void startSession(){
         AndroidAuthSession session = buildSession();
         mDBApi = new DropboxAPI<>(session);
         checkAppKeySetup();
     }
 
+    /**
+     * Check if user has already connected to Dropbox from this application.
+     * @return
+     */
     public boolean isLinked() {
         return mDBApi != null && mDBApi.getSession().isLinked();
     }
 
+    /**
+     * Get Dropbox user name.
+     * @return
+     */
     public String userName(){
         DropboxAPI.Account account = null;
         try {
@@ -71,6 +87,10 @@ public class DropboxHelper {
         return account != null ? account.displayName : null;
     }
 
+    /**
+     * Get user all apace on Dropbox.
+     * @return
+     */
     public long userQuota(){
         DropboxAPI.Account account = null;
         try {
@@ -219,6 +239,10 @@ public class DropboxHelper {
         edit.commit();
     }
 
+    /**
+     * Upload to Dropbox folder backup files from selected folder on SD Card.
+     * @param path name of folder to upload.
+     */
     private void upload(String path){
         startSession();
         if (isLinked()) {
@@ -254,7 +278,11 @@ public class DropboxHelper {
         }
     }
 
-    public void uploadToCloud(final String fileName) {
+    /**
+     * Upload reminder backup files or selected file to Dropbox folder.
+     * @param fileName file name.
+     */
+    public void uploadReminder(final String fileName) {
         startSession();
         if (isLinked()) {
             if (fileName != null) {
@@ -281,19 +309,32 @@ public class DropboxHelper {
         }
     }
 
-    public void uploadNoteToCloud() {
+    /**
+     * Upload all note backup files to Dropbox folder.
+     */
+    public void uploadNote() {
         upload(Constants.DIR_NOTES_SD);
     }
 
-    public void uploadGroupToCloud() {
+    /**
+     * Upload all group backup files to Dropbox folder.
+     */
+    public void uploadGroup() {
         upload(Constants.DIR_GROUP_SD);
     }
 
-    public void uploadBirthToCloud() {
+    /**
+     * Upload all birthday backup files to Dropbox folder.
+     */
+    public void uploadBirthday() {
         upload(Constants.DIR_BIRTHDAY_SD);
     }
 
-    public void deleteFile(String name){
+    /**
+     * Delete reminder backup file from Dropbox folder.
+     * @param name file name.
+     */
+    public void deleteReminder(String name){
         startSession();
         if (isLinked()) {
             try {
@@ -304,6 +345,10 @@ public class DropboxHelper {
         }
     }
 
+    /**
+     * Delete note backup file from Dropbox folder.
+     * @param name file name.
+     */
     public void deleteNote(String name){
         startSession();
         if (isLinked()) {
@@ -315,6 +360,10 @@ public class DropboxHelper {
         }
     }
 
+    /**
+     * Delete group backup file from Dropbox folder.
+     * @param name file name.
+     */
     public void deleteGroup(String name){
         startSession();
         if (isLinked()) {
@@ -326,7 +375,11 @@ public class DropboxHelper {
         }
     }
 
-    public void deleteBirth(String name){
+    /**
+     * Delete birthday backup file from Dropbox folder.
+     * @param name
+     */
+    public void deleteBirthday(String name){
         startSession();
         if (isLinked()) {
             try {
@@ -337,6 +390,9 @@ public class DropboxHelper {
         }
     }
 
+    /**
+     * Delete all folders inside application folder on Dropbox.
+     */
     public void cleanFolder(){
         startSession();
         if (isLinked()) {
@@ -363,7 +419,10 @@ public class DropboxHelper {
         }
     }
 
-    public void downloadFromCloud() {
+    /**
+     * Download on SD Card all reminder backup files found on Dropbox.
+     */
+    public void downloadReminder() {
         startSession();
         if (isLinked()) {
             try {
@@ -411,7 +470,10 @@ public class DropboxHelper {
         }
     }
 
-    public void downloadNoteFromCloud() {
+    /**
+     * Download on SD Card all note backup files found on Dropbox.
+     */
+    public void downloadNote() {
         startSession();
         if (isLinked()) {
             try {
@@ -459,7 +521,10 @@ public class DropboxHelper {
         }
     }
 
-    public void downloadGroupFromCloud() {
+    /**
+     * Download on SD Card all group backup files found on Dropbox.
+     */
+    public void downloadGroup() {
         startSession();
         if (isLinked()) {
             try {
@@ -507,7 +572,10 @@ public class DropboxHelper {
         }
     }
 
-    public void downloadBirthFromCloud() {
+    /**
+     * Download on SD Card all birthday backup files found on Dropbox.
+     */
+    public void downloadBirthday() {
         startSession();
         if (isLinked()) {
             try {
@@ -556,6 +624,10 @@ public class DropboxHelper {
         }
     }
 
+    /**
+     * Count all reminder backup files in Dropbox folder.
+     * @return number of found backup files.
+     */
     public int countFiles() {
         int res = 0;
         startSession();

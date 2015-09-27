@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.ExchangeConstants;
@@ -305,10 +306,33 @@ public class TasksData {
         return db.update(GOOGLE_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    public boolean updateTask(long rowId, String title, long dueDate,
+                              String notes, String status, long remId, String listId) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(TasksConstants.COLUMN_TITLE, title);
+        args.put(TasksConstants.COLUMN_DUE, dueDate);
+        args.put(TasksConstants.COLUMN_NOTES, notes);
+        args.put(TasksConstants.COLUMN_STATUS, status);
+        args.put(TasksConstants.COLUMN_LIST_ID, listId);
+        args.put(TasksConstants.COLUMN_COMPLETED, 0);
+        args.put(TasksConstants.COLUMN_REMINDER_ID, remId);
+        return db.update(GOOGLE_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateTask(long rowId, String listId) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(TasksConstants.COLUMN_STATUS, GTasksHelper.TASKS_NEED_ACTION);
+        args.put(TasksConstants.COLUMN_LIST_ID, listId);
+        args.put(TasksConstants.COLUMN_COMPLETED, 0);
+        return db.update(GOOGLE_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
     public boolean setTaskDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(TasksConstants.COLUMN_STATUS, Constants.TASKS_COMPLETE);
+        args.put(TasksConstants.COLUMN_STATUS, GTasksHelper.TASKS_COMPLETE);
         args.put(TasksConstants.COLUMN_COMPLETED, System.currentTimeMillis());
         return db.update(GOOGLE_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
@@ -316,7 +340,7 @@ public class TasksData {
     public boolean setTaskUnDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(TasksConstants.COLUMN_STATUS, Constants.TASKS_NEED_ACTION);
+        args.put(TasksConstants.COLUMN_STATUS, GTasksHelper.TASKS_NEED_ACTION);
         args.put(TasksConstants.COLUMN_COMPLETED, 0);
         return db.update(GOOGLE_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }

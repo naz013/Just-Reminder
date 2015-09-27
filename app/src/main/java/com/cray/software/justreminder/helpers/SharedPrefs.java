@@ -15,9 +15,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+/**
+ * Helper class for working with SharedPreferences.
+ */
 public class SharedPrefs {
-    SharedPreferences prefs;
-    Context pContext;
+    private SharedPreferences prefs;
+    private Context pContext;
     public static final String APP_UI_PREFERENCES = "ui_settings";
     public static final String APP_CHANGES_PREFERENCES = "changes_settings";
     public static final String APP_PREFERENCES = "system_messages";
@@ -26,6 +29,11 @@ public class SharedPrefs {
         this.pContext = context;
     }
 
+    /**
+     * Save String preference.
+     * @param stringToSave key.
+     * @param value value.
+     */
     public void savePrefs(String stringToSave, String value){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
@@ -33,6 +41,11 @@ public class SharedPrefs {
         uiEd.commit();
     }
 
+    /**
+     * Save Integer preference.
+     * @param stringToSave key.
+     * @param value value.
+     */
     public void saveInt(String stringToSave, int value){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
@@ -40,6 +53,11 @@ public class SharedPrefs {
         uiEd.commit();
     }
 
+    /**
+     * Get Integer preference.
+     * @param stringToLoad key.
+     * @return
+     */
     public int loadInt(String stringToLoad){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         int x;
@@ -51,6 +69,11 @@ public class SharedPrefs {
         return x;
     }
 
+    /**
+     * Save Long preference.
+     * @param stringToSave key.
+     * @param value value.
+     */
     public void saveLong(String stringToSave, long value){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
@@ -58,6 +81,11 @@ public class SharedPrefs {
         uiEd.commit();
     }
 
+    /**
+     * Get Long preference.
+     * @param stringToLoad key.
+     * @return
+     */
     public long loadLong(String stringToLoad){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         long x;
@@ -69,6 +97,11 @@ public class SharedPrefs {
         return x;
     }
 
+    /**
+     * Get String preference.
+     * @param stringToLoad key.
+     * @return
+     */
     public String loadPrefs(String stringToLoad){
         String res;
         try {
@@ -81,11 +114,21 @@ public class SharedPrefs {
         return res;
     }
 
+    /**
+     * Check if preference exist.
+     * @param checkString key.
+     * @return
+     */
     public boolean isString(String checkString){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         return prefs.contains(checkString);
     }
 
+    /**
+     * Save Boolean preference.
+     * @param stringToSave key.
+     * @param value value.
+     */
     public void saveBoolean(String stringToSave, boolean value){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
@@ -93,6 +136,11 @@ public class SharedPrefs {
         uiEd.commit();
     }
 
+    /**
+     * Get Boolean preference.
+     * @param stringToLoad key.
+     * @return
+     */
     public boolean loadBoolean(String stringToLoad){
         prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         boolean res;
@@ -122,22 +170,9 @@ public class SharedPrefs {
         return res;
     }
 
-    public void saveSystemBoolean(String key, boolean value){
-        prefs = pContext.getSharedPreferences(APP_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putBoolean(key, value);
-        uiEd.commit();
-    }
-    public boolean loadSystemBoolean(String key){
-        prefs = pContext.getSharedPreferences(APP_PREFERENCES, MODE);
-        return prefs.getBoolean(key, false);
-    }
-
-    public boolean isSystemKey(String key){
-        prefs = pContext.getSharedPreferences(APP_PREFERENCES, MODE);
-        return prefs.contains(key);
-    }
-
+    /**
+     * Save copy of preferences on SD Card.
+     */
     public void savePrefsBackup(){
         if (SyncHelper.isSdPresent()){
             File sdPath = Environment.getExternalStorageDirectory();
@@ -172,6 +207,9 @@ public class SharedPrefs {
         }
     }
 
+    /**
+     * Get preferences from backup file on SD Card.
+     */
     public void loadPrefsFromFile(){
         File sdPath = Environment.getExternalStorageDirectory();
         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_PREFS);

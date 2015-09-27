@@ -705,4 +705,6 @@
     <string name="deleting">Удаление...</string>
     <string name="beta_version">BETA version!</string>
     <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
+    <string name="move_to_list">Move to list</string>
+    <string name="select_list">Select list</string>
 </resources>

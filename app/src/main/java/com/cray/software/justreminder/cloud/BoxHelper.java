@@ -102,7 +102,7 @@ public class BoxHelper
                 Log.d(Constants.LOG_TAG, "Found files " + files.length);
                 for (File file : files) {
                     String fileName = file.getName();
-                    deleteFile(getCoreName(fileName));
+                    deleteReminder(getCoreName(fileName));
                     Log.d(Constants.LOG_TAG, "Send file " + fileName);
                     BoxApiFile fileApi = new BoxApiFile(session);
                     BoxFile uploadedFile = null;
@@ -121,7 +121,7 @@ public class BoxHelper
         }
     }
 
-    public void deleteFile(String name){
+    public void deleteReminder(String name){
         try {
             delete(name, FileConfig.FILE_NAME_REMINDER);
         } catch (BoxException e) {

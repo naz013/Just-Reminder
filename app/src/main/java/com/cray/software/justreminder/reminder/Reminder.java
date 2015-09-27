@@ -155,7 +155,7 @@ public class Reminder {
                     res = true;
                 } else {
                     if (new TimeCount(context)
-                            .getNextDate(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
+                            .isNext(year, month, day, hour, minute, seconds, repTime, repCode, repCount)) {
                         db.setUnDone(id);
                         db.updateReminderDateTime(id);
                         new AlarmReceiver().setAlarm(context, id);

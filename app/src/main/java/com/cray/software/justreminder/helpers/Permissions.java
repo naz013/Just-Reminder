@@ -31,6 +31,9 @@ public class Permissions {
 
     private Context context;
 
+    /**
+     * Permission constants.
+     */
     public static final String READ_CONTACTS = Manifest.permission.READ_CONTACTS;
     public static final String GET_ACCOUNTS = Manifest.permission.GET_ACCOUNTS;
 
@@ -52,15 +55,31 @@ public class Permissions {
         this.context = context;
     }
 
+    /**
+     * Check if permission is allowed on Android 6.0 and above.
+     * @param permission permission constant.
+     * @return
+     */
     public boolean checkPermission(String permission) {
         if (!Module.isMarshmallow()) return true;
         return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Ask user for a permission.
+     * @param activity activity.
+     * @param permission permission constant.
+     * @param requestCode request code.
+     */
     public void requestPermission(Activity activity, String[] permission, int requestCode){
         activity.requestPermissions(permission, requestCode);
     }
 
+    /**
+     * Show info about permission.
+     * @param activity activity.
+     * @param permission permission constant.
+     */
     public void showInfo(Activity activity, String permission){
         activity.shouldShowRequestPermissionRationale(permission);
     }
