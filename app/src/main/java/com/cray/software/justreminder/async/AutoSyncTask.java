@@ -18,17 +18,17 @@ import java.io.IOException;
 
 public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
 
-    Context tContext;
+    private Context mContext;
 
     public AutoSyncTask(Context context){
-        this.tContext = context;
+        this.mContext = context;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        DataBase DB = new DataBase(tContext);
+        DataBase DB = new DataBase(mContext);
         DB.open();
-        IOHelper ioHelper = new IOHelper(tContext);
+        IOHelper ioHelper = new IOHelper(mContext);
 
         ioHelper.backupGroup(true);
         ioHelper.restoreGroup(true);
@@ -55,7 +55,7 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
         ioHelper.restoreReminder(true);
 
         //export & import notes
-        SharedPrefs prefs = new SharedPrefs(tContext);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
             ioHelper.backupNote(true);
             ioHelper.restoreNote(true);
@@ -70,7 +70,7 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
         DB.close();
 
         try {
-            new SyncHelper(tContext).scanFoldersForJSON();
+            new SyncHelper(mContext).findJson();
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(tContext).updateWidget();
-        new UpdatesHelper(tContext).updateNotesWidget();
+        new UpdatesHelper(mContext).updateWidget();
+        new UpdatesHelper(mContext).updateNotesWidget();
     }
 }

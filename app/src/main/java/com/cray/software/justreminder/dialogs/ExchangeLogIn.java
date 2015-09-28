@@ -20,12 +20,9 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ExchangeLogIn extends AppCompatActivity {
 
-    ColorSetter cs = new ColorSetter(ExchangeLogIn.this);
-    SharedPrefs sPrefs = new SharedPrefs(ExchangeLogIn.this);
-    Toolbar toolbar;
-    TextView title;
-    EditText loginEdit, domainEdit, passwordEdit;
-    CheckBox check;
+    private ColorSetter cs = new ColorSetter(ExchangeLogIn.this);
+    private SharedPrefs sPrefs = new SharedPrefs(ExchangeLogIn.this);
+    private EditText loginEdit, domainEdit, passwordEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +34,7 @@ public class ExchangeLogIn extends AppCompatActivity {
         setContentView(R.layout.exchange_login_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -60,7 +57,7 @@ public class ExchangeLogIn extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        title = (TextView) findViewById(R.id.title);
+        TextView title = (TextView) findViewById(R.id.title);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_white, 0, 0, 0);
         } else {
@@ -71,7 +68,7 @@ public class ExchangeLogIn extends AppCompatActivity {
         domainEdit = (EditText) findViewById(R.id.domainEdit);
         passwordEdit = (EditText) findViewById(R.id.passwordEdit);
 
-        check = (CheckBox) findViewById(R.id.check);
+        CheckBox check = (CheckBox) findViewById(R.id.check);
         check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

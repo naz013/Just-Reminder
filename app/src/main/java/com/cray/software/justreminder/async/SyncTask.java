@@ -23,13 +23,13 @@ import java.io.IOException;
 
 public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
-    Context tContext;
-    NotificationManagerCompat mNotifyMgr;
-    NotificationCompat.Builder builder;
+    private Context mContext;
+    private NotificationManagerCompat mNotifyMgr;
+    private NotificationCompat.Builder builder;
     private SyncListener mListener;
 
     public SyncTask(Context context, SyncListener mListener){
-        this.tContext = context;
+        this.mContext = context;
         builder = new NotificationCompat.Builder(context);
         this.mListener = mListener;
     }
@@ -37,10 +37,10 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        builder.setContentTitle(tContext.getString(R.string.sync_start_message));
-        builder.setContentText(tContext.getString(R.string.loading_wait));
+        builder.setContentTitle(mContext.getString(R.string.sync_start_message));
+        builder.setContentText(mContext.getString(R.string.loading_wait));
         builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
-        mNotifyMgr = NotificationManagerCompat.from(tContext);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(2, builder.build());
     }
 
@@ -54,9 +54,9 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        DataBase DB = new DataBase(tContext);
+        DataBase DB = new DataBase(mContext);
         DB.open();
-        IOHelper ioHelper = new IOHelper(tContext);
+        IOHelper ioHelper = new IOHelper(mContext);
 
         ioHelper.backupGroup(true);
         ioHelper.restoreGroup(true);
@@ -78,22 +78,22 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         }
 
         //export & import reminders
-        publishProgress(tContext.getString(R.string.message_sync_reminders));
+        publishProgress(mContext.getString(R.string.message_sync_reminders));
 
         ioHelper.backupReminder(true);
         ioHelper.restoreReminder(true);
 
         //export & import notes
-        SharedPrefs prefs = new SharedPrefs(tContext);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
-            publishProgress(tContext.getString(R.string.message_sync_notes));
+            publishProgress(mContext.getString(R.string.message_sync_notes));
             ioHelper.backupNote(true);
             ioHelper.restoreNote(true);
         }
 
         //export & import birthdays
         if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
-            publishProgress(tContext.getString(R.string.message_sync_birthdays));
+            publishProgress(mContext.getString(R.string.message_sync_birthdays));
             ioHelper.backupBirthday(true);
             ioHelper.restoreBirthday(true);
         }
@@ -101,7 +101,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         DB.close();
 
         try {
-            new SyncHelper(tContext).scanFoldersForJSON();
+            new SyncHelper(mContext).findJson();
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -111,17 +111,17 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentTitle(tContext.getString(R.string.sync_end_message));
+        builder.setContentTitle(mContext.getString(R.string.sync_end_message));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
         if (Module.isPro()) {
-            builder.setContentText(tContext.getString(R.string.app_name_pro));
-        } else builder.setContentText(tContext.getString(R.string.app_name));
+            builder.setContentText(mContext.getString(R.string.app_name_pro));
+        } else builder.setContentText(mContext.getString(R.string.app_name));
         builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify(2, builder.build());
         if (mListener != null) {
             mListener.endExecution(aVoid);
         }
-        new UpdatesHelper(tContext).updateWidget();
-        new UpdatesHelper(tContext).updateNotesWidget();
+        new UpdatesHelper(mContext).updateWidget();
+        new UpdatesHelper(mContext).updateNotesWidget();
     }
 }

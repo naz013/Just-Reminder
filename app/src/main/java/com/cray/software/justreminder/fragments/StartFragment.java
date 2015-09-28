@@ -15,8 +15,7 @@ public class StartFragment extends Fragment {
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
 
-    int pageNumber;
-    Typeface typeface;
+    private int pageNumber;
 
     public static StartFragment newInstance(int page) {
         StartFragment pageFragment = new StartFragment();
@@ -37,7 +36,7 @@ public class StartFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.guide_fragment, null);
 
-        typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
+        Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
 
         TextView titleHelp = (TextView) view.findViewById(R.id.fragmentTitle);
         titleHelp.setTypeface(typeface);

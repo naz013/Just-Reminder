@@ -29,22 +29,22 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 
 public class TaskListManager extends AppCompatActivity {
-    ColorSetter cSetter = new ColorSetter(TaskListManager.this);
-    SharedPrefs sPrefs = new SharedPrefs(TaskListManager.this);
-    RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
+    private ColorSetter cSetter = new ColorSetter(TaskListManager.this);
+    private SharedPrefs sPrefs = new SharedPrefs(TaskListManager.this);
+    private RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
             yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
             deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
-    RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroupPro;
-    CheckBox defaultCheck;
+    private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroupPro;
+    private CheckBox defaultCheck;
 
-    long id;
-    Toolbar toolbar;
-    FloatingEditText editField;
-    int color, sysDef;
+    private long id;
+    private Toolbar toolbar;
+    private FloatingEditText editField;
+    private int color, sysDef;
 
-    TasksData data = new TasksData(TaskListManager.this);
+    private TasksData data = new TasksData(TaskListManager.this);
 
-    public static final int MENU_ITEM_DELETE = 12;
+    private static final int MENU_ITEM_DELETE = 12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

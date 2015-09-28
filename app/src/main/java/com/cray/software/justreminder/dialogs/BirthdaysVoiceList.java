@@ -18,29 +18,24 @@ import java.util.ArrayList;
 
 public class BirthdaysVoiceList extends Activity{
 
-    ListView contactsList;
-    ColorSetter cs;
-    ArrayList<String> mNames = new ArrayList<>();
-    ArrayList<String> mDates = new ArrayList<>();
-    ArrayList<Integer> mYears = new ArrayList<>();
-    TextView aboutClose;
+    private ListView contactsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(BirthdaysVoiceList.this);
+        ColorSetter cs = new ColorSetter(BirthdaysVoiceList.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.birthdays_list_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         Intent intent = getIntent();
-        mNames = intent.getStringArrayListExtra("names");
-        mDates = intent.getStringArrayListExtra("dates");
-        mYears = intent.getIntegerArrayListExtra("years");
+        ArrayList<String> mNames = intent.getStringArrayListExtra("names");
+        ArrayList<String> mDates = intent.getStringArrayListExtra("dates");
+        ArrayList<Integer> mYears = intent.getIntegerArrayListExtra("years");
 
         contactsList = (ListView) findViewById(R.id.contactsList);
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -15,17 +15,14 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TextSize extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar;
-    TextView radiusValue, titleDialog;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    Button minusButton, plusButton;
+    private SeekBar radiusBar;
+    private TextView radiusValue;
+    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(TextSize.this);
+        ColorSetter cs = new ColorSetter(TextSize.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -33,7 +30,7 @@ public class TextSize extends Activity {
         sPrefs = new SharedPrefs(TextSize.this);
 
 
-        titleDialog = (TextView) findViewById(R.id.titleDialog);
+        TextView titleDialog = (TextView) findViewById(R.id.titleDialog);
         titleDialog.setText(getString(R.string.text_size_dialog_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
@@ -59,13 +56,13 @@ public class TextSize extends Activity {
             }
         });
 
-        plusButton = (Button) findViewById(R.id.plusButton);
+        Button plusButton = (Button) findViewById(R.id.plusButton);
         plusButton.setVisibility(View.GONE);
 
-        minusButton = (Button) findViewById(R.id.minusButton);
+        Button minusButton = (Button) findViewById(R.id.minusButton);
         minusButton.setVisibility(View.GONE);
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

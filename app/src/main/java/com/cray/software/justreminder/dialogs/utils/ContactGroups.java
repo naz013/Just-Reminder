@@ -26,8 +26,7 @@ import java.util.ArrayList;
 
 public class ContactGroups extends AppCompatActivity {
 
-    RecyclerView currentList;
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class ContactGroups extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        currentList = (RecyclerView) findViewById(R.id.currentList);
+        RecyclerView currentList = (RecyclerView) findViewById(R.id.currentList);
         currentList.setLayoutManager(new LinearLayoutManager(this));
         currentList.setAdapter(new SimpleRecyclerAdapter(this, loadGroups()));
     }

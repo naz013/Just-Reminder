@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class FileCursorAdapter extends CursorAdapter implements Filterable {
+
     private LayoutInflater inflater;
     private Cursor c;
     private Context context;

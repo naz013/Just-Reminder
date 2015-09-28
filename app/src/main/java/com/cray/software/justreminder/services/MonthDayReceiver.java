@@ -15,9 +15,10 @@ import com.cray.software.justreminder.interfaces.Constants;
 import java.util.Calendar;
 
 public class MonthDayReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    DataBase DB;
+    private DataBase DB;
 
     @Override
     public void onReceive(Context context, Intent intent) {

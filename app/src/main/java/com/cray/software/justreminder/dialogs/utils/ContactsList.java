@@ -26,17 +26,13 @@ import java.util.ArrayList;
 
 public class ContactsList extends AppCompatActivity {
 
-    FloatingEditText searchField;
-    ListView contactsList;
-    ArrayAdapter<String> adapter;
-    String name = "";
-    ColorSetter cs;
-    Toolbar toolbar;
+    private ArrayAdapter<String> adapter;
+    private String name = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(ContactsList.this);
+        ColorSetter cs = new ColorSetter(ContactsList.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -44,7 +40,7 @@ public class ContactsList extends AppCompatActivity {
         setContentView(R.layout.contact_picker_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -55,7 +51,7 @@ public class ContactsList extends AppCompatActivity {
         Intent intent = getIntent();
         final ArrayList<String> contacts = intent.getStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY);
 
-        searchField = (FloatingEditText) findViewById(R.id.searchField);
+        FloatingEditText searchField = (FloatingEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -74,7 +70,7 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        contactsList = (ListView) findViewById(R.id.contactsList);
+        ListView contactsList = (ListView) findViewById(R.id.contactsList);
         adapter = new ArrayAdapter<>(ContactsList.this,
                 android.R.layout.simple_list_item_1, contacts);
         contactsList.setAdapter(adapter);

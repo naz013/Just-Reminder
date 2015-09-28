@@ -27,10 +27,8 @@ import java.io.File;
 import java.util.Locale;
 
 public class SplashScreen extends Activity{
-    SharedPrefs sPrefs;
-    TextView textView;
-    LinearLayout splashBg;
-    ColorSetter cs = new ColorSetter(SplashScreen.this);
+    private SharedPrefs sPrefs;
+    private ColorSetter cs = new ColorSetter(SplashScreen.this);
 
     public static final String APP_UI_PREFERENCES = "ui_settings";
 
@@ -44,7 +42,7 @@ public class SplashScreen extends Activity{
         }
         setRequestedOrientation(cs.getRequestOrientation());
 
-        textView = (TextView) findViewById(R.id.textView);
+        TextView textView = (TextView) findViewById(R.id.textView);
         String name;
         if (Module.isPro()){
             name = getString(R.string.app_name_pro);
@@ -52,7 +50,7 @@ public class SplashScreen extends Activity{
         textView.setText(name.toUpperCase());
         textView.setTextColor(getResources().getColor(R.color.colorWhite));
 
-        splashBg = (LinearLayout) findViewById(R.id.splashBg);
+        LinearLayout splashBg = (LinearLayout) findViewById(R.id.splashBg);
         splashBg.setBackgroundColor(cs.colorSetter());
 
         sPrefs = new SharedPrefs(SplashScreen.this);

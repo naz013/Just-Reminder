@@ -37,12 +37,8 @@ public class CalendarThemeFragment extends Fragment{
 
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_DATA = "arg_data";
-    int pageNumber;
-    RelativeLayout header;
-    ImageButton plusButton, voiceButton, settingsButton, prevMonth, nextMonth;
-    TextView currentDate, themeTitle;
-    GridView weekdayGrid, monthGrid;
-    ArrayList<CalendarWidgetConfig.ThemeItem> list;
+    private int pageNumber;
+    private ArrayList<CalendarWidgetConfig.ThemeItem> list;
 
     public static CalendarThemeFragment newInstance(int page, ArrayList<CalendarWidgetConfig.ThemeItem> list) {
         CalendarThemeFragment pageFragment = new CalendarThemeFragment();
@@ -66,19 +62,19 @@ public class CalendarThemeFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar_widget_preview, container, false);
 
-        header = (RelativeLayout) view.findViewById(R.id.header);
+        RelativeLayout header = (RelativeLayout) view.findViewById(R.id.header);
 
-        plusButton = (ImageButton) view.findViewById(R.id.plusButton);
-        voiceButton = (ImageButton) view.findViewById(R.id.voiceButton);
-        settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
-        nextMonth = (ImageButton) view.findViewById(R.id.nextMonth);
-        prevMonth = (ImageButton) view.findViewById(R.id.prevMonth);
+        ImageButton plusButton = (ImageButton) view.findViewById(R.id.plusButton);
+        ImageButton voiceButton = (ImageButton) view.findViewById(R.id.voiceButton);
+        ImageButton settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
+        ImageButton nextMonth = (ImageButton) view.findViewById(R.id.nextMonth);
+        ImageButton prevMonth = (ImageButton) view.findViewById(R.id.prevMonth);
 
-        currentDate = (TextView) view.findViewById(R.id.currentDate);
-        themeTitle = (TextView) view.findViewById(R.id.themeTitle);
+        TextView currentDate = (TextView) view.findViewById(R.id.currentDate);
+        TextView themeTitle = (TextView) view.findViewById(R.id.themeTitle);
 
-        weekdayGrid = (GridView) view.findViewById(R.id.weekdayGrid);
-        monthGrid = (GridView) view.findViewById(R.id.monthGrid);
+        GridView weekdayGrid = (GridView) view.findViewById(R.id.weekdayGrid);
+        GridView monthGrid = (GridView) view.findViewById(R.id.monthGrid);
 
         CalendarWidgetConfig.ThemeItem themeItem = list.get(pageNumber);
 

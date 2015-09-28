@@ -24,11 +24,10 @@ import com.cray.software.justreminder.modules.Module;
 
 public class LocationSettingsFragment extends Fragment implements View.OnClickListener {
 
-    SharedPrefs sPrefs;
-    ActionBar ab;
-    RelativeLayout notificationOption, radius, markerStyleContainer, widgetDistance;
-    TextView mapType, radiusText, places, markerStyle, tracker;
-    CheckBox notifCheck, widgetDistanceCheck;
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
+    private TextView radiusText;
+    private CheckBox notifCheck, widgetDistanceCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,37 +40,37 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
             ab.setTitle(R.string.location_settings);
         }
 
-        mapType = (TextView) rootView.findViewById(R.id.mapType);
+        TextView mapType = (TextView) rootView.findViewById(R.id.mapType);
         mapType.setOnClickListener(this);
 
-        notificationOption = (RelativeLayout) rootView.findViewById(R.id.notificationOption);
+        RelativeLayout notificationOption = (RelativeLayout) rootView.findViewById(R.id.notificationOption);
         notificationOption.setOnClickListener(this);
 
         notifCheck = (CheckBox) rootView.findViewById(R.id.notifCheck);
         notifCheck.setChecked(sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION));
 
-        radius = (RelativeLayout) rootView.findViewById(R.id.radius);
+        RelativeLayout radius = (RelativeLayout) rootView.findViewById(R.id.radius);
         radius.setOnClickListener(this);
 
         radiusText = (TextView) rootView.findViewById(R.id.radiusText);
 
-        places = (TextView) rootView.findViewById(R.id.places);
+        TextView places = (TextView) rootView.findViewById(R.id.places);
         places.setOnClickListener(this);
 
-        tracker = (TextView) rootView.findViewById(R.id.tracker);
+        TextView tracker = (TextView) rootView.findViewById(R.id.tracker);
         tracker.setOnClickListener(this);
 
-        widgetDistance = (RelativeLayout) rootView.findViewById(R.id.widgetDistance);
+        RelativeLayout widgetDistance = (RelativeLayout) rootView.findViewById(R.id.widgetDistance);
         widgetDistance.setOnClickListener(this);
 
         widgetDistanceCheck = (CheckBox) rootView.findViewById(R.id.widgetDistanceCheck);
         widgetDistanceCheck.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_DISTANCE));
 
         if (Module.isPro()){
-            markerStyleContainer = (RelativeLayout) rootView.findViewById(R.id.markerStyleContainer);
+            RelativeLayout markerStyleContainer = (RelativeLayout) rootView.findViewById(R.id.markerStyleContainer);
             markerStyleContainer.setVisibility(View.VISIBLE);
 
-            markerStyle = (TextView) rootView.findViewById(R.id.markerStyle);
+            TextView markerStyle = (TextView) rootView.findViewById(R.id.markerStyle);
             markerStyle.setOnClickListener(this);
         }
 

@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 
 public class SettingsFragment extends ListFragment {
-    OnHeadlineSelectedListener mCallback;
+    private OnHeadlineSelectedListener mCallback;
 
     public interface OnHeadlineSelectedListener {
         void onArticleSelected(int position);

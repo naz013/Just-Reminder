@@ -28,15 +28,14 @@ import java.util.ArrayList;
 
 public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdapter.ViewHolder> {
 
-    ArrayList<NoteItem> data;
-    Context cContext;
-    ColorSetter cs;
-    SharedPrefs prefs;
-    SyncHelper syncHelper;
-    private EventListener mEventListener;
+    private ArrayList<Note> data;
+    private Context mContext;
+    private ColorSetter cs;
+    private SharedPrefs prefs;
+    private SyncHelper syncHelper;
 
-    public NotesRecyclerAdapter(Context context, ArrayList<NoteItem> data) {
-        this.cContext = context;
+    public NotesRecyclerAdapter(Context context, ArrayList<Note> data) {
+        this.mContext = context;
         this.data = data;
         cs = new ColorSetter(context);
         prefs = new SharedPrefs(context);
@@ -105,20 +104,20 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     private void onItemClick(long id, ImageView imageView){
         if (prefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Intent intent = new Intent(cContext, NotePreviewFragment.class);
+                Intent intent = new Intent(mContext, NotePreviewFragment.class);
                 intent.putExtra(Constants.EDIT_ID, id);
                 String transitionName = "image";
                 ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) cContext, imageView,
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, imageView,
                                 transitionName);
-                cContext.startActivity(intent, options.toBundle());
+                mContext.startActivity(intent, options.toBundle());
             } else {
-                cContext.startActivity(
-                        new Intent(cContext, NotePreviewFragment.class)
+                mContext.startActivity(
+                        new Intent(mContext, NotePreviewFragment.class)
                                 .putExtra(Constants.EDIT_ID, id));
             }
         } else {
-            cContext.startActivity(new Intent(cContext, NotesManager.class)
+            mContext.startActivity(new Intent(mContext, NotesManager.class)
                     .putExtra(Constants.EDIT_ID, id));
         }
     }
@@ -140,9 +139,5 @@ public class NotesRecyclerAdapter extends RecyclerView.Adapter<NotesRecyclerAdap
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    public void setEventListener(EventListener eventListener) {
-        mEventListener = eventListener;
     }
 }

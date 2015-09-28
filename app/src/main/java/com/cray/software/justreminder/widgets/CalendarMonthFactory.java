@@ -26,13 +26,15 @@ import hirondelle.date4j.DateTime;
 
 public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    ArrayList<DateTime> datetimeList;
-    ArrayList<WidgetItem> pagerData = new ArrayList<>();
-    Context context;
-    int widgetID;
-    int SUNDAY = 1;
-    int startDayOfWeek = SUNDAY;
-    int mDay, mMonth, mYear, prefsMonth, prefsYear;
+    private ArrayList<DateTime> datetimeList;
+    private ArrayList<WidgetItem> pagerData = new ArrayList<>();
+    private Context context;
+    private int widgetID;
+    private int SUNDAY = 1;
+    private int startDayOfWeek = SUNDAY;
+    private int mDay;
+    private int mMonth;
+    private int mYear;
 
     CalendarMonthFactory(Context ctx, Intent intent) {
         context = ctx;
@@ -56,10 +58,9 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
         SharedPreferences sp =
                 context.getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        prefsMonth  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
-        prefsYear  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetID, 0);
+        int prefsMonth = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
 
-        mYear = prefsYear;
+        mYear = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetID, 0);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
         mMonth = prefsMonth + 1;
 

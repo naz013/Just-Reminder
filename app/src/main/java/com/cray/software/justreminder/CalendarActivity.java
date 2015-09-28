@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
-import com.cray.software.justreminder.datas.PagerItem;
+import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -40,26 +40,21 @@ import java.util.Date;
 
 public class CalendarActivity extends AppCompatActivity {
 
-    ColorSetter cSetter;
-    DataBase db;
-    SharedPrefs sPrefs;
-    Toolbar toolbar;
-    FloatingActionsMenu mainMenu;
-    FloatingActionButton addReminder, addBirthday;
-    long dateMills;
-    ImageButton voiceButton;
-    Button currentEvent;
-    TextView title;
-    ViewPager pager;
-    FrameLayout calendarLayout;
-    CircularProgress progress;
+    private SharedPrefs sPrefs;
+    private FloatingActionsMenu mainMenu;
+    private long dateMills;
+    private Button currentEvent;
+    private TextView title;
+    private ViewPager pager;
+    private FrameLayout calendarLayout;
+    private CircularProgress progress;
 
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(CalendarActivity.this);
+        ColorSetter cSetter = new ColorSetter(CalendarActivity.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
@@ -69,7 +64,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         sPrefs = new SharedPrefs(CalendarActivity.this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -77,7 +72,7 @@ public class CalendarActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.title);
         title.setText(getString(R.string.calendar_fragment));
 
-        voiceButton = (ImageButton) findViewById(R.id.voiceButton);
+        ImageButton voiceButton = (ImageButton) findViewById(R.id.voiceButton);
         voiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +110,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         mainMenu = (FloatingActionsMenu) findViewById(R.id.mainMenu);
 
-        addBirthday = new FloatingActionButton(getBaseContext());
+        FloatingActionButton addBirthday = new FloatingActionButton(getBaseContext());
         addBirthday.setTitle(getString(R.string.new_birthday));
         addBirthday.setSize(FloatingActionButton.SIZE_MINI);
         addBirthday.setIcon(R.drawable.ic_cake_grey600_24dp);
@@ -134,7 +129,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        addReminder = new FloatingActionButton(getBaseContext());
+        FloatingActionButton addReminder = new FloatingActionButton(getBaseContext());
         addReminder.setTitle(getString(R.string.new_reminder));
         addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
         addReminder.setIcon(R.drawable.ic_alarm_add_grey600_24dp);
@@ -203,7 +198,7 @@ public class CalendarActivity extends AppCompatActivity {
         } else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
     }
 
-    ArrayList<PagerItem> pagerData = new ArrayList<>();
+    ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
 
     private void showEvents(Date date) {
         progress.setVisibility(View.VISIBLE);
@@ -221,7 +216,7 @@ public class CalendarActivity extends AppCompatActivity {
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        db = new DataBase(CalendarActivity.this);
+        DataBase db = new DataBase(CalendarActivity.this);
         if (!db.isOpen()) db.open();
 
         EventsDataProvider provider = new EventsDataProvider();
@@ -249,9 +244,9 @@ public class CalendarActivity extends AppCompatActivity {
 
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
                 targetPosition = position;
-                pagerData.add(new PagerItem(datas, position, 1, mDay, mMonth, mYear));
+                pagerData.add(new EventsPagerItem(datas, position, 1, mDay, mMonth, mYear));
             } else {
-                pagerData.add(new PagerItem(datas, position, 0, mDay, mMonth, mYear));
+                pagerData.add(new EventsPagerItem(datas, position, 0, mDay, mMonth, mYear));
             }
 
             position++;

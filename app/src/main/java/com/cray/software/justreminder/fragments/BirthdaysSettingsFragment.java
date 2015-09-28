@@ -47,16 +47,18 @@ import java.util.Locale;
 
 public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener {
 
-    ActionBar ab;
-    SharedPrefs sPrefs;
-    TextView daysToText, contactsScan, reminderTimeText, text3, text4, birthdayNotification, birthImport;
-    RelativeLayout useContacts, daysTo, reminderTime, autoScan, birthdayNotifContainer, widgetShow,
-            backupBirth, birthReminder;
-    SwitchCompat contactsSwitch;
-    CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck;
-    DataBase db;
-    BirthdayAlarm alarmReceiver = new BirthdayAlarm();
-    int myHour = 0, myMinute = 0;
+    private ActionBar ab;
+    private SharedPrefs sPrefs;
+    private TextView daysToText;
+    private TextView contactsScan;
+    private TextView reminderTimeText;
+    private TextView text3;
+    private TextView text4;
+    private RelativeLayout autoScan;
+    private SwitchCompat contactsSwitch;
+    private CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck;
+    private DataBase db;
+    private BirthdayAlarm alarmReceiver = new BirthdayAlarm();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,18 +72,18 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
-        useContacts = (RelativeLayout) rootView.findViewById(R.id.useContacts);
+        RelativeLayout useContacts = (RelativeLayout) rootView.findViewById(R.id.useContacts);
         useContacts.setOnClickListener(this);
 
         contactsSwitch = (SwitchCompat) rootView.findViewById(R.id.contactsSwitch);
         contactsSwitch.setChecked(sPrefs.loadBoolean(Prefs.CONTACT_BIRTHDAYS));
 
-        daysTo = (RelativeLayout) rootView.findViewById(R.id.daysTo);
+        RelativeLayout daysTo = (RelativeLayout) rootView.findViewById(R.id.daysTo);
         daysTo.setOnClickListener(this);
 
         daysToText = (TextView) rootView.findViewById(R.id.daysToText);
 
-        reminderTime = (RelativeLayout) rootView.findViewById(R.id.reminderTime);
+        RelativeLayout reminderTime = (RelativeLayout) rootView.findViewById(R.id.reminderTime);
         reminderTime.setOnClickListener(this);
 
         reminderTimeText = (TextView) rootView.findViewById(R.id.reminderTimeText);
@@ -89,11 +91,11 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         contactsScan = (TextView) rootView.findViewById(R.id.contactsScan);
         contactsScan.setOnClickListener(this);
 
-        birthImport = (TextView) rootView.findViewById(R.id.birthImport);
+        TextView birthImport = (TextView) rootView.findViewById(R.id.birthImport);
         birthImport.setOnClickListener(this);
         birthImport.setVisibility(View.GONE);
 
-        birthReminder = (RelativeLayout) rootView.findViewById(R.id.birthReminder);
+        RelativeLayout birthReminder = (RelativeLayout) rootView.findViewById(R.id.birthReminder);
         birthReminder.setOnClickListener(this);
 
         birthReminderCheck = (CheckBox) rootView.findViewById(R.id.birthReminderCheck);
@@ -105,7 +107,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         autoScanCheck = (CheckBox) rootView.findViewById(R.id.autoScanCheck);
         autoScanCheck.setChecked(sPrefs.loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS));
 
-        backupBirth = (RelativeLayout) rootView.findViewById(R.id.backupBirth);
+        RelativeLayout backupBirth = (RelativeLayout) rootView.findViewById(R.id.backupBirth);
         backupBirth.setOnClickListener(this);
 
         backupBirthCheck = (CheckBox) rootView.findViewById(R.id.backupBirthCheck);
@@ -115,14 +117,14 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         text4 = (TextView) rootView.findViewById(R.id.text4);
 
         if (Module.isPro()){
-            birthdayNotifContainer = (RelativeLayout) rootView.findViewById(R.id.birthdayNotifContainer);
+            RelativeLayout birthdayNotifContainer = (RelativeLayout) rootView.findViewById(R.id.birthdayNotifContainer);
             birthdayNotifContainer.setVisibility(View.VISIBLE);
 
-            birthdayNotification = (TextView) rootView.findViewById(R.id.birthdayNotification);
+            TextView birthdayNotification = (TextView) rootView.findViewById(R.id.birthdayNotification);
             birthdayNotification.setOnClickListener(this);
         }
 
-        widgetShow = (RelativeLayout) rootView.findViewById(R.id.widgetShow);
+        RelativeLayout widgetShow = (RelativeLayout) rootView.findViewById(R.id.widgetShow);
         widgetShow.setOnClickListener(this);
 
         widgetShowCheck = (CheckBox) rootView.findViewById(R.id.widgetShowCheck);
@@ -146,8 +148,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (sPrefs.isString(Prefs.BIRTHDAY_REMINDER_HOUR)
                 && sPrefs.isString(Prefs.BIRTHDAY_REMINDER_MINUTE)){
-            myHour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-            myMinute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+            int myHour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+            int myMinute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, myHour);
             calendar.set(Calendar.MINUTE, myMinute);
@@ -397,7 +399,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                         String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = Contacts.get_Number(name, tContext);
+                        String number = Contacts.getNumber(name, tContext);
                         String email = cc.getMail(id);
                         Calendar calendar = Calendar.getInstance();
                         for (SimpleDateFormat f : birthdayFormats) {

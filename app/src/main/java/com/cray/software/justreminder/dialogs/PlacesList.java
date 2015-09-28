@@ -31,12 +31,11 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class PlacesList extends AppCompatActivity {
 
-    ListView listView;
-    ColorSetter cs = new ColorSetter(PlacesList.this);
-    DataBase db = new DataBase(PlacesList.this);
-    SharedPrefs sPrefs = new SharedPrefs(PlacesList.this);
-    Toolbar toolbar;
-    AddFloatingActionButton mFab;
+    private ListView listView;
+    private ColorSetter cs = new ColorSetter(PlacesList.this);
+    private DataBase db = new DataBase(PlacesList.this);
+    private SharedPrefs sPrefs = new SharedPrefs(PlacesList.this);
+    private AddFloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class PlacesList extends AppCompatActivity {
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);

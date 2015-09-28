@@ -53,20 +53,12 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class ActiveFragment extends Fragment {
 
-    RecyclerView currentList;
-    LinearLayout emptyLayout, emptyItem;
-    RelativeLayout ads_container;
+    private RecyclerView currentList;
+    private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
-    ImageView emptyImage;
 
-    DataBase DB;
-    ColorSetter cSetter;
-    SharedPrefs sPrefs;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.Adapter mWrappedAdapter;
-    private RecyclerViewSwipeManager mRecyclerViewSwipeManager;
-    private RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager;
+    private DataBase DB;
+    private SharedPrefs sPrefs;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -120,13 +112,13 @@ public class ActiveFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        cSetter = new ColorSetter(getActivity());
+        ColorSetter cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
+        ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_notifications_white_24dp);
         } else {
@@ -183,7 +175,7 @@ public class ActiveFragment extends Fragment {
                 }
             });
 
-            ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
+            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
         return rootView;
     }
@@ -259,11 +251,11 @@ public class ActiveFragment extends Fragment {
             currentList.setVisibility(View.GONE);
             emptyItem.setVisibility(View.VISIBLE);
         }
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
         mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
         /*final SwipeActionAdapter mAdapter = new SwipeActionAdapter(customAdapter);
         mAdapter.setListView(currentList);
@@ -321,7 +313,7 @@ public class ActiveFragment extends Fragment {
 
             @Override
             public void onItemRemoved(int position) {
-                Reminder.makeArchive(provider.getItem(position).getId(), getActivity());
+                Reminder.moveToTrash(provider.getItem(position).getId(), getActivity());
                 loaderAdapter(null);
             }
 
@@ -361,8 +353,7 @@ public class ActiveFragment extends Fragment {
                 editReminder(provider.getItem(position).getId());
             }
         });
-        mAdapter = myItemAdapter;
-        mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);      // wrap for swiping
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
         currentList.setLayoutManager(mLayoutManager);
@@ -382,12 +373,13 @@ public class ActiveFragment extends Fragment {
 
     private void disableReminder(long id){
         if (id != 0) {
-            Reminder.makeArchive(id, getActivity());
+            Reminder.moveToTrash(id, getActivity());
             loaderAdapter(null);
         }
     }
 
-    ArrayList<String> ids;
+    private ArrayList<String> ids;
+
     private void filterDialog(){
         ids = new ArrayList<>();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(

@@ -9,16 +9,16 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class ColorSetter {
 
-    Context cContext;
-    SharedPrefs sPrefs;
-    Typeface typeface;
+    private Context mContext;
+    private SharedPrefs sPrefs;
+    private Typeface typeface;
 
     public ColorSetter(Context context){
-        this.cContext = context;
+        this.mContext = context;
     }
 
     /**
@@ -28,31 +28,31 @@ public class ColorSetter {
      */
     public Typeface getTypeface(int style){
         if (style == 0) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Black.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Black.ttf");
         } else if (style == 1) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-BlackItalic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-BlackItalic.ttf");
         } else if (style == 2) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Bold.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Bold.ttf");
         } else if (style == 3) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-BoldItalic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-BoldItalic.ttf");
         } else if (style == 4) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Italic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Italic.ttf");
         } else if (style == 5) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Light.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
         } else if (style == 6) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-LightItalic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-LightItalic.ttf");
         } else if (style == 7) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Medium.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Medium.ttf");
         } else if (style == 8) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-MediumItalic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-MediumItalic.ttf");
         } else if (style == 9) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Regular.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Regular.ttf");
         } else if (style == 10) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Thin.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Thin.ttf");
         } else if (style == 11) {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-ThinItalic.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-ThinItalic.ttf");
         } else {
-            typeface = Typeface.createFromAsset(cContext.getAssets(), "fonts/Roboto-Light.ttf");
+            typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Light.ttf");
         }
         return typeface;
     }
@@ -63,7 +63,7 @@ public class ColorSetter {
      * @return Color
      */
     private int getColor(int color){
-        return Utils.getColor(cContext, color);
+        return ViewUtils.getColor(mContext, color);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ColorSetter {
      * @return Color
      */
     public int colorSetter(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
         switch (loadedColor) {
@@ -141,7 +141,7 @@ public class ColorSetter {
      * @return Color Resource
      */
     public int colorBirthdayCalendar(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
         int color;
         switch (loadedColor) {
@@ -213,7 +213,7 @@ public class ColorSetter {
      * @return Color Resource
      */
     public int colorReminderCalendar(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
         int color;
         switch (loadedColor) {
@@ -285,7 +285,7 @@ public class ColorSetter {
      * @return Color Resource
      */
     public int colorCurrentCalendar(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
         int color;
         switch (loadedColor) {
@@ -416,7 +416,7 @@ public class ColorSetter {
      * @return Drawable
      */
     private Drawable getDrawable(int i){
-        return Utils.getDrawable(cContext, i);
+        return ViewUtils.getDrawable(mContext, i);
     }
 
     /**
@@ -424,7 +424,7 @@ public class ColorSetter {
      * @return Drawable
      */
     public Drawable toggleDrawable(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         Drawable color;
         switch (loadedColor) {
@@ -494,7 +494,7 @@ public class ColorSetter {
      * @return Color
      */
     public int colorStatus(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
         switch (loadedColor) {
@@ -564,7 +564,7 @@ public class ColorSetter {
      * @return Color
      */
     public int colorChooser(){
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
         switch (loadedColor) {
@@ -635,7 +635,7 @@ public class ColorSetter {
      */
     public int getStyle(){
         int id;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
@@ -768,7 +768,7 @@ public class ColorSetter {
      */
     public int getSpinnerStyle(){
         int color;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.grey_dark_x);
         } else color = getColor(R.color.colorWhite);
@@ -781,7 +781,7 @@ public class ColorSetter {
      */
     public int getDialogStyle(){
         int id;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
@@ -914,7 +914,7 @@ public class ColorSetter {
      */
     public int getFullscreenStyle(){
         int id;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = R.style.HomeDarkFullscreen;
         } else id = R.style.HomeWhiteFullscreen;
@@ -927,7 +927,7 @@ public class ColorSetter {
      */
     public int getBackgroundStyle(){
         int id;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = getColor(R.color.grey_dark_x);
         } else id = getColor(R.color.colorWhite);
@@ -940,7 +940,7 @@ public class ColorSetter {
      */
     public int getStatusBarStyle(){
         int id;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             id = getColor(R.color.grey_dark_x);
         } else id = getColor(R.color.colorGreyDark);
@@ -953,7 +953,7 @@ public class ColorSetter {
      */
     public int getCardStyle(){
         int color;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.grey_x);
         } else color = getColor(R.color.colorWhite);
@@ -966,7 +966,7 @@ public class ColorSetter {
      */
     public int getCardDrawableStyle(){
         int color;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = R.drawable.card_bg_dark;
         } else color = R.drawable.card_bg;
@@ -979,7 +979,7 @@ public class ColorSetter {
      */
     public int getRequestOrientation(){
         int i;
-        sPrefs = new SharedPrefs(cContext);
+        sPrefs = new SharedPrefs(mContext);
         String prefs = sPrefs.loadPrefs(Prefs.SCREEN);
         if (prefs.matches(Constants.SCREEN_PORTRAIT)){
             i = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
@@ -999,7 +999,7 @@ public class ColorSetter {
         int fillColor;
         int strokeColor;
         if (Module.isPro()) {
-            sPrefs = new SharedPrefs(cContext);
+            sPrefs = new SharedPrefs(mContext);
             int color = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (color == 1) {
                 fillColor = R.color.colorRedTr;
@@ -1130,7 +1130,7 @@ public class ColorSetter {
     public int getMarkerStyle(){
         int color;
         if (Module.isPro()) {
-            sPrefs = new SharedPrefs(cContext);
+            sPrefs = new SharedPrefs(mContext);
             int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (loaded == 1) {
                 color = R.drawable.marker_red;

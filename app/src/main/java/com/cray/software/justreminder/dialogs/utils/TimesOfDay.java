@@ -25,20 +25,18 @@ import java.util.Locale;
 
 public class TimesOfDay extends AppCompatActivity implements View.OnClickListener {
 
-    TextView nightTime, eveningTime, dayTime, morningTime;
-    int morningHour, morningMinute;
-    int dayHour, dayMinute;
-    int eveningHour, eveningMinute;
-    int nightHour, nightMinute;
-    ColorSetter cs = new ColorSetter(TimesOfDay.this);
-    SharedPrefs prefs = new SharedPrefs(TimesOfDay.this);
-    SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
-    Toolbar toolbar;
+    private TextView nightTime, eveningTime, dayTime, morningTime;
+    private int morningHour, morningMinute;
+    private int dayHour, dayMinute;
+    private int eveningHour, eveningMinute;
+    private int nightHour, nightMinute;
+    private SharedPrefs prefs = new SharedPrefs(TimesOfDay.this);
+    private SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(TimesOfDay.this);
+        ColorSetter cs = new ColorSetter(TimesOfDay.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -47,7 +45,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
 
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);

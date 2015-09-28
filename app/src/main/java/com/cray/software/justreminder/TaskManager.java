@@ -31,7 +31,7 @@ import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.Item;
+import com.cray.software.justreminder.datas.Category;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -87,7 +87,7 @@ public class TaskManager extends AppCompatActivity {
 
     private FloatingActionButton mFab;
 
-    private ArrayList<Item> items = new ArrayList<>();
+    private ArrayList<Category> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -316,7 +316,7 @@ public class TaskManager extends AppCompatActivity {
             do {
                 String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                items.add(new Item(listTitle, listId));
+                categories.add(new Category(listTitle, listId));
             } while (c.moveToNext());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -326,10 +326,10 @@ public class TaskManager extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if (move) moveTask(items.get(which).getUuID());
+                if (move) moveTask(categories.get(which).getUuID());
                 else {
-                    listText.setText(items.get(which).getTitle());
-                    listId = items.get(which).getUuID();
+                    listText.setText(categories.get(which).getTitle());
+                    listId = categories.get(which).getUuID();
                 }
             }
         });

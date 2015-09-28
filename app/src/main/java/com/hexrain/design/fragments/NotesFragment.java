@@ -21,14 +21,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.note.Note;
-import com.cray.software.justreminder.note.NoteItem;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.note.NotesRecyclerAdapter;
 import com.cray.software.justreminder.note.SyncNotes;
@@ -42,16 +40,11 @@ import java.util.ArrayList;
 
 public class NotesFragment extends Fragment implements SyncListener {
 
-    ColorSetter cSetter;
-    NotesBase db;
-    SharedPrefs sPrefs;
-    RecyclerView currentList;
-    LinearLayout emptyLayout, emptyItem;
-    RelativeLayout ads_container;
+    private NotesBase db;
+    private SharedPrefs sPrefs;
+    private RecyclerView currentList;
+    private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
-    ImageView emptyImage;
-    TextView emptyText;
-    ArrayList<NoteItem> data;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -108,7 +101,6 @@ public class NotesFragment extends Fragment implements SyncListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
@@ -117,11 +109,11 @@ public class NotesFragment extends Fragment implements SyncListener {
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        emptyText = (TextView) rootView.findViewById(R.id.emptyText);
+        TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getActivity().getString(R.string.no_notes_text));
         emptyItem.setVisibility(View.VISIBLE);
 
-        emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
+        ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_event_note_white_24dp);
         } else {
@@ -154,7 +146,7 @@ public class NotesFragment extends Fragment implements SyncListener {
                 }
             });
 
-            ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
+            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
 
         loaderAdapter();
@@ -181,7 +173,7 @@ public class NotesFragment extends Fragment implements SyncListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!new Module().isPro()){
+        if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
             }
@@ -194,7 +186,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
     @Override
     public void onDestroy() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.destroy();
             }
@@ -204,7 +196,7 @@ public class NotesFragment extends Fragment implements SyncListener {
 
     @Override
     public void onPause() {
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             if (adView != null) {
                 adView.pause();
             }
@@ -243,7 +235,7 @@ public class NotesFragment extends Fragment implements SyncListener {
         db = new NotesBase(getActivity());
         if (!db.isOpen()) db.open();
         else return;
-        data = new ArrayList<>();
+        ArrayList<Note> data = new ArrayList<>();
         data.clear();
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()){
@@ -255,7 +247,7 @@ public class NotesFragment extends Fragment implements SyncListener {
                 int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
                 byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new NoteItem(note, color, style, image, id));
+                data.add(new Note(note, color, style, image, id));
             } while (c.moveToNext());
             NotesRecyclerAdapter adapter = new NotesRecyclerAdapter(getActivity(), data);
             currentList.setAdapter(adapter);

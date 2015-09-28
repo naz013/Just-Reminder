@@ -3,7 +3,7 @@ package com.cray.software.justreminder.datas;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ListItems implements Parcelable {
+public class Task implements Parcelable {
     private String title;
     private String status;
     private String taskId;
@@ -12,7 +12,7 @@ public class ListItems implements Parcelable {
     private long date;
     private long id;
 
-    public ListItems(String title, long id, String status, String taskId, long date, String listId, String note){
+    public Task(String title, long id, String status, String taskId, long date, String listId, String note){
         this.title = title;
         this.id = id;
         this.status = status;
@@ -78,19 +78,19 @@ public class ListItems implements Parcelable {
         this.date = date;
     }
 
-    public ListItems(Parcel in) {
+    public Task(Parcel in) {
         super();
         readFromParcel(in);
     }
 
-    public static final Parcelable.Creator<ListItems> CREATOR = new Parcelable.Creator<ListItems>() {
-        public ListItems createFromParcel(Parcel in) {
-            return new ListItems(in);
+    public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
         }
 
-        public ListItems[] newArray(int size) {
+        public Task[] newArray(int size) {
 
-            return new ListItems[size];
+            return new Task[size];
         }
 
     };

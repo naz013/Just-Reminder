@@ -7,10 +7,10 @@ public class TaskListData {
     private long id;
     private String listId;
     private int color;
-    ArrayList<ListItems> mData;
-    int position, current;
+    private ArrayList<Task> mData;
+    private int position, current;
 
-    public TaskListData(String title, long id, String listId, int color, ArrayList<ListItems> mData,
+    public TaskListData(String title, long id, String listId, int color, ArrayList<Task> mData,
                         int position, int current){
         this.title = title;
         this.id = id;
@@ -44,11 +44,11 @@ public class TaskListData {
         this.current = current;
     }
 
-    public ArrayList<ListItems> getmData(){
+    public ArrayList<Task> getmData(){
         return mData;
     }
 
-    public void setmData(ArrayList<ListItems> mData){
+    public void setmData(ArrayList<Task> mData){
         this.mData = mData;
     }
 

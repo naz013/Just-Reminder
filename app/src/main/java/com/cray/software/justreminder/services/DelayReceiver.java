@@ -15,9 +15,9 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import java.util.Calendar;
 
 public class DelayReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    SharedPrefs sPrefs;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -39,7 +39,7 @@ public class DelayReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, DelayReceiver.class);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
         intent.putExtra(Constants.WINDOW_INTENT, window);
-        sPrefs = new SharedPrefs(context);
+        SharedPrefs sPrefs = new SharedPrefs(context);
         int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

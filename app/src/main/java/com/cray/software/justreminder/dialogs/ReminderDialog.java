@@ -44,7 +44,7 @@ import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -52,25 +52,22 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class ReminderDialog extends Activity implements TextToSpeech.OnInitListener {
     private static final int MY_DATA_CHECK_CODE = 111;
-    FloatingActionButton buttonOk, buttonCancel, buttonCall, buttonDelay, buttonDelayFor,
-            buttonNotification, buttonEdit;
-    TextView remText;
-    RoundImageView contactPhoto;
-    LinearLayout single_container;
-    AlarmReceiver alarm = new AlarmReceiver();
-    DelayReceiver delay = new DelayReceiver();
-    RepeatNotificationReceiver repeater = new RepeatNotificationReceiver();
-    long id, remCount;
-    DataBase DB;
-    SharedPrefs sPrefs;
-    int repCode, color = -1;
-    BroadcastReceiver deliveredReceiver, sentReceiver;
-    ColorSetter cs = new ColorSetter(ReminderDialog.this);
-    String melody, number, name, task, type;
-    Notifier notifier = new Notifier(ReminderDialog.this);
-    TextToSpeech tts;
-    boolean isDark = false;
-    int currVolume, isReminder;
+    private FloatingActionButton buttonCall;
+    private TextView remText;
+    private AlarmReceiver alarm = new AlarmReceiver();
+    private DelayReceiver delay = new DelayReceiver();
+    private RepeatNotificationReceiver repeater = new RepeatNotificationReceiver();
+    private long id, remCount;
+    private DataBase DB;
+    private SharedPrefs sPrefs;
+    private int repCode, color = -1;
+    private BroadcastReceiver deliveredReceiver, sentReceiver;
+    private ColorSetter cs = new ColorSetter(ReminderDialog.this);
+    private String melody, number, name, task, type;
+    private Notifier notifier = new Notifier(ReminderDialog.this);
+    private TextToSpeech tts;
+    private boolean isDark = false;
+    private int currVolume, isReminder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,16 +95,16 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         isReminder = res.getIntExtra("int", 0);
-        single_container = (LinearLayout) findViewById(R.id.single_container);
+        LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
-        buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
-        buttonCancel = (FloatingActionButton) findViewById(R.id.buttonCancel);
+        FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
+        FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
+        FloatingActionButton buttonCancel = (FloatingActionButton) findViewById(R.id.buttonCancel);
         buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
-        buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
-        buttonDelayFor = (FloatingActionButton) findViewById(R.id.buttonDelayFor);
-        buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
+        FloatingActionButton buttonDelay = (FloatingActionButton) findViewById(R.id.buttonDelay);
+        FloatingActionButton buttonDelayFor = (FloatingActionButton) findViewById(R.id.buttonDelayFor);
+        FloatingActionButton buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor,
                 buttonNotification, buttonEdit);
@@ -115,20 +112,20 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
         if (isDark){
-            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
-            buttonEdit.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_create_grey600_24dp));
-            buttonCancel.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
-            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
-            buttonNotification.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_favorite_grey600_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
+            buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_grey600_24dp));
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
+            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_grey600_24dp));
         } else {
-            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_white_24dp));
-            buttonEdit.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_create_white_24dp));
-            buttonCancel.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_clear_white_24dp));
-            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_white_24dp));
-            buttonNotification.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_favorite_white_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
+            buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_white_24dp));
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_white_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_white_24dp));
+            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_white_24dp));
         }
 
-        contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
         DB = new DataBase(ReminderDialog.this);
@@ -167,8 +164,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
-                if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
-                else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
+                if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+                else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
             } else {
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.GONE);
@@ -185,13 +182,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     packageManager.getApplicationLabel(applicationInfo) : "???");
             remText.setText(nameA);
             buttonCall.setVisibility(View.VISIBLE);
-            if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
-            else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
+            if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
+            else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
             remText.setText(number);
             buttonCall.setVisibility(View.VISIBLE);
-            if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
-            else buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
+            if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
+            else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
         } else {
             remText.setText(task);
             buttonCall.setVisibility(View.GONE);
@@ -365,7 +362,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private void make(){
         if (repCode == 0){
             makeArchive(id);
-        } else Reminder.generate(id, this);
+        } else Reminder.generateToCalendar(id, this);
         Reminder.backup(this);
     }
 
@@ -383,7 +380,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void colorify(FloatingActionButton... fab){
-        for (FloatingActionButton button:fab){
+        for (FloatingActionButton button : fab){
             if (isDark){
                 button.setColorNormal(getResources().getColor(R.color.colorWhite));
                 button.setColorPressed(getResources().getColor(R.color.colorGrayDark));
@@ -548,8 +545,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         notifier.showReminder(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
-                        else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
                         }
@@ -557,8 +554,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         notifier.showReminder(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
-                        else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
                         }
@@ -566,8 +563,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         notifier.showReminder(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
-                        else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
                         }
@@ -575,8 +572,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         notifier.showReminder(task, type, 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
-                        else buttonCall.setIconDrawable(Utils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
                         }
@@ -632,7 +629,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     public void makeArchive(long id){
-        Reminder.disable(id, this);
+        Reminder.disableReminder(id, this);
     }
 
     @Override

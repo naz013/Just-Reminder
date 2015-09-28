@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -45,16 +44,11 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TrashFragment extends Fragment {
 
-    RecyclerView currentList;
-    LinearLayout emptyLayout, emptyItem;
-    RelativeLayout ads_container;
+    private RecyclerView currentList;
+    private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
-    ImageView emptyImage;
-    TextView emptyText;
 
-    DataBase DB;
-    ColorSetter cSetter;
-    SharedPrefs sPrefs;
+    private DataBase DB;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -98,17 +92,16 @@ public class TrashFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        cSetter = new ColorSetter(getActivity());
-        sPrefs = new SharedPrefs(getActivity());
+        SharedPrefs sPrefs = new SharedPrefs(getActivity());
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        emptyText = (TextView) rootView.findViewById(R.id.emptyText);
+        TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getActivity().getString(R.string.string_no_archived));
         emptyItem.setVisibility(View.VISIBLE);
 
-        emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
+        ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_delete_white_24dp);
         } else {
@@ -127,7 +120,7 @@ public class TrashFragment extends Fragment {
             }
         });*/
 
-        if (!new Module().isPro()) {
+        if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
 
@@ -151,7 +144,7 @@ public class TrashFragment extends Fragment {
                 }
             });
 
-            ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
+            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
         return rootView;
     }

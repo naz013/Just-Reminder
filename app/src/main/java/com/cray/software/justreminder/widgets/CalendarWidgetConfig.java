@@ -36,8 +36,8 @@ import java.util.List;
 public class CalendarWidgetConfig extends AppCompatActivity implements
         RadioGroup.OnCheckedChangeListener {
 
-    int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
-    Intent resultValue;
+    private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private Intent resultValue;
     public final static String CURRENT_WIDGET_PREF = "calendar_pref";
     public final static String CURRENT_WIDGET_COLOR = "calendar_color_";
     public final static String CURRENT_WIDGET_ROW_COLOR = "calendar_row_color_";
@@ -57,20 +57,13 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
 
     public final static String CURRENT_WIDGET_MONTH = "calendar_month_";
     public final static String CURRENT_WIDGET_YEAR = "calendar_year_";
-    int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor,
+    private int color, title, buttonColor, buttonVoice, buttonSettings, rowColor, itemTextColor,
             leftArrow, rightArrow, headerColor;
-    ColorSetter cSetter;
 
-    Toolbar toolbar;
-
-    TextView note, widgetTitle;
-    Spinner widgetBgSpinner;
-    RadioGroup colorsTitleGroup, colorsButtonGroup, group;
-    RadioButton radioTitleBlack, radioButtonBlack, radioButtonWhite, radioTitleWhite, custom, theme;
-    ViewPager themePager;
-    LinearLayout customContainer;
-    MyFragmentPagerAdapter adapter;
-    ArrayList<ThemeItem> list;
+    private RadioGroup group;
+    private ViewPager themePager;
+    private LinearLayout customContainer;
+    private ArrayList<ThemeItem> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,18 +91,18 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
 
         setResult(RESULT_CANCELED, resultValue);
 
-        cSetter = new ColorSetter(CalendarWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(CalendarWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.calendar_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        note = (TextView) findViewById(R.id.note);
-        widgetTitle = (TextView) findViewById(R.id.widgetTitle);
+        TextView note = (TextView) findViewById(R.id.note);
+        TextView widgetTitle = (TextView) findViewById(R.id.widgetTitle);
 
         List<String> spinnerArray = new ArrayList<>();
         spinnerArray.add(getString(R.string.led_color_white));
@@ -119,7 +112,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, spinnerArray);
 
-        widgetBgSpinner = (Spinner) findViewById(R.id.widgetBgSpinner);
+        Spinner widgetBgSpinner = (Spinner) findViewById(R.id.widgetBgSpinner);
         widgetBgSpinner.setAdapter(spinnerArrayAdapter);
         widgetBgSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -149,7 +142,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             }
         });
 
-        colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
+        RadioGroup colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
         colorsTitleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
@@ -166,11 +159,11 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             }
         });
 
-        colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
+        RadioGroup colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
         colorsButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
                         buttonColor = R.drawable.ic_add_grey600_24dp;
                         buttonVoice = R.drawable.ic_mic_grey600_24dp;
@@ -189,11 +182,11 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         });
 
 
-        radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
-        radioTitleWhite = (RadioButton) findViewById(R.id.radioTitleWhite);
+        RadioButton radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
+        RadioButton radioTitleWhite = (RadioButton) findViewById(R.id.radioTitleWhite);
         radioTitleBlack.setChecked(true);
-        radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
-        radioButtonWhite = (RadioButton) findViewById(R.id.radioButtonWhite);
+        RadioButton radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
+        RadioButton radioButtonWhite = (RadioButton) findViewById(R.id.radioButtonWhite);
         radioButtonBlack.setChecked(true);
 
         if (buttonColor == R.drawable.ic_add_grey600_24dp) radioButtonBlack.setChecked(true);
@@ -211,8 +204,8 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
 
         loadThemes();
 
-        custom = (RadioButton) findViewById(R.id.customRadio);
-        theme = (RadioButton) findViewById(R.id.theme);
+        RadioButton custom = (RadioButton) findViewById(R.id.customRadio);
+        RadioButton theme = (RadioButton) findViewById(R.id.theme);
 
         group = (RadioGroup) findViewById(R.id.group);
         group.setOnCheckedChangeListener(this);
@@ -325,7 +318,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Simple Brown", 0, 0, 0));
 
-        adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), list);
+        MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), list);
         themePager.setAdapter(adapter);
     }
 

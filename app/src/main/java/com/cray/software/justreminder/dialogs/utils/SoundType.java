@@ -28,18 +28,15 @@ import java.util.Collections;
 
 public class SoundType extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
-    int id, dirId;
-    ArrayList<String> names, foldersFile;
+    private SharedPrefs sPrefs;
+    private ListView musicList;
+    private int id, dirId;
+    private ArrayList<String> names, foldersFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(SoundType.this);
+        ColorSetter cs = new ColorSetter(SoundType.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -49,7 +46,7 @@ public class SoundType extends Activity{
 
         sPrefs = new SharedPrefs(SoundType.this);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(R.string.sound_type_dialog_title);
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -75,7 +72,7 @@ public class SoundType extends Activity{
             }
         }
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.spinnerMenu;
+package com.cray.software.justreminder.spinner;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,9 +24,8 @@ public class TitleNavigationAdapter extends BaseAdapter {
     private TextView txtTitle;
     private ArrayList<SpinnerItem> spinnerNavItem;
     private Context context;
-    RelativeLayout itemBg;
-    ColorSetter cs;
-    SharedPrefs prefs;
+    private ColorSetter cs;
+    private SharedPrefs prefs;
 
     public TitleNavigationAdapter(Context context,
                                   ArrayList<SpinnerItem> spinnerNavItem) {
@@ -78,7 +77,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_item_navigation, null);
         }
 
-        itemBg = (RelativeLayout) convertView.findViewById(R.id.itemBg);
+        RelativeLayout itemBg = (RelativeLayout) convertView.findViewById(R.id.itemBg);
         itemBg.setBackgroundColor(cs.getSpinnerStyle());
 
         imgIcon = (ImageView) convertView.findViewById(R.id.imgIcon);

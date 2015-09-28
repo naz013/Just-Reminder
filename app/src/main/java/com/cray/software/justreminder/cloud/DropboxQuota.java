@@ -10,12 +10,12 @@ import com.cray.software.justreminder.helpers.SyncHelper;
  */
 public class DropboxQuota extends AsyncTask<Void, Void, Long[]> {
 
-    DropboxHelper dbx;
-    Context ctx;
+    private DropboxHelper dbx;
+    private Context mContext;
 
     public DropboxQuota(Context context){
-        this.ctx = context;
-        this.dbx = new DropboxHelper(ctx);
+        this.mContext = context;
+        this.dbx = new DropboxHelper(mContext);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class DropboxQuota extends AsyncTask<Void, Void, Long[]> {
         Long[] res = new Long[0];
         dbx.startSession();
         if (dbx.isLinked()){
-            if (SyncHelper.isConnected(ctx)){
+            if (SyncHelper.isConnected(mContext)){
                 long quota = dbx.userQuota();
                 long quotaNormal = dbx.userQuotaNormal();
                 long quotaShared = dbx.userQuotaShared();

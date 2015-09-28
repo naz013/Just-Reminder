@@ -18,23 +18,20 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ScreenOrientation extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
+    private SharedPrefs sPrefs;
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(ScreenOrientation.this);
+        ColorSetter cs = new ColorSetter(ScreenOrientation.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         sPrefs = new SharedPrefs(ScreenOrientation.this);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.screen_orientation_title).toUpperCase());
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -57,14 +54,14 @@ public class ScreenOrientation extends Activity{
             musicList.setItemChecked(2, true);
         }
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int selectedPosition = musicList.getCheckedItemPosition();
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(ScreenOrientation.this);
-                    if (selectedPosition == 0){
+                    if (selectedPosition == 0) {
                         sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);
                     } else if (selectedPosition == 1) {
                         sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_PORTRAIT);

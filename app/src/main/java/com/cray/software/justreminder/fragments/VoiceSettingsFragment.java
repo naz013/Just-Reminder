@@ -23,10 +23,9 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class VoiceSettingsFragment extends Fragment {
 
-    ActionBar ab;
-    TextView voiceCommands, assignContacts, voiceLanguage, voiceTime;
-    RelativeLayout autoLanguage;
-    CheckBox autoLanguageCheck;
+    private ActionBar ab;
+    private TextView voiceLanguage;
+    private CheckBox autoLanguageCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class VoiceSettingsFragment extends Fragment {
             ab.setTitle(R.string.voice_block);
         }
 
-        autoLanguage = (RelativeLayout) rootView.findViewById(R.id.autoLanguage);
+        RelativeLayout autoLanguage = (RelativeLayout) rootView.findViewById(R.id.autoLanguage);
         autoLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +65,7 @@ public class VoiceSettingsFragment extends Fragment {
             voiceLanguage.setEnabled(false);
         } else voiceLanguage.setEnabled(true);
 
-        voiceTime = (TextView) rootView.findViewById(R.id.voiceTime);
+        TextView voiceTime = (TextView) rootView.findViewById(R.id.voiceTime);
         voiceTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +76,7 @@ public class VoiceSettingsFragment extends Fragment {
             }
         });
 
-        assignContacts = (TextView) rootView.findViewById(R.id.assignContacts);
+        TextView assignContacts = (TextView) rootView.findViewById(R.id.assignContacts);
         assignContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +87,7 @@ public class VoiceSettingsFragment extends Fragment {
             }
         });
 
-        voiceCommands = (TextView) rootView.findViewById(R.id.voiceCommands);
+        TextView voiceCommands = (TextView) rootView.findViewById(R.id.voiceCommands);
         voiceCommands.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

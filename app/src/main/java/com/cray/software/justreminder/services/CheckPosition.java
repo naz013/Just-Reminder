@@ -23,10 +23,9 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import java.util.ArrayList;
 
 public class CheckPosition extends IntentService {
-    DataBase DB;
-    NotificationManager mNotifyMgr;
-    NotificationCompat.Builder builder;
-    TimeCount tc;
+
+    private DataBase DB;
+    private TimeCount tc;
 
 
     public CheckPosition() {
@@ -185,15 +184,14 @@ public class CheckPosition extends IntentService {
 
     private void showNotification(long id, int roundedDistance, int shown, String task){
         Integer i = (int) (long) id;
-        builder = new NotificationCompat.Builder(getApplicationContext());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setContentText(String.valueOf(roundedDistance));
         if (shown != 1) {
             builder.setContentTitle(task);
             builder.setContentText(String.valueOf(roundedDistance));
             builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
         }
-        mNotifyMgr =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotifyMgr.notify(i, builder.build());
     }

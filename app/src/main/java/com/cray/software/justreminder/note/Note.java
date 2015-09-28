@@ -18,7 +18,61 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class Note {
+
+    private String note;
+    private int color, style;
+    private byte[] image;
+    private long id;
+
     public Note(){}
+
+    public Note(String note, int color, int style, byte[] image, long id){
+        this.color = color;
+        this.image = image;
+        this.note = note;
+        this.style = style;
+        this.id = id;
+    }
+
+    public String getNote(){
+        return note;
+    }
+
+    public void setNote(String note){
+        this.note = note;
+    }
+
+    public int getColor(){
+        return color;
+    }
+
+    public void setColor(int color){
+        this.color = color;
+    }
+
+    public int getStyle(){
+        return style;
+    }
+
+    public void setStyle(int style){
+        this.style = style;
+    }
+
+    public byte[] getImage(){
+        return image;
+    }
+
+    public void setImage(byte[] image){
+        this.image = image;
+    }
+
+    public long getId(){
+        return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
 
     public static boolean shareNote(long id, Context context) {
         SyncHelper sHelp = new SyncHelper(context);
@@ -72,7 +126,7 @@ public class Note {
         if (c != null) c.close();
         DB.deleteNote(id);
         DB.close();
-        new DeleteNoteFile(context).execute(uuId);
+        new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
     }

@@ -10,9 +10,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class SetBirthdays extends Service {
 
-    DataBase db;
-    BirthdayAlarm alarmReceiver = new BirthdayAlarm();
-    SharedPrefs sharedPrefs;
+    private BirthdayAlarm alarmReceiver = new BirthdayAlarm();
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -22,10 +20,10 @@ public class SetBirthdays extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         alarmReceiver.cancelAlarm(getApplicationContext(), 210);
-        db = new DataBase(getApplicationContext());
+        DataBase db = new DataBase(getApplicationContext());
         db.open();
         if (db.getCountBirthdays() > 0) {
-            sharedPrefs = new SharedPrefs(getApplicationContext());
+            SharedPrefs sharedPrefs = new SharedPrefs(getApplicationContext());
             int hour = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
             int minute = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             alarmReceiver.setBirthdaysAlarm(getApplicationContext(), hour, minute);

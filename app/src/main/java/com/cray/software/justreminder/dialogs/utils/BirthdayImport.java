@@ -17,8 +17,6 @@ public class BirthdayImport extends AppCompatActivity implements View.OnClickLis
 
     private SharedPrefs prefs = new SharedPrefs(BirthdayImport.this);
 
-    PaperButton vkCom;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,7 @@ public class BirthdayImport extends AppCompatActivity implements View.OnClickLis
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        vkCom = (PaperButton) findViewById(R.id.vkCom);
+        PaperButton vkCom = (PaperButton) findViewById(R.id.vkCom);
         vkCom.setOnClickListener(this);
     }
 

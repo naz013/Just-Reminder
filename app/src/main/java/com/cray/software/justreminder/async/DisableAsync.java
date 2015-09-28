@@ -13,8 +13,7 @@ import com.cray.software.justreminder.services.GeolocationService;
 
 public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
-    Context mContext;
-    DataBase mData;
+    private Context mContext;
 
     public DisableAsync(Context context){
         this.mContext = context;
@@ -22,7 +21,7 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        mData = new DataBase(mContext);
+        DataBase mData = new DataBase(mContext);
         mData.open();
         if (mData.getCount() != 0) {
             Cursor c = mData.queryGroup();

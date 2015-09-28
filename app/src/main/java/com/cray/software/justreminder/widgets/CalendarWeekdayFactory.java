@@ -21,14 +21,14 @@ import hirondelle.date4j.DateTime;
 
 public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    ArrayList<String> weekdays;
-    Context context;
-    int widgetID;
-    int SUNDAY = 1;
-    int startDayOfWeek = SUNDAY;
+    private ArrayList<String> weekdays;
+    private Context mContext;
+    private int widgetID;
+    private int SUNDAY = 1;
+    private int startDayOfWeek = SUNDAY;
 
     CalendarWeekdayFactory(Context ctx, Intent intent) {
-        context = ctx;
+        mContext = ctx;
         widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -48,7 +48,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
         // 17 Feb 2013 is Sunday
         DateTime sunday = new DateTime(2013, 2, 17, 0, 0, 0, 0);
         DateTime nextDay = sunday.plusDays(startDayOfWeek - SUNDAY);
-        SharedPrefs prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadInt(Prefs.START_DAY) == 1){
             nextDay = nextDay.plusDays(1);
         }
@@ -72,10 +72,10 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public RemoteViews getViewAt(int i) {
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = mContext.getSharedPreferences(
                 CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
         int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
-        RemoteViews rView = new RemoteViews(context.getPackageName(),
+        RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.weekday_grid);
 
         rView.setTextViewText(R.id.textView1, weekdays.get(i));

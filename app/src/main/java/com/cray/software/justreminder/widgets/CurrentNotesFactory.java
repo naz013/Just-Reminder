@@ -22,18 +22,17 @@ import java.util.ArrayList;
 
 public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    ArrayList<String> note;
-    ArrayList<byte[]> images;
-    ArrayList<Integer> color;
-    ArrayList<Long> ids;
-    Context context;
-    NotesBase db;
-    int widgetID;
-    ColorSetter cs;
+    private ArrayList<String> note;
+    private ArrayList<byte[]> images;
+    private ArrayList<Integer> color;
+    private ArrayList<Long> ids;
+    private Context mContext;
+    private NotesBase db;
+    private ColorSetter cs;
 
     CurrentNotesFactory(Context ctx, Intent intent) {
-        context = ctx;
-        widgetID = intent.getIntExtra(
+        mContext = ctx;
+        int widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
     }
@@ -44,8 +43,8 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         images = new ArrayList<>();
         color = new ArrayList<>();
         ids = new ArrayList<>();
-        db = new NotesBase(context);
-        cs = new ColorSetter(context);
+        db = new NotesBase(mContext);
+        cs = new ColorSetter(mContext);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         images.clear();
         color.clear();
         ids.clear();
-        db = new NotesBase(context);
+        db = new NotesBase(mContext);
         String title;
         int col;
         long id;
@@ -93,9 +92,9 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
 
     @Override
     public RemoteViews getViewAt(int i) {
-        RemoteViews rView = new RemoteViews(context.getPackageName(),
+        RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_note);
-        cs = new ColorSetter(context);
+        cs = new ColorSetter(mContext);
         rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(color.get(i)));
         byte[] byteImage = images.get(i);
         if (byteImage != null){
@@ -105,8 +104,8 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
             } else rView.setViewVisibility(R.id.imageView, View.GONE);
         } else rView.setViewVisibility(R.id.imageView, View.GONE);
 
-        SharedPrefs prefs = new SharedPrefs(context);
-        SyncHelper helper = new SyncHelper(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
+        SyncHelper helper = new SyncHelper(mContext);
         String title = note.get(i);
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = helper.decrypt(title);

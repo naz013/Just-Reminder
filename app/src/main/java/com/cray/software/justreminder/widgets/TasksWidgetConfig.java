@@ -31,8 +31,8 @@ import java.util.List;
 
 public class TasksWidgetConfig extends AppCompatActivity {
 
-    int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
-    Intent resultValue;
+    private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private Intent resultValue;
     public final static String CURRENT_WIDGET_PREF = "tasks_pref";
     public final static String CURRENT_WIDGET_COLOR = "tasks_color_";
     public final static String CURRENT_WIDGET_HEADER_COLOR = "tasks_header_color_";
@@ -40,21 +40,18 @@ public class TasksWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "tasks_button_color_";
     public final static String CURRENT_WIDGET_ITEM_COLOR = "tasks_item_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
-    int color, headerColor, title, button, itemColor, buttonSettings;
-    ColorSetter cSetter;
+    private int color, headerColor, title, button, itemColor, buttonSettings;
 
-    Toolbar toolbar;
+    private LinearLayout headerBg, widgetBg;
+    private TextView note, widgetTitle, task, taskDate;
+    private ImageButton tasksCount;
+    private SeekBar alphaSeek;
+    private Spinner headerBgColor, widgetBgSpinner;
+    private RadioButton headerButton;
+    private RadioButton bodyButton;
 
-    LinearLayout headerBg, widgetBg;
-    TextView note, widgetTitle, task, taskDate;
-    ImageButton tasksCount;
-    SeekBar alphaSeek;
-    Spinner headerBgColor, widgetBgSpinner;
-    RadioGroup switcherGroup, colorsButtonGroup, colorsTitleGroup, colorsGroup;
-    RadioButton headerButton, bodyButton, radioButtonBlack, radioTitleBlack, radioBlack;
-
-    int headerTr = 255, bodyTr = 255;
-    boolean isPro = false;
+    private int headerTr = 255, bodyTr = 255;
+    private boolean isPro = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,14 +80,14 @@ public class TasksWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        cSetter = new ColorSetter(TasksWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(TasksWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.tasks_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         headerBg = (LinearLayout) findViewById(R.id.headerBg);
@@ -140,7 +137,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
             }
         });
 
-        switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
+        RadioGroup switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
         switcherGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
@@ -475,11 +472,11 @@ public class TasksWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
+        RadioGroup colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
         colorsTitleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioTitleBlack:
                         title = getResources().getColor(R.color.colorBlack);
                         widgetTitle.setTextColor(title);
@@ -492,11 +489,11 @@ public class TasksWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
+        RadioGroup colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
         colorsButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
                         button = R.drawable.ic_add_grey600_24dp;
                         tasksCount.setImageResource(button);
@@ -510,11 +507,11 @@ public class TasksWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsGroup = (RadioGroup) findViewById(R.id.colorsGroup);
+        RadioGroup colorsGroup = (RadioGroup) findViewById(R.id.colorsGroup);
         colorsGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioBlack:
                         itemColor = getResources().getColor(R.color.colorBlack);
                         note.setTextColor(itemColor);
@@ -532,10 +529,10 @@ public class TasksWidgetConfig extends AppCompatActivity {
 
         headerButton = (RadioButton) findViewById(R.id.headerButton);
         bodyButton = (RadioButton) findViewById(R.id.bodyButton);
-        radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
-        radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
+        RadioButton radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
+        RadioButton radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
         bodyButton = (RadioButton) findViewById(R.id.bodyButton);
-        radioBlack = (RadioButton) findViewById(R.id.radioBlack);
+        RadioButton radioBlack = (RadioButton) findViewById(R.id.radioBlack);
         headerButton.setChecked(true);
         radioButtonBlack.setChecked(true);
         radioTitleBlack.setChecked(true);

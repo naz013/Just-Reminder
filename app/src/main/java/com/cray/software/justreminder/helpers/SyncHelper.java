@@ -43,22 +43,31 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * Helper class for creating backup files on SD Card.
+ */
 public class SyncHelper {
-    private Context sContext;
+
+    private Context mContext;
     private DataBase DB;
     private NotesBase db;
     private AlarmReceiver alarm = new AlarmReceiver();
     private WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
 
     public SyncHelper(Context context){
-        this.sContext = context;
+        this.mContext = context;
     }
 
     public SyncHelper(){
     }
 
-    public void exportGroups() throws JSONException, IOException {
-        DataBase dataBase = new DataBase(sContext);
+    /**
+     * Creates backup files on SD Card for all groups.
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void groupToJson() throws JSONException, IOException {
+        DataBase dataBase = new DataBase(mContext);
         dataBase.open();
         Cursor c = dataBase.queryCategories();
         if (c != null && c.moveToFirst()){
@@ -95,8 +104,13 @@ public class SyncHelper {
         dataBase.close();
     }
 
-    public void exportBirthdays() throws JSONException, IOException {
-        DataBase dataBase = new DataBase(sContext);
+    /**
+     * Creates backup files on SD Card for all birthdays.
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void birthdayToJson() throws JSONException, IOException {
+        DataBase dataBase = new DataBase(mContext);
         dataBase.open();
         Cursor c = dataBase.getBirthdays();
         if (c != null && c.moveToFirst()){
@@ -142,8 +156,13 @@ public class SyncHelper {
         dataBase.close();
     }
 
-    public void exportReminderToJSON() throws JSONException, IOException {
-        DB = new DataBase(sContext);
+    /**
+     * Creates backup files on SD Card for all reminders.
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void reminderToJson() throws JSONException, IOException {
+        DB = new DataBase(mContext);
         DB.open();
         Cursor c = DB.queryGroup();
         if (c != null && c.moveToFirst()){
@@ -221,6 +240,18 @@ public class SyncHelper {
         DB.close();
     }
 
+    /**
+     * Creates note file on SD Card.
+     * @param note note content.
+     * @param date date of note creating.
+     * @param uuID unique note identifier.
+     * @param color note color.
+     * @param image image attached to note.
+     * @param style typeface style.
+     * @return Note file
+     * @throws JSONException
+     * @throws IOException
+     */
     public File createNote(String note, String date, String uuID, int color, byte[] image,
                            int style) throws JSONException, IOException {
         JSONObject jObjectData = new JSONObject();
@@ -232,7 +263,7 @@ public class SyncHelper {
         if (image != null) {
             jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
         } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-        if (new SharedPrefs(sContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
         } else {
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
@@ -257,8 +288,13 @@ public class SyncHelper {
         return file;
     }
 
-    public void exportNotes() throws JSONException, IOException {
-        db = new NotesBase(sContext);
+    /**
+     * Creates backup files on SD Card for all notes.
+     * @throws JSONException
+     * @throws IOException
+     */
+    public void noteToJson() throws JSONException, IOException {
+        db = new NotesBase(mContext);
         db.open();
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()){
@@ -279,7 +315,7 @@ public class SyncHelper {
                 if (image != null) {
                     jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
                 } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-                if (new SharedPrefs(sContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
+                if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
                     jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
                     jObjectData.put(Constants.COLUMN_NOTE, note);
                 } else {
@@ -309,9 +345,16 @@ public class SyncHelper {
         db.close();
     }
 
-    public void importNotes(String file, String fileNameR) throws IOException, JSONException {
+    /**
+     * Restore note from JSON file to application.
+     * @param file file path.
+     * @param fileNameR file name.
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void noteFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            db = new NotesBase(sContext);
+            db = new NotesBase(mContext);
             db.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = db.getNotes();
@@ -341,7 +384,7 @@ public class SyncHelper {
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
-                    importObject(jsonObj);
+                    reminderObject(jsonObj);
                 }
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -372,7 +415,7 @@ public class SyncHelper {
                                 }
                                 String jsonText = writer.toString();
                                 JSONObject jsonObj = new JSONObject(jsonText);
-                                importNoteObject(jsonObj);
+                                noteObject(jsonObj);
                             }
                         }
                     }
@@ -382,7 +425,12 @@ public class SyncHelper {
         }
     }
 
-    private void importNoteObject(JSONObject jsonObj) throws JSONException {
+    /**
+     * Insert note to database.
+     * @param jsonObj object excluded from file.
+     * @throws JSONException
+     */
+    private void noteObject(JSONObject jsonObj) throws JSONException {
         String note = null;
         if (!jsonObj.isNull(Constants.COLUMN_NOTE)) {
             note = jsonObj.getString(Constants.COLUMN_NOTE);
@@ -405,18 +453,24 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
             image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
         }
-        SharedPrefs prefs = new SharedPrefs(sContext);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (!prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             note = decrypt(note);
         }
         long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
 
-        db = new NotesBase(sContext);
+        db = new NotesBase(mContext);
         db.open();
         long id = db.saveNote(note, date, color, uuID, image, style);
         db.linkToReminder(id, linkId);
     }
 
+    /**
+     * Get note content from file or JSON object.
+     * @param file note file.
+     * @param object JSON object.
+     * @return
+     */
     public ArrayList<String> getNote(File file, JSONObject object) {
         ArrayList<String> data = new ArrayList<>();
         data.clear();
@@ -474,6 +528,12 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get note color from file or JSON object.
+     * @param file note file.
+     * @param object JSON object.
+     * @return
+     */
     public int getColor(File file, JSONObject object){
         int data = 0;
         if (object != null){
@@ -530,6 +590,12 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get font style from file or JSON object.
+     * @param file note file.
+     * @param object JSON object.
+     * @return
+     */
     public int getFontStyle(File file, JSONObject object){
         int data = 5;
         if (object != null){
@@ -586,6 +652,13 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get flag is note is encrypted from file or object.
+     * @param file note file.
+     * @param object JSON object.
+     * @return
+     */
+    @Deprecated
     public int getEncrypt(File file, JSONObject object){
         int data = 0;
         if (object != null){
@@ -642,6 +715,12 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get attached to note image from file or JSON object.
+     * @param file note file.
+     * @param object JSON object.
+     * @return
+     */
     public byte[] getImage(File file, JSONObject object){
         byte[] data = null;
         if (object != null){
@@ -698,6 +777,12 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get note content and unique identifier from JSON object.
+     * @param jsonObj JSON object.
+     * @return
+     * @throws JSONException
+     */
     private ArrayList<String> getNoteString(JSONObject jsonObj) throws JSONException {
         ArrayList<String> data = new ArrayList<>();
         data.clear();
@@ -715,10 +800,22 @@ public class SyncHelper {
         return data;
     }
 
+    /**
+     * Get note color from JSON object.
+     * @param jsonObj JSON object.
+     * @return
+     * @throws JSONException
+     */
     private int getNoteColor(JSONObject jsonObj) throws JSONException {
         return jsonObj.getInt(Constants.COLUMN_COLOR);
     }
 
+    /**
+     * Get note font style from JSON object.
+     * @param jsonObj JSON object.
+     * @return
+     * @throws JSONException
+     */
     private int getNoteFontStyle(JSONObject jsonObj) throws JSONException {
         int style = 5;
         if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
@@ -727,10 +824,23 @@ public class SyncHelper {
         return style;
     }
 
+    /**
+     * Get note encrypt flag from JSON object.
+     * @param jsonObj JSON object.
+     * @return
+     * @throws JSONException
+     */
+    @Deprecated
     private int getNoteEncrypt(JSONObject jsonObj) throws JSONException {
         return jsonObj.getInt(Constants.COLUMN_ENCRYPTED);
     }
 
+    /**
+     * Get note attached image from JSON object.
+     * @param jsonObj JSON object.
+     * @return
+     * @throws JSONException
+     */
     private byte[] getNoteImage(JSONObject jsonObj) throws JSONException {
         byte[] image = null;
         if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
@@ -739,9 +849,17 @@ public class SyncHelper {
         return image;
     }
 
-    public void importReminderFromJSON(String file, String fileNameR) throws IOException, JSONException {
+    /**
+     * Restore reminder from JSON file to database.
+     * Application restore reminders only with actual date.
+     * @param file reminder file path.
+     * @param fileNameR file name.
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void reminderFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(sContext);
+            DB = new DataBase(mContext);
             DB.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = DB.queryGroup();
@@ -771,7 +889,7 @@ public class SyncHelper {
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
-                    importObject(jsonObj);
+                    reminderObject(jsonObj);
                 }
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -801,7 +919,7 @@ public class SyncHelper {
                             }
                             String jsonText = writer.toString();
                             JSONObject jsonObj = new JSONObject(jsonText);
-                            importObject(jsonObj);
+                            reminderObject(jsonObj);
                         }
                     }
                 }
@@ -810,7 +928,12 @@ public class SyncHelper {
         }
     }
 
-    private void importObject(JSONObject jsonObj) throws JSONException {
+    /**
+     * Insert reminder to database from JSON object.
+     * @param jsonObj JSON object.
+     * @throws JSONException
+     */
+    private void reminderObject(JSONObject jsonObj) throws JSONException {
         String text = null;
         if (!jsonObj.isNull(Constants.COLUMN_TEXT)) {
             text = jsonObj.getString(Constants.COLUMN_TEXT);
@@ -853,7 +976,7 @@ public class SyncHelper {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
-        DB = new DataBase(sContext);
+        DB = new DataBase(mContext);
         DB.open();
         if (categoryId == null) {
             Cursor cf = DB.queryCategories();
@@ -871,7 +994,7 @@ public class SyncHelper {
             }
             if (cf != null) cf.close();
         }
-        TimeCount timeCount = new TimeCount(sContext);
+        TimeCount timeCount = new TimeCount(mContext);
         long id;
         Integer i = (int) (long) count;
         if (type != null) {
@@ -881,7 +1004,7 @@ public class SyncHelper {
                             repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
                             radius, 0, 0, categoryId);
                     DB.updateReminderDateTime(id);
-                    weekDayReceiver.setAlarm(sContext, id);
+                    weekDayReceiver.setAlarm(mContext, id);
                 } else {
                     List<String> namesPass = new ArrayList<>();
                     Cursor e = DB.queryAllReminders();
@@ -896,7 +1019,7 @@ public class SyncHelper {
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
                         DB.updateReminderDateTime(id);
-                        weekDayReceiver.setAlarm(sContext, id);
+                        weekDayReceiver.setAlarm(mContext, id);
                     }
                 }
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
@@ -905,7 +1028,7 @@ public class SyncHelper {
                             repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
                             radius, 0, 0, categoryId);
                     DB.updateReminderDateTime(id);
-                    new MonthDayReceiver().setAlarm(sContext, id);
+                    new MonthDayReceiver().setAlarm(mContext, id);
                 } else {
                     List<String> namesPass = new ArrayList<>();
                     Cursor e = DB.queryAllReminders();
@@ -920,7 +1043,7 @@ public class SyncHelper {
                                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
                                 melody, radius, 0, 0, categoryId);
                         DB.updateReminderDateTime(id);
-                        new MonthDayReceiver().setAlarm(sContext, id);
+                        new MonthDayReceiver().setAlarm(mContext, id);
                     }
                 }
             } else {
@@ -932,10 +1055,10 @@ public class SyncHelper {
                         DB.updateReminderDateTime(id);
                         if (type.startsWith(Constants.TYPE_LOCATION) ||
                                 type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                            sContext.startService(new Intent(sContext, GeolocationService.class)
+                            mContext.startService(new Intent(mContext, GeolocationService.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                         } else {
-                            alarm.setAlarm(sContext, id);
+                            alarm.setAlarm(mContext, id);
                         }
                     } else {
                         List<String> namesPass = new ArrayList<>();
@@ -953,10 +1076,10 @@ public class SyncHelper {
                             DB.updateReminderDateTime(id);
                             if (type.startsWith(Constants.TYPE_LOCATION) ||
                                     type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                                sContext.startService(new Intent(sContext, GeolocationService.class)
+                                mContext.startService(new Intent(mContext, GeolocationService.class)
                                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {
-                                alarm.setAlarm(sContext, id);
+                                alarm.setAlarm(mContext, id);
                             }
                         }
                     }
@@ -965,9 +1088,16 @@ public class SyncHelper {
         }
     }
 
-    public void importGroup(String file, String fileNameR) throws IOException, JSONException {
+    /**
+     * Restore group from JSON file to application.
+     * @param file group file path.
+     * @param fileNameR file name.
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void groupFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(sContext);
+            DB = new DataBase(mContext);
             DB.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = DB.queryCategories();
@@ -997,7 +1127,7 @@ public class SyncHelper {
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
-                    importGroupObject(jsonObj);
+                    groupObject(jsonObj);
                 }
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -1027,7 +1157,7 @@ public class SyncHelper {
                             }
                             String jsonText = writer.toString();
                             JSONObject jsonObj = new JSONObject(jsonText);
-                            importGroupObject(jsonObj);
+                            groupObject(jsonObj);
                         }
                     }
                 }
@@ -1036,7 +1166,12 @@ public class SyncHelper {
         }
     }
 
-    private void importGroupObject(JSONObject jsonObj) throws JSONException {
+    /**
+     * Insert group from JSON object to database.
+     * @param jsonObj JSON object.
+     * @throws JSONException
+     */
+    private void groupObject(JSONObject jsonObj) throws JSONException {
         String title = null;
         if (!jsonObj.isNull(Constants.COLUMN_TEXT)) {
             title = jsonObj.getString(Constants.COLUMN_TEXT);
@@ -1047,7 +1182,7 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
-        DB = new DataBase(sContext);
+        DB = new DataBase(mContext);
         DB.open();
         Cursor cf = DB.queryCategories();
         if (cf != null && cf.moveToFirst()) {
@@ -1068,9 +1203,16 @@ public class SyncHelper {
         if (cf != null) cf.close();
     }
 
-    public void importBirthday(String file, String fileNameR) throws IOException, JSONException {
+    /**
+     * Restore birthday from JSON file to application.
+     * @param file birthday file path.
+     * @param fileNameR file name.
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void birthdayFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(sContext);
+            DB = new DataBase(mContext);
             DB.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = DB.getBirthdays();
@@ -1100,7 +1242,7 @@ public class SyncHelper {
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
-                    importBirthObject(jsonObj);
+                    birthdayObject(jsonObj);
                 }
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -1129,7 +1271,7 @@ public class SyncHelper {
                             }
                             String jsonText = writer.toString();
                             JSONObject jsonObj = new JSONObject(jsonText);
-                            importBirthObject(jsonObj);
+                            birthdayObject(jsonObj);
                         }
                     }
                 }
@@ -1138,9 +1280,17 @@ public class SyncHelper {
         }
     }
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    /**
+     * SimpleDateFormat variable for date parsing.
+     */
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-    private void importBirthObject(JSONObject jsonObj) throws JSONException {
+    /**
+     * Insert birthdays from JSON object to database.
+     * @param jsonObj JSON object.
+     * @throws JSONException
+     */
+    private void birthdayObject(JSONObject jsonObj) throws JSONException {
         String name = null;
         String key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME);
         if (!jsonObj.isNull(key)) {
@@ -1186,7 +1336,7 @@ public class SyncHelper {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        DB = new DataBase(sContext);
+        DB = new DataBase(mContext);
         DB.open();
         Cursor cf = DB.getBirthdays();
         if (cf != null && cf.moveToFirst()) {
@@ -1207,9 +1357,14 @@ public class SyncHelper {
         DB.close();
     }
 
-    public void scanFoldersForJSON() throws IOException, JSONException {
+    /**
+     * Scan application folders on SD Card for a JSON files.
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void findJson() throws IOException, JSONException {
         if (isSdPresent()){
-            FilesDataBase fdb = new FilesDataBase(sContext);
+            FilesDataBase fdb = new FilesDataBase(mContext);
             fdb.open();
             Cursor e = fdb.queryGroup();
             if (e != null && e.moveToFirst()){
@@ -1309,6 +1464,15 @@ public class SyncHelper {
         }
     }
 
+    /**
+     * Insert found JSON file to files database.
+     * @param jsonObj JSON object.
+     * @param fileName file name.
+     * @param fileType type of file.
+     * @param fileLocation path to file.
+     * @param lastEdit file last edit time in milliseconds.
+     * @throws JSONException
+     */
     private void saveFiles(JSONObject jsonObj, String fileName, String fileType, String fileLocation, long lastEdit) throws JSONException {
         String text = null;
         if (!jsonObj.isNull(Constants.COLUMN_TEXT)) {
@@ -1373,21 +1537,34 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
-        FilesDataBase fdb = new FilesDataBase(sContext);
+        FilesDataBase fdb = new FilesDataBase(mContext);
         fdb.open();
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
         fdb.insertTask(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays);
     }
 
+    /**
+     * Generate unique identifier.
+     * @return
+     */
     public static String generateID(){
         return UUID.randomUUID().toString();
     }
 
+    /**
+     * Check if device has SD Card.
+     * @return
+     */
     public static boolean isSdPresent() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
+    /**
+     * Check for internet connection.
+     * @param context application context.
+     * @return
+     */
     public static boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager)context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -1413,6 +1590,11 @@ public class SyncHelper {
         return false;
     }
 
+    /**
+     * Decrypt string to human readable format.
+     * @param string string to decrypt.
+     * @return
+     */
     public String decrypt(String string){
         String result = "";
         byte[] byte_string = Base64.decode(string, Base64.DEFAULT);
@@ -1424,6 +1606,11 @@ public class SyncHelper {
         return result;
     }
 
+    /**
+     * Encrypt string.
+     * @param string string to encrypt.
+     * @return
+     */
     public String encrypt(String string){
         byte[] string_byted = null;
         try {

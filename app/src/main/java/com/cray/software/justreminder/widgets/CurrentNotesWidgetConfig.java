@@ -32,30 +32,26 @@ import java.util.List;
 
 public class CurrentNotesWidgetConfig extends AppCompatActivity {
 
-    int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
-    Intent resultValue;
+    private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private Intent resultValue;
     public final static String CURRENT_WIDGET_PREF = "notes_pref";
     public final static String CURRENT_WIDGET_COLOR = "notes_color_";
     public final static String CURRENT_WIDGET_HEADER_COLOR = "notes_header_color_";
     public final static String CURRENT_WIDGET_TITLE_COLOR = "notes_title_color_";
     public final static String CURRENT_WIDGET_BUTTON_COLOR = "notes_button_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "calendar_button_settings_color_";
-    int color, headerColor, title, button, buttonSettings;
-    ColorSetter cSetter;
+    private int color, headerColor, title, button, buttonSettings;
 
-    Toolbar toolbar;
+    private LinearLayout headerBg, widgetBg;
+    private TextView widgetTitle;
+    private ImageButton tasksCount;
+    private SeekBar alphaSeek;
+    private Spinner headerBgColor, widgetBgSpinner;
+    private RadioButton headerButton;
+    private RadioButton bodyButton;
 
-    LinearLayout headerBg, widgetBg;
-    TextView note, widgetTitle;
-    ImageView image;
-    ImageButton tasksCount;
-    SeekBar alphaSeek;
-    Spinner headerBgColor, widgetBgSpinner;
-    RadioGroup switcherGroup, colorsButtonGroup, colorsTitleGroup;
-    RadioButton headerButton, bodyButton, radioButtonBlack, radioTitleBlack;
-
-    int headerTr = 255, bodyTr = 255;
-    boolean isPro = false;
+    private int headerTr = 255, bodyTr = 255;
+    private boolean isPro = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,21 +79,21 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        cSetter = new ColorSetter(CurrentNotesWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(CurrentNotesWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.note_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         headerBg = (LinearLayout) findViewById(R.id.headerBg);
         widgetBg = (LinearLayout) findViewById(R.id.widgetBg);
-        note = (TextView) findViewById(R.id.note);
+        TextView note = (TextView) findViewById(R.id.note);
         widgetTitle = (TextView) findViewById(R.id.widgetTitle);
-        image = (ImageView) findViewById(R.id.imageView);
+        ImageView image = (ImageView) findViewById(R.id.imageView);
         tasksCount = (ImageButton) findViewById(R.id.tasksCount);
 
         alphaSeek = (SeekBar) findViewById(R.id.alphaSeek);
@@ -139,7 +135,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
             }
         });
 
-        switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
+        RadioGroup switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
         switcherGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
@@ -474,11 +470,11 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
+        RadioGroup colorsTitleGroup = (RadioGroup) findViewById(R.id.colorsTitleGroup);
         colorsTitleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioTitleBlack:
                         title = getResources().getColor(R.color.colorBlack);
                         widgetTitle.setTextColor(title);
@@ -491,11 +487,11 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
+        RadioGroup colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
         colorsButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
                         button = R.drawable.ic_add_grey600_24dp;
                         tasksCount.setImageResource(button);
@@ -511,8 +507,8 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
 
         headerButton = (RadioButton) findViewById(R.id.headerButton);
         bodyButton = (RadioButton) findViewById(R.id.bodyButton);
-        radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
-        radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
+        RadioButton radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
+        RadioButton radioTitleBlack = (RadioButton) findViewById(R.id.radioTitleBlack);
         bodyButton = (RadioButton) findViewById(R.id.bodyButton);
         headerButton.setChecked(true);
         radioButtonBlack.setChecked(true);

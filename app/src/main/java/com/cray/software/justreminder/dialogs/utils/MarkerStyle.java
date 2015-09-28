@@ -13,21 +13,19 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MarkerStyle extends Activity implements View.OnClickListener{
-    TextView themeClose;
-    RadioButton red_flat, green_flat, blue_flat, yellow_flat, red_simple, green_simple, blue_simple, yellow_simple,
+    private RadioButton red_flat, green_flat, blue_flat, yellow_flat, red_simple, green_simple, blue_simple, yellow_simple,
             red_round, orange_round, green_round, blue_round, deep_purple, deep_orange, indigo, lime;
-    RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroup4;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
+    private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroup4;
+    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(MarkerStyle.this);
+        ColorSetter cs = new ColorSetter(MarkerStyle.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.marker_style_layout);
 
-        themeClose = (TextView) findViewById(R.id.themeClose);
+        TextView themeClose = (TextView) findViewById(R.id.themeClose);
         themeClose.setOnClickListener(this);
 
         red_flat = (RadioButton) findViewById(R.id.red_flat);

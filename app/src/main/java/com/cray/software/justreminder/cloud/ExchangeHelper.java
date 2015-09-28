@@ -8,22 +8,22 @@ import java.io.IOException;
 
 public class ExchangeHelper {
 
-    Context ctx;
-    SharedPrefs prefs;
+    private Context mContext;
+    private SharedPrefs prefs;
 
     //ExchangeCredentials credentials;
     //ExchangeService service;
 
     public ExchangeHelper(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
     public void authorize(){
         /*service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);
-        TasksData data = new TasksData(ctx);
+        TasksData data = new TasksData(mContext);
         data.open();
         Cursor c = data.getAccount();
-        SyncHelper helper = new SyncHelper(ctx);
+        SyncHelper helper = new SyncHelper(mContext);
         if (c != null && c.moveToFirst()) {
             String login = helper.decrypt(c.getString(c.getColumnIndex(ExchangeConstants.COLUMN_USER)));
             String password = helper.decrypt(c.getString(c.getColumnIndex(ExchangeConstants.COLUMN_PASSWORD)));
@@ -47,7 +47,7 @@ public class ExchangeHelper {
     }
 
     public boolean isLinked(){
-        /*TasksData data = new TasksData(ctx);
+        /*TasksData data = new TasksData(mContext);
         data.open();
         Cursor c = data.getAccount();
         return c != null;*/
@@ -56,7 +56,7 @@ public class ExchangeHelper {
 
     public void insertTask(String taskTitle, String listId, long time, String note) throws Exception {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
+            prefs = new SharedPrefs(mContext);
             authorize();
             //Task task = new Task(service);
         }
@@ -64,7 +64,7 @@ public class ExchangeHelper {
 
     public void updateTaskStatus(String status, String listId, String taskId) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
+            prefs = new SharedPrefs(mContext);
             authorize();
 
         }
@@ -72,14 +72,14 @@ public class ExchangeHelper {
 
     public void deleteTask(String listId, String taskId) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
+            prefs = new SharedPrefs(mContext);
             authorize();
         }
     }
 
     public void updateTask(String text, String listId, String taskId, String note, long time) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
+            prefs = new SharedPrefs(mContext);
             authorize();
 
         }
@@ -87,13 +87,13 @@ public class ExchangeHelper {
 
     public void getTasks() throws Exception {
         if (isLinked()) {
-            prefs = new SharedPrefs(ctx);
+            prefs = new SharedPrefs(mContext);
             authorize();
             /*Log.d(Constants.LOG_TAG, "Authorized");
             ItemView itemView = new ItemView(Integer.MAX_VALUE);
             FindItemsResults<Item> response = service.findItems(WellKnownFolderName.Tasks, itemView);
             Log.d(Constants.LOG_TAG, "Received items size " + response.getItems().size());
-            TasksData data = new TasksData(ctx);
+            TasksData data = new TasksData(mContext);
             data.open();
             Calendar calendar = Calendar.getInstance();
             for (Item item : response.getItems()) {

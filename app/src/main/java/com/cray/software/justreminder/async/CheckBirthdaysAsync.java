@@ -19,10 +19,8 @@ import java.util.Locale;
 
 public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
 
-    Context mContext;
-    DataBase db;
-    Contacts mContacts;
-    public final SimpleDateFormat[] birthdayFormats = {
+    private Context mContext;
+    private final SimpleDateFormat[] birthdayFormats = {
             new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
             new SimpleDateFormat("yyyyMMdd", Locale.getDefault()),
             new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()),
@@ -37,7 +35,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         ContentResolver cr = mContext.getContentResolver();
-        db = new DataBase(mContext);
+        DataBase db = new DataBase(mContext);
         db.open();
         String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
 
@@ -62,7 +60,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
 
             String[] selectionArgs = null;
             String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
-            mContacts = new Contacts(mContext);
+            Contacts mContacts = new Contacts(mContext);
             Cursor cursor = db.getBirthdays();
             ArrayList<Integer> types = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()){
@@ -78,7 +76,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
                     String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                     String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                     int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                    String number = Contacts.get_Number(name, mContext);
+                    String number = Contacts.getNumber(name, mContext);
                     String email = mContacts.getMail(id);
                     Calendar calendar = Calendar.getInstance();
                     for (SimpleDateFormat f : birthdayFormats) {

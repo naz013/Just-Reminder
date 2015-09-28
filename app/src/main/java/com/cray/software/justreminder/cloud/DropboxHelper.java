@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 public class DropboxHelper {
 
-    private Context ctx;
+    private Context mContext;
 
     private String dbxFolder = "JustReminder/";
     private String dbxNoteFolder = "Notes/";
@@ -53,7 +53,7 @@ public class DropboxHelper {
     private static final boolean USE_OAUTH1 = false;
 
     public DropboxHelper(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
     /**
@@ -142,10 +142,10 @@ public class DropboxHelper {
     public boolean startLink(){
         boolean isLinkSuccessful;
         if (USE_OAUTH1) {
-            mDBApi.getSession().startAuthentication(ctx);
+            mDBApi.getSession().startAuthentication(mContext);
             isLinkSuccessful = mDBApi.getSession().isLinked();
         } else {
-            mDBApi.getSession().startOAuth2Authentication(ctx);
+            mDBApi.getSession().startOAuth2Authentication(mContext);
             isLinkSuccessful = mDBApi.getSession().isLinked();
         }
         return isLinkSuccessful;
@@ -163,30 +163,30 @@ public class DropboxHelper {
         if (APP_KEY.startsWith("CHANGE") ||
                 APP_SECRET.startsWith("CHANGE")) {
             showToast("You must apply for an app key and secret from developers.dropbox.com, and add them to the DBRoulette ap before trying it.");
-            ((Activity)ctx).finish();
+            ((Activity) mContext).finish();
             return;
         }
         Intent testIntent = new Intent(Intent.ACTION_VIEW);
         String scheme = "db-" + APP_KEY;
         String uri = scheme + "://" + AuthActivity.AUTH_VERSION + "/test";
         testIntent.setData(Uri.parse(uri));
-        PackageManager pm = ctx.getPackageManager();
+        PackageManager pm = mContext.getPackageManager();
         if (0 == pm.queryIntentActivities(testIntent, 0).size()) {
             showToast("URL scheme in your app's " +
                     "manifest is not set up correctly. You should have a " +
                     "com.dropbox.client2.android.AuthActivity with the " +
                     "scheme: " + scheme);
-            ((Activity)ctx).finish();
+            ((Activity) mContext).finish();
         }
     }
 
     public void showToast(String msg) {
-        Toast toast = Toast.makeText(ctx, msg, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_LONG);
         toast.show();
     }
 
     public void loadAuth(AndroidAuthSession session) {
-        SharedPreferences prefs = ctx.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+        SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
         String key = prefs.getString(ACCESS_KEY_NAME, null);
         String secret = prefs.getString(ACCESS_SECRET_NAME, null);
         if (key == null || secret == null || key.length() == 0 || secret.length() == 0) return;
@@ -201,7 +201,7 @@ public class DropboxHelper {
     public void storeAuth(AndroidAuthSession session) {
         String oauth2AccessToken = session.getOAuth2AccessToken();
         if (oauth2AccessToken != null) {
-            SharedPreferences prefs = ctx.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+            SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
             SharedPreferences.Editor edit = prefs.edit();
             edit.putString(ACCESS_KEY_NAME, "oauth2:");
             edit.putString(ACCESS_SECRET_NAME, oauth2AccessToken);
@@ -210,7 +210,7 @@ public class DropboxHelper {
         }
         AccessTokenPair oauth1AccessToken = session.getAccessTokenPair();
         if (oauth1AccessToken != null) {
-            SharedPreferences prefs = ctx.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+            SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
             SharedPreferences.Editor edit = prefs.edit();
             edit.putString(ACCESS_KEY_NAME, oauth1AccessToken.key);
             edit.putString(ACCESS_SECRET_NAME, oauth1AccessToken.secret);
@@ -233,7 +233,7 @@ public class DropboxHelper {
     }
 
     private void clearKeys() {
-        SharedPreferences prefs = ctx.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
+        SharedPreferences prefs = mContext.getSharedPreferences(ACCOUNT_PREFS_NAME, 0);
         SharedPreferences.Editor edit = prefs.edit();
         edit.clear();
         edit.commit();
@@ -460,7 +460,7 @@ public class DropboxHelper {
                         }
                         //restore tmp files after downloading
                         try {
-                            new SyncHelper(ctx).importReminderFromJSON(localFile.toString(), fileName);
+                            new SyncHelper(mContext).reminderFromJson(localFile.toString(), fileName);
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -511,7 +511,7 @@ public class DropboxHelper {
                         }
                         //restore tmp files after downloading
                         try {
-                            new SyncHelper(ctx).importNotes(localFile.toString(), fileName);
+                            new SyncHelper(mContext).noteFromJson(localFile.toString(), fileName);
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -562,7 +562,7 @@ public class DropboxHelper {
                         }
                         //restore tmp files after downloading
                         try {
-                            new SyncHelper(ctx).importGroup(localFile.toString(), fileName);
+                            new SyncHelper(mContext).groupFromJson(localFile.toString(), fileName);
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -614,7 +614,7 @@ public class DropboxHelper {
                         }
                         //restore tmp files after downloading
                         try {
-                            new SyncHelper(ctx).importBirthday(localFile.toString(), fileName);
+                            new SyncHelper(mContext).birthdayFromJson(localFile.toString(), fileName);
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }

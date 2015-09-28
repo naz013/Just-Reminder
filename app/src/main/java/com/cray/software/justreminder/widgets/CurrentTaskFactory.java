@@ -27,14 +27,13 @@ import java.util.Calendar;
 
 public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    ArrayList<CalendarData> data;
-    Context context;
-    DataBase db;
-    int widgetID;
-    TimeCount tC;
+    private ArrayList<CalendarData> data;
+    private Context mContext;
+    private DataBase db;
+    private int widgetID;
 
     CurrentTaskFactory(Context ctx, Intent intent) {
-        context = ctx;
+        mContext = ctx;
         widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -43,13 +42,13 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onCreate() {
         data = new ArrayList<>();
-        db = new DataBase(context);
+        db = new DataBase(mContext);
     }
 
     @Override
     public void onDataSetChanged() {
         data.clear();
-        db = new DataBase(context);
+        db = new DataBase(mContext);
         db.open();
         String title;
         String type;
@@ -90,7 +89,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
 
                 if (done != 1) {
-                    tC = new TimeCount(context);
+                    TimeCount tC = new TimeCount(mContext);
 
                     String[] dT = tC.getNextDateTime(year, month, day, hour, minute, seconds,
                             repTime, repCode, repCount, 0);
@@ -100,14 +99,14 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         date = String.format("%.5f", lat);
                         time = String.format("%.5f", longi);
                     } else {
-                        boolean is24 = new SharedPrefs(context)
+                        boolean is24 = new SharedPrefs(mContext)
                                 .loadBoolean(Prefs.IS_24_TIME_FORMAT);
                         if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(Calendar.HOUR_OF_DAY, hour);
                             calendar.set(Calendar.MINUTE, minute);
 
-                            date = ReminderUtils.getRepeatString(context, weekdays);
+                            date = ReminderUtils.getRepeatString(mContext, weekdays);
                             time = TimeUtil.getTime(calendar.getTime(), is24);
                         } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                             long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
@@ -131,7 +130,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
         if(c != null) c.close();
 
-        SharedPrefs prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS)) {
             int mDay;
             int mMonth;
@@ -146,7 +145,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                         String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                         long i = 0;
-                        data.add(new CalendarData(context.getString(R.string.birthday_text), name, i, birthday, ""));
+                        data.add(new CalendarData(mContext.getString(R.string.birthday_text), name, i, birthday, ""));
                     } while (cursor.moveToNext());
                 }
                 if (cursor != null) {
@@ -170,9 +169,9 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public RemoteViews getViewAt(int i) {
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = mContext.getSharedPreferences(
                 CurrentTaskWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        RemoteViews rView = new RemoteViews(context.getPackageName(),
+        RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_current_widget);
         int itemColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_ITEM_COLOR + widgetID, 0);
         int itemTextColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
@@ -182,9 +181,9 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         CalendarData item = data.get(i);
 
         String task = item.getName();
-        Contacts contacts = new Contacts(context);
+        Contacts contacts = new Contacts(mContext);
         if (task == null || task.matches("")) task = Contacts.getContactNameFromNumber(
-                item.getNumber(), context);
+                item.getNumber(), mContext);
         rView.setTextViewText(R.id.taskText, task);
         rView.setTextColor(R.id.taskText, itemTextColor);
 

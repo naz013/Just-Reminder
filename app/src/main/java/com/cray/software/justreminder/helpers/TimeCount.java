@@ -9,7 +9,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -39,7 +39,7 @@ public class TimeCount {
      * @return Drawable
      */
     private Drawable getDrawable(int resource){
-        return Utils.getDrawable(mContext, resource);
+        return ViewUtils.getDrawable(mContext, resource);
     }
 
     /**

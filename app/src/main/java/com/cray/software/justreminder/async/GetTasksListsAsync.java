@@ -19,17 +19,17 @@ import java.util.List;
 import java.util.Random;
 
 public class GetTasksListsAsync extends AsyncTask<Void, Void, Void> {
-    Context ctx;
-    SyncListener mListener;
+    private Context mContext;
+    private SyncListener mListener;
 
     public GetTasksListsAsync(Context context, SyncListener listener){
-        this.ctx = context;
+        this.mContext = context;
         this.mListener = listener;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(ctx);
+        GTasksHelper helper = new GTasksHelper(mContext);
         TaskLists lists = null;
         try {
             lists = helper.getTaskLists();
@@ -37,7 +37,7 @@ public class GetTasksListsAsync extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
 
-        TasksData data = new TasksData(ctx);
+        TasksData data = new TasksData(mContext);
         data.open();
 
         if (lists != null && lists.size() > 0){
@@ -135,7 +135,7 @@ public class GetTasksListsAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(ctx).updateTasksWidget();
+        new UpdatesHelper(mContext).updateTasksWidget();
         if (mListener != null) {
             mListener.endExecution(true);
         }

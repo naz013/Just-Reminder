@@ -43,33 +43,31 @@ import java.util.List;
 public class FollowReminder extends AppCompatActivity implements
         CompoundButton.OnCheckedChangeListener, DatePickerDialog.OnDateSetListener {
 
-    DataBase DB;
-    ColorSetter cs;
+    private FloatingEditText textField;
+    private TextView customDate;
+    private TextView customTime;
+    private RadioButton typeMessage, typeCall, timeTomorrow, timeNextWorking, timeAfter, timeCustom;
+    private Spinner afterTime;
+    private CheckBox taskExport;
 
-    FloatingEditText textField;
-    TextView buttonSave, buttonCancel, contactInfo, tomorrowTime, nextWorkingTime, customDate, customTime;
-    RadioButton typeMessage, typeCall, timeTomorrow, timeNextWorking, timeAfter, timeCustom;
-    Spinner afterTime;
-    CheckBox exportCheck, taskExport;
+    private int myHour = 0, customHour = 0;
+    private int myMinute = 0, customMinute = 0;
+    private int myYear = 0, customYear = 0;
+    private int myMonth = 0, customMonth = 0;
+    private int myDay = 1, customDay = 1;
+    private int mySeconds = 0;
+    private long tomorrow, nextWork, currTime;
 
-    int myHour = 0, customHour = 0;
-    int myMinute = 0, customMinute = 0;
-    int myYear = 0, customYear = 0;
-    int myMonth = 0, customMonth = 0;
-    int myDay = 1, customDay = 1;
-    int mySeconds = 0;
-    long tomorrow, nextWork, currTime;
+    private boolean is24Hour = true;
 
-    boolean is24Hour = true;
-
-    SharedPrefs sPrefs = new SharedPrefs(FollowReminder.this);
-    GTasksHelper gtx = new GTasksHelper(FollowReminder.this);
-    String number;
+    private SharedPrefs sPrefs = new SharedPrefs(FollowReminder.this);
+    private GTasksHelper gtx = new GTasksHelper(FollowReminder.this);
+    private String number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(FollowReminder.this);
+        ColorSetter cs = new ColorSetter(FollowReminder.this);
         runOnUiThread(new Runnable() {
             public void run() {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -100,7 +98,7 @@ public class FollowReminder extends AppCompatActivity implements
         textField = (FloatingEditText) findViewById(R.id.textField);
         textField.setHint(getString(R.string.message_field_hint) + getString(R.string.hint_attention));
 
-        contactInfo = (TextView) findViewById(R.id.contactInfo);
+        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(AssetsUtil.getMediumTypeface(this));
         if (name != null && !name.matches("")) {
             contactInfo.setText(name + "\n" + number);
@@ -113,14 +111,14 @@ public class FollowReminder extends AppCompatActivity implements
             taskExport.setVisibility(View.VISIBLE);
         }
 
-        buttonSave = (TextView) findViewById(R.id.buttonSave);
+        TextView buttonSave = (TextView) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveDateTask();
             }
         });
-        buttonCancel = (TextView) findViewById(R.id.buttonCancel);
+        TextView buttonCancel = (TextView) findViewById(R.id.buttonCancel);
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,8 +127,8 @@ public class FollowReminder extends AppCompatActivity implements
             }
         });
 
-        tomorrowTime = (TextView) findViewById(R.id.tomorrowTime);
-        nextWorkingTime = (TextView) findViewById(R.id.nextWorkingTime);
+        TextView tomorrowTime = (TextView) findViewById(R.id.tomorrowTime);
+        TextView nextWorkingTime = (TextView) findViewById(R.id.nextWorkingTime);
         customTime = (TextView) findViewById(R.id.customTime);
         customDate = (TextView) findViewById(R.id.customDate);
 
@@ -148,7 +146,7 @@ public class FollowReminder extends AppCompatActivity implements
         timeNextWorking.setOnCheckedChangeListener(this);
         timeTomorrow.setChecked(true);
 
-        exportCheck = (CheckBox) findViewById(R.id.exportCheck);
+        CheckBox exportCheck = (CheckBox) findViewById(R.id.exportCheck);
         exportCheck.setVisibility(View.GONE);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
             exportCheck.setVisibility(View.VISIBLE);
@@ -277,7 +275,7 @@ public class FollowReminder extends AppCompatActivity implements
         }
         String type = getType();
         setUpTimes();
-        DB = new DataBase(FollowReminder.this);
+        DataBase DB = new DataBase(FollowReminder.this);
         DB.open();
         String uuID = SyncHelper.generateID();
         SharedPrefs prefs = new SharedPrefs(FollowReminder.this);

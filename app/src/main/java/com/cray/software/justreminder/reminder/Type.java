@@ -10,14 +10,14 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
-public class ReminderType {
+public class Type {
 
-    private Context context;
+    private Context mContext;
     private int view;
     private String type;
 
-    public ReminderType(Context context){
-        this.context = context;
+    public Type(Context context){
+        this.mContext = context;
         this.type = "";
     }
 
@@ -25,8 +25,8 @@ public class ReminderType {
         this.view = view;
     }
 
-    public DataItem getItem(long id){
-        DataBase db = new DataBase(context);
+    public Reminder getItem(long id){
+        DataBase db = new DataBase(mContext);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
@@ -56,7 +56,7 @@ public class ReminderType {
             c.close();
             db.close();
 
-            return new DataItem(text, type, weekdays, melody, catId, uuId,
+            return new Reminder(text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due);
         } else return null;
@@ -74,8 +74,8 @@ public class ReminderType {
         return type;
     }
 
-    public long save(DataItem item){
-        DataBase db = new DataBase(context);
+    public long save(Reminder item){
+        DataBase db = new DataBase(mContext);
         db.open();
         long id = db.insertReminder(item.getTitle(), item.getType(), item.getDay(), item.getMonth(),
                 item.getYear(), item.getHour(), item.getMinute(), item.getSeconds(),
@@ -89,8 +89,8 @@ public class ReminderType {
         return id;
     }
 
-    public void save(long id, DataItem item){
-        DataBase db = new DataBase(context);
+    public void save(long id, Reminder item){
+        DataBase db = new DataBase(mContext);
         db.open();
         db.updateReminder(id, item.getTitle(), item.getType(), item.getDay(), item.getMonth(),
                 item.getYear(), item.getHour(), item.getMinute(), item.getSeconds(),
@@ -102,16 +102,16 @@ public class ReminderType {
         updateViews();
     }
 
-    protected void exportToServices(DataItem item, long id){
-        SharedPrefs prefs = new SharedPrefs(context);
+    protected void exportToServices(Reminder item, long id){
+        SharedPrefs prefs = new SharedPrefs(mContext);
         boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        if (item.getExport() == 1) ReminderUtils.exportToCalendar(context, item.getTitle(), item.getDue(), id, calendar, stock);
-        if (item.getCode() == Constants.SYNC_GTASKS_ONLY) ReminderUtils.exportToTasks(context, item.getTitle(), item.getDue(), id);
+        if (item.getExport() == 1) ReminderUtils.exportToCalendar(mContext, item.getTitle(), item.getDue(), id, calendar, stock);
+        if (item.getCode() == Constants.SYNC_GTASKS_ONLY) ReminderUtils.exportToTasks(mContext, item.getTitle(), item.getDue(), id);
     }
 
     private void updateViews(){
-        new Notifier(context).recreatePermanent();
-        new UpdatesHelper(context).updateWidget();
+        new Notifier(mContext).recreatePermanent();
+        new UpdatesHelper(mContext).updateWidget();
     }
 }

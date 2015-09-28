@@ -24,7 +24,6 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
@@ -233,7 +232,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.check.setChecked(true);
         }
 
-        holder.taskIcon.setImageDrawable(Utils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
+        holder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
         //if (item.getSelected()) holder.taskIcon.setBackgroundResource(R.drawable.list_selector);
         holder.taskTitle.setText(title);
         holder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
@@ -357,7 +356,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             }
         }
         if (isDone == 1){
-            holder.leftTimeIcon.setImageDrawable(Utils.getDrawable(mContext, R.drawable.drawable_grey));
+            holder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
             holder.leftTime.setVisibility(View.GONE);
         }
 

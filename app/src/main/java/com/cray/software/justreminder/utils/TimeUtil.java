@@ -6,6 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Some utils for time counting.
+ */
 public class TimeUtil {
 
     public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm");
@@ -16,6 +19,11 @@ public class TimeUtil {
 
     public TimeUtil(){}
 
+    /**
+     * Get user age from birth date string.
+     * @param dateOfBirth date of birth.
+     * @return
+     */
     public static int getYears(String dateOfBirth){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         int years;
@@ -37,16 +45,33 @@ public class TimeUtil {
         return years;
     }
 
+    /**
+     * Get date and time string from date.
+     * @param date date to convert.
+     * @param is24 24H time format flag.
+     * @return
+     */
     public static String getDateTime(Date date, boolean is24){
         if (is24) return format24.format(date);
         else return format12.format(date);
     }
 
+    /**
+     * Get time from date object.
+     * @param date date to convert.
+     * @param is24 24H time format flag.
+     * @return
+     */
     public static String getTime(Date date, boolean is24){
         if (is24) return time24.format(date);
         else return time12.format(date);
     }
 
+    /**
+     * Get age from year of birth.
+     * @param year year.
+     * @return
+     */
     public static int getAge(int year){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -54,6 +79,13 @@ public class TimeUtil {
         return mYear - year;
     }
 
+    /**
+     * Get Date object.
+     * @param year year.
+     * @param month month.
+     * @param day day.
+     * @return
+     */
     public static Date getDate(int year, int month, int day) {
         Calendar cal1 = Calendar.getInstance();
         cal1.set(Calendar.YEAR, year);
@@ -66,6 +98,11 @@ public class TimeUtil {
         return cal1.getTime();
     }
 
+    /**
+     * Get after time for timer.
+     * @param time milliseconds.
+     * @return
+     */
     public static String generateAfterString(long time){
         long s = 1000;
         long m = s * 60;

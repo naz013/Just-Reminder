@@ -30,12 +30,11 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class TemplatesList extends AppCompatActivity {
 
-    ListView listView;
-    ColorSetter cs = new ColorSetter(TemplatesList.this);
-    DataBase db = new DataBase(TemplatesList.this);
-    SharedPrefs sPrefs = new SharedPrefs(TemplatesList.this);
-    Toolbar toolbar;
-    AddFloatingActionButton mFab;
+    private ListView listView;
+    private ColorSetter cs = new ColorSetter(TemplatesList.this);
+    private DataBase db = new DataBase(TemplatesList.this);
+    private SharedPrefs sPrefs = new SharedPrefs(TemplatesList.this);
+    private AddFloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,7 @@ public class TemplatesList extends AppCompatActivity {
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);

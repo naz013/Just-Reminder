@@ -15,17 +15,13 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class DaysTo extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar;
-    TextView radiusValue, titleDialog;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    Button minusButton, plusButton;
+    private TextView radiusValue;
+    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(DaysTo.this);
+        ColorSetter cs = new ColorSetter(DaysTo.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -33,13 +29,13 @@ public class DaysTo extends Activity {
         sPrefs = new SharedPrefs(DaysTo.this);
 
 
-        titleDialog = (TextView) findViewById(R.id.titleDialog);
+        TextView titleDialog = (TextView) findViewById(R.id.titleDialog);
         titleDialog.setText(getString(R.string.days_to_dialog_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
         radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY)));
 
-        radiusBar = (SeekBar) findViewById(R.id.radiusBar);
+        SeekBar radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(5);
         radiusBar.setProgress(sPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY));
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -60,13 +56,13 @@ public class DaysTo extends Activity {
             }
         });
 
-        plusButton = (Button) findViewById(R.id.plusButton);
+        Button plusButton = (Button) findViewById(R.id.plusButton);
         plusButton.setVisibility(View.GONE);
 
-        minusButton = (Button) findViewById(R.id.minusButton);
+        Button minusButton = (Button) findViewById(R.id.minusButton);
         minusButton.setVisibility(View.GONE);
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

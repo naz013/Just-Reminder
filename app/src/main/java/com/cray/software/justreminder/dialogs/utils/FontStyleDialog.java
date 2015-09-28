@@ -22,16 +22,12 @@ import java.util.ArrayList;
 
 public class FontStyleDialog extends Activity{
 
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    fontAdapter adapter;
-    ColorSetter cs;
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(FontStyleDialog.this);
+        ColorSetter cs = new ColorSetter(FontStyleDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -53,13 +49,13 @@ public class FontStyleDialog extends Activity{
 
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        adapter = new fontAdapter(FontStyleDialog.this, contacts);
+        fontAdapter adapter = new fontAdapter(FontStyleDialog.this, contacts);
         musicList.setAdapter(adapter);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.font_style_dialog_title));
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

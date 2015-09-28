@@ -6,12 +6,28 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 
+/**
+ * Helper class.
+ */
 public class Interval {
-    Context mContext;
+
+    private Context mContext;
+
     public Interval(Context context){
         this.mContext = context;
     }
 
+    /**
+     * Build weekday string by selection.
+     * @param mon monday.
+     * @param tue tuesday.
+     * @param wed wednesday.
+     * @param thu thursday.
+     * @param fri friday.
+     * @param sat saturday.
+     * @param sun sunday.
+     * @return
+     */
     public String getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
                                 boolean sat, boolean sun){
         StringBuilder sb = new StringBuilder();
@@ -32,6 +48,11 @@ public class Interval {
         return sb.toString();
     }
 
+    /**
+     * Get repeat interval string by repeat code.
+     * @param code repeat code.
+     * @return
+     */
     public String getInterval(int code){
         String interval;
         if (code == Intervals.REPEAT_CODE_ONCE){
@@ -62,6 +83,11 @@ public class Interval {
         return interval;
     }
 
+    /**
+     * Get repeat interval string for time by repeat code.
+     * @param code repeat code.
+     * @return
+     */
     public String getTimeInterval(int code){
         if (code == 0) return mContext.getString(R.string.interval_zero);
         else return code + mContext.getString(R.string.string_minute);

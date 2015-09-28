@@ -10,12 +10,12 @@ import com.cray.software.justreminder.helpers.SyncHelper;
  */
 public class AccountInfo extends AsyncTask<Void, Void, String> {
 
-    DropboxHelper dbx;
-    Context ctx;
+    private DropboxHelper dbx;
+    private Context mContext;
 
     public AccountInfo(Context context){
-        this.ctx = context;
-        this.dbx = new DropboxHelper(ctx);
+        this.mContext = context;
+        this.dbx = new DropboxHelper(mContext);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class AccountInfo extends AsyncTask<Void, Void, String> {
         String name = null;
         dbx.startSession();
         if (dbx.isLinked()){
-            if (SyncHelper.isConnected(ctx)){
+            if (SyncHelper.isConnected(mContext)){
                 name = dbx.userName();
             }
         }

@@ -17,7 +17,7 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.ListItems;
+import com.cray.software.justreminder.datas.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -30,15 +30,15 @@ import java.util.Locale;
 
 public class TasksRecyclerAdapter extends BaseAdapter {
 
-    private List<ListItems> mDataset;
-    LayoutInflater inflater;
-    Context mContext;
-    SyncListener mListener;
-    TasksData data;
-    ColorSetter cs;
-    SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
+    private List<Task> mDataset;
+    private LayoutInflater inflater;
+    private Context mContext;
+    private SyncListener mListener;
+    private TasksData data;
+    private ColorSetter cs;
+    private SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
-    public TasksRecyclerAdapter(Context context, ArrayList<ListItems> myDataset, SyncListener listener) {
+    public TasksRecyclerAdapter(Context context, ArrayList<Task> myDataset, SyncListener listener) {
         this.mDataset = myDataset;
         this.mContext = context;
         this.mListener = listener;

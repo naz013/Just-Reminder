@@ -2,6 +2,8 @@ package com.cray.software.justreminder.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -17,23 +19,93 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.interfaces.Constants;
 
 public class ViewUtils {
 
-    public ViewUtils(){}
+    /**
+     * Get drawable from resource.
+     * @param context application context.
+     * @param resource drawable resource.
+     * @return
+     */
+    public static Drawable getDrawable (Context context, int resource){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return context.getResources().getDrawable(resource, null);
+        } else {
+            return context.getResources().getDrawable(resource);
+        }
+    }
 
+    /**
+     * Get color from resource.
+     * @param context application context.
+     * @param resource color resource.
+     * @return
+     */
+    public static int getColor(Context context, int resource){
+        return context.getResources().getColor(resource);
+    }
+
+    /**
+     * Get icon for reminder type.
+     * @param typePrefs type of reminder.
+     * @return
+     */
+    public static int getIcon(String typePrefs) {
+        int icon;
+        if (typePrefs.matches(Constants.TYPE_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+            icon = R.drawable.ic_call_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
+            icon = R.drawable.ic_message_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
+                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
+            icon = R.drawable.ic_navigation_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_TIME)) {
+            icon = R.drawable.ic_access_time_white_24dp;
+        } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
+            icon = R.drawable.skype_icon_white;
+        } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {
+            icon = R.drawable.ic_launch_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+            icon = R.drawable.ic_public_white_24dp;
+        } else {
+            icon = R.drawable.ic_event_white_24dp;
+        }
+        return icon;
+    }
+
+    /**
+     * Set contact image to ImageButton.
+     * @param ib ImageButton.
+     * @param isDark dark theme flag.
+     */
     public static void setImage(ImageButton ib, boolean isDark){
         if (isDark){
             ib.setImageResource(R.drawable.ic_person_add_white_24dp);
         } else ib.setImageResource(R.drawable.ic_person_add_grey600_24dp);
     }
 
+    /**
+     * Set compound drawable for button.
+     * @param ib Button.
+     * @param isDark dark theme flag.
+     */
     public static void setImage(Button ib, boolean isDark){
         if (isDark){
             ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_white_24dp, 0, 0, 0);
         } else ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_grey600_24dp, 0, 0, 0);
     }
 
+    /**
+     * Set light typeface for selected TextView's.
+     * @param context application context.
+     * @param views TextView's.
+     */
     public static void setTypeFont(Context context, TextView... views){
         Typeface typeface = AssetsUtil.getLightTypeface(context);
         for (TextView v : views){

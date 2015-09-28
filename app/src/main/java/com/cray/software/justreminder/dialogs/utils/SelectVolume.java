@@ -15,18 +15,15 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class SelectVolume extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar;
-    TextView radiusValue;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    boolean isDark;
-    ImageView volumeImage;
+    private TextView radiusValue;
+    private SharedPrefs sPrefs;
+    private boolean isDark;
+    private ImageView volumeImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(SelectVolume.this);
+        ColorSetter cs = new ColorSetter(SelectVolume.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.volume_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -39,7 +36,7 @@ public class SelectVolume extends Activity {
 
         volumeImage = (ImageView) findViewById(R.id.volumeImage);
 
-        radiusBar = (SeekBar) findViewById(R.id.radiusBar);
+        SeekBar radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         int n = sPrefs.loadInt(Prefs.VOLUME);
         radiusBar.setProgress(n);
         radiusValue.setText(String.valueOf(n));
@@ -63,7 +60,7 @@ public class SelectVolume extends Activity {
             }
         });
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -44,28 +44,21 @@ import java.util.Locale;
 public class AddBirthday extends AppCompatActivity implements View.OnClickListener,
         DatePickerDialog.OnDateSetListener {
 
-    EditText birthName, phone;
-    Button pickContact;
-    RelativeLayout contactLayout;
-    LinearLayout container;
-    TextView birthDate;
-    CheckBox contactCheck;
-    String number = "";
-    int myYear = 0, myMonth = 0, myDay = 0;
-    long id = 0;
-    ProgressDialog pd;
-    DataBase db;
-    ColorSetter cs;
-    SharedPrefs sPrefs;
-    Toolbar toolbar;
-    FloatingActionButton mFab;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private EditText birthName, phone;
+    private LinearLayout container;
+    private TextView birthDate;
+    private CheckBox contactCheck;
+    private String number = "";
+    private int myYear = 0, myMonth = 0, myDay = 0;
+    private long id = 0;
+    private DataBase db;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(AddBirthday.this);
-        sPrefs = new SharedPrefs(this);
+        ColorSetter cs = new ColorSetter(AddBirthday.this);
+        SharedPrefs sPrefs = new SharedPrefs(this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -73,7 +66,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.add_birthday_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -88,7 +81,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
         container = (LinearLayout) findViewById(R.id.container);
 
-        contactLayout = (RelativeLayout) findViewById(R.id.contactLayout);
+        RelativeLayout contactLayout = (RelativeLayout) findViewById(R.id.contactLayout);
 
         contactCheck = (CheckBox) findViewById(R.id.contactCheck);
         contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -144,11 +137,11 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
         birthDate.setText(format.format(calendar.getTime()));
 
-        pickContact = (Button) findViewById(R.id.pickContact);
+        Button pickContact = (Button) findViewById(R.id.pickContact);
         ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         contactLayout.setOnClickListener(this);
 
-        mFab = new FloatingActionButton(AddBirthday.this);
+        FloatingActionButton mFab = new FloatingActionButton(AddBirthday.this);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,7 +168,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 dateDialog();
                 break;
             case R.id.contactLayout:
-                pd = ProgressDialog.show(AddBirthday.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
+                ProgressDialog pd = ProgressDialog.show(AddBirthday.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
                 pickContacts(pd);
                 break;
         }

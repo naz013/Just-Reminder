@@ -37,7 +37,7 @@ import com.cray.software.justreminder.reminder.Telephony;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -45,22 +45,15 @@ import java.util.Calendar;
 
 public class ShowBirthday extends Activity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
-    DataBase DB;
-    RoundImageView contactPhoto;
-    TextView userName, userNumber, userYears;
-    FloatingActionButton buttonOk, buttonCall, buttonSend;
-    LinearLayout single_container;
-    long id;
-    SharedPrefs sPrefs;
-    Contacts contacts;
-    int contactId;
-    String name, number, birthDate;
-    ColorSetter cs = new ColorSetter(ShowBirthday.this);
-    Notifier notifier = new Notifier(ShowBirthday.this);
-    TextToSpeech tts;
-    boolean isDark = false;
-    boolean isGlobal = false;
-    int currVolume;
+    private DataBase DB;
+    private long id;
+    private SharedPrefs sPrefs;
+    private int contactId;
+    private String name, number, birthDate;
+    private ColorSetter cs = new ColorSetter(ShowBirthday.this);
+    private Notifier notifier = new Notifier(ShowBirthday.this);
+    private TextToSpeech tts;
+    private boolean isDark = false;
 
     private static final int MY_DATA_CHECK_CODE = 111;
 
@@ -90,35 +83,35 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         Intent i = getIntent();
         id = i.getLongExtra("id", 0);
 
-        single_container = (LinearLayout) findViewById(R.id.single_container);
+        LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
         Typeface typeface = AssetsUtil.getLightTypeface(this);
 
-        buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
+        FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(this);
 
-        buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
+        FloatingActionButton buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
         buttonCall.setOnClickListener(this);
 
-        buttonSend = (FloatingActionButton) findViewById(R.id.buttonSend);
+        FloatingActionButton buttonSend = (FloatingActionButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(this);
 
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonSend);
         if (isDark){
-            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
-            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
-            buttonSend.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
+            buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
         } else {
-            buttonOk.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_done_white_24dp));
-            buttonCall.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_call_white_24dp));
-            buttonSend.setIconDrawable(Utils.getDrawable(this, R.drawable.ic_send_white_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_white_24dp));
+            buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
         }
 
         DB = new DataBase(ShowBirthday.this);
         sPrefs = new SharedPrefs(ShowBirthday.this);
-        contacts = new Contacts(ShowBirthday.this);
+        Contacts contacts = new Contacts(ShowBirthday.this);
 
         DB.open();
         Cursor c = DB.getBirthday(id);
@@ -130,9 +123,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         }
         if (c != null) c.close();
         if (number == null || number.matches("")) {
-            number = Contacts.get_Number(name, ShowBirthday.this);
+            number = Contacts.getNumber(name, ShowBirthday.this);
         }
-        contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         Bitmap photo = Contacts.getPhoto(this, contactId);
         if (photo != null) {
             contactPhoto.setImageBitmap(photo);
@@ -142,13 +135,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         String years = TimeUtil.getYears(birthDate) + " " + getString(R.string.years_string);
 
-        userName = (TextView) findViewById(R.id.userName);
+        TextView userName = (TextView) findViewById(R.id.userName);
         userName.setTypeface(typeface);
         userName.setText(name);
-        userNumber = (TextView) findViewById(R.id.userNumber);
+        TextView userNumber = (TextView) findViewById(R.id.userNumber);
         userNumber.setTypeface(typeface);
 
-        userYears = (TextView) findViewById(R.id.userYears);
+        TextView userYears = (TextView) findViewById(R.id.userYears);
         userYears.setTypeface(typeface);
         userYears.setText(years);
 
@@ -165,9 +158,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
 
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
+        boolean isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
         if (!isGlobal && sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -180,7 +173,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
     }
 
     private void colorify(FloatingActionButton... fab){
-        for (FloatingActionButton button:fab){
+        for (FloatingActionButton button : fab){
             if (isDark){
                 button.setColorNormal(getResources().getColor(R.color.colorWhite));
                 button.setColorPressed(getResources().getColor(R.color.colorGrayDark));

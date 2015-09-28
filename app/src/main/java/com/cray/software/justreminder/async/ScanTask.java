@@ -11,17 +11,17 @@ import java.io.IOException;
 
 public class ScanTask extends AsyncTask<Void, Void, Boolean> {
 
-    Context tContext;
+    private Context mContext;
 
     public ScanTask(Context context){
-        this.tContext = context;
+        this.mContext = context;
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        SyncHelper sHelp = new SyncHelper(tContext);
+        SyncHelper sHelp = new SyncHelper(mContext);
         try {
-            sHelp.scanFoldersForJSON();
+            sHelp.findJson();
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

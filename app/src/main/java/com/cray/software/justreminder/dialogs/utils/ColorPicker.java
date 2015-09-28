@@ -15,57 +15,49 @@ import com.cray.software.justreminder.modules.Module;
 
 public class ColorPicker extends Activity implements View.OnClickListener {
 
-    ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
-            yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
-            deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
-    LinearLayout themeGroupPro;
-
-    ColorSetter cs;
-    boolean isPro = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(ColorPicker.this);
+        ColorSetter cs = new ColorSetter(ColorPicker.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.color_picker_layout);
 
-        themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
-        isPro = Module.isPro();
+        LinearLayout themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
+        boolean isPro = Module.isPro();
         if (isPro) themeGroupPro.setVisibility(View.VISIBLE);
 
-        red_checkbox = (ImageButton) findViewById(R.id.red_checkbox);
+        ImageButton red_checkbox = (ImageButton) findViewById(R.id.red_checkbox);
         red_checkbox.setOnClickListener(this);
-        violet_checkbox = (ImageButton) findViewById(R.id.violet_checkbox);
+        ImageButton violet_checkbox = (ImageButton) findViewById(R.id.violet_checkbox);
         violet_checkbox.setOnClickListener(this);
-        green_checkbox = (ImageButton) findViewById(R.id.green_checkbox);
+        ImageButton green_checkbox = (ImageButton) findViewById(R.id.green_checkbox);
         green_checkbox.setOnClickListener(this);
-        light_green_checkbox = (ImageButton) findViewById(R.id.light_green_checkbox);
+        ImageButton light_green_checkbox = (ImageButton) findViewById(R.id.light_green_checkbox);
         light_green_checkbox.setOnClickListener(this);
-        blue_checkbox = (ImageButton) findViewById(R.id.blue_checkbox);
+        ImageButton blue_checkbox = (ImageButton) findViewById(R.id.blue_checkbox);
         blue_checkbox.setOnClickListener(this);
-        light_blue_checkbox = (ImageButton) findViewById(R.id.light_blue_checkbox);
+        ImageButton light_blue_checkbox = (ImageButton) findViewById(R.id.light_blue_checkbox);
         light_blue_checkbox.setOnClickListener(this);
-        yellow_checkbox = (ImageButton) findViewById(R.id.yellow_checkbox);
+        ImageButton yellow_checkbox = (ImageButton) findViewById(R.id.yellow_checkbox);
         yellow_checkbox.setOnClickListener(this);
-        orange_checkbox = (ImageButton) findViewById(R.id.orange_checkbox);
+        ImageButton orange_checkbox = (ImageButton) findViewById(R.id.orange_checkbox);
         orange_checkbox.setOnClickListener(this);
-        grey_checkbox = (ImageButton) findViewById(R.id.grey_checkbox);
+        ImageButton grey_checkbox = (ImageButton) findViewById(R.id.grey_checkbox);
         grey_checkbox.setOnClickListener(this);
-        pink_checkbox = (ImageButton) findViewById(R.id.pink_checkbox);
+        ImageButton pink_checkbox = (ImageButton) findViewById(R.id.pink_checkbox);
         pink_checkbox.setOnClickListener(this);
-        sand_checkbox = (ImageButton) findViewById(R.id.sand_checkbox);
+        ImageButton sand_checkbox = (ImageButton) findViewById(R.id.sand_checkbox);
         sand_checkbox.setOnClickListener(this);
-        brown_checkbox = (ImageButton) findViewById(R.id.brown_checkbox);
+        ImageButton brown_checkbox = (ImageButton) findViewById(R.id.brown_checkbox);
         brown_checkbox.setOnClickListener(this);
 
-        deepPurple = (ImageButton) findViewById(R.id.deepPurple);
+        ImageButton deepPurple = (ImageButton) findViewById(R.id.deepPurple);
         deepPurple.setOnClickListener(this);
-        indigoCheckbox = (ImageButton) findViewById(R.id.indigoCheckbox);
+        ImageButton indigoCheckbox = (ImageButton) findViewById(R.id.indigoCheckbox);
         indigoCheckbox.setOnClickListener(this);
-        limeCheckbox = (ImageButton) findViewById(R.id.limeCheckbox);
+        ImageButton limeCheckbox = (ImageButton) findViewById(R.id.limeCheckbox);
         limeCheckbox.setOnClickListener(this);
-        deepOrange = (ImageButton) findViewById(R.id.deepOrange);
+        ImageButton deepOrange = (ImageButton) findViewById(R.id.deepOrange);
         deepOrange.setOnClickListener(this);
     }
 

@@ -26,19 +26,15 @@ import java.util.List;
 
 public class VoiceWidgetConfig extends AppCompatActivity {
 
-    int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
-    Intent resultValue;
+    private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private Intent resultValue;
     public final static String VOICE_WIDGET_PREF = "widget_pref";
     public final static String VOICE_WIDGET_COLOR = "widget_color_";
-    int color;
+    private int color;
 
-    ColorSetter cSetter;
+    private LinearLayout widgetBg;
 
-    LinearLayout widgetBg;
-    Spinner headerBgColor;
-
-    Toolbar toolbar;
-    boolean isPro = false;
+    private boolean isPro = false;
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +55,19 @@ protected void onCreate(Bundle savedInstanceState) {
 
     setResult(RESULT_CANCELED, resultValue);
 
-    cSetter = new ColorSetter(VoiceWidgetConfig.this);
+    ColorSetter cSetter = new ColorSetter(VoiceWidgetConfig.this);
     setTheme(cSetter.getStyle());
     setContentView(R.layout.voice_widget_config_layout);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         getWindow().setStatusBarColor(cSetter.colorStatus());
     }
     findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-    toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
     widgetBg = (LinearLayout) findViewById(R.id.widgetBg);
 
-    headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
+    Spinner headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
     isPro = Module.isPro();
     List<String> spinnerArray = new ArrayList<>();
     String[] colorsArray = getResources().getStringArray(R.array.color_list);
@@ -88,7 +84,7 @@ protected void onCreate(Bundle savedInstanceState) {
     headerBgColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if (isPro){
+            if (isPro) {
                 switch (i) {
                     case 0:
                         color = R.drawable.rectangle_stroke_red;

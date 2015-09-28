@@ -27,8 +27,7 @@ import java.util.Calendar;
 public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnHeadlineSelectedListener,
         TimePickerFragment.TimePickedListener{
 
-    ColorSetter cSetter = new ColorSetter(SettingsActivity.this);
-    Toolbar toolbar;
+    private ColorSetter cSetter = new ColorSetter(SettingsActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         }
         setContentView(R.layout.category_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -24,12 +24,11 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class ExtraSettingsFragment extends Fragment implements View.OnClickListener {
 
-    SharedPrefs sPrefs;
-    ActionBar ab;
-    LinearLayout missedTime;
-    RelativeLayout missed, quickSMS, followReminder;
-    CheckBox missedCheck, quickSMSCheck, followReminderCheck;
-    TextView textMissed2, textMissed3, templates, contactGroups;
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
+    private LinearLayout missedTime;
+    private CheckBox missedCheck, quickSMSCheck, followReminderCheck;
+    private TextView textMissed2, textMissed3, templates, contactGroups;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         }
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
-        missed = (RelativeLayout) rootView.findViewById(R.id.missed);
+        RelativeLayout missed = (RelativeLayout) rootView.findViewById(R.id.missed);
         missed.setOnClickListener(this);
 
         missedCheck = (CheckBox) rootView.findViewById(R.id.missedCheck);
@@ -59,13 +58,13 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
         contactGroups = (TextView) rootView.findViewById(R.id.contactGroups);
         contactGroups.setOnClickListener(this);
 
-        quickSMS = (RelativeLayout) rootView.findViewById(R.id.quickSMS);
+        RelativeLayout quickSMS = (RelativeLayout) rootView.findViewById(R.id.quickSMS);
         quickSMS.setOnClickListener(this);
 
         quickSMSCheck = (CheckBox) rootView.findViewById(R.id.quickSMSCheck);
         quickSMSCheck.setChecked(sPrefs.loadBoolean(Prefs.QUICK_SMS));
 
-        followReminder = (RelativeLayout) rootView.findViewById(R.id.followReminder);
+        RelativeLayout followReminder = (RelativeLayout) rootView.findViewById(R.id.followReminder);
         followReminder.setOnClickListener(this);
 
         followReminderCheck = (CheckBox) rootView.findViewById(R.id.followReminderCheck);

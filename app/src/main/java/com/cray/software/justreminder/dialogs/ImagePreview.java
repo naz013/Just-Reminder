@@ -15,7 +15,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImagePreview extends Activity {
 
-    String photoPath;
+    private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

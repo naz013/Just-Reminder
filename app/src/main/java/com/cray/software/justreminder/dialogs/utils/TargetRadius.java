@@ -19,19 +19,15 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TargetRadius extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar;
-    TextView radiusValue;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    CheckBox transportCheck;
-    Button minusButton, plusButton;
-    int progressInt, i;
+    private SeekBar radiusBar;
+    private TextView radiusValue;
+    private SharedPrefs sPrefs;
+    private int progressInt, i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(TargetRadius.this);
+        ColorSetter cs = new ColorSetter(TargetRadius.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -63,7 +59,7 @@ public class TargetRadius extends Activity {
             }
         });
 
-        plusButton = (Button) findViewById(R.id.plusButton);
+        Button plusButton = (Button) findViewById(R.id.plusButton);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +67,7 @@ public class TargetRadius extends Activity {
             }
         });
 
-        minusButton = (Button) findViewById(R.id.minusButton);
+        Button minusButton = (Button) findViewById(R.id.minusButton);
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +75,7 @@ public class TargetRadius extends Activity {
             }
         });
 
-        transportCheck = (CheckBox) findViewById(R.id.transportCheck);
+        CheckBox transportCheck = (CheckBox) findViewById(R.id.transportCheck);
         transportCheck.setVisibility(View.VISIBLE);
         if (progressInt > 2000){
             transportCheck.setChecked(true);
@@ -95,7 +91,7 @@ public class TargetRadius extends Activity {
         transportCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     radiusBar.setMax(5000);
                     radiusBar.setProgress(progressInt);
                 } else {
@@ -105,7 +101,7 @@ public class TargetRadius extends Activity {
             }
         });
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -12,12 +12,23 @@ import android.provider.ContactsContract;
 
 import java.io.IOException;
 
+/**
+ * Helper class for accessing to contacts.
+ */
 public class Contacts {
-    Context cContext;
+
+    private Context mContext;
+
     public Contacts(Context context){
-        this.cContext = context;
+        this.mContext = context;
     }
 
+    /**
+     * Get photo of contact.
+     * @param context application context.
+     * @param contactId contact identifier.
+     * @return Photo in bitmap format
+     */
     public static Bitmap getPhoto(Context context, long contactId) {
         Bitmap bmp = null;
         if (contactId != 0) {
@@ -34,6 +45,12 @@ public class Contacts {
         return bmp;
     }
 
+    /**
+     * Get contact identifier by contact name.
+     * @param contactNumber contact name.
+     * @param context application context.
+     * @return Contact identifier
+     */
     public static int getContactIDFromNumber(String contactNumber,Context context) {
         int phoneContactID = 0;
         try {
@@ -52,6 +69,12 @@ public class Contacts {
         return phoneContactID;
     }
 
+    /**
+     * Get contact name by contact number.
+     * @param contactNumber contact number.
+     * @param context application context.
+     * @return Contact name
+     */
     public static String getContactNameFromNumber(String contactNumber, Context context) {
         String phoneContactID = null;
         if (contactNumber != null) {
@@ -69,6 +92,12 @@ public class Contacts {
         return phoneContactID;
     }
 
+    /**
+     * Get contact group identifier for contact.
+     * @param contactId contact identifier.
+     * @param context application context.
+     * @return Group identifier
+     */
     public static long getGroupIdFor(Long contactId, Context context){
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String where = String.format(
@@ -102,6 +131,12 @@ public class Contacts {
         }
     }
 
+    /**
+     * Get title for contact group.
+     * @param context application context.
+     * @param groupId group identifier.
+     * @return
+     */
     public static String getGroupTitle(Context context, long groupId){
         Uri uri = ContactsContract.Data.CONTENT_URI;
         String where = String.format("%s = ?", ContactsContract.Groups._ID);
@@ -124,6 +159,12 @@ public class Contacts {
         }
     }
 
+    /**
+     * Get contact group identifier by contact number.
+     * @param context application context.
+     * @param contactNumber contact number.
+     * @return
+     */
     public static String getContactGroupIdFromNumber(Context context, String contactNumber) {
         String phoneContactID = null;
         if (contactNumber != null) {
@@ -143,10 +184,15 @@ public class Contacts {
         return phoneContactID;
     }
 
+    /**
+     * Get e=mail for contact.
+     * @param id contact identifier.
+     * @return
+     */
     public String getMail(int id){
         String mail = null;
         if (id != 0) {
-            ContentResolver cr = cContext.getContentResolver();
+            ContentResolver cr = mContext.getContentResolver();
             Cursor emailCur = cr.query(
                     ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                     null,
@@ -161,7 +207,13 @@ public class Contacts {
         return mail;
     }
 
-    public static String get_Number(String name, Context context) {
+    /**
+     * Get contact number bu contact name.
+     * @param name contact name.
+     * @param context application context.
+     * @return
+     */
+    public static String getNumber(String name, Context context) {
         String number="";
         String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '%" + name +"%'";
         String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};

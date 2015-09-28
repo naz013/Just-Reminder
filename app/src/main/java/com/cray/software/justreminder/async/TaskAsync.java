@@ -12,13 +12,14 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import java.io.IOException;
 
 public class TaskAsync extends AsyncTask<Void, Void, Void> {
-    Context ctx;
-    String title, listId, taskId, taskType, note;
-    long time, localId;
+
+    private Context mContext;
+    private String title, listId, taskId, taskType, note;
+    private long time, localId;
 
     public TaskAsync(Context context, String title, String listId, String taskId, String taskType,
                      long time, String note, long localId){
-        this.ctx = context;
+        this.mContext = context;
         this.title = title;
         this.time = time;
         this.listId = listId;
@@ -30,9 +31,9 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(ctx);
-        boolean isConnected = SyncHelper.isConnected(ctx);
-        TasksData data = new TasksData(ctx);
+        GTasksHelper helper = new GTasksHelper(mContext);
+        boolean isConnected = SyncHelper.isConnected(mContext);
+        TasksData data = new TasksData(mContext);
         data.open();
         if (taskType.matches(TasksConstants.DELETE_TASK)){
             //delete task
@@ -84,6 +85,6 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(ctx).updateTasksWidget();
+        new UpdatesHelper(mContext).updateTasksWidget();
     }
 }

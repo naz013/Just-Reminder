@@ -28,15 +28,58 @@ import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.util.Calendar;
 
+/**
+ * Helper class for interaction with reminders.
+ */
 public class Reminder {
+
+    private String title, type, uuId, number, weekdays, melody, categoryId;
+    private int day, month, year, hour, minute, seconds, repCode, export,
+            radius, color, code;
+    private long id, repMinute, due;
+    private double[] place;
+
     public Reminder(){
     }
 
-    public static void generate(long id, Context context){
+    public Reminder(String title, String type, String weekdays, String melody, String categoryId,
+                    String uuId, double[] place, String number, int day, int month, int year,
+                    int hour, int minute, int seconds, int repCode, int export, int radius,
+                    int color, int code, long repMinute, long due){
+        this.title = title;
+        this.type = type;
+        this.weekdays = weekdays;
+        this.melody = melody;
+        this.categoryId = categoryId;
+        this.uuId = uuId;
+        this.place = place;
+        this.number = number;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.hour = hour;
+        this.minute = minute;
+        this.seconds = seconds;
+        this.repCode = repCode;
+        this.export = export;
+        this.radius = radius;
+        this.color = color;
+        this.code = code;
+        this.repMinute = repMinute;
+        this.due = due;
+    }
+
+    /**
+     * Add next event to calendars.
+     * @param id reminder identifier.
+     * @param context application context.
+     */
+    public static void generateToCalendar(long id, Context context){
         DataBase DB = new DataBase(context);
         DB.open();
         Cursor c = DB.getReminder(id);
@@ -73,12 +116,22 @@ public class Reminder {
         DB.close();
     }
 
+    /**
+     * Make backup files for all data.
+     * @param context application context.
+     */
     public static void backup(Context context){
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new BackupTask(context).execute();
         }
     }
 
+    /**
+     * Toggle reminder status.
+     * @param id reminder identifier.
+     * @param context application context.
+     * @return
+     */
     public static boolean toggle(long id, Context context){
         DataBase db = new DataBase(context);
         db.open();
@@ -103,18 +156,7 @@ public class Reminder {
         if (c != null) c.close();
         boolean res;
         if (isDone == 0){
-            db.setDone(id);
-            Integer i = (int) (long) id;
-            new AlarmReceiver().cancelAlarm(context, i);
-            new WeekDayReceiver().cancelAlarm(context, i);
-            new MonthDayReceiver().cancelAlarm(context, i);
-            new DelayReceiver().cancelAlarm(context, id);
-            new RepeatNotificationReceiver().cancelAlarm(context, i);
-            new PositionDelayReceiver().cancelDelay(context, i);
-            NotificationManager mNotifyMgr =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotifyMgr.cancel(i);
-            new DisableAsync(context).execute();
+            disableReminder(id, context);
             res = true;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -129,17 +171,22 @@ public class Reminder {
                 res = true;
             } else if (type.startsWith(Constants.TYPE_LOCATION) ||
                     type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                db.setUnDone(id);
-                db.updateReminderDateTime(id);
-                if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
-                    context.startService(new Intent(context, GeolocationService.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                    context.startService(new Intent(context, CheckPosition.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                if (!LocationUtil.checkLocationEnable(context)){
+                    LocationUtil.showLocationAlert(context);
+                    res = false;
                 } else {
-                    new PositionDelayReceiver().setDelay(context, id);
+                    db.setUnDone(id);
+                    db.updateReminderDateTime(id);
+                    if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
+                        context.startService(new Intent(context, GeolocationService.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        context.startService(new Intent(context, CheckPosition.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } else {
+                        new PositionDelayReceiver().setDelay(context, id);
+                    }
+                    res = true;
                 }
-                res = true;
             } else {
                 if (type.matches(Constants.TYPE_TIME)){
                     final Calendar calendar1 = Calendar.getInstance();
@@ -174,6 +221,12 @@ public class Reminder {
         return res;
     }
 
+    /**
+     * Create copy of reminder.
+     * @param id reminder identifier.
+     * @param time due time for copy.
+     * @param context application context.
+     */
     public static void copy(long id, long time, Context context) {
         DataBase db = new DataBase(context);
         SharedPrefs sPrefs = new SharedPrefs(context);
@@ -261,7 +314,12 @@ public class Reminder {
                 Toast.LENGTH_SHORT).show();
     }
 
-    public static void disable(long id, Context context){
+    /**
+     * Disable reminder.
+     * @param id reminder identifier.
+     * @param context application context.
+     */
+    public static void disableReminder(long id, Context context){
         DataBase DB = new DataBase(context);
         if (!DB.isOpen()) DB.open();
         NotificationManager mNotifyMgr =
@@ -270,12 +328,23 @@ public class Reminder {
         mNotifyMgr.cancel(i);
         DB.setDone(id);
         DB.close();
+        new AlarmReceiver().cancelAlarm(context, i);
+        new WeekDayReceiver().cancelAlarm(context, i);
+        new MonthDayReceiver().cancelAlarm(context, i);
+        new DelayReceiver().cancelAlarm(context, id);
+        new RepeatNotificationReceiver().cancelAlarm(context, i);
+        new PositionDelayReceiver().cancelDelay(context, i);
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
         new DisableAsync(context).execute();
     }
 
-    public static void makeArchive(long id, Context context){
+    /**
+     * Move reminder to trash.
+     * @param id reminder identifier.
+     * @param context application context.
+     */
+    public static void moveToTrash(long id, Context context){
         DataBase DB = new DataBase(context);
         if (!DB.isOpen()) DB.open();
         NotificationManager mNotifyMgr =
@@ -295,6 +364,11 @@ public class Reminder {
         new DisableAsync(context).execute();
     }
 
+    /**
+     * Edit reminder.
+     * @param id reminder identifier.
+     * @param context application context.
+     */
     public static void edit(long id, Context context){
         Intent intentId = new Intent(context, ReminderManager.class);
         intentId.putExtra(Constants.EDIT_ID, id);
@@ -307,6 +381,11 @@ public class Reminder {
         new DisableAsync(context).execute();
     }
 
+    /**
+     * Delete reminder from application.
+     * @param id reminder identifier.
+     * @param context application context.
+     */
     public static void delete(long id, Context context) {
         DataBase db = new DataBase(context);
         if (!db.isOpen()) db.open();
@@ -327,5 +406,181 @@ public class Reminder {
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
         new DisableAsync(context).execute();
+    }
+
+    public String getWeekdays(){
+        return weekdays;
+    }
+
+    public void setWeekdays(String weekdays){
+        this.weekdays = weekdays;
+    }
+
+    public String getMelody(){
+        return melody;
+    }
+
+    public void setMelody(String melody){
+        this.melody = melody;
+    }
+
+    public String getCategoryId(){
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId){
+        this.categoryId = categoryId;
+    }
+
+    public int getDay(){
+        return day;
+    }
+
+    public void setDay(int day){
+        this.day = day;
+    }
+
+    public int getMonth(){
+        return month;
+    }
+
+    public void setMonth(int month){
+        this.month = month;
+    }
+
+    public int getYear(){
+        return year;
+    }
+
+    public void setYear(int year){
+        this.year = year;
+    }
+
+    public int getHour(){
+        return hour;
+    }
+
+    public void setHour(int hour){
+        this.hour = hour;
+    }
+
+    public int getMinute(){
+        return minute;
+    }
+
+    public int getSeconds(){
+        return seconds;
+    }
+
+    public int getRepCode(){
+        return repCode;
+    }
+
+    public int getExport(){
+        return export;
+    }
+
+    public void setSeconds(int seconds){
+        this.seconds = seconds;
+    }
+
+    public void setRepCode(int repCode){
+        this.repCode = repCode;
+    }
+
+    public void setExport(int export){
+        this.export = export;
+    }
+
+    public void setRepMinute(int repMinute){
+        this.repMinute = repMinute;
+    }
+
+    public int getRadius(){
+        return radius;
+    }
+
+    public void setRadius(int radius){
+        this.radius = radius;
+    }
+
+    public int getColor(){
+        return color;
+    }
+
+    public void setColor(int color){
+        this.color = color;
+    }
+
+    public int getCode(){
+        return code;
+    }
+
+    public void setCode(int code){
+        this.code = code;
+    }
+
+    public long getRepMinute(){
+        return repMinute;
+    }
+
+    public void setMinute(int minute){
+        this.minute = minute;
+    }
+
+    public long getDue(){
+        return due;
+    }
+
+    public void setDue(long due){
+        this.due = due;
+    }
+
+    public double[] getPlace(){
+        return place;
+    }
+
+    public void  setPlace(double[] place){
+        this.place = place;
+    }
+
+    public long getId(){
+        return id;
+    }
+
+    public void setId(long id){
+        this.id = id;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
+    }
+
+    public String getType(){
+        return type;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getUuId(){
+        return uuId;
+    }
+
+    public void setUuId(String uuId){
+        this.uuId = uuId;
+    }
+
+    public String getNumber(){
+        return number;
+    }
+
+    public void setNumber(String number){
+        this.number = number;
     }
 }

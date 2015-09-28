@@ -1,10 +1,10 @@
 package com.cray.software.justreminder.datas;
 
-public class Item {
-    String title;
-    String uuID;
+public class Category {
+    private String title;
+    private String uuID;
 
-    public Item(String title, String uuID){
+    public Category(String title, String uuID){
         this.uuID = uuID;
         this.title = title;
     }

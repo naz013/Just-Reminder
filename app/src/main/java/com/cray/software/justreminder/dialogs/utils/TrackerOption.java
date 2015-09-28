@@ -14,16 +14,14 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class TrackerOption extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar, timeBar;
-    TextView radiusValue, timeValue;
-    SharedPrefs sPrefs;
-    ColorSetter cs;
+    private SeekBar radiusBar, timeBar;
+    private TextView radiusValue, timeValue;
+    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(TrackerOption.this);
+        ColorSetter cs = new ColorSetter(TrackerOption.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.tracker_settings_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -76,7 +74,7 @@ public class TrackerOption extends Activity {
             }
         });
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

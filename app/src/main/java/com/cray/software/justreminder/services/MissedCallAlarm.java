@@ -12,6 +12,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MissedCallAlarm extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
 
     @Override

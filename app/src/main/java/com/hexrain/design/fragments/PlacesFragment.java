@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -24,10 +23,8 @@ import com.hexrain.design.ScreenManager;
 
 public class PlacesFragment extends Fragment {
 
-    ColorSetter cSetter;
-    DataBase db;
-    SharedPrefs sPrefs;
-    ListView listView;
+    private DataBase db;
+    private ListView listView;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -49,9 +46,6 @@ public class PlacesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_simple_list_layout, container, false);
-
-        cSetter = new ColorSetter(getActivity());
-        sPrefs = new SharedPrefs(getActivity());
 
         listView = (ListView) rootView.findViewById(R.id.listView);
         TextView empty = (TextView) rootView.findViewById(R.id.emptyList);

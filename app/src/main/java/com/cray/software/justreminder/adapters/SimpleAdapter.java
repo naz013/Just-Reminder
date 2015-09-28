@@ -12,14 +12,14 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class SimpleAdapter extends CursorAdapter {
 
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     private Cursor c;
-    Context cContext;
-    ColorSetter cs;
+    private Context cContext;
+    private ColorSetter cs;
 
     public SimpleAdapter(Context context, Cursor c) {
         super(context, c);
@@ -70,7 +70,7 @@ public class SimpleAdapter extends CursorAdapter {
         card.setCardBackgroundColor(cs.getCardStyle());
 
         View indicator = convertView.findViewById(R.id.indicator);
-        indicator.setBackgroundDrawable(Utils.getDrawable(cContext, cs.getCategoryIndicator(color)));
+        indicator.setBackgroundDrawable(ViewUtils.getDrawable(cContext, cs.getCategoryIndicator(color)));
 
         return convertView;
     }

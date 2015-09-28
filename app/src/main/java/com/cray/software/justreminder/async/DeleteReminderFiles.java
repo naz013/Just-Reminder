@@ -7,8 +7,8 @@ import com.cray.software.justreminder.helpers.IOHelper;
 
 public class DeleteReminderFiles extends AsyncTask<Void, Void, Void> {
 
-    Context mContext;
-    String uuId;
+    private Context mContext;
+    private String uuId;
 
     public DeleteReminderFiles(Context context, String uuId){
         this.mContext = context;

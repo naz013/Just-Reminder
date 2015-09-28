@@ -23,14 +23,12 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class NewTemplate extends AppCompatActivity {
 
-    ColorSetter cs = new ColorSetter(NewTemplate.this);
-    FloatingEditText placeName;
-    SharedPrefs sPrefs = new SharedPrefs(NewTemplate.this);
-    DataBase db = new DataBase(NewTemplate.this);
-    Toolbar toolbar;
-    TextView leftCharacters;
-    FloatingActionButton mFab;
-    long id;
+    private ColorSetter cs = new ColorSetter(NewTemplate.this);
+    private FloatingEditText placeName;
+    private SharedPrefs sPrefs = new SharedPrefs(NewTemplate.this);
+    private DataBase db = new DataBase(NewTemplate.this);
+    private TextView leftCharacters;
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,7 @@ public class NewTemplate extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -81,7 +79,7 @@ public class NewTemplate extends AppCompatActivity {
             }
         });
 
-        mFab = new FloatingActionButton(NewTemplate.this);
+        FloatingActionButton mFab = new FloatingActionButton(NewTemplate.this);
         mFab.setColorNormal(cs.colorSetter());
         mFab.setColorPressed(cs.colorChooser());
         mFab.setSize(FloatingActionButton.SIZE_NORMAL);

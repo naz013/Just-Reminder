@@ -38,7 +38,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.note.DeleteNoteFile;
+import com.cray.software.justreminder.note.DeleteNoteFilesAsync;
 import com.cray.software.justreminder.note.Note;
 import com.cray.software.justreminder.note.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -56,20 +56,19 @@ import java.util.Calendar;
 public class NotePreviewFragment extends AppCompatActivity {
 
     private long remId;
-    ColorSetter cSetter;
-    SharedPrefs sPrefs;
-    Toolbar toolbar;
+    private ColorSetter cSetter;
+    private SharedPrefs sPrefs;
+    private Toolbar toolbar;
     private long mParam1;
-    Bitmap img;
-    byte[] imageByte;
+    private Bitmap img;
+    private byte[] imageByte;
 
-    ScrollView scrollContent;
-    LinearLayout reminderContainer, buttonContainer;
-    ImageView imageView;
-    TextView noteText, reminderTime;
-    FloatingActionButton mFab;
-    Button editReminder, deleteReminder;
-    NotesBase base;
+    private ScrollView scrollContent;
+    private LinearLayout reminderContainer, buttonContainer;
+    private ImageView imageView;
+    private TextView noteText, reminderTime;
+    private FloatingActionButton mFab;
+    private NotesBase base;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -209,7 +208,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             }
         });
 
-        editReminder = (Button) findViewById(R.id.editReminder);
+        Button editReminder = (Button) findViewById(R.id.editReminder);
         editReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +217,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 }
             }
         });
-        deleteReminder = (Button) findViewById(R.id.deleteReminder);
+        Button deleteReminder = (Button) findViewById(R.id.deleteReminder);
         deleteReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -425,7 +424,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
         }
         DB.deleteNote(mParam1);
-        new DeleteNoteFile(NotePreviewFragment.this).execute(uuId);
+        new DeleteNoteFilesAsync(NotePreviewFragment.this).execute(uuId);
         new UpdatesHelper(this).updateNotesWidget();
         new Notifier(this).discardStatusNotification(mParam1);
         sPrefs = new SharedPrefs(this);

@@ -23,16 +23,12 @@ import java.util.ArrayList;
 
 public class SelectApplication extends AppCompatActivity {
 
-    FloatingEditText searchField;
-    ListView contactsList;
-    ArrayAdapter<String> adapter;
-    ColorSetter cs;
-    Toolbar toolbar;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(SelectApplication.this);
+        ColorSetter cs = new ColorSetter(SelectApplication.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -40,7 +36,7 @@ public class SelectApplication extends AppCompatActivity {
         setContentView(R.layout.contact_list_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -62,7 +58,7 @@ public class SelectApplication extends AppCompatActivity {
             contacts.add(title);
         }
 
-        searchField = (FloatingEditText) findViewById(R.id.searchField);
+        FloatingEditText searchField = (FloatingEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,7 +77,7 @@ public class SelectApplication extends AppCompatActivity {
             }
         });
 
-        contactsList = (ListView) findViewById(R.id.contactsList);
+        ListView contactsList = (ListView) findViewById(R.id.contactsList);
         adapter = new ArrayAdapter<>(SelectApplication.this,
                 android.R.layout.simple_list_item_1, contacts);
         contactsList.setAdapter(adapter);

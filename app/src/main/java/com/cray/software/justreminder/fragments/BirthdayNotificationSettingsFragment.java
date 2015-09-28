@@ -26,16 +26,20 @@ import java.io.File;
 
 public class BirthdayNotificationSettingsFragment extends Fragment implements View.OnClickListener {
 
-    SharedPrefs sPrefs;
-    ActionBar ab;
-    LinearLayout chooseSound, lewColorWrapper, chooseLedColor;
-    RelativeLayout vibrationOption, soundOption, wakeScreenOption, infiniteSoundOption,
-            globalOption, infiniteVibrateOption, tts;
-    RelativeLayout lewWrapper, led;
-    TextView showMelody, locale;
-    TextView textLed2, textLed3, vText, vText1, textC1, textC;
-    TextView textB, textB1, textB2, textB3, textB4, textB5, textB6, textB7, textB10, textB11, textB12;
-    CheckBox vibrationCheck, soundCheck, wakeScreenCheck, infiniteSoundCheck, ledCheck,
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
+    private LinearLayout chooseSound, lewColorWrapper, chooseLedColor;
+    private RelativeLayout vibrationOption;
+    private RelativeLayout soundOption;
+    private RelativeLayout wakeScreenOption;
+    private RelativeLayout infiniteSoundOption;
+    private RelativeLayout infiniteVibrateOption;
+    private RelativeLayout tts;
+    private RelativeLayout lewWrapper, led;
+    private TextView showMelody, locale;
+    private TextView textLed2, textLed3, vText, vText1, textC1, textC;
+    private TextView textB, textB1, textB2, textB3, textB4, textB5, textB6, textB7, textB10, textB11, textB12;
+    private CheckBox vibrationCheck, soundCheck, wakeScreenCheck, infiniteSoundCheck, ledCheck,
             globalCheck, infiniteVibrateCheck, ttsCheck;
 
     @Override
@@ -48,7 +52,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             ab.setTitle(R.string.notification_settings);
         }
 
-        globalOption = (RelativeLayout) rootView.findViewById(R.id.globalOption);
+        RelativeLayout globalOption = (RelativeLayout) rootView.findViewById(R.id.globalOption);
         globalOption.setOnClickListener(this);
 
         globalCheck = (CheckBox) rootView.findViewById(R.id.globalCheck);

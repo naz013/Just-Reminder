@@ -11,6 +11,7 @@ import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import java.util.Calendar;
 
 public class BirthdayCheckAlarm extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
 

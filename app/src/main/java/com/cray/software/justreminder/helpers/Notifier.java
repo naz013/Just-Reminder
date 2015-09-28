@@ -26,7 +26,7 @@ import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.hexrain.design.ScreenManager;
 
 import java.io.File;
@@ -34,9 +34,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * Helper class for status bar notifications.
+ */
 public class Notifier {
 
-    private Context ctx;
+    private Context mContext;
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
     private int NOT_ID = 0;
@@ -44,18 +47,25 @@ public class Notifier {
     private MediaPlayer mMediaPlayer;
 
     public Notifier(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
+    /**
+     * Status bar notification to use when enabled tts.
+     * @param task task string.
+     * @param typePrefs type of reminder.
+     * @param itemId reminder identifier.
+     * @param color LED lights color.
+     */
     public void showTTSNotification(final String task, String typePrefs, long itemId, int color){
-        sPrefs = new SharedPrefs(ctx);
-        builder = new NotificationCompat.Builder(ctx);
+        sPrefs = new SharedPrefs(mContext);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
-            Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
+            Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             builder.setContentIntent(intent);
         }
         builder.setAutoCancel(false);
@@ -67,24 +77,24 @@ public class Notifier {
         }
         String app;
         if (Module.isPro()){
-            app = ctx.getString(R.string.app_name_pro);
-        } else app = ctx.getString(R.string.app_name);
+            app = mContext.getString(R.string.app_name_pro);
+        } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
-        builder.setSmallIcon(Utils.getIcon(typePrefs));
+        builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         int maxVolume = 26;
         int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
-        AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             mMediaPlayer = new MediaPlayer();
             try {
-                AssetFileDescriptor afd = ctx.getAssets().openFd("sounds/beep.mp3");
+                AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
                 mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -108,7 +118,7 @@ public class Notifier {
             if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
                 mMediaPlayer = new MediaPlayer();
                 try {
-                    AssetFileDescriptor afd = ctx.getAssets().openFd("sounds/beep.mp3");
+                    AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
                     mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -159,18 +169,18 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -181,9 +191,18 @@ public class Notifier {
         }
     }
 
+    /**
+     * Standart status bar notification for reminder.
+     * @param task reminder task.
+     * @param type reminder type.
+     * @param i flag for enabling sounds (1 - enabled).
+     * @param itemId reminder identifier.
+     * @param melody reminder custom melody file.
+     * @param color LED lights color.
+     */
     public void showReminder(final String task, String type, int i, long itemId, String melody,
                              int color){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);
@@ -202,20 +221,20 @@ public class Notifier {
             }
         }
 
-        Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
+        Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
         notificationIntent.putExtra("int", 1);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        builder = new NotificationCompat.Builder(ctx);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         builder.setContentIntent(intent);
         /*if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
-            Intent notificationIntent = new Intent(ctx, ReminderDialog.class);
+            Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             builder.setContentIntent(intent);
         }*/
         builder.setAutoCancel(false);
@@ -227,13 +246,13 @@ public class Notifier {
         }
         String app;
         if (Module.isPro()){
-            app = ctx.getString(R.string.app_name_pro);
-        } else app = ctx.getString(R.string.app_name);
+            app = mContext.getString(R.string.app_name_pro);
+        } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
-        builder.setSmallIcon(Utils.getIcon(type));
+        builder.setSmallIcon(ViewUtils.getIcon(type));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         int maxVolume = 26;
@@ -241,11 +260,11 @@ public class Notifier {
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         if (i == 1) {
-            AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+            AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
                 mMediaPlayer = new MediaPlayer();
                 try {
-                    mMediaPlayer.setDataSource(ctx, soundUri);
+                    mMediaPlayer.setDataSource(mContext, soundUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -270,7 +289,7 @@ public class Notifier {
                 if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
                     mMediaPlayer = new MediaPlayer();
                     try {
-                        mMediaPlayer.setDataSource(ctx, soundUri);
+                        mMediaPlayer.setDataSource(mContext, soundUri);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -322,18 +341,18 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -344,8 +363,13 @@ public class Notifier {
         }
     }
 
+    /**
+     * Status bar notification for missed calls.
+     * @param name contact name.
+     * @param itemId reminder identifier.
+     */
     public void showMissedReminder(final String name, long itemId){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)) {
             String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
@@ -359,7 +383,7 @@ public class Notifier {
             soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
 
-        builder = new NotificationCompat.Builder(ctx);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -369,7 +393,7 @@ public class Notifier {
             builder.setOngoing(true);
         }
 
-        builder.setContentText(ctx.getString(R.string.missed_call_event_title));
+        builder.setContentText(mContext.getString(R.string.missed_call_event_title));
 
         int icon = R.drawable.ic_call_white_24dp;
         builder.setSmallIcon(icon);
@@ -378,11 +402,11 @@ public class Notifier {
         int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
-        AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             mMediaPlayer = new MediaPlayer();
             try {
-                mMediaPlayer.setDataSource(ctx, soundUri);
+                mMediaPlayer.setDataSource(mContext, soundUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -407,7 +431,7 @@ public class Notifier {
             if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
                 mMediaPlayer = new MediaPlayer();
                 try {
-                    mMediaPlayer.setDataSource(ctx, soundUri);
+                    mMediaPlayer.setDataSource(mContext, soundUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -447,7 +471,7 @@ public class Notifier {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -459,18 +483,18 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(name);
-                wearableNotificationBuilder.setContentText(ctx.getString(R.string.missed_call_event_title));
+                wearableNotificationBuilder.setContentText(mContext.getString(R.string.missed_call_event_title));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -481,8 +505,17 @@ public class Notifier {
         }
     }
 
+    /**
+     * Status bar notification for weekday reminder type.
+     * @param task reminder task.
+     * @param typePrefs reminder type.
+     * @param i flag for sounds (1 - enabled).
+     * @param itemId reminder identifier.
+     * @param melody reminder custom melody file.
+     * @param color LED light color.
+     */
     public void showNotification(String task, String typePrefs, int i, long itemId, String melody, int color){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);
@@ -501,10 +534,10 @@ public class Notifier {
             }
         }
 
-        Intent notificationIntent = new Intent(ctx, WeekDayDialog.class);
+        Intent notificationIntent = new Intent(mContext, WeekDayDialog.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        PendingIntent intent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
-        builder = new NotificationCompat.Builder(ctx);
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         builder.setContentIntent(intent);
         builder.setAutoCancel(false);
@@ -516,13 +549,13 @@ public class Notifier {
         }
         String app;
         if (Module.isPro()){
-            app = ctx.getString(R.string.app_name_pro);
-        } else app = ctx.getString(R.string.app_name);
+            app = mContext.getString(R.string.app_name_pro);
+        } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
-        builder.setSmallIcon(Utils.getIcon(typePrefs));
+        builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         int maxVolume = 26;
@@ -530,11 +563,11 @@ public class Notifier {
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         if (i == 1) {
-            AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+            AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
                 mMediaPlayer = new MediaPlayer();
                 try {
-                    mMediaPlayer.setDataSource(ctx, soundUri);
+                    mMediaPlayer.setDataSource(mContext, soundUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -558,7 +591,7 @@ public class Notifier {
                 if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
                     mMediaPlayer = new MediaPlayer();
                     try {
-                        mMediaPlayer.setDataSource(ctx, soundUri);
+                        mMediaPlayer.setDataSource(mContext, soundUri);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -609,18 +642,18 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -631,8 +664,13 @@ public class Notifier {
         }
     }
 
+    /**
+     * Status bar notification for birthdays.
+     * @param years user ages.
+     * @param name user name.
+     */
     public void showNotification(int years, String name){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         boolean soundC;
         if (Module.isPro()){
@@ -656,24 +694,24 @@ public class Notifier {
         } else {
             soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
-        builder = new NotificationCompat.Builder(ctx);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
-        builder.setContentText(years + " " + ctx.getString(R.string.years_string));
+        builder.setContentText(years + " " + mContext.getString(R.string.years_string));
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         int maxVolume = 26;
         int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
-        AudioManager am = (AudioManager)ctx.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             mMediaPlayer = new MediaPlayer();
             try {
-                mMediaPlayer.setDataSource(ctx, soundUri);
+                mMediaPlayer.setDataSource(mContext, soundUri);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -713,7 +751,7 @@ public class Notifier {
             if (soundS) {
                 mMediaPlayer = new MediaPlayer();
                 try {
-                    mMediaPlayer.setDataSource(ctx, soundUri);
+                    mMediaPlayer.setDataSource(mContext, soundUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -780,17 +818,17 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(NOT_ID, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(name);
-                wearableNotificationBuilder.setContentText(years + " " + ctx.getString(R.string.years_string));
+                wearableNotificationBuilder.setContentText(years + " " + mContext.getString(R.string.years_string));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -801,20 +839,25 @@ public class Notifier {
         }
     }
 
+    /**
+     * Simple status bar notification for reminders.
+     * @param content notification title.
+     * @param id reminder identifier.
+     */
     public void showReminderNotification(String content, long id){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
 
-        builder = new NotificationCompat.Builder(ctx);
+        builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(content);
         String app;
         if (Module.isPro()){
-            app = ctx.getString(R.string.app_name_pro);
-        } else app = ctx.getString(R.string.app_name);
+            app = mContext.getString(R.string.app_name_pro);
+        } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
         builder.setSmallIcon(R.drawable.ic_notifications_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -826,18 +869,18 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(content);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -848,14 +891,19 @@ public class Notifier {
         }
     }
 
+    /**
+     * Status bar notification for notes.
+     * @param content notification title.
+     * @param id note identifier.
+     */
     public void showNoteNotification(String content, long id){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
 
-        builder = new NotificationCompat.Builder(ctx);
+        builder = new NotificationCompat.Builder(mContext);
 
-        builder.setContentText(ctx.getString(R.string.notification_note_string));
+        builder.setContentText(mContext.getString(R.string.notification_note_string));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
         }
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
@@ -869,19 +917,19 @@ public class Notifier {
             }
         }
 
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
 
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(ctx);
+                final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(content);
-                wearableNotificationBuilder.setContentText(ctx.getString(R.string.notification_note_string));
+                wearableNotificationBuilder.setContentText(mContext.getString(R.string.notification_note_string));
                 wearableNotificationBuilder.setOngoing(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(ctx.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
                 }
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
                 wearableNotificationBuilder.setGroup("GROUP");
@@ -891,17 +939,23 @@ public class Notifier {
         }
     }
 
+    /**
+     * Recreates current permanent status bar notification.
+     */
     public void recreatePermanent(){
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) showPermanent();
     }
 
+    /**
+     * Create permanent notification in status bar.
+     */
     public void showPermanent(){
-        RemoteViews remoteViews = new RemoteViews(ctx.getPackageName(),
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(),
                 R.layout.notification_layout);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(ctx);
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext);
         notification.setAutoCancel(false);
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         notification.setSmallIcon(R.drawable.ic_notifications_white_24dp);
         notification.setContent(remoteViews);
         notification.setOngoing(true);
@@ -909,34 +963,34 @@ public class Notifier {
             notification.setPriority(NotificationCompat.PRIORITY_MAX);
         else notification.setPriority(NotificationCompat.PRIORITY_MIN);
 
-        Intent resultIntent = new Intent(ctx, ReminderManager.class)
+        Intent resultIntent = new Intent(mContext, ReminderManager.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(ctx);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
         stackBuilder.addParentStack(ReminderManager.class);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_ONE_SHOT);
         remoteViews.setOnClickPendingIntent(R.id.notificationAdd, resultPendingIntent);
 
-        Intent noteIntent = new Intent(ctx, NotesManager.class)
+        Intent noteIntent = new Intent(mContext, NotesManager.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        TaskStackBuilder noteBuilder = TaskStackBuilder.create(ctx);
+        TaskStackBuilder noteBuilder = TaskStackBuilder.create(mContext);
         noteBuilder.addParentStack(NotesManager.class);
         noteBuilder.addNextIntent(noteIntent);
         PendingIntent notePendingIntent = noteBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.noteAdd, notePendingIntent);
 
-        Intent resInt = new Intent(ctx, ScreenManager.class);
+        Intent resInt = new Intent(mContext, ScreenManager.class);
         resInt.putExtra("tag", ScreenManager.FRAGMENT_ACTIVE);
-        TaskStackBuilder stackInt = TaskStackBuilder.create(ctx);
+        TaskStackBuilder stackInt = TaskStackBuilder.create(mContext);
         stackInt.addParentStack(ScreenManager.class);
         stackInt.addNextIntent(resInt);
         PendingIntent resultPendingInt = stackInt.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.text, resultPendingInt);
         remoteViews.setOnClickPendingIntent(R.id.featured, resultPendingInt);
-        DataBase db = new DataBase(ctx);
+        DataBase db = new DataBase(mContext);
         db.open();
         int count = db.getCountActive();
         ArrayList<Long> dates = new ArrayList<>();
@@ -1014,42 +1068,48 @@ public class Notifier {
                 remoteViews.setTextViewText(R.id.text, event);
                 remoteViews.setViewVisibility(R.id.featured, View.VISIBLE);
             } else {
-                remoteViews.setTextViewText(R.id.text, ctx.getString(R.string.drawer_active_reminder) + " " + String.valueOf(count));
+                remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.drawer_active_reminder) + " " + String.valueOf(count));
                 remoteViews.setViewVisibility(R.id.featured, View.GONE);
             }
         } else {
-            remoteViews.setTextViewText(R.id.text, ctx.getString(R.string.no_active_text));
+            remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.no_active_text));
             remoteViews.setViewVisibility(R.id.featured, View.GONE);
         }
-        ColorSetter cs = new ColorSetter(ctx);
+        ColorSetter cs = new ColorSetter(mContext);
         remoteViews.setInt(R.id.notificationBg, "setBackgroundColor", cs.colorSetter());
-        NotificationManagerCompat notifier = NotificationManagerCompat.from(ctx);
+        NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
         notifier.notify(1, notification.build());
     }
 
+    /**
+     * Remove permanent norification from status bar.
+     */
     public void hidePermanent(){
-        ((NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(1);
+        ((NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(1);
     }
 
     public void discardNotification(){
         discardMedia();
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(NOT_ID);
     }
 
     public void discardStatusNotification(long id){
         Integer i = (int) (long) id;
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(i);
     }
 
     public void discardNotification(long id){
         discardMedia();
         Integer i = (int) (long) id;
-        mNotifyMgr = NotificationManagerCompat.from(ctx);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(i);
     }
 
+    /**
+     * Stops playing notification sound.
+     */
     public void discardMedia(){
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();

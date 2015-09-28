@@ -33,12 +33,14 @@ import java.util.ArrayList;
 
 public class ExportSettingsFragment extends Fragment implements View.OnClickListener {
 
-    RelativeLayout exportToCalendar, autoBackup, exportToStock, exportTasks, syncSettings;
-    CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
+    private RelativeLayout exportTasks;
+    private CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
             syncSettingsCheck;
-    TextView eventDuration, selectCalendar, clouds, clean, syncInterval;
-    SharedPrefs sPrefs;
-    ActionBar ab;
+    private TextView eventDuration;
+    private TextView selectCalendar;
+    private TextView syncInterval;
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             ab.setTitle(R.string.export_settings_block);
         }
 
-        exportToCalendar = (RelativeLayout) rootView.findViewById(R.id.exportToCalendar);
+        RelativeLayout exportToCalendar = (RelativeLayout) rootView.findViewById(R.id.exportToCalendar);
         exportToCalendar.setOnClickListener(this);
 
         exportToCalendarCheck = (CheckBox) rootView.findViewById(R.id.exportToCalendarCheck);
@@ -63,28 +65,28 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         selectCalendar = (TextView) rootView.findViewById(R.id.selectCalendar);
         selectCalendar.setOnClickListener(this);
 
-        clouds = (TextView) rootView.findViewById(R.id.clouds);
+        TextView clouds = (TextView) rootView.findViewById(R.id.clouds);
         clouds.setOnClickListener(this);
 
-        clean = (TextView) rootView.findViewById(R.id.clean);
+        TextView clean = (TextView) rootView.findViewById(R.id.clean);
         clean.setOnClickListener(this);
 
         syncInterval = (TextView) rootView.findViewById(R.id.syncInterval);
         syncInterval.setOnClickListener(this);
 
-        autoBackup = (RelativeLayout) rootView.findViewById(R.id.autoBackup);
+        RelativeLayout autoBackup = (RelativeLayout) rootView.findViewById(R.id.autoBackup);
         autoBackup.setOnClickListener(this);
 
         autoBackupCheck = (CheckBox) rootView.findViewById(R.id.autoBackupCheck);
         autoBackupCheck.setChecked(sPrefs.loadBoolean(Prefs.AUTO_BACKUP));
 
-        exportToStock = (RelativeLayout) rootView.findViewById(R.id.exportToStock);
+        RelativeLayout exportToStock = (RelativeLayout) rootView.findViewById(R.id.exportToStock);
         exportToStock.setOnClickListener(this);
 
         exportToStockCheck = (CheckBox) rootView.findViewById(R.id.exportToStockCheck);
         exportToStockCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
 
-        syncSettings = (RelativeLayout) rootView.findViewById(R.id.syncSettings);
+        RelativeLayout syncSettings = (RelativeLayout) rootView.findViewById(R.id.syncSettings);
         syncSettings.setOnClickListener(this);
 
         syncSettingsCheck = (CheckBox) rootView.findViewById(R.id.syncSettingsCheck);
@@ -265,8 +267,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         builder.setNeutralButton(getActivity().getString(R.string.clean_dialog_button_local), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SyncHelper syncHelper = new SyncHelper(getActivity());
-                if (syncHelper.isSdPresent()){
+                if (SyncHelper.isSdPresent()){
                     File sdPath = Environment.getExternalStorageDirectory();
                     File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
                     DeleteRecursive(sdPathDr);
@@ -282,9 +283,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         builder.setPositiveButton(getActivity().getString(R.string.clean_dialog_button_full), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                SyncHelper syncHelper = new SyncHelper(getActivity());
-                if (syncHelper.isSdPresent()){
+                if (SyncHelper.isSdPresent()){
                     File sdPath = Environment.getExternalStorageDirectory();
                     File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
                     DeleteRecursive(sdPathDr);

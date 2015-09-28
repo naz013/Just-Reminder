@@ -13,13 +13,13 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import java.io.IOException;
 
 public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
-    Context ctx;
-    String taskId, listId;
-    SyncListener mListener;
-    boolean status;
+    private Context mContext;
+    private String taskId, listId;
+    private SyncListener mListener;
+    private boolean status;
 
     public SwitchTaskAsync(Context context, String listId, String taskId, boolean status, SyncListener listener){
-        this.ctx = context;
+        this.mContext = context;
         this.listId = listId;
         this.taskId = taskId;
         this.status = status;
@@ -28,9 +28,9 @@ public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(ctx);
-        boolean isConnected = SyncHelper.isConnected(ctx);
-        TasksData data = new TasksData(ctx);
+        GTasksHelper helper = new GTasksHelper(mContext);
+        boolean isConnected = SyncHelper.isConnected(mContext);
+        TasksData data = new TasksData(mContext);
         data.open();
         if (status){
             if (isConnected) {
@@ -59,7 +59,7 @@ public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(ctx).updateTasksWidget();
+        new UpdatesHelper(mContext).updateTasksWidget();
         if (mListener != null) {
             mListener.endExecution(true);
         }

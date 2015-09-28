@@ -18,8 +18,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class RateDialog extends Activity {
 
-    TextView buttonRate, rateLater, rateNever;
-    SharedPrefs sharedPrefs;
+    private SharedPrefs sharedPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +32,7 @@ public class RateDialog extends Activity {
 
         sharedPrefs = new SharedPrefs(RateDialog.this);
 
-        buttonRate = (TextView) findViewById(R.id.buttonRate);
+        TextView buttonRate = (TextView) findViewById(R.id.buttonRate);
         buttonRate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +42,7 @@ public class RateDialog extends Activity {
             }
         });
 
-        rateLater = (TextView) findViewById(R.id.rateLater);
+        TextView rateLater = (TextView) findViewById(R.id.rateLater);
         rateLater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +52,7 @@ public class RateDialog extends Activity {
             }
         });
 
-        rateNever = (TextView) findViewById(R.id.rateNever);
+        TextView rateNever = (TextView) findViewById(R.id.rateNever);
         rateNever.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

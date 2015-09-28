@@ -29,14 +29,11 @@ import com.google.android.gms.wearable.Wearable;
 
 public class GeneralSettingsFragment extends Fragment implements View.OnClickListener {
 
-    RelativeLayout themeColor, useDarkStyle, smartFold, wearEnable, animations, use24Time,
-            wearable, extendedButton, itemPreview;
-    CheckBox useDarkStyleCheck, smartFoldCheck, wearEnableCheck, animationsCheck, use24TimeCheck,
+    private CheckBox useDarkStyleCheck, smartFoldCheck, wearEnableCheck, animationsCheck, use24TimeCheck,
             wearableCheck, extendedButtonCheck, itemPreviewCheck;
-    TextView screenOrientation;
-    View themeColorSwitcher;
-    SharedPrefs sPrefs;
-    ActionBar ab;
+    private View themeColorSwitcher;
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,47 +47,47 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
         getActivity().getIntent().setAction("General attached");
 
-        themeColor = (RelativeLayout) rootView.findViewById(R.id.themeColor);
+        RelativeLayout themeColor = (RelativeLayout) rootView.findViewById(R.id.themeColor);
         themeColorSwitcher = rootView.findViewById(R.id.themeColorSwitcher);
 
         themeView();
         themeColor.setOnClickListener(this);
 
-        useDarkStyle = (RelativeLayout) rootView.findViewById(R.id.useDarkStyle);
+        RelativeLayout useDarkStyle = (RelativeLayout) rootView.findViewById(R.id.useDarkStyle);
         useDarkStyle.setOnClickListener(this);
 
         useDarkStyleCheck = (CheckBox) rootView.findViewById(R.id.useDarkStyleCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         useDarkStyleCheck.setChecked(sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
 
-        use24Time = (RelativeLayout) rootView.findViewById(R.id.use24Time);
+        RelativeLayout use24Time = (RelativeLayout) rootView.findViewById(R.id.use24Time);
         use24Time.setOnClickListener(this);
 
         use24TimeCheck = (CheckBox) rootView.findViewById(R.id.use24TimeCheck);
         use24TimeCheck.setChecked(sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
 
-        smartFold = (RelativeLayout) rootView.findViewById(R.id.smartFold);
+        RelativeLayout smartFold = (RelativeLayout) rootView.findViewById(R.id.smartFold);
         smartFold.setOnClickListener(this);
 
         smartFoldCheck = (CheckBox) rootView.findViewById(R.id.smartFoldCheck);
         smartFoldCheck.setChecked(sPrefs.loadBoolean(Prefs.SMART_FOLD));
 
-        screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
+        TextView screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
         screenOrientation.setOnClickListener(this);
 
-        wearEnable = (RelativeLayout) rootView.findViewById(R.id.wearEnable);
+        RelativeLayout wearEnable = (RelativeLayout) rootView.findViewById(R.id.wearEnable);
         wearEnable.setOnClickListener(this);
 
         wearEnableCheck = (CheckBox) rootView.findViewById(R.id.wearEnableCheck);
         wearEnableCheck.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
 
-        animations = (RelativeLayout) rootView.findViewById(R.id.animations);
+        RelativeLayout animations = (RelativeLayout) rootView.findViewById(R.id.animations);
         animations.setOnClickListener(this);
 
         animationsCheck = (CheckBox) rootView.findViewById(R.id.animationsCheck);
         animationsCheck.setChecked(sPrefs.loadBoolean(Prefs.ANIMATIONS));
 
-        wearable = (RelativeLayout) rootView.findViewById(R.id.wearable);
+        RelativeLayout wearable = (RelativeLayout) rootView.findViewById(R.id.wearable);
         wearable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +98,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearableCheck = (CheckBox) rootView.findViewById(R.id.wearableCheck);
         wearableCheck.setChecked(sPrefs.loadBoolean(Prefs.WEARABLE));
 
-        extendedButton = (RelativeLayout) rootView.findViewById(R.id.extendedButton);
+        RelativeLayout extendedButton = (RelativeLayout) rootView.findViewById(R.id.extendedButton);
         extendedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +109,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         extendedButtonCheck = (CheckBox) rootView.findViewById(R.id.extendedButtonCheck);
         extendedButtonCheck.setChecked(sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON));
 
-        itemPreview = (RelativeLayout) rootView.findViewById(R.id.itemPreview);
+        RelativeLayout itemPreview = (RelativeLayout) rootView.findViewById(R.id.itemPreview);
         itemPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

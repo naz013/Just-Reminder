@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventsCheckAlarm extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
 

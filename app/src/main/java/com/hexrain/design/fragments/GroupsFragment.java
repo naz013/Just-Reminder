@@ -20,7 +20,6 @@ import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.CategoryManager;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -34,10 +33,9 @@ import java.io.File;
 
 public class GroupsFragment extends Fragment {
 
-    ColorSetter cSetter;
-    DataBase db;
-    SharedPrefs sPrefs;
-    ListView listView;
+    private DataBase db;
+    private SharedPrefs sPrefs;
+    private ListView listView;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -60,7 +58,6 @@ public class GroupsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_simple_list_layout, container, false);
 
-        cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
 
         listView = (ListView) rootView.findViewById(R.id.listView);
@@ -187,8 +184,7 @@ public class GroupsFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            SyncHelper syncHelper = new SyncHelper(mContext);
-            if (syncHelper.isSdPresent()) {
+            if (SyncHelper.isSdPresent()) {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
                 String exportFileName = uuId + Constants.FILE_NAME_GROUP;
@@ -219,7 +215,7 @@ public class GroupsFragment extends Fragment {
                 do {
                     String remUUId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                     dataBase.deleteReminder(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)));
-                    if (syncHelper.isSdPresent()) {
+                    if (SyncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
                         String exportFileName = remUUId + Constants.FILE_NAME_REMINDER;

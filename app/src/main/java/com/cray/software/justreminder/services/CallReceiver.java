@@ -16,10 +16,11 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 public class CallReceiver extends BroadcastReceiver {
-    Context mContext;
-    String incoming_nr;
+
+    private Context mContext;
+    private String incoming_nr;
     private int prev_state;
-    long startCallTime;
+    private long startCallTime;
 
     @Override
     public void onReceive(Context context, Intent intent) {

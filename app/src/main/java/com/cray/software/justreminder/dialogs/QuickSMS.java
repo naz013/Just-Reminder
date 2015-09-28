@@ -30,13 +30,12 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 
 public class QuickSMS extends Activity {
 
-    DataBase DB;
-    TextView contactInfo, buttonSend;
-    ListView messagesList;
-    SharedPrefs sPrefs;
-    String number;
-    ColorSetter cs = new ColorSetter(QuickSMS.this);
-    BroadcastReceiver deliveredReceiver, sentReceiver;
+    private DataBase DB;
+    private TextView buttonSend;
+    private ListView messagesList;
+    private SharedPrefs sPrefs;
+    private String number;
+    private ColorSetter cs = new ColorSetter(QuickSMS.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +85,7 @@ public class QuickSMS extends Activity {
         DB.open();
         String name = Contacts.getContactNameFromNumber(number, QuickSMS.this);
 
-        contactInfo = (TextView) findViewById(R.id.contactInfo);
+        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(typeface);
         contactInfo.setText(name + "\n" + number);
 
@@ -124,6 +123,7 @@ public class QuickSMS extends Activity {
         PendingIntent deliveredPI = PendingIntent.getBroadcast(QuickSMS.this,
                 0, new Intent(DELIVERED), 0);
 
+        BroadcastReceiver sentReceiver;
         registerReceiver(sentReceiver = new BroadcastReceiver() {
 
             @Override
@@ -152,6 +152,7 @@ public class QuickSMS extends Activity {
         }, new IntentFilter(SENT));
 
         // ---when the SMS has been delivered---
+        BroadcastReceiver deliveredReceiver;
         registerReceiver( deliveredReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {

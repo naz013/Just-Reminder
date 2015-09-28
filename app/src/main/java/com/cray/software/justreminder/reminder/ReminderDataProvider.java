@@ -15,23 +15,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReminderDataProvider {
-    Cursor c, old;
-    List<ReminderItem> data;
-    Context context;
-    Interval mInterval;
+    private Cursor c, old;
+    private List<ReminderItem> data;
+    private Context mContext;
+    private Interval mInterval;
     private ReminderItem mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
-    public ReminderDataProvider(Context context){
+    public ReminderDataProvider(Context mContext){
         data = new ArrayList<>();
-        this.context = context;
-        mInterval = new Interval(context);
+        this.mContext = mContext;
+        mInterval = new Interval(mContext);
     }
 
-    public ReminderDataProvider(Context context, Cursor c){
+    public ReminderDataProvider(Context mContext, Cursor c){
         data = new ArrayList<>();
-        mInterval = new Interval(context);
-        this.context = context;
+        mInterval = new Interval(mContext);
+        this.mContext = mContext;
         this.c = c;
         load();
     }
@@ -167,7 +167,7 @@ public class ReminderDataProvider {
 
     public void load(){
         data.clear();
-        DataBase db = new DataBase(context);
+        DataBase db = new DataBase(mContext);
         db.open();
         if (c != null && c.moveToNext()){
             do {
@@ -218,16 +218,16 @@ public class ReminderDataProvider {
                     } else {
                         if (!type.startsWith(Constants.TYPE_LOCATION) &&
                                 !type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                            repeat = context.getString(R.string.interval_zero);
+                            repeat = mContext.getString(R.string.interval_zero);
                         }
                     }
                 } else {
                     due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
 
                     if (weekdays.length() == 7) {
-                        repeat = ReminderUtils.getRepeatString(context, weekdays);
+                        repeat = ReminderUtils.getRepeatString(mContext, weekdays);
                     } else {
-                        repeat = context.getString(R.string.interval_zero);
+                        repeat = mContext.getString(R.string.interval_zero);
                     }
                 }
 
@@ -238,7 +238,7 @@ public class ReminderDataProvider {
     }
 
     public void sort(){
-        SharedPrefs prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
         ArrayList<ReminderItem> list = new ArrayList<>();
         list.clear();

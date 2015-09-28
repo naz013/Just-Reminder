@@ -39,28 +39,28 @@ import java.util.regex.Pattern;
 
 public class Recognizer {
 
-    Context ctx;
-    DataBase DB = new DataBase(ctx);
-    SyncHelper sHelp;
-    UpdatesHelper updatesHelper;
-    SharedPrefs sPrefs;
+    private Context mContext;
+    private DataBase DB = new DataBase(mContext);
+    private SyncHelper sHelp;
+    private UpdatesHelper updatesHelper;
+    private SharedPrefs sPrefs;
 
-    AlarmReceiver alarm = new AlarmReceiver();
+    private AlarmReceiver alarm = new AlarmReceiver();
 
-    public final SimpleDateFormat[] dateTaskFormats = {
+    private final SimpleDateFormat[] dateTaskFormats = {
             new SimpleDateFormat("HH mm"),
             new SimpleDateFormat("HH:mm"),
             new SimpleDateFormat("HH")
     };
 
-    SimpleDateFormat mFormat = new SimpleDateFormat("HH:mm");
+    private SimpleDateFormat mFormat = new SimpleDateFormat("HH:mm");
 
-    long min = 60 * 1000;
-    long hourLong = min * 60;
-    long dayLong = hourLong * 24;
+    private long min = 60 * 1000;
+    private long hourLong = min * 60;
+    private long dayLong = hourLong * 24;
 
     public Recognizer(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
     public void selectTask(ArrayList matches, boolean isWidget){
@@ -74,31 +74,31 @@ public class Recognizer {
                 if (keyStr.matches(".*налаштування.*") ||
                         keyStr.matches(".*settings?.*") ||
                         keyStr.matches(".*настройки.*")){
-                    ctx.startActivity(new Intent(ctx, SettingsActivity.class));
+                    mContext.startActivity(new Intent(mContext, SettingsActivity.class));
                     break;
                 } else if (keyStr.matches(".*календар.*") ||
                         keyStr.matches(".*calendar.*") ||
                         keyStr.matches(".*календарь.*")){
-                    ctx.startActivity(new Intent(ctx, ScreenManager.class)
+                    mContext.startActivity(new Intent(mContext, ScreenManager.class)
                             .putExtra("tag", ScreenManager.ACTION_CALENDAR));
                     break;
                 } else if (keyStr.matches(".*локації.*") ||
                         keyStr.matches(".*locations?.*") ||
                         keyStr.matches(".*локации.*")){
-                    ctx.startActivity(new Intent(ctx, ScreenManager.class)
+                    mContext.startActivity(new Intent(mContext, ScreenManager.class)
                             .putExtra("tag", ScreenManager.FRAGMENT_LOCATIONS));
                     break;
                 } else if ((keyStr.matches(".*додаток.*") ||
                         keyStr.matches(".*application.*") ||
                         keyStr.matches(".*приложение.*")) && isWidget){
-                    ctx.startActivity(new Intent(ctx, SplashScreen.class));
+                    mContext.startActivity(new Intent(mContext, SplashScreen.class));
                     break;
                 } else if ((keyStr.matches(".*підказки.*") || keyStr.matches(".*підказку.*") ||
                         keyStr.matches(".*допомогу.*") || keyStr.matches(".*подсказку.*") ||
                         keyStr.matches(".*help.*") || keyStr.matches(".*подсказки.*") ||
                         keyStr.matches(".*помощь.*"))){
-                    ctx.startActivity(new Intent(ctx, VoiceHelp.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
+                    mContext.startActivity(new Intent(mContext, VoiceHelp.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
                     break;
                 }
             } else if (keyStr.matches(".*додати.*") ||
@@ -107,18 +107,18 @@ public class Recognizer {
                 if (keyStr.matches(".*день народження.*") ||
                         keyStr.matches(".*birthday.*") ||
                         keyStr.matches(".*день рождения.*")){
-                    ctx.startActivity(new Intent(ctx, AddBirthday.class));
+                    mContext.startActivity(new Intent(mContext, AddBirthday.class));
                     break;
                 } else if (keyStr.matches(".*нагадування.*") ||
                         keyStr.matches(".*reminder.*") ||
                         keyStr.matches(".*напоминание.*")){
-                    ctx.startActivity(new Intent(ctx, QuickAddReminder.class));
+                    mContext.startActivity(new Intent(mContext, QuickAddReminder.class));
                     break;
                 }
             } else if ((keyStr.matches(".*налаштувати гучність.*") ||
                     keyStr.matches(".*настроить громкость.*") ||
                     keyStr.matches(".*volume settings.*"))){
-                ctx.startActivity(new Intent(ctx, SelectVolume.class)
+                mContext.startActivity(new Intent(mContext, SelectVolume.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
                 break;
             } else if (keyStr.matches("завтра .* [0-9][0-9]? .*") ||
@@ -199,7 +199,7 @@ public class Recognizer {
                     keyStr.matches(".*допомогу.*") || keyStr.matches(".*подсказку.*") ||
                     keyStr.matches(".*help.*") || keyStr.matches(".*подсказки.*") ||
                     keyStr.matches(".*помощь.*")) && isWidget){
-                ctx.startActivity(new Intent(ctx, VoiceHelp.class));
+                mContext.startActivity(new Intent(mContext, VoiceHelp.class));
                 break;
             } else if (keyStr.matches(".* tonight.*") ||
                     keyStr.matches(".* ввечері.*") ||
@@ -1913,11 +1913,11 @@ public class Recognizer {
     private void saveTimeReminder(String task, boolean isWidget, boolean export, int dayOfMonth,
                               int monthOfYear, int mYear, int hourOfDay, int minuteOfHour,
                               long after){
-        DB = new DataBase(ctx);
+        DB = new DataBase(mContext);
         DB.open();
-        sHelp = new SyncHelper(ctx);
+        sHelp = new SyncHelper(mContext);
         String uuID = SyncHelper.generateID();
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         long id;
         Cursor cf = DB.queryCategories();
         String categoryId = null;
@@ -1937,8 +1937,8 @@ public class Recognizer {
                     0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         DB.updateReminderDateTime(id);
-        alarm.setAlarm(ctx, id);
-        updatesHelper = new UpdatesHelper(ctx);
+        alarm.setAlarm(mContext, id);
+        updatesHelper = new UpdatesHelper(mContext);
         updatesHelper.updateWidget();
         showResult(id, isWidget);
     }
@@ -1946,11 +1946,11 @@ public class Recognizer {
     private void saveReminder(String task, boolean isWidget, boolean export, int dayOfMonth,
                               int monthOfYear, int mYear, int hourOfDay, int minuteOfHour,
                               int repeat){
-        DB = new DataBase(ctx);
+        DB = new DataBase(mContext);
         DB.open();
-        sHelp = new SyncHelper(ctx);
+        sHelp = new SyncHelper(mContext);
         String uuID = SyncHelper.generateID();
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         long id;
         Cursor cf = DB.queryCategories();
         String categoryId = null;
@@ -1970,8 +1970,8 @@ public class Recognizer {
                     0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
         }
         DB.updateReminderDateTime(id);
-        alarm.setAlarm(ctx, id);
-        updatesHelper = new UpdatesHelper(ctx);
+        alarm.setAlarm(mContext, id);
+        updatesHelper = new UpdatesHelper(mContext);
         updatesHelper.updateWidget();
         showResult(id, isWidget);
     }
@@ -2027,7 +2027,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2076,7 +2076,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2125,7 +2125,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2188,7 +2188,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2240,7 +2240,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2292,7 +2292,7 @@ public class Recognizer {
                         }
                         saveReminder(res, isWidget, export, mDay, mMonth, mYear, hourOfDay, minuteOfHour, 0);
                     } else {
-                        Toast.makeText(ctx, ctx.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getString(R.string.wrong_date_time_message), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -2348,7 +2348,7 @@ public class Recognizer {
         int indexStart;
         boolean isTomorrow;
         boolean isWeekDay;
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         String mTime = prefs.loadPrefs(Prefs.TIME_NIGHT);
         Date date = null;
         try {
@@ -2499,7 +2499,7 @@ public class Recognizer {
         int indexStart;
         boolean isTomorrow;
         boolean isWeekDay;
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         String mTime = prefs.loadPrefs(Prefs.TIME_DAY);
         Date date = null;
         try {
@@ -2649,7 +2649,7 @@ public class Recognizer {
         int indexStart;
         boolean isTomorrow;
         boolean isWeekDay;
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         String mTime = prefs.loadPrefs(Prefs.TIME_MORNING);
         Date date = null;
         try {
@@ -2803,7 +2803,7 @@ public class Recognizer {
         int indexStart;
         boolean isTomorrow;
         boolean isWeekDay;
-        SharedPrefs prefs = new SharedPrefs(ctx);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         String mTime = prefs.loadPrefs(Prefs.TIME_EVENING);
         Date date = null;
         try {
@@ -2955,7 +2955,7 @@ public class Recognizer {
         if (matcher.find()) {
             String time = matcher.group().trim();
 
-            new loadAsync(ctx).execute(time);
+            new loadAsync(mContext).execute(time);
         }
     }
 
@@ -3013,7 +3013,7 @@ public class Recognizer {
             super.onPostExecute(aVoid);
 
             if (names.size() > 0 && dates.size() > 0 && years.size() > 0) {
-                ctx.startActivity(new Intent(mContext, BirthdaysVoiceList.class)
+                Recognizer.this.mContext.startActivity(new Intent(mContext, BirthdaysVoiceList.class)
                         .putExtra("names", names)
                         .putExtra("dates", dates)
                         .putExtra("years", years));
@@ -3063,9 +3063,9 @@ public class Recognizer {
             res = keyStr.substring(indexStart).trim();
         }
 
-        sHelp = new SyncHelper(ctx);
-        sPrefs = new SharedPrefs(ctx);
-        ColorSetter cs = new ColorSetter(ctx);
+        sHelp = new SyncHelper(mContext);
+        sPrefs = new SharedPrefs(mContext);
+        ColorSetter cs = new ColorSetter(mContext);
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
@@ -3075,7 +3075,7 @@ public class Recognizer {
         String date = day + "-" + month + "-" + year;
 
         String uuID = SyncHelper.generateID();
-        NotesBase db = new NotesBase(ctx);
+        NotesBase db = new NotesBase(mContext);
         db.open();
         if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             db.saveNote(sHelp.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
@@ -3084,7 +3084,7 @@ public class Recognizer {
         }
 
         if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
-            DB = new DataBase(ctx);
+            DB = new DataBase(mContext);
             DB.open();
             Cursor cf = DB.queryCategories();
             String categoryId = null;
@@ -3095,12 +3095,12 @@ public class Recognizer {
             long id = DB.insertReminder(res, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
                     0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME),
                     0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
-            alarm.setAlarm(ctx, id);
+            alarm.setAlarm(mContext, id);
             DB.updateReminderDateTime(id);
-            new UpdatesHelper(ctx).updateWidget();
+            new UpdatesHelper(mContext).updateWidget();
         }
-        new UpdatesHelper(ctx).updateNotesWidget();
-        Toast.makeText(ctx, ctx.getString(R.string.note_saved_toast), Toast.LENGTH_SHORT).show();
+        new UpdatesHelper(mContext).updateNotesWidget();
+        Toast.makeText(mContext, mContext.getString(R.string.note_saved_toast), Toast.LENGTH_SHORT).show();
     }
 
     private void messageTask(String keyStr, boolean isWidget) {
@@ -3122,8 +3122,8 @@ public class Recognizer {
             user = keyStr.substring(indexStart, indexEnd).trim();
         }
 
-        Contacts contacts = new Contacts(ctx);
-        String number = Contacts.get_Number(user, ctx);
+        Contacts contacts = new Contacts(mContext);
+        String number = Contacts.getNumber(user, mContext);
 
         if (keyStr.matches(".*send .* to .* at [0-9][0-9]?(:? ?)[0-9]?[0-9]? .*")) {
             indexStart = keyStr.lastIndexOf("send ");
@@ -3165,11 +3165,11 @@ public class Recognizer {
                         calendar.setTime(date);
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(ctx);
+                        DB = new DataBase(mContext);
                         DB.open();
-                        sHelp = new SyncHelper(ctx);
+                        sHelp = new SyncHelper(mContext);
                         String uuID = SyncHelper.generateID();
-                        sPrefs = new SharedPrefs(ctx);
+                        sPrefs = new SharedPrefs(mContext);
                         long id;
                         Cursor cf = DB.queryCategories();
                         String categoryId = null;
@@ -3189,9 +3189,9 @@ public class Recognizer {
                                     0, null, 0, 0, 0, categoryId);
                         }
                         DB.updateReminderDateTime(id);
-                        alarm.setAlarm(ctx, id);
+                        alarm.setAlarm(mContext, id);
                         DB.close();
-                        updatesHelper = new UpdatesHelper(ctx);
+                        updatesHelper = new UpdatesHelper(mContext);
                         updatesHelper.updateWidget();
                         showResult(id, isWidget);
                         break;
@@ -3226,8 +3226,8 @@ public class Recognizer {
 
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
 
-        Contacts contacts = new Contacts(ctx);
-        String number = Contacts.get_Number(user, ctx);
+        Contacts contacts = new Contacts(mContext);
+        String number = Contacts.getNumber(user, mContext);
 
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
         /*if (keyStr.matches(".*(p|a?m).*") && locale){
@@ -3251,11 +3251,11 @@ public class Recognizer {
                         calendar.setTime(date);
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(ctx);
+                        DB = new DataBase(mContext);
                         DB.open();
-                        sHelp = new SyncHelper(ctx);
+                        sHelp = new SyncHelper(mContext);
                         String uuID = SyncHelper.generateID();
-                        sPrefs = new SharedPrefs(ctx);
+                        sPrefs = new SharedPrefs(mContext);
                         long id;
                         Cursor cf = DB.queryCategories();
                         String categoryId = null;
@@ -3278,9 +3278,9 @@ public class Recognizer {
                                     0, null, 0, 0, 0, categoryId);
                         }
                         DB.updateReminderDateTime(id);
-                        alarm.setAlarm(ctx, id);
+                        alarm.setAlarm(mContext, id);
                         DB.close();
-                        updatesHelper = new UpdatesHelper(ctx);
+                        updatesHelper = new UpdatesHelper(mContext);
                         updatesHelper.updateWidget();
                         showResult(id, isWidget);
                         break;
@@ -3326,7 +3326,7 @@ public class Recognizer {
                         calendar.setTime(date);
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(ctx);
+                        DB = new DataBase(mContext);
                         DB.open();
                         Cursor cf = DB.queryCategories();
                         String categoryId = null;
@@ -3334,14 +3334,14 @@ public class Recognizer {
                             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         }
                         if (cf != null) cf.close();
-                        sHelp = new SyncHelper(ctx);
+                        sHelp = new SyncHelper(mContext);
                         String uuID = SyncHelper.generateID();
                         long id = DB.insertReminder(res, Constants.TYPE_WEEKDAY, 0, 0, 0,
                                 hour, minute, 0, null, 0, 0, 0, 0, 0, uuID, weekdays, 0, null, 0, 0,
                                 0, categoryId);
-                        new WeekDayReceiver().setAlarm(ctx, id);
+                        new WeekDayReceiver().setAlarm(mContext, id);
                         DB.close();
-                        updatesHelper = new UpdatesHelper(ctx);
+                        updatesHelper = new UpdatesHelper(mContext);
                         updatesHelper.updateWidget();
                         showResult(id, isWidget);
                         break;
@@ -3393,11 +3393,11 @@ public class Recognizer {
                 int currentMinute = calendar.get(Calendar.MINUTE);
                 int currentSeconds = calendar.get(Calendar.SECOND);
                 long minute = hour * 60 * 1000;
-                DB = new DataBase(ctx);
+                DB = new DataBase(mContext);
                 DB.open();
-                sHelp = new SyncHelper(ctx);
+                sHelp = new SyncHelper(mContext);
                 String uuID = SyncHelper.generateID();
-                sPrefs = new SharedPrefs(ctx);
+                sPrefs = new SharedPrefs(mContext);
                 long id;
                 Cursor cf = DB.queryCategories();
                 String categoryId = null;
@@ -3420,9 +3420,9 @@ public class Recognizer {
                             null, 0, 0, 0, categoryId);
                 }
                 DB.updateReminderDateTime(id);
-                alarm.setAlarm(ctx, id);
+                alarm.setAlarm(mContext, id);
                 DB.close();
-                updatesHelper = new UpdatesHelper(ctx);
+                updatesHelper = new UpdatesHelper(mContext);
                 updatesHelper.updateWidget();
                 showResult(id, isWidget);
             } else if (keyStr.matches(".* minutes?.*") ||
@@ -3437,11 +3437,11 @@ public class Recognizer {
                 int currentMinute = calendar.get(Calendar.MINUTE);
                 int currentSeconds = calendar.get(Calendar.SECOND);
                 long minute = hour * 1000;
-                DB = new DataBase(ctx);
+                DB = new DataBase(mContext);
                 DB.open();
-                sHelp = new SyncHelper(ctx);
+                sHelp = new SyncHelper(mContext);
                 String uuID = SyncHelper.generateID();
-                sPrefs = new SharedPrefs(ctx);
+                sPrefs = new SharedPrefs(mContext);
                 long id;
                 Cursor cf = DB.queryCategories();
                 String categoryId = null;
@@ -3464,9 +3464,9 @@ public class Recognizer {
                             0, null, 0, 0, 0, categoryId);
                 }
                 DB.updateReminderDateTime(id);
-                alarm.setAlarm(ctx, id);
+                alarm.setAlarm(mContext, id);
                 DB.close();
-                updatesHelper = new UpdatesHelper(ctx);
+                updatesHelper = new UpdatesHelper(mContext);
                 updatesHelper.updateWidget();
                 showResult(id, isWidget);
             }
@@ -3529,21 +3529,21 @@ public class Recognizer {
 
     private void showResult(long id, boolean isWidget) {
         if (isWidget) {
-            ctx.startActivity(new Intent(ctx, VoiceResult.class)
+            mContext.startActivity(new Intent(mContext, VoiceResult.class)
                     .putExtra("ids", id)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         } else {
-            Toast.makeText(ctx, ctx.getString(R.string.reminder_saved_title), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getString(R.string.reminder_saved_title), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void exportToCalendar(String summary, long startTime, long id){
-        sPrefs = new SharedPrefs(ctx);
+        sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR)){
-            new CalendarManager(ctx).addEvent(summary, startTime, id);
+            new CalendarManager(mContext).addEvent(summary, startTime, id);
         }
         if (sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)){
-            new CalendarManager(ctx).addEventToStock(summary, startTime);
+            new CalendarManager(mContext).addEventToStock(summary, startTime);
         }
     }
 }

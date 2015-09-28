@@ -58,7 +58,7 @@ import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
-import com.cray.software.justreminder.datas.Item;
+import com.cray.software.justreminder.datas.Category;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -247,13 +247,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private void changeCategory() {
         DB = new DataBase(this);
         DB.open();
-        final ArrayList<Item> items = new ArrayList<>();
+        final ArrayList<Category> categories = new ArrayList<>();
         Cursor c = DB.queryCategories();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                items.add(new Item(title, uuId));
+                categories.add(new Category(title, uuId));
             } while (c.moveToNext());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -263,8 +263,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                category.setText(items.get(which).getTitle());
-                categoryId = items.get(which).getUuID();
+                category.setText(categories.get(which).getTitle());
+                categoryId = categories.get(which).getUuID();
             }
         });
         AlertDialog alert = builder.create();
@@ -2759,6 +2759,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
 
+        if (!LocationUtil.checkLocationEnable(this)){
+            LocationUtil.showLocationAlert(this);
+            return;
+        }
+
         Double latitude = dest.latitude;
         Double longitude = dest.longitude;
         DB = new DataBase(BackupFileEdit.this);
@@ -2812,6 +2817,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (isUID(uuID)){
             Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
                     Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!LocationUtil.checkLocationEnable(this)){
+            LocationUtil.showLocationAlert(this);
             return;
         }
 

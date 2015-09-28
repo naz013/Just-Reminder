@@ -67,32 +67,32 @@ import java.util.Calendar;
 
 public class NotesManager extends AppCompatActivity {
 
-    int myHour = 0;
-    int myMinute = 0;
-    int myYear = 0;
-    int myMonth = 0;
-    int myDay = 1;
-    int color = 0;
-    int style = 5;
-    String uuID = "";
-    byte[] image = null;
-    Bitmap img;
-    RelativeLayout layoutContainer, imageContainer;
-    LinearLayout remindContainer;
-    TextView remindDate, remindTime;
-    ImageButton discardReminder, deleteButton;
-    ImageView noteImage;
-    AlarmReceiver alarm = new AlarmReceiver();
+    private int myHour = 0;
+    private int myMinute = 0;
+    private int myYear = 0;
+    private int myMonth = 0;
+    private int myDay = 1;
+    private int color = 0;
+    private int style = 5;
+    private String uuID = "";
+    private byte[] image = null;
+    private Bitmap img;
+    private RelativeLayout layoutContainer, imageContainer;
+    private LinearLayout remindContainer;
+    private TextView remindDate, remindTime;
+    private ImageButton discardReminder;
+    private ImageView noteImage;
+    private AlarmReceiver alarm = new AlarmReceiver();
 
-    NotesBase DB = new NotesBase(NotesManager.this);
+    private NotesBase DB = new NotesBase(NotesManager.this);
 
-    ColorSetter cSetter = new ColorSetter(NotesManager.this);
-    SharedPrefs sPrefs = new SharedPrefs(NotesManager.this);
+    private ColorSetter cSetter = new ColorSetter(NotesManager.this);
+    private SharedPrefs sPrefs = new SharedPrefs(NotesManager.this);
 
-    long id;
-    Toolbar toolbar;
-    FloatingEditText taskField;
-    FloatingActionButton mFab;
+    private long id;
+    private Toolbar toolbar;
+    private FloatingEditText taskField;
+    private FloatingActionButton mFab;
 
     public static final int MENU_ITEM_DELETE = 12;
 
@@ -238,7 +238,7 @@ public class NotesManager extends AppCompatActivity {
             }
         });
 
-        deleteButton = (ImageButton) findViewById(R.id.deleteButton);
+        ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

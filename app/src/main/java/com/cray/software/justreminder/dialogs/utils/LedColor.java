@@ -23,19 +23,17 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class LedColor extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
-    NotificationManagerCompat mNotifyMgr;
-    NotificationCompat.Builder builder;
-    int id;
+    private SharedPrefs sPrefs;
+    private ListView musicList;
+    private TextView musicDialogOk;
+    private NotificationManagerCompat mNotifyMgr;
+    private NotificationCompat.Builder builder;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(LedColor.this);
+        ColorSetter cs = new ColorSetter(LedColor.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -43,7 +41,7 @@ public class LedColor extends Activity{
         final Intent intent = getIntent();
         id = intent.getIntExtra(Constants.BIRTHDAY_INTENT_ID, 0);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.select_led_color_title));
 
         musicList = (ListView) findViewById(R.id.musicList);

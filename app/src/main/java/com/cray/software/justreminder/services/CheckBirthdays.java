@@ -15,11 +15,11 @@ import java.util.Calendar;
 
 public class CheckBirthdays extends IntentService{
 
-    DataBase db;
-    SharedPrefs sharedPrefs;
-    int minuteInt = 1000 * 60;
-    int hourInt = minuteInt * 60;
-    int dayInt = hourInt * 24;
+    private DataBase db;
+    private SharedPrefs sharedPrefs;
+    private int minuteInt = 1000 * 60;
+    private int hourInt = minuteInt * 60;
+    private int dayInt = hourInt * 24;
 
     public CheckBirthdays() {
         super("CheckBirthdaysAsync");

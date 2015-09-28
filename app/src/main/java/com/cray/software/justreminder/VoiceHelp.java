@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class VoiceHelp extends Activity {
 
-    AlertDialog alertDialog;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

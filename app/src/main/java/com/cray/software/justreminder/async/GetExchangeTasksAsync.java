@@ -7,17 +7,17 @@ import com.cray.software.justreminder.cloud.ExchangeHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 
 public class GetExchangeTasksAsync extends AsyncTask<Void, Void, Void> {
-    Context ctx;
-    SyncListener mListener;
+    private Context mContext;
+    private SyncListener mListener;
 
     public GetExchangeTasksAsync(Context context, SyncListener listener){
-        this.ctx = context;
+        this.mContext = context;
         this.mListener = listener;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        ExchangeHelper helper = new ExchangeHelper(ctx);
+        ExchangeHelper helper = new ExchangeHelper(mContext);
         try {
             helper.getTasks();
         } catch (Exception e) {

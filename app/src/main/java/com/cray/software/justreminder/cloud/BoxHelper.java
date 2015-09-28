@@ -268,16 +268,16 @@ public class BoxHelper
                                 try {
                                     SyncHelper helper = new SyncHelper(mContext);
                                     if (ext.matches(FileConfig.FILE_NAME_REMINDER)){
-                                        helper.importReminderFromJSON(localFile.toString(), fileName);
+                                        helper.reminderFromJson(localFile.toString(), fileName);
                                     }
                                     if (ext.matches(FileConfig.FILE_NAME_GROUP)){
-                                        helper.importGroup(localFile.toString(), fileName);
+                                        helper.groupFromJson(localFile.toString(), fileName);
                                     }
                                     if (ext.matches(FileConfig.FILE_NAME_NOTE)){
-                                        helper.importNotes(localFile.toString(), fileName);
+                                        helper.noteFromJson(localFile.toString(), fileName);
                                     }
                                     if (ext.matches(FileConfig.FILE_NAME_BIRTHDAY)){
-                                        helper.importBirthday(localFile.toString(), fileName);
+                                        helper.birthdayFromJson(localFile.toString(), fileName);
                                     }
                                 } catch (IOException | JSONException e1) {
                                     e1.printStackTrace();

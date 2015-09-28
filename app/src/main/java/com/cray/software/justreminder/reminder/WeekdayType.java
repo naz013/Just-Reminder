@@ -4,17 +4,17 @@ import android.content.Context;
 
 import com.cray.software.justreminder.services.WeekDayReceiver;
 
-public class WeekdayType extends ReminderType {
+public class WeekdayType extends Type {
 
-    Context context;
+    private Context mContext;
 
     public WeekdayType(Context context) {
         super(context);
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override
-    public long save(DataItem item) {
+    public long save(Reminder item) {
         long id = super.save(item);
         startAlarm(id);
         exportToServices(item, id);
@@ -22,11 +22,11 @@ public class WeekdayType extends ReminderType {
     }
 
     private void startAlarm(long id) {
-        new WeekDayReceiver().setAlarm(context, id);
+        new WeekDayReceiver().setAlarm(mContext, id);
     }
 
     @Override
-    public void save(long id, DataItem item) {
+    public void save(long id, Reminder item) {
         super.save(id, item);
         startAlarm(id);
         exportToServices(item, id);

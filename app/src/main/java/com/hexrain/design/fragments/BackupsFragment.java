@@ -38,8 +38,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
-import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
+import com.cray.software.justreminder.spinner.SpinnerItem;
+import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -624,7 +624,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 final int count = gdx.countFiles();
                 SyncHelper sHelp = new SyncHelper(getActivity());
                 try {
-                    sHelp.scanFoldersForJSON();
+                    sHelp.findJson();
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -679,7 +679,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 final int count = new DropboxHelper(getActivity()).countFiles();
                 SyncHelper sHelp = new SyncHelper(getActivity());
                 try {
-                    sHelp.scanFoldersForJSON();
+                    sHelp.findJson();
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }

@@ -13,10 +13,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 
 public class ThanksDialog extends AppCompatActivity {
 
-    WebView helpView;
-    ColorSetter cSetter = new ColorSetter(ThanksDialog.this);
-    Toolbar toolbar;
-    EditText searchEdit;
+    private ColorSetter cSetter = new ColorSetter(ThanksDialog.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +27,7 @@ public class ThanksDialog extends AppCompatActivity {
 
         int code = getIntent().getIntExtra("int", 0);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_security_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -40,12 +37,12 @@ public class ThanksDialog extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        helpView = (WebView) findViewById(R.id.helpView);
+        WebView helpView = (WebView) findViewById(R.id.helpView);
         String url = "file:///android_asset/files/LICENSE.html";
         if (code == 1) url = "file:///android_asset/files/permissions.html";
         helpView.loadUrl(url);
 
-        searchEdit = (EditText) findViewById(R.id.searchEdit);
+        EditText searchEdit = (EditText) findViewById(R.id.searchEdit);
         searchEdit.setVisibility(View.GONE);
     }
 

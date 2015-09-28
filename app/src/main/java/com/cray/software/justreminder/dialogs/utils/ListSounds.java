@@ -27,19 +27,17 @@ import java.util.ArrayList;
 
 public class ListSounds extends Activity{
 
-    MediaPlayer mMediaPlayer;
-    ArrayList<File> fileList = new ArrayList<>();
-    SharedPrefs sPrefs;
-    ColorSetter cs;
-    ListView musicList;
-    TextView musicDialogOk;
-    int id;
-    float log1;
+    private MediaPlayer mMediaPlayer;
+    private ArrayList<File> fileList = new ArrayList<>();
+    private SharedPrefs sPrefs;
+    private ListView musicList;
+    private int id;
+    private float log1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(ListSounds.this);
+        ColorSetter cs = new ColorSetter(ListSounds.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         sPrefs = new SharedPrefs(ListSounds.this);
@@ -97,7 +95,7 @@ public class ListSounds extends Activity{
                 android.R.layout.simple_list_item_single_choice, names);
         musicList.setAdapter(adapter);
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

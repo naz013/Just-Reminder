@@ -27,23 +27,22 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class CustomCursorAdapter extends CursorAdapter implements Filterable {
 
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     private Cursor c;
-    Context context;
-    DataBase DB;
-    TimeCount mCount;
-    Interval mInterval;
-    SyncListener mListener;
-    Typeface typeface;
-    ColorSetter cs;
-    SharedPrefs prefs;
+    private Context context;
+    private DataBase DB;
+    private TimeCount mCount;
+    private Interval mInterval;
+    private Typeface typeface;
+    private ColorSetter cs;
+    private SharedPrefs prefs;
 
     @SuppressWarnings("deprecation")
     public CustomCursorAdapter(Context context, Cursor c, SyncListener clickListener) {
@@ -52,7 +51,6 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         inflater = LayoutInflater.from(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.c = c;
-        this.mListener = clickListener;
         DB = new DataBase(context);
         mInterval = new Interval(context);
         typeface = AssetsUtil.getLightTypeface(context);
@@ -161,7 +159,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         if (type.startsWith(Constants.TYPE_MONTHDAY)){
             taskTitle.setText(title);
 
-            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(ViewUtils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                 reminder_phone.setText(number);
@@ -225,7 +223,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
                 reminder_contact_name.setText(number);
             }
 
-            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(ViewUtils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
                     repCode, repCount, delay);
@@ -272,7 +270,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
         } else {
             taskTitle.setText(title);
 
-            taskIcon.setImageDrawable(Utils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
+            taskIcon.setImageDrawable(ViewUtils.getDrawable(context, cs.getCategoryIndicator(categoryColor)));
 
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
@@ -309,7 +307,7 @@ public class CustomCursorAdapter extends CursorAdapter implements Filterable {
             }
         }
         if (isDone == 1){
-            leftTimeIcon.setImageDrawable(Utils.getDrawable(context, R.drawable.drawable_grey));
+            leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(context, R.drawable.drawable_grey));
         }
 
         if (archived > 0) {

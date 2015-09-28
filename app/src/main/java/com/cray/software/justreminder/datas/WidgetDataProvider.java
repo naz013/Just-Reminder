@@ -22,10 +22,10 @@ public class WidgetDataProvider {
     }
 
     private ArrayList<Item> data;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    int hour, minute;
-    boolean isFeature;
-    Cursor c, s;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private int hour, minute;
+    private boolean isFeature;
+    private Cursor c, s;
 
     public WidgetDataProvider(){
         data = new ArrayList<>();

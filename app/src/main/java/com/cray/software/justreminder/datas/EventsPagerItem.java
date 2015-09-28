@@ -2,19 +2,19 @@ package com.cray.software.justreminder.datas;
 
 import java.util.ArrayList;
 
-public class PagerItem {
-    int position, current;
-    ArrayList<EventsDataProvider.EventsItem> datas;
-    int day, month, year;
+public class EventsPagerItem {
+    private int position, current;
+    private ArrayList<EventsDataProvider.EventsItem> datas;
+    private int day, month, year;
 
-    public PagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day){
+    public EventsPagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day){
         this.datas = datas;
         this.current = current;
         this.position = position;
         this.day = day;
     }
 
-    public PagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day, int month, int year){
+    public EventsPagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day, int month, int year){
         this.datas = datas;
         this.current = current;
         this.position = position;

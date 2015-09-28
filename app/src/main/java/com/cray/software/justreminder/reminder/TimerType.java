@@ -1,27 +1,22 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 
-public class TimerType extends ReminderType {
+public class TimerType extends Type {
 
-    Context context;
+    private Context mContext;
 
     public TimerType(Context context) {
         super(context);
-        this.context = context;
+        this.mContext = context;
         setType(Constants.TYPE_TIME);
     }
 
     @Override
-    public long save(DataItem item) {
+    public long save(Reminder item) {
         long id = super.save(item);
         startAlarm(id);
         exportToServices(item, id);
@@ -29,11 +24,11 @@ public class TimerType extends ReminderType {
     }
 
     private void startAlarm(long id) {
-        new AlarmReceiver().setAlarm(context, id);
+        new AlarmReceiver().setAlarm(mContext, id);
     }
 
     @Override
-    public void save(long id, DataItem item) {
+    public void save(long id, Reminder item) {
         super.save(id, item);
         startAlarm(id);
         exportToServices(item, id);

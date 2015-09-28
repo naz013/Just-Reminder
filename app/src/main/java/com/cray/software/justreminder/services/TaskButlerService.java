@@ -9,9 +9,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.interfaces.Constants;
 
 public class TaskButlerService extends IntentService {
-    AlarmReceiver alarm = new AlarmReceiver();
-    WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
-    DataBase DB;
+
+    private AlarmReceiver alarm = new AlarmReceiver();
+    private WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
+    private DataBase DB;
 
     public TaskButlerService() {
         super("TaskButlerService");

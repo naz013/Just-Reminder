@@ -18,21 +18,18 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class MapType extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
+    private SharedPrefs sPrefs;
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(MapType.this);
+        ColorSetter cs = new ColorSetter(MapType.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(R.string.map_type_title);
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -59,7 +56,7 @@ public class MapType extends Activity{
 
         musicList.setItemChecked(position, true);
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,13 +64,13 @@ public class MapType extends Activity{
                 if (selectedPosition != -1) {
                     sPrefs = new SharedPrefs(MapType.this);
                     String prefs = Prefs.MAP_TYPE;
-                    if (selectedPosition == 0){
+                    if (selectedPosition == 0) {
                         sPrefs.savePrefs(prefs, Constants.MAP_TYPE_NORMAL);
-                    } else if (selectedPosition == 1){
+                    } else if (selectedPosition == 1) {
                         sPrefs.savePrefs(prefs, Constants.MAP_TYPE_SATELLITE);
-                    } else if (selectedPosition == 2){
+                    } else if (selectedPosition == 2) {
                         sPrefs.savePrefs(prefs, Constants.MAP_TYPE_HYBRID);
-                    } else if (selectedPosition == 3){
+                    } else if (selectedPosition == 3) {
                         sPrefs.savePrefs(prefs, Constants.MAP_TYPE_TERRAIN);
                     } else {
                         sPrefs.savePrefs(prefs, Constants.MAP_TYPE_NORMAL);

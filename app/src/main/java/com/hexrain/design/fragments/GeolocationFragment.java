@@ -13,10 +13,9 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.MarkerItem;
+import com.cray.software.justreminder.datas.Marker;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.google.android.gms.maps.model.LatLng;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -52,8 +51,6 @@ public class GeolocationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-
         googleMap = ((MapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.markersMap));
         googleMap.enableTouch(false);
@@ -65,7 +62,7 @@ public class GeolocationFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 long i = markersCursorAdapter.getItemId(position);
-                MarkerItem item = (MarkerItem) markersCursorAdapter.getItem(position);
+                Marker item = (Marker) markersCursorAdapter.getItem(position);
                 if (item != null && googleMap != null) {
                     googleMap.animate(item.getPosition());
                 }
@@ -105,7 +102,7 @@ public class GeolocationFragment extends Fragment {
         Random random = new Random();
         if (c != null && c.moveToFirst()){
             ColorSetter cSetter = new ColorSetter(getActivity());
-            ArrayList<MarkerItem> list = new ArrayList<>();
+            ArrayList<Marker> list = new ArrayList<>();
             do {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
@@ -116,7 +113,7 @@ public class GeolocationFragment extends Fragment {
                 if (longitude != 0 && latitude != 0) {
                     int rand = random.nextInt(16-2)+1;
                     LatLng pos = new LatLng(latitude, longitude);
-                    list.add(new MarkerItem(task, pos, rand, id));
+                    list.add(new Marker(task, pos, rand, id));
                     if (googleMap != null) {
                         googleMap.addMarker(pos, task, false, rand, false, radius);
                     }
@@ -132,7 +129,7 @@ public class GeolocationFragment extends Fragment {
         DB.close();
     }
 
-    public void loaderAdapter(ArrayList<MarkerItem> list){
+    public void loaderAdapter(ArrayList<Marker> list){
         if (list.size() > 0) {
             markersCursorAdapter = new MarkersCursorAdapter(getActivity(), list);
             geoTasks.setAdapter(markersCursorAdapter);

@@ -17,8 +17,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
-import com.cray.software.justreminder.datas.PagerItem;
-import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -32,11 +31,8 @@ import java.util.Date;
 
 public class EventsFragment extends Fragment {
 
-    ColorSetter cSetter;
-    SharedPrefs sPrefs;
-    long dateMills;
-    ViewPager pager;
-    CircularProgress progress;
+    private long dateMills;
+    private ViewPager pager;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -101,12 +97,10 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
 
-        cSetter = new ColorSetter(getActivity());
-        sPrefs = new SharedPrefs(getActivity());
-
+        SharedPrefs sPrefs = new SharedPrefs(getActivity());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
 
-        progress = (CircularProgress) rootView.findViewById(R.id.progress);
+        CircularProgress progress = (CircularProgress) rootView.findViewById(R.id.progress);
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -156,7 +150,7 @@ public class EventsFragment extends Fragment {
         }
     }
 
-    ArrayList<PagerItem> pagerData = new ArrayList<>();
+    ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
     int targetPosition = -1;
 
     private void showEvents(Date date) {
@@ -201,9 +195,9 @@ public class EventsFragment extends Fragment {
 
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
                 targetPosition = position;
-                pagerData.add(new PagerItem(datas, position, 1, mDay, mMonth, mYear));
+                pagerData.add(new EventsPagerItem(datas, position, 1, mDay, mMonth, mYear));
             } else {
-                pagerData.add(new PagerItem(datas, position, 0, mDay, mMonth, mYear));
+                pagerData.add(new EventsPagerItem(datas, position, 0, mDay, mMonth, mYear));
             }
 
             position++;

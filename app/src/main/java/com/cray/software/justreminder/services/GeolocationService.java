@@ -16,8 +16,8 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class GeolocationService extends Service {
 
-    LocationManager mLocationManager;
-    LocationListener mLocList;
+    private LocationManager mLocationManager;
+    private LocationListener mLocList;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

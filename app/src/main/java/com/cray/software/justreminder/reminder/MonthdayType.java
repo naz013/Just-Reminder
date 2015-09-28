@@ -1,27 +1,22 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.MonthDayReceiver;
 
-public class MonthdayType extends ReminderType {
+public class MonthdayType extends Type {
 
-    Context context;
+    private Context mContext;
 
     public MonthdayType(Context context) {
         super(context);
-        this.context = context;
+        this.mContext = context;
         setType(Constants.TYPE_MONTHDAY);
     }
 
     @Override
-    public long save(DataItem item) {
+    public long save(Reminder item) {
         long id = super.save(item);
         startAlarm(id);
         exportToServices(item, id);
@@ -29,13 +24,13 @@ public class MonthdayType extends ReminderType {
     }
 
     @Override
-    public void save(long id, DataItem item) {
+    public void save(long id, Reminder item) {
         super.save(id, item);
         startAlarm(id);
         exportToServices(item, id);
     }
 
     private void startAlarm(long id) {
-        new MonthDayReceiver().setAlarm(context, id);
+        new MonthDayReceiver().setAlarm(mContext, id);
     }
 }

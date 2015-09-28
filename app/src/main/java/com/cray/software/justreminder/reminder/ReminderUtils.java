@@ -2,7 +2,6 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.widget.CheckBox;
 
 import com.cray.software.justreminder.R;
@@ -19,14 +18,17 @@ import java.util.Calendar;
 
 public class ReminderUtils {
 
-    Context context;
-
     public ReminderUtils(){}
 
-    public ReminderUtils(Context context){
-        this.context = context;
-    }
-
+    /**
+     * Add new event from reminder to Calendar.
+     * @param context application context.
+     * @param summary event summary.
+     * @param startTime event start time in milliseconds.
+     * @param id reminder identifier.
+     * @param calendar flag for exporting to Google Calendar.
+     * @param stock flag for exporting to stock Android calendar.
+     */
     public static void exportToCalendar(Context context, String summary, long startTime, long id,
                                         boolean calendar, boolean stock){
         if (calendar){
@@ -37,6 +39,13 @@ public class ReminderUtils {
         }
     }
 
+    /**
+     * Add new task to Google Tasks from reminder.
+     * @param context application context.
+     * @param summary task summary.
+     * @param startTime task start time in milliseconds.
+     * @param mId reminder identifier.
+     */
     public static void exportToTasks(Context context, String summary, long startTime, long mId){
         long localId = new TasksData(context).addTask(summary, null, 0, false, startTime,
                 null, null, context.getString(R.string.string_task_from_just_reminder),
@@ -45,10 +54,11 @@ public class ReminderUtils {
                 context.getString(R.string.string_task_from_just_reminder), localId).execute();
     }
 
-    public static boolean isSdPresent() {
-        return Environment.getExternalStorageState() != null;
-    }
-
+    /**
+     * Check if Skype client installed on device.
+     * @param context application context.
+     * @return
+     */
     public static boolean isSkypeClientInstalled(Context context) {
         PackageManager myPackageMgr = context.getPackageManager();
         try {
@@ -60,11 +70,21 @@ public class ReminderUtils {
         return (true);
     }
 
+    /**
+     * Generate sync code for reminder.
+     * @param tasks Checkbox.
+     * @return
+     */
     public static int getSyncCode(CheckBox tasks){
         if (tasks.isChecked()) return Constants.SYNC_GTASKS_ONLY;
         else return Constants.SYNC_NO;
     }
 
+    /**
+     * Get days array for weekday reminder type.
+     * @param weekdays weekdays.
+     * @return
+     */
     public static ArrayList<Integer> getRepeatArray(String weekdays){
         ArrayList<Integer> res = new ArrayList<>();
         if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))res.add(1);
@@ -84,20 +104,50 @@ public class ReminderUtils {
         return res;
     }
 
+    /**
+     * Get time in milliseconds for weekday reminder type.
+     * @param hour hour.
+     * @param minute minute.
+     * @param weekdays weekdays string.
+     * @return
+     */
     public static long getWeekTime(int hour, int minute, String weekdays){
         return TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
     }
 
+    /**
+     * Get time in milliseconds for MonthDay reminder type.
+     * @param hour hour.
+     * @param minute minute.
+     * @param day day (if 0 get time for last day in month).
+     * @return
+     */
     public static long getMonthTime(int hour, int minute, int day){
         return TimeCount.getNextMonthDayTime(hour, minute, day, 0);
     }
 
+    /**
+     * Get time in milliseconds for date and timer reminder type.
+     * @param day day.
+     * @param month month.
+     * @param year year.
+     * @param hour hour.
+     * @param minute minute.
+     * @param after time for timer.
+     * @return
+     */
     public static long getTime(int day, int month, int year, int hour, int minute, long after){
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute);
         return calendar.getTimeInMillis() + after;
     }
 
+    /**
+     * Generate human readable weekdays string for weekday reminder type.
+     * @param context application context.
+     * @param repCode system weekdays string.
+     * @return
+     */
     public static String getRepeatString(Context context, String repCode){
         String res;
         StringBuilder sb = new StringBuilder();
@@ -134,6 +184,12 @@ public class ReminderUtils {
         return res;
     }
 
+    /**
+     * Generate human readable string for reminder type.
+     * @param context application context.
+     * @param type reminder type.
+     * @return
+     */
     public static String getTypeString(Context context, String type){
         String res;
         if (type.startsWith(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
@@ -168,6 +224,12 @@ public class ReminderUtils {
         return res;
     }
 
+    /**
+     * Get human readable string for reminder type.
+     * @param context application context.
+     * @param type reminder type.
+     * @return
+     */
     public static String getType(Context context, String type){
         String res;
         if (type.startsWith(Constants.TYPE_MONTHDAY)){

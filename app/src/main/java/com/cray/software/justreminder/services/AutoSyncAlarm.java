@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.cray.software.justreminder.async.AutoSyncTask;
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.Calendar;
 
 public class AutoSyncAlarm extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
 

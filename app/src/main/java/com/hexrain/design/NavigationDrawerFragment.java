@@ -48,12 +48,18 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
-    ImageView basket, image;
-    TextView archiveScreen, activeScreen, geoScreen, calendar,
-            manageBackup, notes, helpTranslate, googleTasks, moreApps, templates, places,
-            categories, prefsButton, feedButton, helpButton;
-    TextView appNameBanner;
-    RelativeLayout ads_container;
+    private TextView archiveScreen;
+    private TextView activeScreen;
+    private TextView geoScreen;
+    private TextView calendar;
+    private TextView manageBackup;
+    private TextView notes;
+    private TextView helpTranslate;
+    private TextView googleTasks;
+    private TextView templates;
+    private TextView places;
+    private TextView categories;
+    private TextView prefsButton;
     private View mFragmentContainerView;
 
     private String mCurrentSelectedPosition = "";
@@ -93,9 +99,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
 
-        image = (ImageView) rootView.findViewById(R.id.image);
+        ImageView image = (ImageView) rootView.findViewById(R.id.image);
 
-        appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
+        TextView appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
         String appName;
         if (Module.isPro()) {
@@ -117,7 +123,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         prefsButton = (TextView) rootView.findViewById(R.id.settings);
         prefsButton.setOnClickListener(this);
 
-        helpButton = (TextView) rootView.findViewById(R.id.help);
+        TextView helpButton = (TextView) rootView.findViewById(R.id.help);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +131,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         });
 
-        feedButton = (TextView) rootView.findViewById(R.id.feed);
+        TextView feedButton = (TextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
 
         geoScreen = (TextView) rootView.findViewById(R.id.geoScreen);
@@ -161,7 +167,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         });
         helpTranslate.setTypeface(typeface);
 
-        moreApps = (TextView) rootView.findViewById(R.id.moreApps);
+        TextView moreApps = (TextView) rootView.findViewById(R.id.moreApps);
         moreApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,8 +233,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
 
         if (!Module.isPro()){
-            ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
-            basket = (ImageView) rootView.findViewById(R.id.basket);
+            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
+            ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
             if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else basket.setImageResource(R.drawable.market_icon);

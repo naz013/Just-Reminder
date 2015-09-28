@@ -21,26 +21,23 @@ import java.util.ArrayList;
 
 public class SelectCalendar extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
-    ArrayList<String> names = new ArrayList<>();
-    ArrayList<String> ids;
-    CalendarManager calendar = new CalendarManager(SelectCalendar.this);
+    private SharedPrefs sPrefs;
+    private ListView musicList;
+    private ArrayList<String> names = new ArrayList<>();
+    private ArrayList<String> ids;
+    private CalendarManager calendar = new CalendarManager(SelectCalendar.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-        cs = new ColorSetter(SelectCalendar.this);
+        ColorSetter cs = new ColorSetter(SelectCalendar.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.select_calendar_settings_title));
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -55,7 +52,7 @@ public class SelectCalendar extends Activity{
                 android.R.layout.simple_list_item_single_choice, names);
         musicList.setAdapter(l_arrayAdapter);
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

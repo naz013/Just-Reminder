@@ -25,13 +25,12 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.Utils;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class VoiceResult extends Activity {
 
-    ColorSetter cs = new ColorSetter(VoiceResult.this);
-    DataBase DB;
-    long id;
+    private ColorSetter cs = new ColorSetter(VoiceResult.this);
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class VoiceResult extends Activity {
             }
         });
 
-        DB = new DataBase(VoiceResult.this);
+        DataBase DB = new DataBase(VoiceResult.this);
         Interval interval = new Interval(VoiceResult.this);
         DB.open();
 
@@ -135,7 +134,7 @@ public class VoiceResult extends Activity {
         }
         if (cf != null) cf.close();
 
-        taskIcon.setImageDrawable(Utils.getDrawable(this, cs.getCategoryIndicator(categoryColor)));
+        taskIcon.setImageDrawable(ViewUtils.getDrawable(this, cs.getCategoryIndicator(categoryColor)));
 
         if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {

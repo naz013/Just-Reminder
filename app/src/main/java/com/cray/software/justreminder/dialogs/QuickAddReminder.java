@@ -42,31 +42,24 @@ import java.util.Calendar;
 public class QuickAddReminder extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener{
 
-    DataBase DB;
-    ColorSetter cs;
+    private FloatingEditText task_text;
+    private EditText repeatDays;
+    private CheckBox taskExport;
+    private TextView dateField, timeField, dateYearField;
 
-    LinearLayout by_date_layout, dateRing;
-    FloatingEditText task_text;
-    EditText repeatDays;
-    CheckBox taskExport;
-    TextView dateField, timeField, dateYearField;
-    SeekBar repeatDateInt;
+    private int myHour = 0;
+    private int myMinute = 0;
+    private int myYear = 0;
+    private int myMonth = 0;
+    private int myDay = 1;
 
-    int myHour = 0;
-    int myMinute = 0;
-    int myYear = 0;
-    int myMonth = 0;
-    int myDay = 1;
-
-    SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
-    Toolbar toolbar;
-    FloatingActionButton mFab;
-    GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
+    private SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
+    private GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(QuickAddReminder.this);
+        ColorSetter cs = new ColorSetter(QuickAddReminder.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -74,7 +67,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         setContentView(R.layout.quick_add_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -82,7 +75,7 @@ public class QuickAddReminder extends AppCompatActivity implements
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
+        LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         task_text = (FloatingEditText) findViewById(R.id.task_text);
 
         Intent i = getIntent();
@@ -105,7 +98,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
-        dateRing = (LinearLayout) findViewById(R.id.dateRing);
+        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
         dateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,7 +144,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         repeatDays = (EditText) findViewById(R.id.repeatDays);
         repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
+        SeekBar repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDateInt.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -171,7 +164,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         });
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
 
-        mFab = new FloatingActionButton(QuickAddReminder.this);
+        FloatingActionButton mFab = new FloatingActionButton(QuickAddReminder.this);
         mFab.setColorNormal(cs.colorSetter());
         mFab.setColorPressed(cs.colorChooser());
         mFab.setSize(FloatingActionButton.SIZE_NORMAL);
@@ -244,7 +237,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         }
         String type = Constants.TYPE_REMINDER;
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
-        DB = new DataBase(QuickAddReminder.this);
+        DataBase DB = new DataBase(QuickAddReminder.this);
         DB.open();
         String uuID = SyncHelper.generateID();
         Cursor cf = DB.queryCategories();

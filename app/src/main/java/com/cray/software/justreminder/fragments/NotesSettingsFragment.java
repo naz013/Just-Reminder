@@ -28,11 +28,10 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 public class NotesSettingsFragment extends Fragment implements View.OnClickListener {
 
-    RelativeLayout encryptNote, noteReminder, backupNote, deleteFile;
-    CheckBox encryptNoteCheck, noteReminderCheck, backupNoteCheck, deleteFileCheck;
-    TextView noteReminderTime, textSize;
-    SharedPrefs sPrefs;
-    ActionBar ab;
+    private CheckBox encryptNoteCheck, noteReminderCheck, backupNoteCheck, deleteFileCheck;
+    private TextView noteReminderTime;
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,26 +43,26 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
             ab.setTitle(R.string.fragment_notes);
         }
 
-        encryptNote = (RelativeLayout) rootView.findViewById(R.id.encryptNote);
+        RelativeLayout encryptNote = (RelativeLayout) rootView.findViewById(R.id.encryptNote);
         encryptNote.setOnClickListener(this);
 
         encryptNoteCheck = (CheckBox) rootView.findViewById(R.id.encryptNoteCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         encryptNoteCheck.setChecked(sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT));
 
-        noteReminder = (RelativeLayout) rootView.findViewById(R.id.noteReminder);
+        RelativeLayout noteReminder = (RelativeLayout) rootView.findViewById(R.id.noteReminder);
         noteReminder.setOnClickListener(this);
 
         noteReminderCheck = (CheckBox) rootView.findViewById(R.id.noteReminderCheck);
         noteReminderCheck.setChecked(sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER));
 
-        backupNote = (RelativeLayout) rootView.findViewById(R.id.backupNote);
+        RelativeLayout backupNote = (RelativeLayout) rootView.findViewById(R.id.backupNote);
         backupNote.setOnClickListener(this);
 
         backupNoteCheck = (CheckBox) rootView.findViewById(R.id.backupNoteCheck);
         backupNoteCheck.setChecked(sPrefs.loadBoolean(Prefs.SYNC_NOTES));
 
-        deleteFile = (RelativeLayout) rootView.findViewById(R.id.deleteFile);
+        RelativeLayout deleteFile = (RelativeLayout) rootView.findViewById(R.id.deleteFile);
         deleteFile.setOnClickListener(this);
 
         deleteFileCheck = (CheckBox) rootView.findViewById(R.id.deleteFileCheck);
@@ -72,7 +71,7 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         noteReminderTime = (TextView) rootView.findViewById(R.id.noteReminderTime);
         noteReminderTime.setOnClickListener(this);
 
-        textSize = (TextView) rootView.findViewById(R.id.textSize);
+        TextView textSize = (TextView) rootView.findViewById(R.id.textSize);
         textSize.setOnClickListener(this);
 
         checkEnables();

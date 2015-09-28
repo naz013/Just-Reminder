@@ -20,13 +20,13 @@ import java.io.IOException;
 
 public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
 
-    Context tContext;
-    NotificationManagerCompat mNotifyMgr;
-    NotificationCompat.Builder builder;
+    private Context mContext;
+    private NotificationManagerCompat mNotifyMgr;
+    private NotificationCompat.Builder builder;
     private SyncListener mListener;
 
     public SyncNotes(Context context, SyncListener mListener){
-        this.tContext = context;
+        this.mContext = context;
         builder = new NotificationCompat.Builder(context);
         this.mListener = mListener;
     }
@@ -34,43 +34,43 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        builder.setContentTitle(tContext.getString(R.string.sync_start_message));
-        builder.setContentText(tContext.getString(R.string.loading_wait));
+        builder.setContentTitle(mContext.getString(R.string.sync_start_message));
+        builder.setContentText(mContext.getString(R.string.loading_wait));
         builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
-        mNotifyMgr = NotificationManagerCompat.from(tContext);
+        mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(2, builder.build());
     }
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        SyncHelper sHelp = new SyncHelper(tContext);
+        SyncHelper sHelp = new SyncHelper(mContext);
         try {
-            sHelp.exportNotes();
+            sHelp.noteToJson();
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         try {
-            sHelp.importNotes(null, null);
+            sHelp.noteFromJson(null, null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 
-        boolean isConnected = SyncHelper.isConnected(tContext);
+        boolean isConnected = SyncHelper.isConnected(mContext);
         if (isConnected) {
-            new DropboxHelper(tContext).uploadNote();
+            new DropboxHelper(mContext).uploadNote();
             try {
-                new GDriveHelper(tContext).saveNoteToDrive();
+                new GDriveHelper(mContext).saveNoteToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(tContext).uploadNote();
-            new DropboxHelper(tContext).downloadNote();
+            new BoxHelper(mContext).uploadNote();
+            new DropboxHelper(mContext).downloadNote();
             try {
-                new GDriveHelper(tContext).downloadNote();
+                new GDriveHelper(mContext).downloadNote();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(tContext).downloadNote();
+            //new BoxHelper(mContext).downloadNote();
         }
         return true;
     }
@@ -78,14 +78,14 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentTitle(tContext.getString(R.string.sync_end_message));
+        builder.setContentTitle(mContext.getString(R.string.sync_end_message));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
         if (Module.isPro()){
-            builder.setContentText(tContext.getString(R.string.app_name_pro));
-        } else builder.setContentText(tContext.getString(R.string.app_name));
+            builder.setContentText(mContext.getString(R.string.app_name_pro));
+        } else builder.setContentText(mContext.getString(R.string.app_name));
         builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify(2, builder.build());
         mListener.endExecution(aVoid);
-        new UpdatesHelper(tContext).updateNotesWidget();
+        new UpdatesHelper(mContext).updateNotesWidget();
     }
 }

@@ -14,8 +14,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 public class HelpOverflow extends Activity {
 
-    RelativeLayout list_help, create_help;
-    LinearLayout swipeItem, simpleTap, longTap, swipeHeader, swipeUpDown;
+    private LinearLayout swipeItem, simpleTap, longTap, swipeHeader, swipeUpDown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,8 +28,8 @@ public class HelpOverflow extends Activity {
 
         FrameLayout help_container = (FrameLayout) findViewById(R.id.help_container);
 
-        list_help = (RelativeLayout) findViewById(R.id.list_help);
-        create_help = (RelativeLayout) findViewById(R.id.create_help);
+        RelativeLayout list_help = (RelativeLayout) findViewById(R.id.list_help);
+        RelativeLayout create_help = (RelativeLayout) findViewById(R.id.create_help);
         help_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

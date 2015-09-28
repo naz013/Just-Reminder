@@ -14,7 +14,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import java.util.ArrayList;
 
 public class JustBootReceiver extends BroadcastReceiver {
-    DataBase DB;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,7 +31,7 @@ public class JustBootReceiver extends BroadcastReceiver {
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new AutoSyncAlarm().setAlarm(context);
         }
-        DB = new DataBase(context);
+        DataBase DB = new DataBase(context);
         DB.open();
         if (DB.getCount() != 0){
             Cursor c = DB.queryGroup();

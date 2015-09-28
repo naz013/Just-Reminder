@@ -17,18 +17,14 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class RepeatInterval extends Activity {
 
-    TextView aboutClose;
-    SeekBar radiusBar;
-    TextView radiusValue, titleDialog;
-    SharedPrefs sPrefs = new SharedPrefs(RepeatInterval.this);
-    ColorSetter cs;
-    Button minusButton, plusButton;
-    int index;
+    private TextView radiusValue;
+    private SharedPrefs sPrefs = new SharedPrefs(RepeatInterval.this);
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(RepeatInterval.this);
+        ColorSetter cs = new ColorSetter(RepeatInterval.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -38,7 +34,7 @@ public class RepeatInterval extends Activity {
         Intent intent = getIntent();
         index = intent.getIntExtra(Constants.ITEM_ID_INTENT, 0);
 
-        titleDialog = (TextView) findViewById(R.id.titleDialog);
+        TextView titleDialog = (TextView) findViewById(R.id.titleDialog);
         titleDialog.setText(getString(R.string.repeat_interval_dialog_title));
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
@@ -48,7 +44,7 @@ public class RepeatInterval extends Activity {
             radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL)));
         }
 
-        radiusBar = (SeekBar) findViewById(R.id.radiusBar);
+        SeekBar radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(60);
         if (index == 2){
             radiusBar.setProgress(sPrefs.loadInt(Prefs.MISSED_CALL_TIME));
@@ -59,7 +55,7 @@ public class RepeatInterval extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 radiusValue.setText(String.valueOf(i));
-                if (index == 2){
+                if (index == 2) {
                     sPrefs.saveInt(Prefs.MISSED_CALL_TIME, i);
                 } else {
                     sPrefs.saveInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, i);
@@ -77,13 +73,13 @@ public class RepeatInterval extends Activity {
             }
         });
 
-        plusButton = (Button) findViewById(R.id.plusButton);
+        Button plusButton = (Button) findViewById(R.id.plusButton);
         plusButton.setVisibility(View.GONE);
 
-        minusButton = (Button) findViewById(R.id.minusButton);
+        Button minusButton = (Button) findViewById(R.id.minusButton);
         minusButton.setVisibility(View.GONE);
 
-        aboutClose = (TextView) findViewById(R.id.aboutClose);
+        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -23,10 +23,7 @@ import com.cray.software.justreminder.modules.Module;
 
 public class OtherSettingsFragment extends Fragment {
 
-    ActionBar ab;
-    TextView about, rateApp, thanks, help, menuShare, menuFeedback, changes, permissionExplain,
-            permissionEnable;
-    LinearLayout permissionBlock;
+    private ActionBar ab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +35,7 @@ public class OtherSettingsFragment extends Fragment {
             ab.setTitle(R.string.other_settings);
         }
 
-        about = (TextView) rootView.findViewById(R.id.about);
+        TextView about = (TextView) rootView.findViewById(R.id.about);
         about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +46,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        changes = (TextView) rootView.findViewById(R.id.changes);
+        TextView changes = (TextView) rootView.findViewById(R.id.changes);
         changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +57,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        rateApp = (TextView) rootView.findViewById(R.id.rateApp);
+        TextView rateApp = (TextView) rootView.findViewById(R.id.rateApp);
         rateApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +68,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        thanks = (TextView) rootView.findViewById(R.id.thanks);
+        TextView thanks = (TextView) rootView.findViewById(R.id.thanks);
         thanks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +79,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        help = (TextView) rootView.findViewById(R.id.help);
+        TextView help = (TextView) rootView.findViewById(R.id.help);
         help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,14 +90,14 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        menuFeedback = (TextView) rootView.findViewById(R.id.menuFeedback);
+        TextView menuFeedback = (TextView) rootView.findViewById(R.id.menuFeedback);
         menuFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent emailIntent = new Intent( Intent.ACTION_SEND);
+                final Intent emailIntent = new Intent(Intent.ACTION_SEND);
                 emailIntent.setType("plain/text");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
-                if (Module.isPro()){
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"feedback.cray@gmail.com"});
+                if (Module.isPro()) {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
                 } else {
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
@@ -109,7 +106,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        menuShare = (TextView) rootView.findViewById(R.id.menuShare);
+        TextView menuShare = (TextView) rootView.findViewById(R.id.menuShare);
         menuShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,11 +117,11 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        permissionBlock = (LinearLayout) rootView.findViewById(R.id.permissionBlock);
+        LinearLayout permissionBlock = (LinearLayout) rootView.findViewById(R.id.permissionBlock);
         if (Module.isMarshmallow()) permissionBlock.setVisibility(View.VISIBLE);
         else permissionBlock.setVisibility(View.GONE);
 
-        permissionExplain = (TextView) rootView.findViewById(R.id.permissionExplain);
+        TextView permissionExplain = (TextView) rootView.findViewById(R.id.permissionExplain);
         permissionExplain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +132,7 @@ public class OtherSettingsFragment extends Fragment {
             }
         });
 
-        permissionEnable = (TextView) rootView.findViewById(R.id.permissionEnable);
+        TextView permissionEnable = (TextView) rootView.findViewById(R.id.permissionEnable);
         permissionEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

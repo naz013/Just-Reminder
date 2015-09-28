@@ -29,7 +29,7 @@ import com.cray.software.justreminder.modules.Module;
 @TargetApi(Build.VERSION_CODES.M)
 public class Permissions {
 
-    private Context context;
+    private Context mContext;
 
     /**
      * Permission constants.
@@ -52,7 +52,7 @@ public class Permissions {
     public static final String SEND_SMS = Manifest.permission.SEND_SMS;
 
     public Permissions(Context context){
-        this.context = context;
+        this.mContext = context;
     }
 
     /**
@@ -62,7 +62,7 @@ public class Permissions {
      */
     public boolean checkPermission(String permission) {
         if (!Module.isMarshmallow()) return true;
-        return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+        return mContext.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**

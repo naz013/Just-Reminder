@@ -13,9 +13,9 @@ import com.cray.software.justreminder.interfaces.Constants;
 import java.util.Calendar;
 
 public class PositionDelayReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    DataBase DB;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -23,7 +23,7 @@ public class PositionDelayReceiver extends BroadcastReceiver {
     }
 
     public void setDelay(Context context, long id) {
-        DB = new DataBase(context);
+        DataBase DB = new DataBase(context);
         DB.open();
         Cursor c = DB.getReminder(id);
 

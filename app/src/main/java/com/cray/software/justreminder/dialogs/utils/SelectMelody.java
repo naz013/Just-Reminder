@@ -25,23 +25,20 @@ import java.util.ArrayList;
 
 public class SelectMelody extends Activity{
 
-    MediaPlayer mMediaPlayer;
-    ArrayList<File> fileList = new ArrayList<>();
-    ColorSetter cs;
-    ListView musicList;
-    TextView musicDialogOk;
-    int id;
+    private MediaPlayer mMediaPlayer;
+    private ArrayList<File> fileList = new ArrayList<>();
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(SelectMelody.this);
+        ColorSetter cs = new ColorSetter(SelectMelody.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         Intent intent = getIntent();
-        id = intent.getIntExtra(Constants.BIRTHDAY_INTENT_ID, 0);
+        int id = intent.getIntExtra(Constants.BIRTHDAY_INTENT_ID, 0);
         ArrayList<String> names = intent.getStringArrayListExtra("names");
         ArrayList<String> folders = intent.getStringArrayListExtra("folders");
         for (String folder : folders) {
@@ -82,7 +79,7 @@ public class SelectMelody extends Activity{
                 android.R.layout.simple_list_item_single_choice, names);
         musicList.setAdapter(adapter);
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

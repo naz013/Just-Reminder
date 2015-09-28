@@ -14,8 +14,8 @@ import java.io.IOException;
 
 public class DelayedAsync extends AsyncTask<Void, Void, Void> {
 
-    Context mContext;
-    SyncListener mListener;
+    private Context mContext;
+    private SyncListener mListener;
 
     public DelayedAsync(Context context, SyncListener listener){
         this.mContext = context;

@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +10,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
@@ -26,12 +26,9 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class RepeatNotificationReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
-    NotificationManager mNotifyMgr;
-    Notification.Builder builder;
-    SharedPrefs sPrefs;
-    MediaPlayer mMediaPlayer;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -75,7 +72,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
     }
 
     private void showNotification(Context ctx, String task, String type, int i, long itemId, int color, String melody){
-        sPrefs = new SharedPrefs(ctx);
+        SharedPrefs sPrefs = new SharedPrefs(ctx);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);
@@ -93,7 +90,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             }
         }
-        builder = new Notification.Builder(ctx);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
         builder.setContentTitle(task);
         builder.setAutoCancel(false);
         builder.setPriority(5);
@@ -133,6 +130,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
 
         if (i == 1) {
             if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+                MediaPlayer mMediaPlayer;
                 if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) {
                     mMediaPlayer = new MediaPlayer();
                     try {
@@ -144,7 +142,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                     if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
                     else mMediaPlayer.setLooping(false);
 
-                    mMediaPlayer.setVolume(1-log1, 1-log1);
+                    mMediaPlayer.setVolume(1 - log1, 1 - log1);
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
@@ -167,7 +165,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                     if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
                     else mMediaPlayer.setLooping(false);
 
-                    mMediaPlayer.setVolume(1-log1, 1-log1);
+                    mMediaPlayer.setVolume(1 - log1, 1 - log1);
                     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
                         public void onPrepared(MediaPlayer mp) {
@@ -203,8 +201,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 }
             }
         }
-        mNotifyMgr =
-                (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(ctx);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
     }

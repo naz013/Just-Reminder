@@ -12,13 +12,13 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import java.io.IOException;
 
 public class TaskListAsync extends AsyncTask<Void, Void, Void> {
-    Context ctx;
-    String title, listId, taskType;
-    long id;
-    int color;
+    private Context mContext;
+    private String title, listId, taskType;
+    private long id;
+    private int color;
 
     public TaskListAsync(Context context, String title, long id, int color, String listId, String taskType){
-        this.ctx = context;
+        this.mContext = context;
         this.title = title;
         this.id = id;
         this.color = color;
@@ -28,9 +28,9 @@ public class TaskListAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(ctx);
-        boolean isConnected = SyncHelper.isConnected(ctx);
-        TasksData data = new TasksData(ctx);
+        GTasksHelper helper = new GTasksHelper(mContext);
+        boolean isConnected = SyncHelper.isConnected(mContext);
+        TasksData data = new TasksData(mContext);
         data.open();
         if (taskType.matches(TasksConstants.UPDATE_TASK_LIST)){
             if (isConnected) {
@@ -71,6 +71,6 @@ public class TaskListAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(ctx).updateTasksWidget();
+        new UpdatesHelper(mContext).updateTasksWidget();
     }
 }

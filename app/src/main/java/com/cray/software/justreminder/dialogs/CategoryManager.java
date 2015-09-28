@@ -24,18 +24,16 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class CategoryManager extends AppCompatActivity {
 
-    ColorSetter cs = new ColorSetter(CategoryManager.this);
-    FloatingEditText editField;
-    RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
+    private ColorSetter cs = new ColorSetter(CategoryManager.this);
+    private FloatingEditText editField;
+    private RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
             yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
             deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
-    RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroupPro;
-    SharedPrefs sPrefs = new SharedPrefs(CategoryManager.this);
-    DataBase db;
-    Toolbar toolbar;
-    FloatingActionButton mFab;
-    long id;
-    int color = 0;
+    private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroupPro;
+    private SharedPrefs sPrefs = new SharedPrefs(CategoryManager.this);
+    private DataBase db;
+    private long id;
+    private int color = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +48,7 @@ public class CategoryManager extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -72,7 +70,7 @@ public class CategoryManager extends AppCompatActivity {
             toolbar.setTitle(getString(R.string.string_edit_category));
         }
 
-        mFab = new FloatingActionButton(CategoryManager.this);
+        FloatingActionButton mFab = new FloatingActionButton(CategoryManager.this);
         mFab.setColorNormal(cs.colorSetter());
         mFab.setColorPressed(cs.colorChooser());
         mFab.setSize(FloatingActionButton.SIZE_NORMAL);

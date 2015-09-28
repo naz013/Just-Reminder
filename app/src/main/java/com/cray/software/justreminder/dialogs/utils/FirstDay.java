@@ -18,21 +18,18 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 public class FirstDay extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
+    private SharedPrefs sPrefs;
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(FirstDay.this);
+        ColorSetter cs = new ColorSetter(FirstDay.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.first_day_dialog_title));
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -50,7 +47,7 @@ public class FirstDay extends Activity{
             musicList.setItemChecked(position, true);
         }
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

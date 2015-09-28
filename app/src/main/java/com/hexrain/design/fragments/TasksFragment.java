@@ -29,7 +29,7 @@ import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.ListItems;
+import com.cray.software.justreminder.datas.Task;
 import com.cray.software.justreminder.datas.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -43,12 +43,12 @@ import java.util.ArrayList;
 
 public class TasksFragment extends Fragment implements View.OnTouchListener {
 
-    ListView mList;
-    TasksData DB;
+    private ListView mList;
+    private TasksData DB;
 
-    ArrayList<TaskListData> taskListDatum;
-    int currentPos;
-    Activity activity;
+    private ArrayList<TaskListData> taskListDatum;
+    private int currentPos;
+    private Activity activity;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -330,7 +330,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
 
     private void loadList(String id, int i){
         if (id == null){
-            ArrayList<ListItems> mData = new ArrayList<>();
+            ArrayList<Task> mData = new ArrayList<>();
             mData.clear();
             DB.open();
             Cursor c = DB.getTasks();
@@ -344,7 +344,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
                         String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        mData.add(new ListItems(title, mId, checks, taskId, date, listId, note));
+                        mData.add(new Task(title, mId, checks, taskId, date, listId, note));
                     }
                 } while (c.moveToNext());
             }
@@ -353,7 +353,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else if (id.matches(GTasksHelper.TASKS_ALL)){
-            ArrayList<ListItems> mData = new ArrayList<>();
+            ArrayList<Task> mData = new ArrayList<>();
             mData.clear();
             DB.open();
             Cursor c = DB.getTasks();
@@ -367,7 +367,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
                         String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        mData.add(new ListItems(title, mId, checks, taskId, date, listId, note));
+                        mData.add(new Task(title, mId, checks, taskId, date, listId, note));
                     }
                 } while (c.moveToNext());
             }
@@ -376,7 +376,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else {
-            ArrayList<ListItems> mData = new ArrayList<>();
+            ArrayList<Task> mData = new ArrayList<>();
             mData.clear();
             DB = DB.open();
             Cursor c = DB.getTasks(id);
@@ -390,7 +390,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
                         String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        mData.add(new ListItems(title, mId, checks, taskId, date, listId, note));
+                        mData.add(new Task(title, mId, checks, taskId, date, listId, note));
                     }
                 } while (c.moveToNext());
             }

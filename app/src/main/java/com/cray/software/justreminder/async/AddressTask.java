@@ -11,16 +11,16 @@ import java.util.List;
 
 public class AddressTask extends AsyncTask<String, Void, List<Address>> {
 
-    Context ctx;
+    private Context mContext;
 
     public AddressTask(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
     @Override
     protected List<Address> doInBackground(String... locationName) {
         // Creating an instance of Geocoder class
-        Geocoder geocoder = new Geocoder(ctx);
+        Geocoder geocoder = new Geocoder(mContext);
         List<Address> addresses = null;
 
         try {
@@ -35,7 +35,7 @@ public class AddressTask extends AsyncTask<String, Void, List<Address>> {
     @Override
     protected void onPostExecute(List<Address> addresses) {
         if(addresses==null || addresses.size()==0){
-            Toast.makeText(ctx, "No Location found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "No Location found", Toast.LENGTH_SHORT).show();
         }
 
     }

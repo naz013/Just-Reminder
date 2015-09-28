@@ -31,24 +31,22 @@ import java.io.File;
 
 public class NotificationSettingsFragment extends Fragment implements View.OnClickListener {
 
-    SharedPrefs sPrefs;
-    ActionBar ab;
-    LinearLayout lewColorWrapper, chooseLedColor;
-    RelativeLayout wakeScreenOption, silentSMSOption, delayFor, repeatNotificationOption,
-            repeatInterval, autoLaunch, unlockScreen, tts;
-    RelativeLayout lewWrapper, led;
-    TextView delayForText, repeatIntervalText;
-    TextView textLed2, textLed3, repeatText, repeatText1;
-    CheckBox wakeScreenCheck, silentSMSCheck, ledCheck, repeatNotificationCheck, autoLaunchCheck,
+    private SharedPrefs sPrefs;
+    private ActionBar ab;
+    private LinearLayout lewColorWrapper, chooseLedColor;
+    private RelativeLayout repeatInterval;
+    private TextView delayForText, repeatIntervalText;
+    private TextView textLed2, textLed3, repeatText, repeatText1;
+    private CheckBox wakeScreenCheck, silentSMSCheck, ledCheck, repeatNotificationCheck, autoLaunchCheck,
             unlockScreenCheck, ttsCheck;
-    RelativeLayout notificationDismiss, permanentNotification, statusIcon;
-    CheckBox notificationDismissCheck, permanentNotificationCheck, statusIconCheck;
-    LinearLayout chooseSound;
-    TextView volume, locale;
-    RelativeLayout vibrationOption, soundOption, infiniteSoundOption, infiniteVibrateOption;
-    TextView showMelody;
-    TextView vText, vText1, sText, sText1;
-    CheckBox vibrationCheck, soundCheck, infiniteSoundCheck, infiniteVibrateCheck;
+    private RelativeLayout statusIcon;
+    private CheckBox notificationDismissCheck, permanentNotificationCheck, statusIconCheck;
+    private TextView locale;
+    private RelativeLayout infiniteSoundOption;
+    private RelativeLayout infiniteVibrateOption;
+    private TextView showMelody;
+    private TextView vText, vText1, sText, sText1, i1, i2;
+    private CheckBox vibrationCheck, soundCheck, infiniteSoundCheck, infiniteVibrateCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,30 +60,30 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
-        wakeScreenOption = (RelativeLayout) rootView.findViewById(R.id.wakeScreenOption);
+        RelativeLayout wakeScreenOption = (RelativeLayout) rootView.findViewById(R.id.wakeScreenOption);
         wakeScreenOption.setOnClickListener(this);
 
         wakeScreenCheck = (CheckBox) rootView.findViewById(R.id.wakeScreenCheck);
         wakeScreenCheck.setChecked(sPrefs.loadBoolean(Prefs.WAKE_STATUS));
 
-        unlockScreen = (RelativeLayout) rootView.findViewById(R.id.unlockScreen);
+        RelativeLayout unlockScreen = (RelativeLayout) rootView.findViewById(R.id.unlockScreen);
         unlockScreen.setOnClickListener(this);
 
         unlockScreenCheck = (CheckBox) rootView.findViewById(R.id.unlockScreenCheck);
         unlockScreenCheck.setChecked(sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE));
 
-        silentSMSOption = (RelativeLayout) rootView.findViewById(R.id.silentSMSOption);
+        RelativeLayout silentSMSOption = (RelativeLayout) rootView.findViewById(R.id.silentSMSOption);
         silentSMSOption.setOnClickListener(this);
 
         silentSMSCheck = (CheckBox) rootView.findViewById(R.id.silentSMSCheck);
         silentSMSCheck.setChecked(sPrefs.loadBoolean(Prefs.SILENT_SMS));
 
-        delayFor = (RelativeLayout) rootView.findViewById(R.id.delayFor);
+        RelativeLayout delayFor = (RelativeLayout) rootView.findViewById(R.id.delayFor);
         delayFor.setOnClickListener(this);
 
         delayForText = (TextView) rootView.findViewById(R.id.delayForText);
 
-        repeatNotificationOption = (RelativeLayout) rootView.findViewById(R.id.repeatNotificationOption);
+        RelativeLayout repeatNotificationOption = (RelativeLayout) rootView.findViewById(R.id.repeatNotificationOption);
         repeatNotificationOption.setOnClickListener(this);
 
         repeatNotificationCheck = (CheckBox) rootView.findViewById(R.id.repeatNotificationCheck);
@@ -98,13 +96,13 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         repeatText = (TextView) rootView.findViewById(R.id.repeatText);
         repeatText1 = (TextView) rootView.findViewById(R.id.repeatText1);
 
-        autoLaunch = (RelativeLayout) rootView.findViewById(R.id.autoLaunch);
+        RelativeLayout autoLaunch = (RelativeLayout) rootView.findViewById(R.id.autoLaunch);
         autoLaunch.setOnClickListener(this);
 
         autoLaunchCheck = (CheckBox) rootView.findViewById(R.id.autoLaunchCheck);
         autoLaunchCheck.setChecked(sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH));
 
-        notificationDismiss = (RelativeLayout) rootView.findViewById(R.id.notificationDismiss);
+        RelativeLayout notificationDismiss = (RelativeLayout) rootView.findViewById(R.id.notificationDismiss);
         notificationDismiss.setOnClickListener(this);
 
         notificationDismissCheck = (CheckBox) rootView.findViewById(R.id.notificationDismissCheck);
@@ -114,7 +112,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         sText = (TextView) rootView.findViewById(R.id.sText);
         sText1 = (TextView) rootView.findViewById(R.id.sText1);
 
-        permanentNotification = (RelativeLayout) rootView.findViewById(R.id.permanentNotification);
+        RelativeLayout permanentNotification = (RelativeLayout) rootView.findViewById(R.id.permanentNotification);
         permanentNotification.setOnClickListener(this);
 
         permanentNotificationCheck = (CheckBox) rootView.findViewById(R.id.permanentNotificationCheck);
@@ -126,7 +124,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         statusIconCheck = (CheckBox) rootView.findViewById(R.id.statusIconCheck);
         statusIconCheck.setChecked(sPrefs.loadBoolean(Prefs.STATUS_BAR_ICON));
 
-        vibrationOption = (RelativeLayout) rootView.findViewById(R.id.vibrationOption);
+        RelativeLayout vibrationOption = (RelativeLayout) rootView.findViewById(R.id.vibrationOption);
         vibrationOption.setOnClickListener(this);
 
         vText = (TextView) rootView.findViewById(R.id.vText);
@@ -141,16 +139,16 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         infiniteVibrateCheck = (CheckBox) rootView.findViewById(R.id.infiniteVibrateCheck);
         infiniteVibrateCheck.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION));
 
-        soundOption = (RelativeLayout) rootView.findViewById(R.id.soundOption);
+        RelativeLayout soundOption = (RelativeLayout) rootView.findViewById(R.id.soundOption);
         soundOption.setOnClickListener(this);
 
         soundCheck = (CheckBox) rootView.findViewById(R.id.soundCheck);
         soundCheck.setChecked(sPrefs.loadBoolean(Prefs.SOUND_STATUS));
 
-        chooseSound = (LinearLayout) rootView.findViewById(R.id.chooseSound);
+        LinearLayout chooseSound = (LinearLayout) rootView.findViewById(R.id.chooseSound);
         chooseSound.setOnClickListener(this);
 
-        volume = (TextView) rootView.findViewById(R.id.volume);
+        TextView volume = (TextView) rootView.findViewById(R.id.volume);
         volume.setOnClickListener(this);
 
         showMelody = (TextView) rootView.findViewById(R.id.showMelody);
@@ -162,7 +160,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         infiniteSoundCheck = (CheckBox) rootView.findViewById(R.id.infiniteSoundCheck);
         infiniteSoundCheck.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
 
-        tts = (RelativeLayout) rootView.findViewById(R.id.tts);
+        RelativeLayout tts = (RelativeLayout) rootView.findViewById(R.id.tts);
         tts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,6 +183,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         sText = (TextView) rootView.findViewById(R.id.sText);
         sText1 = (TextView) rootView.findViewById(R.id.sText1);
 
+        i1 = (TextView) rootView.findViewById(R.id.i1);
+        i2 = (TextView) rootView.findViewById(R.id.i2);
+
         checkVibrate();
 
         checkRepeat();
@@ -193,10 +194,12 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         checkTTS();
 
+        checkIcon();
+
         if (Module.isPro()){
-            lewWrapper = (RelativeLayout) rootView.findViewById(R.id.lewWrapper);
+            RelativeLayout lewWrapper = (RelativeLayout) rootView.findViewById(R.id.lewWrapper);
             lewWrapper.setVisibility(View.VISIBLE);
-            led = (RelativeLayout) rootView.findViewById(R.id.led);
+            RelativeLayout led = (RelativeLayout) rootView.findViewById(R.id.led);
             led.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -239,6 +242,20 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             sText1.setEnabled(false);
             infiniteSoundCheck.setEnabled(false);
             infiniteSoundOption.setEnabled(false);
+        }
+    }
+
+    private void checkIcon(){
+        if (permanentNotificationCheck.isChecked()){
+            statusIcon.setEnabled(true);
+            statusIconCheck.setEnabled(true);
+            i1.setEnabled(true);
+            i2.setEnabled(true);
+        } else {
+            statusIcon.setEnabled(false);
+            statusIconCheck.setEnabled(false);
+            i1.setEnabled(false);
+            i2.setEnabled(false);
         }
     }
 
@@ -370,6 +387,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             permanentNotificationCheck.setChecked(true);
             new Notifier(getActivity()).recreatePermanent();
         }
+        checkIcon();
     }
 
     private void notificationDismissChange (){

@@ -20,13 +20,13 @@ import java.util.Map;
  */
 public class SharedPrefs {
     private SharedPreferences prefs;
-    private Context pContext;
+    private Context mContext;
     public static final String APP_UI_PREFERENCES = "ui_settings";
     public static final String APP_CHANGES_PREFERENCES = "changes_settings";
     public static final String APP_PREFERENCES = "system_messages";
     private static int MODE = Context.MODE_PRIVATE;
     public SharedPrefs(Context context){
-        this.pContext = context;
+        this.mContext = context;
     }
 
     /**
@@ -35,7 +35,7 @@ public class SharedPrefs {
      * @param value value.
      */
     public void savePrefs(String stringToSave, String value){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
         uiEd.putString(stringToSave, value);
         uiEd.commit();
@@ -47,7 +47,7 @@ public class SharedPrefs {
      * @param value value.
      */
     public void saveInt(String stringToSave, int value){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
         uiEd.putInt(stringToSave, value);
         uiEd.commit();
@@ -59,7 +59,7 @@ public class SharedPrefs {
      * @return
      */
     public int loadInt(String stringToLoad){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         int x;
         try {
             x = prefs.getInt(stringToLoad, 0);
@@ -75,7 +75,7 @@ public class SharedPrefs {
      * @param value value.
      */
     public void saveLong(String stringToSave, long value){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
         uiEd.putLong(stringToSave, value);
         uiEd.commit();
@@ -87,7 +87,7 @@ public class SharedPrefs {
      * @return
      */
     public long loadLong(String stringToLoad){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         long x;
         try {
             x = prefs.getLong(stringToLoad, 1000);
@@ -105,7 +105,7 @@ public class SharedPrefs {
     public String loadPrefs(String stringToLoad){
         String res;
         try {
-            prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+            prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
             res = prefs.getString(stringToLoad, "");
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -120,7 +120,7 @@ public class SharedPrefs {
      * @return
      */
     public boolean isString(String checkString){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         return prefs.contains(checkString);
     }
 
@@ -130,7 +130,7 @@ public class SharedPrefs {
      * @param value value.
      */
     public void saveBoolean(String stringToSave, boolean value){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
         uiEd.putBoolean(stringToSave, value);
         uiEd.commit();
@@ -142,7 +142,7 @@ public class SharedPrefs {
      * @return
      */
     public boolean loadBoolean(String stringToLoad){
-        prefs = pContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
         boolean res;
         try {
             res = prefs.getBoolean(stringToLoad, false);
@@ -153,14 +153,14 @@ public class SharedPrefs {
     }
 
     public void saveVersionBoolean(String stringToSave){
-        prefs = pContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
         SharedPreferences.Editor uiEd = prefs.edit();
         uiEd.putBoolean(stringToSave, true);
         uiEd.commit();
     }
 
     public boolean loadVersionBoolean(String stringToLoad){
-        prefs = pContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
+        prefs = mContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
         boolean res;
         try {
             res = prefs.getBoolean(stringToLoad, false);
@@ -188,7 +188,7 @@ public class SharedPrefs {
             try {
                 output = new ObjectOutputStream(new FileOutputStream(prefs));
                 SharedPreferences pref =
-                        pContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
+                        mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
                 Map<String, ?> list = pref.getAll();
                 if (list.containsKey(Prefs.CONTACTS_IMPORT_DIALOG)) list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
                 output.writeObject(list);
@@ -218,7 +218,7 @@ public class SharedPrefs {
             ObjectInputStream input = null;
             try {
                 input = new ObjectInputStream(new FileInputStream(prefs));
-                SharedPreferences.Editor prefEdit = pContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE).edit();
+                SharedPreferences.Editor prefEdit = mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE).edit();
                 prefEdit.clear();
                 Map<String, ?> entries = (Map<String, ?>) input.readObject();
                 for (Map.Entry<String, ?> entry : entries.entrySet()) {

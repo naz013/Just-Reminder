@@ -63,7 +63,7 @@ import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.Item;
+import com.cray.software.justreminder.datas.Category;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
 import com.cray.software.justreminder.dialogs.utils.SelectApplication;
@@ -81,12 +81,12 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.DataItem;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderType;
+import com.cray.software.justreminder.reminder.Type;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.TimerType;
 import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -96,11 +96,10 @@ import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
-import com.cray.software.justreminder.spinnerMenu.SpinnerItem;
-import com.cray.software.justreminder.spinnerMenu.TitleNavigationAdapter;
+import com.cray.software.justreminder.spinner.SpinnerItem;
+import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -121,52 +120,49 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         SeekBar.OnSeekBarChangeListener, AdapterView.OnItemSelectedListener, View.OnTouchListener,
         DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener, MapListener {
 
-    LinearLayout callDateRing, dateRing, messageDateRing, action_layout;
-    FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
-    TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
+    private LinearLayout action_layout;
+    private FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
+    private TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
             messageDate, messageYearDate, messageTime, weekTimeField;
-    ImageButton addNumberButton, addMessageNumberButton, weekAddNumberButton;
-    SeekBar repeatCallInt, repeatDateInt, repeatMessageInt;
-    ImageButton insertVoice, pickApplication;
+    private ImageButton weekAddNumberButton;
 
-    LinearLayout layoutContainer, delayLayout, navContainer;
-    CheckBox attackDelay;
-    CheckBox timeExport, messageExport, dateExport, callExport, weekExport;
+    private LinearLayout delayLayout;
+    private LinearLayout navContainer;
+    private CheckBox attackDelay;
+    private CheckBox timeExport, messageExport, dateExport, callExport, weekExport;
 
-    int myHour = 0;
-    int myMinute = 0;
-    int mySeconds = 0;
-    int myYear = 0;
-    int myMonth = 0;
-    int myDay = 1;
+    private int myHour = 0;
+    private int myMinute = 0;
+    private int mySeconds = 0;
+    private int myYear = 0;
+    private int myMonth = 0;
+    private int myDay = 1;
 
-    ProgressDialog pd;
-    DataBase DB = new DataBase(ReminderManager.this);
+    private ProgressDialog pd;
+    private DataBase DB = new DataBase(ReminderManager.this);
 
-    boolean isGPSEnabled = false, isNetworkEnabled = false, isDelayed = false;
-    protected LocationManager locationManager;
+    private boolean isDelayed = false;
 
-    ColorSetter cSetter = new ColorSetter(ReminderManager.this);
-    SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
-    Interval interval = new Interval(ReminderManager.this);
-    GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
+    private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
+    private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
+    private GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
 
-    long id;
-    String categoryId;
-    String type, melody = null, selectedPackage = null;
-    int radius = -1, ledColor = 0;
-    Toolbar toolbar;
-    Spinner spinner;
-    FloatingEditText taskField;
-    TextView category;
-    FloatingActionButton mFab;
+    private long id;
+    private String categoryId;
+    private String type, melody = null, selectedPackage = null;
+    private int radius = -1, ledColor = 0;
+    private Toolbar toolbar;
+    private Spinner spinner;
+    private FloatingEditText taskField;
+    private TextView category;
+    private FloatingActionButton mFab;
 
-    public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
-    public static final int MENU_ITEM_DELETE = 12;
+    private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
+    private static final int MENU_ITEM_DELETE = 12;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
 
-    private ReminderType remControl = new ReminderType(this);
-    private DataItem item;
+    private Type remControl = new Type(this);
+    private Reminder item;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,7 +229,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-        insertVoice = (ImageButton) findViewById(R.id.insertVoice);
+        ImageButton insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -249,7 +245,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
+        LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         findViewById(R.id.windowBackground).setOnTouchListener(this);
 
@@ -394,13 +390,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void changeCategory() {
         DB = new DataBase(ReminderManager.this);
         DB.open();
-        final ArrayList<Item> items = new ArrayList<>();
+        final ArrayList<Category> categories = new ArrayList<>();
         Cursor c = DB.queryCategories();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                items.add(new Item(title, uuId));
+                categories.add(new Category(title, uuId));
             } while (c.moveToNext());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -410,8 +406,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                category.setText(items.get(which).getTitle());
-                categoryId = items.get(which).getUuID();
+                category.setText(categories.get(which).getTitle());
+                categoryId = categories.get(which).getUuID();
             }
         });
         AlertDialog alert = builder.create();
@@ -458,7 +454,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isArchived == 1) {
                 Reminder.delete(id, this);
                 Toast.makeText(ReminderManager.this, getString(R.string.string_deleted), Toast.LENGTH_SHORT).show();
-            } else Reminder.makeArchive(id, this);
+            } else Reminder.moveToTrash(id, this);
             finish();
         }
         if (c != null) c.close();
@@ -528,8 +524,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return is;
     }
 
-    CheckBox dateTaskExport;
-    EditText repeatDays;
+    private CheckBox dateTaskExport;
+    private EditText repeatDays;
 
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -557,7 +553,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMinute = cal.get(Calendar.MINUTE);
         }
 
-        dateRing = (LinearLayout) findViewById(R.id.dateRing);
+        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
         dateRing.setOnClickListener(this);
 
         dateField = (TextView) findViewById(R.id.dateField);
@@ -607,7 +603,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDays = (EditText) findViewById(R.id.repeatDays);
         repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
+        SeekBar repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setOnSeekBarChangeListener(this);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
@@ -655,12 +651,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
-    LinearLayout monthDayActionLayout;
-    TextView monthDayField, monthDayTimeField;
-    RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    ImageButton monthDayAddNumberButton;
-    FloatingEditText monthDayPhoneNumber;
+    private CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
+    private LinearLayout monthDayActionLayout;
+    private TextView monthDayField, monthDayTimeField;
+    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    private ImageButton monthDayAddNumberButton;
+    private FloatingEditText monthDayPhoneNumber;
 
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -881,9 +877,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    RadioButton callCheck, messageCheck;
-    CheckBox attachAction, weekTaskExport;
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    private RadioButton callCheck, messageCheck;
+    private CheckBox attachAction, weekTaskExport;
 
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1077,13 +1073,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else sundayCheck.setChecked(false);
     }
 
-    CheckBox timeTaskExport;
-    TextView hoursView, minutesView, secondsView;
-    ImageButton deleteButton;
-    EditText repeatMinutes;
-    Button b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
-    String timeString = "000000";
-    SeekBar repeatMinutesSeek;
+    private CheckBox timeTaskExport;
+    private TextView hoursView, minutesView, secondsView;
+    private ImageButton deleteButton;
+    private EditText repeatMinutes;
+    private String timeString = "000000";
 
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1134,16 +1128,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         updateTimeView();
 
-        b1 = (Button) findViewById(R.id.b1);
-        b2 = (Button) findViewById(R.id.b2);
-        b3 = (Button) findViewById(R.id.b3);
-        b4 = (Button) findViewById(R.id.b4);
-        b5 = (Button) findViewById(R.id.b5);
-        b6 = (Button) findViewById(R.id.b6);
-        b7 = (Button) findViewById(R.id.b7);
-        b8 = (Button) findViewById(R.id.b8);
-        b9 = (Button) findViewById(R.id.b9);
-        b0 = (Button) findViewById(R.id.b0);
+        Button b1 = (Button) findViewById(R.id.b1);
+        Button b2 = (Button) findViewById(R.id.b2);
+        Button b3 = (Button) findViewById(R.id.b3);
+        Button b4 = (Button) findViewById(R.id.b4);
+        Button b5 = (Button) findViewById(R.id.b5);
+        Button b6 = (Button) findViewById(R.id.b6);
+        Button b7 = (Button) findViewById(R.id.b7);
+        Button b8 = (Button) findViewById(R.id.b8);
+        Button b9 = (Button) findViewById(R.id.b9);
+        Button b0 = (Button) findViewById(R.id.b0);
         if (b1 != null) {
             b1.setId(101);
             b2.setId(102);
@@ -1170,7 +1164,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatMinutes = (EditText) findViewById(R.id.repeatMinutes);
         repeatMinutes.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
+        SeekBar repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
         repeatMinutesSeek.setOnSeekBarChangeListener(this);
         repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
 
@@ -1236,12 +1230,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    CheckBox skypeExport, skypeTaskExport;
-    EditText skypeUser, repeatDaysSkype;
-    RadioButton skypeCall, skypeVideo, skypeChat;
-    LinearLayout skypeDateRing;
-    TextView skypeDate, skypeYearDate, skypeTime;
-    SeekBar repeatSkype;
+    private CheckBox skypeExport, skypeTaskExport;
+    private EditText skypeUser, repeatDaysSkype;
+    private RadioButton skypeCall;
+    private RadioButton skypeVideo;
+    private TextView skypeDate, skypeYearDate, skypeTime;
 
     private void attachSkype(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1258,7 +1251,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         skypeCall = (RadioButton) findViewById(R.id.skypeCall);
         skypeVideo = (RadioButton) findViewById(R.id.skypeVideo);
         skypeCall.setChecked(true);
-        skypeChat = (RadioButton) findViewById(R.id.skypeChat);
+        RadioButton skypeChat = (RadioButton) findViewById(R.id.skypeChat);
         skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -1283,7 +1276,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMinute = cal.get(Calendar.MINUTE);
         }
 
-        skypeDateRing = (LinearLayout) findViewById(R.id.skypeDateRing);
+        LinearLayout skypeDateRing = (LinearLayout) findViewById(R.id.skypeDateRing);
         skypeDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1338,7 +1331,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
         repeatDaysSkype.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
+        SeekBar repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
         repeatSkype.setOnSeekBarChangeListener(this);
         repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysSkype.setText(String.valueOf(repeatSkype.getProgress()));
@@ -1400,13 +1393,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    CheckBox appExport, appTaskExport;
-    EditText browseLink, repeatDaysApp;
-    RadioButton application, browser;
-    LinearLayout appDateRing;
-    TextView appDate, appYearDate, appTime, applicationName;
-    SeekBar repeatApp;
-    RelativeLayout applicationLayout;
+    private CheckBox appExport, appTaskExport;
+    private EditText browseLink, repeatDaysApp;
+    private RadioButton application, browser;
+    private TextView appDate, appYearDate, appTime, applicationName;
+    private RelativeLayout applicationLayout;
 
     private void attachApplication(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1424,7 +1415,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         applicationLayout.setVisibility(View.VISIBLE);
         applicationName = (TextView) findViewById(R.id.applicationName);
 
-        pickApplication = (ImageButton) findViewById(R.id.pickApplication);
+        ImageButton pickApplication = (ImageButton) findViewById(R.id.pickApplication);
         pickApplication.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1433,7 +1424,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
         sPrefs = new SharedPrefs(ReminderManager.this);
-        if (isDark){pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
+        if (isDark){
+            pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
         } else pickApplication.setImageResource(R.drawable.ic_launch_grey600_24dp);
 
         application = (RadioButton) findViewById(R.id.application);
@@ -1478,7 +1470,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMinute = cal.get(Calendar.MINUTE);
         }
 
-        appDateRing = (LinearLayout) findViewById(R.id.appDateRing);
+        LinearLayout appDateRing = (LinearLayout) findViewById(R.id.appDateRing);
         appDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1533,7 +1525,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
         repeatDaysApp.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatApp = (SeekBar) findViewById(R.id.repeatApp);
+        SeekBar repeatApp = (SeekBar) findViewById(R.id.repeatApp);
         repeatApp.setOnSeekBarChangeListener(this);
         repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysApp.setText(String.valueOf(repeatApp.getProgress()));
@@ -1603,8 +1595,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    CheckBox callTaskExport;
-    EditText repeatDaysCall;
+    private CheckBox callTaskExport;
+    private EditText repeatDaysCall;
 
     private void attachCall(){
         taskField.setHint(getString(R.string.tast_hint));
@@ -1616,7 +1608,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.call_layout);
         remControl = dateType;
 
-        addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
+        ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
         addNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1644,7 +1636,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMinute = cal.get(Calendar.MINUTE);
         }
 
-        callDateRing = (LinearLayout) findViewById(R.id.callDateRing);
+        LinearLayout callDateRing = (LinearLayout) findViewById(R.id.callDateRing);
         callDateRing.setOnClickListener(this);
 
         callExport = (CheckBox) findViewById(R.id.callExport);
@@ -1694,7 +1686,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
         repeatDaysCall.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
+        SeekBar repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
         repeatCallInt.setOnSeekBarChangeListener(this);
         repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysCall.setText(String.valueOf(repeatCallInt.getProgress()));
@@ -1745,8 +1737,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    CheckBox messageTaskExport;
-    EditText repeatDaysMessage;
+    private CheckBox messageTaskExport;
+    private EditText repeatDaysMessage;
 
     private void attachMessage(){
         taskField.setHint(getString(R.string.message_field_hint));
@@ -1758,7 +1750,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.message_layout);
         remControl = dateType;
 
-        addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
+        ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
         addMessageNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1786,7 +1778,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMinute = cal.get(Calendar.MINUTE);
         }
 
-        messageDateRing = (LinearLayout) findViewById(R.id.messageDateRing);
+        LinearLayout messageDateRing = (LinearLayout) findViewById(R.id.messageDateRing);
         messageDateRing.setOnClickListener(this);
 
         messageExport = (CheckBox) findViewById(R.id.messageExport);
@@ -1837,7 +1829,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
         repeatDaysMessage.setTypeface(AssetsUtil.getLightTypeface(this));
 
-        repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
+        SeekBar repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
         repeatMessageInt.setOnSeekBarChangeListener(this);
         repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysMessage.setText(String.valueOf(repeatMessageInt.getProgress()));
@@ -1888,14 +1880,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    LinearLayout locationDateRing;
-    TextView locationDateField, locationDateYearField, locationTimeField;
-    AutoCompleteTextView searchField;
-    ImageButton clearField;
-    List<Address> foundPlaces;
-    ArrayAdapter<String> adapter;
-    GeocoderTask task;
-    ArrayList<String> namesList;
+    private TextView locationDateField, locationDateYearField, locationTimeField;
+    private AutoCompleteTextView searchField;
+    private List<Address> foundPlaces;
+    private ArrayAdapter<String> adapter;
+    private GeocoderTask task;
+    private ArrayList<String> namesList;
     private LatLng curPlace;
 
     @Override
@@ -1964,14 +1954,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    ImageButton mapButton, addNumberButtonLocation;
-    LinearLayout actionLocation;
-    RelativeLayout mapContainer;
-    ScrollView specsContainer;
-    CheckBox attachLocationAction;
-    RadioButton callCheckLocation, messageCheckLocation;
-    FloatingEditText phoneNumberLocation;
-    MapFragment map;
+    private ImageButton addNumberButtonLocation;
+    private LinearLayout actionLocation;
+    private RelativeLayout mapContainer;
+    private ScrollView specsContainer;
+    private CheckBox attachLocationAction;
+    private RadioButton callCheckLocation, messageCheckLocation;
+    private FloatingEditText phoneNumberLocation;
+    private MapFragment map;
 
     private boolean isMapVisible(){
         return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
@@ -2020,8 +2010,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else delayLayout.setVisibility(View.VISIBLE);
         }
 
-        clearField = (ImageButton) findViewById(R.id.clearButton);
-        mapButton = (ImageButton) findViewById(R.id.mapButton);
+        ImageButton clearField = (ImageButton) findViewById(R.id.clearButton);
+        ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
 
         if (isDark){
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
@@ -2149,7 +2139,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
+        LinearLayout locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
         locationDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2233,17 +2223,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    ImageButton addNumberButtonLocationOut, mapButtonOut;
-    LinearLayout actionLocationOut, delayLayoutOut, locationOutDateRing;
-    RelativeLayout mapContainerOut;
-    ScrollView specsContainerOut;
-    TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
+    private ImageButton addNumberButtonLocationOut;
+    private LinearLayout actionLocationOut;
+    private LinearLayout delayLayoutOut;
+    private RelativeLayout mapContainerOut;
+    private ScrollView specsContainerOut;
+    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
             mapLocation, radiusMark;
-    CheckBox attachLocationOutAction, attachDelayOut;
-    RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    FloatingEditText phoneNumberLocationOut;
-    SeekBar pointRadius;
-    MapFragment mapOut;
+    private CheckBox attachLocationOutAction, attachDelayOut;
+    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    private FloatingEditText phoneNumberLocationOut;
+    private MapFragment mapOut;
 
     private boolean isMapOutVisible(){
         return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
@@ -2291,7 +2281,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 ViewUtils.expand(delayLayoutOut);
             } else delayLayoutOut.setVisibility(View.VISIBLE);
         }
-        mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
+        ImageButton mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
         if (isDark){
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
@@ -2316,7 +2306,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapCheck.setOnCheckedChangeListener(this);
         currentCheck.setChecked(true);
 
-        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
+        SeekBar pointRadius = (SeekBar) findViewById(R.id.pointRadius);
         pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -2401,7 +2391,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
+        LinearLayout locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
         locationOutDateRing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2602,33 +2592,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public void showSettingsAlert(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReminderManager.this);
-        alertDialog.setTitle(getString(R.string.gps_title));
-        alertDialog.setMessage(getString(R.string.gps_text));
-
-        alertDialog.setPositiveButton(getString(R.string.action_settings), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        });
-
-        alertDialog.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
-
     private void saveTask(){
         save();
     }
 
     private void save() {
-        DataItem item = getData();
+        Reminder item = getData();
         if (item == null) return;
         if (id != 0){
             remControl.save(id, item);
@@ -2793,12 +2762,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return type;
     }
 
-    private DataItem getData() {
+    private Reminder getData() {
         String type = getType();
         Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
         String weekdays = null;
         if (isWeekDayReminderAttached()) {
-            interval = new Interval(ReminderManager.this);
+            Interval interval = new Interval(ReminderManager.this);
             weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                     thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
             if (weekdays.matches(Constants.NOTHING_CHECKED)) {
@@ -2840,13 +2809,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         Double latitude = 0.0;
         Double longitude = 0.0;
         if (isLocationAttached() || isLocationOutAttached()){
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (!isGPSEnabled && !isNetworkEnabled) {
-               showSettingsAlert();
+            if (!LocationUtil.checkLocationEnable(this)){
+                LocationUtil.showLocationAlert(this);
                 return null;
             }
             LatLng dest = null;
@@ -2917,7 +2881,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
 
-        return new DataItem(task, type, weekdays, melody, categoryId, uuId,
+        return new Reminder(task, type, weekdays, melody, categoryId, uuId,
                 new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                 mySeconds, repeat, export, radius, ledColor, sync, repMinute, due);
     }
@@ -3356,7 +3320,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    static final int MIN_DISTANCE = 40;
+    private static final int MIN_DISTANCE = 40;
     private float downX;
     private float downY;
 
@@ -3597,8 +3561,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         startActivity(myIntent);
     }
 
-    ArrayList<String> names, foldersFile;
-    ArrayList<File> fileList;
+    private ArrayList<String> names, foldersFile;
+    private ArrayList<File> fileList;
     private void pickSounds(final ProgressDialog pd) {
         new Thread(new Runnable() {
             @Override
@@ -3607,7 +3571,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 fileList = new ArrayList<>();
                 fileList.clear();
                 File dir;
-                if (ReminderUtils.isSdPresent()) {
+                if (SyncHelper.isSdPresent()) {
                     dir = new File(Environment.getExternalStorageDirectory()
                             .toString());
                     listf(dir.toString(), fileList);
@@ -3837,8 +3801,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         super.onDestroy();
     }
 
-    LocationManager mLocationManager;
-    LocationListener mLocList;
+    private LocationManager mLocationManager;
+    private LocationListener mLocList;
 
     public class CurrentLocation implements LocationListener {
 

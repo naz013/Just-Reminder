@@ -18,8 +18,7 @@ import java.util.Calendar;
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
     private TimePickedListener mListener;
-    Activity mActivity;
-    boolean is24 = true;
+    private Activity mActivity;
 
     @NonNull
     @Override
@@ -29,7 +28,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        is24 = new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        boolean is24 = new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT);
         // create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute, is24);
     }

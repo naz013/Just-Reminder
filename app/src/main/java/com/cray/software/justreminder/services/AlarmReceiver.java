@@ -14,8 +14,8 @@ import com.cray.software.justreminder.interfaces.Constants;
 import java.util.Calendar;
 
 public class AlarmReceiver extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
-    DataBase DB;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -29,7 +29,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     public void setAlarm(Context context, long id) {
-        DB = new DataBase(context);
+        DataBase DB = new DataBase(context);
         DB.open();
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);

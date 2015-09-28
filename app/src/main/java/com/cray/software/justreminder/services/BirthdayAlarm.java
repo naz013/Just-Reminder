@@ -9,6 +9,7 @@ import android.content.Intent;
 import java.util.Calendar;
 
 public class BirthdayAlarm extends BroadcastReceiver {
+
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
 

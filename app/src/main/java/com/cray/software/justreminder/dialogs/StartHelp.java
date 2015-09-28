@@ -21,9 +21,8 @@ import com.hexrain.design.LogInActivity;
 
 public class StartHelp extends FragmentActivity implements View.OnClickListener {
 
-    ViewPager pager;
-    PagerAdapter pagerAdapter;
-    TextView skipButton, nextCloseButton;
+    private ViewPager pager;
+    private TextView skipButton, nextCloseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,7 @@ public class StartHelp extends FragmentActivity implements View.OnClickListener 
         nextCloseButton.setTypeface(typeface);
 
         pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
+        PagerAdapter pagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

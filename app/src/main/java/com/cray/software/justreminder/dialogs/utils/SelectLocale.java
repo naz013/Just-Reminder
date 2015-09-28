@@ -22,25 +22,21 @@ import java.util.ArrayList;
 
 public class SelectLocale extends Activity{
 
-    SharedPrefs sPrefs;
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
-    ArrayList<String> names = new ArrayList<>();
-    int extra = 0;
+    private SharedPrefs sPrefs;
+    private ArrayList<String> names = new ArrayList<>();
+    private int extra = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
-        cs = new ColorSetter(SelectLocale.this);
+        ColorSetter cs = new ColorSetter(SelectLocale.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.select_language_title));
 
         extra = getIntent().getIntExtra("tts", 0);
@@ -57,7 +53,7 @@ public class SelectLocale extends Activity{
         names.add(getString(R.string.locale_russian));
         names.add(getString(R.string.locale_spanish));
 
-        musicList = (ListView) findViewById(R.id.musicList);
+        ListView musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
         ArrayAdapter<String> l_arrayAdapter = new ArrayAdapter<>(SelectLocale.this,
@@ -96,7 +92,7 @@ public class SelectLocale extends Activity{
 
         musicList.setItemChecked(position, true);
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

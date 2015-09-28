@@ -114,20 +114,22 @@ import hirondelle.date4j.DateTime;
 public class ScreenManager extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private NavigationDrawerFragment mNavigationDrawerFragment;
     private String mTag;
-    Toolbar toolbar;
-    FloatingEditText quickNote;
-    CardView noteCard, noteStatusCard, noteReminderCard;
-    TextView buttonYes, buttonNo, buttonReminderYes, buttonReminderNo, buttonSave;
+    private Toolbar toolbar;
+    private FloatingEditText quickNote;
+    private CardView noteCard, noteStatusCard, noteReminderCard;
+    private TextView buttonYes;
+    private TextView buttonNo;
+    private TextView buttonReminderYes;
+    private TextView buttonReminderNo;
 
-    FloatingActionsMenu mainMenu;
-    FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
+    private FloatingActionsMenu mainMenu;
+    private FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
             addPlace, addGroup;
 
-    ColorSetter cSetter = new ColorSetter(this);
-    SharedPrefs sPrefs = new SharedPrefs(this);
-    DataBase DB;
+    private ColorSetter cSetter = new ColorSetter(this);
+    private SharedPrefs sPrefs = new SharedPrefs(this);
+    private DataBase DB;
 
     public static final String FRAGMENT_ACTIVE = "fragment_active";
     public static final String FRAGMENT_ARCHIVE = "fragment_archive";
@@ -152,11 +154,11 @@ public class ScreenManager extends AppCompatActivity
     private String mTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
-    String accountName;
+    private String accountName;
     private Context ctx = this;
     private Activity a = this;
-    RecyclerView currentList;
-    ListView currentListView;
+    private RecyclerView currentList;
+    private ListView currentListView;
     private boolean isAnimation = false;
 
     @Override
@@ -190,7 +192,7 @@ public class ScreenManager extends AppCompatActivity
         noteReminderCard.setCardBackgroundColor(cSetter.getCardStyle());
 
         buttonYes = (TextView) findViewById(R.id.buttonYes);
-        buttonSave = (TextView) findViewById(R.id.buttonSave);
+        TextView buttonSave = (TextView) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,7 +205,7 @@ public class ScreenManager extends AppCompatActivity
 
         initButton();
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.

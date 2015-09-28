@@ -18,15 +18,12 @@ import java.util.Locale;
 
 public class Help extends AppCompatActivity {
 
-    ColorSetter cSetter;
-    WebView helpView;
-    FloatingEditText searchEdit;
-    Toolbar toolbar;
+    private WebView helpView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(Help.this);
+        ColorSetter cSetter = new ColorSetter(Help.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
@@ -34,7 +31,7 @@ public class Help extends AppCompatActivity {
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_help_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -64,7 +61,7 @@ public class Help extends AppCompatActivity {
 
         helpView.loadUrl(url);
 
-        searchEdit = (FloatingEditText) findViewById(R.id.searchEdit);
+        FloatingEditText searchEdit = (FloatingEditText) findViewById(R.id.searchEdit);
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -73,7 +70,7 @@ public class Help extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                helpView.findAllAsync(s.toString());
+                helpView.findAll(s.toString());
             }
 
             @Override

@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.PagerItem;
+import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -23,15 +23,15 @@ import java.util.ArrayList;
 
 public class BirthdaysList extends Fragment{
 
-    ListView contactsList;
-    CalendarEventsAdapter customAdapter;
-    ColorSetter cs;
-    ArrayList<PagerItem> datas;
+    private ListView contactsList;
+    private CalendarEventsAdapter customAdapter;
+    private ColorSetter cs;
+    private ArrayList<EventsPagerItem> datas;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_PAGE_DATA = "arg_page_data";
-    int pageNumber;
+    private int pageNumber;
 
-    public void setData(ArrayList<PagerItem> datas){
+    public void setData(ArrayList<EventsPagerItem> datas){
         this.datas = datas;
     }
 

@@ -19,11 +19,11 @@ import java.io.IOException;
  */
 public class IOHelper {
 
-    private Context context;
+    private Context mContext;
     private boolean isConnected;
 
     public IOHelper (Context context){
-        this.context = context;
+        this.mContext = context;
         isConnected = SyncHelper.isConnected(context);
     }
 
@@ -57,9 +57,9 @@ public class IOHelper {
             }
         }
         if (isConnected){
-            new DropboxHelper(context).deleteReminder(name);
-            new GDriveHelper(context).deleteReminder(name);
-            //new BoxHelper(context).deleteReminder(name);
+            new DropboxHelper(mContext).deleteReminder(name);
+            new GDriveHelper(mContext).deleteReminder(name);
+            //new BoxHelper(mContext).deleteReminder(name);
         }
     }
 
@@ -70,7 +70,7 @@ public class IOHelper {
         backupGroup(true);
         backupReminder(true);
 
-        SharedPrefs prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)){
             backupNote(true);
         }
@@ -85,18 +85,18 @@ public class IOHelper {
      */
     public void backupGroup(boolean isCloud){
         try {
-            new SyncHelper(context).exportGroups();
+            new SyncHelper(mContext).groupToJson();
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadGroup();
+            new DropboxHelper(mContext).uploadGroup();
             try {
-                new GDriveHelper(context).saveGroupToDrive();
+                new GDriveHelper(mContext).saveGroupToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).uploadGroup();
+            new BoxHelper(mContext).uploadGroup();
         }
     }
 
@@ -113,7 +113,7 @@ public class IOHelper {
                 final int x = files.length;
                 if (x > 0) {
                     try {
-                        new SyncHelper(context).importGroup(null, null);
+                        new SyncHelper(mContext).groupFromJson(null, null);
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
@@ -121,13 +121,13 @@ public class IOHelper {
             }
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadGroup();
+            new DropboxHelper(mContext).downloadGroup();
             try {
-                new GDriveHelper(context).downloadGroup();
+                new GDriveHelper(mContext).downloadGroup();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(context).downloadGroup();
+            //new BoxHelper(mContext).downloadGroup();
         }
     }
 
@@ -137,18 +137,18 @@ public class IOHelper {
      */
     public void backupReminder(boolean isCloud){
         try {
-            new SyncHelper(context).exportReminderToJSON();
+            new SyncHelper(mContext).reminderToJson();
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadReminder(null);
+            new DropboxHelper(mContext).uploadReminder(null);
             try {
-                new GDriveHelper(context).saveReminderToDrive();
+                new GDriveHelper(mContext).saveReminderToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).uploadReminder();
+            new BoxHelper(mContext).uploadReminder();
         }
     }
 
@@ -165,7 +165,7 @@ public class IOHelper {
                 final int x = files.length;
                 if (x > 0) {
                     try {
-                        new SyncHelper(context).importReminderFromJSON(null, null);
+                        new SyncHelper(mContext).reminderFromJson(null, null);
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
@@ -173,13 +173,13 @@ public class IOHelper {
             }
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadReminder();
+            new DropboxHelper(mContext).downloadReminder();
             try {
-                new GDriveHelper(context).downloadReminder();
+                new GDriveHelper(mContext).downloadReminder();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(context).downloadReminder();
+            //new BoxHelper(mContext).downloadReminder();
         }
     }
 
@@ -189,18 +189,18 @@ public class IOHelper {
      */
     public void backupNote(boolean isCloud){
         try {
-            new SyncHelper(context).exportNotes();
+            new SyncHelper(mContext).noteToJson();
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadNote();
+            new DropboxHelper(mContext).uploadNote();
             try {
-                new GDriveHelper(context).saveNoteToDrive();
+                new GDriveHelper(mContext).saveNoteToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).uploadNote();
+            new BoxHelper(mContext).uploadNote();
         }
     }
 
@@ -210,18 +210,18 @@ public class IOHelper {
      */
     public void restoreNote(boolean isCloud){
         try {
-            new SyncHelper(context).importNotes(null, null);
+            new SyncHelper(mContext).noteFromJson(null, null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadNote();
+            new DropboxHelper(mContext).downloadNote();
             try {
-                new GDriveHelper(context).downloadNote();
+                new GDriveHelper(mContext).downloadNote();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(context).downloadNote();
+            //new BoxHelper(mContext).downloadNote();
         }
     }
 
@@ -231,18 +231,18 @@ public class IOHelper {
      */
     public void backupBirthday(boolean isCloud){
         try {
-            new SyncHelper(context).exportBirthdays();
+            new SyncHelper(mContext).birthdayToJson();
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).uploadBirthday();
+            new DropboxHelper(mContext).uploadBirthday();
             try {
-                new GDriveHelper(context).saveBirthToDrive();
+                new GDriveHelper(mContext).saveBirthToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(context).uploadBirthday();
+            new BoxHelper(mContext).uploadBirthday();
         }
     }
 
@@ -252,18 +252,18 @@ public class IOHelper {
      */
     public void restoreBirthday(boolean isCloud){
         try {
-            new SyncHelper(context).importBirthday(null, null);
+            new SyncHelper(mContext).birthdayFromJson(null, null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(context).downloadBirthday();
+            new DropboxHelper(mContext).downloadBirthday();
             try {
-                new GDriveHelper(context).downloadBirthday();
+                new GDriveHelper(mContext).downloadBirthday();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(context).downloadBirthday();
+            //new BoxHelper(mContext).downloadBirthday();
         }
     }
 }

@@ -12,7 +12,7 @@ import com.cray.software.justreminder.modules.Module;
 
 public class ChangeDialog extends Activity {
 
-    AlertDialog alertDialog;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

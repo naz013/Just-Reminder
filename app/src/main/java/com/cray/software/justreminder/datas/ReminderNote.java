@@ -16,15 +16,15 @@ package com.cray.software.justreminder.datas;
  * limitations under the License.
  *
  */
-public class ItemData {
-    String noteText;
-    byte[] image;
-    String taskTitle, taskNote, taskStatus, taskListId, taskIdentifier;
-    long taskDate;
-    long noteId, taskId;
+public class ReminderNote {
+    private String noteText;
+    private byte[] image;
+    private String taskTitle, taskNote, taskStatus, taskListId, taskIdentifier;
+    private long taskDate;
+    private long noteId, taskId;
 
-    public ItemData(String noteText, byte[] image, String taskTitle, String taskNote,
-                    String taskStatus, long taskDate, long taskId, long noteId, String taskListId, String taskIdentifier){
+    public ReminderNote(String noteText, byte[] image, String taskTitle, String taskNote,
+                        String taskStatus, long taskDate, long taskId, long noteId, String taskListId, String taskIdentifier){
         this.noteText = noteText;
         this.image = image;
         this.taskTitle = taskTitle;
@@ -37,7 +37,7 @@ public class ItemData {
         this.taskIdentifier = taskIdentifier;
     }
 
-    public ItemData(){
+    public ReminderNote(){
 
     }
 

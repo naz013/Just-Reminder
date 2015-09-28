@@ -17,13 +17,13 @@ import com.google.android.gms.maps.model.LatLng;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class MarkerItem{
+public class Marker {
     private String title;
     private LatLng position;
     private int icon;
     private long id;
 
-    public MarkerItem(String title, LatLng position, int icon, long id){
+    public Marker(String title, LatLng position, int icon, long id){
         this.position = position;
         this.title = title;
         this.icon = icon;

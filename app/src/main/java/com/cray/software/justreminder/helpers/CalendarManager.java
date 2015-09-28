@@ -17,16 +17,25 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+/**
+ * Helper class to interact with Google and Stock calendars.
+ */
 public class CalendarManager {
 
-    Context ctx;
-    SharedPrefs sPrefs;
+    private Context ctx;
+    private SharedPrefs sPrefs;
 
     public CalendarManager(Context context){
         this.ctx = context;
         sPrefs = new SharedPrefs(context);
     }
 
+    /**
+     * Add event to calendar.
+     * @param summary summary.
+     * @param startTime start time of event in milliseconds.
+     * @param id local reminder id.
+     */
     public void addEvent(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ctx);
         String m_selectedCalendarId = sPrefs.loadPrefs(Prefs.CALENDAR_ID);
@@ -68,6 +77,10 @@ public class CalendarManager {
         }
     }
 
+    /**
+     * Delete event from calendar.
+     * @param id event identifier inside application.
+     */
     public void deleteEvents(long id){
         DataBase db = new DataBase(ctx);
         db.open();
@@ -85,6 +98,11 @@ public class CalendarManager {
         if (c != null) c.close();
     }
 
+    /**
+     * Add event to stock Android calendar.
+     * @param summary summary.
+     * @param startTime event start time in milliseconds.
+     */
     public void addEventToStock(String summary, long startTime){
         sPrefs = new SharedPrefs(ctx);
         Intent intent = new Intent(Intent.ACTION_INSERT)
@@ -97,6 +115,10 @@ public class CalendarManager {
         ctx.startActivity(intent);
     }
 
+    /**
+     * Get list of available Google calendars.
+     * @return List of calendar identifiers.
+     */
     public ArrayList<String> getCalendars() {
         ArrayList<String> ids = new ArrayList<>();
         ids.clear();
@@ -126,6 +148,10 @@ public class CalendarManager {
         else return ids;
     }
 
+    /**
+     * Get list of available Google calendars.
+     * @return List of CalendarItem's.
+     */
     public ArrayList<CalendarItem> getCalendarsList() {
         ArrayList<CalendarItem> ids = new ArrayList<>();
         ids.clear();
@@ -155,6 +181,11 @@ public class CalendarManager {
         else return ids;
     }
 
+    /**
+     * Get name for calendar.
+     * @param id Calendar identifier.
+     * @return
+     */
     public String getCalendarName(String id) {
         String mName = null;
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
@@ -180,6 +211,11 @@ public class CalendarManager {
         return mName;
     }
 
+    /**
+     * Get list of events for calendar.
+     * @param id calendar identifier.
+     * @return List of EventItem's.
+     */
     public ArrayList<EventItem> getEvents(String id){
         ArrayList<EventItem> list = new ArrayList<>();
 

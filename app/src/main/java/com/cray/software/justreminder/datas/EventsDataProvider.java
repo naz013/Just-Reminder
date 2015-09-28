@@ -26,9 +26,9 @@ public class EventsDataProvider {
 
     private ArrayList<EventsItem> data = new ArrayList<>();
     private Cursor s, c;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    int hour, minute;
-    boolean isFeature;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private int hour, minute;
+    private boolean isFeature;
 
     public EventsDataProvider(){
         data = new ArrayList<>();

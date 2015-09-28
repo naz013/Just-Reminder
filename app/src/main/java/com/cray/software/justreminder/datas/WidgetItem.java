@@ -1,8 +1,8 @@
 package com.cray.software.justreminder.datas;
 
 public class WidgetItem {
-    int day, month, year;
-    boolean hasReminders, hasBirthdays;
+    private int day, month, year;
+    private boolean hasReminders, hasBirthdays;
 
     public WidgetItem(int day, int month, int year, boolean hasReminders, boolean hasBirthdays){
         this.day = day;

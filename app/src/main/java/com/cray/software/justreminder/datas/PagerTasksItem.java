@@ -3,8 +3,8 @@ package com.cray.software.justreminder.datas;
 import java.util.ArrayList;
 
 public class PagerTasksItem {
-    int position, current;
-    ArrayList<TaskListData> datas;
+    private int position, current;
+    private ArrayList<TaskListData> datas;
 
     public PagerTasksItem(ArrayList<TaskListData> datas, int position, int current){
         this.datas = datas;

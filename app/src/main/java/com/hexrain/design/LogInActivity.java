@@ -64,21 +64,21 @@ import java.util.Random;
 
 public class LogInActivity extends Activity {
 
-    SharedPrefs sPrefs;
-    ColorSetter cs = new ColorSetter(LogInActivity.this);
-    PaperButton connectGDrive, connectDropbox;
-    CheckBox checkBox;
-    TextView skipButton, progressMesage;
-    CircularProgress progress;
+    private SharedPrefs sPrefs;
+    private ColorSetter cs = new ColorSetter(LogInActivity.this);
+    private PaperButton connectGDrive, connectDropbox;
+    private CheckBox checkBox;
+    private TextView skipButton, progressMesage;
+    private CircularProgress progress;
 
-    DropboxHelper dbx = new DropboxHelper(LogInActivity.this);
+    private DropboxHelper dbx = new DropboxHelper(LogInActivity.this);
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
     public static final String MARKET_APP_JUSTREMINDER = "com.cray.software.justreminder";
     public static final String MARKET_APP_JUSTREMINDER_PRO = "com.cray.software.justreminderpro";
 
-    String accountName;
+    private String accountName;
     private Context ctx = this;
     private Activity a = this;
 
@@ -731,7 +731,7 @@ public class LogInActivity extends Activity {
                         String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = Contacts.get_Number(name, mContext);
+                        String number = Contacts.getNumber(name, mContext);
                         String email = cc.getMail(id);
                         if (!names.contains(name) && !ids.contains(id)) {
                             Calendar calendar = Calendar.getInstance();

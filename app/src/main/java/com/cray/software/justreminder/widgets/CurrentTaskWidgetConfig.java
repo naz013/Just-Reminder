@@ -35,8 +35,8 @@ import java.util.Locale;
 
 public class CurrentTaskWidgetConfig extends AppCompatActivity {
 
-    int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
-    Intent resultValue;
+    private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private Intent resultValue;
     public final static String CURRENT_WIDGET_PREF = "widget_pref";
     public final static String CURRENT_WIDGET_TEXT_COLOR = "widget_text_color_";
     public final static String CURRENT_WIDGET_ITEM_TEXT_COLOR = "widget_item_text_color_";
@@ -47,23 +47,21 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
     public final static String CURRENT_WIDGET_BUTTON_VOICE_COLOR = "widget_button_voice_color_";
     public final static String CURRENT_WIDGET_BUTTON_SETTINGS_COLOR = "widget_button_settings_color_";
     public final static String CURRENT_WIDGET_TEXT_SIZE = "widget_text_size_";
-    int color, headerColor, textColor, itemColor, itemTextColor, button = 0, buttonVoice, buttonSettings;
-    float textMultiply;
-    ColorSetter cSetter;
+    private int color, headerColor, textColor, itemColor, itemTextColor, button = 0, buttonVoice, buttonSettings;
+    private float textMultiply;
 
-    Toolbar toolbar;
+    private LinearLayout headerBg, widgetBg, listItemCard;
+    private TextView widgetDate, taskText, taskNumber, taskDate, taskTime;
+    private SeekBar alphaSeek;
+    private ImageButton tasksCount;
+    private Spinner headerBgColor, widgetBgSpinner, itemBgSpinner;
+    private RadioButton headerButton;
+    private RadioButton bodyButton;
+    private RadioButton itemButton;
 
-    LinearLayout headerBg, widgetBg, listItemCard;
-    TextView widgetDate, taskText, taskNumber, taskDate, taskTime;
-    SeekBar alphaSeek, textSize;
-    ImageButton tasksCount;
-    Spinner headerBgColor, widgetBgSpinner, itemBgSpinner;
-    RadioGroup colorsGroup, switcherGroup, colorsItemGroup, colorsButtonGroup;
-    RadioButton radioBlack, headerButton, bodyButton, itemButton, radioItemBlack, radioButtonBlack;
+    private int headerTr = 255, bodyTr = 255, itemTr = 255;
 
-    int headerTr = 255, bodyTr = 255, itemTr = 255;
-
-    boolean isPro = false;
+    private boolean isPro = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +93,14 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        cSetter = new ColorSetter(CurrentTaskWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(CurrentTaskWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.current_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         headerBg = (LinearLayout) findViewById(R.id.headerBg);
@@ -114,7 +112,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         taskTime = (TextView) findViewById(R.id.taskTime);
         tasksCount = (ImageButton) findViewById(R.id.tasksCount);
 
-        textSize = (SeekBar) findViewById(R.id.textSize);
+        SeekBar textSize = (SeekBar) findViewById(R.id.textSize);
         textSize.setMax(13);
         textSize.setProgress(2);
         textMultiply = 14;
@@ -195,11 +193,11 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         String date = dateFormat.format(cal.getTime());
         widgetDate.setText(date);
 
-        switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
+        RadioGroup switcherGroup = (RadioGroup) findViewById(R.id.switcherGroup);
         switcherGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.headerButton:
                         alphaSeek.setProgress(headerTr);
                         break;
@@ -685,11 +683,11 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsGroup = (RadioGroup) findViewById(R.id.colorsGroup);
+        RadioGroup colorsGroup = (RadioGroup) findViewById(R.id.colorsGroup);
         colorsGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioBlack:
                         textColor = getResources().getColor(R.color.colorBlack);
                         widgetDate.setTextColor(textColor);
@@ -702,11 +700,11 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
+        RadioGroup colorsButtonGroup = (RadioGroup) findViewById(R.id.colorsButtonGroup);
         colorsButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
                         button = R.drawable.ic_add_grey600_24dp;
                         tasksCount.setImageResource(button);
@@ -722,11 +720,11 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             }
         });
 
-        colorsItemGroup = (RadioGroup) findViewById(R.id.colorsItemGroup);
+        RadioGroup colorsItemGroup = (RadioGroup) findViewById(R.id.colorsItemGroup);
         colorsItemGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                switch (radioGroup.getCheckedRadioButtonId()){
+                switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioItemBlack:
                         itemTextColor = getResources().getColor(R.color.colorBlack);
                         taskText.setTextColor(itemTextColor);
@@ -745,12 +743,12 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             }
         });
 
-        radioBlack = (RadioButton) findViewById(R.id.radioBlack);
-        radioItemBlack = (RadioButton) findViewById(R.id.radioItemBlack);
+        RadioButton radioBlack = (RadioButton) findViewById(R.id.radioBlack);
+        RadioButton radioItemBlack = (RadioButton) findViewById(R.id.radioItemBlack);
         headerButton = (RadioButton) findViewById(R.id.headerButton);
         bodyButton = (RadioButton) findViewById(R.id.bodyButton);
         itemButton = (RadioButton) findViewById(R.id.itemButton);
-        radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
+        RadioButton radioButtonBlack = (RadioButton) findViewById(R.id.radioButtonBlack);
         radioBlack.setChecked(true);
         radioItemBlack.setChecked(true);
         headerButton.setChecked(true);

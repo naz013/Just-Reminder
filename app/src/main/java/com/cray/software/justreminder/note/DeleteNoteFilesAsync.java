@@ -11,20 +11,19 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 import java.io.File;
 
-public class DeleteNoteFile extends AsyncTask<String, Void, Boolean> {
+public class DeleteNoteFilesAsync extends AsyncTask<String, Void, Boolean> {
 
-    Context ctx;
+    private Context mContext;
 
-    public DeleteNoteFile(Context context){
-        this.ctx = context;
+    public DeleteNoteFilesAsync(Context context){
+        this.mContext = context;
     }
 
     @Override
     protected Boolean doInBackground(String... params) {
         if (params.length > 0) {
             String uuID = params[0];
-            SyncHelper syncHelper = new SyncHelper(ctx);
-            if (syncHelper.isSdPresent()) {
+            if (SyncHelper.isSdPresent()) {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD);
                 String exportFileName = uuID + Constants.FILE_NAME_NOTE;
@@ -48,11 +47,11 @@ public class DeleteNoteFile extends AsyncTask<String, Void, Boolean> {
                     file.delete();
                 }
 
-                boolean isConnected = SyncHelper.isConnected(ctx);
+                boolean isConnected = SyncHelper.isConnected(mContext);
                 if (isConnected) {
-                    new DropboxHelper(ctx).deleteNote(uuID);
-                    new GDriveHelper(ctx).deleteNote(uuID);
-                    //new BoxHelper(ctx).deleteNoteFile(uuID);
+                    new DropboxHelper(mContext).deleteNote(uuID);
+                    new GDriveHelper(mContext).deleteNote(uuID);
+                    //new BoxHelper(mContext).deleteNoteFile(uuID);
                 }
             }
         }

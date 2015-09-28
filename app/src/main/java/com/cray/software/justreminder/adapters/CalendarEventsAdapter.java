@@ -24,12 +24,12 @@ import java.util.Date;
 
 public class CalendarEventsAdapter extends BaseAdapter{
 
-    LayoutInflater inflater;
-    ArrayList<EventsDataProvider.EventsItem> mDatas;
-    Context mContext;
-    ColorSetter cs;
-    Typeface typeface;
-    SharedPrefs prefs;
+    private LayoutInflater inflater;
+    private ArrayList<EventsDataProvider.EventsItem> mDatas;
+    private Context mContext;
+    private ColorSetter cs;
+    private Typeface typeface;
+    private SharedPrefs prefs;
 
     @SuppressWarnings("deprecation")
     public CalendarEventsAdapter(Context context, ArrayList<EventsDataProvider.EventsItem> datas) {
@@ -85,7 +85,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
             eventType.setText(mContext.getString(R.string.birthday_text));
             String title = item.getName();
             String phone = item.getNumber();
-            if (phone == null || phone.matches("")) phone = Contacts.get_Number(title, mContext);
+            if (phone == null || phone.matches("")) phone = Contacts.getNumber(title, mContext);
             if (phone != null && !phone.matches("")){
                 eventNumber.setText(phone);
             } else {

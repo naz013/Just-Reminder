@@ -35,7 +35,7 @@ public class GTasksHelper {
     public static final String TASKS_NEED_ACTION = "needsAction";
     public static final String TASKS_COMPLETE = "completed";
 
-    private Context ctx;
+    private Context mContext;
     private SharedPrefs prefs;
 
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
@@ -44,16 +44,16 @@ public class GTasksHelper {
     private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
 
     public GTasksHelper(Context context){
-        this.ctx = context;
+        this.mContext = context;
     }
 
     /**
      * API authorization method;
      */
     public void authorize(){
-        prefs = new SharedPrefs(ctx);
-        GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(ctx, Collections.singleton(TasksScopes.TASKS));
-        m_credential.setSelectedAccountName(new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
+        prefs = new SharedPrefs(mContext);
+        GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(TasksScopes.TASKS));
+        m_credential.setSelectedAccountName(new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         service = new Tasks.Builder(m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME).build();
     }
 
@@ -62,8 +62,8 @@ public class GTasksHelper {
      * @return
      */
     public boolean isLinked(){
-        prefs = new SharedPrefs(ctx);
-        return new SyncHelper(ctx).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
+        prefs = new SharedPrefs(mContext);
+        return new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     /**
@@ -83,7 +83,7 @@ public class GTasksHelper {
             if (note != null) task.setNotes(note);
             if (time != 0) task.setDue(new DateTime(time));
 
-            TasksData data = new TasksData(ctx);
+            TasksData data = new TasksData(mContext);
             data.open();
 
             Task result;
@@ -250,7 +250,7 @@ public class GTasksHelper {
 
             try {
                 TaskList result = service.tasklists().insert(taskList).execute();
-                TasksData data = new TasksData(ctx);
+                TasksData data = new TasksData(mContext);
                 data.open();
                 DateTime dateTime = result.getUpdated();
                 long updated = dateTime != null ? dateTime.getValue() : 0;

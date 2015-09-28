@@ -48,29 +48,27 @@ import java.io.IOException;
 
 public class CloudDrives extends AppCompatActivity {
 
-    ColorSetter cs = new ColorSetter(CloudDrives.this);
-    DropboxHelper dbx = new DropboxHelper(CloudDrives.this);
-    GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
-    BoxHelper box = new BoxHelper(CloudDrives.this);
-    SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
+    private DropboxHelper dbx = new DropboxHelper(CloudDrives.this);
+    private GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
+    private BoxHelper box = new BoxHelper(CloudDrives.this);
+    private SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
-    Button linkDropbox, linkGDrive, linkExchange, linkBox;
-    TextView gDriveTitle, dropboxTitle, exchangeTitle, boxTitle;
+    private Button linkDropbox, linkGDrive, linkExchange, linkBox;
+    private TextView gDriveTitle, dropboxTitle, exchangeTitle, boxTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
-    String MARKET_APP_JUSTREMINDER = "com.cray.software.justreminder";
-    String MARKET_APP_JUSTREMINDER_PRO = "com.cray.software.justreminderpro";
+    private String MARKET_APP_JUSTREMINDER = "com.cray.software.justreminder";
+    private String MARKET_APP_JUSTREMINDER_PRO = "com.cray.software.justreminderpro";
 
-    String accountName;
+    private String accountName;
     private Context ctx = this;
     private Activity a = this;
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(CloudDrives.this);
+        ColorSetter cs = new ColorSetter(CloudDrives.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.colorStatus());
@@ -78,7 +76,7 @@ public class CloudDrives extends AppCompatActivity {
         setContentView(R.layout.clouds_dialog_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);

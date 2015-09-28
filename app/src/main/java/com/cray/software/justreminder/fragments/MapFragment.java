@@ -31,7 +31,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.utils.Utils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -146,8 +145,8 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         .center(pos)
                         .radius(radius)
                         .strokeWidth(strokeWidth)
-                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
-                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+                        .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
             }
             if (animate) animate(pos);
         }
@@ -179,8 +178,8 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         .center(pos)
                         .radius(radius)
                         .strokeWidth(strokeWidth)
-                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
-                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+                        .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
             }
             if (animate) animate(pos);
         }
@@ -207,8 +206,8 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         .center(lastPos)
                         .radius(radius)
                         .strokeWidth(strokeWidth)
-                        .fillColor(Utils.getColor(getActivity(), circleColors[0]))
-                        .strokeColor(Utils.getColor(getActivity(), circleColors[1])));
+                        .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
+                        .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
             }
             animate(lastPos);
         }

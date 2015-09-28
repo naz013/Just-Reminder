@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.spinnerMenu;
+package com.cray.software.justreminder.spinner;
 
 public class SpinnerItem {
 

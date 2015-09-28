@@ -17,6 +17,12 @@ public class Language {
     public static final String RUSSIAN = "ru";
     public static final String SPANISH = "es";
 
+    /**
+     * Get locale for tts.
+     * @param context application context.
+     * @param birth flag for birthdays.
+     * @return Locale
+     */
     public Locale getLocale(Context context, boolean birth){
         Locale res = null;
         SharedPrefs sPrefs = new SharedPrefs(context);

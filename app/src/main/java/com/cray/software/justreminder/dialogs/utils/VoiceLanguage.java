@@ -21,18 +21,12 @@ import java.util.Locale;
 
 public class VoiceLanguage extends Activity{
 
-    ListView musicList;
-    TextView musicDialogOk;
-    TextView dialogTitle;
-    ColorSetter cs;
-    int uk = 0;
-    int ru = 1;
-    int en = 2;
+    private ListView musicList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(VoiceLanguage.this);
+        ColorSetter cs = new ColorSetter(VoiceLanguage.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -41,6 +35,9 @@ public class VoiceLanguage extends Activity{
         contacts.clear();
 
         final String localeCheck = Locale.getDefault().toString().toLowerCase();
+        int ru;
+        int uk;
+        int en;
         if (localeCheck.startsWith("uk")) {
             uk = 0;
             ru = 2;
@@ -82,27 +79,36 @@ public class VoiceLanguage extends Activity{
         musicList.setAdapter(adapter);
         musicList.setItemChecked(i, true);
 
-        dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.select_language_title));
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int selected = musicList.getCheckedItemPosition();
                 if (selected != -1) {
                     if (localeCheck.startsWith("uk")) {
-                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 0)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 1)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 2)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
                     } else if (localeCheck.startsWith("ru")) {
-                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
-                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 0)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 1)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 2)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
                     } else {
-                        if (selected == 0) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (selected == 1) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (selected == 2) prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
+                        if (selected == 0)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
+                        if (selected == 1)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
+                        if (selected == 2)
+                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
                     }
                     finish();
                 } else {

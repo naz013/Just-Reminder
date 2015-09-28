@@ -138,12 +138,14 @@
                     android:gravity="center_vertical"
                     android:text="@string/status_icon_title"
                     android:textSize="@dimen/settings_text_size_primary"
+                    android:id="@+id/i1"
                     android:layout_marginBottom="5dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/settings_text_size_secondary"
                     android:text="@string/status_icon_explanation"
+                    android:id="@+id/i2"
                     android:paddingBottom="10dp" />
 
             </LinearLayout>
