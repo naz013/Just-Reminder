@@ -34,9 +34,7 @@ public class VoiceWidgetConfig extends AppCompatActivity {
 
     private LinearLayout widgetBg;
 
-    private boolean isPro = false;
-
-@Override
+    @Override
 protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -68,7 +66,7 @@ protected void onCreate(Bundle savedInstanceState) {
     widgetBg = (LinearLayout) findViewById(R.id.widgetBg);
 
     Spinner headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
-    isPro = Module.isPro();
+        boolean isPro = Module.isPro();
     List<String> spinnerArray = new ArrayList<>();
     String[] colorsArray = getResources().getStringArray(R.array.color_list);
     Collections.addAll(spinnerArray, colorsArray);
@@ -84,141 +82,8 @@ protected void onCreate(Bundle savedInstanceState) {
     headerBgColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if (isPro) {
-                switch (i) {
-                    case 0:
-                        color = R.drawable.rectangle_stroke_red;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 1:
-                        color = R.drawable.rectangle_stroke_violet;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 2:
-                        color = R.drawable.rectangle_stroke_light_green;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 3:
-                        color = R.drawable.rectangle_stroke_green;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 4:
-                        color = R.drawable.rectangle_stroke_light_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 5:
-                        color = R.drawable.rectangle_stroke_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 6:
-                        color = R.drawable.rectangle_stroke_yellow;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 7:
-                        color = R.drawable.rectangle_stroke_orange;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 8:
-                        color = R.drawable.rectangle_stroke_grey;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 9:
-                        color = R.drawable.rectangle_stroke;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 10:
-                        color = R.drawable.rectangle_stroke_sand;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 11:
-                        color = R.drawable.rectangle_stroke_brown;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 12:
-                        color = R.drawable.rectangle_stroke_transparent;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 13:
-                        color = R.drawable.rectangle_stroke_deep_purple;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 14:
-                        color = R.drawable.rectangle_stroke_deep_orange;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 15:
-                        color = R.drawable.rectangle_stroke_lime;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 16:
-                        color = R.drawable.rectangle_stroke_indigo;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    default:
-                        color = R.drawable.rectangle_stroke_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                }
-            } else {
-                switch (i) {
-                    case 0:
-                        color = R.drawable.rectangle_stroke_red;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 1:
-                        color = R.drawable.rectangle_stroke_violet;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 2:
-                        color = R.drawable.rectangle_stroke_light_green;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 3:
-                        color = R.drawable.rectangle_stroke_green;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 4:
-                        color = R.drawable.rectangle_stroke_light_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 5:
-                        color = R.drawable.rectangle_stroke_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 6:
-                        color = R.drawable.rectangle_stroke_yellow;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 7:
-                        color = R.drawable.rectangle_stroke_orange;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 8:
-                        color = R.drawable.rectangle_stroke_grey;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 9:
-                        color = R.drawable.rectangle_stroke;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 10:
-                        color = R.drawable.rectangle_stroke_sand;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 11:
-                        color = R.drawable.rectangle_stroke_brown;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    case 12:
-                        color = R.drawable.rectangle_stroke_transparent;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                    default:
-                        color = R.drawable.rectangle_stroke_blue;
-                        widgetBg.setBackgroundResource(color);
-                        break;
-                }
-            }
+            color = WidgetUtils.getDrawable(i);
+            widgetBg.setBackgroundResource(color);
         }
 
         @Override
