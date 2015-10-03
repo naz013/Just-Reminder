@@ -3,7 +3,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,15 +18,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.note.NotesBase;
-import com.cray.software.justreminder.dialogs.utils.NoteReminderTime;
-import com.cray.software.justreminder.dialogs.utils.TextSize;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
-public class NotesSettingsFragment extends Fragment implements View.OnClickListener {
+public class NotesSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private CheckBox encryptNoteCheck, noteReminderCheck, backupNoteCheck, deleteFileCheck;
     private TextView noteReminderTime;
@@ -163,16 +162,17 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
                 deleteChange();
                 break;
             case R.id.noteReminderTime:
-                getActivity().getApplicationContext().startActivity(
-                        new Intent(getActivity().getApplicationContext(), NoteReminderTime.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 120, Prefs.QUICK_NOTE_REMINDER_TIME, getString(R.string.note_reminder_time_dialog), this);
                 break;
             case R.id.textSize:
-                getActivity().getApplicationContext().startActivity(
-                        new Intent(getActivity().getApplicationContext(), TextSize.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 18, Prefs.TEXT_SIZE, getString(R.string.text_size_dialog_title), this);
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+
     }
 
     class encryptNotes extends AsyncTask<Void, Void, Integer> {

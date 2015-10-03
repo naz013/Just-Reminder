@@ -38,7 +38,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.Telephony;
+import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;

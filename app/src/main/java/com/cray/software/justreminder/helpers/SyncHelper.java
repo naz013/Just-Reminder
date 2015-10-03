@@ -13,7 +13,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;

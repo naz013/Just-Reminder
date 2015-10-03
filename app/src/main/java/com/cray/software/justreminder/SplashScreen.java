@@ -18,6 +18,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
@@ -73,8 +74,8 @@ public class SplashScreen extends Activity{
             uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
             uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
             uiEd.putString(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
-            uiEd.putInt(Prefs.LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
-            uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+            uiEd.putInt(Prefs.LED_COLOR, LED.BLUE);
+            uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.LOCATION_RADIUS, 25);
             uiEd.putInt(Prefs.TRACK_DISTANCE, 1);
             uiEd.putInt(Prefs.TRACK_TIME, 1);
@@ -413,13 +414,13 @@ public class SplashScreen extends Activity{
                 sPrefs.saveBoolean(Prefs.LED_STATUS, false);
             }
             if (!sPrefs.isString(Prefs.LED_COLOR)) {
-                sPrefs.saveInt(Prefs.LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+                sPrefs.saveInt(Prefs.LED_COLOR, LED.BLUE);
             }
             if (!sPrefs.isString(Prefs.BIRTHDAY_LED_STATUS)) {
                 sPrefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
             }
             if (!sPrefs.isString(Prefs.BIRTHDAY_LED_COLOR)) {
-                sPrefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, Constants.ColorConstants.COLOR_BLUE);
+                sPrefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
             }
             if (!sPrefs.isString(Prefs.BIRTHDAY_VIBRATION_STATUS)) {
                 sPrefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);

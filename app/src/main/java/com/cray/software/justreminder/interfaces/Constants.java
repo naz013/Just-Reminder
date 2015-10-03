@@ -184,19 +184,6 @@ public class Constants {
     public static final int SYNC_MS_EXCHANGE_ONLY = 10;
     public static final int SYNC_ALL = 11;
 
-    public class ColorConstants{
-        public static final int COLOR_WHITE= 0xffffffff;
-        public static final int COLOR_RED = 0xffff0000;
-        public static final int COLOR_GREEN = 0xff008000;
-        public static final int COLOR_BLUE = 0xff0000ff;
-        public static final int COLOR_ORANGE = 0xffffa500;
-        public static final int COLOR_YELLOW = 0xffffff00;
-        public static final int COLOR_PINK = 0xffffc0cb;
-        public static final int COLOR_GREEN_LIGHT = 0xff00ff00;
-        public static final int COLOR_BLUE_LIGHT = 0xff1e90ff;
-        public static final int COLOR_PURPLE = 0xff9900FF;
-    }
-
     public class ContactConstants{
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_CONTACT_ID = "contact_id";

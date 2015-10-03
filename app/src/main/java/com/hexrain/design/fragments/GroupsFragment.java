@@ -4,38 +4,53 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.SimpleAdapter;
+import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.CategoryManager;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.modules.Module;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.io.File;
 
-public class GroupsFragment extends Fragment {
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
-    private DataBase db;
-    private SharedPrefs sPrefs;
-    private ListView listView;
+public class GroupsFragment extends Fragment implements SwipeListener {
+
+    private RecyclerView listView;
+    private LinearLayout emptyLayout;
+    private AdView adView;
+
+    private CategoryDataProvider provider;
+    private CategoryRecyclerAdapter adapter;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -56,19 +71,39 @@ public class GroupsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_simple_list_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        sPrefs = new SharedPrefs(getActivity());
+        LinearLayout emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
+        emptyItem.setVisibility(View.GONE);
 
-        listView = (ListView) rootView.findViewById(R.id.listView);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), CategoryManager.class)
-                        .putExtra(Constants.ITEM_ID_INTENT, id));
-            }
-        });
+        listView = (RecyclerView) rootView.findViewById(R.id.currentList);
 
+        if (!Module.isPro()) {
+            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
+            emptyLayout.setVisibility(View.GONE);
+
+            adView = (AdView) rootView.findViewById(R.id.adView);
+            adView.setVisibility(View.GONE);
+
+            AdRequest adRequest = new AdRequest.Builder()
+                    .build();
+            adView.loadAd(adRequest);
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    adView.setVisibility(View.GONE);
+                    emptyLayout.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAdLoaded() {
+                    emptyLayout.setVisibility(View.VISIBLE);
+                    adView.setVisibility(View.VISIBLE);
+                }
+            });
+
+            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
+        }
         return rootView;
     }
 
@@ -93,83 +128,93 @@ public class GroupsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadTemplates();
+        if (!Module.isPro()){
+            if (adView != null) {
+                adView.resume();
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (!Module.isPro()) {
+            if (adView != null) {
+                adView.destroy();
+            }
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        if (!Module.isPro()) {
+            if (adView != null) {
+                adView.pause();
+            }
+        }
+        super.onPause();
     }
 
     private void loadTemplates(){
-        db = new DataBase(getActivity());
-        db.open();
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), db.queryCategories());
-        final SwipeActionAdapter mAdapter = new SwipeActionAdapter(adapter);
-        mAdapter.setListView(listView);
-        mAdapter.setFixedBackgrounds(true);
-        sPrefs = new SharedPrefs(getActivity());
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light);
-        mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position) {
-                db = new DataBase(getActivity());
-                db.open();
-                Cursor c = db.queryCategories();
-                return c != null && c.getCount() > 1;
-            }
-
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    db = new DataBase(getActivity());
-                    if (!db.isOpen()) db.open();
-                    SimpleAdapter adapter = new SimpleAdapter(getActivity(), db.queryCategories());
-                    long itemId = adapter.getItemId(position);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            removeGroup(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            removeGroup(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(), CategoryManager.class)
-                                        .putExtra(Constants.ITEM_ID_INTENT, itemId));
-                            }
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(), CategoryManager.class)
-                                        .putExtra(Constants.ITEM_ID_INTENT, itemId));
-                            }
-                            break;
-                    }
-                }
-            }
-        });
-        listView.setAdapter(mAdapter);
+        provider = new CategoryDataProvider(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+        adapter = new CategoryRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        listView.setLayoutManager(mLayoutManager);
+        listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        listView.setItemAnimator(new LandingAnimator());
+        listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
+        mRecyclerViewSwipeManager.attachRecyclerView(listView);
         if (mCallbacks != null) mCallbacks.onListChange(listView);
-        db.close();
     }
 
-    private void removeGroup(long itemId){
+    private void removeGroup(int position){
+        long itemId = provider.getItem(position).getId();
         if (itemId != 0) {
+            DataBase db = new DataBase(getActivity());
+            db.open();
             Cursor s = db.getCategory(itemId);
             if (s != null && s.moveToFirst()){
                 String uuId = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 db.deleteCategory(itemId);
                 new DeleteAsync(getActivity(), uuId).execute();
             }
-            loadTemplates();
+            if (s != null) s.close();
+            db.close();
+            provider.removeItem(position);
+            adapter.notifyItemRemoved(position);
         }
+    }
+
+    @Override
+    public void onSwipeToRight(int position) {
+        startActivity(new Intent(getActivity(), CategoryManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onSwipeToLeft(int position) {
+        removeGroup(position);
+    }
+
+    @Override
+    public void onItemClicked(int position, View view) {
+        startActivity(new Intent(getActivity(), CategoryManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        startActivity(new Intent(getActivity(), CategoryManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
     public class DeleteAsync extends AsyncTask<Void, Void, Void> {

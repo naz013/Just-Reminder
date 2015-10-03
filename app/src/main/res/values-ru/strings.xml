@@ -703,8 +703,9 @@
     <string name="one_day">1 день</string>
     <string name="dropbox">Dropbox</string>
     <string name="deleting">Удаление...</string>
-    <string name="beta_version">BETA version!</string>
-    <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
-    <string name="move_to_list">Move to list</string>
-    <string name="select_list">Select list</string>
+    <string name="beta_version">BETA версия!</string>
+    <string name="beta_version_message">Помни эта BETA версия, по этому приложение может иметь ошибки!</string>
+    <string name="select_list">Выберите список</string>
+    <string name="move_to_list">Переместить в другой список</string>
+    <string name="same_list_warming">Вы выбрали тот самый список!</string>
 </resources>

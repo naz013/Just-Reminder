@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,12 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.utils.DelayTime;
-import com.cray.software.justreminder.dialogs.utils.LedColor;
-import com.cray.software.justreminder.dialogs.utils.RepeatInterval;
-import com.cray.software.justreminder.dialogs.utils.SelectLocale;
-import com.cray.software.justreminder.dialogs.utils.SelectVolume;
 import com.cray.software.justreminder.dialogs.utils.SoundType;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -29,7 +26,7 @@ import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
 
-public class NotificationSettingsFragment extends Fragment implements View.OnClickListener {
+public class NotificationSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
@@ -175,8 +172,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         locale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.ttsLocale(getActivity(), Prefs.TTS_LOCALE);
             }
         });
 
@@ -217,9 +213,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             chooseLedColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getActivity().getApplicationContext()
-                            .startActivity(new Intent(getActivity().getApplicationContext(), LedColor.class)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    Dialog.ledColor(getActivity(), Prefs.LED_COLOR);
                 }
             });
             textLed2 = (TextView) rootView.findViewById(R.id.textLed2);
@@ -333,8 +327,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         } else {
             sPrefs.saveBoolean(Prefs.TTS, true);
             ttsCheck.setChecked(true);
-            getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            Dialog.ttsLocale(getActivity(), Prefs.TTS_LOCALE);
         }
         checkTTS();
     }
@@ -582,20 +575,20 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 repeatChange();
                 break;
             case R.id.delayFor:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), DelayTime.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 60, Prefs.DELAY_TIME, getString(R.string.delay_dialog_title), this);
                 break;
             case R.id.volume:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), SelectVolume.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 25, Prefs.VOLUME, getString(R.string.settings_volume_title), this);
                 break;
             case R.id.repeatInterval:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), RepeatInterval.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 60, Prefs.NOTIFICATION_REPEAT_INTERVAL, getString(R.string.repeat_interval_dialog_title), this);
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        showDays();
+        showRepeat();
     }
 }

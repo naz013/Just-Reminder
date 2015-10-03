@@ -3,8 +3,11 @@ package com.hexrain.design.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,16 +23,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.note.Note;
-import com.cray.software.justreminder.note.NotesBase;
-import com.cray.software.justreminder.note.NotesRecyclerAdapter;
-import com.cray.software.justreminder.note.SyncNotes;
+import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.adapters.NotesRecyclerAdapter;
+import com.cray.software.justreminder.async.SyncNotes;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -38,13 +43,14 @@ import com.hexrain.design.ScreenManager;
 
 import java.util.ArrayList;
 
-public class NotesFragment extends Fragment implements SyncListener {
+public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
     private NotesBase db;
     private SharedPrefs sPrefs;
     private RecyclerView currentList;
     private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
+    private NotesRecyclerAdapter adapter;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -249,7 +255,8 @@ public class NotesFragment extends Fragment implements SyncListener {
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 data.add(new Note(note, color, style, image, id));
             } while (c.moveToNext());
-            NotesRecyclerAdapter adapter = new NotesRecyclerAdapter(getActivity(), data);
+            adapter = new NotesRecyclerAdapter(getActivity(), data);
+            adapter.addListener(this);
             currentList.setAdapter(adapter);
             currentList.setItemAnimator(new DefaultItemAnimator());
             if (adapter.getItemCount() == 0) {
@@ -313,5 +320,36 @@ public class NotesFragment extends Fragment implements SyncListener {
             loaderAdapter();
             getActivity().invalidateOptionsMenu();
         }
+    }
+
+    @Override
+    public void onItemClicked(int position, View view) {
+        long id = adapter.getItemId(position);
+        sPrefs = new SharedPrefs(getActivity());
+        if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Intent intent = new Intent(getActivity(), NotePreviewFragment.class);
+                intent.putExtra(Constants.EDIT_ID, id);
+                String transitionName = "image";
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view,
+                                transitionName);
+                getActivity().startActivity(intent, options.toBundle());
+            } else {
+                getActivity().startActivity(
+                        new Intent(getActivity(), NotePreviewFragment.class)
+                                .putExtra(Constants.EDIT_ID, id));
+            }
+        } else {
+            getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                    .putExtra(Constants.EDIT_ID, id));
+        }
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        long id = adapter.getItemId(position);
+        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                .putExtra(Constants.EDIT_ID, id));
     }
 }

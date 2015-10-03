@@ -66,7 +66,7 @@ import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScroll
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;

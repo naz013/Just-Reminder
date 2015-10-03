@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,10 +24,11 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.reminder.RemindersRecyclerAdapter;
+import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -42,13 +42,15 @@ import com.hexrain.design.ScreenManager;
 
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
-public class TrashFragment extends Fragment {
+public class TrashFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
     private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
 
     private DataBase DB;
+    private RemindersRecyclerAdapter adapter;
+    private ReminderDataProvider provider;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -99,7 +101,6 @@ public class TrashFragment extends Fragment {
 
         TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getActivity().getString(R.string.string_no_archived));
-        emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -109,16 +110,7 @@ public class TrashFragment extends Fragment {
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-        /*currentList.setEmptyView(emptyItem);
-        currentList.setVisibility(View.VISIBLE);
-        currentList.setItemsCanFocus(false);*/
         loaderAdapter();
-        /*currentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Reminder.edit(id, getActivity());
-            }
-        });*/
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -197,55 +189,21 @@ public class TrashFragment extends Fragment {
         super.onPause();
     }
 
-    ReminderDataProvider provider;
-
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         provider = new ReminderDataProvider(getActivity());
         provider.setCursor(DB.getArchivedReminders());
-        provider.load();
-        int size = provider.getCount();
-        if (size > 0){
-            currentList.setVisibility(View.VISIBLE);
-            emptyItem.setVisibility(View.GONE);
-        } else {
-            currentList.setVisibility(View.GONE);
-            emptyItem.setVisibility(View.VISIBLE);
-        }
+        reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
         mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
         RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-        RemindersRecyclerAdapter myItemAdapter = new RemindersRecyclerAdapter(getActivity(), provider);
-        myItemAdapter.setEventListener(new RemindersRecyclerAdapter.EventListener() {
-            @Override
-            public void onItemEdit(int position) {
-                Reminder.edit(provider.getItem(position).getId(), getActivity());
-            }
 
-            @Override
-            public void onItemRemoved(int position) {
-                Reminder.delete(provider.getItem(position).getId(), getActivity());
-                loaderAdapter();
-            }
-
-            @Override
-            public void onItemSwitched(boolean position) {
-            }
-
-            @Override
-            public void onItemClicked(int position, SwitchCompat check) {
-                Reminder.edit(provider.getItem(position).getId(), getActivity());
-            }
-
-            @Override
-            public void onItemLongClicked(int position) {
-                Reminder.edit(provider.getItem(position).getId(), getActivity());
-            }
-        });
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(myItemAdapter);
+        adapter = new RemindersRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
         animator.setSupportsChangeAnimations(false);
         currentList.setLayoutManager(mLayoutManager);
@@ -254,54 +212,17 @@ public class TrashFragment extends Fragment {
         currentList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        /*final SwipeActionAdapter mAdapter = new SwipeActionAdapter(archiveCursorAdapter);
-        mAdapter.setListView(currentList);
-        mAdapter.setFixedBackgrounds(true);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.swipe_edit_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, R.layout.swipe_delete_layout)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, R.layout.swipe_edit_layout);
-        mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position) {
-                return true;
-            }
-
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    long itId = archiveCursorAdapter.getItemId(position);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT |
-                                SwipeDirections.DIRECTION_FAR_LEFT:
-                            removeReminder(itId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT |
-                                SwipeDirections.DIRECTION_FAR_RIGHT:
-                            Reminder.edit(itId, getActivity());
-                            break;
-                    }
-                }
-            }
-        });
-        currentList.setAdapter(mAdapter);*/
         if (mCallbacks != null) mCallbacks.onListChange(currentList);
     }
 
-    private void removeReminder(long itId){
-        if (itId != 0) {
-            Reminder.delete(itId, getActivity());
-            Toast.makeText(getActivity(), getString(R.string.swipe_delete),
-                    Toast.LENGTH_SHORT).show();
-            loaderAdapter();
+    private void reloadView() {
+        int size = provider.getCount();
+        if (size > 0){
+            currentList.setVisibility(View.VISIBLE);
+            emptyItem.setVisibility(View.GONE);
+        } else {
+            currentList.setVisibility(View.GONE);
+            emptyItem.setVisibility(View.VISIBLE);
         }
     }
 
@@ -319,5 +240,33 @@ public class TrashFragment extends Fragment {
         Toast.makeText(getActivity(), getString(R.string.string_trash_cleared),
                 Toast.LENGTH_SHORT).show();
         loaderAdapter();
+    }
+
+    @Override
+    public void onSwipeToRight(int position) {
+        Reminder.edit(provider.getItem(position).getId(), getActivity());
+    }
+
+    @Override
+    public void onSwipeToLeft(int position) {
+        Reminder.delete(provider.getItem(position).getId(), getActivity());
+        provider.removeItem(position);
+        adapter.notifyItemRemoved(position);
+        reloadView();
+    }
+
+    @Override
+    public void onItemSwitched(int position) {
+
+    }
+
+    @Override
+    public void onItemClicked(int position, View view) {
+        Reminder.edit(provider.getItem(position).getId(), getActivity());
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        Reminder.edit(provider.getItem(position).getId(), getActivity());
     }
 }

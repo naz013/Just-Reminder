@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -302,12 +303,16 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void moveTask(String listId) {
-        data.open();
-        data.updateTask(id, listId);
-        new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
-                0, null, id).execute();
-        data.close();
-        finish();
+        if (!listId.matches(initListId)) {
+            data.open();
+            data.updateTask(id, listId);
+            new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
+                    0, null, id).execute();
+            data.close();
+            finish();
+        } else {
+            Toast.makeText(this, R.string.same_list_warming, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void selectList(final boolean move) {

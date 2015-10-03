@@ -14,21 +14,43 @@
         android:id="@+id/wrapper"
         android:layout_height="match_parent">
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listView"
-        android:divider="@android:color/transparent"
-        android:choiceMode="singleChoice"
-        android:fastScrollEnabled="true" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/currentList"
+            android:layout_width="match_parent"
+            android:overScrollMode="never"
+            android:visibility="visible"
+            android:divider="@android:color/transparent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:focusable="false"
+            android:choiceMode="singleChoice"
+            android:fastScrollEnabled="true"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:id="@+id/emptyList"
-        android:visibility="gone"
-        android:text="@string/empty_places_list_text"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/emptyItem"
+            android:visibility="visible"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:id="@+id/emptyImage"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="35dp"
+                android:src="@drawable/ic_place_white_24dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/emptyText"
+                android:textSize="25sp"
+                android:text="@string/empty_places_list_text"
+                android:gravity="center|top"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 </LinearLayout>

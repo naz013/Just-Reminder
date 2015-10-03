@@ -38,12 +38,6 @@ public class ReminderDataProvider {
 
     public void setCursor(Cursor c){
         this.c = c;
-    }
-
-    public void swapCursor(Cursor c){
-        this.old = this.c;
-        this.c = c;
-        data.clear();
         load();
     }
 

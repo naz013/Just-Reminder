@@ -19,6 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 public class LedColor extends Activity{
@@ -70,25 +71,25 @@ public class LedColor extends Activity{
                     Toast.makeText(LedColor.this, getString(R.string.turn_screen_warm), Toast.LENGTH_SHORT).show();
                     builder = new NotificationCompat.Builder(LedColor.this);
                     if (i == 0){
-                        showLED(Constants.ColorConstants.COLOR_WHITE);
+                        showLED(LED.WHITE);
                     } else if (i == 1){
-                        showLED(Constants.ColorConstants.COLOR_RED);
+                        showLED(LED.RED);
                     } else if (i == 2){
-                        showLED(Constants.ColorConstants.COLOR_GREEN);
+                        showLED(LED.GREEN);
                     } else if (i == 3){
-                        showLED(Constants.ColorConstants.COLOR_BLUE);
+                        showLED(LED.BLUE);
                     } else if (i == 4){
-                        showLED(Constants.ColorConstants.COLOR_ORANGE);
+                        showLED(LED.ORANGE);
                     } else if (i == 5){
-                        showLED(Constants.ColorConstants.COLOR_YELLOW);
+                        showLED(LED.YELLOW);
                     } else if (i == 6){
-                        showLED(Constants.ColorConstants.COLOR_PINK);
+                        showLED(LED.PINK);
                     } else if (i == 7){
-                        showLED(Constants.ColorConstants.COLOR_GREEN_LIGHT);
+                        showLED(LED.GREEN_LIGHT);
                     } else if (i == 8){
-                        showLED(Constants.ColorConstants.COLOR_BLUE_LIGHT);
+                        showLED(LED.BLUE_LIGHT);
                     } else {
-                        showLED(Constants.ColorConstants.COLOR_BLUE);
+                        showLED(LED.BLUE);
                     }
                 }
             }
@@ -106,25 +107,25 @@ public class LedColor extends Activity{
                         if (id == 3) prefs = Prefs.BIRTHDAY_LED_COLOR;
                         else prefs = Prefs.LED_COLOR;
                         if (selectedPosition == 0) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_WHITE);
+                            sPrefs.saveInt(prefs, LED.WHITE);
                         } else if (selectedPosition == 1) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_RED);
+                            sPrefs.saveInt(prefs, LED.RED);
                         } else if (selectedPosition == 2) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_GREEN);
+                            sPrefs.saveInt(prefs, LED.GREEN);
                         } else if (selectedPosition == 3) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_BLUE);
+                            sPrefs.saveInt(prefs, LED.BLUE);
                         } else if (selectedPosition == 4) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_ORANGE);
+                            sPrefs.saveInt(prefs, LED.ORANGE);
                         } else if (selectedPosition == 5) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_YELLOW);
+                            sPrefs.saveInt(prefs, LED.YELLOW);
                         } else if (selectedPosition == 6) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_PINK);
+                            sPrefs.saveInt(prefs, LED.PINK);
                         } else if (selectedPosition == 7) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_GREEN_LIGHT);
+                            sPrefs.saveInt(prefs, LED.GREEN_LIGHT);
                         } else if (selectedPosition == 8) {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_BLUE_LIGHT);
+                            sPrefs.saveInt(prefs, LED.BLUE_LIGHT);
                         } else {
-                            sPrefs.saveInt(prefs, Constants.ColorConstants.COLOR_BLUE);
+                            sPrefs.saveInt(prefs, LED.BLUE);
                         }
                     } else {
                         Intent i = new Intent();

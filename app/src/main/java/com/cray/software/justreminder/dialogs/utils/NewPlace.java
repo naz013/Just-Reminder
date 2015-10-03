@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.dialogs.utils;
 
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,9 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
@@ -28,6 +31,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
 
     private LatLng place;
     private String placeTitle;
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         toolbar.setTitle(getString(R.string.new_place_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+
+        id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
         placeName = (FloatingEditText) findViewById(R.id.placeName);
         MapFragment googleMap = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -74,6 +80,19 @@ public class NewPlace extends AppCompatActivity implements MapListener {
                 addPlace();
             }
         });
+
+        if (id != 0){
+            int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+            db.open();
+            Cursor c = db.getPlace(id);
+            if (c != null && c.moveToFirst()){
+                String text = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
+                double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
+                double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
+                googleMap.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
+                placeName.setText(text);
+            }
+        }
     }
 
     private void addPlace(){
@@ -89,7 +108,11 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             Double latitude = place.latitude;
             Double longitude = place.longitude;
             db.open();
-            db.insertPlace(task, latitude, longitude);
+            if (id != 0){
+                db.updatePlace(id, task, latitude, longitude);
+            } else {
+                db.insertPlace(task, latitude, longitude);
+            }
             db.close();
             finish();
         } else {

@@ -22,6 +22,12 @@ public class Marker {
     private LatLng position;
     private int icon;
     private long id;
+    private boolean mPinnedToSwipeLeft;
+
+    public Marker(String title, long id){
+        this.title = title;
+        this.id = id;
+    }
 
     public Marker(String title, LatLng position, int icon, long id){
         this.position = position;
@@ -44,5 +50,13 @@ public class Marker {
 
     public int getIcon(){
         return icon;
+    }
+
+    public boolean isPinnedToSwipeLeft() {
+        return mPinnedToSwipeLeft;
+    }
+
+    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
+        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 }

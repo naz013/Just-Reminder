@@ -14,10 +14,10 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.PlacesList;
-import com.cray.software.justreminder.dialogs.utils.MapType;
 import com.cray.software.justreminder.dialogs.utils.MarkerStyle;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.dialogs.utils.TrackerOption;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
@@ -116,17 +116,11 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         }
     }
 
-    private void chooseMapType(){
-        getActivity().getApplicationContext()
-                .startActivity(new Intent(getActivity().getApplicationContext(), MapType.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mapType:
-                chooseMapType();
+                Dialog.mapType(getActivity());
                 break;
             case R.id.notificationOption:
                 notificationChange();

@@ -109,6 +109,7 @@ public class Prefs {
     public static final String LAST_FRAGMENT = "last_fragment";
     public static final String CALENDAR_IMAGE = "calendar_image";
     public static final String EXPORT_SETTINGS = "export_settings";
+    public static final String FLOATING_NOTE = "floating_note";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";

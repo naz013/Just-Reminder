@@ -20,7 +20,7 @@ import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.dialogs.utils.SelectVolume;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.note.NotesBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;

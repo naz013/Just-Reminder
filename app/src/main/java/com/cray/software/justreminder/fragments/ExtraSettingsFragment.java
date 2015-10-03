@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,11 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.TemplatesList;
 import com.cray.software.justreminder.dialogs.utils.ContactGroups;
-import com.cray.software.justreminder.dialogs.utils.RepeatInterval;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 
-public class ExtraSettingsFragment extends Fragment implements View.OnClickListener {
+public class ExtraSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
@@ -162,10 +162,7 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
                 missedChange();
                 break;
             case R.id.missedTime:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), RepeatInterval.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .putExtra(Constants.ITEM_ID_INTENT, 2));
+                Dialog.dialogWithSeek(getActivity(), 60, Prefs.MISSED_CALL_TIME, getString(R.string.repeat_interval_dialog_title), this);
                 break;
             case R.id.quickSMS:
                 quickChange();
@@ -184,5 +181,10 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+
     }
 }

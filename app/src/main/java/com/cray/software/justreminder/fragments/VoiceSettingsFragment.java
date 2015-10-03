@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.VoiceHelp;
-import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.utils.TimesOfDay;
-import com.cray.software.justreminder.dialogs.utils.VoiceLanguage;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
@@ -54,10 +53,7 @@ public class VoiceSettingsFragment extends Fragment {
         voiceLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(),
-                                VoiceLanguage.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.language(getActivity());
             }
         });
 
@@ -72,17 +68,6 @@ public class VoiceSettingsFragment extends Fragment {
                 getActivity().getApplicationContext()
                         .startActivity(new Intent(getActivity().getApplicationContext(),
                                 TimesOfDay.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        });
-
-        TextView assignContacts = (TextView) rootView.findViewById(R.id.assignContacts);
-        assignContacts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(),
-                                AboutDialog.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });

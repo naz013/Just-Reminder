@@ -721,37 +721,19 @@ public class DataBase {
 
     public Cursor getPlace(String name) throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, new String[] {Constants.LocationConstants.COLUMN_ID, Constants.LocationConstants.COLUMN_LOCATION_NAME,
-                Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE,
-                Constants.LocationConstants.COLUMN_LOCATION_TECH,
-                Constants.LocationConstants.COLUMN_LOCATION_TECH1, Constants.LocationConstants.COLUMN_LOCATION_TECH2,
-                Constants.LocationConstants.COLUMN_LOCATION_VAR, Constants.LocationConstants.COLUMN_LOCATION_VAR1,
-                        Constants.LocationConstants.COLUMN_LOCATION_VAR2},
-                Constants.LocationConstants.COLUMN_LOCATION_NAME  +
+        return db.query(LOCATION_TABLE_NAME, null, Constants.LocationConstants.COLUMN_LOCATION_NAME  +
                         "='" + name + "'", null, null, null, null, null);
     }
 
     public Cursor getPlace(long id) throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, new String[] {Constants.LocationConstants.COLUMN_ID, Constants.LocationConstants.COLUMN_LOCATION_NAME,
-                        Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE,
-                        Constants.LocationConstants.COLUMN_LOCATION_TECH,
-                        Constants.LocationConstants.COLUMN_LOCATION_TECH1, Constants.LocationConstants.COLUMN_LOCATION_TECH2,
-                        Constants.LocationConstants.COLUMN_LOCATION_VAR, Constants.LocationConstants.COLUMN_LOCATION_VAR1,
-                        Constants.LocationConstants.COLUMN_LOCATION_VAR2},
-                Constants.LocationConstants.COLUMN_ID  +
+        return db.query(LOCATION_TABLE_NAME, null, Constants.LocationConstants.COLUMN_ID  +
                         "=" + id, null, null, null, null, null);
     }
 
     public Cursor queryPlaces() throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, new String[]{Constants.LocationConstants.COLUMN_ID,
-                Constants.LocationConstants.COLUMN_LOCATION_NAME,
-                Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE,
-                Constants.LocationConstants.COLUMN_LOCATION_TECH,
-                Constants.LocationConstants.COLUMN_LOCATION_TECH1, Constants.LocationConstants.COLUMN_LOCATION_TECH2,
-                Constants.LocationConstants.COLUMN_LOCATION_VAR, Constants.LocationConstants.COLUMN_LOCATION_VAR1,
-                Constants.LocationConstants.COLUMN_LOCATION_VAR2}, null, null, null, null, null);
+        return db.query(LOCATION_TABLE_NAME, null, null, null, null, null, null);
     }
 
     public long insertPlace (String name, double latitude, double longitude) {
@@ -760,8 +742,16 @@ public class DataBase {
         cv.put(Constants.LocationConstants.COLUMN_LOCATION_NAME, name);
         cv.put(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, latitude);
         cv.put(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE, longitude);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(LOCATION_TABLE_NAME, null, cv);
+    }
+
+    public boolean updatePlace(long rowId, String name, double latitude, double longitude){
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.LocationConstants.COLUMN_LOCATION_NAME, name);
+        args.put(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, latitude);
+        args.put(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE, longitude);
+        return db.update(LOCATION_TABLE_NAME, args, Constants.LocationConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     //Events table

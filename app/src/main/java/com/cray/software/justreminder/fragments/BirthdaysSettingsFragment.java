@@ -3,6 +3,7 @@ package com.cray.software.justreminder.fragments;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -26,8 +27,8 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.BirthdayImport;
-import com.cray.software.justreminder.dialogs.utils.DaysTo;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -45,7 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener {
+public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private ActionBar ab;
     private SharedPrefs sPrefs;
@@ -298,9 +299,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 new checkBirthdays(getActivity()).execute();
                 break;
             case R.id.daysTo:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), DaysTo.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
                 break;
             case R.id.birthdayNotification:
                 BirthdayNotificationSettingsFragment newFragment = new BirthdayNotificationSettingsFragment();
@@ -324,6 +323,12 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             birthReminderCheck.setChecked(true);
             getActivity().startService(new Intent(getActivity(), SetBirthdays.class));
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        showDays();
+        showTime();
     }
 
     class checkBirthdays extends AsyncTask<Void, Void, Integer>{

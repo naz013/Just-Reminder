@@ -3,7 +3,7 @@
     <item>
         <color android:color="@color/colorWhite"/>
     </item>
-    <item android:left="16dp">
+    <item android:left="20dp">
         <bitmap
             android:src="@drawable/ic_create_grey600_24dp"
             android:gravity="left|center_vertical"/>

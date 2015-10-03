@@ -702,9 +702,10 @@
     <string name="twelve_hours">12 годин</string>
     <string name="one_day">1 день</string>
     <string name="dropbox">Dropbox</string>
-    <string name="deleting">Видалення...</string>
-    <string name="beta_version">BETA version!</string>
-    <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
-    <string name="move_to_list">Move to list</string>
-    <string name="select_list">Select list</string>
+    <string name="deleting">Видалення…</string>
+    <string name="beta_version">BETA версія!</string>
+    <string name="beta_version_message">Пам\'ятай це BETA версія, тому додаток може мати помилки!</string>
+    <string name="select_list">Оберіть список</string>
+    <string name="move_to_list">Перемістити до іншого списку</string>
+    <string name="same_list_warming">Ви обрали той самий список!</string>
 </resources>

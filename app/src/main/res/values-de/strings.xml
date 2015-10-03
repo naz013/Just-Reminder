@@ -704,7 +704,8 @@
     <string name="dropbox">Dropbox</string>
     <string name="deleting">Löschen von...</string>
     <string name="beta_version">BETA version!</string>
-    <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
-    <string name="move_to_list">Move to list</string>
-    <string name="select_list">Select list</string>
+    <string name="beta_version_message">Denken Sie daran, es BETA-Version, so Antrag kann Fehler enthalten!</string>
+    <string name="move_to_list">Zu bewegen, um eine andere Liste</string>
+    <string name="select_list">Auswahlliste</string>
+    <string name="same_list_warming">Sie haben wählen Sie dieselbe Liste!</string>
 </resources>

@@ -1,10 +1,8 @@
 package com.cray.software.justreminder.fragments;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,21 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.dialogs.CloudDrives;
-import com.cray.software.justreminder.dialogs.utils.EventDuration;
 import com.cray.software.justreminder.dialogs.utils.SelectCalendar;
 import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 
-import java.io.File;
 import java.util.ArrayList;
 
-public class ExportSettingsFragment extends Fragment implements View.OnClickListener {
+public class ExportSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private RelativeLayout exportTasks;
     private CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
@@ -194,9 +188,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 exportToCalendarChange();
                 break;
             case R.id.eventDuration:
-                getActivity().getApplicationContext().startActivity(
-                        new Intent(getActivity().getApplicationContext(), EventDuration.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration_title), this);
                 break;
             case R.id.selectCalendar:
                 getActivity().getApplicationContext().startActivity(
@@ -212,98 +204,19 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.clean:
-                cleanFolders();
+                Dialog.cleanFolders(getActivity());
                 break;
             case R.id.syncSettings:
                 prefsChange();
                 break;
             case R.id.syncInterval:
-                chooseInterval();
+                Dialog.syncInterval(getActivity());
                 break;
         }
     }
 
-    private void chooseInterval() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setCancelable(true);
-        builder.setTitle(getActivity().getString(R.string.auto_sync_interval));
-        final CharSequence[] items = {getString(R.string.one_hour),
-                getString(R.string.six_hours),
-                getString(R.string.twelve_hours),
-                getString(R.string.one_day)};
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(getActivity());
-                if (item == 0) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 1);
-                } else if (item == 1) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
-                } else if (item == 2) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 12);
-                } else if (item == 3) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 24);
-                }
-                new AutoSyncAlarm().setAlarm(getActivity());
-                dialog.dismiss();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
+    @Override
+    public void onDismiss(DialogInterface dialog) {
 
-    public void DeleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                DeleteRecursive(child);
-
-        fileOrDirectory.delete();
-    }
-
-    private void cleanFolders() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setCancelable(true);
-        builder.setTitle(getActivity().getString(R.string.settings_clean_title));
-        builder.setMessage(getActivity().getString(R.string.clean_dialog_message));
-        builder.setNeutralButton(getActivity().getString(R.string.clean_dialog_button_local), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (SyncHelper.isSdPresent()){
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
-                    DeleteRecursive(sdPathDr);
-                }
-            }
-        });
-        builder.setNegativeButton(getActivity().getString(R.string.button_close), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getActivity().getString(R.string.clean_dialog_button_full), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (SyncHelper.isSdPresent()){
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
-                    DeleteRecursive(sdPathDr);
-                }
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        GDriveHelper gdx = new GDriveHelper(getActivity());
-                        DropboxHelper dbx = new DropboxHelper(getActivity());
-                        if (SyncHelper.isConnected(getActivity())){
-                            gdx.clean();
-                            dbx.cleanFolder();
-                        }
-                    }
-                }).start();
-
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }

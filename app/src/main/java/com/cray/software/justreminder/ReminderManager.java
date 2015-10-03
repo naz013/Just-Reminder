@@ -25,7 +25,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -78,6 +77,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
@@ -85,9 +85,9 @@ import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.TimerType;
+import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
@@ -3698,31 +3698,31 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 int position = data.getIntExtra(Constants.SELECTED_LED_COLOR, -1);
                 String selColor = null;
                 if (position == 0) {
-                    ledColor = Constants.ColorConstants.COLOR_WHITE;
+                    ledColor = LED.WHITE;
                     selColor = getString(R.string.led_color_white);
                 } else if (position == 1) {
-                    ledColor = Constants.ColorConstants.COLOR_RED;
+                    ledColor = LED.RED;
                     selColor = getString(R.string.led_color_red);
                 } else if (position == 2) {
-                    ledColor = Constants.ColorConstants.COLOR_GREEN;
+                    ledColor = LED.GREEN;
                     selColor = getString(R.string.led_color_green);
                 } else if (position == 3) {
-                    ledColor = Constants.ColorConstants.COLOR_BLUE;
+                    ledColor = LED.BLUE;
                     selColor = getString(R.string.led_color_blue);
                 } else if (position == 4) {
-                    ledColor = Constants.ColorConstants.COLOR_ORANGE;
+                    ledColor = LED.ORANGE;
                     selColor = getString(R.string.led_color_orange);
                 } else if (position == 5) {
-                    ledColor = Constants.ColorConstants.COLOR_YELLOW;
+                    ledColor = LED.YELLOW;
                     selColor = getString(R.string.led_color_yellow);
                 } else if (position == 6) {
-                    ledColor = Constants.ColorConstants.COLOR_PINK;
+                    ledColor = LED.PINK;
                     selColor = getString(R.string.led_color_pink);
                 } else if (position == 7) {
-                    ledColor = Constants.ColorConstants.COLOR_GREEN_LIGHT;
+                    ledColor = LED.GREEN_LIGHT;
                     selColor = getString(R.string.led_color_green_light);
                 } else if (position == 8) {
-                    ledColor = Constants.ColorConstants.COLOR_BLUE_LIGHT;
+                    ledColor = LED.BLUE_LIGHT;
                     selColor = getString(R.string.led_color_blue_light);
                 }
 

@@ -15,9 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.utils.LedColor;
-import com.cray.software.justreminder.dialogs.utils.SelectLocale;
 import com.cray.software.justreminder.dialogs.utils.SoundType;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -123,10 +122,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
          chooseLedColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getActivity().getApplicationContext()
-                            .startActivity(new Intent(getActivity().getApplicationContext(), LedColor.class)
-                                    .putExtra(Constants.BIRTHDAY_INTENT_ID, 3)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    Dialog.ledColor(getActivity(), Prefs.BIRTHDAY_LED_COLOR);
              }
             });
         textLed2 = (TextView) rootView.findViewById(R.id.textLed2);
@@ -162,9 +158,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         locale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
-                        .putExtra("tts", 1)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialog.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
             }
         });
 
@@ -286,9 +280,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, true);
             ttsCheck.setChecked(true);
-            getActivity().startActivity(new Intent(getActivity(), SelectLocale.class)
-                    .putExtra("tts", 1)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            Dialog.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
         }
         checkTTS();
     }
