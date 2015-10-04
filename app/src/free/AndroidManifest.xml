@@ -2,6 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="internalOnly" >
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
     <permission
         android:name="com.cray.software.justreminder.maps.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />

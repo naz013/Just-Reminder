@@ -240,13 +240,14 @@
             android:orientation="vertical"
             android:id="@+id/mapContainerOut">
 
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout
                 android:id="@+id/mapOut"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="true"
-                android:layout_alignParentBottom="true"
-                android:name="com.cray.software.justreminder.fragments.MapFragment"/>
+                android:orientation="vertical"
+                android:layout_alignParentBottom="true">
+
+            </LinearLayout>
 
         </RelativeLayout>
 

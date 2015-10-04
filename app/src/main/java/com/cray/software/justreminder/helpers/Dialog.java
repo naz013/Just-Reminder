@@ -588,7 +588,29 @@ public class Dialog {
                 context.getString(R.string.six_hours),
                 context.getString(R.string.twelve_hours),
                 context.getString(R.string.one_day)};
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+
+        int position;
+        SharedPrefs prefs = new SharedPrefs(context);
+        int interval = prefs.loadInt(Prefs.AUTO_BACKUP_INTERVAL);
+        switch (interval){
+            case 1:
+                position = 0;
+                break;
+            case 6:
+                position = 1;
+                break;
+            case 12:
+                position = 2;
+                break;
+            case 24:
+                position = 3;
+                break;
+            default:
+                position = 0;
+                break;
+        }
+
+        builder.setSingleChoiceItems(items, position, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(context);
                 if (item == 0) {
@@ -601,6 +623,11 @@ public class Dialog {
                     prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 24);
                 }
                 new AutoSyncAlarm().setAlarm(context);
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });

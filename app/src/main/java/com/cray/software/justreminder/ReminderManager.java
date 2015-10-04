@@ -27,6 +27,8 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -1980,10 +1982,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
 
-        map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        map = new MapFragment();
         map.setListener(this);
         map.enableTouch(true);
         map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+
+        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentTransaction fragTransaction = fragMan.beginTransaction();
+        fragTransaction.add(R.id.map, map);
+        fragTransaction.commit();
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2252,10 +2259,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
 
-        mapOut = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mapOut);
+        mapOut = new MapFragment();
         mapOut.setListener(this);
         mapOut.enableTouch(true);
         mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+
+        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentTransaction fragTransaction = fragMan.beginTransaction();
+        fragTransaction.add(R.id.mapOut, mapOut);
+        fragTransaction.commit();
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

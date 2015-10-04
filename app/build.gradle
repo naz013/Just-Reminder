@@ -111,12 +111,6 @@ repositories {
 
 
 
-
-
-
-
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.apis:google-api-services-calendar:v3-rev137-1.20.0' exclude module: 'httpclient'
@@ -124,7 +118,6 @@ dependencies {
     compile 'com.google.http-client:google-http-client-gson:+' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-drive:v2-rev183-1.20.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-tasks:v1-rev41-1.20.0' exclude module: 'httpclient'
-    compile project(':swipe_actions')
     compile project(':photoPreview')
     compile project(':fab')
     compile project(':flextcal')
@@ -137,4 +130,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.7.3'
     compile 'com.nispok:snackbar:2.11.+'
+    compile 'com.google.android.gms:play-services-ads:8.1.0'
+    compile 'com.google.android.gms:play-services-identity:8.1.0'
+    compile 'com.google.android.gms:play-services-gcm:8.1.0'
 }

@@ -5,9 +5,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,20 +21,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.BackupFileEdit;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.FileCursorAdapter;
+import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.AccountInfo;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.DropboxQuota;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.FilesDataBase;
+import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -38,14 +42,18 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.SwipeListener;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import org.json.JSONException;
 
@@ -54,7 +62,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener, SwipeListener {
 
     public static final int LOCAL_INT = 120;
     public static final int DROPBOX_INT = 121;
@@ -68,9 +76,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private ArrayList<Item> navIds = new ArrayList<>();
 
-    private FileCursorAdapter fileCursorAdapter;
-    private FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-
     private LinearLayout localLayout, cloudLayout, container, cloudContainer, googleContainer, googleLayout;
     private TextView localCount;
     private TextView cloudUser;
@@ -80,7 +85,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private TextView googleSpace;
     private TextView googleFreeSpace;
     private TextView googleCount;
-    private ListView filesList, filesCloudList, filesGoogleList;
+    private RecyclerView filesList, filesCloudList, filesGoogleList;
     private PieGraph usedSizeGraph;
 
     private Typeface typefaceMedium;
@@ -92,6 +97,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private Toolbar toolbar;
     private Spinner spinner;
     private View rootView;
+
+    private FileRecyclerAdapter adapter;
+    private FileDataProvider provider;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -221,21 +229,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         spinner.setOnItemSelectedListener(this);
     }
 
-    private void setSwipeDismissAdapter(ListView lv, FileCursorAdapter cursorAdapter,
-                                        SwipeActionAdapter.SwipeActionListener listener) {
-        final SwipeActionAdapter mAdapter = new SwipeActionAdapter(cursorAdapter);
-        mAdapter.setListView(lv);
-        mAdapter.setFixedBackgrounds(true);
-        sPrefs = new SharedPrefs(getActivity());
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_FAR_LEFT, isDark ? R.layout.swipe_delete_layout : R.layout.swipe_delete_layout_light)
-                .addBackground(SwipeDirections.DIRECTION_FAR_RIGHT, isDark ? R.layout.swipe_edit_layout : R.layout.swipe_edit_layout_light);
-        mAdapter.setSwipeActionListener(listener);
-        lv.setAdapter(mAdapter);
-    }
-
     private void attachDropbox() {
         cloudContainer = (LinearLayout) rootView.findViewById(R.id.cloudContainer);
         cloudContainer.setVisibility(View.VISIBLE);
@@ -292,7 +285,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filesDataBase = new FilesDataBase(getActivity());
+                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
                 Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
@@ -304,80 +297,45 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     while (c.moveToNext());
                 }
                 if (c != null) c.close();
+                filesDataBase.close();
                 if (cloudContainer.getVisibility() == View.GONE) {
                     isDropboxDeleted = true;
                 }
             }
         });
 
-        filesCloudList = (ListView) rootView.findViewById(R.id.filesCloudList);
-        filesCloudList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), BackupFileEdit.class).putExtra(Constants.EDIT_ID, id));
-            }
-        });
+        filesCloudList = (RecyclerView) rootView.findViewById(R.id.filesCloudList);
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         cloudContainer.setVisibility(View.GONE);
         loadInfo(pd);
     }
 
     private void loadDropboxList(){
-        filesDataBase = new FilesDataBase(getActivity());
-        filesDataBase.open();
-        fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_DROPBOX));
-        filesCloudList.setAdapter(fileCursorAdapter);
-        setSwipeDismissAdapter(filesCloudList, fileCursorAdapter, new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position) {
-                return true;
-            }
+        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_DROPBOX);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    filesDataBase = new FilesDataBase(getActivity());
-                    filesDataBase.open();
-                    fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                            filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_DROPBOX));
-                    final long itemId = fileCursorAdapter.getItemId(position);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            deleteFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            deleteFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                    }
-                }
-            }
-        });
+        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        filesCloudList.setLayoutManager(mLayoutManager);
+        filesCloudList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesCloudList.setItemAnimator(new DefaultItemAnimator());
+        filesCloudList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesCloudList);
+        mRecyclerViewSwipeManager.attachRecyclerView(filesCloudList);
     }
 
     private void deleteFile(long itemId) {
         if (itemId != 0) {
             String uuID = "";
+            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
+            filesDataBase.open();
             Cursor c = filesDataBase.getTask(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -395,6 +353,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
             deleteFromDropbox(uuID, pd);
             filesDataBase.deleteTask(itemId);
+            filesDataBase.close();
             isDropboxDeleted = true;
         }
     }
@@ -414,11 +373,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        filesDataBase = new FilesDataBase(getActivity());
-                        fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                                filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_DROPBOX));
-                        filesCloudList.setAdapter(fileCursorAdapter);
                         if (progress != null && progress.isShowing()) progress.dismiss();
+                        loadDropboxList();
                     }
                 });
             }
@@ -481,7 +437,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleDeleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filesDataBase = new FilesDataBase(getActivity());
+                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
                 Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
@@ -493,78 +449,45 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     while (c.moveToNext());
                 }
                 if (c != null) c.close();
+                filesDataBase.close();
                 if (googleContainer.getVisibility() == View.GONE) {
                     isGoogleDeleted = true;
                 }
             }
         });
 
-        filesGoogleList = (ListView) rootView.findViewById(R.id.filesGoogleList);
-        filesGoogleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), BackupFileEdit.class).putExtra(Constants.EDIT_ID, id));
-            }
-        });
+        filesGoogleList = (RecyclerView) rootView.findViewById(R.id.filesGoogleList);
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         googleContainer.setVisibility(View.GONE);
         loadGoogleInfo(pd);
     }
 
     private void loadGoogleList(){
-        filesDataBase = new FilesDataBase(getActivity());
-        filesDataBase.open();
-        fileCursorAdapter = new FileCursorAdapter(getActivity(), filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE));
-        setSwipeDismissAdapter(filesGoogleList, fileCursorAdapter, new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position) {
-                return true;
-            }
+        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_GDRIVE);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    filesDataBase = new FilesDataBase(getActivity());
-                    filesDataBase.open();
-                    fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                            filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE));
-                    final long itemId = fileCursorAdapter.getItemId(position);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            deleteGoogleFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            deleteGoogleFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                    }
-                }
-            }
-        });
+        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        filesGoogleList.setLayoutManager(mLayoutManager);
+        filesGoogleList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesGoogleList.setItemAnimator(new DefaultItemAnimator());
+        filesGoogleList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesGoogleList);
+        mRecyclerViewSwipeManager.attachRecyclerView(filesGoogleList);
     }
 
     private void deleteGoogleFile(long itemId) {
         if (itemId != 0) {
             String uuID = "";
+            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
+            filesDataBase.open();
             Cursor c = filesDataBase.getTask(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -582,6 +505,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
             deleteFromGoogle(uuID, pd);
             filesDataBase.deleteTask(itemId);
+            filesDataBase.close();
             isGoogleDeleted = true;
         }
     }
@@ -600,11 +524,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        filesDataBase = new FilesDataBase(getActivity());
-                        fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                                filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE));
-                        filesGoogleList.setAdapter(fileCursorAdapter);
                         if (progress != null && progress.isShowing()) progress.dismiss();
+                        loadGoogleList();
                     }
                 });
             }
@@ -754,7 +675,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                filesDataBase = new FilesDataBase(getActivity());
+                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
                 Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL);
                 if (c != null && c.moveToFirst()) {
@@ -766,7 +687,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     while (c.moveToNext());
                 }
                 if (c != null) c.close();
-
+                filesDataBase.close();
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList, isAnimation);
                     ViewUtils.expand(container);
@@ -775,68 +696,29 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
             }
         });
-
         showFilesCount();
-
-        filesList = (ListView) rootView.findViewById(R.id.filesList);
-        filesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), BackupFileEdit.class).putExtra(Constants.EDIT_ID, id));
-            }
-        });
+        filesList = (RecyclerView) rootView.findViewById(R.id.filesList);
     }
 
     private void loadLocalList(){
-        filesDataBase = new FilesDataBase(getActivity());
-        filesDataBase.open();
-        fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
-        setSwipeDismissAdapter(filesList, fileCursorAdapter, new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position) {
-                return true;
-            }
+        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_LOCAL);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-            @Override
-            public boolean shouldDismiss(int position, int direction) {
-                return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
-            }
-
-            @Override
-            public void onSwipe(int[] positionList, int[] directionList) {
-                for (int ii = 0; ii < positionList.length; ii++) {
-                    int direction = directionList[ii];
-                    int position = positionList[ii];
-                    filesDataBase = new FilesDataBase(getActivity());
-                    filesDataBase.open();
-                    fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                            filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
-                    final long itemId = fileCursorAdapter.getItemId(position);
-
-                    switch (direction) {
-                        case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                            deleteLocalFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_LEFT:
-                            deleteLocalFile(itemId);
-                            break;
-                        case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                        case SwipeDirections.DIRECTION_FAR_RIGHT:
-                            if (itemId != 0) {
-                                startActivity(new Intent(getActivity(),
-                                        BackupFileEdit.class).putExtra(Constants.EDIT_ID, itemId));
-                            }
-                            break;
-                    }
-                }
-            }
-        });
+        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        filesList.setLayoutManager(mLayoutManager);
+        filesList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesList.setItemAnimator(new DefaultItemAnimator());
+        filesList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesList);
+        mRecyclerViewSwipeManager.attachRecyclerView(filesList);
     }
 
     private void showFilesCount() {
@@ -855,6 +737,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private void deleteLocalFile(long itemId) {
         if (itemId != 0) {
             String uuID = "";
+            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
+            filesDataBase.open();
             Cursor c = filesDataBase.getTask(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -869,10 +753,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     file.delete();
                 }
             }
-            filesDataBase.deleteTask(itemId);
-            fileCursorAdapter = new FileCursorAdapter(getActivity(),
-                    filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL));
-            filesList.setAdapter(fileCursorAdapter);
+            filesDataBase.close();
+            loadLocalList();
             boolean isLocalDeleted = true;
         }
     }
@@ -917,7 +799,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         ViewUtils.collapse(cloudLayout);
         usedSpace.setText("");
         freeSpace.setText("");
-
         cloudCount.setText("");
     }
 
@@ -926,7 +807,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         ViewUtils.collapse(googleLayout);
         googleSpace.setText("");
         googleFreeSpace.setText("");
-
         googleCount.setText("");
     }
 
@@ -990,6 +870,38 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public void onSwipeToRight(int position) {
+        startActivity(new Intent(getActivity(),
+                BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onSwipeToLeft(int position) {
+        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_DROPBOX)){
+            deleteFile(provider.getItem(position).getId());
+        }
+        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_GDRIVE)){
+            deleteGoogleFile(provider.getItem(position).getId());
+        }
+        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_LOCAL)){
+            deleteLocalFile(provider.getItem(position).getId());
+        }
+        provider.removeItem(position);
+        adapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onItemClicked(int position, View view) {
+        startActivity(new Intent(getActivity(),
+                BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
 
     }
 
