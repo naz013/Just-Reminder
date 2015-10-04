@@ -3,8 +3,10 @@ package com.cray.software.justreminder.datas;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.DeleteNoteFilesAsync;
 import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -25,6 +27,7 @@ public class Note {
     private int color, style;
     private byte[] image;
     private long id;
+    private boolean mPinnedToSwipeLeft;
 
     public Note(){}
 
@@ -74,6 +77,14 @@ public class Note {
 
     public void setId(long id){
         this.id = id;
+    }
+
+    public boolean isPinnedToSwipeLeft() {
+        return mPinnedToSwipeLeft;
+    }
+
+    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
+        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 
     public static boolean shareNote(long id, Context context) {
@@ -131,5 +142,6 @@ public class Note {
         new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
+        Messages.snackbar(context, R.string.note_deleted);
     }
 }

@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
@@ -14,6 +13,7 @@ import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -157,7 +157,7 @@ public class Reminder {
         boolean res;
         if (isDone == 0){
             disableReminder(id, context);
-            res = true;
+            res = false;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 db.setUnDone(id);
@@ -209,8 +209,7 @@ public class Reminder {
                         res = true;
                     } else {
                         res = false;
-                        Toast.makeText(context, context.getString(R.string.edit_reminder_toast),
-                                Toast.LENGTH_SHORT).show();
+                        Messages.snackbar(context, context.getString(R.string.edit_reminder_toast));
                     }
                 }
             }
@@ -310,8 +309,7 @@ public class Reminder {
         db.close();
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
-        Toast.makeText(context, context.getString(R.string.string_reminder_created),
-                Toast.LENGTH_SHORT).show();
+        Messages.snackbar(context, context.getString(R.string.string_reminder_created));
     }
 
     /**
@@ -359,8 +357,7 @@ public class Reminder {
         new PositionDelayReceiver().cancelDelay(context, id);
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
-        Toast.makeText(context, context.getString(R.string.archived_result_message),
-                Toast.LENGTH_SHORT).show();
+        Messages.snackbar(context, context.getString(R.string.archived_result_message));
         new DisableAsync(context).execute();
     }
 

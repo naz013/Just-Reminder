@@ -3,6 +3,7 @@ package com.hexrain.design.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,26 +27,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.datas.Note;
 import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.async.DeleteNoteFilesAsync;
-import com.cray.software.justreminder.datas.Note;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
@@ -316,7 +315,11 @@ public class NotePreviewFragment extends AppCompatActivity {
                 params.height = QuickReturnUtils.dp2px(this, 256);
                 imageView.setLayoutParams(params);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                toolbar.setBackgroundColor(getResources().getColor(color));
+                try {
+                    toolbar.setBackgroundColor(getResources().getColor(color));
+                } catch (Resources.NotFoundException e){
+                    toolbar.setBackgroundColor(color);
+                }
                 toolbar.getBackground().setAlpha(0);
             } else {
                 imageView.setBackgroundColor(cSetter.getNoteLightColor(color));
@@ -325,7 +328,11 @@ public class NotePreviewFragment extends AppCompatActivity {
                 imageView.setLayoutParams(params);
                 imageView.setVisibility(View.INVISIBLE);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.noteText);
-                toolbar.setBackgroundColor(getResources().getColor(color));
+                try {
+                    toolbar.setBackgroundColor(getResources().getColor(color));
+                } catch (Resources.NotFoundException e){
+                    toolbar.setBackgroundColor(color);
+                }
                 toolbar.getBackground().setAlpha(255);
             }
 
@@ -349,7 +356,7 @@ public class NotePreviewFragment extends AppCompatActivity {
 
     private void shareNote(){
         if (!Note.shareNote(mParam1, this)) {
-            Toast.makeText(this, getString(R.string.attach_error_message), Toast.LENGTH_SHORT).show();
+            Messages.toast(this, getString(R.string.attach_error_message));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else finish();
@@ -416,17 +423,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        NotesBase DB = new NotesBase(this);
-        DB.open();
-        String uuId = null;
-        Cursor c = DB.getNote(mParam1);
-        if (c != null && c.moveToFirst()){
-            uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-        }
-        DB.deleteNote(mParam1);
-        new DeleteNoteFilesAsync(NotePreviewFragment.this).execute(uuId);
-        new UpdatesHelper(this).updateNotesWidget();
-        new Notifier(this).discardStatusNotification(mParam1);
+        Note.deleteNote(mParam1, this);
         sPrefs = new SharedPrefs(this);
         sPrefs.saveBoolean("isNew", true);
     }

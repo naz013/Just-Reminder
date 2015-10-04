@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
@@ -68,7 +68,7 @@ public class RateDialog extends Activity {
         try {
             startActivity(goToMarket);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "Couldn't launch market", Toast.LENGTH_LONG).show();
+            Messages.toast(this, "Couldn't launch market");
         }
     }
 

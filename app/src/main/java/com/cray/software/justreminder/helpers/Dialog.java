@@ -11,6 +11,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.LoadSounds;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -52,14 +53,19 @@ public class Dialog {
         seekBar.setMax(max);
         int progress = sharedPrefs.loadInt(prefs);
         seekBar.setProgress(progress);
-        textView.setText(String.valueOf(progress));
+        if (prefs.matches(Prefs.TEXT_SIZE)){
+            textView.setText(String.valueOf(progress + 12));
+        } else {
+            textView.setText(String.valueOf(progress));
+        }
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (prefs.matches(Prefs.TEXT_SIZE)){
-                    progress += 12;
+                    textView.setText(String.valueOf(progress + 12));
+                } else {
+                    textView.setText(String.valueOf(progress));
                 }
-                textView.setText(String.valueOf(progress));
                 sharedPrefs.saveInt(prefs, progress);
             }
 
@@ -130,6 +136,122 @@ public class Dialog {
         });
         AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(listener);
+        dialog.show();
+    }
+
+    public static void melodyType(final Context context, final String prefsToSave,
+                                  final DialogInterface.OnDismissListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(true);
+        builder.setTitle(context.getString(R.string.sound_type_dialog_title));
+        String[] types = new String[]{context.getString(R.string.sound_default),
+                context.getString(R.string.sound_custom)};
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, types);
+
+        SharedPrefs prefs = new SharedPrefs(context);
+        int position;
+        if (!prefs.loadBoolean(prefsToSave)) {
+            position = 0;
+        } else {
+            position = 1;
+        }
+
+        builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    if (which == 0) {
+                        prefs.saveBoolean(prefsToSave, false);
+                    } else {
+                        prefs.saveBoolean(prefsToSave, true);
+                        dialog.dismiss();
+                        new LoadSounds(context, prefsToSave, listener).execute();
+                    }
+                }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public static void customMelody(final Context context, final String prefsToSave, ArrayList<String> names,
+                                    final ArrayList<String> folders, DialogInterface.OnDismissListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setTitle(context.getString(R.string.sounds_dialog_title));
+        final String newPrefs;
+        if (prefsToSave.matches(Prefs.CUSTOM_SOUND)) newPrefs = Prefs.CUSTOM_SOUND_FILE;
+        else newPrefs = Prefs.BIRTHDAY_CUSTOM_SOUND_FILE;
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, names);
+
+        final Sound sound = new Sound(context);
+
+        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    sound.play(folders.get(which));
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    prefs.savePrefs(newPrefs, folders.get(which));
+                }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sound.stop();
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(listener);
+        dialog.show();
+    }
+
+    public static void selectCalendar(final Context context, final ArrayList<CalendarManager.CalendarItem> list) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setTitle(context.getString(R.string.select_calendar_settings_title));
+
+        ArrayList<String> spinnerArray = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            for (CalendarManager.CalendarItem item : list) {
+                spinnerArray.add(item.getName());
+            }
+        }
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, spinnerArray);
+
+        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    CalendarManager.CalendarItem item = list.get(which);
+                    prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
+                    prefs.savePrefs(Prefs.CALENDAR_ID, item.getId());
+                }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 

@@ -28,20 +28,20 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.datas.Note;
 import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.dialogs.utils.ColorPicker;
 import com.cray.software.justreminder.dialogs.utils.FontStyleDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.datas.Note;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -429,7 +429,7 @@ public class NotesManager extends AppCompatActivity {
 
     private void sendMail(File file){
         if (!file.exists() || !file.canRead()) {
-            Toast.makeText(this, getString(R.string.attach_error_message), Toast.LENGTH_SHORT).show();
+            Messages.toast(this, getString(R.string.attach_error_message));
             finish();
             return;
         }

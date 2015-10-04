@@ -12,10 +12,10 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class FontStyleDialog extends Activity{
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Toast.makeText(FontStyleDialog.this, getString(R.string.select_item_warming), Toast.LENGTH_SHORT).show();
+                    Messages.toast(FontStyleDialog.this, getString(R.string.select_item_warming));
                 }
             }
         });

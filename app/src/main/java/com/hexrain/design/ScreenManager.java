@@ -34,7 +34,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.Help;
 import com.cray.software.justreminder.NotesManager;
@@ -45,6 +44,7 @@ import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
@@ -53,6 +53,7 @@ import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -66,11 +67,10 @@ import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScroll
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -329,9 +329,7 @@ public class ScreenManager extends AppCompatActivity
                     }
 
                     if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
-                        Toast.makeText(ScreenManager.this,
-                                getString(R.string.calendar_birthday_info),
-                                Toast.LENGTH_LONG).show();
+                        Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
                     else {
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -378,9 +376,7 @@ public class ScreenManager extends AppCompatActivity
                             }
 
                             if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
-                                Toast.makeText(ScreenManager.this,
-                                        getString(R.string.calendar_birthday_info),
-                                        Toast.LENGTH_LONG).show();
+                                Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
                             else {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -410,7 +406,7 @@ public class ScreenManager extends AppCompatActivity
                                 }, 150);
 
                             } else
-                                Toast.makeText(ScreenManager.this, getString(R.string.tasks_connection_warming), Toast.LENGTH_SHORT).show();
+                                Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
                         }
                     }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.google_tasks_grey);
                     setUpButton(addNote, new View.OnClickListener() {
@@ -565,8 +561,7 @@ public class ScreenManager extends AppCompatActivity
                                 }, 150);
 
                             } else
-                                Toast.makeText(ScreenManager.this, getString(R.string.tasks_connection_warming),
-                                        Toast.LENGTH_SHORT).show();
+                                Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
                         }
                     });
                     mFab.setVisibility(View.VISIBLE);
@@ -790,7 +785,7 @@ public class ScreenManager extends AppCompatActivity
                 try {
                     startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(this, "Couldn't launch market", Toast.LENGTH_LONG).show();
+                    Messages.toast(ScreenManager.this, "Couldn't launch market");
                 }
             } else if (tag.matches(FRAGMENT_SETTINGS)) {
                 Intent intentS = new Intent(this, com.cray.software.justreminder.SettingsActivity.class);
@@ -1459,7 +1454,7 @@ public class ScreenManager extends AppCompatActivity
             return;
         }
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, getString(R.string.press_again), Toast.LENGTH_SHORT).show();
+        Messages.toast(ScreenManager.this, getString(R.string.press_again));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1478,10 +1473,7 @@ public class ScreenManager extends AppCompatActivity
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Toast t = Toast.makeText(getApplicationContext(),
-                    getString(R.string.recognizer_not_found_error_message),
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Messages.toast(ScreenManager.this, getString(R.string.recognizer_not_found_error_message));
         }
     }
 

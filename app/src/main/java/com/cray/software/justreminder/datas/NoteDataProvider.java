@@ -3,25 +3,25 @@ package com.cray.software.justreminder.datas;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemplateDataProvider {
-    private List<Template> data;
+public class NoteDataProvider {
+    private List<Note> data;
     private Context mContext;
-    private Template mLastRemovedData;
+    private Note mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
-    public TemplateDataProvider(Context mContext){
+    public NoteDataProvider(Context mContext){
         data = new ArrayList<>();
         this.mContext = mContext;
         load();
     }
 
-    public List<Template> getData(){
+    public List<Note> getData(){
         return data;
     }
 
@@ -29,11 +29,11 @@ public class TemplateDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(Template item){
+    public int getPosition(Note item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Template item1 = data.get(i);
+                Note item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -43,11 +43,11 @@ public class TemplateDataProvider {
         return res;
     }
 
-    public int removeItem(Template item){
+    public int removeItem(Note item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Template item1 = data.get(i);
+                Note item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -72,7 +72,7 @@ public class TemplateDataProvider {
             return;
         }
 
-        final Template item = data.remove(from);
+        final Note item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -98,7 +98,7 @@ public class TemplateDataProvider {
         }
     }
 
-    public Template getItem(int index) {
+    public Note getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -108,14 +108,17 @@ public class TemplateDataProvider {
 
     public void load() {
         data.clear();
-        DataBase db = new DataBase(mContext);
+        NotesBase db = new NotesBase(mContext);
         db.open();
-        Cursor c = db.queryTemplates();
+        Cursor c = db.getNotes();
         if (c != null && c.moveToNext()) {
             do {
-                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+                int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
+                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new Template(text, id));
+                data.add(new Note(note, color, style, image, id));
             } while (c.moveToNext());
         }
         if (c != null) c.close();

@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -34,6 +33,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.Category;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -311,7 +311,7 @@ public class TaskManager extends AppCompatActivity {
             data.close();
             finish();
         } else {
-            Toast.makeText(this, R.string.same_list_warming, Toast.LENGTH_SHORT).show();
+            Messages.toast(this, getString(R.string.same_list_warming));
         }
     }
 

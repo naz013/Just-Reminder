@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
@@ -22,6 +22,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -37,8 +38,6 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimat
 import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
-
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class PlacesList extends AppCompatActivity implements SwipeListener {
 
@@ -125,7 +124,7 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
         animator.setSupportsChangeAnimations(false);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        listView.setItemAnimator(new LandingAnimator());
+        listView.setItemAnimator(new DefaultItemAnimator());
         listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
@@ -158,7 +157,7 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
             db.deletePlace(id);
             provider.removeItem(position);
             adapter.notifyItemRemoved(position);
-            Toast.makeText(this, getString(R.string.delete_place_toast), Toast.LENGTH_SHORT).show();
+            Messages.snackbar(this, getString(R.string.delete_place_toast));
             db.close();
             reloadView();
         }

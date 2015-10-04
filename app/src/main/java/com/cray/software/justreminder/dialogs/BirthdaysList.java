@@ -10,13 +10,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.reminder.Reminder;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class BirthdaysList extends Fragment{
                     db.deleteBirthday(id);
                     datas.remove(position);
                     loaderAdapter();
-                    Toast.makeText(getActivity(), getString(R.string.swipe_delete), Toast.LENGTH_SHORT).show();
+                    Messages.toast(getActivity(), getString(R.string.swipe_delete));
                 }
                 return true;
             }

@@ -5,9 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
@@ -19,7 +19,6 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
 
 public class NewPlace extends AppCompatActivity implements MapListener {
@@ -60,26 +59,6 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         googleMap.enablePlaceList(false);
         googleMap.setListener(this);
         googleMap.moveToMyLocation();
-
-        FloatingActionButton mFab = new FloatingActionButton(NewPlace.this);
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addPlace();
-            }
-        });
 
         if (id != 0){
             int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
@@ -126,9 +105,19 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.action_add:
+                addPlace();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
+        return true;
     }
 
     @Override

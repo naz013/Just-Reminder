@@ -110,7 +110,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
                 mEventListener.onSwipeToLeft(position);
             }
         } else {
-            item.setPinnedToSwipeLeft(false);
+            if (item != null) item.setPinnedToSwipeLeft(false);
         }
     }
 

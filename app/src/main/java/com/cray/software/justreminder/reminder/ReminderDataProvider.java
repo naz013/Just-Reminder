@@ -149,7 +149,7 @@ public class ReminderDataProvider {
 
     public ReminderItem getItem(int index) {
         if (index < 0 || index >= getCount()) {
-            throw new IndexOutOfBoundsException("index = " + index);
+            return null;
         }
 
         return data.get(index);

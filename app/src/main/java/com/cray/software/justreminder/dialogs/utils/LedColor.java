@@ -13,10 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.LED;
@@ -68,7 +68,7 @@ public class LedColor extends Activity{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i != -1) {
-                    Toast.makeText(LedColor.this, getString(R.string.turn_screen_warm), Toast.LENGTH_SHORT).show();
+                    Messages.toast(LedColor.this, getString(R.string.turn_screen_warm));
                     builder = new NotificationCompat.Builder(LedColor.this);
                     if (i == 0){
                         showLED(LED.WHITE);
@@ -136,7 +136,7 @@ public class LedColor extends Activity{
                     mNotifyMgr.cancel(1);
                     finish();
                 } else {
-                    Toast.makeText(LedColor.this, getString(R.string.select_item_warming), Toast.LENGTH_SHORT).show();
+                    Messages.toast(LedColor.this, getString(R.string.select_item_warming));
                 }
             }
         });

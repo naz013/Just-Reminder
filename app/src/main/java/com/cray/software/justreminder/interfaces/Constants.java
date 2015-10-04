@@ -84,9 +84,6 @@ public class Constants {
     public final static String SELECTED_LED_COLOR = "selected_led_color";
     public final static String SELECTED_APPLICATION = "selected_application";
 
-    public final static String CUSTOM_SOUND = "custom_sound";
-    public final static String CUSTOM_SOUND_FILE = "sound_file";
-
     public final static String DIR_SD = "backup";
     public final static String DIR_IMAGE_CACHE = "img";
     public final static String DIR_PREFS = "preferences";

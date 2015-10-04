@@ -711,6 +711,8 @@
     <string name="move_to_list">Move to another list</string>
     <string name="select_list">Select list</string>
     <string name="same_list_warming">You\'ve select same list!</string>
+    <string name="group_deleted">Group deleted.</string>
+    <string name="note_deleted">Note deleted.</string>
     <integer name="com_vk_sdk_AppId">5052869</integer>
 
 </resources>

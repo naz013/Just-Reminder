@@ -51,7 +51,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.adapters.SimpleAdapter;
@@ -63,6 +62,7 @@ import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -215,14 +215,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
                         attachLocation();
                     } else {
-                        Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                        Messages.toast(BackupFileEdit.this, getString(R.string.play_services_check_error));
                         finish();
                     }
                 } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     if (LocationUtil.checkGooglePlayServicesAvailability(BackupFileEdit.this)) {
                         attachLocationOut();
                     } else {
-                        Toast.makeText(BackupFileEdit.this, getString(R.string.play_services_check_error), Toast.LENGTH_SHORT).show();
+                        Messages.toast(BackupFileEdit.this, getString(R.string.play_services_check_error));
                         finish();
                     }
                 } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -234,11 +234,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                     attachMonthDay();
                 } else {
-                    Toast.makeText(BackupFileEdit.this, getString(R.string.file_error_message), Toast.LENGTH_SHORT).show();
+                    Messages.toast(BackupFileEdit.this, getString(R.string.file_error_message));
                     finish();
                 }
             } else {
-                Toast.makeText(BackupFileEdit.this, getString(R.string.file_error_message), Toast.LENGTH_SHORT).show();
+                Messages.toast(BackupFileEdit.this, getString(R.string.file_error_message));
                 finish();
             }
         }
@@ -281,10 +281,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Toast t = Toast.makeText(getApplicationContext(),
-                    getString(R.string.recognizer_not_found_error_message),
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.recognizer_not_found_error_message));
         }
     }
 
@@ -2270,7 +2267,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (browser.isChecked()){
                         browseLink.setError(getString(R.string.empty_field_error));
                     } else if (application.isChecked()){
-                        Toast.makeText(BackupFileEdit.this, getString(R.string.not_selected_application_message), Toast.LENGTH_SHORT).show();
+                        Messages.toast(BackupFileEdit.this, getString(R.string.not_selected_application_message));
                     }
                 }
             } else if (isMessageAttached()){
@@ -2361,15 +2358,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 wednesdayCheck.isChecked(), thursdayCheck.isChecked(), fridayCheck.isChecked(),
                 saturdayCheck.isChecked(), sundayCheck.isChecked());
         if (repeat.matches(Constants.NOTHING_CHECKED)) {
-            Toast.makeText(BackupFileEdit.this, getString(R.string.weekday_nothing_checked),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.weekday_nothing_checked));
             return;
         }
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
         if (categoryId == null) {
@@ -2412,8 +2407,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
         if (categoryId == null) {
@@ -2450,8 +2444,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
         if (categoryId == null) {
@@ -2526,8 +2519,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         DB.open();
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2564,8 +2556,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
         if (categoryId == null) {
@@ -2608,8 +2599,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         int mySeconds = c.get(Calendar.SECOND);
 
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2647,7 +2637,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             long m = s * 60;
             long h = m * 60;
             res = (hour * h) + (minute * m) + (sec * s);
-        } else Toast.makeText(this, "You don't insert any time!", Toast.LENGTH_SHORT).show();
+        } else Messages.toast(BackupFileEdit.this, getString(R.string.string_timer_warming));
         return res;
     }
 
@@ -2664,8 +2654,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DB.open();
 
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2703,8 +2692,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DB.open();
 
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2748,14 +2736,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         if (isNull){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.point_warning));
             return;
         }
 
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2809,14 +2795,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         if (isNull){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.point_warning),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.point_warning));
             return;
         }
 
         if (isUID(uuID)){
-            Toast.makeText(BackupFileEdit.this, getString(R.string.same_uuid_error),
-                    Toast.LENGTH_SHORT).show();
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
             return;
         }
 
@@ -2972,7 +2956,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myDay < 29) monthDayField.setText(dayStr);
             else {
                 myDay = 28;
-                Toast.makeText(BackupFileEdit.this, getString(R.string.string_max_day_message), Toast.LENGTH_SHORT).show();
+                Messages.toast(BackupFileEdit.this, getString(R.string.string_max_day_message));
             }
         }
         if (isSkypeAttached()){

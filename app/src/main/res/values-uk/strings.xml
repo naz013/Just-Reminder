@@ -708,4 +708,6 @@
     <string name="select_list">Оберіть список</string>
     <string name="move_to_list">Перемістити до іншого списку</string>
     <string name="same_list_warming">Ви обрали той самий список!</string>
+    <string name="group_deleted">Категорію видалено.</string>
+    <string name="note_deleted">Нотатку видалено.</string>
 </resources>

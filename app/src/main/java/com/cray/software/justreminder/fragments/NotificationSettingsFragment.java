@@ -2,7 +2,6 @@ package com.cray.software.justreminder.fragments;
 
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -16,11 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.utils.SoundType;
 import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 
@@ -277,9 +274,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
     private void showMelody(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)){
-            if (sPrefs.isString(Constants.CUSTOM_SOUND_FILE)) {
-                String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+        if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)){
+            if (sPrefs.isString(Prefs.CUSTOM_SOUND_FILE)) {
+                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                 if (!path.matches("")) {
                     File sound = new File(path);
                     String fileName = sound.getName();
@@ -526,12 +523,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         }
     }
 
-    void showDialog() {
-        getActivity().getApplicationContext()
-                .startActivity(new Intent(getActivity().getApplicationContext(), SoundType.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -545,7 +536,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 infiniteSoundChange();
                 break;
             case R.id.chooseSound:
-                showDialog();
+                Dialog.melodyType(getActivity(), Prefs.CUSTOM_SOUND, this);
                 break;
             case R.id.infiniteVibrateOption:
                 infiniteVibrationChange();
@@ -590,5 +581,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     public void onDismiss(DialogInterface dialog) {
         showDays();
         showRepeat();
+        showMelody();
     }
 }

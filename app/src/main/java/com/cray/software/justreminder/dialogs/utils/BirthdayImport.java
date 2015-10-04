@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -58,9 +57,5 @@ public class BirthdayImport extends AppCompatActivity implements View.OnClickLis
             case R.id.vkCom:
                 break;
         }
-    }
-
-    private void showMessage(String text){
-        Toast.makeText(BirthdayImport.this, text, Toast.LENGTH_SHORT).show();
     }
 }

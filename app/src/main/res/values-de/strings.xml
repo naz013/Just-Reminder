@@ -708,4 +708,6 @@
     <string name="move_to_list">Zu bewegen, um eine andere Liste</string>
     <string name="select_list">Auswahlliste</string>
     <string name="same_list_warming">Sie haben wählen Sie dieselbe Liste!</string>
+    <string name="group_deleted">Gruppe gelöscht.</string>
+    <string name="note_deleted">Bemerken gelöscht.</string>
 </resources>

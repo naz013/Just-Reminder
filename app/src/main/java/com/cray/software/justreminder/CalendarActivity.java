@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
@@ -26,6 +25,7 @@ import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -122,7 +122,7 @@ public class CalendarActivity extends AppCompatActivity {
                 if (mainMenu.isExpanded()) mainMenu.collapse();
 
                 if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
-                    Toast.makeText(CalendarActivity.this, getString(R.string.calendar_birthday_info), Toast.LENGTH_LONG).show();
+                    Messages.toast(CalendarActivity.this, getString(R.string.calendar_birthday_info));
                 else {
                     addBirthday();
                 }
@@ -173,10 +173,7 @@ public class CalendarActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Toast t = Toast.makeText(getApplicationContext(),
-                    getString(R.string.recognizer_not_found_error_message),
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Messages.toast(CalendarActivity.this, getString(R.string.recognizer_not_found_error_message));
         }
     }
 
@@ -193,8 +190,7 @@ public class CalendarActivity extends AppCompatActivity {
     private void addBirthday() {
         sPrefs = new SharedPrefs(CalendarActivity.this);
         if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
-            Toast.makeText(CalendarActivity.this, getString(R.string.calendar_birthday_info),
-                    Toast.LENGTH_LONG).show();
+            Messages.toast(CalendarActivity.this, getString(R.string.calendar_birthday_info));
         } else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
     }
 

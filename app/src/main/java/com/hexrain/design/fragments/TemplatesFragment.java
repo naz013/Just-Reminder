@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
@@ -22,6 +22,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -37,8 +38,6 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TemplatesFragment extends Fragment implements SwipeListener {
 
@@ -185,7 +184,7 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
         animator.setSupportsChangeAnimations(false);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        listView.setItemAnimator(new LandingAnimator());
+        listView.setItemAnimator(new DefaultItemAnimator());
         listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
@@ -215,7 +214,7 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
-        Toast.makeText(getActivity(), getString(R.string.string_template_deleted), Toast.LENGTH_SHORT).show();
+        Messages.snackbar(getActivity(), getString(R.string.string_template_deleted));
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
         reloadView();

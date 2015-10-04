@@ -18,12 +18,12 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -158,12 +158,10 @@ public class QuickSMS extends Activity {
             public void onReceive(Context arg0, Intent arg1) {
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
-                        Toast.makeText(QuickSMS.this, "SMS delivered",
-                                Toast.LENGTH_SHORT).show();
+                        Messages.toast(QuickSMS.this, "SMS delivered");
                         break;
                     case Activity.RESULT_CANCELED:
-                        Toast.makeText(QuickSMS.this, "SMS not delivered",
-                                Toast.LENGTH_SHORT).show();
+                        Messages.toast(QuickSMS.this, "SMS not delivered");
                         break;
                 }
             }

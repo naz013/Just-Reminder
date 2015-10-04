@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.CategoryManager;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SwipeListener;
@@ -40,8 +42,6 @@ import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 import java.io.File;
-
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class GroupsFragment extends Fragment implements SwipeListener {
 
@@ -169,7 +169,7 @@ public class GroupsFragment extends Fragment implements SwipeListener {
         animator.setSupportsChangeAnimations(false);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        listView.setItemAnimator(new LandingAnimator());
+        listView.setItemAnimator(new DefaultItemAnimator());
         listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
@@ -189,6 +189,7 @@ public class GroupsFragment extends Fragment implements SwipeListener {
             }
             if (s != null) s.close();
             db.close();
+            Messages.snackbar(getActivity(), R.string.group_deleted);
             provider.removeItem(position);
             adapter.notifyItemRemoved(position);
         }

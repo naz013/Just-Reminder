@@ -110,6 +110,8 @@ public class Prefs {
     public static final String CALENDAR_IMAGE = "calendar_image";
     public static final String EXPORT_SETTINGS = "export_settings";
     public static final String FLOATING_NOTE = "floating_note";
+    public final static String CUSTOM_SOUND = "custom_sound";
+    public final static String CUSTOM_SOUND_FILE = "sound_file";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";

@@ -8,8 +8,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.dropbox.client2.DropboxAPI;
@@ -132,8 +132,7 @@ public class DropboxHelper {
                 isLogged = true;
 
             } catch (IllegalStateException e) {
-                showToast("Couldn't authenticate with Dropbox:" + e.getLocalizedMessage());
-                //Log.d(Constants.LOG_TAG, "Error authenticating", e);
+                Messages.toast(mContext, "Couldn't authenticate with Dropbox:" + e.getLocalizedMessage());
             }
         }
         return isLogged;
@@ -162,7 +161,8 @@ public class DropboxHelper {
     public void checkAppKeySetup() {
         if (APP_KEY.startsWith("CHANGE") ||
                 APP_SECRET.startsWith("CHANGE")) {
-            showToast("You must apply for an app key and secret from developers.dropbox.com, and add them to the DBRoulette ap before trying it.");
+            Messages.toast(mContext, "You must apply for an app key and secret from developers.dropbox.com, " +
+                    "and add them to the DBRoulette ap before trying it.");
             ((Activity) mContext).finish();
             return;
         }
@@ -172,17 +172,12 @@ public class DropboxHelper {
         testIntent.setData(Uri.parse(uri));
         PackageManager pm = mContext.getPackageManager();
         if (0 == pm.queryIntentActivities(testIntent, 0).size()) {
-            showToast("URL scheme in your app's " +
+            Messages.toast(mContext, "URL scheme in your app's " +
                     "manifest is not set up correctly. You should have a " +
                     "com.dropbox.client2.android.AuthActivity with the " +
                     "scheme: " + scheme);
             ((Activity) mContext).finish();
         }
-    }
-
-    public void showToast(String msg) {
-        Toast toast = Toast.makeText(mContext, msg, Toast.LENGTH_LONG);
-        toast.show();
     }
 
     public void loadAuth(AndroidAuthSession session) {

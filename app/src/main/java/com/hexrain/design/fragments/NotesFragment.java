@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -25,32 +26,38 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.adapters.NoteRecyclerAdapter;
+import com.cray.software.justreminder.async.SyncNotes;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.interfaces.SwipeListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.datas.Note;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.adapters.NotesRecyclerAdapter;
-import com.cray.software.justreminder.async.SyncNotes;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
+import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
-import java.util.ArrayList;
-
-public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
+public class NotesFragment extends Fragment implements SyncListener, SimpleListener, SwipeListener {
 
     private NotesBase db;
     private SharedPrefs sPrefs;
     private RecyclerView currentList;
     private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
-    private NotesRecyclerAdapter adapter;
+    private NoteRecyclerAdapter adapter;
+    private NoteDataProvider provider;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -238,40 +245,38 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     public void loaderAdapter(){
-        db = new NotesBase(getActivity());
-        if (!db.isOpen()) db.open();
-        else return;
-        ArrayList<Note> data = new ArrayList<>();
-        data.clear();
-        Cursor c = db.getNotes();
-        if (c != null && c.moveToFirst()){
-            emptyItem.setVisibility(View.GONE);
+        provider = new NoteDataProvider(getActivity());
+        reloadView();
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
+        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
+        mRecyclerViewTouchActionGuardManager.setEnabled(true);
+        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
+
+        adapter = new NoteRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
+        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
+        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
+        animator.setSupportsChangeAnimations(false);
+        currentList.setLayoutManager(mLayoutManager);
+        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        currentList.setItemAnimator(new DefaultItemAnimator());
+        currentList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
+        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
+        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
+        if (mCallbacks != null) mCallbacks.onListChange(currentList);
+    }
+
+    private void reloadView() {
+        int size = provider.getCount();
+        if (size > 0){
             currentList.setVisibility(View.VISIBLE);
-            do {
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new Note(note, color, style, image, id));
-            } while (c.moveToNext());
-            adapter = new NotesRecyclerAdapter(getActivity(), data);
-            adapter.addListener(this);
-            currentList.setAdapter(adapter);
-            currentList.setItemAnimator(new DefaultItemAnimator());
-            if (adapter.getItemCount() == 0) {
-                emptyItem.setVisibility(View.VISIBLE);
-                currentList.setVisibility(View.GONE);
-            }
-            if (adapter.getItemCount() > 0) {
-                if (mCallbacks != null) mCallbacks.onListChange(currentList);
-            }
+            emptyItem.setVisibility(View.GONE);
         } else {
-            emptyItem.setVisibility(View.VISIBLE);
             currentList.setVisibility(View.GONE);
+            emptyItem.setVisibility(View.VISIBLE);
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void deleteDialog() {
@@ -324,7 +329,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemClicked(int position, View view) {
-        long id = adapter.getItemId(position);
+        long id = provider.getItem(position).getId();
         sPrefs = new SharedPrefs(getActivity());
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -348,8 +353,21 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemLongClicked(int position) {
-        long id = adapter.getItemId(position);
         getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
-                .putExtra(Constants.EDIT_ID, id));
+                .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onSwipeToRight(int position) {
+        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+    }
+
+    @Override
+    public void onSwipeToLeft(int position) {
+        long id = provider.getItem(position).getId();
+        Note.deleteNote(id, getActivity());
+        provider.removeItem(position);
+        adapter.notifyItemRemoved(position);
     }
 }

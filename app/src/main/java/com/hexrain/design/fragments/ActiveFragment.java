@@ -10,8 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -32,10 +35,8 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.adapters.CustomCursorAdapter;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -49,8 +50,6 @@ import com.hexrain.design.ScreenManager;
 
 import java.util.ArrayList;
 
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
-
 public class ActiveFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
@@ -60,6 +59,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     private DataBase DB;
     private SharedPrefs sPrefs;
     private RemindersRecyclerAdapter adapter;
+    private ReminderDataProvider provider;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -127,8 +127,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-
-        loaderAdapter(null);
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -207,9 +205,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         super.onPause();
     }
 
-    CustomCursorAdapter customAdapter;
-    ReminderDataProvider provider;
-
     public void loaderAdapter(String categoryId){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
@@ -233,7 +228,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         animator.setSupportsChangeAnimations(false);
         currentList.setLayoutManager(mLayoutManager);
         currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        currentList.setItemAnimator(new LandingAnimator());
+        currentList.setItemAnimator(new DefaultItemAnimator());
         currentList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
@@ -335,9 +330,12 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     }
 
     @Override
-    public void onItemSwitched(int position) {
+    public void onItemSwitched(int position, SwitchCompat switchCompat) {
         if (Reminder.toggle(provider.getItem(position).getId(), getActivity())) {
+            switchCompat.setChecked(true);
             loaderAdapter(null);
+        } else {
+            switchCompat.setChecked(false);
         }
     }
 

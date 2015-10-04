@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -44,10 +43,11 @@ public class Notifier {
     private NotificationCompat.Builder builder;
     private int NOT_ID = 0;
     private SharedPrefs sPrefs;
-    private MediaPlayer mMediaPlayer;
+    private Sound sound;
 
     public Notifier(Context context){
         this.mContext = context;
+        sound = new Sound(context);
     }
 
     /**
@@ -92,51 +92,21 @@ public class Notifier {
 
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-            mMediaPlayer = new MediaPlayer();
             try {
                 AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
-                mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                sound.playAlarm(afd, false);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-            mMediaPlayer.setLooping(false);
-
-            mMediaPlayer.setVolume(1-log1, 1-log1);
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            try {
-                mMediaPlayer.prepareAsync();
-            } catch (IllegalStateException e){
-                e.printStackTrace();
+                sound.playAlarm(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), false);
             }
         } else {
             if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
-                mMediaPlayer = new MediaPlayer();
                 try {
                     AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
-                    mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                    sound.playAlarm(afd, false);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                mMediaPlayer.setLooping(false);
-
-                mMediaPlayer.setVolume(1 - log1, 1 - log1);
-                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                try {
-                    mMediaPlayer.prepareAsync();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
+                    sound.playAlarm(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), false);
                 }
             }
         }
@@ -192,7 +162,7 @@ public class Notifier {
     }
 
     /**
-     * Standart status bar notification for reminder.
+     * Standard status bar notification for reminder.
      * @param task reminder task.
      * @param type reminder type.
      * @param i flag for enabling sounds (1 - enabled).
@@ -208,8 +178,8 @@ public class Notifier {
             File sound = new File(melody);
             soundUri = Uri.fromFile(sound);
         } else {
-            if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)) {
-                String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+            if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
+                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                 if (path != null) {
                     File sound = new File(path);
                     soundUri = Uri.fromFile(sound);
@@ -230,13 +200,6 @@ public class Notifier {
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         builder.setContentIntent(intent);
-        /*if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
-            Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
-            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-            builder.setContentIntent(intent);
-        }*/
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){
@@ -262,53 +225,10 @@ public class Notifier {
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-                mMediaPlayer = new MediaPlayer();
-                try {
-                    mMediaPlayer.setDataSource(mContext, soundUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                final boolean isLoop = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-                if (isLoop) mMediaPlayer.setLooping(true);
-                else mMediaPlayer.setLooping(false);
-
-                mMediaPlayer.setVolume(1-log1, 1-log1);
-                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                try {
-                    mMediaPlayer.prepareAsync();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
+                sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             } else {
                 if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
-                    mMediaPlayer = new MediaPlayer();
-                    try {
-                        mMediaPlayer.setDataSource(mContext, soundUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                    else mMediaPlayer.setLooping(false);
-
-                    mMediaPlayer.setVolume(1-log1, 1-log1);
-                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-                    try {
-                        mMediaPlayer.prepareAsync();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
+                    sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
                 }
             }
         }
@@ -371,8 +291,8 @@ public class Notifier {
     public void showMissedReminder(final String name, long itemId){
         sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
-        if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)) {
-            String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+        if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
+            String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
             if (path != null) {
                 File sound = new File(path);
                 soundUri = Uri.fromFile(sound);
@@ -404,54 +324,10 @@ public class Notifier {
 
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-            mMediaPlayer = new MediaPlayer();
-            try {
-                mMediaPlayer.setDataSource(mContext, soundUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-            final boolean isLoop = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-            if (isLoop) mMediaPlayer.setLooping(true);
-            else mMediaPlayer.setLooping(false);
-
-            mMediaPlayer.setVolume(1-log1, 1-log1);
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            try {
-                mMediaPlayer.prepareAsync();
-            } catch (IllegalStateException e){
-                e.printStackTrace();
-            }
+            sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
         } else {
             if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
-                mMediaPlayer = new MediaPlayer();
-                try {
-                    mMediaPlayer.setDataSource(mContext, soundUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                final boolean isLoop = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-                if (isLoop) mMediaPlayer.setLooping(true);
-                else mMediaPlayer.setLooping(false);
-
-                mMediaPlayer.setVolume(1-log1, 1-log1);
-                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                try {
-                    mMediaPlayer.prepareAsync();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
+                sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             }
         }
 
@@ -521,8 +397,8 @@ public class Notifier {
             File sound = new File(melody);
             soundUri = Uri.fromFile(sound);
         } else {
-            if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)) {
-                String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+            if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
+                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                 if (path != null) {
                     File sound = new File(path);
                     soundUri = Uri.fromFile(sound);
@@ -565,52 +441,10 @@ public class Notifier {
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-                mMediaPlayer = new MediaPlayer();
-                try {
-                    mMediaPlayer.setDataSource(mContext, soundUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                else mMediaPlayer.setLooping(false);
-
-                mMediaPlayer.setVolume(1-log1, 1-log1);
-                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                try {
-                    mMediaPlayer.prepareAsync();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
+                sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             } else {
                 if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
-                    mMediaPlayer = new MediaPlayer();
-                    try {
-                        mMediaPlayer.setDataSource(mContext, soundUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                    else mMediaPlayer.setLooping(false);
-
-                    mMediaPlayer.setVolume(1-log1, 1-log1);
-                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-                    try {
-                        mMediaPlayer.prepareAsync();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
+                    sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
                 }
             }
         }
@@ -676,15 +510,15 @@ public class Notifier {
         if (Module.isPro()){
             if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
                 soundC = sPrefs.loadBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND);
-            } else soundC = sPrefs.loadBoolean(Constants.CUSTOM_SOUND);
-        } else soundC = sPrefs.loadBoolean(Constants.CUSTOM_SOUND);
+            } else soundC = sPrefs.loadBoolean(Prefs.CUSTOM_SOUND);
+        } else soundC = sPrefs.loadBoolean(Prefs.CUSTOM_SOUND);
         if (soundC){
             String path;
             if (Module.isPro()) {
                 if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
                     path = sPrefs.loadPrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE);
-                } else path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
-            } else path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+                } else path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+            } else path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
             if (path != null){
                 File sound = new File(path);
                 soundUri = Uri.fromFile(sound);
@@ -709,37 +543,14 @@ public class Notifier {
 
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-            mMediaPlayer = new MediaPlayer();
-            try {
-                mMediaPlayer.setDataSource(mContext, soundUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-
-            boolean soundI;
+            boolean isLooping;
             if (Module.isPro()){
                 if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                    soundI = sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
-                } else soundI = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-            } else soundI = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+                    isLooping = sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
+                } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+            } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
 
-            if (soundI) mMediaPlayer.setLooping(true);
-            else mMediaPlayer.setLooping(false);
-
-            mMediaPlayer.setVolume(1-log1, 1-log1);
-
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                }
-            });
-            try {
-                mMediaPlayer.prepareAsync();
-            } catch (IllegalStateException e){
-                e.printStackTrace();
-            }
+            sound.playAlarm(soundUri, isLooping);
         } else {
             boolean soundS;
             if (Module.isPro()){
@@ -749,28 +560,13 @@ public class Notifier {
             } else soundS = sPrefs.loadBoolean(Prefs.SOUND_STATUS);
 
             if (soundS) {
-                mMediaPlayer = new MediaPlayer();
-                try {
-                    mMediaPlayer.setDataSource(mContext, soundUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                else mMediaPlayer.setLooping(false);
-
-                mMediaPlayer.setVolume(1-log1, 1-log1);
-                mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.start();
-                    }
-                });
-                try {
-                    mMediaPlayer.prepareAsync();
-                } catch (IllegalStateException e){
-                    e.printStackTrace();
-                }
+                boolean isLooping;
+                if (Module.isPro()){
+                    if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                        isLooping = sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
+                    } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+                } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+                sound.playAlarm(soundUri, isLooping);
             }
         }
 
@@ -1111,8 +907,6 @@ public class Notifier {
      * Stops playing notification sound.
      */
     public void discardMedia(){
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-        }
+        sound.stop();
     }
 }

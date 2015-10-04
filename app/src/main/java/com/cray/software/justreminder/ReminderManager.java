@@ -55,7 +55,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.adapters.SimpleAdapter;
@@ -71,6 +70,7 @@ import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -453,7 +453,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int isArchived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
             if (isArchived == 1) {
                 Reminder.delete(id, this);
-                Toast.makeText(ReminderManager.this, getString(R.string.string_deleted), Toast.LENGTH_SHORT).show();
+                Messages.toast(ReminderManager.this, getString(R.string.string_deleted));
             } else Reminder.moveToTrash(id, this);
             finish();
         }
@@ -487,10 +487,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Toast t = Toast.makeText(getApplicationContext(),
-                    getString(R.string.recognizer_not_found_error_message),
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Messages.toast(ReminderManager.this, getString(R.string.recognizer_not_found_error_message));
         }
     }
 
@@ -2771,7 +2768,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                     thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
             if (weekdays.matches(Constants.NOTHING_CHECKED)) {
-                Toast.makeText(ReminderManager.this, getString(R.string.weekday_nothing_checked), Toast.LENGTH_SHORT).show();
+                Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
                 return null;
             }
         }
@@ -2792,8 +2789,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (application.isChecked()){
                 number = selectedPackage;
                 if (number == null){
-                    Toast.makeText(ReminderManager.this,
-                            getString(R.string.dont_selected_application_message), Toast.LENGTH_SHORT).show();
+                    Messages.toast(ReminderManager.this, getString(R.string.dont_selected_application_message));
                     return null;
                 }
             } else if (browser.isChecked()){
@@ -2820,8 +2816,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 isNull = false;
             }
             if (isNull) {
-                Toast.makeText(ReminderManager.this, getString(R.string.point_warning),
-                        Toast.LENGTH_SHORT).show();
+                Messages.toast(ReminderManager.this, getString(R.string.point_warning));
                 return null;
             }
 
@@ -3038,7 +3033,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             long m = s * 60;
             long h = m * 60;
             res = (hour * h) + (minute * m) + (sec * s);
-        } else Toast.makeText(this, R.string.string_timer_warming, Toast.LENGTH_SHORT).show();
+        } else Messages.toast(ReminderManager.this, getString(R.string.string_timer_warming));
         return res;
     }
 
@@ -3139,8 +3134,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (myDay < 29) monthDayField.setText(dayStr);
             else {
                 myDay = 28;
-                Toast.makeText(ReminderManager.this, getString(R.string.string_max_day_message),
-                        Toast.LENGTH_SHORT).show();
+                Messages.toast(ReminderManager.this, getString(R.string.string_max_day_message));
             }
         }
         if (isCallAttached()){
@@ -3605,9 +3599,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             i.putExtra(Constants.BIRTHDAY_INTENT_ID, 1);
                             startActivityForResult(i, Constants.REQUEST_CODE_SELECTED_MELODY);
                         } else {
-                            Toast.makeText(ReminderManager.this,
-                                    getString(R.string.no_music),
-                                    Toast.LENGTH_SHORT).show();
+                            Messages.toast(ReminderManager.this, getString(R.string.no_music));
                         }
                     }
                 });
@@ -3674,8 +3666,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 melody = data.getStringExtra(Constants.SELECTED_MELODY);
                 if (melody != null) {
                     File musicFile = new File(melody);
-                    Toast.makeText(ReminderManager.this,
-                            getString(R.string.selected_melody_string) + musicFile.getName(), Toast.LENGTH_SHORT).show();
+                    Messages.toast(ReminderManager.this, getString(R.string.selected_melody_string) + musicFile.getName());
                 }
             }
         }
@@ -3684,9 +3675,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (resultCode == RESULT_OK){
                 radius = data.getIntExtra(Constants.SELECTED_RADIUS, -1);
                 if (radius != -1) {
-                    Toast.makeText(ReminderManager.this,
-                            getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter),
-                            Toast.LENGTH_SHORT).show();
+                    Messages.toast(ReminderManager.this, getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter));
                     if (isLocationAttached()) map.recreateMarker(radius);
                     if (isLocationOutAttached()) mapOut.recreateMarker(radius);
                 }
@@ -3725,9 +3714,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     ledColor = LED.BLUE_LIGHT;
                     selColor = getString(R.string.led_color_blue_light);
                 }
-
-                Toast.makeText(ReminderManager.this, getString(R.string.string_selected_led_color) + " " + selColor,
-                        Toast.LENGTH_SHORT).show();
+                Messages.toast(ReminderManager.this, getString(R.string.string_selected_led_color) + " " + selColor);
             }
         }
 

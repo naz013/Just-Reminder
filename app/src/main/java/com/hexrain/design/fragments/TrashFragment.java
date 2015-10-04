@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,10 +19,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -28,7 +31,6 @@ import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -39,8 +41,6 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-
-import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
@@ -208,7 +208,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         animator.setSupportsChangeAnimations(false);
         currentList.setLayoutManager(mLayoutManager);
         currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
-        currentList.setItemAnimator(new LandingAnimator());
+        currentList.setItemAnimator(new DefaultItemAnimator());
         currentList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
@@ -237,8 +237,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
             }while (c.moveToNext());
         }
         if (c != null) c.close();
-        Toast.makeText(getActivity(), getString(R.string.string_trash_cleared),
-                Toast.LENGTH_SHORT).show();
+        Messages.snackbar(getActivity(), getString(R.string.string_trash_cleared));
         loaderAdapter();
     }
 
@@ -256,11 +255,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     }
 
     @Override
-    public void onItemSwitched(int position) {
-
-    }
-
-    @Override
     public void onItemClicked(int position, View view) {
         Reminder.edit(provider.getItem(position).getId(), getActivity());
     }
@@ -268,5 +262,10 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onItemLongClicked(int position) {
         Reminder.edit(provider.getItem(position).getId(), getActivity());
+    }
+
+    @Override
+    public void onItemSwitched(int position, SwitchCompat switchCompat) {
+
     }
 }

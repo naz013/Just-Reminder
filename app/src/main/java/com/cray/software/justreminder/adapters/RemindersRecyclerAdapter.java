@@ -122,7 +122,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 mEventListener.onSwipeToLeft(position);
             }
         } else {
-            item.setPinnedToSwipeLeft(false);
+            if (item != null) item.setPinnedToSwipeLeft(false);
         }
     }
 
@@ -389,7 +389,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mEventListener != null) mEventListener.onItemSwitched(position);
+                if (mEventListener != null) mEventListener.onItemSwitched(position, holder.check);
             }
         });
 

@@ -1,7 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
 
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -15,15 +15,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.utils.SoundType;
 import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.io.File;
 
-public class BirthdayNotificationSettingsFragment extends Fragment implements View.OnClickListener {
+public class BirthdayNotificationSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
@@ -262,6 +260,9 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
             vText.setEnabled(true);
             vText1.setEnabled(true);
         }
+        checkVibrate();
+        checkTTS();
+        checkEnabling();
     }
 
     private void checkTTS(){
@@ -418,13 +419,6 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         }
     }
 
-    void showDialog() {
-        getActivity().getApplicationContext()
-                .startActivity(new Intent(getActivity().getApplicationContext(), SoundType.class)
-                        .putExtra(Constants.BIRTHDAY_INTENT_ID, 3)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -447,8 +441,13 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
                 infiniteSoundChange();
                 break;
             case R.id.chooseSound:
-                showDialog();
+                Dialog.melodyType(getActivity(), Prefs.BIRTHDAY_CUSTOM_SOUND, this);
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        showMelody();
     }
 }

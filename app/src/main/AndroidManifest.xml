@@ -361,22 +361,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.utils.ListSounds"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.utils.SoundType"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dialogs.utils.PermissionsList"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog" >
@@ -433,14 +417,6 @@
             android:name=".dialogs.WeekDayDialog"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteFullscreen" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.utils.SelectCalendar"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

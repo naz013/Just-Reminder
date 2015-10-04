@@ -5,9 +5,9 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -35,10 +35,7 @@ public class VoiceWidgetDialog extends Activity {
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Toast t = Toast.makeText(getApplicationContext(),
-                    getString(R.string.recognizer_not_found_error_message),
-                    Toast.LENGTH_SHORT);
-            t.show();
+            Messages.toast(getApplicationContext(), getString(R.string.recognizer_not_found_error_message));
             finish();
         }
     }

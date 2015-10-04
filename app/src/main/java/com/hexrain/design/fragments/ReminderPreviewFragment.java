@@ -350,8 +350,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     File sound = new File(melody);
                     soundUri = Uri.fromFile(sound);
                 } else {
-                    if (new SharedPrefs(mContext).loadBoolean(Constants.CUSTOM_SOUND)) {
-                        String path = new SharedPrefs(mContext).loadPrefs(Constants.CUSTOM_SOUND_FILE);
+                    if (new SharedPrefs(mContext).loadBoolean(Prefs.CUSTOM_SOUND)) {
+                        String path = new SharedPrefs(mContext).loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                         if (path != null) {
                             File sound = new File(path);
                             soundUri = Uri.fromFile(sound);

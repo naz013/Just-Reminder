@@ -1,44 +1,47 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.Marker;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SwipeListener;
-import com.cray.software.justreminder.utils.AssetsUtil;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
-public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder>
-        implements SwipeableItemAdapter<PlaceRecyclerAdapter.ViewHolder> {
+public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder>
+        implements SwipeableItemAdapter<NoteRecyclerAdapter.ViewHolder> {
 
     private Context mContext;
     private ColorSetter cs;
-    private PlaceDataProvider provider;
-    private Typeface typeface;
+    private NoteDataProvider provider;
+    private SharedPrefs prefs;
+    private SyncHelper syncHelper;
     private SwipeListener mEventListener;
     private boolean isDark;
 
-    public PlaceRecyclerAdapter(Context context, PlaceDataProvider provider) {
+    public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
-        SharedPrefs prefs = new SharedPrefs(context);
+        prefs = new SharedPrefs(context);
+        syncHelper = new SyncHelper(context);
         cs = new ColorSetter(context);
-        typeface = AssetsUtil.getLightTypeface(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         setHasStableIds(true);
     }
@@ -96,7 +99,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
         Log.d(Constants.LOG_TAG,
                 "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
 
-        final Marker item = provider.getItem(position);
+        final Note item = provider.getItem(position);
 
         if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
             if (mEventListener != null) {
@@ -115,13 +118,15 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
         TextView textView;
         ViewGroup container;
-        RelativeLayout background;
+        LinearLayout noteBackground;
+        ImageView noteImage;
 
         public ViewHolder(View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.textView);
+            textView = (TextView) v.findViewById(R.id.note);
             container = (ViewGroup) v.findViewById(R.id.container);
-            background = (RelativeLayout) v.findViewById(R.id.background);
+            noteBackground = (LinearLayout) v.findViewById(R.id.noteBackground);
+            noteImage = (ImageView) v.findViewById(R.id.noteImage);
         }
 
         @Override
@@ -134,7 +139,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_simple_card, parent, false);
+                .inflate(R.layout.list_item_note, parent, false);
 
         // create ViewHolder
 
@@ -143,18 +148,31 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
+        final Note item = provider.getData().get(position);
+        String title = item.getNote();
+        int color = item.getColor();
+        int style = item.getStyle();
+        byte[] byteImage = item.getImage();
 
-        final Marker item = provider.getData().get(position);
-        String title = item.getTitle();
+        holder.textView.setTypeface(cs.getTypeface(style));
+        holder.noteBackground.setBackgroundColor(cs.getNoteLightColor(color));
+        if (byteImage != null){
+            Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
+            if (photo != null){
+                holder.noteImage.setImageBitmap(photo);
+            } else holder.noteImage.setImageDrawable(null);
+        } else holder.noteImage.setImageDrawable(null);
 
-        holder.textView.setTypeface(typeface);
+        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+            title = syncHelper.decrypt(title);
+        }
         holder.textView.setText(title);
+        holder.textView.setTextSize(prefs.loadInt(Prefs.TEXT_SIZE) + 12);
 
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.textView);
+                if (mEventListener != null) mEventListener.onItemClicked(position, holder.noteImage);
             }
         });
 

@@ -78,8 +78,8 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
             File sound = new File(melody);
             soundUri = Uri.fromFile(sound);
         } else {
-            if (sPrefs.loadBoolean(Constants.CUSTOM_SOUND)) {
-                String path = sPrefs.loadPrefs(Constants.CUSTOM_SOUND_FILE);
+            if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
+                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                 if (path != null) {
                     File sound = new File(path);
                     soundUri = Uri.fromFile(sound);

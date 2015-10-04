@@ -14,12 +14,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -84,11 +84,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadCalendars() {
-        list = new ArrayList<>();
         list = new CalendarManager(this).getCalendarsList();
 
         if (list == null || list.size() == 0){
-            showMessage(getString(R.string.no_google_calendars_found));
+            Messages.toast(EventsImport.this, getString(R.string.no_google_calendars_found));
             finish();
         }
 
@@ -129,12 +128,12 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     private void importEvents() {
         if (!eventsCheck.isChecked()) {
-            showMessage(getString(R.string.string_no_action_selected));
+            Messages.toast(EventsImport.this, getString(R.string.string_no_action_selected));
             return;
         }
 
         if (eventCalendar.getSelectedItemPosition() == 0){
-            showMessage(getString(R.string.string_no_calendar_selected));
+            Messages.toast(EventsImport.this, getString(R.string.string_no_calendar_selected));
             return;
         }
 
@@ -153,10 +152,6 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         }
 
         new Import(this).execute(map);
-    }
-
-    private void showMessage(String text){
-        Toast.makeText(EventsImport.this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -269,10 +264,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            if (result == 0) showMessage(getString(R.string.string_no_events_found));
+            if (result == 0) Messages.toast(EventsImport.this, getString(R.string.string_no_events_found));
 
             if (result > 0) {
-                showMessage(getString(R.string.simple_imported) + " " + result + " " +
+                Messages.toast(EventsImport.this, getString(R.string.simple_imported) + " " + result + " " +
                         getString(R.string.simple_event) +
                         (result == 1 ? "." : getString(R.string.char_s_with_point)));
                 new UpdatesHelper(context).updateWidget();

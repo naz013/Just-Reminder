@@ -2,9 +2,6 @@ package com.cray.software.justreminder.dialogs.utils;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +14,15 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Sound;
 import com.cray.software.justreminder.interfaces.Constants;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class SelectMelody extends Activity{
 
-    private MediaPlayer mMediaPlayer;
+    private Sound sound = new Sound(this);
     private ArrayList<File> fileList = new ArrayList<>();
     private ListView musicList;
 
@@ -53,24 +50,7 @@ public class SelectMelody extends Activity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position != -1) {
                     File path = fileList.get(position);
-                    Uri soundUri = Uri.fromFile(path);
-                    if (mMediaPlayer != null) {
-                        mMediaPlayer.stop();
-                    }
-                    mMediaPlayer = new MediaPlayer();
-                    try {
-                        mMediaPlayer.setDataSource(SelectMelody.this, soundUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    mMediaPlayer.setLooping(false);
-                    try {
-                        mMediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.start();
+                    sound.play(path.toString());
                 }
             }
         });
@@ -85,9 +65,7 @@ public class SelectMelody extends Activity{
             public void onClick(View v) {
                 int selectedPosition = musicList.getCheckedItemPosition();
                 if (selectedPosition != -1) {
-                    if (mMediaPlayer != null) {
-                        mMediaPlayer.stop();
-                    }
+                    sound.stop();
                     File path = fileList.get(selectedPosition);
                     Intent intent = new Intent();
                     intent.putExtra(Constants.SELECTED_MELODY, path.toString());
