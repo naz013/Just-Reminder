@@ -670,7 +670,7 @@
     <string name="simple_imported">"Импортировано "</string>
     <string name="simple_event">" событий"</string>
     <string name="char_s_with_point">.</string>
-    <string name="string_trash_cleared">Все события удалены из корзины.</string>
+    <string name="string_trash_cleared">Все события удалены из корзины</string>
     <string name="import_birth_from_facebook">Импортировать дни рождения с Facebook</string>
     <string name="settings_birthday_reminder_title">Напоминание о днях рождения</string>
     <string name="settings_bg_image_explanation">Отметьте, чтобы включить фоновое изображение в календаре. Приложение загрузит дополнительные данные через WiFi (~ 50Mb)</string>
@@ -702,12 +702,19 @@
     <string name="twelve_hours">12 часов</string>
     <string name="one_day">1 день</string>
     <string name="dropbox">Dropbox</string>
-    <string name="deleting">Удаление...</string>
+    <string name="deleting">Удаление…</string>
     <string name="beta_version">BETA версия!</string>
     <string name="beta_version_message">Помни эта BETA версия, по этому приложение может иметь ошибки!</string>
     <string name="select_list">Выберите список</string>
     <string name="move_to_list">Переместить в другой список</string>
     <string name="same_list_warming">Вы выбрали тот самый список!</string>
-    <string name="group_deleted">Категория удалена.</string>
-    <string name="note_deleted">Заметка удалена.</string>
+    <string name="group_deleted">Категория удалена</string>
+    <string name="note_deleted">Заметка удалена</string>
+    <string name="file_delted">Файл удален</string>
+    <string name="all_files_removed">Все файлы удалены</string>
+    <string name="two_days">2 дня</string>
+    <string name="event_import_interval">Выбрать интервал обновлений</string>
+    <string name="show_grid">Сетка</string>
+    <string name="show_list">Список</string>
+    <string name="simple_import">Импортировать</string>
 </resources>

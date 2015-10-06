@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/insertVoice"
                 android:layout_marginLeft="10dp"
-                style="?android:buttonBarButtonStyle"
+                style="@style/Widget.AppCompat.ActionButton"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_mic_white_24dp"/>

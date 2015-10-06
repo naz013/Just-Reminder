@@ -59,6 +59,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private NoteRecyclerAdapter adapter;
     private NoteDataProvider provider;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static NotesFragment newInstance() {
@@ -135,6 +137,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
 
+        loaderAdapter();
+        onCreate = true;
+
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
@@ -192,7 +197,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             }
         }
         sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean("isNew")) loaderAdapter();
+        if (sPrefs.loadBoolean("isNew") || !onCreate) loaderAdapter();
+        onCreate = false;
         sPrefs.saveBoolean("isNew", false);
         getActivity().invalidateOptionsMenu();
     }

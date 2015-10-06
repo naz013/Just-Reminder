@@ -53,11 +53,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.datas.Category;
+import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -200,6 +200,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             Cursor c = fdb.getTask(id);
             if (c != null && c.moveToNext()) {
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                DataBase db = new DataBase(this);
+                db.open();
+                Cursor cf = db.queryCategories();
+                if (cf != null && cf.moveToFirst()) {
+                    String title = cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT));
+                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                    category.setText(title);
+                }
+                if (cf != null) cf.close();
+                db.close();
             }
             if (c != null) c.close();
             if (type != null) {
@@ -244,27 +255,24 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    private CategoryDataProvider provider;
+
     private void changeCategory() {
-        DB = new DataBase(this);
-        DB.open();
-        final ArrayList<Category> categories = new ArrayList<>();
-        Cursor c = DB.queryCategories();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                categories.add(new Category(title, uuId));
-            } while (c.moveToNext());
+        provider = new CategoryDataProvider(this);
+        final ArrayList<String> categories = new ArrayList<>();
+        for (Category item : provider.getData()){
+            categories.add(item.getTitle());
         }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.string_select_category));
-        builder.setAdapter(new SimpleAdapter(BackupFileEdit.this,
-                DB.queryCategories()), new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(new ArrayAdapter<>(BackupFileEdit.this,
+                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                category.setText(categories.get(which).getTitle());
-                categoryId = categories.get(which).getUuID();
+                category.setText(provider.getItem(which).getTitle());
+                categoryId = provider.getItem(which).getUuID();
             }
         });
         AlertDialog alert = builder.create();

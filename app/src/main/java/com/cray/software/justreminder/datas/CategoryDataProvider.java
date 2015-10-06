@@ -43,6 +43,20 @@ public class CategoryDataProvider {
         return res;
     }
 
+    public int getPosition(String uuId){
+        int res = -1;
+        if (data.size() > 0 && uuId != null) {
+            for (int i = 0; i < data.size(); i++){
+                Category item = data.get(i);
+                if (item.getUuID().matches(uuId)) {
+                    res = i;
+                    break;
+                }
+            }
+        } else res = 0;
+        return res;
+    }
+
     public int removeItem(Category item){
         int res = 0;
         if (data.size() > 0) {

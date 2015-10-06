@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.CalendarStyle;
-import com.cray.software.justreminder.dialogs.utils.EventsImport;
+import com.cray.software.justreminder.dialogs.EventsImport;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.Permissions;

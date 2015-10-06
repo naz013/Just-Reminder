@@ -52,6 +52,8 @@ public class GroupsFragment extends Fragment implements SwipeListener {
     private CategoryDataProvider provider;
     private CategoryRecyclerAdapter adapter;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static GroupsFragment newInstance() {
@@ -77,6 +79,9 @@ public class GroupsFragment extends Fragment implements SwipeListener {
         emptyItem.setVisibility(View.GONE);
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
+
+        loadCategories();
+        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -127,7 +132,8 @@ public class GroupsFragment extends Fragment implements SwipeListener {
     @Override
     public void onResume() {
         super.onResume();
-        loadTemplates();
+        if (!onCreate) loadCategories();
+        onCreate = false;
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -155,7 +161,7 @@ public class GroupsFragment extends Fragment implements SwipeListener {
         super.onPause();
     }
 
-    private void loadTemplates(){
+    private void loadCategories(){
         provider = new CategoryDataProvider(getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
@@ -220,8 +226,8 @@ public class GroupsFragment extends Fragment implements SwipeListener {
 
     public class DeleteAsync extends AsyncTask<Void, Void, Void> {
 
-        Context mContext;
-        String uuId;
+        private Context mContext;
+        private String uuId;
 
         public DeleteAsync(Context context, String uuID){
             this.mContext = context;

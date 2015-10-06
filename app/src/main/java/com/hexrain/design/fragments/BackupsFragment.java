@@ -38,6 +38,7 @@ import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -269,14 +270,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     ViewUtils.collapse(cloudContainer);
                     ViewUtils.fadeInAnimation(filesCloudList, isAnimation);
                 } else {
-                    ViewUtils.fadeOutAnimation(filesCloudList, isAnimation);
-                    if (isDropboxDeleted) {
-                        pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
-                        loadInfo(pd);
-                    } else {
-                        ViewUtils.expand(cloudContainer);
-                        isDropboxDeleted = false;
-                    }
+                    reloadDropbox();
                 }
             }
         });
@@ -298,9 +292,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
+                Messages.snackbar(getActivity(), R.string.all_files_removed);
                 if (cloudContainer.getVisibility() == View.GONE) {
                     isDropboxDeleted = true;
                 }
+                reloadDropbox();
             }
         });
 
@@ -308,6 +304,17 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         cloudContainer.setVisibility(View.GONE);
         loadInfo(pd);
+    }
+
+    private void reloadDropbox() {
+        ViewUtils.fadeOutAnimation(filesCloudList, isAnimation);
+        if (isDropboxDeleted) {
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+            loadInfo(pd);
+        } else {
+            ViewUtils.expand(cloudContainer);
+            isDropboxDeleted = false;
+        }
     }
 
     private void loadDropboxList(){
@@ -354,6 +361,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             deleteFromDropbox(uuID, pd);
             filesDataBase.deleteTask(itemId);
             filesDataBase.close();
+            Messages.snackbar(getActivity(), R.string.file_delted);
             isDropboxDeleted = true;
         }
     }
@@ -421,14 +429,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     ViewUtils.collapse(googleContainer);
                     ViewUtils.fadeInAnimation(filesGoogleList, isAnimation);
                 } else {
-                    ViewUtils.fadeOutAnimation(filesGoogleList, isAnimation);
-                    if (isGoogleDeleted) {
-                        pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
-                        loadGoogleInfo(pd);
-                    } else {
-                        ViewUtils.expand(googleContainer);
-                        isGoogleDeleted = false;
-                    }
+                    reloadGoogle();
                 }
             }
         });
@@ -450,9 +451,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
+                Messages.snackbar(getActivity(), R.string.all_files_removed);
                 if (googleContainer.getVisibility() == View.GONE) {
                     isGoogleDeleted = true;
                 }
+                reloadGoogle();
             }
         });
 
@@ -460,6 +463,17 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         googleContainer.setVisibility(View.GONE);
         loadGoogleInfo(pd);
+    }
+
+    private void reloadGoogle() {
+        ViewUtils.fadeOutAnimation(filesGoogleList, isAnimation);
+        if (isGoogleDeleted) {
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+            loadGoogleInfo(pd);
+        } else {
+            ViewUtils.expand(googleContainer);
+            isGoogleDeleted = false;
+        }
     }
 
     private void loadGoogleList(){
@@ -506,6 +520,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             deleteFromGoogle(uuID, pd);
             filesDataBase.deleteTask(itemId);
             filesDataBase.close();
+            Messages.snackbar(getActivity(), R.string.file_delted);
             isGoogleDeleted = true;
         }
     }
@@ -664,9 +679,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     ViewUtils.collapse(container);
                     ViewUtils.fadeInAnimation(filesList, isAnimation);
                 } else {
-                    ViewUtils.fadeOutAnimation(filesList, isAnimation);
-                    ViewUtils.expand(container);
-                    showFilesCount();
+                    reloadLocal();
                 }
             }
         });
@@ -688,16 +701,24 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
+                Messages.snackbar(getActivity(), R.string.all_files_removed);
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList, isAnimation);
                     ViewUtils.expand(container);
                     showFilesCount();
                 }
+                reloadLocal();
 
             }
         });
         showFilesCount();
         filesList = (RecyclerView) rootView.findViewById(R.id.filesList);
+    }
+
+    private void reloadLocal() {
+        ViewUtils.fadeOutAnimation(filesList, isAnimation);
+        ViewUtils.expand(container);
+        showFilesCount();
     }
 
     private void loadLocalList(){
@@ -754,6 +775,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
             filesDataBase.close();
+            Messages.snackbar(getActivity(), R.string.file_delted);
             loadLocalList();
             boolean isLocalDeleted = true;
         }
@@ -883,15 +905,28 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public void onSwipeToLeft(int position) {
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_DROPBOX)){
             deleteFile(provider.getItem(position).getId());
+            provider.removeItem(position);
+            adapter.notifyItemRemoved(position);
+            if (provider.getCount() == 0){
+                reloadDropbox();
+            }
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_GDRIVE)){
             deleteGoogleFile(provider.getItem(position).getId());
+            provider.removeItem(position);
+            adapter.notifyItemRemoved(position);
+            if (provider.getCount() == 0){
+                reloadGoogle();
+            }
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_LOCAL)){
             deleteLocalFile(provider.getItem(position).getId());
+            provider.removeItem(position);
+            adapter.notifyItemRemoved(position);
+            if (provider.getCount() == 0){
+                reloadLocal();
+            }
         }
-        provider.removeItem(position);
-        adapter.notifyItemRemoved(position);
     }
 
     @Override

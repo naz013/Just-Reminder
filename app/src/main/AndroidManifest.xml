@@ -460,7 +460,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.utils.EventsImport"
+            android:name=".dialogs.EventsImport"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

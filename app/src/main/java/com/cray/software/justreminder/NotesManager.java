@@ -63,6 +63,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 
 public class NotesManager extends AppCompatActivity {
@@ -166,7 +167,8 @@ public class NotesManager extends AppCompatActivity {
 
         layoutContainer = (RelativeLayout) findViewById(R.id.layoutContainer);
         imageContainer = (RelativeLayout) findViewById(R.id.imageContainer);
-        color = cSetter.getNoteColor(8);
+        int rand = new Random().nextInt(15+1);
+        color = cSetter.getNoteColor(rand);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
         if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
             ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Prefs.ANIMATIONS));

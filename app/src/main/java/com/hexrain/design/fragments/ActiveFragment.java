@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -61,6 +62,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     private RemindersRecyclerAdapter adapter;
     private ReminderDataProvider provider;
 
+    private boolean onCreate = false;
+    private boolean enableGrid = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static ActiveFragment newInstance() {
@@ -81,6 +85,11 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.action_list);
+        if (item != null){
+            item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
+            item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -104,6 +113,12 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
             case R.id.action_exit:
                 getActivity().finish();
                 return true;
+            case R.id.action_list:
+                enableGrid = !enableGrid;
+                new SharedPrefs(getActivity()).saveBoolean(Prefs.LIST_GRID, enableGrid);
+                loaderAdapter(null);
+                getActivity().invalidateOptionsMenu();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -115,6 +130,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
 
         ColorSetter cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
+        enableGrid = sPrefs.loadBoolean(Prefs.LIST_GRID);
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
@@ -127,6 +143,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+
+        loaderAdapter(null);
+        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -182,7 +201,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
                 adView.resume();
             }
         }
-        loaderAdapter(null);
+        if (!onCreate) loaderAdapter(null);
+        onCreate = false;
     }
 
     @Override
@@ -216,6 +236,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         }
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        if (enableGrid) mLayoutManager = new GridLayoutManager(getActivity(), 2);
         RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
         mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
@@ -335,7 +356,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
             switchCompat.setChecked(true);
             loaderAdapter(null);
         } else {
-            switchCompat.setChecked(false);
+            loaderAdapter(null);
         }
     }
 

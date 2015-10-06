@@ -30,6 +30,8 @@ public class GeolocationFragment extends Fragment {
     private MapFragment googleMap;
     private MarkersCursorAdapter markersCursorAdapter;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static GeolocationFragment newInstance() {
@@ -68,6 +70,9 @@ public class GeolocationFragment extends Fragment {
                 }
             }
         });
+
+        loadMarkers();
+        onCreate = true;
         return rootView;
     }
 
@@ -91,7 +96,8 @@ public class GeolocationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadMarkers();
+        if (!onCreate) loadMarkers();
+        onCreate = false;
     }
 
     private void loadMarkers(){
@@ -100,9 +106,9 @@ public class GeolocationFragment extends Fragment {
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryGroup();
         Random random = new Random();
+        ArrayList<Marker> list = new ArrayList<>();
         if (c != null && c.moveToFirst()){
             ColorSetter cSetter = new ColorSetter(getActivity());
-            ArrayList<Marker> list = new ArrayList<>();
             do {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
@@ -119,12 +125,12 @@ public class GeolocationFragment extends Fragment {
                     }
                 }
             } while (c.moveToNext());
-            loaderAdapter(list);
         } else {
             if (googleMap != null) {
                 googleMap.moveToMyLocation(false);
             }
         }
+        loaderAdapter(list);
         if (c != null) c.close();
         DB.close();
     }

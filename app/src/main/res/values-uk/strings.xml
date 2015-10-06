@@ -670,7 +670,7 @@
     <string name="simple_imported">"Імпортовано "</string>
     <string name="simple_event">" подій"</string>
     <string name="char_s_with_point">.</string>
-    <string name="string_trash_cleared">Корзина очищена.</string>
+    <string name="string_trash_cleared">Корзина очищена</string>
     <string name="import_birth_from_facebook">Імпортувати дні народження з Facebook</string>
     <string name="settings_birthday_reminder_explanation">Відмітьте, щоб увімкнути нагадування про дні народження</string>
     <string name="settings_birthday_reminder_title">Нагадування про дні народження</string>
@@ -708,6 +708,13 @@
     <string name="select_list">Оберіть список</string>
     <string name="move_to_list">Перемістити до іншого списку</string>
     <string name="same_list_warming">Ви обрали той самий список!</string>
-    <string name="group_deleted">Категорію видалено.</string>
-    <string name="note_deleted">Нотатку видалено.</string>
+    <string name="group_deleted">Категорію видалено</string>
+    <string name="note_deleted">Нотатку видалено</string>
+    <string name="file_delted">Файл видалено</string>
+    <string name="all_files_removed">Всі файли видалено</string>
+    <string name="two_days">2 дні</string>
+    <string name="event_import_interval">Обрати інтервал оновлень</string>
+    <string name="show_grid">Сітка</string>
+    <string name="show_list">Список</string>
+    <string name="simple_import">Імпортувати</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.dialogs.utils;
+package com.cray.software.justreminder.dialogs;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
@@ -19,6 +20,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -45,6 +47,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     private CheckBox eventsCheck;
     private Spinner eventCalendar;
+    private Button syncInterval;
 
     private ArrayList<CalendarManager.CalendarItem> list;
 
@@ -73,11 +76,22 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         TextView button = (TextView) findViewById(R.id.button);
         button.setOnClickListener(this);
 
+        syncInterval = (Button) findViewById(R.id.syncInterval);
+        syncInterval.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog.syncInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
+            }
+        });
+
         eventsCheck = (CheckBox) findViewById(R.id.eventsCheck);
         CheckBox autoCheck = (CheckBox) findViewById(R.id.autoCheck);
         eventsCheck.setOnCheckedChangeListener(this);
         autoCheck.setOnCheckedChangeListener(this);
         autoCheck.setChecked(prefs.loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS));
+
+        if (autoCheck.isChecked()) syncInterval.setEnabled(true);
+        else syncInterval.setEnabled(false);
 
         eventCalendar = (Spinner) findViewById(R.id.eventCalendar);
         loadCalendars();
@@ -170,6 +184,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     private void autoCheck(boolean isChecked) {
         if (isChecked) prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, true);
         else prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, false);
+        syncInterval.setEnabled(isChecked);
         EventsCheckAlarm alarm = new EventsCheckAlarm();
         if (isChecked) alarm.setAlarm(this);
         else alarm.cancelAlarm(this);

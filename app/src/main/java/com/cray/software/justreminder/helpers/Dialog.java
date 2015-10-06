@@ -19,6 +19,7 @@ import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
+import com.cray.software.justreminder.services.EventsCheckAlarm;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -580,18 +581,19 @@ public class Dialog {
         dialog.show();
     }
 
-    public static void syncInterval(final Context context) {
+    public static void syncInterval(final Context context, final String prefsToSave, int titleRes) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.auto_sync_interval));
+        builder.setTitle(context.getString(titleRes));
         final CharSequence[] items = {context.getString(R.string.one_hour),
                 context.getString(R.string.six_hours),
                 context.getString(R.string.twelve_hours),
-                context.getString(R.string.one_day)};
+                context.getString(R.string.one_day),
+                context.getString(R.string.two_days)};
 
         int position;
         SharedPrefs prefs = new SharedPrefs(context);
-        int interval = prefs.loadInt(Prefs.AUTO_BACKUP_INTERVAL);
+        int interval = prefs.loadInt(prefsToSave);
         switch (interval){
             case 1:
                 position = 0;
@@ -605,6 +607,9 @@ public class Dialog {
             case 24:
                 position = 3;
                 break;
+            case 48:
+                position = 4;
+                break;
             default:
                 position = 0;
                 break;
@@ -614,15 +619,18 @@ public class Dialog {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(context);
                 if (item == 0) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 1);
+                    prefs.saveInt(prefsToSave, 1);
                 } else if (item == 1) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
+                    prefs.saveInt(prefsToSave, 6);
                 } else if (item == 2) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 12);
+                    prefs.saveInt(prefsToSave, 12);
                 } else if (item == 3) {
-                    prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 24);
+                    prefs.saveInt(prefsToSave, 24);
+                } else if (item == 4) {
+                    prefs.saveInt(prefsToSave, 48);
                 }
-                new AutoSyncAlarm().setAlarm(context);
+                if (prefsToSave.matches(Prefs.AUTO_BACKUP_INTERVAL)) new AutoSyncAlarm().setAlarm(context);
+                else new EventsCheckAlarm().setAlarm(context);
             }
         });
         builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {

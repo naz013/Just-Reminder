@@ -46,6 +46,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     private Typeface typeface;
     private RecyclerListener mEventListener;
     private boolean isDark;
+    private boolean isGrid;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
@@ -55,6 +56,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         mCount = new TimeCount(context);
         typeface = AssetsUtil.getLightTypeface(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isGrid = prefs.loadBoolean(Prefs.LIST_GRID);
         setHasStableIds(true);
     }
 
@@ -178,7 +180,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_card, parent, false);
+                .inflate(!isGrid ? R.layout.list_item_card : R.layout.grid_item_card, parent, false);
 
         // create ViewHolder
 
@@ -345,7 +347,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
         if (isDone == 1){
             holder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
-            holder.leftTime.setVisibility(View.GONE);
+            holder.leftTime.setVisibility(!isGrid ? View.GONE : View.INVISIBLE);
         }
 
         if (archived > 0) {

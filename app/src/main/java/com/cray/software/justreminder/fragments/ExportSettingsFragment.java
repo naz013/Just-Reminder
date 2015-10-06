@@ -207,7 +207,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 prefsChange();
                 break;
             case R.id.syncInterval:
-                Dialog.syncInterval(getActivity());
+                Dialog.syncInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
                 break;
         }
     }

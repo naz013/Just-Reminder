@@ -50,6 +50,8 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
     private int currentPos;
     private Activity activity;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static TasksFragment newInstance() {
@@ -139,6 +141,7 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
         });
 
         loadData();
+        onCreate = true;
 
         return rootView;
     }
@@ -164,6 +167,8 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
     @Override
     public void onResume() {
         super.onResume();
+        if (!onCreate) loadData();
+        onCreate = false;
 
         SharedPrefs sPrefs = new SharedPrefs(activity);
         if (sPrefs.loadBoolean(Prefs.TASK_CHANGED)) {

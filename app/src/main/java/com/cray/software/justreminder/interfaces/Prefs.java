@@ -22,10 +22,12 @@ public class Prefs {
     public static final String EVENTS_CALENDAR = "events_calendar";
     public static final String BIRTH_CALENDAR = "birth_calendar";
     public static final String AUTO_CHECK_FOR_EVENTS = "auto_events";
+    public static final String AUTO_CHECK_FOR_EVENTS_INTERVAL = "auto_events_interval";
     public static final String THEME = "theme_color";
     public static final String DRIVE_USER = "ggl_user";
     public static final String SCREEN = "screen";
     public static final String USE_DARK_THEME = "dark_theme";
+    public static final String LIST_GRID = "list_grid";
     public static final String MAP_TYPE = "map_type";
     public static final String LOCATION_RADIUS = "radius";
     public static final String TRACKING_NOTIFICATION = "tracking_notification";

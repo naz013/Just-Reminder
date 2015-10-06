@@ -672,7 +672,7 @@
     <string name="simple_imported">"Imported "</string>
     <string name="simple_event">" event"</string>
     <string name="char_s_with_point">s.</string>
-    <string name="string_trash_cleared">Trash cleared.</string>
+    <string name="string_trash_cleared">Trash cleared</string>
     <string name="import_birth_from_facebook">Import birthdays from Facebook</string>
     <string name="settings_birthday_reminder_explanation">Check to enable reminder for birthdays</string>
     <string name="settings_birthday_reminder_title">Birthday reminder</string>
@@ -711,8 +711,15 @@
     <string name="move_to_list">Move to another list</string>
     <string name="select_list">Select list</string>
     <string name="same_list_warming">You\'ve select same list!</string>
-    <string name="group_deleted">Group deleted.</string>
-    <string name="note_deleted">Note deleted.</string>
+    <string name="group_deleted">Group deleted</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="file_delted">File deleted</string>
+    <string name="all_files_removed">All files were removed</string>
+    <string name="two_days">2 days</string>
+    <string name="event_import_interval">Select event check interval</string>
+    <string name="show_list">List view</string>
     <integer name="com_vk_sdk_AppId">5052869</integer>
+    <string name="show_grid">Grid view</string>
+    <string name="simple_import">Import</string>
 
 </resources>

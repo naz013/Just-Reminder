@@ -670,7 +670,7 @@
     <string name="simple_imported">"Importiert "</string>
     <string name="simple_event">" Veranstaltung"</string>
     <string name="char_s_with_point">en.</string>
-    <string name="string_trash_cleared">Abfalleimer gelöscht.</string>
+    <string name="string_trash_cleared">Abfalleimer gelöscht</string>
     <string name="import_birth_from_facebook">Import Geburtstage aus Facebook</string>
     <string name="settings_birthday_reminder_explanation">Überprüfen Sie, Erinnerung für Geburtstage aktivieren</string>
     <string name="settings_birthday_reminder_title">Geburtstagserinnerung</string>
@@ -702,12 +702,19 @@
     <string name="twelve_hours">12 Stunden</string>
     <string name="one_day">1 Tag</string>
     <string name="dropbox">Dropbox</string>
-    <string name="deleting">Löschen von...</string>
+    <string name="deleting">Löschen von…</string>
     <string name="beta_version">BETA version!</string>
     <string name="beta_version_message">Denken Sie daran, es BETA-Version, so Antrag kann Fehler enthalten!</string>
     <string name="move_to_list">Zu bewegen, um eine andere Liste</string>
     <string name="select_list">Auswahlliste</string>
     <string name="same_list_warming">Sie haben wählen Sie dieselbe Liste!</string>
-    <string name="group_deleted">Gruppe gelöscht.</string>
-    <string name="note_deleted">Bemerken gelöscht.</string>
+    <string name="group_deleted">Gruppe gelöscht</string>
+    <string name="note_deleted">Bemerken gelöscht</string>
+    <string name="file_delted">Datei gelöscht</string>
+    <string name="all_files_removed">Alle Dateien wurden entfernt</string>
+    <string name="two_days">2 Tage</string>
+    <string name="event_import_interval">Veranstaltungsauswahl Prüfintervall</string>
+    <string name="show_grid">Rasteransicht</string>
+    <string name="show_list">Listenansicht</string>
+    <string name="simple_import">Importieren</string>
 </resources>

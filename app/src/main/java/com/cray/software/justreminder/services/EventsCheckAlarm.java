@@ -40,14 +40,10 @@ public class EventsCheckAlarm extends BroadcastReceiver {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         long currTime = calendar.getTimeInMillis();
-        calendar.set(Calendar.HOUR_OF_DAY, 3);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long time = calendar.getTimeInMillis();
-        if (currTime > time) calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
+        SharedPrefs prefs = new SharedPrefs(context);
+        int interval = prefs.loadInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL);
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+                AlarmManager.INTERVAL_HOUR * interval, alarmIntent);
     }
 
     public void cancelAlarm(Context context) {

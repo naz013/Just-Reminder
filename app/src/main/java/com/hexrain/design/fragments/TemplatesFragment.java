@@ -48,6 +48,8 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
     private TemplateRecyclerAdapter adapter;
     private TemplateDataProvider provider;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static TemplatesFragment newInstance() {
@@ -86,6 +88,8 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
+        loadTemplates();
+        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -137,7 +141,8 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
     @Override
     public void onResume() {
         super.onResume();
-        loadTemplates();
+        if (!onCreate) loadTemplates();
+        onCreate = false;
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();

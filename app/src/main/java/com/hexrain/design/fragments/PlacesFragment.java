@@ -48,6 +48,8 @@ public class PlacesFragment extends Fragment implements SwipeListener {
     private PlaceRecyclerAdapter adapter;
     private PlaceDataProvider provider;
 
+    private boolean onCreate = false;
+
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public static PlacesFragment newInstance() {
@@ -86,6 +88,9 @@ public class PlacesFragment extends Fragment implements SwipeListener {
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
+
+        loadPlaces();
+        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -137,7 +142,8 @@ public class PlacesFragment extends Fragment implements SwipeListener {
     @Override
     public void onResume() {
         super.onResume();
-        loadPlaces();
+        if (!onCreate) loadPlaces();
+        onCreate = false;
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();

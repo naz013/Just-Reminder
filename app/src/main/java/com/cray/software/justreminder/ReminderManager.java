@@ -59,11 +59,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-import com.cray.software.justreminder.adapters.SimpleAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.Category;
+import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
 import com.cray.software.justreminder.dialogs.utils.SelectApplication;
@@ -141,8 +141,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private int myDay = 1;
 
     private ProgressDialog pd;
-    private DataBase DB = new DataBase(ReminderManager.this);
-
     private boolean isDelayed = false;
 
     private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
@@ -251,14 +249,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         findViewById(R.id.windowBackground).setOnTouchListener(this);
 
-        DB.open();
-        Cursor cf = DB.queryCategories();
+        DataBase db = new DataBase(this);
+        db.open();
+        Cursor cf = db.queryCategories();
         if (cf != null && cf.moveToFirst()) {
             String title = cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT));
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             category.setText(title);
         }
         if (cf != null) cf.close();
+        db.close();
 
         setUpNavigation();
 
@@ -332,14 +332,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
                 if (catId != null && !catId.matches("")) categoryId = catId;
 
+                db = new DataBase(this);
+                db.open();
                 if (categoryId != null && !categoryId.matches("")) {
-                    Cursor cx = DB.getCategory(categoryId);
+                    Cursor cx = db.getCategory(categoryId);
                     if (cx != null && cx.moveToFirst()) {
                         String title = cx.getString(cx.getColumnIndex(Constants.COLUMN_TEXT));
                         category.setText(title);
                     }
                     if (cf != null) cf.close();
                 }
+                db.close();
             }
 
             if (type.matches(Constants.TYPE_REMINDER)) {
@@ -389,27 +392,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         alertDialog.show();
     }
 
+    private CategoryDataProvider provider;
+
     private void changeCategory() {
-        DB = new DataBase(ReminderManager.this);
-        DB.open();
-        final ArrayList<Category> categories = new ArrayList<>();
-        Cursor c = DB.queryCategories();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                categories.add(new Category(title, uuId));
-            } while (c.moveToNext());
+        provider = new CategoryDataProvider(this);
+        final ArrayList<String> categories = new ArrayList<>();
+        for (Category item : provider.getData()){
+            categories.add(item.getTitle());
         }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.string_select_category));
-        builder.setAdapter(new SimpleAdapter(ReminderManager.this,
-                DB.queryCategories()), new DialogInterface.OnClickListener() {
+        builder.setSingleChoiceItems(new ArrayAdapter<>(ReminderManager.this,
+                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                category.setText(categories.get(which).getTitle());
-                categoryId = categories.get(which).getUuID();
+                category.setText(provider.getItem(which).getTitle());
+                categoryId = provider.getItem(which).getUuID();
             }
         });
         AlertDialog alert = builder.create();
@@ -449,8 +449,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     private void deleteReminder() {
-        DB.open();
-        Cursor c = DB.getReminder(id);
+        DataBase db = new DataBase(this);
+        db.open();
+        Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             int isArchived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
             if (isArchived == 1) {
@@ -460,6 +461,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             finish();
         }
         if (c != null) c.close();
+        db.close();
     }
 
     private void selectRadius() {
@@ -3255,12 +3257,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private void restoreTask(){
         if (id != 0) {
-            DB.open();
-            if (DB.getCount() == 0) {
+            DataBase db = new DataBase(this);
+            db.open();
+            if (db.getCount() == 0) {
                 stopService(new Intent(ReminderManager.this, GeolocationService.class));
                 stopService(new Intent(ReminderManager.this, CheckPosition.class));
             } else {
-                Cursor c = DB.queryGroup();
+                Cursor c = db.queryGroup();
                 if (c != null && c.moveToFirst()) {
                     ArrayList<String> types = new ArrayList<>();
                     do {
@@ -3285,7 +3288,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 if (c != null) c.close();
             }
-            Cursor c = DB.getReminder(id);
+            Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()) {
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
@@ -3306,6 +3309,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
             if (c != null) c.close();
+            db.close();
             new Notifier(ReminderManager.this).recreatePermanent();
             finish();
         } else {
