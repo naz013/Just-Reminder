@@ -1,11 +1,9 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.widget.Toast;
-
-import com.nispok.snackbar.Snackbar;
-import com.nispok.snackbar.SnackbarManager;
-import com.nispok.snackbar.enums.SnackbarType;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -31,28 +29,11 @@ public class Messages {
         Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show();
     }
 
-    public static void snackbar(Context context, String message){
-        boolean isLong = false;
-        if (message.length() > 70){
-            isLong = true;
-        }
-        SnackbarManager.show(
-                Snackbar.with(context)
-                        .text(message)
-                        .type(isLong ? SnackbarType.MULTI_LINE : SnackbarType.SINGLE_LINE)
-                        .duration(Snackbar.SnackbarDuration.LENGTH_SHORT));
+    public static void snackbar(View v, String message){
+        Snackbar.make(v, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    public static void snackbar(Context context, int resId){
-        boolean isLong = false;
-        String message = context.getString(resId);
-        if (message.length() > 70){
-            isLong = true;
-        }
-        SnackbarManager.show(
-                Snackbar.with(context)
-                        .text(message)
-                        .type(isLong ? SnackbarType.MULTI_LINE : SnackbarType.SINGLE_LINE)
-                        .duration(Snackbar.SnackbarDuration.LENGTH_SHORT));
+    public static void snackbar(View v, int resId){
+        Snackbar.make(v, resId, Snackbar.LENGTH_SHORT).show();
     }
 }

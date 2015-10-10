@@ -37,9 +37,9 @@ import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.ReminderNote;
-import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Interval;
@@ -49,7 +49,6 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -59,9 +58,16 @@ import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -145,7 +151,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         switchWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Reminder.toggle(id, ReminderPreviewFragment.this);
+                Reminder.toggle(id, ReminderPreviewFragment.this, null);
                 loadData();
             }
         });
@@ -285,7 +291,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         builder.setTitle(getString(R.string.string_select_time));
         builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                Reminder.copy(id, list.get(item), ReminderPreviewFragment.this);
+                Reminder.copy(id, list.get(item), ReminderPreviewFragment.this, null);
                 dialog.dismiss();
             }
         });
@@ -498,13 +504,28 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     time.setVisibility(View.GONE);
                     repeat.setVisibility(View.GONE);
                     mapContainer.setVisibility(View.VISIBLE);
-                    MapFragment map = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-                    map.enableTouch(false);
-                    map.hideUi();
-                    map.moveToMyLocation(true);
+                    GoogleMap map = ((SupportMapFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.map)).getMap();
+                    map.getUiSettings().setMyLocationButtonEnabled(false);
+
                     if (lon != 0 && lat != 0) {
                         LatLng pos = new LatLng(lat, lon);
-                        map.addMarker(pos, aVoid[1], true, true, radius);
+                        ColorSetter cs = new ColorSetter(mContext);
+                        map.addMarker(new MarkerOptions()
+                                .position(pos)
+                                .title(aVoid[1])
+                                .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle()))
+                                .draggable(false));
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                        if (radius != -1) {
+                            int[] circleColors = cs.getMarkerRadiusStyle();
+                            map.addCircle(new CircleOptions()
+                                    .center(pos)
+                                    .radius(radius)
+                                    .strokeWidth(3f)
+                                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
+                        }
                     }
                     String _Location = LocationUtil.getAddress(mContext, lat, lon);
                     if (_Location != null && !_Location.matches("")) {

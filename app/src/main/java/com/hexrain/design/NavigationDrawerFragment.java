@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -60,7 +61,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     private TextView places;
     private TextView categories;
     private TextView prefsButton;
+    private TextView appNameBanner;
     private View mFragmentContainerView;
+    private ImageView image;
 
     private String mCurrentSelectedPosition = "";
     private boolean mFromSavedInstanceState;
@@ -99,9 +102,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
 
-        ImageView image = (ImageView) rootView.findViewById(R.id.image);
+        image = (ImageView) rootView.findViewById(R.id.image);
 
-        TextView appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
+        appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
         String appName;
         if (Module.isPro()) {
@@ -110,15 +113,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             appName = getString(R.string.app_name);
         }
         appNameBanner.setText(appName.toUpperCase());
-
-        ImageCheck imageCheck = new ImageCheck(getActivity());
-        if (imageCheck.isImage(13)){
-            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
-            Picasso.with(getActivity()).load(new File(imageCheck.getImage(13))).into(image);
-        } else {
-            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorBlack));
-            new LoadAsync(getActivity(), 13).execute();
-        }
 
         prefsButton = (TextView) rootView.findViewById(R.id.settings);
         prefsButton.setOnClickListener(this);
@@ -147,7 +141,6 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         notes.setOnClickListener(this);
 
         googleTasks = (TextView) rootView.findViewById(R.id.googleTasks);
-        if (new GTasksHelper(getActivity()).isLinked()) googleTasks.setVisibility(View.VISIBLE);
         googleTasks.setOnClickListener(this);
 
         activeScreen = (TextView) rootView.findViewById(R.id.activeScreen);
@@ -205,19 +198,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         });
         templates.setTypeface(typeface);
-        DataBase DB = new DataBase(getActivity());
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        if (!DB.isOpen()) DB.open();
-        Cursor c = DB.queryTemplates();
-        if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
-            templates.setVisibility(View.VISIBLE);
-        }
-        if (!DB.isOpen()) DB.open();
-        c = DB.queryPlaces();
-        if (c != null && c.moveToFirst()){
-            places.setVisibility(View.VISIBLE);
-        }
-        if (c != null) c.close();
+        reloadItems();
 
         geoScreen.setTypeface(typeface);
         calendar.setTypeface(typeface);
@@ -235,6 +216,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
+            SharedPrefs sPrefs = new SharedPrefs(getActivity());
             if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else basket.setImageResource(R.drawable.market_icon);
@@ -252,6 +234,33 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         loadMenu();
         return rootView;
+    }
+
+    private void reloadItems(){
+        ImageCheck imageCheck = new ImageCheck(getActivity());
+        if (imageCheck.isImage(13)){
+            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+            Picasso.with(getActivity()).load(new File(imageCheck.getImage(13))).into(image);
+        } else {
+            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorBlack));
+            new LoadAsync(getActivity(), 13).execute();
+        }
+
+        if (new GTasksHelper(getActivity()).isLinked()) googleTasks.setVisibility(View.VISIBLE);
+
+        DataBase DB = new DataBase(getActivity());
+        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        if (!DB.isOpen()) DB.open();
+        Cursor c = DB.queryTemplates();
+        if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
+            templates.setVisibility(View.VISIBLE);
+        }
+        if (!DB.isOpen()) DB.open();
+        c = DB.queryPlaces();
+        if (c != null && c.moveToFirst()){
+            places.setVisibility(View.VISIBLE);
+        }
+        if (c != null) c.close();
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -501,6 +510,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
+        reloadItems();
+
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
         if (sPrefs.loadBoolean(Prefs.HIDE_TRANSLATION_MENU)) {
             helpTranslate.setVisibility(View.GONE);
@@ -520,9 +531,21 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     }
 
     private boolean isListFirstTime() {
+        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = null;
+        if (pInfo != null) {
+            version = pInfo.versionName;
+        }
+        boolean isShown = sPrefs.loadVersionBoolean(version);
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         boolean ranBefore = preferences.getBoolean("JustListBefore", false);
-        if (!ranBefore) {
+        if (!ranBefore && isShown) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("JustListBefore", true);
             editor.commit();
@@ -535,6 +558,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         void onNavigationDrawerItemSelected(String tag);
 
         void onTitleChanged(String title);
+
+        void showSnackbar(int message);
 
         void onListChange(RecyclerView list);
 

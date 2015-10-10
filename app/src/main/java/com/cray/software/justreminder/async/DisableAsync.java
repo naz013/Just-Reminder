@@ -10,6 +10,7 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.utils.LocationUtil;
 
 public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
@@ -21,25 +22,11 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        DataBase mData = new DataBase(mContext);
-        mData.open();
-        if (mData.getCount() != 0) {
-            Cursor c = mData.queryGroup();
-            if (!getInt(c)){
-                mContext.stopService(new Intent(mContext, GeolocationService.class));
-                mContext.stopService(new Intent(mContext, CheckPosition.class));
-            }
-        } else {
-            mContext.stopService(new Intent(mContext, GeolocationService.class));
-            mContext.stopService(new Intent(mContext, CheckPosition.class));
-        }
-        return null;
-    }
-
-    private boolean getInt(Cursor c){
-        boolean x = false;
-        TimeCount tc = new TimeCount(mContext);
-        if (c != null && c.moveToFirst()) {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor c = db.queryGroup();
+        if (c != null && c.moveToFirst()){
+            boolean res = false;
             do {
                 String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 if (tp.startsWith(Constants.TYPE_LOCATION) || tp.startsWith(Constants.TYPE_LOCATION_OUT)) {
@@ -51,20 +38,29 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
                     int isShown = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                     int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                     if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
-                        if (isShown != 1 && isDone != 1) {
-                            x = true;
+                        if (isDone != 1){
+                            if (isShown != LocationUtil.SHOWN) res = true;
                         }
                     } else {
+                        TimeCount tc = new TimeCount(mContext);
                         if (tc.isCurrent(year, month, day, hour, minute, 0)) {
-                            if (isShown != 1 && isDone != 1) {
-                                x = true;
+                            if (isDone != 1){
+                                if (isShown != LocationUtil.SHOWN) res = true;
                             }
                         }
                     }
                 }
             } while (c.moveToNext());
+            if (!res) {
+                mContext.stopService(new Intent(mContext, GeolocationService.class));
+                mContext.stopService(new Intent(mContext, CheckPosition.class));
+            }
+        } else {
+            mContext.stopService(new Intent(mContext, GeolocationService.class));
+            mContext.stopService(new Intent(mContext, CheckPosition.class));
         }
         if (c != null) c.close();
-        return x;
+        db.close();
+        return null;
     }
 }

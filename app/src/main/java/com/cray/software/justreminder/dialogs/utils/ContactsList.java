@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.dialogs.utils;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -28,6 +30,8 @@ public class ContactsList extends AppCompatActivity {
 
     private ArrayAdapter<String> adapter;
     private String name = "";
+
+    private FloatingEditText searchField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ public class ContactsList extends AppCompatActivity {
         Intent intent = getIntent();
         final ArrayList<String> contacts = intent.getStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY);
 
-        FloatingEditText searchField = (FloatingEditText) findViewById(R.id.searchField);
+        searchField = (FloatingEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -141,5 +145,13 @@ public class ContactsList extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
+        super.onPause();
     }
 }

@@ -344,7 +344,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
 
     @Override
     public void onSwipeToLeft(int position) {
-        Reminder.moveToTrash(provider.getItem(position).getId(), getActivity());
+        Reminder.moveToTrash(provider.getItem(position).getId(), getActivity(), mCallbacks);
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
         reloadView();
@@ -352,7 +352,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
 
     @Override
     public void onItemSwitched(int position, SwitchCompat switchCompat) {
-        if (Reminder.toggle(provider.getItem(position).getId(), getActivity())) {
+        if (Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks)) {
             switchCompat.setChecked(true);
             loaderAdapter(null);
         } else {
@@ -378,7 +378,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
                                 .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
             }
         } else {
-            if (Reminder.toggle(provider.getItem(position).getId(), getActivity())){
+            if (Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks)){
                 loaderAdapter(null);
             }
         }

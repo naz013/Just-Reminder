@@ -22,7 +22,6 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -219,7 +218,7 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
-        Messages.snackbar(getActivity(), getString(R.string.string_template_deleted));
+        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_template_deleted);
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
         reloadView();

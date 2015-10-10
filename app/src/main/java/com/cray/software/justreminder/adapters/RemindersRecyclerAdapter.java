@@ -334,7 +334,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (lat != 0.0 || lon != 0.0) {
                 holder.taskDate.setText(String.format("%.5f", lat));
                 holder.viewTime.setText(String.format("%.5f", lon));
-                holder.leftTime.setVisibility(View.GONE);
+                if (archived > 0) holder.leftTime.setVisibility(View.GONE);
+                else holder.leftTime.setVisibility(!isGrid ? View.GONE : View.INVISIBLE);
             } else {
                 if (isDone == 0) {
                     holder.leftTime.setText(mCount.

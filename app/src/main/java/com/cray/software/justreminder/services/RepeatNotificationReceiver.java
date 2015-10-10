@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationManagerCompat;
@@ -22,7 +20,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 
 public class RepeatNotificationReceiver extends BroadcastReceiver {
@@ -42,7 +39,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
                 int color = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
-                showNotification(context, task, type, 1, id, color, melody);
+                showNotification(context, task, type, id, color, melody);
             }
             if (c != null) c.close();
         }
@@ -71,7 +68,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         }
     }
 
-    private void showNotification(Context ctx, String task, String type, int i, long itemId, int color, String melody){
+    private void showNotification(Context ctx, String task, String type, long itemId, int color, String melody){
         SharedPrefs sPrefs = new SharedPrefs(ctx);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
@@ -128,60 +125,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         int currVolume = sPrefs.loadInt(Prefs.VOLUME);
         float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
-        if (i == 1) {
-            if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
-                MediaPlayer mMediaPlayer;
-                if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) {
-                    mMediaPlayer = new MediaPlayer();
-                    try {
-                        mMediaPlayer.setDataSource(ctx, soundUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                    else mMediaPlayer.setLooping(false);
-
-                    mMediaPlayer.setVolume(1 - log1, 1 - log1);
-                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-                    try {
-                        mMediaPlayer.prepareAsync();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                } else {
-                    mMediaPlayer = new MediaPlayer();
-                    try {
-                        mMediaPlayer.setDataSource(ctx, soundUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                    if (sPrefs.loadBoolean(Prefs.INFINITE_SOUND)) mMediaPlayer.setLooping(true);
-                    else mMediaPlayer.setLooping(false);
-
-                    mMediaPlayer.setVolume(1 - log1, 1 - log1);
-                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-                    try {
-                        mMediaPlayer.prepareAsync();
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                builder.setSound(soundUri);
-            }
-        }
+        builder.setSound(soundUri);
 
         if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
             long[] pattern;

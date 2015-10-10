@@ -156,7 +156,7 @@
     <string name="weekday_saturday">СБ</string>
     <string name="weekday_sunday">НД</string>
     <string name="action_check_text">Додати дію</string>
-    <string name="event_description">Подію додано з Just Reminder</string>
+    <string name="event_description">Подію додано з Reminder</string>
     <string name="calendar_birthday_info">Для того, щоб додати день народження до календаря потрібно увімкнути використання днів народжень з контактів в \"Налаштуваннях\"</string>
     <string name="thank_dialog_title">ПРО Ліцензія</string>
     <string name="thank_dialog_message">Дякуємо за те що придбали ПРО ліцензію даного додатку. </string>
@@ -717,4 +717,11 @@
     <string name="show_grid">Сітка</string>
     <string name="show_list">Список</string>
     <string name="simple_import">Імпортувати</string>
+    <string name="flexible_explanation">Багато видів нагадувань для щоденного використання</string>
+    <string name="smart_explanation">Розумна індикація в залежності від типу нагадування і ситуації</string>
+    <string name="dark_mode_explanation">Темний стиль - простота і елегантність</string>
+    <string name="cloud_sync_explanation">Зберігайте свої нагадування в Dropbox чи Диску Google. Також керуйте Завданнями Google </string>
+    <string name="simple_note">Нотатки</string>
+    <string name="note_explnation">Додавайте, змінюйте, діліться зашифрованими нотатками</string>
+    <string name="widget_explanation">Широкий вибір віджетів головного екрану і тем до них</string>
 </resources>

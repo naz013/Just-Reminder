@@ -195,7 +195,7 @@ public class GroupsFragment extends Fragment implements SwipeListener {
             }
             if (s != null) s.close();
             db.close();
-            Messages.snackbar(getActivity(), R.string.group_deleted);
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.group_deleted);
             provider.removeItem(position);
             adapter.notifyItemRemoved(position);
         }

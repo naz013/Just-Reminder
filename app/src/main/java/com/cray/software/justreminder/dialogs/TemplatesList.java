@@ -156,7 +156,7 @@ public class TemplatesList extends AppCompatActivity implements SwipeListener {
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
-        Messages.snackbar(this, getString(R.string.string_template_deleted));
+        Messages.toast(this, getString(R.string.string_template_deleted));
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
         reloadView();

@@ -41,6 +41,7 @@ public class Type {
             int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
+            long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
             int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
             int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
             String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
@@ -58,7 +59,7 @@ public class Type {
 
             return new Reminder(text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due);
+                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count);
         } else return null;
     }
 

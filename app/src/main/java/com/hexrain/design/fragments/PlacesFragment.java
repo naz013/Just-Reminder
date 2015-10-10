@@ -22,7 +22,6 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -214,7 +213,7 @@ public class PlacesFragment extends Fragment implements SwipeListener {
             db.deletePlace(id);
             provider.removeItem(position);
             adapter.notifyItemRemoved(position);
-            Messages.snackbar(getActivity(), getString(R.string.delete_place_toast));
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.delete_place_toast);
             db.close();
             reloadView();
         }

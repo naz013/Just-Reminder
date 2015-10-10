@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -21,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -549,7 +551,7 @@ public class NotesManager extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Note.deleteNote(id, NotesManager.this);
+                Note.deleteNote(id, NotesManager.this, null);
                 dialog.dismiss();
                 new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
                 finish();
@@ -736,6 +738,9 @@ public class NotesManager extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (DB != null && DB.isOpen()) DB.close();
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
         super.onDestroy();
     }
 

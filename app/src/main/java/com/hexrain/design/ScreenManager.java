@@ -20,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -61,6 +63,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
@@ -122,10 +125,13 @@ public class ScreenManager extends AppCompatActivity
     private TextView buttonNo;
     private TextView buttonReminderYes;
     private TextView buttonReminderNo;
+    private AppBarLayout bar;
 
     private FloatingActionsMenu mainMenu;
     private FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
             addPlace, addGroup;
+
+    private CoordinatorLayout coordinatorLayout;
 
     private ColorSetter cSetter = new ColorSetter(this);
     private SharedPrefs sPrefs = new SharedPrefs(this);
@@ -174,6 +180,8 @@ public class ScreenManager extends AppCompatActivity
 
         isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
 
+        bar = (AppBarLayout) findViewById(R.id.bar);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -202,6 +210,8 @@ public class ScreenManager extends AppCompatActivity
         buttonNo = (TextView) findViewById(R.id.buttonNo);
         buttonReminderYes = (TextView) findViewById(R.id.buttonReminderYes);
         buttonReminderNo = (TextView) findViewById(R.id.buttonReminderNo);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         initButton();
 
@@ -246,7 +256,7 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (isNoteVisible()) {
-                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                    ViewUtils.hideReveal(noteCard, isAnimation);
                 }
 
                 new Handler().postDelayed(new Runnable() {
@@ -261,12 +271,12 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public boolean onLongClick(View v) {
                 if (!isNoteVisible()) {
-                    ViewUtils.show(ScreenManager.this, noteCard, isAnimation);
+                    ViewUtils.showReveal(noteCard, isAnimation);
                 } else {
                     quickNote.setText("");
                     quickNote.setError(null);
 
-                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                    ViewUtils.hideReveal(noteCard, isAnimation);
                 }
                 return true;
             }
@@ -393,7 +403,7 @@ public class ScreenManager extends AppCompatActivity
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
                                 if (isNoteVisible()) {
-                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                                    ViewUtils.hideReveal(noteCard, isAnimation);
                                 }
 
                                 new Handler().postDelayed(new Runnable() {
@@ -414,7 +424,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                                ViewUtils.hideReveal(noteCard, isAnimation);
                             }
 
                             new Handler().postDelayed(new Runnable() {
@@ -430,12 +440,12 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (!isNoteVisible()) {
-                                ViewUtils.show(ScreenManager.this, noteCard, isAnimation);
+                                ViewUtils.showReveal(noteCard, isAnimation);
                             } else {
                                 quickNote.setText("");
                                 quickNote.setError(null);
 
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+                                ViewUtils.hideReveal(noteCard, isAnimation);
                             }
                         }
                     }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_grey600_24dp);
@@ -1324,7 +1334,7 @@ public class ScreenManager extends AppCompatActivity
         quickNote.setText("");
         quickNote.setError(null);
 
-        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+        ViewUtils.hideReveal(noteCard, isAnimation);
 
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
@@ -1345,13 +1355,13 @@ public class ScreenManager extends AppCompatActivity
 
     private void askNotification(final String note, final long id){
         sPrefs = new SharedPrefs(ScreenManager.this);
-        ViewUtils.show(ScreenManager.this, noteStatusCard, isAnimation);
+        ViewUtils.showReveal(noteStatusCard, isAnimation);
 
         buttonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Notifier(ScreenManager.this).showNoteNotification(note, id);
-                ViewUtils.hide(ScreenManager.this, noteStatusCard, isAnimation);
+                ViewUtils.hideReveal(noteStatusCard, isAnimation);
 
                 if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1367,7 +1377,7 @@ public class ScreenManager extends AppCompatActivity
         buttonNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hide(ScreenManager.this, noteStatusCard, isAnimation);
+                ViewUtils.hideReveal(noteStatusCard, isAnimation);
 
                 if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1383,12 +1393,12 @@ public class ScreenManager extends AppCompatActivity
 
     private void askReminder(final String note, final long noteId){
         sPrefs = new SharedPrefs(ScreenManager.this);
-        ViewUtils.show(ScreenManager.this, noteReminderCard, isAnimation);
+        ViewUtils.showReveal(noteReminderCard, isAnimation);
 
         buttonReminderYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hide(ScreenManager.this, noteReminderCard, isAnimation);
+                ViewUtils.hideReveal(noteReminderCard, isAnimation);
                 DB = new DataBase(ScreenManager.this);
                 if (!DB.isOpen()) DB.open();
                 Calendar calendar1 = Calendar.getInstance();
@@ -1405,7 +1415,7 @@ public class ScreenManager extends AppCompatActivity
                 }
                 if (cf != null) cf.close();
                 long remId = DB.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
-                        minute, 0, null, 0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME),
+                        minute, 0, null, 0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
                         0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
                 new AlarmReceiver().setAlarm(ScreenManager.this, remId);
                 DB.updateReminderDateTime(remId);
@@ -1422,7 +1432,7 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hide(ScreenManager.this, noteReminderCard, isAnimation);
+                ViewUtils.hideReveal(noteReminderCard, isAnimation);
             }
         });
     }
@@ -1438,7 +1448,7 @@ public class ScreenManager extends AppCompatActivity
         if (isNoteVisible()){
             quickNote.setText("");
             quickNote.setError(null);
-            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
+            ViewUtils.hideReveal(noteCard, isAnimation);
 
             InputMethodManager imm = (InputMethodManager)getSystemService(
                     Context.INPUT_METHOD_SERVICE);
@@ -1561,5 +1571,10 @@ public class ScreenManager extends AppCompatActivity
             new SharedPrefs(this).savePrefsBackup();
         }
         super.onStop();
+    }
+
+    @Override
+    public void showSnackbar(int message) {
+        Messages.snackbar(coordinatorLayout, message);
     }
 }

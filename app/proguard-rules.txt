@@ -13,6 +13,12 @@
 -keep class com.dropbox.** {*;}
 -keep class org.apache.http.** { *; }
 -keep class ch.boye.** { *; }
+-keep class io.codetail.animation.arcanimator.** { *; }
+
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
 
 -printmapping out.map
 

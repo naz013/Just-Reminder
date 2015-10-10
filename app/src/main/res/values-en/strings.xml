@@ -153,7 +153,7 @@
     <string name="weekday_saturday">"SAT"</string>
     <string name="weekday_sunday">"SUN"</string>
     <string name="action_check_text">"Add action"</string>
-    <string name="event_description">"Event added from Just Reminder"</string>
+    <string name="event_description">"Event added from Reminder"</string>
     <string name="calendar_birthday_info">"In order to add a birthday to the calendar you want to enable the birthdays from contacts in the \"Settings\""</string>
     <string name="thank_dialog_title">"PRO License"</string>
     <string name="thank_dialog_message">"Thank you for purchasing PRO license of application. "</string>
@@ -717,4 +717,11 @@
     <string name="show_grid">Grid view</string>
     <string name="show_list">List view</string>
     <string name="simple_import">Import</string>
+    <string name="flexible_explanation">Many types of reminders for everyday use</string>
+    <string name="smart_explanation">Smart display depending on the type and situation</string>
+    <string name="widget_explanation">Wide range of widgets and themes for them</string>
+    <string name="dark_mode_explanation">Dark style - simplicity and elegance</string>
+    <string name="cloud_sync_explanation">Save your reminders in Dropbox or Google Drive. And also manage your Google Tasks</string>
+    <string name="simple_note">Notes</string>
+    <string name="note_explnation">Add, modify, share encrypted notes</string>
 </resources>

@@ -292,7 +292,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
-                Messages.snackbar(getActivity(), R.string.all_files_removed);
+                if (mCallbacks != null) mCallbacks.showSnackbar(R.string.all_files_removed);
                 if (cloudContainer.getVisibility() == View.GONE) {
                     isDropboxDeleted = true;
                 }
@@ -361,7 +361,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             deleteFromDropbox(uuID, pd);
             filesDataBase.deleteTask(itemId);
             filesDataBase.close();
-            Messages.snackbar(getActivity(), R.string.file_delted);
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             isDropboxDeleted = true;
         }
     }
@@ -451,7 +451,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
-                Messages.snackbar(getActivity(), R.string.all_files_removed);
+                if (mCallbacks != null) mCallbacks.showSnackbar(R.string.all_files_removed);
                 if (googleContainer.getVisibility() == View.GONE) {
                     isGoogleDeleted = true;
                 }
@@ -520,7 +520,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             deleteFromGoogle(uuID, pd);
             filesDataBase.deleteTask(itemId);
             filesDataBase.close();
-            Messages.snackbar(getActivity(), R.string.file_delted);
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             isGoogleDeleted = true;
         }
     }
@@ -701,7 +701,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
                 if (c != null) c.close();
                 filesDataBase.close();
-                Messages.snackbar(getActivity(), R.string.all_files_removed);
+                if (mCallbacks != null) mCallbacks.showSnackbar(R.string.all_files_removed);
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList, isAnimation);
                     ViewUtils.expand(container);
@@ -775,7 +775,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 }
             }
             filesDataBase.close();
-            Messages.snackbar(getActivity(), R.string.file_delted);
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             loadLocalList();
             boolean isLocalDeleted = true;
         }

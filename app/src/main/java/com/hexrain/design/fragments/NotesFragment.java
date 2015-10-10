@@ -318,7 +318,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                Note.deleteNote(rowId, getActivity());
+                Note.deleteNote(rowId, getActivity(), mCallbacks);
 
             }while (c.moveToNext());
         }
@@ -372,7 +372,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onSwipeToLeft(int position) {
         long id = provider.getItem(position).getId();
-        Note.deleteNote(id, getActivity());
+        Note.deleteNote(id, getActivity(), mCallbacks);
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
     }

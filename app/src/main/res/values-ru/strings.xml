@@ -156,7 +156,7 @@
     <string name="weekday_saturday">СБ</string>
     <string name="weekday_sunday">ВС</string>
     <string name="action_check_text">Добавить действие</string>
-    <string name="event_description">Событие добавлено с Just Reminder</string>
+    <string name="event_description">Событие добавлено с Reminder</string>
     <string name="calendar_birthday_info">Если Вы хотите добавить день рождения в календарь, сначала включите использование дней рождения с контактов в \"Настройках\"</string>
     <string name="thank_dialog_title">Лицензировано</string>
     <string name="thank_dialog_message">Спасибо за установку ПРО лицензиии. </string>
@@ -717,4 +717,11 @@
     <string name="show_grid">Сетка</string>
     <string name="show_list">Список</string>
     <string name="simple_import">Импортировать</string>
+    <string name="flexible_explanation">Много типов напоминаний для повседневного использования</string>
+    <string name="smart_explanation">Интеллектуальная индикация в зависимости от типа напоминания и ситуации</string>
+    <string name="widget_explanation">Широкий выбор виджетов и тем для них</string>
+    <string name="dark_mode_explanation">Темный стиль - простота и элегантность</string>
+    <string name="cloud_sync_explanation">Сохраняйте свои напоминания в Dropbox или Диске Google. Также управляйте Заданиями Google</string>
+    <string name="simple_note">Заметки</string>
+    <string name="note_explnation">Добавляйте, редактируйте, делитесь зашифрованными заметками</string>
 </resources>

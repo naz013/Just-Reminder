@@ -423,7 +423,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        Note.deleteNote(mParam1, this);
+        Note.deleteNote(mParam1, this, null);
         sPrefs = new SharedPrefs(this);
         sPrefs.saveBoolean("isNew", true);
     }

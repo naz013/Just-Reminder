@@ -113,41 +113,54 @@
             android:layout_toRightOf="@+id/card2"
             android:id="@+id/layersContainer">
 
-            <TextView
+            <ScrollView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/typeNormal"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:padding="7dp"
-                android:text="@string/map_normal"/>
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/typeSatellite"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:padding="7dp"
-                android:text="@string/map_satellite"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/typeHybrid"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:padding="7dp"
-                android:text="@string/map_hybrid"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/typeNormal"
+                        android:textSize="18sp"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/map_normal"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/typeTerrain"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:padding="7dp"
-                android:text="@string/map_terrain"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/typeSatellite"
+                        android:textSize="18sp"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/map_satellite"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/typeHybrid"
+                        android:textSize="18sp"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/map_hybrid"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/typeTerrain"
+                        android:textSize="18sp"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/map_terrain"/>
+
+                </LinearLayout>
+
+            </ScrollView>
 
         </LinearLayout>
 

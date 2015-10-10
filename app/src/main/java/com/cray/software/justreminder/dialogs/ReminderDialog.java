@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -30,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
@@ -41,6 +39,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
@@ -57,17 +56,19 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private AlarmReceiver alarm = new AlarmReceiver();
     private DelayReceiver delay = new DelayReceiver();
     private RepeatNotificationReceiver repeater = new RepeatNotificationReceiver();
-    private long id, remCount;
-    private DataBase DB;
+    private long id;
     private SharedPrefs sPrefs;
     private int repCode, color = -1;
     private BroadcastReceiver deliveredReceiver, sentReceiver;
     private ColorSetter cs = new ColorSetter(ReminderDialog.this);
-    private String melody, number, name, task, type;
+    private String melody, number, name, task, typeField;
     private Notifier notifier = new Notifier(ReminderDialog.this);
     private TextToSpeech tts;
     private boolean isDark = false;
     private int currVolume, isReminder;
+
+    private Type reminder;
+    private Reminder item;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,67 +129,79 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
-        DB = new DataBase(ReminderDialog.this);
-        DB.open();
-        Cursor r = DB.getReminder(id);
-        if (r != null && r.moveToFirst()) {
-            task = r.getString(r.getColumnIndex(Constants.COLUMN_TEXT));
-            type = r.getString(r.getColumnIndex(Constants.COLUMN_TYPE));
-            number = r.getString(r.getColumnIndex(Constants.COLUMN_NUMBER));
-            melody = r.getString(r.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-            repCode = r.getInt(r.getColumnIndex(Constants.COLUMN_REPEAT));
-            remCount = r.getInt(r.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            color = r.getInt(r.getColumnIndex(Constants.COLUMN_LED_COLOR));
+        reminder = new Type(this);
+
+        item = reminder.getItem(id);
+        if (item != null) {
+            task = item.getTitle();
+            typeField = item.getType();
+            number = item.getNumber();
+            melody = item.getMelody();
+            repCode = item.getRepCode();
+            color = item.getColor();
         }
 
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
-        if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
-                type.matches(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_SKYPE_VIDEO) ||
-                type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-            if (!type.startsWith(Constants.TYPE_SKYPE)) {
-                contactPhoto.setVisibility(View.VISIBLE);
-                long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
-                Bitmap photo = Contacts.getPhoto(this, conID);
-                if (photo != null) {
-                    contactPhoto.setImageBitmap(photo);
-                } else {
-                    contactPhoto.setVisibility(View.GONE);
+        String type = getType();
+        if (type != null) {
+            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
+                    type.matches(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_SKYPE_VIDEO) ||
+                    type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+                if (!type.startsWith(Constants.TYPE_SKYPE)) {
+                    contactPhoto.setVisibility(View.VISIBLE);
+                    long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
+                    Bitmap photo = Contacts.getPhoto(this, conID);
+                    if (photo != null) {
+                        contactPhoto.setImageBitmap(photo);
+                    } else {
+                        contactPhoto.setVisibility(View.GONE);
+                    }
                 }
-            }
-            name = Contacts.getContactNameFromNumber(number, ReminderDialog.this);
-            remText.setText(task + "\n" + name + "\n" + number);
-        } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) ||
-                type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_SKYPE_CHAT)){
-            if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
-                remText.setText(task + "\n" + number);
+                name = Contacts.getContactNameFromNumber(number, ReminderDialog.this);
+                remText.setText(task + "\n" + name + "\n" + number);
+            } else if (type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                    type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE) ||
+                    type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_SKYPE_CHAT)) {
+                if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
+                    remText.setText(task + "\n" + number);
+                    buttonCall.setVisibility(View.VISIBLE);
+                    if (isDark)
+                        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+                    else
+                        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+                } else {
+                    remText.setText(task + "\n" + number);
+                    buttonCall.setVisibility(View.GONE);
+                    buttonDelay.setVisibility(View.GONE);
+                    buttonDelayFor.setVisibility(View.GONE);
+                }
+            } else if (type.matches(Constants.TYPE_APPLICATION)) {
+                PackageManager packageManager = getPackageManager();
+                ApplicationInfo applicationInfo = null;
+                try {
+                    applicationInfo = packageManager.getApplicationInfo(number, 0);
+                } catch (final PackageManager.NameNotFoundException ignored) {
+                }
+                final String nameA = (String) ((applicationInfo != null) ?
+                        packageManager.getApplicationLabel(applicationInfo) : "???");
+                remText.setText(nameA);
                 buttonCall.setVisibility(View.VISIBLE);
-                if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
-                else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+                if (isDark)
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
+                else
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
+            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+                remText.setText(number);
+                buttonCall.setVisibility(View.VISIBLE);
+                if (isDark)
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
+                else
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
             } else {
-                remText.setText(task + "\n" + number);
+                remText.setText(task);
                 buttonCall.setVisibility(View.GONE);
-                buttonDelay.setVisibility(View.GONE);
-                buttonDelayFor.setVisibility(View.GONE);
             }
-        } else if (type.matches(Constants.TYPE_APPLICATION)){
-            PackageManager packageManager = getPackageManager();
-            ApplicationInfo applicationInfo = null;
-            try {
-                applicationInfo = packageManager.getApplicationInfo(number, 0);
-            } catch (final PackageManager.NameNotFoundException ignored) {}
-            final String nameA = (String)((applicationInfo != null) ?
-                    packageManager.getApplicationLabel(applicationInfo) : "???");
-            remText.setText(nameA);
-            buttonCall.setVisibility(View.VISIBLE);
-            if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
-            else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
-        } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-            remText.setText(number);
-            buttonCall.setVisibility(View.VISIBLE);
-            if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
-            else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
         } else {
             remText.setText(task);
             buttonCall.setVisibility(View.GONE);
@@ -211,12 +224,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 alarm.cancelAlarm(getApplicationContext(), id);
-                notifier.discardNotification(id);
-                makeArchive(id);
+                update(1);
+                Reminder.disableReminder(id, ReminderDialog.this);
                 Reminder.backup(ReminderDialog.this);
-                removeFlags();
-                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
-                repeater.cancelAlarm(ReminderDialog.this, id);
+                Reminder.updateCount(ReminderDialog.this, id);
                 finish();
             }
         });
@@ -224,11 +235,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonNotification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
                 make();
-                removeFlags();
-                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
-                repeater.cancelAlarm(ReminderDialog.this, id);
+                update(1);
+                Reminder.updateCount(ReminderDialog.this, id);
                 if ((task == null || task.trim().matches("")) &&
                         (number != null && !number.trim().matches(""))) {
                     notifier.showReminderNotification(name + " " + number, id);
@@ -242,11 +251,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
                 make();
-                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
-                removeFlags();
-                repeater.cancelAlarm(ReminderDialog.this, id);
+                update(1);
+                Reminder.updateCount(ReminderDialog.this, id);
                 finish();
             }
         });
@@ -254,11 +261,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
                 make();
-                repeater.cancelAlarm(ReminderDialog.this, id);
-                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
-                removeFlags();
+                update(1);
+                Reminder.updateCount(ReminderDialog.this, id);
                 Reminder.edit(id, ReminderDialog.this);
                 finish();
             }
@@ -267,29 +272,25 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonDelay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
-                delay.setAlarm(ReminderDialog.this, 1, id);
-                int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
-                DB.setDelay(id, inTime);
+                int delay = sPrefs.loadInt(Prefs.DELAY_TIME);
+                Reminder.setDelay(ReminderDialog.this, id, delay);
                 Reminder.backup(ReminderDialog.this);
-                repeater.cancelAlarm(ReminderDialog.this, id);
-                removeFlags();
+                update(1);
                 finish();
             }
         });
         buttonDelayFor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
                 showDialog();
                 Reminder.backup(ReminderDialog.this);
-                repeater.cancelAlarm(ReminderDialog.this, id);
+                update(0);
             }
         });
         buttonCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notifier.discardNotification(id);
+                String type = getType();
                 if (type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                     sendSMS(number, task, melody);
@@ -307,9 +308,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     Telephony.makeCall(number, ReminderDialog.this);
                 }
                 make();
-                if (repCode > 0) DB.updateReminderCount(id, remCount + 1);
-                removeFlags();
-                repeater.cancelAlarm(ReminderDialog.this, id);
+                Reminder.updateCount(ReminderDialog.this, id);
+                update(1);
                 if (!type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         !type.matches(Constants.TYPE_MESSAGE) ||
                         !type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
@@ -318,28 +318,26 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
         });
         boolean autoLaunch = sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
-        if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-            if (sPrefs.loadBoolean(Prefs.SILENT_SMS) && isReminder != 1) {
-                sendSMS(number, task, melody);
+        if (type != null) {
+            if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                    type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
+                if (sPrefs.loadBoolean(Prefs.SILENT_SMS) && isReminder != 1) {
+                    sendSMS(number, task, melody);
+                } else {
+                    showReminder(1);
+                }
+            } else if (type.matches(Constants.TYPE_APPLICATION)) {
+                if (autoLaunch && isReminder != 1) openApplication(number);
+
+                showReminder(1);
+            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+                if (autoLaunch && isReminder != 1) openLink(number);
+
+                showReminder(1);
             } else {
-                if (task == null || task.matches("")) showReminder(1);
-                else showReminder(1);
+                showReminder(1);
             }
-        } else if (type.matches(Constants.TYPE_APPLICATION)){
-            if (autoLaunch && isReminder != 1) openApplication(number);
-
-            if (task == null || task.matches("")) showReminder(1);
-            else showReminder(1);
-        } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-            if (autoLaunch && isReminder != 1) openLink(number);
-
-            if (task == null || task.matches("")) showReminder(1);
-            else showReminder(1);
-        } else {
-            if (task == null || task.matches("")) showReminder(1);
-            else showReminder(1);
-        }
+        } else showReminder(1);
 
         if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
             repeater.setAlarm(ReminderDialog.this, id);
@@ -359,9 +357,29 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
     }
 
+    private String getType(){
+        if (typeField != null) {
+            return typeField;
+        } else {
+            if (item != null){
+                return item.getType();
+            } else {
+                if (id != 0){
+                    return reminder.getItem(id).getType();
+                } else return "";
+            }
+        }
+    }
+
+    private void update(int i){
+        if (i == 1) removeFlags();
+        repeater.cancelAlarm(ReminderDialog.this, id);
+        notifier.discardNotification(id);
+    }
+
     private void make(){
         if (repCode == 0){
-            makeArchive(id);
+            Reminder.disableReminder(id, ReminderDialog.this);
         } else Reminder.generateToCalendar(id, this);
         Reminder.backup(this);
     }
@@ -393,6 +411,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     private void showReminder(int i){
         sPrefs = new SharedPrefs(ReminderDialog.this);
+        String type = getType();
         if (!sPrefs.loadBoolean(Prefs.TTS)) {
             if (isReminder == 1) notifier.showReminder(task, type, 0, id, melody, color);
             else notifier.showReminder(task, type, i, id, melody, color);
@@ -466,35 +485,33 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 int x = 0;
-                if (item == 0){
+                if (item == 0) {
                     x = 5;
-                } else if (item == 1){
+                } else if (item == 1) {
                     x = 10;
-                } else if (item == 2){
+                } else if (item == 2) {
                     x = 15;
-                } else if (item == 3){
+                } else if (item == 3) {
                     x = 30;
-                } else if (item == 4){
+                } else if (item == 4) {
                     x = 45;
-                } else if (item == 5){
+                } else if (item == 5) {
                     x = 60;
-                } else if (item == 6){
+                } else if (item == 6) {
                     x = 90;
-                } else if (item == 7){
+                } else if (item == 7) {
                     x = 120;
-                } else if (item == 8){
+                } else if (item == 8) {
                     x = 60 * 5;
-                } else if (item == 9){
+                } else if (item == 9) {
                     x = 60 * 24;
-                } else if (item == 10){
+                } else if (item == 10) {
                     x = 60 * 24 * 2;
-                } else if (item == 11){
+                } else if (item == 11) {
                     x = 60 * 24 * 7;
                 }
 
-                delay.setAlarm(ReminderDialog.this, 1, id, x);
-                if (!DB.isOpen()) DB.open();
-                DB.setDelay(id, x);
+                Reminder.setDelay(ReminderDialog.this, id, x);
 
                 if (x < 100) {
                     Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +
@@ -537,13 +554,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         remText.setText(getString(R.string.dialog_message_sent));
-                        notifier.showReminder(task, type, 1, id, melody, color);
+                        notifier.showReminder(task, getType(), 1, id, melody, color);
                         if (buttonCall.getVisibility() == View.VISIBLE) {
                             buttonCall.setVisibility(View.GONE);
                         }
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        notifier.showReminder(task, type, 0, id, melody, color);
+                        notifier.showReminder(task, getType(), 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
@@ -552,7 +569,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        notifier.showReminder(task, type, 0, id, melody, color);
+                        notifier.showReminder(task, getType(), 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
@@ -561,7 +578,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        notifier.showReminder(task, type, 0, id, melody, color);
+                        notifier.showReminder(task, getType(), 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
@@ -570,7 +587,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                         }
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        notifier.showReminder(task, type, 0, id, melody, color);
+                        notifier.showReminder(task, getType(), 0, id, melody, color);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_white_24dp));
@@ -583,7 +600,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }, new IntentFilter(SENT));
 
         // ---when the SMS has been delivered---
-        registerReceiver( deliveredReceiver = new BroadcastReceiver() {
+        registerReceiver(deliveredReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context arg0, Intent arg1) {
                 switch (getResultCode()) {
@@ -613,9 +630,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         new UpdatesHelper(ReminderDialog.this).updateWidget();
-        DB = new DataBase(ReminderDialog.this);
-        DB.open();
-        DB.updateReminderDateTime(id);
+        Reminder.updateDate(this, id);
     }
 
     @Override
@@ -624,10 +639,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             notifier.discardMedia();
         }
         return super.onTouchEvent(event);
-    }
-
-    public void makeArchive(long id){
-        Reminder.disableReminder(id, this);
     }
 
     @Override
@@ -642,7 +653,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         removeFlags();
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
-        if (DB != null) DB.close();
         super.onDestroy();
     }
 

@@ -162,12 +162,12 @@
             android:layout_marginTop="@dimen/reminder_preview_margin_top"
             android:orientation="vertical">
 
-            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            <fragment
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:clickable="true"
-                android:name="com.cray.software.justreminder.fragments.MapFragment"/>
+                android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
             </LinearLayout>
 

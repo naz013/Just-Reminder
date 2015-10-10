@@ -41,6 +41,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -457,7 +458,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isArchived == 1) {
                 Reminder.delete(id, this);
                 Messages.toast(ReminderManager.this, getString(R.string.string_deleted));
-            } else Reminder.moveToTrash(id, this);
+            } else Reminder.moveToTrash(id, this, null);
             finish();
         }
         if (c != null) c.close();
@@ -3801,6 +3802,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
         super.onDestroy();
     }
 

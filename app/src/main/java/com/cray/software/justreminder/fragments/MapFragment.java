@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.fragments;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
@@ -54,7 +55,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     private LinearLayout layersContainer;
     private AutoCompleteTextView cardSearch;
     private Spinner placesList;
-    private CardView card, card1, card2;
 
     /**
      * Array of user frequently used places;
@@ -66,6 +66,10 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
      */
     private boolean isAnimation = true;
     private boolean isTouch = true;
+    private boolean isClose = true;
+    private boolean isAll = true;
+    private boolean isList = true;
+    private boolean isSearch = true;
     private String markerTitle;
     private int markerRadius = -1;
     private LatLng lastPos;
@@ -88,6 +92,13 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
      * MapListener link;
      */
     private MapListener listener;
+
+    public static final String ENABLE_TOUCH = "enable_touch";
+    public static final String ENABLE_CLOSE = "enable_close";
+    public static final String ENABLE_ALL_UI = "enable_all_ui";
+    public static final String ENABLE_SEARCH = "enable_search";
+    public static final String ENABLE_LIST = "enable_list";
+    public static final String ENABLE_ANIMATION = "enable_animation";
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -163,6 +174,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
      */
     public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate, int radius){
         if (map != null) {
+            Log.d(Constants.LOG_TAG, "map not null");
             if (clear) map.clear();
             if (title == null || title.matches("")) title = pos.toString();
             lastPos = pos;
@@ -182,7 +194,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                         .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
             }
             if (animate) animate(pos);
-        }
+        } else Log.d(Constants.LOG_TAG, "map is null");
     }
 
     /**
@@ -265,30 +277,34 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     /**
      * Enable/Disable close map button;
-     * @param enable flag
+     * @param isClose flag
      */
-    public void enableCloseButton(boolean enable){
-        if (enable) card1.setVisibility(View.VISIBLE);
-        else card1.setVisibility(View.GONE);
+    public void enableCloseButton(boolean isClose){
+        this.isClose = isClose;
     }
 
     /**
      * Enable/Disable list of user frequently used places;
-     * @param enable flag
+     * @param isList flag
      */
-    public void enablePlaceList(boolean enable){
-        if (enable) placesList.setVisibility(View.VISIBLE);
-        else placesList.setVisibility(View.GONE);
+    public void enablePlaceList(boolean isList){
+        this.isList = isList;
     }
 
     /**
      * Method that allows to hide all custom UI;
+     * @param isAll flag to enable/disable additional UI elements.
      */
-    public void hideUi(){
-        card.setVisibility(View.GONE);
-        card1.setVisibility(View.GONE);
-        card2.setVisibility(View.GONE);
-        placesList.setVisibility(View.GONE);
+    public void enableUI(boolean isAll){
+        this.isAll = isAll;
+    }
+
+    /**
+     * Method that allows to search panel;
+     * @param isSearch flag to enable/disable searchBar.
+     */
+    public void enableSearch(boolean isSearch){
+        this.isSearch = isSearch;
     }
 
     /**
@@ -312,6 +328,8 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        initArguments(getArguments());
+
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         final SharedPrefs sPrefs = new SharedPrefs(getActivity());
@@ -353,9 +371,9 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             addMarker(lastPos, lastPos.toString(), true, false, markerRadius);
         }
 
-        card = (CardView) rootView.findViewById(R.id.card);
-        card1 = (CardView) rootView.findViewById(R.id.card1);
-        card2 = (CardView) rootView.findViewById(R.id.card2);
+        CardView card = (CardView) rootView.findViewById(R.id.card);
+        CardView card1 = (CardView) rootView.findViewById(R.id.card1);
+        CardView card2 = (CardView) rootView.findViewById(R.id.card2);
         card.setCardBackgroundColor(cSetter.getCardStyle());
         card1.setCardBackgroundColor(cSetter.getCardStyle());
         card2.setCardBackgroundColor(cSetter.getCardStyle());
@@ -479,8 +497,10 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
-                task.execute(s.toString());
+                if (s.length() != 0) {
+                    task = new GeocoderTask(getActivity());
+                    task.execute(s.toString());
+                }
             }
 
             @Override
@@ -537,7 +557,32 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                 }
             });
         }
+
+        if (!isAll){
+            card.setVisibility(View.GONE);
+            card1.setVisibility(View.GONE);
+            card2.setVisibility(View.GONE);
+            placesList.setVisibility(View.GONE);
+        }
+
+        if (!isList) placesList.setVisibility(View.GONE);
+
+        if (!isClose) card1.setVisibility(View.GONE);
+
+        if (!isSearch) card.setVisibility(View.GONE);
+
         return rootView;
+    }
+
+    private void initArguments(Bundle arguments) {
+        if (arguments != null) {
+            isAnimation = arguments.getBoolean(ENABLE_ANIMATION, true);
+            isTouch = arguments.getBoolean(ENABLE_TOUCH, true);
+            isAll = arguments.getBoolean(ENABLE_ALL_UI, true);
+            isClose = arguments.getBoolean(ENABLE_CLOSE, true);
+            isList = arguments.getBoolean(ENABLE_LIST, true);
+            isSearch = arguments.getBoolean(ENABLE_SEARCH, true);
+        }
     }
 
     private void showMessage(String message){
@@ -592,10 +637,16 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
 
+        private Context context;
+
+        public GeocoderTask(Context context){
+            this.context = context;
+        }
+
         @Override
         protected List<Address> doInBackground(String... locationName) {
             // Creating an instance of Geocoder class
-            Geocoder geocoder = new Geocoder(getActivity());
+            Geocoder geocoder = new Geocoder(context);
             List<Address> addresses = null;
 
             try {

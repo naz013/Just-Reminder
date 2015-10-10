@@ -14,10 +14,18 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.Marker;
-import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.utils.ViewUtils;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -27,7 +35,7 @@ import java.util.Random;
 public class GeolocationFragment extends Fragment {
 
     private ListView geoTasks;
-    private MapFragment googleMap;
+    private GoogleMap googleMap;
     private MarkersCursorAdapter markersCursorAdapter;
 
     private boolean onCreate = false;
@@ -53,11 +61,9 @@ public class GeolocationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
-        googleMap = ((MapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.markersMap));
-        googleMap.enableTouch(false);
-        googleMap.enableCloseButton(false);
-        googleMap.enablePlaceList(false);
+        googleMap = ((SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.markersMap)).getMap();
+        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
 
         geoTasks = (ListView) rootView.findViewById(R.id.geoTasks);
         geoTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -65,9 +71,7 @@ public class GeolocationFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 long i = markersCursorAdapter.getItemId(position);
                 Marker item = (Marker) markersCursorAdapter.getItem(position);
-                if (item != null && googleMap != null) {
-                    googleMap.animate(item.getPosition());
-                }
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(item.getPosition(), 13));
             }
         });
 
@@ -101,7 +105,7 @@ public class GeolocationFragment extends Fragment {
     }
 
     private void loadMarkers(){
-        if (googleMap != null) googleMap.clear();
+        googleMap.clear();
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryGroup();
@@ -111,24 +115,33 @@ public class GeolocationFragment extends Fragment {
             ColorSetter cSetter = new ColorSetter(getActivity());
             do {
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+                if (radius == -1) radius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                if (longitude != 0 && latitude != 0) {
+                if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     int rand = random.nextInt(16-2)+1;
                     LatLng pos = new LatLng(latitude, longitude);
                     list.add(new Marker(task, pos, rand, id));
-                    if (googleMap != null) {
-                        googleMap.addMarker(pos, task, false, rand, false, radius);
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(pos)
+                            .title(task)
+                            .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(rand)))
+                            .draggable(false));
+                    if (radius != -1) {
+                        int[] circleColors = cSetter.getMarkerRadiusStyle(rand);
+                        googleMap.addCircle(new CircleOptions()
+                                .center(pos)
+                                .radius(radius)
+                                .strokeWidth(3f)
+                                .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
+                                .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
                     }
                 }
             } while (c.moveToNext());
-        } else {
-            if (googleMap != null) {
-                googleMap.moveToMyLocation(false);
-            }
         }
         loaderAdapter(list);
         if (c != null) c.close();

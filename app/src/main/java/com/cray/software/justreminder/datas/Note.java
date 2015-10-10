@@ -10,10 +10,11 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.hexrain.design.NavigationDrawerFragment;
 
 import org.json.JSONException;
 
@@ -128,7 +129,7 @@ public class Note {
         return res;
     }
 
-    public static void deleteNote(long id, Context context) {
+    public static void deleteNote(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
         NotesBase DB = new NotesBase(context);
         DB.open();
         String uuId = null;
@@ -142,6 +143,7 @@ public class Note {
         new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
-        Messages.snackbar(context, R.string.note_deleted);
+        if (callbacks != null) callbacks.showSnackbar(R.string.note_deleted);
+        else Messages.toast(context, R.string.note_deleted);
     }
 }

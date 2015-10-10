@@ -156,7 +156,7 @@
     <string name="weekday_saturday">SAM</string>
     <string name="weekday_sunday">"SONN"</string>
     <string name="action_check_text">"Aktion hinzufügen"</string>
-    <string name="event_description">"Event hinzugefügt Produkte von Just Reminder"</string>
+    <string name="event_description">"Event hinzugefügt Produkte von Reminder"</string>
     <string name="calendar_birthday_info">"In order to add a birthday to the calendar you want to enable the birthdays from contacts in the \"Settings\""</string>
     <string name="thank_dialog_title">"Pro Lizenz"</string>
     <string name="thank_dialog_message">"Danke für den Kauf PRO Lizenz-Anwendung."</string>
@@ -717,4 +717,11 @@
     <string name="show_grid">Rasteransicht</string>
     <string name="show_list">Listenansicht</string>
     <string name="simple_import">Importieren</string>
+    <string name="flexible_explanation">Viele Arten von Erinnerungen für den täglichen Gebrauch</string>
+    <string name="smart_explanation">Intelligente Anzeige je nach Art und Lage</string>
+    <string name="widget_explanation">Große Auswahl an Widgets und Themen für sie</string>
+    <string name="dark_mode_explanation">Dunklen Stil - Schlichtheit und Eleganz</string>
+    <string name="cloud_sync_explanation">Speichern Sie Ihre Erinnerungen im Dropbox oder Google Drive. Und auch Ihre Google Tasks verwalten</string>
+    <string name="simple_note">Notizen</string>
+    <string name="note_explnation">Hinzufügen, Ändern Anteil verschlüsselte Notizen</string>
 </resources>

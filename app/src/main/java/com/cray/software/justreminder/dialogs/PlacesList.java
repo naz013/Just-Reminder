@@ -157,7 +157,7 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
             db.deletePlace(id);
             provider.removeItem(position);
             adapter.notifyItemRemoved(position);
-            Messages.snackbar(this, getString(R.string.delete_place_toast));
+            Messages.toast(this, getString(R.string.delete_place_toast));
             db.close();
             reloadView();
         }

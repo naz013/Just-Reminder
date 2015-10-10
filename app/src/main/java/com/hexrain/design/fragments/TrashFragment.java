@@ -24,7 +24,6 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -256,7 +255,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
             }while (c.moveToNext());
         }
         if (c != null) c.close();
-        Messages.snackbar(getActivity(), getString(R.string.string_trash_cleared));
+        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_trash_cleared);
         loaderAdapter();
     }
 
@@ -268,7 +267,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onSwipeToLeft(int position) {
         Reminder.delete(provider.getItem(position).getId(), getActivity());
-        Messages.snackbar(getActivity(), getString(R.string.string_deleted));
+        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_deleted);
         provider.removeItem(position);
         adapter.notifyItemRemoved(position);
         reloadView();

@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -20,6 +21,10 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.modules.Module;
+
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
 
 public class ViewUtils {
 
@@ -44,6 +49,7 @@ public class ViewUtils {
      * @return
      */
     public static int getColor(Context context, int resource){
+        if (Module.isMarshmallow()) return context.getResources().getColor(resource, null);
         return context.getResources().getColor(resource);
     }
 
@@ -168,6 +174,30 @@ public class ViewUtils {
         if (animation) {
             Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom_out);
             v.startAnimation(slide);
+            v.setVisibility(View.GONE);
+        } else {
+            v.setVisibility(View.GONE);
+        }
+    }
+
+    public static void showReveal(View v, boolean animation) {
+        if (animation) {
+            Animation fadeIn = new AlphaAnimation(0, 1);
+            fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
+            fadeIn.setDuration(300);
+            v.setAnimation(fadeIn);
+            v.setVisibility(View.VISIBLE);
+        } else {
+            v.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public static void hideReveal(View v, boolean animation) {
+        if (animation) {
+            Animation fadeIn = new AlphaAnimation(1, 0);
+            fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
+            fadeIn.setDuration(300);
+            v.setAnimation(fadeIn);
             v.setVisibility(View.GONE);
         } else {
             v.setVisibility(View.GONE);

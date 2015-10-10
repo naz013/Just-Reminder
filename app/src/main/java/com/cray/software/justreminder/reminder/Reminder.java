@@ -30,6 +30,7 @@ import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.hexrain.design.NavigationDrawerFragment;
 
 import java.util.Calendar;
 
@@ -41,7 +42,7 @@ public class Reminder {
     private String title, type, uuId, number, weekdays, melody, categoryId;
     private int day, month, year, hour, minute, seconds, repCode, export,
             radius, color, code;
-    private long id, repMinute, due;
+    private long id, repMinute, due, count;
     private double[] place;
 
     public Reminder(){
@@ -72,6 +73,35 @@ public class Reminder {
         this.code = code;
         this.repMinute = repMinute;
         this.due = due;
+        this.count = 0;
+    }
+
+    public Reminder(String title, String type, String weekdays, String melody, String categoryId,
+                    String uuId, double[] place, String number, int day, int month, int year,
+                    int hour, int minute, int seconds, int repCode, int export, int radius,
+                    int color, int code, long repMinute, long due, long count){
+        this.title = title;
+        this.type = type;
+        this.weekdays = weekdays;
+        this.melody = melody;
+        this.categoryId = categoryId;
+        this.uuId = uuId;
+        this.place = place;
+        this.number = number;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.hour = hour;
+        this.minute = minute;
+        this.seconds = seconds;
+        this.repCode = repCode;
+        this.export = export;
+        this.radius = radius;
+        this.color = color;
+        this.code = code;
+        this.repMinute = repMinute;
+        this.due = due;
+        this.count = count;
     }
 
     /**
@@ -132,7 +162,7 @@ public class Reminder {
      * @param context application context.
      * @return
      */
-    public static boolean toggle(long id, Context context){
+    public static boolean toggle(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
         DataBase db = new DataBase(context);
         db.open();
         Cursor c = db.getReminder(id);
@@ -209,7 +239,8 @@ public class Reminder {
                         res = true;
                     } else {
                         res = false;
-                        Messages.snackbar(context, context.getString(R.string.edit_reminder_toast));
+                        if (callbacks != null) callbacks.showSnackbar(R.string.edit_reminder_toast);
+                        else Messages.toast(context, R.string.edit_reminder_toast);
                     }
                 }
             }
@@ -226,7 +257,7 @@ public class Reminder {
      * @param time due time for copy.
      * @param context application context.
      */
-    public static void copy(long id, long time, Context context) {
+    public static void copy(long id, long time, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
         DataBase db = new DataBase(context);
         SharedPrefs sPrefs = new SharedPrefs(context);
         if (!db.isOpen()) db.open();
@@ -309,7 +340,8 @@ public class Reminder {
         db.close();
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
-        Messages.snackbar(context, context.getString(R.string.string_reminder_created));
+        if (callbacks != null) callbacks.showSnackbar(R.string.string_reminder_created);
+        else Messages.toast(context, R.string.string_reminder_created);
     }
 
     /**
@@ -320,12 +352,17 @@ public class Reminder {
     public static void disableReminder(long id, Context context){
         DataBase DB = new DataBase(context);
         if (!DB.isOpen()) DB.open();
+
+        DB.setDone(id);
+        DB.close();
+        disable(context, id);
+    }
+
+    private static void disable(Context context, long id) {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Integer i = (int) (long) id;
         mNotifyMgr.cancel(i);
-        DB.setDone(id);
-        DB.close();
         new AlarmReceiver().cancelAlarm(context, i);
         new WeekDayReceiver().cancelAlarm(context, i);
         new MonthDayReceiver().cancelAlarm(context, i);
@@ -342,23 +379,14 @@ public class Reminder {
      * @param id reminder identifier.
      * @param context application context.
      */
-    public static void moveToTrash(long id, Context context){
+    public static void moveToTrash(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
         DataBase DB = new DataBase(context);
         if (!DB.isOpen()) DB.open();
-        NotificationManager mNotifyMgr =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Integer i = (int) (long) id;
-        mNotifyMgr.cancel(i);
         DB.toArchive(id);
         DB.close();
-        new AlarmReceiver().cancelAlarm(context, id);
-        new WeekDayReceiver().cancelAlarm(context, id);
-        new DelayReceiver().cancelAlarm(context, id);
-        new PositionDelayReceiver().cancelDelay(context, id);
-        new UpdatesHelper(context).updateWidget();
-        new Notifier(context).recreatePermanent();
-        Messages.snackbar(context, context.getString(R.string.archived_result_message));
-        new DisableAsync(context).execute();
+        disable(context, id);
+        if (callbacks != null) callbacks.showSnackbar(R.string.archived_result_message);
+        else Messages.toast(context, R.string.archived_result_message);
     }
 
     /**
@@ -367,15 +395,10 @@ public class Reminder {
      * @param context application context.
      */
     public static void edit(long id, Context context){
+        disable(context, id);
         Intent intentId = new Intent(context, ReminderManager.class);
         intentId.putExtra(Constants.EDIT_ID, id);
-        new AlarmReceiver().cancelAlarm(context, id);
-        new WeekDayReceiver().cancelAlarm(context, id);
-        new MonthDayReceiver().cancelAlarm(context, id);
-        new DelayReceiver().cancelAlarm(context, id);
-        new PositionDelayReceiver().cancelDelay(context, id);
         context.startActivity(intentId);
-        new DisableAsync(context).execute();
     }
 
     /**
@@ -386,10 +409,6 @@ public class Reminder {
     public static void delete(long id, Context context) {
         DataBase db = new DataBase(context);
         if (!db.isOpen()) db.open();
-        NotificationManager mNotifyMgr =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Integer i = (int) (long) id;
-        mNotifyMgr.cancel(i);
         Cursor c = db.getReminder(id);
         String uuID = null;
         if (c != null && c.moveToFirst()){
@@ -400,9 +419,36 @@ public class Reminder {
         db.close();
         new CalendarManager(context).deleteEvents(id);
         new DeleteReminderFiles(context, uuID).execute();
-        new UpdatesHelper(context).updateWidget();
-        new Notifier(context).recreatePermanent();
-        new DisableAsync(context).execute();
+        disable(context, id);
+    }
+
+    public static void updateCount(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            if (repCode > 0) {
+                db.updateReminderCount(id, (c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT)) + 1));
+            }
+        }
+        if (c != null) c.close();
+        db.close();
+    }
+
+    public static void setDelay(Context context, long id, int delay){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.setDelay(id, delay);
+        new DelayReceiver().setAlarm(context, 1, id, delay);
+        db.close();
+    }
+
+    public static void updateDate(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateReminderDateTime(id);
+        db.close();
     }
 
     public String getWeekdays(){
@@ -579,5 +625,17 @@ public class Reminder {
 
     public void setNumber(String number){
         this.number = number;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
+    }
+
+    public void setRepMinute(long repMinute) {
+        this.repMinute = repMinute;
     }
 }
