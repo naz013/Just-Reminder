@@ -724,4 +724,6 @@
     <string name="simple_note">Нотатки</string>
     <string name="note_explnation">Додавайте, змінюйте, діліться зашифрованими нотатками</string>
     <string name="widget_explanation">Широкий вибір віджетів головного екрану і тем до них</string>
+    <string name="extra_options">Extra options</string>
+    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
 </resources>

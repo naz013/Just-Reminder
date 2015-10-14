@@ -142,6 +142,7 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Prefs.ITEM_PREVIEW, true);
             uiEd.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
             uiEd.putBoolean(Prefs.LIST_GRID, false);
+            uiEd.putBoolean(Prefs.EXTRA_OPTIONS, false);
 
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
@@ -331,6 +332,9 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.REMINDERS_IN_CALENDAR)){
             sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
+        }
+        if (!sPrefs.isString(Prefs.EXTRA_OPTIONS)){
+            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, false);
         }
         if (!sPrefs.isString(Prefs.TTS)){
             sPrefs.saveBoolean(Prefs.TTS, false);

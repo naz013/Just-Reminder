@@ -724,4 +724,6 @@
     <string name="cloud_sync_explanation">Speichern Sie Ihre Erinnerungen im Dropbox oder Google Drive. Und auch Ihre Google Tasks verwalten</string>
     <string name="simple_note">Notizen</string>
     <string name="note_explnation">Hinzufügen, Ändern Anteil verschlüsselte Notizen</string>
+    <string name="extra_options">Extra options</string>
+    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
 </resources>

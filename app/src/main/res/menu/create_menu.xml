@@ -19,4 +19,5 @@
         android:title="@string/menu_led_color"
         android:visible="false"
         app:showAsAction="never" />
+
 </menu>

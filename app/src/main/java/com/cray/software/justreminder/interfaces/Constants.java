@@ -30,6 +30,18 @@ public class Constants {
     public static final String COLUMN_CATEGORY = "var2";
     public static final String COLUMN_LED_COLOR = "int";
     public static final String COLUMN_SYNC_CODE = "int2";
+    public static final String COLUMN_VIBRATION = "vibration";
+    public static final String COLUMN_AUTO_ACTION = "action_";
+    public static final String COLUMN_WAKE_SCREEN = "awake_screen";
+    public static final String COLUMN_UNLOCK_DEVICE = "unlock_device";
+    public static final String COLUMN_NOTIFICATION_REPEAT = "notification_repeat";
+    public static final String COLUMN_VOICE = "voice_notification";
+    public static final String COLUMN_REPEAT_LIMIT = "column_extra";
+    public static final String COLUMN_EXTRA_1 = "column_extra_1";
+    public static final String COLUMN_EXTRA_2 = "column_extra_2";
+    public static final String COLUMN_EXTRA_3 = "column_extra_3";
+    public static final String COLUMN_EXTRA_4 = "column_extra_4";
+    public static final String COLUMN_EXTRA_5 = "column_extra_5";
 
     public static final String COLUMN_NOTE = "note";
     public static final String COLUMN_DATE = "date";

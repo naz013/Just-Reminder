@@ -48,6 +48,13 @@ public class Type {
             String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
             int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
             int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+            int voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
+            int vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
+            int notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
+            int wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
+            int unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
+            int auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
+            long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
             String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
             String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
             String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -59,7 +66,8 @@ public class Type {
 
             return new Reminder(text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count);
+                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
+                    voice, notificationRepeat, wake, unlock, auto, limit);
         } else return null;
     }
 
@@ -85,6 +93,8 @@ public class Type {
                 item.getMelody(), item.getRadius(), item.getColor(), item.getCode(),
                 item.getCategoryId());
         db.updateReminderDateTime(id);
+        db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
+                item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());
         db.close();
         updateViews();
         return id;
@@ -99,6 +109,8 @@ public class Type {
                 item.getPlace()[1], item.getWeekdays(), item.getExport(), item.getMelody(),
                 item.getRadius(), item.getColor(), item.getCode(), item.getCategoryId());
         db.updateReminderDateTime(id);
+        db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
+                item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());
         db.close();
         updateViews();
     }

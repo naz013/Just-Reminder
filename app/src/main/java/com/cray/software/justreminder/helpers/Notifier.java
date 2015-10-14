@@ -57,7 +57,8 @@ public class Notifier {
      * @param itemId reminder identifier.
      * @param color LED lights color.
      */
-    public void showTTSNotification(final String task, String typePrefs, long itemId, int color){
+    public void showTTSNotification(final String task, String typePrefs, long itemId, int color,
+                                    boolean vibrate, boolean isExtra){
         sPrefs = new SharedPrefs(mContext);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
@@ -111,7 +112,9 @@ public class Notifier {
             }
         }
 
-        if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
+        boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
+        if (isExtra) isV = vibrate;
+        if (isV){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
@@ -171,7 +174,7 @@ public class Notifier {
      * @param color LED lights color.
      */
     public void showReminder(final String task, String type, int i, long itemId, String melody,
-                             int color){
+                             int color, boolean vibrate, boolean isExtra){
         sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
@@ -233,7 +236,9 @@ public class Notifier {
             }
         }
 
-        if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
+        boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
+        if (isExtra) isV = vibrate;
+        if (isV){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
@@ -390,7 +395,8 @@ public class Notifier {
      * @param melody reminder custom melody file.
      * @param color LED light color.
      */
-    public void showNotification(String task, String typePrefs, int i, long itemId, String melody, int color){
+    public void showNotification(String task, String typePrefs, int i, long itemId, String melody,
+                                 int color, boolean vibrate, boolean isExtra){
         sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
@@ -449,7 +455,9 @@ public class Notifier {
             }
         }
 
-        if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
+        boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
+        if (isExtra) isV = vibrate;
+        if (isV){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
@@ -458,6 +466,7 @@ public class Notifier {
             }
             builder.setVibrate(pattern);
         }
+
         if (Module.isPro()){
             if (sPrefs.loadBoolean(Prefs.LED_STATUS)){
                 if (color != 0) {
@@ -802,7 +811,7 @@ public class Notifier {
                 int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                long remCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));

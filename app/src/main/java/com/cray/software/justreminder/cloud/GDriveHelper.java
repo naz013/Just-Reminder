@@ -247,7 +247,7 @@ public class GDriveHelper {
 
                     FileContent mediaContent = new FileContent("text/plain", file);
 
-                    deleteGroup(file.getName());
+                    deleteBirthday(file.getName());
 
                     com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();

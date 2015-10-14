@@ -415,4 +415,6 @@
         <item name="metaButtonBarStyle">@style/ButtonBar</item>
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
     </style>
+    <style name="HomeWhite.Blue.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="HomeWhite.Blue.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

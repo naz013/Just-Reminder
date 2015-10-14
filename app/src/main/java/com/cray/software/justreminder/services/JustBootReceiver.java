@@ -3,15 +3,11 @@ package com.cray.software.justreminder.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-
-import java.util.ArrayList;
 
 public class JustBootReceiver extends BroadcastReceiver {
 
@@ -31,28 +27,8 @@ public class JustBootReceiver extends BroadcastReceiver {
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new AutoSyncAlarm().setAlarm(context);
         }
-        DataBase DB = new DataBase(context);
-        DB.open();
-        if (DB.getCount() != 0){
-            Cursor c = DB.queryGroup();
-            if (c != null && c.moveToFirst()){
-                ArrayList<String> types = new ArrayList<>();
-                do{
-                    String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                    types.add(type);
-                } while (c.moveToNext());
-                if (types.contains(Constants.TYPE_LOCATION) ||
-                        types.contains(Constants.TYPE_LOCATION_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
-                        types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                    context.startService(new Intent(context, GeolocationService.class));
-                }
-            }
-            if (c != null) c.close();
-        }
 
+        new DisableAsync(context).execute();
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             context.startService(new Intent(context, WearService.class));
         }*/

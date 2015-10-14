@@ -41,8 +41,8 @@ public class Reminder {
 
     private String title, type, uuId, number, weekdays, melody, categoryId;
     private int day, month, year, hour, minute, seconds, repCode, export,
-            radius, color, code;
-    private long id, repMinute, due, count;
+            radius, color, code, vibration, voice, notificationRepeat, wake, unlock, auto;
+    private long id, repMinute, due, count, limit;
     private double[] place;
 
     public Reminder(){
@@ -51,7 +51,8 @@ public class Reminder {
     public Reminder(String title, String type, String weekdays, String melody, String categoryId,
                     String uuId, double[] place, String number, int day, int month, int year,
                     int hour, int minute, int seconds, int repCode, int export, int radius,
-                    int color, int code, long repMinute, long due){
+                    int color, int code, long repMinute, long due, int vibration, int voice,
+                    int notificationRepeat, int wake, int unlock, int auto, long limit){
         this.title = title;
         this.type = type;
         this.weekdays = weekdays;
@@ -74,12 +75,20 @@ public class Reminder {
         this.repMinute = repMinute;
         this.due = due;
         this.count = 0;
+        this.vibration = vibration;
+        this.voice = voice;
+        this.notificationRepeat = notificationRepeat;
+        this.wake = wake;
+        this.unlock = unlock;
+        this.auto = auto;
+        this.limit = limit;
     }
 
     public Reminder(String title, String type, String weekdays, String melody, String categoryId,
                     String uuId, double[] place, String number, int day, int month, int year,
                     int hour, int minute, int seconds, int repCode, int export, int radius,
-                    int color, int code, long repMinute, long due, long count){
+                    int color, int code, long repMinute, long due, long count, int vibration, int voice,
+                    int notificationRepeat, int wake, int unlock, int auto, long limit){
         this.title = title;
         this.type = type;
         this.weekdays = weekdays;
@@ -102,6 +111,13 @@ public class Reminder {
         this.repMinute = repMinute;
         this.due = due;
         this.count = count;
+        this.vibration = vibration;
+        this.voice = voice;
+        this.notificationRepeat = notificationRepeat;
+        this.wake = wake;
+        this.unlock = unlock;
+        this.auto = auto;
+        this.limit = limit;
     }
 
     /**
@@ -449,6 +465,62 @@ public class Reminder {
         db.open();
         db.updateReminderDateTime(id);
         db.close();
+    }
+
+    public long getLimit() {
+        return limit;
+    }
+
+    public void setLimit(long limit) {
+        this.limit = limit;
+    }
+
+    public int getAuto() {
+        return auto;
+    }
+
+    public void setAuto(int auto) {
+        this.auto = auto;
+    }
+
+    public int getNotificationRepeat() {
+        return notificationRepeat;
+    }
+
+    public void setNotificationRepeat(int notificationRepeat) {
+        this.notificationRepeat = notificationRepeat;
+    }
+
+    public int getUnlock() {
+        return unlock;
+    }
+
+    public void setUnlock(int unlock) {
+        this.unlock = unlock;
+    }
+
+    public int getVibration() {
+        return vibration;
+    }
+
+    public void setVibration(int vibration) {
+        this.vibration = vibration;
+    }
+
+    public int getVoice() {
+        return voice;
+    }
+
+    public void setVoice(int voice) {
+        this.voice = voice;
+    }
+
+    public void setWake(int wake) {
+        this.wake = wake;
+    }
+
+    public int getWake() {
+        return wake;
     }
 
     public String getWeekdays(){

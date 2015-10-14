@@ -49,6 +49,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -133,6 +134,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private LinearLayout navContainer;
     private CheckBox attackDelay;
     private CheckBox timeExport, messageExport, dateExport, callExport, weekExport;
+    private ScrollView extraScroll;
+    private ImageButton extraVibration, extraUnlock, extraVoice, extraWake, extraRepeat, extraAuto,
+            extraLimit, extraSwitch;
+    private RelativeLayout extraHolder;
+    private FrameLayout repeatFrame;
+    private TextView repeatLabel;
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -140,6 +147,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
+
+    private int vibration = -1;
+    private int voice = -1;
+    private int notificationRepeat = -1;
+    private int wake = -1;
+    private int unlock = -1;
+    private int auto = -1;
+    private int repeats = -1;
 
     private ProgressDialog pd;
     private boolean isDelayed = false;
@@ -164,6 +179,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private Type remControl = new Type(this);
     private Reminder item;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +226,83 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 });
 
         toolbar.setOnTouchListener(this);
+
+        extraHolder = (RelativeLayout) findViewById(R.id.extraHolder);
+        extraScroll = (ScrollView) findViewById(R.id.extraScroll);
+        extraVibration = (ImageButton) findViewById(R.id.extraVibration);
+        extraVoice = (ImageButton) findViewById(R.id.extraVoice);
+        extraUnlock = (ImageButton) findViewById(R.id.extraUnlock);
+        extraWake = (ImageButton) findViewById(R.id.extraWake);
+        extraRepeat = (ImageButton) findViewById(R.id.extraRepeat);
+        extraAuto = (ImageButton) findViewById(R.id.extraAuto);
+        extraSwitch = (ImageButton) findViewById(R.id.extraSwitch);
+        extraLimit = (ImageButton) findViewById(R.id.extraLimit);
+        colorifyButtons();
+
+        extraScroll.setVisibility(View.GONE);
+        extraHolder.setVisibility(View.GONE);
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   ViewUtils.showOver(extraHolder, isAnimation);
+                }
+            }, 500);
+        } else extraHolder.setVisibility(View.GONE);
+
+        extraSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchOptions();
+            }
+        });
+
+        repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
+        repeatFrame.setBackgroundResource(cSetter.getCardDrawableStyle());
+        repeatLabel = (TextView) findViewById(R.id.repeatLabel);
+        repeatLabel.setVisibility(View.GONE);
+        repeatFrame.setVisibility(View.GONE);
+        SeekBar repeatSeek = (SeekBar) findViewById(R.id.repeatSeek);
+        repeatSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                repeats = progress + 1;
+                repeatLabel.setText(String.valueOf(progress + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                ViewUtils.fadeInAnimation(repeatLabel, isAnimation);
+                handler.removeCallbacks(seek);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewUtils.fadeOutAnimation(repeatLabel, isAnimation);
+                        ViewUtils.fadeOutAnimation(repeatFrame, isAnimation);
+                    }
+                }, 500);
+            }
+        });
+
+        extraUnlock.setOnClickListener(clickListener);
+        extraVibration.setOnClickListener(clickListener);
+        extraVoice.setOnClickListener(clickListener);
+        extraWake.setOnClickListener(clickListener);
+        extraRepeat.setOnClickListener(clickListener);
+        extraAuto.setOnClickListener(clickListener);
+        extraLimit.setOnClickListener(clickListener);
+
+        extraUnlock.setOnLongClickListener(longClickListener);
+        extraVibration.setOnLongClickListener(longClickListener);
+        extraVoice.setOnLongClickListener(longClickListener);
+        extraWake.setOnLongClickListener(longClickListener);
+        extraRepeat.setOnLongClickListener(longClickListener);
+        extraAuto.setOnLongClickListener(longClickListener);
+        extraLimit.setOnLongClickListener(longClickListener);
 
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
         spinner = (Spinner) findViewById(R.id.navSpinner);
@@ -328,6 +421,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 radius = item.getRadius();
                 ledColor = item.getColor();
                 melody = item.getWeekdays();
+                vibration = item.getVibration();
+                voice = item.getVoice();
+                notificationRepeat = item.getNotificationRepeat();
+                wake = item.getWake();
+                unlock = item.getUnlock();
+                auto = item.getAuto();
+                repeats = item.getAuto();
                 String catId = item.getCategoryId();
                 if (radius == 0) radius = -1;
 
@@ -371,6 +471,173 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
         clearViews();
+    }
+
+    private View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            String message = "";
+            switch (v.getId()){
+                case R.id.extraAuto:
+                    String action = "sending message";
+                    if (isApplicationAttached()) action = "opening application";
+                    message = String.format("Check to enable %s automatically", action);
+                    break;
+                case R.id.extraLimit:
+                    message = "Check to enable repeat limits";
+                    break;
+                case R.id.extraVibration:
+                    message = "Check to enable vibration";
+                    break;
+                case R.id.extraVoice:
+                    message = "Check to enable voice notification";
+                    break;
+                case R.id.extraWake:
+                    message = "Check to enable screen awaking";
+                    break;
+                case R.id.extraUnlock:
+                    message = "Check to enable device unlocking";
+                    break;
+                case R.id.extraRepeat:
+                    message = "Check to enable notification repeating";
+                    break;
+            }
+            Messages.toast(ReminderManager.this, message);
+            addHandler();
+            return false;
+        }
+    };
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            boolean is = !v.isSelected();
+            v.setSelected(is);
+            addHandler();
+            if (v.getId() == R.id.extraLimit){
+                if (is){
+                    ViewUtils.fadeInAnimation(repeatFrame, isAnimation);
+                    handler.postDelayed(seek, 3000);
+                }
+            }
+        }
+    };
+
+    private void addHandler(){
+        handler.removeCallbacks(runnable);
+        handler.postDelayed(runnable, 4000);
+    }
+
+    private Runnable seek = new Runnable() {
+        @Override
+        public void run() {
+            if (repeatFrame.getVisibility() == View.VISIBLE) {
+                ViewUtils.fadeOutAnimation(repeatFrame, isAnimation);
+                repeats = -1;
+                extraLimit.setSelected(false);
+            }
+        }
+    };
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isOptionsVisible()) ViewUtils.hideReveal(extraScroll, isAnimation);
+        }
+    };
+
+    private void invalidateButtons(){
+        if (isLocationAttached() || isLocationOutAttached()){
+            extraRepeat.setEnabled(false);
+        } else {
+            extraRepeat.setEnabled(true);
+            if (notificationRepeat == 1) extraRepeat.setSelected(true);
+            else extraRepeat.setSelected(false);
+        }
+
+        if (isLocationAttached() || isLocationOutAttached()){
+            extraLimit.setEnabled(false);
+        } else {
+            extraLimit.setEnabled(true);
+            if (repeats > 0) extraLimit.setSelected(true);
+            else extraLimit.setSelected(false);
+        }
+
+        if (isMessageAttached() || isApplicationAttached() ||
+                (isWeekDayReminderAttached() && messageCheck.isChecked()) ||
+                (isMonthDayAttached() && monthDayMessageCheck.isChecked()) ||
+                (isLocationAttached() && messageCheckLocation.isChecked()) ||
+                (isLocationOutAttached() && messageCheckLocationOut.isChecked())){
+            extraAuto.setEnabled(true);
+            if (auto == 1) extraAuto.setSelected(true);
+            else extraAuto.setSelected(false);
+        } else extraAuto.setEnabled(false);
+
+        if (vibration == 1) extraVibration.setSelected(true);
+        else extraVibration.setSelected(false);
+
+        if (voice == 1) extraVoice.setSelected(true);
+        else extraVoice.setSelected(false);
+
+        if (wake == 1) extraWake.setSelected(true);
+        else extraWake.setSelected(false);
+
+        if (unlock == 1) extraUnlock.setSelected(true);
+        else extraUnlock.setSelected(false);
+    }
+
+    private void colorifyButtons() {
+        if (isDark){
+            extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
+            extraLimit.setImageResource(R.drawable.button_limit_light);
+            extraVoice.setImageResource(R.drawable.button_voice_light);
+            extraVibration.setImageResource(R.drawable.button_vibration_light);
+            extraRepeat.setImageResource(R.drawable.button_repeat_light);
+            extraAuto.setImageResource(R.drawable.button_auto_light);
+            extraUnlock.setImageResource(R.drawable.button_unlock_light);
+            extraWake.setImageResource(R.drawable.button_wake_light);
+        } else {
+            extraSwitch.setImageResource(R.drawable.ic_expand_more_grey600_24dp);
+            extraLimit.setImageResource(R.drawable.button_limit_dark);
+            extraVoice.setImageResource(R.drawable.button_voice_dark);
+            extraVibration.setImageResource(R.drawable.button_vibration_dark);
+            extraRepeat.setImageResource(R.drawable.button_repeat_dark);
+            extraAuto.setImageResource(R.drawable.button_auto_dark);
+            extraUnlock.setImageResource(R.drawable.button_unlock_dark);
+            extraWake.setImageResource(R.drawable.button_wake_dark);
+        }
+    }
+
+    private boolean isOptionsVisible(){
+        return extraScroll.getVisibility() == View.VISIBLE;
+    }
+
+    private void switchOptions(){
+        if (isOptionsVisible()) {
+            ViewUtils.hideReveal(extraScroll, isAnimation);
+            handler.removeCallbacks(runnable);
+        }
+        else {
+            ViewUtils.showReveal(extraScroll, isAnimation);
+            addHandler();
+        }
+        switchIcon();
+    }
+
+    private void switchIcon() {
+        if (isOptionsVisible()) {
+            if (isDark){
+                extraSwitch.setImageResource(R.drawable.ic_expand_less_white_24dp);
+            } else {
+                extraSwitch.setImageResource(R.drawable.ic_expand_less_grey600_24dp);
+            }
+        } else {
+            if (isDark){
+                extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
+            } else {
+                extraSwitch.setImageResource(R.drawable.ic_expand_more_grey600_24dp);
+            }
+        }
     }
 
     private void clearViews() {
@@ -498,6 +765,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        boolean is;
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mFab.getVisibility() == View.GONE){
@@ -610,6 +878,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text = "";
             int repCode = 0;
@@ -650,6 +920,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(repCode);
             repeatDays.setText(String.valueOf(repCode));
+            invalidateButtons();
         }
     }
 
@@ -759,6 +1030,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                 if (b) taskField.setHint(getString(R.string.message_field_hint));
                                 else taskField.setHint(getString(R.string.tast_hint));
+                                invalidateButtons();
                             }
                         });
                     } else {
@@ -774,6 +1046,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         if (monthDayAttachAction.isChecked()) ViewUtils.showOver(monthDayActionLayout, isAnimation);
+
+        invalidateButtons();
 
         if (id != 0 && isSame()) {
             String text = "";
@@ -809,6 +1083,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             monthDayField.setText(dayStr);
+
+            invalidateButtons();
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
                 monthDayAttachAction.setChecked(false);
@@ -977,6 +1253,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                                 if (b) taskField.setHint(getString(R.string.message_field_hint));
                                 else taskField.setHint(getString(R.string.tast_hint));
+                                invalidateButtons();
                             }
                         });
                     } else {
@@ -992,6 +1269,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         if (attachAction.isChecked()) ViewUtils.showOver(action_layout, isAnimation);
+
+        invalidateButtons();
 
         if (id != 0 && isSame()) {
             String text = "";
@@ -1027,6 +1306,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             taskField.setText(text);
 
             setCheckForDays(weekdays);
+
+            invalidateButtons();
 
             if (type.matches(Constants.TYPE_WEEKDAY)){
                 attachAction.setChecked(false);
@@ -1170,6 +1451,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatMinutesSeek.setOnSeekBarChangeListener(this);
         repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text = "";
             int  exp = 0, expTasks = 0, repeat = 0;
@@ -1196,6 +1479,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             repeatMinutes.setText(String.valueOf(repeat));
 
             taskField.setText(text);
+
+            invalidateButtons();
         }
     }
 
@@ -1338,6 +1623,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysSkype.setText(String.valueOf(repeatSkype.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text="", number="", type="";
             int repCode = 0;
@@ -1392,6 +1679,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatSkype.setProgress(repCode);
             repeatDaysSkype.setText(String.valueOf(repCode));
+
+            invalidateButtons();
         }
     }
 
@@ -1453,6 +1742,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         applicationLayout.setVisibility(View.VISIBLE);
                     }
                 }
+                invalidateButtons();
             }
         });
 
@@ -1532,6 +1822,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysApp.setText(String.valueOf(repeatApp.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text="", number="", type="";
             int repCode = 0;
@@ -1594,6 +1886,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatApp.setProgress(repCode);
             repeatDaysApp.setText(String.valueOf(repCode));
+            invalidateButtons();
         }
     }
 
@@ -1693,6 +1986,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysCall.setText(String.valueOf(repeatCallInt.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text="", number="";
             int repCode = 0;
@@ -1736,6 +2031,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatCallInt.setProgress(repCode);
             repeatDaysCall.setText(String.valueOf(repCode));
+            invalidateButtons();
         }
     }
 
@@ -1836,6 +2132,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
         repeatDaysMessage.setText(String.valueOf(repeatMessageInt.getProgress()));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text="", number="";
             int repCode = 0;
@@ -1879,6 +2177,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatMessageInt.setProgress(repCode);
             repeatDaysMessage.setText(String.valueOf(repCode));
+            invalidateButtons();
         }
     }
 
@@ -2110,6 +2409,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             if (b) taskField.setHint(getString(R.string.message_field_hint));
                             else taskField.setHint(getString(R.string.tast_hint));
+                            invalidateButtons();
                         }
                     });
                 } else {
@@ -2171,6 +2471,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
         locationDateYearField.setText(String.valueOf(myYear));
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text = "", number = null, remType = "";
             double latitude = 0.0, longitude = 0.0;
@@ -2226,6 +2528,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
 
             taskField.setText(text);
+            invalidateButtons();
             if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
         }
     }
@@ -2367,6 +2670,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                             if (b) taskField.setHint(getString(R.string.message_field_hint));
                             else taskField.setHint(getString(R.string.tast_hint));
+                            invalidateButtons();
                         }
                     });
                 } else {
@@ -2433,6 +2737,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
+        invalidateButtons();
+
         if (id != 0 && isSame()) {
             String text = "", number = null, remType = "";
             double latitude = 0, longitude = 0;
@@ -2492,6 +2798,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
             mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
             mapCheck.setChecked(true);
+            invalidateButtons();
         }
     }
 
@@ -2891,9 +3198,77 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
 
+        int vibro = getVibro();
+        int voice = getVoice();
+        int notification = getNotification();
+        int wake = getWake();
+        int unlock = getUnlock();
+        int auto = getAuto();
+        int limit = getLimit();
+        if (repeat == 0) limit = -1;
+
+        Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
+                wake + ", U " + unlock + ", A " + auto + ", L " + limit);
+
         return new Reminder(task, type, weekdays, melody, categoryId, uuId,
                 new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due);
+                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, vibro, voice,
+                notification, wake, unlock, auto, limit);
+    }
+
+    private int getLimit() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraLimit.isEnabled()) {
+                if (extraLimit.isSelected()) return repeats;
+                else return 0;
+            } else return -1;
+        } else return -1;
+    }
+
+    private int getAuto() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraAuto.isEnabled()) {
+                if (extraAuto.isSelected()) return 1;
+                else return 0;
+            } else return -1;
+        } else return -1;
+    }
+
+    private int getUnlock() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraUnlock.isSelected()) return 1;
+            else return 0;
+        } else return -1;
+    }
+
+    private int getWake() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraWake.isSelected()) return 1;
+            else return 0;
+        } else return -1;
+    }
+
+    private int getNotification() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (isOptionsVisible() && extraRepeat.isEnabled()) {
+                if (extraRepeat.isSelected()) return 1;
+                else return 0;
+            } else return -1;
+        } else return -1;
+    }
+
+    private int getVoice() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraVoice.isSelected()) return 1;
+            else return 0;
+        } else return -1;
+    }
+
+    private int getVibro() {
+        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
+            if (extraVibration.isSelected()) return 1;
+            else return 0;
+        } else return -1;
     }
 
     private int getExportCode() {

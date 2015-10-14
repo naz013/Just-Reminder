@@ -35,6 +35,114 @@
 
         </LinearLayout>
 
+        <RelativeLayout
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:id="@+id/extraHolder">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:scrollbars="none"
+                android:id="@+id/extraScroll">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraVibration"
+                        android:src="@drawable/ic_vibration_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraUnlock"
+                        android:src="@drawable/ic_screen_lock_portrait_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraVoice"
+                        android:src="@drawable/ic_multitrack_audio_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraWake"
+                        android:src="@drawable/ic_brightness_high_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraRepeat"
+                        android:src="@drawable/ic_refresh_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraAuto"
+                        android:src="@drawable/ic_textsms_grey600_24dp"/>
+
+                    <ImageButton
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/extraScroll"
+                        android:id="@+id/extraLimit"
+                        android:src="@drawable/ic_block_grey600_24dp"/>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@+id/extraScroll"
+                android:id="@+id/extraSwitch"
+                android:src="@drawable/ic_expand_more_grey600_24dp"/>
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/card_bg_dark"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp"
+            android:id="@+id/repeatFrame">
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/repeatSeek"
+                android:layout_margin="5dp"
+                android:max="100"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_above="@+id/repeatFrame"
+            android:id="@+id/repeatLabel"
+            android:textSize="70sp"/>
+
     </RelativeLayout>
 
 </LinearLayout>

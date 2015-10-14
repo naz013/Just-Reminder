@@ -91,7 +91,7 @@ public class TimeCount {
      */
     public Drawable getDifference(String weekdays, int year, int month, int dayOfMonth, int hourOfDay,
                                   int minuteOfHour, int seconds, long inTime, int repeatCode,
-                                  int remCount, int delay){
+                                  long remCount, int delay){
         Drawable color;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             color = getDrawable(R.color.colorSemiTrGrayDark);
@@ -163,7 +163,7 @@ public class TimeCount {
      */
     public String[] getNextDateTime(int year, int month, int dayOfMonth, int hourOfDay,
                                     int minuteOfHour, int seconds, long inTime, int repeatCode,
-                                    int remCount, int delay){
+                                    long remCount, int delay){
         String date;
         String time;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
@@ -197,13 +197,13 @@ public class TimeCount {
         int year = 0;
         int repCode = 0;
         long repTime = 0;
-        int repCount = 0;
+        long repCount = 0;
         String type = null;
         String weekdays = null;
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-            repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+            repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
             repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             dayOfMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
             monthOfYear = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
@@ -251,7 +251,7 @@ public class TimeCount {
      * @return Due time in milliseconds.
      */
     public static long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
-                             int seconds, long inTime, int repeatCode, int remCount, int delay){
+                             int seconds, long inTime, int repeatCode, long remCount, int delay){
         long date;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             date = 0;
@@ -387,7 +387,7 @@ public class TimeCount {
      * @return
      */
     public boolean isNext(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
-                          long inTime, int repeatCode, int remCount) {
+                          long inTime, int repeatCode, long remCount) {
         boolean nextDate = false;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
             nextDate = true;

@@ -14,6 +14,12 @@ import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.LocationType;
+import com.cray.software.justreminder.reminder.MonthdayType;
+import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.TimerType;
+import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
@@ -180,9 +186,16 @@ public class SyncHelper {
                 int isDone  = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 int repeatCode  = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+                int voice  = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
+                int vibration  = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
+                int auto  = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
+                int unlock  = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
+                int wake  = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
+                int notificationRepeat  = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
                 long repMinute  = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 long radius = c.getLong(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+                long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -216,6 +229,13 @@ public class SyncHelper {
                     jObjectData.put(Constants.COLUMN_CATEGORY, categoryId);
                     jObjectData.put(Constants.COLUMN_CUSTOM_MELODY, melody);
                     jObjectData.put(Constants.COLUMN_CUSTOM_RADIUS, radius);
+                    jObjectData.put(Constants.COLUMN_VOICE, voice);
+                    jObjectData.put(Constants.COLUMN_VIBRATION, vibration);
+                    jObjectData.put(Constants.COLUMN_AUTO_ACTION, auto);
+                    jObjectData.put(Constants.COLUMN_WAKE_SCREEN, wake);
+                    jObjectData.put(Constants.COLUMN_UNLOCK_DEVICE, unlock);
+                    jObjectData.put(Constants.COLUMN_REPEAT_LIMIT, limit);
+                    jObjectData.put(Constants.COLUMN_NOTIFICATION_REPEAT, notificationRepeat);
 
                     if (isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
@@ -976,6 +996,22 @@ public class SyncHelper {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
+
+        int vibration = -1;
+        if (jsonObj.has(Constants.COLUMN_VIBRATION)) jsonObj.getInt(Constants.COLUMN_VIBRATION);
+        int voice = -1;
+        if (jsonObj.has(Constants.COLUMN_VOICE)) jsonObj.getInt(Constants.COLUMN_VOICE);
+        int wake = -1;
+        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN)) jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
+        int unlock = -1;
+        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE)) jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        int notificationRepeat = -1;
+        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT)) jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        int auto = -1;
+        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION)) jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
+        long limit = -1;
+        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT)) jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+
         DB = new DataBase(mContext);
         DB.open();
         if (categoryId == null) {
@@ -997,91 +1033,49 @@ public class SyncHelper {
         TimeCount timeCount = new TimeCount(mContext);
         long id;
         Integer i = (int) (long) count;
-        if (type != null) {
+        List<String> namesPass = new ArrayList<>();
+        Cursor e = DB.queryAllReminders();
+        while (e.moveToNext()) {
+            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
+            }
+        }
+        e.close();
+        if (type != null && !namesPass.contains(type)) {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                if (DB.getCount() == 0) {
-                    id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                            repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
-                            radius, 0, 0, categoryId);
-                    DB.updateReminderDateTime(id);
-                    weekDayReceiver.setAlarm(mContext, id);
-                } else {
-                    List<String> namesPass = new ArrayList<>();
-                    Cursor e = DB.queryAllReminders();
-                    while (e.moveToNext()) {
-                        for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                            namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                        }
-                    }
-                    e.close();
-                    if (!namesPass.contains(uuID)) {
-                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
-                                melody, radius, 0, 0, categoryId);
-                        DB.updateReminderDateTime(id);
-                        weekDayReceiver.setAlarm(mContext, id);
-                    }
+                if (!namesPass.contains(uuID)) {
+                    long due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
+                    new WeekdayType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
+                            uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                            minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                            notificationRepeat, wake, unlock, auto, limit));
                 }
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                if (DB.getCount() == 0) {
-                    id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                            repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0, melody,
-                            radius, 0, 0, categoryId);
-                    DB.updateReminderDateTime(id);
-                    new MonthDayReceiver().setAlarm(mContext, id);
-                } else {
-                    List<String> namesPass = new ArrayList<>();
-                    Cursor e = DB.queryAllReminders();
-                    while (e.moveToNext()) {
-                        for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                            namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                        }
-                    }
-                    e.close();
-                    if (!namesPass.contains(uuID)) {
-                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
-                                melody, radius, 0, 0, categoryId);
-                        DB.updateReminderDateTime(id);
-                        new MonthDayReceiver().setAlarm(mContext, id);
-                    }
-                }
+                long due = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
+                new MonthdayType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
+                        uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                        minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                        notificationRepeat, wake, unlock, auto, limit));
             } else {
                 if (timeCount.isNext(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
-                    if (DB.getCount() == 0) {
-                        id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
-                                melody, radius, 0, 0, categoryId);
-                        DB.updateReminderDateTime(id);
-                        if (type.startsWith(Constants.TYPE_LOCATION) ||
-                                type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                            mContext.startService(new Intent(mContext, GeolocationService.class)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        } else {
-                            alarm.setAlarm(mContext, id);
-                        }
+                    if (type.matches(Constants.TYPE_TIME)) {
+                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                        new TimerType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
+                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                                notificationRepeat, wake, unlock, auto, limit));
+                    } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                        new LocationType(mContext, type).save(new Reminder(text, type, weekdays, melody, categoryId,
+                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                                notificationRepeat, wake, unlock, auto, limit));
                     } else {
-                        List<String> namesPass = new ArrayList<>();
-                        Cursor e = DB.queryAllReminders();
-                        while (e.moveToNext()) {
-                            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                                namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                            }
-                        }
-                        e.close();
-                        if (!namesPass.contains(uuID)) {
-                            id = DB.insertReminder(text, type, day, month, year, hour, minute, seconds, number,
-                                    repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, 0,
-                                    melody, radius, 0, 0, categoryId);
-                            DB.updateReminderDateTime(id);
-                            if (type.startsWith(Constants.TYPE_LOCATION) ||
-                                    type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                                mContext.startService(new Intent(mContext, GeolocationService.class)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                            } else {
-                                alarm.setAlarm(mContext, id);
-                            }
-                        }
+                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                        new DateType(mContext, type).save(new Reminder(text, type, weekdays, melody, categoryId,
+                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                                notificationRepeat, wake, unlock, auto, limit));
                     }
                 }
             }

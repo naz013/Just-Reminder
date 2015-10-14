@@ -15,7 +15,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
-    private static final int DB_VERSION = 11;
+    private static final int DB_VERSION = 12;
     private static final String CURRENT_TABLE_NAME = "current_task_table";
     private static final String CURRENT_CACHE_TABLE_NAME = "current_cache_task_table";
     private static final String CONTACTS_TABLE_NAME = "contacts_task_table";
@@ -25,6 +25,7 @@ public class DataBase {
     private static final String CALLS_TABLE_NAME = "calls_table";
     private static final String MESSAGES_TABLE_NAME = "messages_table";
     private static final String CATEGORIES_TABLE_NAME = "categories_table";
+    private static final String SHOPPING_TABLE_NAME = "shopping_table";
 
     private DBHelper dbHelper;
     private static Context mContext;
@@ -56,7 +57,19 @@ public class DataBase {
                     Constants.COLUMN_LONGITUDE + " REAL, " +
                     Constants.COLUMN_FEATURE_TIME + " INTEGER, " +
                     Constants.COLUMN_DELAY + " INTEGER, " +
+                    Constants.COLUMN_VIBRATION + " INTEGER, " +
+                    Constants.COLUMN_VOICE + " INTEGER, " +
+                    Constants.COLUMN_AUTO_ACTION + " INTEGER, " +
+                    Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER, " +
+                    Constants.COLUMN_WAKE_SCREEN + " INTEGER, " +
+                    Constants.COLUMN_UNLOCK_DEVICE + " INTEGER, " +
+                    Constants.COLUMN_REPEAT_LIMIT + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_1 + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_2 + " INTEGER, " +
                     Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_3 + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_4 + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_5 + " VARCHAR(255), " +
                     Constants.COLUMN_DATE_TIME + " VARCHAR(255), " +
                     Constants.COLUMN_CATEGORY + " VARCHAR(255), " +
                     Constants.COLUMN_WEEKDAYS + " VARCHAR(255) " +
@@ -126,6 +139,18 @@ public class DataBase {
                     Constants.COLUMN_DATE_TIME + " INTEGER " +
                     ");";
 
+    private static final String SHOPPING_TABLE_CREATE =
+            "create table " + SHOPPING_TABLE_NAME + "(" +
+                    Constants.COLUMN_ID + " integer primary key autoincrement, " +
+                    Constants.COLUMN_TEXT + " VARCHAR(255), " +
+                    Constants.COLUMN_COLOR + " INTEGER, " +
+                    Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
+                    Constants.COLUMN_CATEGORY + " VARCHAR(255), " +
+                    Constants.COLUMN_REMINDER_ID + " INTEGER, " +
+                    Constants.COLUMN_ARCHIVED + " INTEGER, " +
+                    Constants.COLUMN_DATE_TIME + " INTEGER " +
+                    ");";
+
     public class DBHelper extends SQLiteOpenHelper {
 
 
@@ -142,6 +167,7 @@ public class DataBase {
             sqLiteDatabase.execSQL(CALLS_TABLE_CREATE);
             sqLiteDatabase.execSQL(MESSAGES_TABLE_CREATE);
             sqLiteDatabase.execSQL(CATEGORIES_TABLE_CREATE);
+            sqLiteDatabase.execSQL(SHOPPING_TABLE_CREATE);
         }
 
         @Override
@@ -154,16 +180,19 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXPORT_TO_CALENDAR + " INTEGER");
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_ARCHIVED + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_DATE_TIME + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -172,6 +201,31 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 2:
                     db.execSQL(LOCATION_TABLE_CREATE);
@@ -179,16 +233,19 @@ public class DataBase {
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXPORT_TO_CALENDAR + " INTEGER");
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_ARCHIVED + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_DATE_TIME + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -197,22 +254,50 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 3:
                     db.execSQL(EVENTS_TABLE_CREATE);
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXPORT_TO_CALENDAR + " INTEGER");
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_ARCHIVED + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_DATE_TIME + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -221,23 +306,51 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 4:
                     db.execSQL(EVENTS_TABLE_CREATE);
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
                     db.execSQL("DELETE FROM " + NOTE_TABLE_NAME);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXPORT_TO_CALENDAR + " INTEGER");
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_ARCHIVED + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_DATE_TIME + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -246,22 +359,50 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 5:
                     db.execSQL(EVENTS_TABLE_CREATE);
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_IS_DONE + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXPORT_TO_CALENDAR + " INTEGER");
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_ARCHIVED + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_CUSTOM_MELODY + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_DATE_TIME + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -270,12 +411,39 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 6:
                     db.execSQL(EVENTS_TABLE_CREATE);
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_CUSTOM_RADIUS + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
@@ -290,17 +458,148 @@ public class DataBase {
                             + Constants.COLUMN_LED_COLOR + " INTEGER");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_SYNC_CODE + " INTEGER");
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 7:
                     db.execSQL(CALLS_TABLE_CREATE);
                     db.execSQL(MESSAGES_TABLE_CREATE);
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 8:
                     db.execSQL(CATEGORIES_TABLE_CREATE);
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
                 case 10:
+                    db.execSQL(SHOPPING_TABLE_CREATE);
                     db.execSQL("DELETE FROM " + CURRENT_CACHE_TABLE_NAME);
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+                    break;
+                case 11:
+                    db.execSQL(SHOPPING_TABLE_CREATE);
+                    //
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
                     break;
             }
         }
@@ -364,6 +663,13 @@ public class DataBase {
         cv.put(Constants.COLUMN_LED_COLOR, color);
         cv.put(Constants.COLUMN_SYNC_CODE, code);
         cv.put(Constants.COLUMN_CATEGORY, categoryId);
+        cv.put(Constants.COLUMN_VIBRATION, -1);
+        cv.put(Constants.COLUMN_VOICE, -1);
+        cv.put(Constants.COLUMN_NOTIFICATION_REPEAT, -1);
+        cv.put(Constants.COLUMN_WAKE_SCREEN, -1);
+        cv.put(Constants.COLUMN_UNLOCK_DEVICE, -1);
+        cv.put(Constants.COLUMN_AUTO_ACTION, -1);
+        cv.put(Constants.COLUMN_REPEAT_LIMIT, -1);
         //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(CURRENT_TABLE_NAME, null, cv);
     }
@@ -413,6 +719,20 @@ public class DataBase {
         args.put(Constants.COLUMN_REMINDERS_COUNT, 0);
         args.put(Constants.COLUMN_IS_DONE, 0);
         args.put(Constants.COLUMN_ARCHIVED, 0);
+        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateReminderExtra(long rowId, int vibro, int voice, int repeat, int wake,
+                                       int unlock, int auto, long limit) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_VIBRATION, vibro);
+        args.put(Constants.COLUMN_VOICE, voice);
+        args.put(Constants.COLUMN_NOTIFICATION_REPEAT, repeat);
+        args.put(Constants.COLUMN_WAKE_SCREEN, wake);
+        args.put(Constants.COLUMN_UNLOCK_DEVICE, unlock);
+        args.put(Constants.COLUMN_AUTO_ACTION, auto);
+        args.put(Constants.COLUMN_REPEAT_LIMIT, limit);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

@@ -20,12 +20,12 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SwipeListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.SwipeableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
 public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ViewHolder>
-        implements SwipeableItemAdapter<CategoryRecyclerAdapter.ViewHolder> {
+        implements LegacySwipeableItemAdapter<CategoryRecyclerAdapter.ViewHolder> {
 
     private Context mContext;
     private SharedPrefs prefs;
@@ -48,7 +48,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     @Override
     public int onGetSwipeReactionType(ViewHolder viewHolder, int position, int x, int y) {
         if (provider.getCount() == 1) return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_RIGHT;
-        else return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH;
+        else return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
     @Override

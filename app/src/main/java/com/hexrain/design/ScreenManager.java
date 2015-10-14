@@ -1077,7 +1077,7 @@ public class ScreenManager extends AppCompatActivity
                 int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                int remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                long remCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 long afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));

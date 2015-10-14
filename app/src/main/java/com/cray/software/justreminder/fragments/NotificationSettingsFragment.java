@@ -32,7 +32,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private TextView delayForText, repeatIntervalText;
     private TextView textLed2, textLed3, repeatText, repeatText1;
     private CheckBox wakeScreenCheck, silentSMSCheck, ledCheck, repeatNotificationCheck, autoLaunchCheck,
-            unlockScreenCheck, ttsCheck;
+            unlockScreenCheck, ttsCheck, extraNotificationCheck;
     private RelativeLayout statusIcon;
     private CheckBox notificationDismissCheck, permanentNotificationCheck, statusIconCheck;
     private TextView locale;
@@ -165,6 +165,17 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         ttsCheck = (CheckBox) rootView.findViewById(R.id.ttsCheck);
         ttsCheck.setChecked(sPrefs.loadBoolean(Prefs.TTS));
 
+        RelativeLayout extraNotification = (RelativeLayout) rootView.findViewById(R.id.extraNotification);
+        extraNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                extraChange();
+            }
+        });
+
+        extraNotificationCheck = (CheckBox) rootView.findViewById(R.id.extraNotificationCheck);
+        extraNotificationCheck.setChecked(sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS));
+
         locale = (TextView) rootView.findViewById(R.id.locale);
         locale.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +231,17 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         }
 
         return rootView;
+    }
+
+    private void extraChange() {
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (extraNotificationCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, false);
+            extraNotificationCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, true);
+            extraNotificationCheck.setChecked(true);
+        }
     }
 
     private void checkInfinite(){
@@ -297,12 +319,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         if (vibrationCheck.isChecked()){
             sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, false);
             vibrationCheck.setChecked(false);
-            checkVibrate();
         } else {
             sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, true);
             vibrationCheck.setChecked(true);
-            checkVibrate();
         }
+        checkVibrate();
     }
 
     private void infiniteVibrationChange (){

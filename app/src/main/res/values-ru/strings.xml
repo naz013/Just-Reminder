@@ -724,4 +724,6 @@
     <string name="cloud_sync_explanation">Сохраняйте свои напоминания в Dropbox или Диске Google. Также управляйте Заданиями Google</string>
     <string name="simple_note">Заметки</string>
     <string name="note_explnation">Добавляйте, редактируйте, делитесь зашифрованными заметками</string>
+    <string name="extra_options">Extra options</string>
+    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
 </resources>

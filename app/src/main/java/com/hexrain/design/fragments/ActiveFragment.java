@@ -48,6 +48,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeMana
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
+import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
 
@@ -90,6 +91,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
             item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
         }
+        menu.add(Menu.NONE, 55, 100, "Test List");
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -118,6 +120,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
                 new SharedPrefs(getActivity()).saveBoolean(Prefs.LIST_GRID, enableGrid);
                 loaderAdapter(null);
                 getActivity().invalidateOptionsMenu();
+                break;
+            case 55:
+                startActivity(new Intent(getActivity(), TestActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
         }
         return super.onOptionsItemSelected(item);

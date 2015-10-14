@@ -65,14 +65,14 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         int done;
         double lat;
         double longi;
-        int repCount;
+        long repCount;
         long id;
         Cursor c = db.queryGroup();
         if (c != null && c.moveToFirst()) {
             do {
                 id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                 lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));

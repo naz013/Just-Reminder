@@ -184,7 +184,7 @@ public class ReminderDataProvider {
                 int archived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
                 double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                long repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
 
                 Cursor cf = db.getCategory(categoryId);

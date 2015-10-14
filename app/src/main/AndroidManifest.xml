@@ -756,6 +756,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.hexrain.design.TestActivity"
+            android:label="@string/title_activity_test"
+            android:theme="@style/HomeWhite.Blue" >
+        </activity>
     </application>
 
 </manifest>

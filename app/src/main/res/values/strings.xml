@@ -728,5 +728,8 @@
     <string name="cloud_sync_explanation">Save your reminders in Dropbox or Google Drive. And also manage your Google Tasks</string>
     <string name="simple_note">Notes</string>
     <string name="note_explnation">Add, modify, share encrypted notes</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="extra_options">Extra options</string>
+    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
 
 </resources>

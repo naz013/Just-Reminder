@@ -348,7 +348,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
                 lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                long repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
 
                 Uri soundUri;
@@ -517,6 +517,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                                 .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle()))
                                 .draggable(false));
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                        if (radius == -1) radius = new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS);
                         if (radius != -1) {
                             int[] circleColors = cs.getMarkerRadiusStyle();
                             map.addCircle(new CircleOptions()
