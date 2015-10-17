@@ -21,10 +21,19 @@ public class Type {
         this.type = "";
     }
 
+    /**
+     * Inflate layout file for reminder.
+     * @param view layout resource identifier.
+     */
     public void inflateView(int view){
         this.view = view;
     }
 
+    /**
+     * Get reminder object.
+     * @param id reminder identifier.
+     * @return reminder object
+     */
     public Reminder getItem(long id){
         DataBase db = new DataBase(mContext);
         db.open();
@@ -71,18 +80,35 @@ public class Type {
         } else return null;
     }
 
+    /**
+     * Get reminder layout resource identifier.
+     * @return
+     */
     public int getView(){
         return view;
     }
 
+    /**
+     * Set reminder type.
+     * @param type
+     */
     public void setType(String type){
         this.type = type;
     }
 
+    /**
+     * Get reminder type.
+     * @return
+     */
     public String getType(){
         return type;
     }
 
+    /**
+     * Save new reminder to database.
+     * @param item reminder object.
+     * @return
+     */
     public long save(Reminder item){
         DataBase db = new DataBase(mContext);
         db.open();
@@ -100,6 +126,11 @@ public class Type {
         return id;
     }
 
+    /**
+     * Update reminder in database.
+     * @param id reminder identifier.
+     * @param item reminder object.
+     */
     public void save(long id, Reminder item){
         DataBase db = new DataBase(mContext);
         db.open();
@@ -115,6 +146,11 @@ public class Type {
         updateViews();
     }
 
+    /**
+     * Add reminder to Google, Stock Calendar and/or Google Tasks.
+     * @param item reminder object.
+     * @param id reminder identifier.
+     */
     protected void exportToServices(Reminder item, long id){
         SharedPrefs prefs = new SharedPrefs(mContext);
         boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
@@ -123,6 +159,9 @@ public class Type {
         if (item.getCode() == Constants.SYNC_GTASKS_ONLY) ReminderUtils.exportToTasks(mContext, item.getTitle(), item.getDue(), id);
     }
 
+    /**
+     * Update all application widgets and permanent notification in Status Bar.
+     */
     private void updateViews(){
         new Notifier(mContext).recreatePermanent();
         new UpdatesHelper(mContext).updateWidget();

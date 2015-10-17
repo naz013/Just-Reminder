@@ -80,7 +80,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         syncInterval.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog.syncInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
+                Dialog.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
             }
         });
 

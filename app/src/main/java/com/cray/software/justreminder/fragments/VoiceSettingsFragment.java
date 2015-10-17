@@ -29,7 +29,7 @@ public class VoiceSettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.voice_settings_layout, container, false);
+        View rootView =  inflater.inflate(R.layout.settings_voice, container, false);
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){

@@ -1,5 +1,8 @@
 package com.cray.software.justreminder.datas;
 
+/**
+ * Reminder category item constructor.
+ */
 public class Category {
     private String title;
     private String uuID;

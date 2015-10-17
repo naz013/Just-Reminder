@@ -724,6 +724,12 @@
     <string name="cloud_sync_explanation">Speichern Sie Ihre Erinnerungen im Dropbox oder Google Drive. Und auch Ihre Google Tasks verwalten</string>
     <string name="simple_note">Notizen</string>
     <string name="note_explnation">Hinzufügen, Ändern Anteil verschlüsselte Notizen</string>
-    <string name="extra_options">Extra options</string>
-    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
+    <string name="extra_options">Extra Möglichkeiten</string>
+    <string name="extra_options_explanation">Überprüfen Sie, um zusätzliche Optionen für jede Mahnung aktivieren</string>
+    <string name="repeat_limit_explanation">Überprüfen Sie wiederholenden Grenze für diese Erinnerung zu aktivieren</string>
+    <string name="add_item">Aufgabe hinzufügen</string>
+    <string name="shopping_list">Einkaufsliste</string>
+    <string name="empty_task">Leere Aufgabe!</string>
+    <string name="title">Titel</string>
+    <string name="no_tasks_warming">Sie haben noch keine Aufgaben hinzuzufügen!</string>
 </resources>

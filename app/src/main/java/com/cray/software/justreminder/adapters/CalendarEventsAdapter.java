@@ -99,7 +99,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
             eventDate.setText(TimeUtil.getDateTime(time, is24) + "\n" + TimeUtil.getAge(item.getYear()) +
                     " " + mContext.getString(R.string.years_string));
         } else {
-            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorReminderCalendar()));
+            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.getCategoryColor(item.getColor())));
             eventType.setText(mContext.getString(R.string.reminder_type));
 
             String number = item.getNumber();

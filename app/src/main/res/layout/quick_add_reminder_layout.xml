@@ -40,6 +40,7 @@
                 android:paddingBottom="10dp"
                 android:hint="@string/tast_hint"
                 android:paddingLeft="15dp"
+                android:background="@android:color/transparent"
                 android:paddingRight="15dp"
                 android:inputType="textMultiLine"
                 android:layout_gravity="center_horizontal" />
@@ -144,6 +145,7 @@
                         android:maxLength="3"
                         android:inputType="number"
                         android:gravity="center"
+                        android:background="@android:color/transparent"
                         android:layout_marginLeft="@dimen/create_margin"
                         android:textSize="@dimen/create_text_size_primary"
                         android:id="@+id/repeatDays"/>

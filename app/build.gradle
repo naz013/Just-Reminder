@@ -64,8 +64,8 @@ android {
             applicationId 'com.hexrain.reminder.beta'
             buildConfigField "boolean", "IS_PRO", "false"
             buildConfigField "boolean", "IS_BETA", "true"
-            versionCode 9
-            versionName '4.1 beta 3'
+            versionCode 10
+            versionName '4.1 beta 4'
         }
     }
 

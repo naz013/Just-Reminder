@@ -24,9 +24,6 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.Module;
 
-import io.codetail.animation.SupportAnimator;
-import io.codetail.animation.ViewAnimationUtils;
-
 public class ViewUtils {
 
     /**

@@ -32,6 +32,7 @@
         <include layout="@layout/application_layout"/>
         <include layout="@layout/reminder_day_of_month_layout"/>
         <include layout="@layout/location_out_reminder_layout"/>
+        <include layout="@layout/shopping_layout"/>
 
         </LinearLayout>
 

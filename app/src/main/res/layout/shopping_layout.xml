@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shoppingLayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="visible">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/todoList"
+        android:layout_width="match_parent"
+        android:overScrollMode="never"
+        android:visibility="visible"
+        android:divider="@android:color/transparent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:focusable="false"
+        android:layout_below="@+id/cardContainer"
+        android:choiceMode="singleChoice"
+        android:fastScrollEnabled="true"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/patch_card_bg"
+        android:layout_alignParentTop="true"
+        android:id="@+id/cardContainer">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/shopEdit"
+            android:layout_centerVertical="true"
+            android:hint="@string/add_item"
+            android:lines="2"
+            android:background="@android:color/transparent"
+            android:layout_toLeftOf="@+id/addButton" />
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/addButton"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_add_grey600_24dp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

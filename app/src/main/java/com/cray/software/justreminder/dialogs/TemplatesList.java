@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.dialogs;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,9 +31,6 @@ import com.cray.software.justreminder.interfaces.SwipeListener;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 
@@ -117,12 +113,9 @@ public class TemplatesList extends AppCompatActivity implements SwipeListener {
         adapter = new TemplateRecyclerAdapter(this, provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
         db.close();

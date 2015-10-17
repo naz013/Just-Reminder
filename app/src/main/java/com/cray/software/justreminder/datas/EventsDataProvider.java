@@ -16,7 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class EventsDataProvider {
     public enum Type {
@@ -25,7 +27,7 @@ public class EventsDataProvider {
     }
 
     private ArrayList<EventsItem> data = new ArrayList<>();
-    private Cursor s, c;
+    private Cursor s, c, cat;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private int hour, minute;
     private boolean isFeature;
@@ -38,8 +40,10 @@ public class EventsDataProvider {
         this.c = c;
     }
 
-    public void setReminders(Cursor s){
+    public void setReminders(Cursor s, Cursor cat){
         this.s = s;
+        if (cat == null) throw new NullPointerException("Nullable category cursor");
+        this.cat = cat;
     }
 
     public void setTime(int hour, int minute){
@@ -120,7 +124,7 @@ public class EventsDataProvider {
                     calendar1.set(Calendar.HOUR_OF_DAY, hour);
                     calendar1.set(Calendar.MINUTE, minute);
                     data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
-                            bDay, bMonth, bYear, Type.birthday));
+                            bDay, bMonth, bYear, Type.birthday, 0));
                 }
             } while (c.moveToNext());
         }
@@ -129,6 +133,14 @@ public class EventsDataProvider {
 
     public void loadReminders(){
         long start = System.currentTimeMillis();
+        Map<String, Integer> map = new HashMap<>();
+        if (cat != null && cat.moveToFirst()){
+            do {
+                String uuid = cat.getString(cat.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                int color = cat.getInt(cat.getColumnIndex(Constants.COLUMN_COLOR));
+                map.put(uuid, color);
+            } while (cat.moveToNext());
+        }
         if (s != null && s.moveToFirst()) {
             do {
                 int myHour = s.getInt(s.getColumnIndex(Constants.COLUMN_HOUR));
@@ -137,6 +149,7 @@ public class EventsDataProvider {
                 int myMonth = s.getInt(s.getColumnIndex(Constants.COLUMN_MONTH));
                 int myYear = s.getInt(s.getColumnIndex(Constants.COLUMN_YEAR));
                 int repCode = s.getInt(s.getColumnIndex(Constants.COLUMN_REPEAT));
+                String category = s.getString(s.getColumnIndex(Constants.COLUMN_CATEGORY));
                 long remCount = s.getLong(s.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
                 long afterTime = s.getInt(s.getColumnIndex(Constants.COLUMN_REMIND_TIME));
@@ -161,7 +174,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder));
+                                mMonth, mYear, Type.reminder, map.get(category)));
                     }
                     if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
                         int days = 0;
@@ -176,7 +189,7 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder));
+                                        mMonth, mYear, Type.reminder, map.get(category)));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -190,7 +203,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder));
+                                mMonth, mYear, Type.reminder, map.get(category)));
                     }
                     int days = 0;
                     if (isFeature) {
@@ -207,7 +220,7 @@ public class EventsDataProvider {
                                 if (time > 0) {
                                     if (number == null) number = "0";
                                     data.add(new EventsItem("reminder", name, number, id, time, sDay,
-                                            sMonth, sYear, Type.reminder));
+                                            sMonth, sYear, Type.reminder, map.get(category)));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
@@ -223,7 +236,7 @@ public class EventsDataProvider {
                         if (time > 0) {
                             if (number == null) number = "0";
                             data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                    mMonth, mYear, Type.reminder));
+                                    mMonth, mYear, Type.reminder, map.get(category)));
                         }
                     }
                     int days = 1;
@@ -238,7 +251,7 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder));
+                                        mMonth, mYear, Type.reminder, map.get(category)));
                             }
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
@@ -252,11 +265,11 @@ public class EventsDataProvider {
     public class EventsItem implements Parcelable{
         private String type, name, number, time;
         private long id, date;
-        private int day, month, year;
+        private int day, month, year, color;
         private Type inn;
 
         public EventsItem(String type, String name, String number, long id, long date, int day,
-                          int month, int year, Type inn){
+                          int month, int year, Type inn, int color){
             this.type = type;
             this.name = name;
             this.id = id;
@@ -266,6 +279,15 @@ public class EventsDataProvider {
             this.month = month;
             this.year = year;
             this.inn = inn;
+            this.color = color;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
         }
 
         public Type getInn(){
@@ -375,6 +397,7 @@ public class EventsDataProvider {
             day = in.readInt();
             month = in.readInt();
             year = in.readInt();
+            color = in.readInt();
             inn = (Type) in.readValue(Type.class.getClassLoader());
         }
 
@@ -394,6 +417,7 @@ public class EventsDataProvider {
             dest.writeInt(day);
             dest.writeInt(month);
             dest.writeInt(year);
+            dest.writeInt(color);
             dest.writeValue(inn);
         }
     }

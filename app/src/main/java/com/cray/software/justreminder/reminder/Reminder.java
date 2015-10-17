@@ -126,9 +126,9 @@ public class Reminder {
      * @param context application context.
      */
     public static void generateToCalendar(long id, Context context){
-        DataBase DB = new DataBase(context);
-        DB.open();
-        Cursor c = DB.getReminder(id);
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String text = "";
             String type = "";
@@ -137,7 +137,7 @@ public class Reminder {
             int minute = 0;
             int day = 0;
             int exp = 0;
-            Cursor t = DB.getReminder(id);
+            Cursor t = db.getReminder(id);
             if (t != null && t.moveToNext()) {
                 text = t.getString(t.getColumnIndex(Constants.COLUMN_TEXT));
                 type = t.getString(t.getColumnIndex(Constants.COLUMN_TYPE));
@@ -159,7 +159,7 @@ public class Reminder {
             }
         }
         if (c != null) c.close();
-        DB.close();
+        db.close();
     }
 
     /**
@@ -366,14 +366,18 @@ public class Reminder {
      * @param context application context.
      */
     public static void disableReminder(long id, Context context){
-        DataBase DB = new DataBase(context);
-        if (!DB.isOpen()) DB.open();
-
-        DB.setDone(id);
-        DB.close();
+        DataBase db = new DataBase(context);
+        if (!db.isOpen()) db.open();
+        db.setDone(id);
+        db.close();
         disable(context, id);
     }
 
+    /**
+     * Disable all available reminder notifications.
+     * @param context application context.
+     * @param id reminder identifier.
+     */
     private static void disable(Context context, long id) {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -396,10 +400,10 @@ public class Reminder {
      * @param context application context.
      */
     public static void moveToTrash(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
-        DataBase DB = new DataBase(context);
-        if (!DB.isOpen()) DB.open();
-        DB.toArchive(id);
-        DB.close();
+        DataBase db = new DataBase(context);
+        if (!db.isOpen()) db.open();
+        db.toArchive(id);
+        db.close();
         disable(context, id);
         if (callbacks != null) callbacks.showSnackbar(R.string.archived_result_message);
         else Messages.toast(context, R.string.archived_result_message);
@@ -431,13 +435,22 @@ public class Reminder {
             uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (c != null) c.close();
+        Reminder reminder = new Type(context).getItem(id);
         db.deleteReminder(id);
+        if (reminder.getType().matches(Constants.TYPE_SHOPPING_LIST)){
+            db.deleteShopItems(id);
+        }
         db.close();
         new CalendarManager(context).deleteEvents(id);
         new DeleteReminderFiles(context, uuID).execute();
         disable(context, id);
     }
 
+    /**
+     * Update reminders count.
+     * @param context application context.
+     * @param id reminder identifier.
+     */
     public static void updateCount(Context context, long id){
         DataBase db = new DataBase(context);
         db.open();
@@ -452,6 +465,12 @@ public class Reminder {
         db.close();
     }
 
+    /**
+     * Set delay for reminder.
+     * @param context application context.
+     * @param id reminder identifier.
+     * @param delay delay for reminder (integer).
+     */
     public static void setDelay(Context context, long id, int delay){
         DataBase db = new DataBase(context);
         db.open();
@@ -460,6 +479,11 @@ public class Reminder {
         db.close();
     }
 
+    /**
+     * Update next date and time for reminder.
+     * @param context application context.
+     * @param id reminder identifier.
+     */
     public static void updateDate(Context context, long id){
         DataBase db = new DataBase(context);
         db.open();

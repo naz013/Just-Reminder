@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -12,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -26,6 +29,7 @@ import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAdapter;
@@ -35,8 +39,8 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemView
 import java.util.Calendar;
 import java.util.Date;
 
-public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder>
-        implements LegacySwipeableItemAdapter<RemindersRecyclerAdapter.ViewHolder> {
+public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements LegacySwipeableItemAdapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private TimeCount mCount;
@@ -61,12 +65,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     }
 
     @Override
-    public int onGetSwipeReactionType(ViewHolder viewHolder, int position, int x, int y) {
+    public int onGetSwipeReactionType(RecyclerView.ViewHolder viewHolder, int position, int x, int y) {
         return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
     }
 
     @Override
-    public void onSetSwipeBackground(ViewHolder viewHolder, int position, int type) {
+    public void onSetSwipeBackground(RecyclerView.ViewHolder viewHolder, int position, int type) {
         int bgRes = 0;
         switch (type) {
             case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
@@ -87,7 +91,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     }
 
     @Override
-    public int onSwipeItem(ViewHolder holder, int position, int result) {
+    public int onSwipeItem(RecyclerView.ViewHolder holder, int position, int result) {
         switch (result) {
             // swipe right
             case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
@@ -109,7 +113,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     }
 
     @Override
-    public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
+    public void onPerformAfterSwipeReaction(RecyclerView.ViewHolder holder, int position, int result, int reaction) {
         Log.d(Constants.LOG_TAG,
                 "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
 
@@ -128,6 +132,33 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
     }
 
+    public static class ViewHolder1 extends AbstractSwipeableItemViewHolder {
+
+        TextView taskTitle;
+        ViewGroup container;
+        RelativeLayout background;
+        RecyclerView todoList;
+        LinearLayout subBackground, titleContainer;
+
+        public ViewHolder1(View v) {
+            super(v);
+            todoList = (RecyclerView) v.findViewById(R.id.todoList);
+            todoList.setVisibility(View.VISIBLE);
+            background = (RelativeLayout) v.findViewById(R.id.background);
+            subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
+            titleContainer = (LinearLayout) v.findViewById(R.id.titleContainer);
+            container = (ViewGroup) v.findViewById(R.id.container);
+
+            taskTitle = (TextView) v.findViewById(R.id.taskText);
+            taskTitle.setText("");
+        }
+
+        @Override
+        public View getSwipeableContainerView() {
+            return container;
+        }
+    }
+
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
 
         TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
@@ -143,31 +174,25 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
             taskIcon = (ImageView) v.findViewById(R.id.taskIcon);
-            background = (RelativeLayout) v.findViewById(R.id.background);
-            taskTitle = (TextView) v.findViewById(R.id.taskText);
-
-            taskTitle.setText("");
             taskDate = (TextView) v.findViewById(R.id.taskDate);
-
             taskDate.setText("");
             viewTime = (TextView) v.findViewById(R.id.taskTime);
-
             viewTime.setText("");
             reminder_type = (TextView) v.findViewById(R.id.reminder_type);
-
             reminder_type.setText("");
             reminder_phone = (TextView) v.findViewById(R.id.reminder_phone);
-
             reminder_phone.setText("");
             repeatInterval = (TextView) v.findViewById(R.id.repeatInterval);
-
             repeatInterval.setText("");
             reminder_contact_name = (TextView) v.findViewById(R.id.reminder_contact_name);
-
             reminder_contact_name.setText("");
             leftTimeIcon = (ImageView) v.findViewById(R.id.leftTime);
             leftTimeIcon.setVisibility(View.VISIBLE);
+            background = (RelativeLayout) v.findViewById(R.id.background);
             container = (ViewGroup) v.findViewById(R.id.container);
+
+            taskTitle = (TextView) v.findViewById(R.id.taskText);
+            taskTitle.setText("");
         }
 
         @Override
@@ -177,247 +202,320 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(!isGrid ? R.layout.list_item_card : R.layout.grid_item_card, parent, false);
+        if (viewType == ReminderDataProvider.VIEW_SHOPPING_LIST) {
+            itemLayoutView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_item_card_with_list, parent, false);
+        }
 
         // create ViewHolder
-
-        return new ViewHolder(itemLayoutView);
+        if (viewType == ReminderDataProvider.VIEW_SHOPPING_LIST){
+            return new ViewHolder1(itemLayoutView);
+        } else {
+            return new ViewHolder(itemLayoutView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
-        boolean mDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         final ReminderDataProvider.ReminderItem item = provider.getData().get(position);
-        String title = item.getTitle();
-        String type = item.getType();
-        String number = item.getNumber();
-        long due = item.getDue();
-        double lat = item.getPlace()[0];
-        double lon = item.getPlace()[1];
-        int isDone = item.getCompleted();
-        String repeat = item.getRepeat();
-        int archived = item.getArchived();
 
-        int categoryColor = item.getCatColor();
+        if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
+            final ViewHolder viewHolder = (ViewHolder) holder;
 
-        holder.reminder_contact_name.setTypeface(typeface);
-        holder.taskTitle.setTypeface(typeface);
-        holder.taskDate.setTypeface(typeface);
-        holder.viewTime.setTypeface(typeface);
-        holder.reminder_type.setTypeface(typeface);
-        holder.reminder_phone.setTypeface(typeface);
-        holder.repeatInterval.setTypeface(typeface);
-        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
+            String title = item.getTitle();
+            viewHolder.taskTitle.setTypeface(typeface);
 
-        holder.repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white :
-                R.drawable.round_view_black);
+            String type = item.getType();
+            String number = item.getNumber();
+            long due = item.getDue();
+            double lat = item.getPlace()[0];
+            double lon = item.getPlace()[1];
+            int isDone = item.getCompleted();
+            String repeat = item.getRepeat();
+            int archived = item.getArchived();
 
-        if (isDone == 1){
-            holder.check.setChecked(false);
-        } else {
-            holder.check.setChecked(true);
-        }
+            int categoryColor = item.getCatColor();
 
-        holder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
-        holder.taskTitle.setText(title);
-        holder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
+            viewHolder.reminder_contact_name.setTypeface(typeface);
+            viewHolder.taskDate.setTypeface(typeface);
+            viewHolder.viewTime.setTypeface(typeface);
+            viewHolder.reminder_type.setTypeface(typeface);
+            viewHolder.reminder_phone.setTypeface(typeface);
+            viewHolder.repeatInterval.setTypeface(typeface);
+            viewHolder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
-        if (type.startsWith(Constants.TYPE_MONTHDAY)){
-            if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
-                holder.reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
-                holder.reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            }
+            viewHolder.repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
+                    R.drawable.round_view_black);
 
-            holder.leftTimeIcon.setImageDrawable(mCount.
-                    getDifference(due));
-            holder.repeatInterval.setVisibility(View.GONE);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(due);
-            Date mTime = calendar.getTime();
-            holder.viewTime.setText(TimeUtil.getTime(mTime, is24));
-            holder.taskDate.setText(TimeUtil.dateFormat.format(calendar.getTime()));
-            if (isDone == 0) {
-                String remaining = mCount.getRemaining(due);
-                holder.leftTime.setText(remaining);
-            }
-        } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-            if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
-                holder. reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
-                holder.reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            }
-
-            holder.leftTimeIcon.setImageDrawable(mCount.
-                    getDifference(due));
-            holder.repeatInterval.setVisibility(View.GONE);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(due);
-
-            holder.taskDate.setText(repeat);
-            if (isDone == 0) {
-                String remaining = mCount.getRemaining(due);
-                holder.leftTime.setText(remaining);
-            }
-            holder.viewTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
-        } else {
-            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
-                    type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-                holder.reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                    type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-                holder.reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, mContext);
-                if (name != null) holder.reminder_contact_name.setText(name);
-                else holder.reminder_contact_name.setText("");
-            } else if (type.startsWith(Constants.TYPE_SKYPE)){
-                holder.reminder_phone.setText(number);
-                holder.reminder_contact_name.setText(number);
-            } else if (type.matches(Constants.TYPE_APPLICATION)){
-                PackageManager packageManager = mContext.getPackageManager();
-                ApplicationInfo applicationInfo = null;
-                try {
-                    applicationInfo = packageManager.getApplicationInfo(number, 0);
-                } catch (final PackageManager.NameNotFoundException ignored) {}
-                final String name = (String)((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
-                holder.reminder_phone.setText(number);
-                holder.reminder_contact_name.setText(name);
-            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-                holder.reminder_phone.setText(number);
-                holder.reminder_contact_name.setText(number);
-            }
-
-            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
-                    type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
-                    type.startsWith(Constants.TYPE_APPLICATION)) {
-                holder.leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
-                holder.repeatInterval.setText(repeat);
-            } else if (type.matches(Constants.TYPE_TIME)) {
-                holder.leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
-                holder.repeatInterval.setText(repeat);
+            if (isDone == 1) {
+                viewHolder.check.setChecked(false);
             } else {
-                if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                    holder.leftTimeIcon.setVisibility(View.GONE);
-                    holder.repeatInterval.setVisibility(View.GONE);
-                } else {
-                    holder.leftTimeIcon.setVisibility(View.GONE);
-                    holder.repeatInterval.setText(mContext.getString(R.string.interval_zero));
+                viewHolder.check.setChecked(true);
+            }
+
+            viewHolder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
+            viewHolder.taskTitle.setText(title);
+            viewHolder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
+
+            if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
                 }
-            }
 
-            String[] dT = mCount.
-                    getNextDateTime(due);
-            if (lat != 0.0 || lon != 0.0) {
-                holder.taskDate.setText(String.format("%.5f", lat));
-                holder.viewTime.setText(String.format("%.5f", lon));
-                if (archived > 0) holder.leftTime.setVisibility(View.GONE);
-                else holder.leftTime.setVisibility(!isGrid ? View.GONE : View.INVISIBLE);
-            } else {
+                viewHolder.leftTimeIcon.setImageDrawable(mCount.
+                        getDifference(due));
+                viewHolder.repeatInterval.setVisibility(View.GONE);
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(due);
+                Date mTime = calendar.getTime();
+                viewHolder.viewTime.setText(TimeUtil.getTime(mTime, is24));
+                viewHolder.taskDate.setText(TimeUtil.dateFormat.format(calendar.getTime()));
                 if (isDone == 0) {
-                    holder.leftTime.setText(mCount.
-                            getRemaining(due));
+                    String remaining = mCount.getRemaining(due);
+                    viewHolder.leftTime.setText(remaining);
+                }
+            } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
+                if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
+                } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
                 }
 
-                holder.taskDate.setText(dT[0]);
-                holder.viewTime.setText(dT[1]);
-            }
-        }
-        if (isDone == 1){
-            holder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
-            holder.leftTime.setVisibility(!isGrid ? View.GONE : View.INVISIBLE);
-        }
+                viewHolder.leftTimeIcon.setImageDrawable(mCount.
+                        getDifference(due));
+                viewHolder.repeatInterval.setVisibility(View.GONE);
 
-        if (archived > 0) {
-            holder.check.setVisibility(View.GONE);
-            holder.leftTime.setVisibility(View.GONE);
-            holder.leftTimeIcon.setVisibility(View.GONE);
-        }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(due);
 
-        if (prefs.loadBoolean(Prefs.ANIMATIONS)) {
-            holder.leftTimeIcon.setVisibility(View.GONE);
-            holder.repeatInterval.setVisibility(View.GONE);
-            holder.taskIcon.setVisibility(View.GONE);
-            ViewUtils.zoom(holder.taskIcon, position, 1);
-            boolean prev = false;
-            if (type.matches(Constants.TYPE_CALL) || type.startsWith(Constants.TYPE_APPLICATION) ||
-                    type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_TIME) ||
-                    type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)) {
-                ViewUtils.zoom(holder.repeatInterval, position, 2);
-                prev = true;
-            }
-            if (archived == 0) {
-                ViewUtils.zoom(holder.leftTimeIcon, position, prev ? 3 : 2);
-            }
-        }
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.check);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null) mEventListener.onItemLongClicked(position);
-                return true;
-            }
-        });
-
-        holder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mEventListener != null) mEventListener.onItemSwitched(position, holder.check);
-            }
-        });
-
-        final int swipeState = holder.getSwipeStateFlags();
-
-        if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
-            int bgResId;
-
-            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
-                bgResId = R.drawable.bg_swipe_item_left;
+                viewHolder.taskDate.setText(repeat);
+                if (isDone == 0) {
+                    String remaining = mCount.getRemaining(due);
+                    viewHolder.leftTime.setText(remaining);
+                }
+                viewHolder.viewTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
             } else {
-                bgResId = R.color.colorWhite;
+                if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
+                        type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
+                } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
+                        type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
+                    viewHolder.reminder_phone.setText(number);
+                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    if (name != null) viewHolder.reminder_contact_name.setText(name);
+                    else viewHolder.reminder_contact_name.setText("");
+                } else if (type.startsWith(Constants.TYPE_SKYPE)) {
+                    viewHolder.reminder_phone.setText(number);
+                    viewHolder.reminder_contact_name.setText(number);
+                } else if (type.matches(Constants.TYPE_APPLICATION)) {
+                    PackageManager packageManager = mContext.getPackageManager();
+                    ApplicationInfo applicationInfo = null;
+                    try {
+                        applicationInfo = packageManager.getApplicationInfo(number, 0);
+                    } catch (final PackageManager.NameNotFoundException ignored) {
+                    }
+                    final String name = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
+                    viewHolder.reminder_phone.setText(number);
+                    viewHolder.reminder_contact_name.setText(name);
+                } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+                    viewHolder.reminder_phone.setText(number);
+                    viewHolder.reminder_contact_name.setText(number);
+                }
+
+                if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
+                        type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
+                        type.startsWith(Constants.TYPE_APPLICATION)) {
+                    viewHolder.leftTimeIcon.setImageDrawable(mCount.
+                            getDifference(due));
+                    viewHolder.repeatInterval.setText(repeat);
+                } else if (type.matches(Constants.TYPE_TIME)) {
+                    viewHolder.leftTimeIcon.setImageDrawable(mCount.
+                            getDifference(due));
+                    viewHolder.repeatInterval.setText(repeat);
+                } else {
+                    if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                        viewHolder.leftTimeIcon.setVisibility(View.GONE);
+                        viewHolder.repeatInterval.setVisibility(View.GONE);
+                    } else {
+                        viewHolder.leftTimeIcon.setVisibility(View.GONE);
+                        viewHolder.repeatInterval.setText(mContext.getString(R.string.interval_zero));
+                    }
+                }
+
+                String[] dT = mCount.
+                        getNextDateTime(due);
+                if (lat != 0.0 || lon != 0.0) {
+                    viewHolder.taskDate.setText(String.format("%.5f", lat));
+                    viewHolder.viewTime.setText(String.format("%.5f", lon));
+                    if (archived > 0) viewHolder.leftTime.setVisibility(View.GONE);
+                    else viewHolder.leftTime.setVisibility(View.GONE);
+                } else {
+                    if (isDone == 0) {
+                        viewHolder.leftTime.setText(mCount.
+                                getRemaining(due));
+                    }
+
+                    viewHolder.taskDate.setText(dT[0]);
+                    viewHolder.viewTime.setText(dT[1]);
+                }
+            }
+            if (isDone == 1) {
+                viewHolder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
+                viewHolder.leftTime.setVisibility(View.GONE);
             }
 
-            holder.container.setBackgroundResource(bgResId);
-        }
+            if (archived > 0) {
+                viewHolder.check.setVisibility(View.GONE);
+                viewHolder.leftTime.setVisibility(View.GONE);
+                viewHolder.leftTimeIcon.setVisibility(View.GONE);
+            }
 
-        // set swiping properties
-        holder.setSwipeItemSlideAmount(
-                item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
+            if (prefs.loadBoolean(Prefs.ANIMATIONS)) {
+                viewHolder.leftTimeIcon.setVisibility(View.GONE);
+                viewHolder.repeatInterval.setVisibility(View.GONE);
+                viewHolder.taskIcon.setVisibility(View.GONE);
+                ViewUtils.zoom(viewHolder.taskIcon, position, 1);
+                boolean prev = false;
+                if (type.matches(Constants.TYPE_CALL) || type.startsWith(Constants.TYPE_APPLICATION) ||
+                        type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_TIME) ||
+                        type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)) {
+                    ViewUtils.zoom(viewHolder.repeatInterval, position, 2);
+                    prev = true;
+                }
+                if (archived == 0) {
+                    ViewUtils.zoom(viewHolder.leftTimeIcon, position, prev ? 3 : 2);
+                }
+            }
+
+            viewHolder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (mEventListener != null) mEventListener.onItemSwitched(position, viewHolder.check);
+                }
+            });
+
+            viewHolder.container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
+                }
+            });
+
+            viewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mEventListener != null) mEventListener.onItemLongClicked(position);
+                    return true;
+                }
+            });
+
+            final int swipeState = viewHolder.getSwipeStateFlags();
+
+            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
+                int bgResId;
+
+                if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
+                    bgResId = R.drawable.bg_swipe_item_left;
+                } else {
+                    bgResId = R.color.colorWhite;
+                }
+
+                viewHolder.container.setBackgroundResource(bgResId);
+            }
+
+            // set swiping properties
+            viewHolder.setSwipeItemSlideAmount(
+                    item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
+        } else {
+            final ViewHolder1 viewHolder1 = (ViewHolder1) holder;
+            viewHolder1.background.setBackgroundResource(cs.getCardDrawableStyle());
+            viewHolder1.subBackground.setBackgroundColor(mContext.getResources().getColor(cs.getCategoryColor(item.getCatColor())));
+
+            String title = item.getTitle();
+            viewHolder1.taskTitle.setTypeface(typeface);
+            viewHolder1.taskTitle.setText(title);
+
+            viewHolder1.taskTitle.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
+            if (title.matches("")) viewHolder1.titleContainer.setVisibility(View.GONE);
+            else viewHolder1.titleContainer.setVisibility(View.VISIBLE);
+
+            viewHolder1.todoList.setFocusableInTouchMode(false);
+            viewHolder1.todoList.setFocusable(false);
+
+            ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId());
+            int size = provider.getCount();
+            if (size > 8) size = 8;
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewHolder1.todoList.getLayoutParams();
+            params.height = QuickReturnUtils.dp2px(mContext, size * 35);
+            viewHolder1.todoList.setLayoutParams(params);
+
+            Log.d(Constants.LOG_TAG, "Data size " + size);
+            TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(mContext, provider, null);
+            viewHolder1.todoList.setLayoutManager(new LinearLayoutManager(mContext));
+            viewHolder1.todoList.setAdapter(shoppingAdapter);
+
+            viewHolder1.container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder1.subBackground);
+                }
+            });
+
+            viewHolder1.container.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mEventListener != null) mEventListener.onItemLongClicked(position);
+                    return true;
+                }
+            });
+
+            final int swipeState = viewHolder1.getSwipeStateFlags();
+
+            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
+                int bgResId;
+
+                if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
+                    bgResId = R.drawable.bg_swipe_item_left;
+                } else {
+                    bgResId = R.color.colorWhite;
+                }
+
+                viewHolder1.container.setBackgroundResource(bgResId);
+            }
+
+            // set swiping properties
+            viewHolder1.setSwipeItemSlideAmount(
+                    item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return 0;
+        return provider.getItem(position).getViewType();
     }
 
     @Override

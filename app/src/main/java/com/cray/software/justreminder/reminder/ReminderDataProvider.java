@@ -12,7 +12,9 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ReminderDataProvider {
     private Cursor c, old;
@@ -21,6 +23,8 @@ public class ReminderDataProvider {
     private Interval mInterval;
     private ReminderItem mLastRemovedData;
     private int mLastRemovedPosition = -1;
+    public static final int VIEW_REMINDER = 15666;
+    public static final int VIEW_SHOPPING_LIST = 15667;
 
     public ReminderDataProvider(Context mContext){
         data = new ArrayList<>();
@@ -163,6 +167,16 @@ public class ReminderDataProvider {
         data.clear();
         DataBase db = new DataBase(mContext);
         db.open();
+        Map<String, Integer> map = new HashMap<>();
+        Cursor cf = db.queryCategories();
+        if (cf != null && cf.moveToFirst()){
+            do {
+                String uuid = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                int color = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
+                map.put(uuid, color);
+            } while (cf.moveToNext());
+        }
+        if (cf != null) cf.close();
         if (c != null && c.moveToNext()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
@@ -187,15 +201,8 @@ public class ReminderDataProvider {
                 long repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
 
-                Cursor cf = db.getCategory(categoryId);
-                int categoryColor = 0;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryColor = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
-                }
-                if (cf != null) cf.close();
-
                 String repeat = null;
-                long due;
+                long due = 0;
 
                 if (type.startsWith(Constants.TYPE_MONTHDAY)){
                     due = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
@@ -215,7 +222,7 @@ public class ReminderDataProvider {
                             repeat = mContext.getString(R.string.interval_zero);
                         }
                     }
-                } else {
+                } else if (!type.matches(Constants.TYPE_SHOPPING_LIST)){
                     due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
 
                     if (weekdays.length() == 7) {
@@ -225,8 +232,11 @@ public class ReminderDataProvider {
                     }
                 }
 
-                data.add(new ReminderItem(title, type, repeat, categoryColor, uuID, isDone, due, id,
-                        new double[]{lat, lon}, number, archived));
+                int viewType = VIEW_REMINDER;
+                if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
+
+                data.add(new ReminderItem(title, type, repeat, map.get(categoryId), uuID, isDone, due, id,
+                        new double[]{lat, lon}, number, archived, viewType));
             } while (c.moveToNext());
         }
     }
@@ -321,14 +331,15 @@ public class ReminderDataProvider {
 
     public class ReminderItem {
         private String title, type, repeat, uuId, number;
-        private int completed, archived, catColor;
+        private int completed, archived, catColor, viewType;
         private long due, id;
         private double[] place;
         private boolean mPinnedToSwipeLeft, selected;
 
         public ReminderItem(String title, String type, String repeat, int catColor, String uuId,
-                            int completed, long due, long id, double[] place, String number, int archived){
+                            int completed, long due, long id, double[] place, String number, int archived, int viewType){
             this.catColor = catColor;
+            this.viewType = viewType;
             this.title = title;
             this.type = type;
             this.due = due;
@@ -340,6 +351,14 @@ public class ReminderDataProvider {
             this.number = number;
             this.archived = archived;
             this.selected = false;
+        }
+
+        public int getViewType() {
+            return viewType;
+        }
+
+        public void setViewType(int viewType) {
+            this.viewType = viewType;
         }
 
         public boolean getSelected(){

@@ -18,45 +18,26 @@ import com.cray.software.justreminder.helpers.SyncHelper;
  * limitations under the License.
  */
 public class ShoppingList {
-    public enum Type{
-        EDITABLE,
-        READY,
-        NEW
-    }
 
     private String title;
     private int position;
     private boolean isChecked;
     private String uuId;
-    private long id;
-    private Type type;
+    private long remId, dateTime, id;
 
-    public ShoppingList(){
-        this.type = Type.NEW;
+    public ShoppingList(String title, long dateTime){
         this.uuId = SyncHelper.generateID();
-        this.title = "Add item";
+        this.title = title;
+        this.dateTime = dateTime;
+        this.isChecked = false;
     }
 
-    public ShoppingList(Type type){
-        this.type = type;
-        this.uuId = SyncHelper.generateID();
-        this.title = "";
-    }
-
-    public ShoppingList(String title, boolean isChecked, String uuId, long id, Type type){
+    public ShoppingList(long id, String title, boolean isChecked, String uuId, long remId){
         this.uuId = uuId;
         this.title = title;
         this.isChecked = isChecked;
+        this.remId = remId;
         this.id = id;
-        this.type = type;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     public long getId() {
@@ -65,6 +46,22 @@ public class ShoppingList {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public long getRemId() {
+        return remId;
+    }
+
+    public void setRemId(long remId) {
+        this.remId = remId;
     }
 
     public String getUuId() {

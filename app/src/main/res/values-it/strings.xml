@@ -726,4 +726,10 @@
     <string name="note_explnation">Add, modify, share encrypted notes</string>
     <string name="extra_options">Extra options</string>
     <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
+    <string name="repeat_limit_explanation">Check to enable repeating limit for this reminder</string>
+    <string name="add_item">Add task</string>
+    <string name="shopping_list">Shopping list</string>
+    <string name="empty_task">Empty task!</string>
+    <string name="title">Title</string>
+    <string name="no_tasks_warming">You don\'t add any tasks!</string>
 </resources>

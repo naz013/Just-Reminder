@@ -178,7 +178,8 @@ public class EventsFragment extends Fragment {
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
             Cursor s = db.getActiveReminders();
-            provider.setReminders(s);
+            Cursor cat = db.queryCategories();
+            provider.setReminders(s, cat);
             provider.setFeature(isFeature);
         }
         provider.fillArray();

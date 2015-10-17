@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -38,7 +37,6 @@ import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -48,9 +46,6 @@ import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -281,7 +276,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View view) {
                 FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
-                Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE);
+                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
                     do {
                         String uuID;
@@ -328,12 +323,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         filesCloudList.setLayoutManager(mLayoutManager);
         filesCloudList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         filesCloudList.setItemAnimator(new DefaultItemAnimator());
-        filesCloudList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesCloudList);
         mRecyclerViewSwipeManager.attachRecyclerView(filesCloudList);
     }
@@ -343,7 +335,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             String uuID = "";
             FilesDataBase filesDataBase = new FilesDataBase(getActivity());
             filesDataBase.open();
-            Cursor c = filesDataBase.getTask(itemId);
+            Cursor c = filesDataBase.getFile(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
@@ -359,7 +351,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
             deleteFromDropbox(uuID, pd);
-            filesDataBase.deleteTask(itemId);
+            filesDataBase.deleteFile(itemId);
             filesDataBase.close();
             if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             isDropboxDeleted = true;
@@ -440,7 +432,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View view) {
                 FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
-                Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_GDRIVE);
+                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
                     do {
                         String uuID;
@@ -487,12 +479,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         filesGoogleList.setLayoutManager(mLayoutManager);
         filesGoogleList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         filesGoogleList.setItemAnimator(new DefaultItemAnimator());
-        filesGoogleList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesGoogleList);
         mRecyclerViewSwipeManager.attachRecyclerView(filesGoogleList);
     }
@@ -502,7 +491,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             String uuID = "";
             FilesDataBase filesDataBase = new FilesDataBase(getActivity());
             filesDataBase.open();
-            Cursor c = filesDataBase.getTask(itemId);
+            Cursor c = filesDataBase.getFile(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
@@ -518,7 +507,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
             deleteFromGoogle(uuID, pd);
-            filesDataBase.deleteTask(itemId);
+            filesDataBase.deleteFile(itemId);
             filesDataBase.close();
             if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             isGoogleDeleted = true;
@@ -690,7 +679,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             public void onClick(View view) {
                 FilesDataBase filesDataBase = new FilesDataBase(getActivity());
                 filesDataBase.open();
-                Cursor c = filesDataBase.getTask(Constants.FilesConstants.FILE_TYPE_LOCAL);
+                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_LOCAL);
                 if (c != null && c.moveToFirst()) {
                     do {
                         String uuID;
@@ -732,12 +721,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         filesList.setLayoutManager(mLayoutManager);
         filesList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         filesList.setItemAnimator(new DefaultItemAnimator());
-        filesList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesList);
         mRecyclerViewSwipeManager.attachRecyclerView(filesList);
     }
@@ -760,7 +746,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             String uuID = "";
             FilesDataBase filesDataBase = new FilesDataBase(getActivity());
             filesDataBase.open();
-            Cursor c = filesDataBase.getTask(itemId);
+            Cursor c = filesDataBase.getFile(itemId);
             if (c != null && c.moveToFirst()){
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }

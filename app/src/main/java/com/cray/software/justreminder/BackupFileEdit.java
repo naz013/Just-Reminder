@@ -42,6 +42,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -111,6 +112,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private int myDay = 1;
     private String uuID = "";
 
+    private int vibration = -1;
+    private int voice = -1;
+    private int notificationRepeat = -1;
+    private int wake = -1;
+    private int unlock = -1;
+    private int auto = -1;
+    private long limits = -1;
+
     private ProgressDialog pd;
     private DataBase DB = new DataBase(BackupFileEdit.this);
     private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
@@ -132,6 +141,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     private  static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
+    private boolean isLocationMessage = false;
+    private boolean isLocationOutMessage = false;
+    private boolean isWeekMessage = false;
+    private boolean isMonthMessage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +192,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+        RelativeLayout extraHolder = (RelativeLayout) findViewById(R.id.extraHolder);
+        extraHolder.setVisibility(View.GONE);
+
+        FrameLayout repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
+        repeatFrame.setVisibility(View.GONE);
+
+        TextView frameLabel = (TextView) findViewById(R.id.repeatLabel);
+        frameLabel.setVisibility(View.GONE);
+
         LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
@@ -197,10 +219,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0){
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             if (c != null && c.moveToNext()) {
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
+                voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
+                wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
+                unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
+                auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
+                notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
+                limits = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
                 DataBase db = new DataBase(this);
                 db.open();
                 Cursor cf = db.queryCategories();
@@ -360,7 +389,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text = "";
             int repCode=0;
             if (c != null && c.moveToFirst()){
@@ -511,7 +540,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text = "";
             String number = "";
             int exp = 0;
@@ -702,7 +731,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor x = fdb.getTask(id);
+            Cursor x = fdb.getFile(id);
             String text = "";
             String type = "";
             String weekdays = "";
@@ -859,7 +888,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text = "";
             int repeat = 0;
             long afterTime=0;
@@ -999,7 +1028,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text="", number="";
             int repCode=0;
             if (c != null && c.moveToFirst()){
@@ -1138,7 +1167,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text="", number="";
             int repCode=0;
             if (c != null && c.moveToFirst()){
@@ -1274,7 +1303,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text="", number="";
             int repCode=0;
             if (c != null && c.moveToFirst()){
@@ -1389,7 +1418,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text="", number="";
             int repCode=0;
             if (c != null && c.moveToFirst()){
@@ -1686,7 +1715,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text = "", number = null;
             double latitude=0, longitude=0;
             if (c != null && c.moveToFirst()){
@@ -1929,7 +1958,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (id != 0) {
             fdb.open();
-            Cursor c = fdb.getTask(id);
+            Cursor c = fdb.getFile(id);
             String text = "", number = null;
             double latitude=0, longitude=0;
             if (c != null && c.moveToFirst()){
@@ -2062,6 +2091,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         monthDayLayout.setVisibility(View.GONE);
         locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
         locationOutLayout.setVisibility(View.GONE);
+        findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
     }
 
     private String getTaskType(){
@@ -2382,13 +2412,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(task, type, 0, 0, 0, myHour, myMinute, 0, number,
+        long ids = DB.insertReminder(task, type, 0, 0, 0, myHour, myMinute, 0, number,
                 0, 0, 0, 0, 0, uuID, repeat, 0, null, 0, -1, 0, categoryId);
-        new WeekDayReceiver().setAlarm(BackupFileEdit.this, idN);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
+        new WeekDayReceiver().setAlarm(BackupFileEdit.this, ids);
         long startTime = ReminderUtils.getWeekTime(myHour, myMinute, repeat);
-        ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, task, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && weekTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, task, startTime, idN);
+            ReminderUtils.exportToTasks(this, task, startTime, ids);
         }
         DB.close();
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
@@ -2425,15 +2457,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+        long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
-        alarm.setAlarm(BackupFileEdit.this, idN);
-        DB.updateReminderDateTime(idN);
+        alarm.setAlarm(BackupFileEdit.this, ids);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         DB.close();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, task, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && appTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, task, startTime, idN);
+            ReminderUtils.exportToTasks(this, task, startTime, ids);
         }
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
@@ -2462,15 +2495,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+        long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
-        alarm.setAlarm(BackupFileEdit.this, idN);
-        DB.updateReminderDateTime(idN);
+        alarm.setAlarm(BackupFileEdit.this, ids);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         DB.close();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        ReminderUtils.exportToCalendar(this, task, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, task, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && skypeTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, task, startTime, idN);
+            ReminderUtils.exportToTasks(this, task, startTime, ids);
         }new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
     }
@@ -2538,17 +2572,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
+        long ids = DB.insertReminder(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
-        DB.updateReminderDateTime(idN);
-        new MonthDayReceiver().setAlarm(this, id);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
+        new MonthDayReceiver().setAlarm(this, ids);
 
         long startTime = ReminderUtils.getMonthTime(myHour, myMinute, day);
-        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, text, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && monthDayTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, id);
+            ReminderUtils.exportToTasks(this, text, startTime, ids);
         }
-        DB.updateReminderDateTime(id);
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
     }
@@ -2574,14 +2608,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
+        long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
-        alarm.setAlarm(BackupFileEdit.this, idN);
-        DB.updateReminderDateTime(idN);
+        alarm.setAlarm(BackupFileEdit.this, ids);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, text, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && dateTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, idN);
+            ReminderUtils.exportToTasks(this, text, startTime, ids);
         }
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
@@ -2618,15 +2653,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
+        long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
                 null, 0, time, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
-        alarm.setAlarm(BackupFileEdit.this, idN);
-        DB.updateReminderDateTime(idN);
+        alarm.setAlarm(BackupFileEdit.this, ids);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time);
-        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, text, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && timeTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, idN);
+            ReminderUtils.exportToTasks(this, text, startTime, ids);
         }
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
@@ -2673,15 +2709,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+        long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
-        alarm.setAlarm(BackupFileEdit.this, idN);
-        DB.updateReminderDateTime(idN);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         DB.close();
+        alarm.setAlarm(BackupFileEdit.this, ids);
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, text, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && callTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, idN);
+            ReminderUtils.exportToTasks(this, text, startTime, ids);
         }
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
@@ -2711,15 +2748,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long idN = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
+        long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, number, repeat, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId);
-        DB.updateReminderDateTime(idN);
-        alarm.setAlarm(BackupFileEdit.this, idN);
+        DB.updateReminderDateTime(ids);
+        DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
+        alarm.setAlarm(BackupFileEdit.this, ids);
         DB.close();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        ReminderUtils.exportToCalendar(this, text, startTime, idN, isCalendar, isStock);
+        ReminderUtils.exportToCalendar(this, text, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && messageTaskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, idN);
+            ReminderUtils.exportToTasks(this, text, startTime, ids);
         }
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
@@ -2770,14 +2808,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         if (attackDelay.isChecked()){
-            long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+            long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-            DB.updateReminderDateTime(newIds);
-            positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
+            DB.updateReminderDateTime(ids);
+            DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
+            positionDelayReceiver.setDelay(BackupFileEdit.this, ids);
         } else {
             long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
                     0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
             DB.updateReminderDateTime(ids);
+            DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
             startService(new Intent(BackupFileEdit.this, GeolocationService.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
@@ -2830,14 +2870,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         if (attachDelayOut.isChecked()){
-            long newIds = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
+            long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
-            DB.updateReminderDateTime(newIds);
-            positionDelayReceiver.setDelay(BackupFileEdit.this, newIds);
+            DB.updateReminderDateTime(ids);
+            DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
+            positionDelayReceiver.setDelay(BackupFileEdit.this, ids);
         } else {
             long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
                     0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
             DB.updateReminderDateTime(ids);
+            DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
             startService(new Intent(BackupFileEdit.this, GeolocationService.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }

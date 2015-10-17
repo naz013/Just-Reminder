@@ -34,12 +34,19 @@ public class Sound {
         this.mContext = context;
     }
 
+    /**
+     * Stop playing melody.
+     */
     public void stop(){
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
     }
 
+    /**
+     * Play melody file.
+     * @param path path to file.
+     */
     public void play(String path){
         int maxVolume = 26;
         int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
@@ -71,6 +78,11 @@ public class Sound {
         }
     }
 
+    /**
+     * Play melody for reminder.
+     * @param path Uri path for melody file.
+     * @param looping flag for media player looping.
+     */
     public void playAlarm(Uri path, boolean looping){
         int maxVolume = 26;
         int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
@@ -100,6 +112,11 @@ public class Sound {
         }
     }
 
+    /**
+     * Play built-in reminder melody from assets.
+     * @param afd file descriptor for built-in melody.
+     * @param looping flag for media player looping.
+     */
     public void playAlarm(AssetFileDescriptor afd, boolean looping){
         int maxVolume = 26;
         int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);

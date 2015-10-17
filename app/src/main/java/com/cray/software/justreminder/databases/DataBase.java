@@ -1228,6 +1228,65 @@ public class DataBase {
         return db.delete(CATEGORIES_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    //Working with reminder shopping list type table
+
+    public long addShopItem (String task, long dateTime, String uuID, long remId) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.COLUMN_TEXT, task);
+        cv.put(Constants.COLUMN_DATE_TIME, dateTime);
+        cv.put(Constants.COLUMN_TECH_VAR, uuID);
+        cv.put(Constants.COLUMN_REMINDER_ID, remId);
+        cv.put(Constants.COLUMN_ARCHIVED, 0);
+        //Log.d(LOG_TAG, "data is inserted " + cv);
+        return db.insert(SHOPPING_TABLE_NAME, null, cv);
+    }
+
+    public boolean updateShopItem(long rowId, String task, long dateTime){
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_TEXT, task);
+        args.put(Constants.COLUMN_DATE_TIME, dateTime);
+        args.put(Constants.COLUMN_ARCHIVED, 0);
+        return db.update(SHOPPING_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public Cursor getShopItem(long id) throws SQLException {
+        openGuard();
+        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_ID +
+                "=" + id, null, null, null, null, null);
+    }
+
+    public Cursor getShopItem(String uuId) throws SQLException {
+        openGuard();
+        return db.query(SHOPPING_TABLE_NAME, null,
+                Constants.COLUMN_TECH_VAR  +
+                        "='" + uuId + "'", null, null, null, null, null);
+    }
+
+    public Cursor getShopItems() throws SQLException {
+        openGuard();
+        return db.query(SHOPPING_TABLE_NAME, null, null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " +
+                Constants.COLUMN_DATE_TIME + " ASC", null);
+    }
+
+    public Cursor getShopItems(long id) throws SQLException {
+        openGuard();
+        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID +
+                "=" + id, null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " +
+                Constants.COLUMN_DATE_TIME + " ASC", null);
+    }
+
+    public boolean deleteShopItem(long rowId) {
+        openGuard();
+        return db.delete(SHOPPING_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean deleteShopItems(long rowId) {
+        openGuard();
+        return db.delete(SHOPPING_TABLE_NAME, Constants.COLUMN_REMINDER_ID + "=" + rowId, null) > 0;
+    }
+
     public void openGuard() throws SQLiteException {
         if(isOpen()) return;
         open();

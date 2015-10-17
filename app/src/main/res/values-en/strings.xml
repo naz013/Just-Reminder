@@ -52,7 +52,7 @@
     <string name="infinite_title">"Endless Melody"</string>
     <string name="infinite_explanation">"Select to enable playing tunes by the time asking the user"</string>
     <string name="message_field_hint">"Message"</string>
-    <string name="silent_sms_explanation">"Check if you want to automatically sent SMS"</string>
+    <string name="silent_sms_explanation">"Check if you want to automatically send SMS"</string>
     <string name="silent_sms_title">"\"Silent\" SMS"</string>
     <string name="message_empty_error">"Message cannot be empty"</string>
     <string name="dialog_button_send">"Send"</string>
@@ -726,4 +726,10 @@
     <string name="note_explnation">Add, modify, share encrypted notes</string>
     <string name="extra_options">Extra options</string>
     <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
+    <string name="repeat_limit_explanation">Check to enable repeating limit for this reminder</string>
+    <string name="add_item">Add task</string>
+    <string name="shopping_list">Shopping list</string>
+    <string name="empty_task">Empty task!</string>
+    <string name="title">Title</string>
+    <string name="no_tasks_warming">You don\'t add any tasks!</string>
 </resources>

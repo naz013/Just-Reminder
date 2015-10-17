@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/background"
-        android:background="@drawable/card_bg"
+        android:background="@drawable/patch_card_bg"
         android:focusable="false">
 
         <LinearLayout

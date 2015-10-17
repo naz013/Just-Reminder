@@ -15,7 +15,6 @@ public class ColorSetter {
 
     private Context mContext;
     private SharedPrefs sPrefs;
-    private Typeface typeface;
 
     public ColorSetter(Context context){
         this.mContext = context;
@@ -27,6 +26,7 @@ public class ColorSetter {
      * @return
      */
     public Typeface getTypeface(int style){
+        Typeface typeface;
         if (style == 0) {
             typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Black.ttf");
         } else if (style == 1) {
@@ -352,6 +352,11 @@ public class ColorSetter {
         return color;
     }
 
+    /**
+     * Get color indicator by identifier.
+     * @param color color identifier.
+     * @return Drawable identifier
+     */
     public int getIndicator(String color){
         int drawable;
         switch (color) {
@@ -1300,70 +1305,133 @@ public class ColorSetter {
      */
     public int getCategoryIndicator(int code){
         int color;
-        if (Module.isPro()){
-            if (code == 0) {
+        switch (code){
+            case 0:
                 color = R.drawable.circle_red;
-            } else if (code == 1) {
+                break;
+            case 1:
                 color = R.drawable.circle_violet;
-            } else if (code == 2) {
+                break;
+            case 2:
                 color = R.drawable.circle_green;
-            } else if (code == 3) {
+                break;
+            case 3:
                 color = R.drawable.circle_green_light;
-            } else if (code == 4) {
+                break;
+            case 4:
                 color = R.drawable.circle_blue;
-            } else if (code == 5) {
+                break;
+            case 5:
                 color = R.drawable.circle_blue_light;
-            } else if (code == 6) {
+                break;
+            case 6:
                 color = R.drawable.circle_yellow;
-            } else if (code == 7) {
+                break;
+            case 7:
                 color = R.drawable.circle_orange;
-            } else if (code == 8) {
+                break;
+            case 8:
                 color = R.drawable.circle_grey;
-            } else if (code == 9) {
+                break;
+            case 9:
                 color = R.drawable.circle_pink;
-            } else if (code == 10) {
+                break;
+            case 10:
                 color = R.drawable.circle_teal;
-            } else if (code == 11) {
+                break;
+            case 11:
                 color = R.drawable.circle_brown;
-            } else if (code == 12) {
-                color = R.drawable.circle_deep_purple;
-            } else if (code == 13) {
-                color = R.drawable.circle_deep_orange;
-            } else if (code == 14) {
-                color = R.drawable.circle_lime;
-            } else if (code == 15) {
-                color = R.drawable.circle_indigo;
-            } else {
-                color = R.drawable.circle_blue;
-            }
-        } else {
-            if (code == 0) {
-                color = R.drawable.circle_red;
-            } else if (code == 1) {
-                color = R.drawable.circle_violet;
-            } else if (code == 2) {
-                color = R.drawable.circle_green;
-            } else if (code == 3) {
-                color = R.drawable.circle_green_light;
-            } else if (code == 4) {
-                color = R.drawable.circle_blue;
-            } else if (code == 5) {
-                color = R.drawable.circle_blue_light;
-            } else if (code == 6) {
-                color = R.drawable.circle_yellow;
-            } else if (code == 7) {
-                color = R.drawable.circle_orange;
-            } else if (code == 8) {
-                color = R.drawable.circle_grey;
-            } else if (code == 9) {
-                color = R.drawable.circle_pink;
-            } else if (code == 10) {
-                color = R.drawable.circle_teal;
-            } else if (code == 11) {
-                color = R.drawable.circle_brown;
-            } else {
-                color = R.drawable.circle_blue;
-            }
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code){
+                        case 12:
+                            color = R.drawable.circle_deep_purple;
+                            break;
+                        case 13:
+                            color = R.drawable.circle_deep_orange;
+                            break;
+                        case 14:
+                            color = R.drawable.circle_lime;
+                            break;
+                        case 15:
+                            color = R.drawable.circle_indigo;
+                            break;
+                        default:
+                            color = R.drawable.circle_blue;
+                            break;
+                    }
+                } else color = R.drawable.circle_blue;
+                break;
+        }
+        return color;
+    }
+
+    /**
+     * Get reminder group color by code.
+     * @param code indicator code.
+     * @return Color resource
+     */
+    public int getCategoryColor(int code){
+        int color;
+        switch (code){
+            case 0:
+                color = R.color.colorRed;
+                break;
+            case 1:
+                color = R.color.colorViolet;
+                break;
+            case 2:
+                color = R.color.colorGreen;
+                break;
+            case 3:
+                color = R.color.colorLightCreen;
+                break;
+            case 4:
+                color = R.color.colorBlue;
+                break;
+            case 5:
+                color = R.color.colorLightBlue;
+                break;
+            case 6:
+                color = R.color.colorYellow;
+                break;
+            case 7:
+                color = R.color.colorOrange;
+                break;
+            case 8:
+                color = R.color.colorGrey;
+                break;
+            case 9:
+                color = R.color.colorPink;
+                break;
+            case 10:
+                color = R.color.colorSand;
+                break;
+            case 11:
+                color = R.color.colorBrown;
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code){
+                        case 12:
+                            color = R.color.colorDeepPurple;
+                            break;
+                        case 13:
+                            color = R.color.colorDeepOrange;
+                            break;
+                        case 14:
+                            color = R.color.colorLime;
+                            break;
+                        case 15:
+                            color = R.color.colorIndigo;
+                            break;
+                        default:
+                            color = R.color.colorBlue;
+                            break;
+                    }
+                } else color = R.color.colorBlue;
+                break;
         }
         return color;
     }

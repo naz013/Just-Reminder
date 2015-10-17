@@ -724,6 +724,12 @@
     <string name="simple_note">Нотатки</string>
     <string name="note_explnation">Додавайте, змінюйте, діліться зашифрованими нотатками</string>
     <string name="widget_explanation">Широкий вибір віджетів головного екрану і тем до них</string>
-    <string name="extra_options">Extra options</string>
-    <string name="extra_options_explanation">Check to enable extra options for each reminder</string>
+    <string name="extra_options">Розширені можливості</string>
+    <string name="extra_options_explanation">Відмітьте, щоб увімкнути додаткові функції для кожного нагадування</string>
+    <string name="repeat_limit_explanation">Відмітьте, щоб увімкнути ліміт повторень для цього нагадування</string>
+    <string name="add_item">Додати завдання</string>
+    <string name="shopping_list">Список покупок</string>
+    <string name="empty_task">Порожнє завдання!</string>
+    <string name="title">Заголовок</string>
+    <string name="no_tasks_warming">Ви не додали жодного завдання!</string>
 </resources>

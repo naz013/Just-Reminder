@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,9 +10,9 @@ import android.util.Log;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
+import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.MonthdayType;
@@ -21,8 +20,6 @@ import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.TimerType;
 import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.GeolocationService;
-import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 
 import org.json.JSONException;
@@ -1360,12 +1357,12 @@ public class SyncHelper {
         if (isSdPresent()){
             FilesDataBase fdb = new FilesDataBase(mContext);
             fdb.open();
-            Cursor e = fdb.queryGroup();
+            Cursor e = fdb.getFiles();
             if (e != null && e.moveToFirst()){
                 do{
                     long rowId = e.getLong(e.getColumnIndex(Constants.COLUMN_ID));
                     if (rowId != 0 && fdb != null) {
-                        fdb.deleteTask(rowId);
+                        fdb.deleteFile(rowId);
                     }
                 }while (e.moveToNext());
             }
@@ -1383,7 +1380,8 @@ public class SyncHelper {
                     String fileLoc = sdPathDr + "/" + fileName;
                     Writer writer = new StringWriter();
                     char[] buffer = new char[1024];
-                    try (FileInputStream stream = new FileInputStream(fileLoc)) {
+                    try {
+                        FileInputStream stream = new FileInputStream(fileLoc);
                         BufferedReader reader = new BufferedReader(
                                 new InputStreamReader(stream, "UTF-8")
                         );
@@ -1391,6 +1389,8 @@ public class SyncHelper {
                         while ((n = reader.read(buffer)) != -1) {
                             writer.write(buffer, 0, n);
                         }
+                    } catch (FileNotFoundException s){
+                        throw s;
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
@@ -1527,6 +1527,22 @@ public class SyncHelper {
         long count = jsonObj.getLong(Constants.COLUMN_REMINDERS_COUNT);
         double latitude = jsonObj.getDouble(Constants.COLUMN_LATITUDE);
         double longitude = jsonObj.getDouble(Constants.COLUMN_LONGITUDE);
+
+        int vibration = -1;
+        if (jsonObj.has(Constants.COLUMN_VIBRATION)) jsonObj.getInt(Constants.COLUMN_VIBRATION);
+        int voice = -1;
+        if (jsonObj.has(Constants.COLUMN_VOICE)) jsonObj.getInt(Constants.COLUMN_VOICE);
+        int wake = -1;
+        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN)) jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
+        int unlock = -1;
+        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE)) jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        int notificationRepeat = -1;
+        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT)) jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        int auto = -1;
+        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION)) jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
+        long limit = -1;
+        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT)) jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+
         String uuID = null;
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
@@ -1534,8 +1550,10 @@ public class SyncHelper {
         FilesDataBase fdb = new FilesDataBase(mContext);
         fdb.open();
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
-        fdb.insertTask(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
+        long id = fdb.insertFile(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
                 repeatCode, repMinute, count, latitude, longitude, uuID, weekdays);
+        fdb.updateFileExtra(id, vibration, voice, notificationRepeat, wake, unlock, auto, limit);
+        fdb.close();
     }
 
     /**

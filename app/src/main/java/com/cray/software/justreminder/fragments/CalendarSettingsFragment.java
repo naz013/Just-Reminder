@@ -38,7 +38,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.calendar_settings_fragment, container, false);
+        View rootView =  inflater.inflate(R.layout.settings_calendar, container, false);
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){

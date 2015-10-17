@@ -2,7 +2,6 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -30,9 +29,6 @@ import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -183,12 +179,9 @@ public class PlacesFragment extends Fragment implements SwipeListener {
         adapter = new PlaceRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        listView.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
         if (mCallbacks != null) mCallbacks.onListChange(listView);

@@ -12,7 +12,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 public class FilesDataBase {
     private static final String DB_NAME = "files_database";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
     private static final String ARCHIVE_TABLE_NAME = "files_table";
     private DBHelper dbHelper;
     private static Context mContext;
@@ -41,6 +41,18 @@ public class FilesDataBase {
                     Constants.COLUMN_LONGITUDE + " REAL, " +
                     Constants.COLUMN_FEATURE_TIME + " INTEGER, " +
                     Constants.COLUMN_DELAY + " INTEGER, " +
+                    Constants.COLUMN_VIBRATION + " INTEGER, " +
+                    Constants.COLUMN_VOICE + " INTEGER, " +
+                    Constants.COLUMN_AUTO_ACTION + " INTEGER, " +
+                    Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER, " +
+                    Constants.COLUMN_WAKE_SCREEN + " INTEGER, " +
+                    Constants.COLUMN_UNLOCK_DEVICE + " INTEGER, " +
+                    Constants.COLUMN_REPEAT_LIMIT + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_1 + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_2 + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_3 + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_4 + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_5 + " VARCHAR(255), " +
                     Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
                     Constants.COLUMN_WEEKDAYS + " VARCHAR(255) " +
                     ");";
@@ -59,6 +71,34 @@ public class FilesDataBase {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            switch (oldVersion){
+                case 1:
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VOICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_VIBRATION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_AUTO_ACTION + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_WAKE_SCREEN + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_UNLOCK_DEVICE + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_NOTIFICATION_REPEAT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_REPEAT_LIMIT + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + ARCHIVE_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+                    break;
+            }
         }
 
 
@@ -94,10 +134,10 @@ public class FilesDataBase {
             dbHelper.close();
     }
 
-    public long insertTask (String fileName, String fileType, String fileLocation, long edit, String text, String type,
-                            int day, int month, int year, int hour, int minute, int seconds,
-                            String number, int repeatCode, long repMinute, long count, double latitude, double longitude, String uID,
-                            String weekdays) {
+    public long insertFile(String fileName, String fileType, String fileLocation, long edit, String text, String type,
+                           int day, int month, int year, int hour, int minute, int seconds,
+                           String number, int repeatCode, long repMinute, long count, double latitude, double longitude, String uID,
+                           String weekdays) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.FilesConstants.COLUMN_FILE_NAME, fileName);
@@ -124,28 +164,42 @@ public class FilesDataBase {
         return db.insert(ARCHIVE_TABLE_NAME, null, cv);
     }
 
-    public Cursor queryGroup() throws SQLException {
+    public boolean updateFileExtra(long rowId, int vibro, int voice, int repeat, int wake,
+                                   int unlock, int auto, long limit) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_VIBRATION, vibro);
+        args.put(Constants.COLUMN_VOICE, voice);
+        args.put(Constants.COLUMN_NOTIFICATION_REPEAT, repeat);
+        args.put(Constants.COLUMN_WAKE_SCREEN, wake);
+        args.put(Constants.COLUMN_UNLOCK_DEVICE, unlock);
+        args.put(Constants.COLUMN_AUTO_ACTION, auto);
+        args.put(Constants.COLUMN_REPEAT_LIMIT, limit);
+        return db.update(ARCHIVE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public Cursor getFiles() throws SQLException {
         openGuard();
         return db.query(ARCHIVE_TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public Cursor getTask(long rowId) throws SQLException {
+    public Cursor getFile(long rowId) throws SQLException {
         openGuard();
         return db.query(ARCHIVE_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + rowId, null, null, null, null, null);
     }
 
-    public Cursor getTask(String type) throws SQLException {
+    public Cursor getFile(String type) throws SQLException {
         openGuard();
         return db.query(ARCHIVE_TABLE_NAME, null, Constants.FilesConstants.COLUMN_FILE_TYPE +
                         "='" + type + "'", null, null, null, null, null);
     }
 
-    public boolean deleteTask(long rowId) {
+    public boolean deleteFile(long rowId) {
         openGuard();
         return db.delete(ARCHIVE_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public int getCount() throws SQLException {
+    public int countFiles() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + ARCHIVE_TABLE_NAME;
         Cursor cursor = db.rawQuery(countQuery, null);

@@ -38,7 +38,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.export_settings_layout, container, false);
+        View rootView =  inflater.inflate(R.layout.settings_export, container, false);
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
@@ -207,7 +207,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 prefsChange();
                 break;
             case R.id.syncInterval:
-                Dialog.syncInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
+                Dialog.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
                 break;
         }
     }

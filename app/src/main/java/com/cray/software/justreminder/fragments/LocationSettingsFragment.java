@@ -32,7 +32,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.location_settings_layout, container, false);
+        View rootView =  inflater.inflate(R.layout.settings_location, container, false);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();

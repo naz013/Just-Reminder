@@ -117,7 +117,6 @@ import hirondelle.date4j.DateTime;
 public class ScreenManager extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private String mTag;
     private Toolbar toolbar;
     private FloatingEditText quickNote;
     private CardView noteCard, noteStatusCard, noteReminderCard;
@@ -126,12 +125,15 @@ public class ScreenManager extends AppCompatActivity
     private TextView buttonReminderYes;
     private TextView buttonReminderNo;
     private AppBarLayout bar;
-
     private FloatingActionsMenu mainMenu;
     private FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
             addPlace, addGroup;
-
+    private FloatingActionButton[] prevButtons;
+    private RecyclerView currentList;
+    private ListView currentListView;
     private CoordinatorLayout coordinatorLayout;
+
+    private QuickReturnRecyclerViewOnScrollListener scrollListener;
 
     private ColorSetter cSetter = new ColorSetter(this);
     private SharedPrefs sPrefs = new SharedPrefs(this);
@@ -156,16 +158,23 @@ public class ScreenManager extends AppCompatActivity
     public static final String VOICE_RECOGNIZER = "sync_reminder";
     public static final String TASKS_AUTHORIZATION = "authorize";
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
-
-    private String mTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
+
+    private String mTitle;
+    private String mTag;
     private String accountName;
+    private long listId;
+    private long dateMills;
+    private boolean isAnimation = false;
+    private boolean doubleBackToExitPressedOnce = false;
+
     private Context ctx = this;
     private Activity a = this;
-    private RecyclerView currentList;
-    private ListView currentListView;
-    private boolean isAnimation = false;
+    private Date eventsDate = null;
+    private FlextCal calendarView;
+
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,8 +301,6 @@ public class ScreenManager extends AppCompatActivity
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
     }
-
-    FloatingActionButton[] prevButtons;
 
     private void attachButtons(FloatingActionButton... buttons){
         if (prevButtons != null) {
@@ -663,23 +670,26 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void setScrollListener(){
+        sPrefs = new SharedPrefs(this);
         if (currentList != null){
-            sPrefs = new SharedPrefs(this);
-            boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-            QuickReturnRecyclerViewOnScrollListener scrollListener = new
-                    QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                    .footer(isExtended ? mainMenu : mFab)
-                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                    .isSnappable(true)
-                    .build();
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                currentList.addOnScrollListener(scrollListener);
+            if (!sPrefs.loadBoolean(Prefs.LIST_GRID)) {
+                boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+                scrollListener = new
+                        QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                        .footer(isExtended ? mainMenu : mFab)
+                        .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                        .isSnappable(true)
+                        .build();
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                    currentList.addOnScrollListener(scrollListener);
+                } else {
+                    currentList.setOnScrollListener(scrollListener);
+                }
             } else {
-                currentList.setOnScrollListener(scrollListener);
+                if (scrollListener != null) currentList.removeOnScrollListener(scrollListener);
             }
         }
         if (currentListView != null){
-            sPrefs = new SharedPrefs(this);
             boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
             QuickReturnListViewOnScrollListener scrollListener = new
                     QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
@@ -691,14 +701,10 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    long listId;
-
     @Override
     public void onListIdChanged(long listId) {
         this.listId = listId;
     }
-
-    private long dateMills;
 
     @Override
     public void onDateChanged(long dateMills) {
@@ -854,9 +860,6 @@ public class ScreenManager extends AppCompatActivity
             mainMenu.setButtonColorPressed(cSetter.colorStatus());
         }
     }
-
-    Date eventsDate = null;
-    FlextCal calendarView;
 
     private void showMonth(){
         calendarView = new FlextCal();
@@ -1177,8 +1180,6 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
     private void loadEvents(){
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
@@ -1440,8 +1441,6 @@ public class ScreenManager extends AppCompatActivity
     private boolean isNoteVisible(){
         return noteCard.getVisibility() == View.VISIBLE;
     }
-
-    private boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {

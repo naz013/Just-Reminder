@@ -2,13 +2,12 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,9 +33,6 @@ import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.animator.SwipeDismissItemAnimator;
-import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDecorator;
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
@@ -213,7 +209,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         provider.setCursor(DB.getArchivedReminders());
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        if (enableGrid) mLayoutManager = new GridLayoutManager(getActivity(), 2);
+        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
         mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
@@ -222,12 +218,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        final GeneralItemAnimator animator = new SwipeDismissItemAnimator();
-        animator.setSupportsChangeAnimations(false);
         currentList.setLayoutManager(mLayoutManager);
         currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(new DefaultItemAnimator());
-        currentList.addItemDecoration(new SimpleListDividerDecorator(new ColorDrawable(android.R.color.transparent), true));
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
         if (mCallbacks != null) mCallbacks.onListChange(currentList);

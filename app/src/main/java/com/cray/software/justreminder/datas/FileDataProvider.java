@@ -123,7 +123,7 @@ public class FileDataProvider {
         data.clear();
         FilesDataBase db = new FilesDataBase(mContext);
         db.open();
-        Cursor c = db.getTask(where);
+        Cursor c = db.getFile(where);
         boolean is24 = new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT);
         Interval interval = new Interval(mContext);
         if (c != null && c.moveToFirst()) {

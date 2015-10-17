@@ -42,6 +42,14 @@ import java.util.Locale;
  */
 public class Dialog {
 
+    /**
+     * Create and AlertDialog with customizable seekbar.
+     * @param context Application context.
+     * @param max seekbar maximum.
+     * @param prefs Preference key for saving result.
+     * @param title title for Dialog.
+     * @param listener Dialog action listener.
+     */
     public static void dialogWithSeek(final Context context, int max, final String prefs, String title, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
@@ -92,6 +100,11 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting application screen orientation.
+     * @param context application context.
+     * @param listener listener for Dialog.
+     */
     public static void orientationDialog(final Context context, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -140,6 +153,12 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting type of melody - system or custom file.
+     * @param context application context.
+     * @param prefsToSave Preference key to save result.
+     * @param listener action listener for dialog.
+     */
     public static void melodyType(final Context context, final String prefsToSave,
                                   final DialogInterface.OnDismissListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -177,13 +196,28 @@ public class Dialog {
         builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+                SharedPrefs prefs = new SharedPrefs(context);
+                int position;
+                if (!prefs.loadBoolean(prefsToSave)) {
+                    dialog.dismiss();
+                } else {
+                    dialog.dismiss();
+                    new LoadSounds(context, prefsToSave, listener).execute();
+                }
             }
         });
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting melody for event.
+     * @param context application context.
+     * @param prefsToSave Preference key to save result.
+     * @param names list of melody file names.
+     * @param folders list of path for each file name.
+     * @param listener action listener for dialog.
+     */
     public static void customMelody(final Context context, final String prefsToSave, ArrayList<String> names,
                                     final ArrayList<String> folders, DialogInterface.OnDismissListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -220,6 +254,11 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting default Google Calendar.
+     * @param context application context.
+     * @param list action listener for dialog.
+     */
     public static void selectCalendar(final Context context, final ArrayList<CalendarManager.CalendarItem> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -256,6 +295,10 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting language for voice recognition.
+     * @param context application context.
+     */
     public static void language(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -344,6 +387,11 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting LED indicator color for events.
+     * @param context application context.
+     * @param prefsToSave Preference key to save result.
+     */
     public static void ledColor(final Context context, final String prefsToSave) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -437,6 +485,11 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting language for voice notifications (text to speech).
+     * @param context application context.
+     * @param prefsToSave Preference key for results saving.
+     */
     public static void ttsLocale(final Context context, final String prefsToSave) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
@@ -497,6 +550,10 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting map type.
+     * @param context application context.
+     */
     public static void mapType(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
@@ -549,6 +606,10 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * AlertDialog for selecting first day of week in calendars.
+     * @param context application context
+     */
     public static void firstDay(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
@@ -581,7 +642,13 @@ public class Dialog {
         dialog.show();
     }
 
-    public static void syncInterval(final Context context, final String prefsToSave, int titleRes) {
+    /**
+     * AlertDialog for selecting sync intervals for reminders and birthdays.
+     * @param context application context.
+     * @param prefsToSave Preference key for results.
+     * @param titleRes title for dialog.
+     */
+    public static void selectInterval(final Context context, final String prefsToSave, int titleRes) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(context.getString(titleRes));
@@ -643,6 +710,10 @@ public class Dialog {
         dialog.show();
     }
 
+    /**
+     * Method for deleting all file/folders inside selected folder.
+     * @param fileOrDirectory file or directory to delete.
+     */
     private static void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
@@ -650,6 +721,10 @@ public class Dialog {
         fileOrDirectory.delete();
     }
 
+    /**
+     * AlertDialog for cleaning all application data on SDCard and Cloud's.
+     * @param context application context.
+     */
     public static void cleanFolders(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);

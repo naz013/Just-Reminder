@@ -21,4 +21,9 @@ public class Configs {
      * Max month for MonthDay reminder type calculating.
      */
     public static final int MAX_MONTH_COUNT = 12;
+
+    /**
+     * Number of reminders used in application.
+     */
+    public static final int NUMBER_OF_REMINDERS = 9;
 }
