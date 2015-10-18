@@ -184,7 +184,7 @@ public class PlacesFragment extends Fragment implements SwipeListener {
         listView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
-        if (mCallbacks != null) mCallbacks.onListChange(listView);
+        if (mCallbacks != null) mCallbacks.onListChange(listView, adapter);
     }
 
     private void reloadView() {

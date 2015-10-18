@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
+import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 
 import java.util.ArrayList;
@@ -19,13 +20,15 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     private final View mFooter;
     private final int mMinFooterTranslation;
     private final boolean mIsSnappable; // Can Quick Return view snap into place?
+    private final boolean mIsGrid;
+    private RemindersRecyclerAdapter mAdapter;
 
     private int mPrevScrollY = 0;
     private int mHeaderDiffTotal = 0;
     private int mFooterDiffTotal = 0;
     private final int mColumnCount;
     private CollapseListener mListener = null;
-    private List<RecyclerView.OnScrollListener> mExtraOnScrollListenerList = new ArrayList<RecyclerView.OnScrollListener>();
+    private List<RecyclerView.OnScrollListener> mExtraOnScrollListenerList = new ArrayList<>();
     // endregion
 
     // region Constructors
@@ -38,6 +41,8 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         mColumnCount = builder.mColumnCount;
         mMinFooterTranslation = builder.mMinFooterTranslation;
         mIsSnappable = builder.mIsSnappable;
+        mIsGrid = builder.isGrid;
+        mAdapter = builder.adapter;
     }
     // endregion
 
@@ -52,6 +57,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         if (mListener != null) mListener.onStartScroll(true);
         if(newState == RecyclerView.SCROLL_STATE_IDLE && mIsSnappable){
 
+            if (mAdapter != null) mAdapter.setScrolled(true);
             int midHeader = -mMinHeaderTranslation/2;
             int midFooter = mMinFooterTranslation/2;
 
@@ -134,6 +140,11 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
                     break;
             }
 
+        } else {
+            if (mAdapter != null) mAdapter.setScrolled(false);
+        }
+        if (newState == 0) {
+            if (mAdapter != null) mAdapter.setScrolled(false);
         }
     }
 
@@ -151,7 +162,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
             }*/
             listener.onScrolled(recyclerView, dx, dy);
         }
-        int scrollY = QuickReturnUtils.getScrollY(recyclerView, mColumnCount);
+        int scrollY = QuickReturnUtils.getScrollY(recyclerView, mColumnCount, mIsGrid);
         int diff = mPrevScrollY - scrollY;
 
 //        Log.d(getClass().getSimpleName(), "onScroll() : scrollY - "+scrollY);
@@ -160,6 +171,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
 //        Log.d(getClass().getSimpleName(), "onScroll() : mMinFooterTranslation - "+mMinFooterTranslation);
 
         if(diff != 0){
+            if (mAdapter != null) mAdapter.setScrolled(true);
             switch (mQuickReturnViewType){
                 case HEADER:
                     if(diff < 0){ // scrolling down
@@ -208,6 +220,8 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
                 default:
                     break;
             }
+        } else {
+            if (mAdapter != null) mAdapter.setScrolled(false);
         }
 
         mPrevScrollY = scrollY;
@@ -231,8 +245,10 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         private View mFooter = null;
         private int mMinFooterTranslation = 0;
         private boolean mIsSnappable = false;
+        private boolean isGrid = false;
         private int mColumnCount = 1;
         private CollapseListener mListener = null;
+        private RemindersRecyclerAdapter adapter = null;
 
         public Builder(QuickReturnViewType quickReturnViewType) {
             mQuickReturnViewType = quickReturnViewType;
@@ -270,6 +286,16 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
 
         public Builder isSnappable(boolean isSnappable){
             mIsSnappable = isSnappable;
+            return this;
+        }
+
+        public Builder isGrid(boolean isGrid){
+            this.isGrid = isGrid;
+            return this;
+        }
+
+        public Builder adapter(RemindersRecyclerAdapter adapter){
+            this.adapter = adapter;
             return this;
         }
 

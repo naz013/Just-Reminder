@@ -187,7 +187,7 @@ public class TemplatesFragment extends Fragment implements SwipeListener {
         mRecyclerViewSwipeManager.attachRecyclerView(listView);
         db.close();
 
-        if (mCallbacks != null) mCallbacks.onListChange(listView);
+        if (mCallbacks != null) mCallbacks.onListChange(listView, adapter);
     }
 
     private void reloadView() {

@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,7 @@ import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.TaskManager;
+import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -133,11 +135,8 @@ public class ScreenManager extends AppCompatActivity
     private ListView currentListView;
     private CoordinatorLayout coordinatorLayout;
 
-    private QuickReturnRecyclerViewOnScrollListener scrollListener;
-
     private ColorSetter cSetter = new ColorSetter(this);
-    private SharedPrefs sPrefs = new SharedPrefs(this);
-    private DataBase DB;
+    private SharedPrefs mPrefs = new SharedPrefs(this);
 
     public static final String FRAGMENT_ACTIVE = "fragment_active";
     public static final String FRAGMENT_ARCHIVE = "fragment_archive";
@@ -187,7 +186,7 @@ public class ScreenManager extends AppCompatActivity
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
 
-        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
+        isAnimation = mPrefs.loadBoolean(Prefs.ANIMATIONS);
 
         bar = (AppBarLayout) findViewById(R.id.bar);
 
@@ -232,9 +231,9 @@ public class ScreenManager extends AppCompatActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
-        if (sPrefs.loadBoolean(Prefs.UI_CHANGED)) {
-            onNavigationDrawerItemSelected(sPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
-            sPrefs.saveBoolean(Prefs.UI_CHANGED, false);
+        if (mPrefs.loadBoolean(Prefs.UI_CHANGED)) {
+            onNavigationDrawerItemSelected(mPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
+            mPrefs.saveBoolean(Prefs.UI_CHANGED, false);
         }
     }
 
@@ -315,8 +314,8 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void reloadButton(){
-        sPrefs = new SharedPrefs(this);
-        final boolean isExtend = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+        mPrefs = new SharedPrefs(this);
+        final boolean isExtend = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
             mFab.setVisibility(View.GONE);
             setUpButton(addReminder, new View.OnClickListener() {
@@ -345,7 +344,7 @@ public class ScreenManager extends AppCompatActivity
                         ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                     }
 
-                    if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
+                    if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
                         Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
                     else {
                         new Handler().postDelayed(new Runnable() {
@@ -392,7 +391,7 @@ public class ScreenManager extends AppCompatActivity
                                 ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
                             }
 
-                            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
+                            if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
                                 Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
                             else {
                                 new Handler().postDelayed(new Runnable() {
@@ -658,39 +657,40 @@ public class ScreenManager extends AppCompatActivity
     }
 
     @Override
-    public void onListChange(RecyclerView list) {
+    public void onListChange(RecyclerView list, RecyclerView.Adapter adapter) {
         this.currentList = list;
-        setScrollListener();
+        setScrollListener(adapter);
     }
 
     @Override
     public void onListChange(ListView list) {
         this.currentListView = list;
-        setScrollListener();
+        setScrollListener(null);
     }
 
-    private void setScrollListener(){
-        sPrefs = new SharedPrefs(this);
+    private QuickReturnRecyclerViewOnScrollListener scrollListener;
+
+    private void setScrollListener(RecyclerView.Adapter adapter){
+        mPrefs = new SharedPrefs(this);
         if (currentList != null){
-            if (!sPrefs.loadBoolean(Prefs.LIST_GRID)) {
-                boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-                scrollListener = new
-                        QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                        .footer(isExtended ? mainMenu : mFab)
-                        .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                        .isSnappable(true)
-                        .build();
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    currentList.addOnScrollListener(scrollListener);
-                } else {
-                    currentList.setOnScrollListener(scrollListener);
-                }
+            currentList.removeOnScrollListener(scrollListener);
+            boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+            boolean isGrid = mPrefs.loadBoolean(Prefs.LIST_GRID);
+            scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                    .footer(isExtended ? mainMenu : mFab)
+                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                    .isSnappable(true)
+                    .isGrid(isGrid)
+                    .adapter(adapter instanceof RemindersRecyclerAdapter ? (RemindersRecyclerAdapter) adapter : null)
+                    .build();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                currentList.addOnScrollListener(scrollListener);
             } else {
-                if (scrollListener != null) currentList.removeOnScrollListener(scrollListener);
+                currentList.setOnScrollListener(scrollListener);
             }
         }
         if (currentListView != null){
-            boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+            boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
             QuickReturnListViewOnScrollListener scrollListener = new
                     QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
                     .footer(isExtended ? mainMenu : mFab)
@@ -748,7 +748,7 @@ public class ScreenManager extends AppCompatActivity
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commitAllowingStateLoss();
         mTag = tag;
-        sPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
+        mPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
     }
 
     @Override
@@ -778,9 +778,9 @@ public class ScreenManager extends AppCompatActivity
                 }
             } else if (tag.matches(ACTION_CALENDAR)) {
                 showMonth();
-                sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
+                mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
                 mTag = tag;
-                sPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
+                mPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
             } else if (tag.matches(FRAGMENT_EVENTS)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
@@ -788,7 +788,7 @@ public class ScreenManager extends AppCompatActivity
                     cal.setTime(eventsDate);
                 }
                 replace(EventsFragment.newInstance(cal.getTimeInMillis()), tag);
-                sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+                mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
             } else if (tag.matches(TRANSLATION)) {
@@ -851,7 +851,7 @@ public class ScreenManager extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorStatus());
         }
-        boolean isExtended = sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+        boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (!isExtended) {
             mFab.setColorNormal(cSetter.colorSetter());
             mFab.setColorPressed(cSetter.colorStatus());
@@ -868,14 +868,14 @@ public class ScreenManager extends AppCompatActivity
         cal.setTimeInMillis(System.currentTimeMillis());
         args.putInt(FlextCal.MONTH, cal.get(Calendar.MONTH) + 1);
         args.putInt(FlextCal.YEAR, cal.get(Calendar.YEAR));
-        sPrefs = new SharedPrefs(this);
-        if (sPrefs.loadInt(Prefs.START_DAY) == 0) {
+        mPrefs = new SharedPrefs(this);
+        if (mPrefs.loadInt(Prefs.START_DAY) == 0) {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.SUNDAY);
         } else {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
         args.putBoolean(FlextCal.SIX_WEEKS_IN_CALENDAR, true);
-        args.putBoolean(FlextCal.ENABLE_IMAGES, sPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
+        args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.colorCurrentCalendar());
         replace(calendarView, mTag);
@@ -920,13 +920,13 @@ public class ScreenManager extends AppCompatActivity
             calendarView.clearSelectedDates();
         }
 
-        if (sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR)) {
+        if (mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR)) {
             loadReminders();
         }
 
         loadEvents();
         calendarView.populateData();
-        sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
+        mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
         mTitle = getString(R.string.calendar_fragment);
         toolbar.setTitle(mTitle);
         invalidateOptionsMenu();
@@ -1066,8 +1066,8 @@ public class ScreenManager extends AppCompatActivity
     private void loadReminders() {
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
-        sPrefs = new SharedPrefs(this);
-        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        mPrefs = new SharedPrefs(this);
+        boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         HashMap<DateTime, String> dates = new HashMap<>();
         dates.clear();
         calendarView.setBackgroundForOne(cSetter.colorReminderCalendar());
@@ -1324,7 +1324,7 @@ public class ScreenManager extends AppCompatActivity
         Random r = new Random();
         int color = r.nextInt(15);
         final long id;
-        if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (mPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             id = db.saveNote(sHelp.encrypt(note), date, cSetter.getNoteColor(color), uuID, null, 5);
         } else {
             id = db.saveNote(note, date, cSetter.getNoteColor(color), uuID, null, 5);
@@ -1355,7 +1355,7 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void askNotification(final String note, final long id){
-        sPrefs = new SharedPrefs(ScreenManager.this);
+        mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteStatusCard, isAnimation);
 
         buttonYes.setOnClickListener(new View.OnClickListener() {
@@ -1364,7 +1364,7 @@ public class ScreenManager extends AppCompatActivity
                 new Notifier(ScreenManager.this).showNoteNotification(note, id);
                 ViewUtils.hideReveal(noteStatusCard, isAnimation);
 
-                if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+                if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1380,7 +1380,7 @@ public class ScreenManager extends AppCompatActivity
             public void onClick(View v) {
                 ViewUtils.hideReveal(noteStatusCard, isAnimation);
 
-                if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+                if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1393,15 +1393,15 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void askReminder(final String note, final long noteId){
-        sPrefs = new SharedPrefs(ScreenManager.this);
+        mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteReminderCard, isAnimation);
 
         buttonReminderYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ViewUtils.hideReveal(noteReminderCard, isAnimation);
-                DB = new DataBase(ScreenManager.this);
-                if (!DB.isOpen()) DB.open();
+                DataBase db = new DataBase(ScreenManager.this);
+                if (!db.isOpen()) db.open();
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTimeInMillis(System.currentTimeMillis());
                 int day = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -1409,17 +1409,17 @@ public class ScreenManager extends AppCompatActivity
                 int year = calendar1.get(Calendar.YEAR);
                 int hour = calendar1.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar1.get(Calendar.MINUTE);
-                Cursor cf = DB.queryCategories();
+                Cursor cf = db.queryCategories();
                 String categoryId = null;
                 if (cf != null && cf.moveToFirst()) {
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 }
                 if (cf != null) cf.close();
-                long remId = DB.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
-                        minute, 0, null, 0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
+                long remId = db.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
+                        minute, 0, null, 0, mPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
                         0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
                 new AlarmReceiver().setAlarm(ScreenManager.this, remId);
-                DB.updateReminderDateTime(remId);
+                db.updateReminderDateTime(remId);
                 new UpdatesHelper(ScreenManager.this).updateWidget();
                 NotesBase base = new NotesBase(ScreenManager.this);
                 base.open();
@@ -1474,9 +1474,9 @@ public class ScreenManager extends AppCompatActivity
 
     public void startVoiceRecognitionActivity() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        sPrefs = new SharedPrefs(this);
-        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
+        mPrefs = new SharedPrefs(this);
+        if (!mPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, mPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
         try {
@@ -1555,11 +1555,11 @@ public class ScreenManager extends AppCompatActivity
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            mPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            mPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         }
     }

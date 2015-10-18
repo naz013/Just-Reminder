@@ -264,7 +264,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         currentList.setItemAnimator(new DefaultItemAnimator());
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        if (mCallbacks != null) mCallbacks.onListChange(currentList);
+        if (mCallbacks != null) mCallbacks.onListChange(currentList, adapter);
     }
 
     private void reloadView() {

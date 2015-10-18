@@ -158,11 +158,6 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         holder.textView.setText(title);
         holder.indicator.setBackgroundDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(indicator)));
 
-        if (prefs.loadBoolean(Prefs.ANIMATIONS)) {
-            holder.indicator.setVisibility(View.GONE);
-            ViewUtils.zoom(holder.indicator, position, 1);
-        }
-
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

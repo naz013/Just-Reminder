@@ -3341,7 +3341,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraLimit.isEnabled()) {
                 if (extraLimit.isSelected()) return repeats;
-                else return 0;
+                else return -1;
             } else return -1;
         } else return -1;
     }

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.ReminderItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -38,6 +39,8 @@ import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchAct
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
+import java.util.ArrayList;
+
 public class TrashFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
@@ -46,7 +49,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     private DataBase DB;
     private RemindersRecyclerAdapter adapter;
-    private ReminderDataProvider provider;
+    private ArrayList<ReminderItem> data;
 
     private boolean onCreate = false;
     private boolean enableGrid = false;
@@ -205,8 +208,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        provider = new ReminderDataProvider(getActivity());
+        ReminderDataProvider provider = new ReminderDataProvider(getActivity());
         provider.setCursor(DB.getArchivedReminders());
+        data = provider.getData();
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -215,7 +219,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         mRecyclerViewTouchActionGuardManager.setEnabled(true);
         RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-        adapter = new RemindersRecyclerAdapter(getActivity(), provider);
+        adapter = new RemindersRecyclerAdapter(getActivity(), data);
         adapter.setEventListener(this);
         RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         currentList.setLayoutManager(mLayoutManager);
@@ -223,11 +227,11 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         currentList.setItemAnimator(new DefaultItemAnimator());
         mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
         mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        if (mCallbacks != null) mCallbacks.onListChange(currentList);
+        if (mCallbacks != null) mCallbacks.onListChange(currentList, adapter);
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = data.size();
         if (size > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -254,26 +258,26 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     @Override
     public void onSwipeToRight(int position) {
-        Reminder.edit(provider.getItem(position).getId(), getActivity());
+        Reminder.edit(data.get(position).getId(), getActivity());
     }
 
     @Override
     public void onSwipeToLeft(int position) {
-        Reminder.delete(provider.getItem(position).getId(), getActivity());
+        ReminderItem item = data.get(position);
+        Reminder.delete(item.getId(), getActivity());
         if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_deleted);
-        provider.removeItem(position);
-        adapter.notifyItemRemoved(position);
+        adapter.removeItem(item);
         reloadView();
     }
 
     @Override
     public void onItemClicked(int position, View view) {
-        Reminder.edit(provider.getItem(position).getId(), getActivity());
+        Reminder.edit(data.get(position).getId(), getActivity());
     }
 
     @Override
     public void onItemLongClicked(int position) {
-        Reminder.edit(provider.getItem(position).getId(), getActivity());
+        Reminder.edit(data.get(position).getId(), getActivity());
     }
 
     @Override

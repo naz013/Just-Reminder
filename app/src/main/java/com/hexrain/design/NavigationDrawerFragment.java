@@ -561,7 +561,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         void showSnackbar(int message);
 
-        void onListChange(RecyclerView list);
+        void onListChange(RecyclerView list, RecyclerView.Adapter adapter);
 
         void onListChange(ListView list);
 

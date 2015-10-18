@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.datas.ReminderItem;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -36,6 +37,7 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAd
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,22 +46,24 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private Context mContext;
     private TimeCount mCount;
-    private SharedPrefs prefs;
     private ColorSetter cs;
-    private ReminderDataProvider provider;
+    private ArrayList<ReminderItem> provider;
     private Typeface typeface;
     private RecyclerListener mEventListener;
     private boolean isDark;
+    private boolean is24;
     private boolean isGrid;
+    private boolean isScrolling;
 
-    public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
+    public RemindersRecyclerAdapter(Context context, ArrayList<ReminderItem> provider) {
         this.mContext = context;
         this.provider = provider;
-        prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         typeface = AssetsUtil.getLightTypeface(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         isGrid = prefs.loadBoolean(Prefs.LIST_GRID);
         setHasStableIds(true);
     }
@@ -95,7 +99,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         switch (result) {
             // swipe right
             case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                if (provider.getItem(position).isPinnedToSwipeLeft()) {
+                if (provider.get(position).isPinnedToSwipeLeft()) {
                     // pinned --- back to default position
                     return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
                 } else {
@@ -117,7 +121,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         Log.d(Constants.LOG_TAG,
                 "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
 
-        final ReminderDataProvider.ReminderItem item = provider.getItem(position);
+        final ReminderItem item = provider.get(position);
 
         if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
             if (mEventListener != null) {
@@ -221,16 +225,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-
-        final ReminderDataProvider.ReminderItem item = provider.getData().get(position);
+        final ReminderItem item = provider.get(position);
 
         if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
             final ViewHolder viewHolder = (ViewHolder) holder;
 
             String title = item.getTitle();
-            viewHolder.taskTitle.setTypeface(typeface);
-
             String type = item.getType();
             String number = item.getNumber();
             long due = item.getDue();
@@ -239,9 +239,17 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             int isDone = item.getCompleted();
             String repeat = item.getRepeat();
             int archived = item.getArchived();
-
             int categoryColor = item.getCatColor();
 
+            viewHolder.taskTitle.setText("");
+            viewHolder.reminder_contact_name.setText("");
+            viewHolder.taskDate.setText("");
+            viewHolder.viewTime.setText("");
+            viewHolder.reminder_type.setText("");
+            viewHolder.reminder_phone.setText("");
+            viewHolder.repeatInterval.setText("");
+
+            viewHolder.taskTitle.setTypeface(typeface);
             viewHolder.reminder_contact_name.setTypeface(typeface);
             viewHolder.taskDate.setTypeface(typeface);
             viewHolder.viewTime.setTypeface(typeface);
@@ -394,41 +402,25 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.leftTimeIcon.setVisibility(View.GONE);
             }
 
-            if (prefs.loadBoolean(Prefs.ANIMATIONS)) {
-                viewHolder.leftTimeIcon.setVisibility(View.GONE);
-                viewHolder.repeatInterval.setVisibility(View.GONE);
-                viewHolder.taskIcon.setVisibility(View.GONE);
-                ViewUtils.zoom(viewHolder.taskIcon, position, 1);
-                boolean prev = false;
-                if (type.matches(Constants.TYPE_CALL) || type.startsWith(Constants.TYPE_APPLICATION) ||
-                        type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_TIME) ||
-                        type.startsWith(Constants.TYPE_SKYPE) || type.matches(Constants.TYPE_REMINDER)) {
-                    ViewUtils.zoom(viewHolder.repeatInterval, position, 2);
-                    prev = true;
-                }
-                if (archived == 0) {
-                    ViewUtils.zoom(viewHolder.leftTimeIcon, position, prev ? 3 : 2);
-                }
-            }
-
             viewHolder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (mEventListener != null) mEventListener.onItemSwitched(position, viewHolder.check);
+                    if (mEventListener != null && !isScrolling) mEventListener.onItemSwitched(position, viewHolder.check);
+                    else compoundButton.setChecked(!b);
                 }
             });
 
             viewHolder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
+                    if (mEventListener != null && !isScrolling) mEventListener.onItemClicked(position, viewHolder.check);
                 }
             });
 
             viewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mEventListener != null) mEventListener.onItemLongClicked(position);
+                    if (mEventListener != null && !isScrolling) mEventListener.onItemLongClicked(position);
                     return true;
                 }
             });
@@ -473,7 +465,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             params.height = QuickReturnUtils.dp2px(mContext, size * 35);
             viewHolder1.todoList.setLayoutParams(params);
 
-            Log.d(Constants.LOG_TAG, "Data size " + size);
             TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(mContext, provider, null);
             viewHolder1.todoList.setLayoutManager(new LinearLayoutManager(mContext));
             viewHolder1.todoList.setAdapter(shoppingAdapter);
@@ -513,19 +504,29 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    public void setScrolled(boolean scrolled){
+        isScrolling = scrolled;
+    }
+
+    public void removeItem(ReminderItem item){
+        int position = provider.indexOf(item);
+        provider.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return provider.getItem(position).getViewType();
+        return provider.get(position).getViewType();
     }
 
     @Override
     public long getItemId(int position) {
-        return provider.getData().get(position).getId();
+        return provider.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return provider.size();
     }
 
     public RecyclerListener getEventListener() {

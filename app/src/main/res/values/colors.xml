@@ -109,6 +109,9 @@
     <color name="grey_dark_y">#474747</color>
     <color name="grey_dark_z">#292929</color>
 
+    <color name="material_grey">#303030</color>
+    <color name="material_white">#fafafa</color>
+
     <color name="grey">#777777</color>
     <color name="grey_x">#555555</color>
     <color name="grey_y">#999999</color>
