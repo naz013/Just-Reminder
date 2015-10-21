@@ -737,5 +737,6 @@
     <string name="empty_task">Empty task!</string>
     <string name="title">Title</string>
     <string name="no_tasks_warming">You don\'t add any tasks!</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

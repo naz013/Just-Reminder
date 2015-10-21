@@ -6,8 +6,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="CustomActionBarTheme"
-        parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="CustomActionBarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:windowActionBarOverlay">true</item>
 
         <!-- Support library compatibility -->
@@ -386,8 +385,7 @@
         <item name="colorAccent">@color/colorIndigo</item>
     </style>
 
-    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
-    </style>
+    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox"></style>
 
     <style name="Transparent" parent="@android:style/Theme.NoTitleBar">
         <item name="android:windowContentOverlay">@null</item>
@@ -415,6 +413,8 @@
         <item name="metaButtonBarStyle">@style/ButtonBar</item>
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
     </style>
+
     <style name="HomeWhite.Blue.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="HomeWhite.Blue.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

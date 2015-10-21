@@ -40,6 +40,7 @@ import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
@@ -49,7 +50,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     private DataBase DB;
     private RemindersRecyclerAdapter adapter;
-    private ArrayList<ReminderItem> data;
+    private List<ReminderItem> data;
 
     private boolean onCreate = false;
     private boolean enableGrid = false;

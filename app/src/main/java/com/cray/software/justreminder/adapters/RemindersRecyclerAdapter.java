@@ -3,7 +3,6 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -29,7 +28,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -37,9 +35,9 @@ import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAd
 import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements LegacySwipeableItemAdapter<RecyclerView.ViewHolder> {
@@ -47,21 +45,19 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private Context mContext;
     private TimeCount mCount;
     private ColorSetter cs;
-    private ArrayList<ReminderItem> provider;
-    private Typeface typeface;
+    private List<ReminderItem> provider;
     private RecyclerListener mEventListener;
     private boolean isDark;
     private boolean is24;
     private boolean isGrid;
     private boolean isScrolling;
 
-    public RemindersRecyclerAdapter(Context context, ArrayList<ReminderItem> provider) {
+    public RemindersRecyclerAdapter(Context context, List<ReminderItem> provider) {
         this.mContext = context;
         this.provider = provider;
         SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
-        typeface = AssetsUtil.getLightTypeface(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         isGrid = prefs.loadBoolean(Prefs.LIST_GRID);
@@ -138,11 +134,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class ViewHolder1 extends AbstractSwipeableItemViewHolder {
 
-        TextView taskTitle;
-        ViewGroup container;
-        RelativeLayout background;
-        RecyclerView todoList;
-        LinearLayout subBackground, titleContainer;
+        private final TextView taskTitle;
+        private final ViewGroup container;
+        private final RelativeLayout background;
+        private final RecyclerView todoList;
+        private final LinearLayout subBackground, titleContainer;
 
         public ViewHolder1(View v) {
             super(v);
@@ -165,12 +161,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public static class ViewHolder extends AbstractSwipeableItemViewHolder {
 
-        TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
+        private final TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
-        SwitchCompat check;
-        ImageView taskIcon, leftTimeIcon;
-        ViewGroup container;
-        RelativeLayout background;
+        private final SwitchCompat check;
+        private final ImageView taskIcon, leftTimeIcon;
+        private final ViewGroup container;
+        private final RelativeLayout background;
 
         public ViewHolder(View v) {
             super(v);
@@ -216,11 +212,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
         // create ViewHolder
+        RecyclerView.ViewHolder vh;
         if (viewType == ReminderDataProvider.VIEW_SHOPPING_LIST){
-            return new ViewHolder1(itemLayoutView);
+            vh = new ViewHolder1(itemLayoutView);
         } else {
-            return new ViewHolder(itemLayoutView);
+            vh = new ViewHolder(itemLayoutView);
         }
+        return vh;
     }
 
     @Override
@@ -249,13 +247,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder.reminder_phone.setText("");
             viewHolder.repeatInterval.setText("");
 
-            viewHolder.taskTitle.setTypeface(typeface);
-            viewHolder.reminder_contact_name.setTypeface(typeface);
-            viewHolder.taskDate.setTypeface(typeface);
-            viewHolder.viewTime.setTypeface(typeface);
-            viewHolder.reminder_type.setTypeface(typeface);
-            viewHolder.reminder_phone.setTypeface(typeface);
-            viewHolder.repeatInterval.setTypeface(typeface);
             viewHolder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
             viewHolder.repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
@@ -448,7 +439,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.subBackground.setBackgroundColor(mContext.getResources().getColor(cs.getCategoryColor(item.getCatColor())));
 
             String title = item.getTitle();
-            viewHolder1.taskTitle.setTypeface(typeface);
             viewHolder1.taskTitle.setText(title);
 
             viewHolder1.taskTitle.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));

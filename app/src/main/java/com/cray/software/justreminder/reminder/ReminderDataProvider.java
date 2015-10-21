@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ReminderDataProvider {
     private Cursor c, old;
-    private ArrayList<ReminderItem> data;
+    private List<ReminderItem> data;
     private Context mContext;
     private Interval mInterval;
     private ReminderItem mLastRemovedData;
@@ -46,7 +46,7 @@ public class ReminderDataProvider {
         load();
     }
 
-    public ArrayList<ReminderItem> getData(){
+    public List<ReminderItem> getData(){
         return data;
     }
 

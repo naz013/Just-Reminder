@@ -16,10 +16,10 @@ package com.cray.software.justreminder.datas;
  * limitations under the License.
  */
 public class ReminderItem {
-    private String title, type, repeat, uuId, number;
-    private int completed, archived, catColor, viewType;
-    private long due, id;
-    private double[] place;
+    private final String title, type, repeat, uuId, number;
+    private final int completed, archived, catColor, viewType;
+    private final long due, id;
+    private final double[] place;
     private boolean mPinnedToSwipeLeft, selected;
 
     public ReminderItem(String title, String type, String repeat, int catColor, String uuId,
@@ -43,10 +43,6 @@ public class ReminderItem {
         return viewType;
     }
 
-    public void setViewType(int viewType) {
-        this.viewType = viewType;
-    }
-
     public boolean getSelected(){
         return selected;
     }
@@ -59,88 +55,44 @@ public class ReminderItem {
         return archived;
     }
 
-    public void setArchived(int archived){
-        this.archived = archived;
-    }
-
     public int getCompleted(){
         return completed;
-    }
-
-    public void setCompleted(int completed){
-        this.completed = completed;
     }
 
     public double[] getPlace(){
         return place;
     }
 
-    public void  setPlace(double[] place){
-        this.place = place;
-    }
-
     public long getDue(){
         return due;
-    }
-
-    public void setDue(long due){
-        this.due = due;
     }
 
     public long getId(){
         return id;
     }
 
-    public void setId(long id){
-        this.id = id;
-    }
-
     public String getTitle(){
         return title;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
     }
 
     public String getType(){
         return type;
     }
 
-    public void setType(String type){
-        this.type = type;
-    }
-
     public String getRepeat(){
         return repeat;
-    }
-
-    public void setRepeat(String repeat){
-        this.repeat = repeat;
     }
 
     public int getCatColor(){
         return catColor;
     }
 
-    public void setCatColor(int catColor){
-        this.catColor = catColor;
-    }
-
     public String getUuId(){
         return uuId;
     }
 
-    public void setUuId(String uuId){
-        this.uuId = uuId;
-    }
-
     public String getNumber(){
         return number;
-    }
-
-    public void setNumber(String number){
-        this.number = number;
     }
 
     public boolean isPinnedToSwipeLeft() {

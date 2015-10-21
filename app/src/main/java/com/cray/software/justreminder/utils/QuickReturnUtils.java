@@ -3,7 +3,6 @@ package com.cray.software.justreminder.utils;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -91,22 +90,15 @@ public class QuickReturnUtils {
         return scrollY;
     }
 
-    public static int getScrollY(RecyclerView rv, int columnCount, boolean mIsGrid) {
+    public static int getScrollY(RecyclerView rv, int columnCount) {
         View c = rv.getChildAt(0);
         if (c == null) {
             return 0;
         }
 
         int firstVisiblePosition;
-        if (mIsGrid){
-            StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) rv.getLayoutManager();
-            int[] pos = new int[4];
-            layoutManager.findFirstVisibleItemPositions(pos);
-            firstVisiblePosition = pos[0];
-        } else {
-            LinearLayoutManager layoutManager = (LinearLayoutManager)rv.getLayoutManager();
-            firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
-        }
+        LinearLayoutManager layoutManager = (LinearLayoutManager)rv.getLayoutManager();
+        firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
 
         int scrollY = -(c.getTop());
 

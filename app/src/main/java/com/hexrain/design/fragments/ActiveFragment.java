@@ -49,6 +49,7 @@ import com.hexrain.design.ScreenManager;
 import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ActiveFragment extends Fragment implements RecyclerListener{
 
@@ -59,7 +60,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     private DataBase DB;
     private SharedPrefs sPrefs;
     private RemindersRecyclerAdapter adapter;
-    private ArrayList<ReminderItem> data;
+    private List<ReminderItem> data;
 
     private boolean onCreate = false;
     private boolean enableGrid = false;
@@ -83,7 +84,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.fragment_active_menu, menu);
         MenuItem item = menu.findItem(R.id.action_list);
         if (item != null){
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
