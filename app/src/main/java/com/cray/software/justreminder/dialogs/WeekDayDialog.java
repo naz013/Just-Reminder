@@ -208,7 +208,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 alarm.cancelAlarm(getApplicationContext(), id);
                 Reminder.disableReminder(id, WeekDayDialog.this);
                 Reminder.backup(WeekDayDialog.this);
-                Reminder.setDelay(WeekDayDialog.this, id, 0);
+                Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 update(1);
                 finish();
             }
@@ -224,7 +224,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     Reminder.generateToCalendar(id, WeekDayDialog.this);
                 }
                 Reminder.backup(WeekDayDialog.this);
-                Reminder.setDelay(WeekDayDialog.this, id, 0);
+                Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 update(1);
                 finish();
             }
@@ -234,7 +234,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             @Override
             public void onClick(View v) {
                 Reminder.generateToCalendar(id, WeekDayDialog.this);
-                Reminder.setDelay(WeekDayDialog.this, id, 0);
+                Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 Reminder.backup(WeekDayDialog.this);
                 Reminder.edit(id, WeekDayDialog.this);
                 update(1);
@@ -247,7 +247,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             public void onClick(View v) {
                 Reminder.generateToCalendar(id, WeekDayDialog.this);
                 Reminder.backup(WeekDayDialog.this);
-                Reminder.setDelay(WeekDayDialog.this, id, 0);
+                Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 update(1);
                 if ((task == null || task.trim().matches("")) &&
                         (number != null && !number.trim().matches("")))
@@ -263,7 +263,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 Reminder.generateToCalendar(id, WeekDayDialog.this);
                 delay.setAlarm(WeekDayDialog.this, 2, id);
                 int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
-                Reminder.setDelay(WeekDayDialog.this, id, inTime);
+                Reminder.setDelay(WeekDayDialog.this, id, inTime, true);
                 Reminder.backup(WeekDayDialog.this);
                 update(1);
                 finish();
@@ -294,7 +294,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     Telephony.makeCall(number, WeekDayDialog.this);
                 }
                 Reminder.backup(WeekDayDialog.this);
-                Reminder.setDelay(WeekDayDialog.this, id, 0);
+                Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 update(1);
                 if (!type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
                         !type.matches(Constants.TYPE_MONTHDAY_MESSAGE)
@@ -485,7 +485,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     x = 60 * 24 * 7;
                 }
 
-                Reminder.setDelay(WeekDayDialog.this, id, x);
+                Reminder.setDelay(WeekDayDialog.this, id, x, true);
 
                 if (x < 100) {
                     Messages.toast(WeekDayDialog.this, getString(R.string.repeat_toast_start) + " " +

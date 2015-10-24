@@ -470,12 +470,13 @@ public class Reminder {
      * @param context application context.
      * @param id reminder identifier.
      * @param delay delay for reminder (integer).
+     * @param addAlarm flag for enabling delayed reminder.
      */
-    public static void setDelay(Context context, long id, int delay){
+    public static void setDelay(Context context, long id, int delay, boolean addAlarm){
         DataBase db = new DataBase(context);
         db.open();
         db.setDelay(id, delay);
-        new DelayReceiver().setAlarm(context, 1, id, delay);
+        if (addAlarm) new DelayReceiver().setAlarm(context, 1, id, delay);
         db.close();
     }
 

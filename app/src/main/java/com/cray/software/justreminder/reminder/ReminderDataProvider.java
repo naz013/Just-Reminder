@@ -236,7 +236,10 @@ public class ReminderDataProvider {
                 int viewType = VIEW_REMINDER;
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
 
-                data.add(new ReminderItem(title, type, repeat, map.get(categoryId), uuID, isDone, due, id,
+                int catColor = 0;
+                if (map.containsKey(categoryId)) catColor = map.get(categoryId);
+
+                data.add(new ReminderItem(title, type, repeat, catColor, uuID, isDone, due, id,
                         new double[]{lat, lon}, number, archived, viewType));
             } while (c.moveToNext());
         }

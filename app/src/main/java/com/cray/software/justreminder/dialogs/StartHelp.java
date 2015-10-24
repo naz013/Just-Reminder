@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.modules.Module;
-import com.github.paolorotolo.appintro.AppIntro2;
+import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
 import com.hexrain.design.LogInActivity;
 
-public class StartHelp extends AppIntro2 {
+public class StartHelp extends AppIntro {
 
     @Override
     public void init(Bundle savedInstanceState) {
@@ -22,6 +22,12 @@ public class StartHelp extends AppIntro2 {
         showDoneButton(true);
         setVibrate(false);
         setFadeAnimation();
+    }
+
+    @Override
+    public void onSkipPressed() {
+        startActivity(new Intent(this, LogInActivity.class));
+        finish();
     }
 
     private int getColorRes(int resId){

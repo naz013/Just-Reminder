@@ -30,10 +30,12 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     private ArrayList<CalendarData> data;
     private Context mContext;
     private DataBase db;
+    private TimeCount mCount;
     private int widgetID;
 
     CurrentTaskFactory(Context ctx, Intent intent) {
         mContext = ctx;
+        mCount = new TimeCount(ctx);
         widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -63,6 +65,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         int repCode;
         long repTime;
         int done;
+        int delay;
         double lat;
         double longi;
         long repCount;
@@ -83,16 +86,14 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
                 done = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+                delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
 
                 if (done != 1) {
-                    TimeCount tC = new TimeCount(mContext);
-
-                    String[] dT = tC.getNextDateTime(year, month, day, hour, minute, seconds,
-                            repTime, repCode, repCount, 0);
+                    long due = 0;
                     String time = "";
                     String date = "";
                     if (lat != 0.0 || longi != 0.0) {
@@ -108,8 +109,9 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
                             date = ReminderUtils.getRepeatString(mContext, weekdays);
                             time = TimeUtil.getTime(calendar.getTime(), is24);
+                            due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
                         } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                            long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
+                            long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
                             Calendar calendar1 = Calendar.getInstance();
                             if (timeL > 0) {
                                 calendar1.setTimeInMillis(timeL);
@@ -117,13 +119,17 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                                 date = TimeUtil.dateFormat.format(calendar1.getTime());
                                 time = TimeUtil.getTime(calendar1.getTime(), is24);
                             }
+                            due = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
                         } else {
+                            due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime, repCode, repCount, delay);
+                            String[] dT = mCount.getNextDateTime(due);
                             date = dT[0];
                             time = dT[1];
+
                         }
                     }
 
-                    data.add(new CalendarData(title, number, id, time, date));
+                    data.add(new CalendarData(title, number, id, time, date, due));
                 }
             } while (c.moveToNext());
         }
@@ -145,7 +151,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                         String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                         long i = 0;
-                        data.add(new CalendarData(mContext.getString(R.string.birthday_text), name, i, birthday, ""));
+                        data.add(new CalendarData(mContext.getString(R.string.birthday_text), name, i, birthday, "", 0));
                     } while (cursor.moveToNext());
                 }
                 if (cursor != null) {
@@ -192,11 +198,13 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             rView.setTextViewTextSize(R.id.taskNumber, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
             rView.setTextViewTextSize(R.id.taskDate, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
             rView.setTextViewTextSize(R.id.taskTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+            rView.setTextViewTextSize(R.id.leftTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
         } else {
             rView.setFloat(R.id.taskTime, "setTextSize", itemTextSize);
             rView.setFloat(R.id.taskDate, "setTextSize", itemTextSize);
             rView.setFloat(R.id.taskNumber, "setTextSize", itemTextSize);
             rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
+            rView.setFloat(R.id.leftTime, "setTextSize", itemTextSize);
         }
 
         String number = item.getNumber();
@@ -208,8 +216,12 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         }
         rView.setTextViewText(R.id.taskDate, item.getDayDate());
         rView.setTextColor(R.id.taskDate, itemTextColor);
+
         rView.setTextViewText(R.id.taskTime, item.getTime());
         rView.setTextColor(R.id.taskTime, itemTextColor);
+
+        rView.setTextViewText(R.id.leftTime, mCount.getRemaining(item.getDate()));
+        rView.setTextColor(R.id.leftTime, itemTextColor);
 
         long id = item.getId();
         if (id != 0) {

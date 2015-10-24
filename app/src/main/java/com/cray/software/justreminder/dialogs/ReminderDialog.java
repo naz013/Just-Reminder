@@ -290,7 +290,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             @Override
             public void onClick(View v) {
                 int delay = sPrefs.loadInt(Prefs.DELAY_TIME);
-                Reminder.setDelay(ReminderDialog.this, id, delay);
+                Reminder.setDelay(ReminderDialog.this, id, delay, true);
                 Reminder.backup(ReminderDialog.this);
                 update(1);
                 finish();
@@ -541,7 +541,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     x = 60 * 24 * 7;
                 }
 
-                Reminder.setDelay(ReminderDialog.this, id, x);
+                Reminder.setDelay(ReminderDialog.this, id, x, true);
 
                 if (x < 100) {
                     Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +

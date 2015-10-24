@@ -16,12 +16,13 @@ public class CalendarData implements Parcelable {
     }
 
     public CalendarData(String name, String number, long id, String time,
-                        String dayDate){
+                        String dayDate, long date){
         this.time = time;
         this.dayDate = dayDate;
         this.name = name;
         this.id = id;
         this.number = number;
+        this.date = date;
     }
 
     public String getDayDate(){

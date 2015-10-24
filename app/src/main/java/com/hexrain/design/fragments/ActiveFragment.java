@@ -239,6 +239,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         } else {
             provider.setCursor(DB.queryGroup());
         }
+        data = new ArrayList<>();
         data = provider.getData();
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
