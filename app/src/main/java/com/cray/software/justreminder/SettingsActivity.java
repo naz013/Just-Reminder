@@ -2,12 +2,14 @@ package com.cray.software.justreminder;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.fragments.BirthdaysSettingsFragment;
 import com.cray.software.justreminder.fragments.CalendarSettingsFragment;
 import com.cray.software.justreminder.fragments.ExportSettingsFragment;
@@ -169,5 +171,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.addToBackStack("birth");
         transaction.commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 106:
+                new CheckBirthdaysAsync(this, true).execute();
+                break;
+        }
     }
 }
