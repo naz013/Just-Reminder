@@ -5,7 +5,7 @@
     <string name="action_settings">"Einstellungen"</string>
     <string name="drawer_active_reminder">Mahnungen</string>
     <string name="drawer_archive_reminder">Papierkorb</string>
-    <string name="copyright">"2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2015 \u00A9 Nazar Suhovych"</string>
     <string name="button_close">"Schließen"</string>
     <string name="menu_send_feedback">"Feedback senden"</string>
     <string name="menu_rate_application">"Bewerten Sie diese Anwendung"</string>
@@ -440,7 +440,7 @@
     <string name="settings_sound_and_vibratioon">Schall und Schwingungen</string>
     <string name="gesture_list_swipe">Streichen Sie nach links oder rechts, um Erinnerung zu löschen</string>
     <string name="gesture_single_tap">Tippen Sie deaktivieren / aktivieren Mahnung</string>
-    <string name="gesture_tap_a_hold">Tippen und halten, um Mahnung bearbeiten</string>
+    <string name="gesture_tap_a_hold">Tippen Sie und halten Sie für mehr Wahl</string>
     <string name="tap_to_continue">Tippen Sie auf, um fortzufahren</string>
     <string name="gesture_swipe_type">Streichen Sie nach links oder rechts, um zwischen verschiedenen Arten von Mahnung wechseln</string>
     <string name="gesture_swipe_up_down">Streichen Sie nach oben oder unten zu kollabieren / erweitern Kopf</string>
@@ -732,4 +732,10 @@
     <string name="empty_task">Leere Aufgabe!</string>
     <string name="title">Titel</string>
     <string name="no_tasks_warming">Sie haben noch keine Aufgaben hinzuzufügen!</string>
+    <string name="open">Open</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="delete">Löschen</string>
+    <string name="move_to_archive">Ab in den Müll</string>
+    <string name="message_note_shared">Hinweis erfolgreich freigegeben</string>
+    <string name="error_sharing_note">Fehler Sharing Hinweis!</string>
 </resources>

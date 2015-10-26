@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.dialogs;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,22 +29,19 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
-import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 
-public class PlacesList extends AppCompatActivity implements SwipeListener {
+public class PlacesList extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyLayout, emptyItem;
     private ColorSetter cs = new ColorSetter(PlacesList.this);
     private AddFloatingActionButton mFab;
 
-    private PlaceRecyclerAdapter adapter;
     private PlaceDataProvider provider;
 
     @Override
@@ -102,26 +101,13 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
     }
 
     private void loadPlaces(){
-        DataBase db = new DataBase(this);
-        db.open();
         provider = new PlaceDataProvider(this);
         reloadView();
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        adapter = new PlaceRecyclerAdapter(this, provider);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(this, provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        listView.setLayoutManager(new LinearLayoutManager(this));
+        listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
-        mRecyclerViewSwipeManager.attachRecyclerView(listView);
-        db.close();
         QuickReturnRecyclerViewOnScrollListener scrollListener = new
                 QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
                 .footer(mFab)
@@ -148,11 +134,9 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
             DataBase db = new DataBase(this);
             db.open();
             db.deletePlace(id);
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
-            Messages.toast(this, getString(R.string.delete_place_toast));
             db.close();
-            reloadView();
+            Messages.toast(this, getString(R.string.delete_place_toast));
+            loadPlaces();
         }
     }
 
@@ -179,22 +163,27 @@ public class PlacesList extends AppCompatActivity implements SwipeListener {
     }
 
     @Override
-    public void onSwipeToRight(int position) {
-        editPlace(position);
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        deletePlace(position);
-    }
-
-    @Override
     public void onItemClicked(int position, View view) {
         editPlace(position);
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        deletePlace(position);
+    public void onItemLongClicked(final int position, View view) {
+
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    editPlace(position);
+                }
+                if (item == 1) {
+                    deletePlace(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

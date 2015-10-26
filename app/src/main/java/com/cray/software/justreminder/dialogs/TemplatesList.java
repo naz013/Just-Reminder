@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.dialogs;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,21 +29,18 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
-import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 
-public class TemplatesList extends AppCompatActivity implements SwipeListener {
+public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyLayout, emptyItem;
     private ColorSetter cs = new ColorSetter(TemplatesList.this);
     private AddFloatingActionButton mFab;
 
-    private TemplateRecyclerAdapter adapter;
     private TemplateDataProvider provider;
 
     @Override
@@ -99,26 +98,13 @@ public class TemplatesList extends AppCompatActivity implements SwipeListener {
     }
 
     private void loadTemplates(){
-        DataBase db = new DataBase(this);
-        db.open();
         provider = new TemplateDataProvider(this);
         reloadView();
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        adapter = new TemplateRecyclerAdapter(this, provider);
+        TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(this, provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        listView.setLayoutManager(new LinearLayoutManager(this));
+        listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
-        mRecyclerViewSwipeManager.attachRecyclerView(listView);
-        db.close();
         QuickReturnRecyclerViewOnScrollListener scrollListener = new
                 QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
                 .footer(mFab)
@@ -150,9 +136,7 @@ public class TemplatesList extends AppCompatActivity implements SwipeListener {
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
         Messages.toast(this, getString(R.string.string_template_deleted));
-        provider.removeItem(position);
-        adapter.notifyItemRemoved(position);
-        reloadView();
+        loadTemplates();
     }
 
     @Override
@@ -173,22 +157,26 @@ public class TemplatesList extends AppCompatActivity implements SwipeListener {
     }
 
     @Override
-    public void onSwipeToRight(int position) {
-        editTemplate(position);
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        removeTemplate(position);
-    }
-
-    @Override
     public void onItemClicked(int position, View view) {
         editTemplate(position);
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        removeTemplate(position);
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    editTemplate(position);
+                }
+                if (item == 1) {
+                    removeTemplate(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

@@ -1,11 +1,14 @@
 package com.cray.software.justreminder.async;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.widget.Toast;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -17,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
+public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
 
     private Context mContext;
     private final SimpleDateFormat[] birthdayFormats = {
@@ -28,15 +31,35 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
             new SimpleDateFormat("yy/MM/dd", Locale.getDefault()),
     };
 
+    private boolean showDialog = false;
+    private ProgressDialog pd;
+
     public CheckBirthdaysAsync(Context context){
         this.mContext = context;
     }
 
+    public CheckBirthdaysAsync(Context context, boolean showDialog){
+        this.mContext = context;
+        this.showDialog = showDialog;
+        if (showDialog){
+            pd = new ProgressDialog(context);
+            pd.setCancelable(true);
+            pd.setMessage(context.getString(R.string.checking_new_birthdays_title));
+        }
+    }
+
     @Override
-    protected Void doInBackground(Void... params) {
+    protected void onPreExecute() {
+        super.onPreExecute();
+        if (showDialog) pd.show();
+    }
+
+    @Override
+    protected Integer doInBackground(Void... params) {
         ContentResolver cr = mContext.getContentResolver();
         DataBase db = new DataBase(mContext);
         db.open();
+        int i = 0;
         String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
 
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null,
@@ -87,6 +110,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
                                 if (!types.contains(id)) {
+                                    i = i + 1;
                                     db.addBirthday(name, id, birthday, day, month, number,
                                             SyncHelper.generateID());
                                 }
@@ -101,6 +125,28 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Void> {
         }
 
         cur.close();
-        return null;
+        return i;
+    }
+
+    @Override
+    protected void onPostExecute(Integer files) {
+        if (showDialog) {
+            try {
+                if ((pd != null) && pd.isShowing()) {
+                    pd.dismiss();
+                }
+            } catch (final Exception e) {
+                // Handle or log or ignore
+            }
+            if (files > 0) {
+                Toast.makeText(mContext,
+                        mContext.getString(R.string.found_word) + " " + files + " " + mContext.getString(R.string.birthdays_word),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext,
+                        mContext.getString(R.string.nothing_found),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

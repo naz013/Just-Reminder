@@ -42,7 +42,6 @@ import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -66,15 +65,11 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.QuickReturnListViewOnScrollListener;
-import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
-import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -652,50 +647,6 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setVisibility(View.VISIBLE);
                 }
             }
-        }
-    }
-
-    @Override
-    public void onListChange(RecyclerView list, RecyclerView.Adapter adapter) {
-        this.currentList = list;
-        setScrollListener(adapter);
-    }
-
-    @Override
-    public void onListChange(ListView list) {
-        this.currentListView = list;
-        setScrollListener(null);
-    }
-
-    private QuickReturnRecyclerViewOnScrollListener scrollListener;
-
-    private void setScrollListener(RecyclerView.Adapter adapter){
-        mPrefs = new SharedPrefs(this);
-        if (currentList != null){
-            if (!mPrefs.loadBoolean(Prefs.LIST_GRID)) {
-                boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-                scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                        .footer(isExtended ? mainMenu : mFab)
-                        .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                        .isSnappable(true)
-                        .adapter(adapter instanceof RemindersRecyclerAdapter ? (RemindersRecyclerAdapter) adapter : null)
-                        .build();
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    currentList.addOnScrollListener(scrollListener);
-                } else {
-                    currentList.setOnScrollListener(scrollListener);
-                }
-            } else currentList.removeOnScrollListener(scrollListener);
-        }
-        if (currentListView != null){
-            boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-            QuickReturnListViewOnScrollListener scrollListener = new
-                    QuickReturnListViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                    .footer(isExtended ? mainMenu : mFab)
-                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                    .isSnappable(true)
-                    .build();
-            currentListView.setOnScrollListener(scrollListener);
         }
     }
 

@@ -1,15 +1,10 @@
 package com.cray.software.justreminder.fragments;
 
-import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,15 +17,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.BirthdayImport;
-import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
@@ -40,11 +34,7 @@ import com.cray.software.justreminder.services.SetBirthdays;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
@@ -146,12 +136,13 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     }
 
     private void showTime(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = new SharedPrefs(getActivity());
         if (sPrefs.isString(Prefs.BIRTHDAY_REMINDER_HOUR)
                 && sPrefs.isString(Prefs.BIRTHDAY_REMINDER_MINUTE)){
             int myHour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
             int myMinute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, myHour);
             calendar.set(Calendar.MINUTE, myMinute);
             reminderTimeText.setText(TimeUtil.getTime(calendar.getTime(),
@@ -296,7 +287,13 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.contactsScan:
-                new checkBirthdays(getActivity()).execute();
+                if (new Permissions(getActivity()).checkPermission(Permissions.ACCESS_FINE_LOCATION)) {
+                    new CheckBirthdaysAsync(getActivity(), true).execute();
+                } else {
+                    new Permissions(getActivity())
+                            .requestPermission(getActivity(),
+                                    new String[]{Permissions.READ_CONTACTS}, 106);
+                }
                 break;
             case R.id.daysTo:
                 Dialog.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
@@ -329,128 +326,5 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     public void onDismiss(DialogInterface dialog) {
         showDays();
         showTime();
-    }
-
-    class checkBirthdays extends AsyncTask<Void, Void, Integer>{
-
-        ProgressDialog pd;
-        Context tContext;
-        DataBase db;
-        Contacts cc;
-        //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        public final SimpleDateFormat[] birthdayFormats = {
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()),
-                new SimpleDateFormat("yyyyMMdd", Locale.getDefault()),
-                new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault()),
-                new SimpleDateFormat("yy.MM.dd", Locale.getDefault()),
-                new SimpleDateFormat("yy/MM/dd", Locale.getDefault()),
-        };
-
-        public checkBirthdays(Context context){
-            this.tContext = context;
-            pd = new ProgressDialog(context);
-            pd.setCancelable(true);
-            pd.setMessage(context.getString(R.string.checking_new_birthdays_title));
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd.show();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            int i = 0;
-            ContentResolver cr = tContext.getContentResolver();
-            db = new DataBase(tContext);
-            db.open();
-            String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
-
-            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null,
-                    ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
-            while (cur.moveToNext()) {
-                String contactId = cur.getString(cur.getColumnIndex(ContactsContract.Data._ID));
-
-
-                String columns[] = {
-                        ContactsContract.CommonDataKinds.Event.START_DATE,
-                        ContactsContract.CommonDataKinds.Event.TYPE,
-                        ContactsContract.CommonDataKinds.Event.MIMETYPE,
-                        ContactsContract.PhoneLookup.DISPLAY_NAME,
-                        ContactsContract.Contacts._ID,
-                };
-
-                String where = ContactsContract.CommonDataKinds.Event.TYPE + "=" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY +
-                        " and " + ContactsContract.CommonDataKinds.Event.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE +
-                        "' and "                  + ContactsContract.Data.CONTACT_ID + " = " + contactId;
-
-                String[] selectionArgs = null;
-                String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
-                cc = new Contacts(tContext);
-                Cursor cursor = db.getBirthdays();
-                ArrayList<Integer> types = new ArrayList<>();
-                if (cursor != null && cursor.moveToFirst()){
-                    do{
-                        int tp = cursor.getInt(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-                        types.add(tp);
-                    } while (cursor.moveToNext());
-                }
-                Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, selectionArgs, sortOrder);
-                if (birthdayCur.getCount() > 0) {
-                    while (birthdayCur.moveToNext()) {
-                        Date date;
-                        String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
-                        String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
-                        int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = Contacts.getNumber(name, tContext);
-                        String email = cc.getMail(id);
-                        Calendar calendar = Calendar.getInstance();
-                        for (SimpleDateFormat f : birthdayFormats) {
-                            try {
-                                date = f.parse(birthday);
-                                if (date != null) {
-                                    calendar.setTime(date);
-                                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                    int month = calendar.get(Calendar.MONTH);
-                                    if (!types.contains(id)) {
-                                        i = i + 1;
-                                        db.addBirthday(name, id, birthday, day, month, number,
-                                                SyncHelper.generateID());
-                                    }
-                                }
-                            } catch (Exception e) {
-
-                            }
-                        }
-                    }
-                }
-                birthdayCur.close();
-            }
-
-            cur.close();
-            return i;
-        }
-
-        @Override
-        protected void onPostExecute(Integer files) {
-            try {
-                if ((pd != null) && pd.isShowing()) {
-                    pd.dismiss();
-                }
-            } catch (final Exception e) {
-                // Handle or log or ignore
-            }
-            if (files > 0){
-                Toast.makeText(tContext,
-                        tContext.getString(R.string.found_word) + " " + files + " " + tContext.getString(R.string.birthdays_word),
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(tContext,
-                        tContext.getString(R.string.nothing_found),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }

@@ -1,7 +1,9 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -26,26 +28,23 @@ import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 import java.io.File;
 
-public class GroupsFragment extends Fragment implements SwipeListener {
+public class GroupsFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyLayout;
     private AdView adView;
 
     private CategoryDataProvider provider;
-    private CategoryRecyclerAdapter adapter;
 
     private boolean onCreate = false;
 
@@ -159,19 +158,11 @@ public class GroupsFragment extends Fragment implements SwipeListener {
     private void loadCategories(){
         provider = new CategoryDataProvider(getActivity());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-        adapter = new CategoryRecyclerAdapter(getActivity(), provider);
+        CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
-        mRecyclerViewSwipeManager.attachRecyclerView(listView);
-        if (mCallbacks != null) mCallbacks.onListChange(listView, adapter);
     }
 
     private void removeGroup(int position){
@@ -188,20 +179,8 @@ public class GroupsFragment extends Fragment implements SwipeListener {
             if (s != null) s.close();
             db.close();
             if (mCallbacks != null) mCallbacks.showSnackbar(R.string.group_deleted);
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
+            loadCategories();
         }
-    }
-
-    @Override
-    public void onSwipeToRight(int position) {
-        startActivity(new Intent(getActivity(), CategoryManager.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        removeGroup(position);
     }
 
     @Override
@@ -211,9 +190,23 @@ public class GroupsFragment extends Fragment implements SwipeListener {
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        startActivity(new Intent(getActivity(), CategoryManager.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    startActivity(new Intent(getActivity(), CategoryManager.class)
+                            .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                }
+                if (item == 1) {
+                    removeGroup(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public class DeleteAsync extends AsyncTask<Void, Void, Void> {

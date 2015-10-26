@@ -20,50 +20,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/list_help">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:layout_marginTop="56dp"
-            android:id="@+id/swipeItem"
-            android:visibility="gone"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="35dp"
-                android:clickable="false"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:clickable="false"
-                    android:src="@drawable/gesture_swipe_left"/>
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:clickable="false"
-                    android:src="@drawable/gesture_swipe_right"/>
-
-                </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:clickable="false"
-                android:textColor="@color/colorWhite"
-                android:text="@string/gesture_list_swipe"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

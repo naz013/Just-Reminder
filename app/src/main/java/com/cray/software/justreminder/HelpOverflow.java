@@ -14,7 +14,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 
 public class HelpOverflow extends Activity {
 
-    private LinearLayout swipeItem, simpleTap, longTap, swipeHeader, swipeUpDown;
+    private LinearLayout simpleTap, longTap, swipeHeader, swipeUpDown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,10 +34,7 @@ public class HelpOverflow extends Activity {
             @Override
             public void onClick(View v) {
                 if (code == 1){
-                    if (swipeItem.getVisibility() == View.VISIBLE){
-                        swipeItem.setVisibility(View.GONE);
-                        simpleTap.setVisibility(View.VISIBLE);
-                    } else if (simpleTap.getVisibility() == View.VISIBLE){
+                    if (simpleTap.getVisibility() == View.VISIBLE){
                         simpleTap.setVisibility(View.GONE);
                         longTap.setVisibility(View.VISIBLE);
                     } else if (longTap.getVisibility() == View.VISIBLE){
@@ -54,7 +51,6 @@ public class HelpOverflow extends Activity {
             }
         });
 
-        swipeItem = (LinearLayout) findViewById(R.id.swipeItem);
         simpleTap = (LinearLayout) findViewById(R.id.simpleTap);
         longTap = (LinearLayout) findViewById(R.id.longTap);
         swipeHeader = (LinearLayout) findViewById(R.id.swipeHeader);
@@ -62,7 +58,7 @@ public class HelpOverflow extends Activity {
 
         if (code == 1){
             list_help.setVisibility(View.VISIBLE);
-            swipeItem.setVisibility(View.VISIBLE);
+            simpleTap.setVisibility(View.VISIBLE);
         } else if (code == 2){
             create_help.setVisibility(View.VISIBLE);
             swipeHeader.setVisibility(View.VISIBLE);

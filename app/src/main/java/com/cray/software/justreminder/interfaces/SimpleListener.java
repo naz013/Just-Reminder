@@ -19,5 +19,5 @@ import android.view.View;
  */
 public interface SimpleListener {
     void onItemClicked(int position, View view);
-    void onItemLongClicked(int position);
+    void onItemLongClicked(int position, View view);
 }

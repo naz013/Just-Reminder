@@ -1,7 +1,9 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -41,13 +43,11 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -58,7 +58,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener, SwipeListener {
+public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener, SimpleListener {
 
     public static final int LOCAL_INT = 120;
     public static final int DROPBOX_INT = 121;
@@ -314,20 +314,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void loadDropboxList(){
         provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_DROPBOX);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        filesCloudList.setLayoutManager(mLayoutManager);
-        filesCloudList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesCloudList.setAdapter(adapter);  // requires *wrapped* adapter
         filesCloudList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesCloudList);
-        mRecyclerViewSwipeManager.attachRecyclerView(filesCloudList);
     }
 
     private void deleteFile(long itemId) {
@@ -470,20 +461,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void loadGoogleList(){
         provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_GDRIVE);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        filesGoogleList.setLayoutManager(mLayoutManager);
-        filesGoogleList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesGoogleList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesGoogleList.setAdapter(adapter);  // requires *wrapped* adapter
         filesGoogleList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesGoogleList);
-        mRecyclerViewSwipeManager.attachRecyclerView(filesGoogleList);
     }
 
     private void deleteGoogleFile(long itemId) {
@@ -712,20 +694,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void loadLocalList(){
         provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_LOCAL);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
-        filesList.setLayoutManager(mLayoutManager);
-        filesList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        filesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesList.setAdapter(adapter);
         filesList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(filesList);
-        mRecyclerViewSwipeManager.attachRecyclerView(filesList);
     }
 
     private void showFilesCount() {
@@ -881,37 +854,18 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     }
 
-    @Override
-    public void onSwipeToRight(int position) {
-        startActivity(new Intent(getActivity(),
-                BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
+    private void actionDelete(int position){
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_DROPBOX)){
             deleteFile(provider.getItem(position).getId());
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
-            if (provider.getCount() == 0){
-                reloadDropbox();
-            }
+            reloadDropbox();
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_GDRIVE)){
             deleteGoogleFile(provider.getItem(position).getId());
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
-            if (provider.getCount() == 0){
-                reloadGoogle();
-            }
+            reloadGoogle();
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_LOCAL)){
             deleteLocalFile(provider.getItem(position).getId());
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
-            if (provider.getCount() == 0){
-                reloadLocal();
-            }
+            reloadLocal();
         }
     }
 
@@ -922,8 +876,23 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    startActivity(new Intent(getActivity(),
+                            BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+                }
+                if (item == 1) {
+                    actionDelete(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public class Item {

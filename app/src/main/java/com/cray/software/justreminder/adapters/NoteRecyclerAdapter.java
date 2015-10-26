@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,23 +17,17 @@ import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.SwipeListener;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAdapter;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 
-public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder>
-        implements LegacySwipeableItemAdapter<NoteRecyclerAdapter.ViewHolder> {
+public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
     private Context mContext;
     private ColorSetter cs;
     private NoteDataProvider provider;
     private SharedPrefs prefs;
     private SyncHelper syncHelper;
-    private SwipeListener mEventListener;
-    private boolean isDark;
+    private SimpleListener mEventListener;
 
     public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
         this.mContext = context;
@@ -42,79 +35,10 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         prefs = new SharedPrefs(context);
         syncHelper = new SyncHelper(context);
         cs = new ColorSetter(context);
-        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         setHasStableIds(true);
     }
 
-    @Override
-    public int onGetSwipeReactionType(ViewHolder viewHolder, int position, int x, int y) {
-        return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
-    }
-
-    @Override
-    public void onSetSwipeBackground(ViewHolder viewHolder, int position, int type) {
-        int bgRes = 0;
-        switch (type) {
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_neutral_dark;
-                else bgRes = R.drawable.bg_swipe_item_neutral;
-                break;
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_left;
-                else bgRes = R.drawable.bg_swipe_item_left_dark;
-                break;
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_right;
-                else bgRes = R.drawable.bg_swipe_item_right_dark;
-                break;
-        }
-
-        viewHolder.itemView.setBackgroundResource(bgRes);
-    }
-
-    @Override
-    public int onSwipeItem(ViewHolder holder, int position, int result) {
-        switch (result) {
-            // swipe right
-            case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                if (provider.getItem(position).isPinnedToSwipeLeft()) {
-                    // pinned --- back to default position
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-                } else {
-                    // not pinned --- remove
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                }
-                // swipe left -- pin
-            case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION;
-            // other --- do nothing
-            case RecyclerViewSwipeManager.RESULT_CANCELED:
-            default:
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-        }
-    }
-
-    @Override
-    public void onPerformAfterSwipeReaction(ViewHolder holder, int position, int result, int reaction) {
-        Log.d(Constants.LOG_TAG,
-                "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
-
-        final Note item = provider.getItem(position);
-
-        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-            if (mEventListener != null) {
-                mEventListener.onSwipeToRight(position);
-            }
-        } else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
-            if (mEventListener != null) {
-                mEventListener.onSwipeToLeft(position);
-            }
-        } else {
-            if (item != null) item.setPinnedToSwipeLeft(false);
-        }
-    }
-
-    public static class ViewHolder extends AbstractSwipeableItemViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView;
         ViewGroup container;
@@ -127,11 +51,6 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             container = (ViewGroup) v.findViewById(R.id.container);
             noteBackground = (LinearLayout) v.findViewById(R.id.noteBackground);
             noteImage = (ImageView) v.findViewById(R.id.noteImage);
-        }
-
-        @Override
-        public View getSwipeableContainerView() {
-            return container;
         }
     }
 
@@ -179,28 +98,10 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         holder.container.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (mEventListener != null) mEventListener.onItemLongClicked(position);
+                if (mEventListener != null) mEventListener.onItemLongClicked(position, holder.noteImage);
                 return true;
             }
         });
-
-        final int swipeState = holder.getSwipeStateFlags();
-
-        if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
-            int bgResId;
-
-            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
-                bgResId = R.drawable.bg_swipe_item_left;
-            } else {
-                bgResId = R.color.colorWhite;
-            }
-
-            holder.container.setBackgroundResource(bgResId);
-        }
-
-        // set swiping properties
-        holder.setSwipeItemSlideAmount(
-                item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
     }
 
     @Override
@@ -218,11 +119,11 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         return provider.getData().size();
     }
 
-    public SwipeListener getEventListener() {
+    public SimpleListener getEventListener() {
         return mEventListener;
     }
 
-    public void setEventListener(SwipeListener eventListener) {
+    public void setEventListener(SimpleListener eventListener) {
         mEventListener = eventListener;
     }
 }

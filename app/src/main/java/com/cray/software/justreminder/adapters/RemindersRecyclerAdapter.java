@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,28 +30,22 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.LegacySwipeableItemAdapter;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractSwipeableItemViewHolder;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements LegacySwipeableItemAdapter<RecyclerView.ViewHolder> {
+public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private TimeCount mCount;
     private ColorSetter cs;
-    private List<ReminderItem> provider;
+    private ReminderDataProvider provider;
     private RecyclerListener mEventListener;
     private boolean isDark;
     private boolean is24;
     private boolean isGrid;
-    private boolean isScrolling;
 
-    public RemindersRecyclerAdapter(Context context, List<ReminderItem> provider) {
+    public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
         SharedPrefs prefs = new SharedPrefs(context);
@@ -64,75 +57,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         setHasStableIds(true);
     }
 
-    @Override
-    public int onGetSwipeReactionType(RecyclerView.ViewHolder viewHolder, int position, int x, int y) {
-        return RecyclerViewSwipeManager.REACTION_CAN_SWIPE_BOTH_H;
-    }
-
-    @Override
-    public void onSetSwipeBackground(RecyclerView.ViewHolder viewHolder, int position, int type) {
-        int bgRes = 0;
-        switch (type) {
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_NEUTRAL_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_neutral_dark;
-                else bgRes = R.drawable.bg_swipe_item_neutral;
-                break;
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_LEFT_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_left;
-                else bgRes = R.drawable.bg_swipe_item_left_dark;
-                break;
-            case RecyclerViewSwipeManager.DRAWABLE_SWIPE_RIGHT_BACKGROUND:
-                if (isDark) bgRes = R.drawable.bg_swipe_item_right;
-                else bgRes = R.drawable.bg_swipe_item_right_dark;
-                break;
-        }
-
-        viewHolder.itemView.setBackgroundResource(bgRes);
-    }
-
-    @Override
-    public int onSwipeItem(RecyclerView.ViewHolder holder, int position, int result) {
-        switch (result) {
-            // swipe right
-            case RecyclerViewSwipeManager.RESULT_SWIPED_RIGHT:
-                if (provider.get(position).isPinnedToSwipeLeft()) {
-                    // pinned --- back to default position
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-                } else {
-                    // not pinned --- remove
-                    return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM;
-                }
-                // swipe left -- pin
-            case RecyclerViewSwipeManager.RESULT_SWIPED_LEFT:
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION;
-            // other --- do nothing
-            case RecyclerViewSwipeManager.RESULT_CANCELED:
-            default:
-                return RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_DEFAULT;
-        }
-    }
-
-    @Override
-    public void onPerformAfterSwipeReaction(RecyclerView.ViewHolder holder, int position, int result, int reaction) {
-        Log.d(Constants.LOG_TAG,
-                "onPerformAfterSwipeReaction(position = " + position + ", result = " + result + ", reaction = " + reaction + ")");
-
-        final ReminderItem item = provider.get(position);
-
-        if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_REMOVE_ITEM) {
-            if (mEventListener != null) {
-                mEventListener.onSwipeToRight(position);
-            }
-        } else if (reaction == RecyclerViewSwipeManager.AFTER_SWIPE_REACTION_MOVE_TO_SWIPED_DIRECTION) {
-            if (mEventListener != null) {
-                mEventListener.onSwipeToLeft(position);
-            }
-        } else {
-            if (item != null) item.setPinnedToSwipeLeft(false);
-        }
-    }
-
-    public static class ViewHolder1 extends AbstractSwipeableItemViewHolder {
+    public static class ViewHolder1 extends RecyclerView.ViewHolder {
 
         private final TextView taskTitle;
         private final ViewGroup container;
@@ -152,14 +77,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             taskTitle.setText("");
         }
-
-        @Override
-        public View getSwipeableContainerView() {
-            return container;
-        }
     }
 
-    public static class ViewHolder extends AbstractSwipeableItemViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
@@ -194,11 +114,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             taskTitle.setText("");
         }
-
-        @Override
-        public View getSwipeableContainerView() {
-            return container;
-        }
     }
 
     @Override
@@ -223,7 +138,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        final ReminderItem item = provider.get(position);
+        final ReminderItem item = provider.getItem(position);
 
         if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
             final ViewHolder viewHolder = (ViewHolder) holder;
@@ -251,12 +166,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             viewHolder.repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
                     R.drawable.round_view_black);
-
-            if (isDone == 1) {
-                viewHolder.check.setChecked(false);
-            } else {
-                viewHolder.check.setChecked(true);
-            }
 
             viewHolder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
             viewHolder.taskTitle.setText(title);
@@ -385,6 +294,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             if (isDone == 1) {
                 viewHolder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
                 viewHolder.leftTime.setVisibility(View.GONE);
+                viewHolder.check.setChecked(false);
+            } else {
+                viewHolder.check.setChecked(true);
             }
 
             if (archived > 0) {
@@ -396,7 +308,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (mEventListener != null && !isScrolling) mEventListener.onItemSwitched(position, viewHolder.check);
+                    if (mEventListener != null) mEventListener.onItemSwitched(position, viewHolder.check);
                     else compoundButton.setChecked(!b);
                 }
             });
@@ -404,35 +316,18 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mEventListener != null && !isScrolling) mEventListener.onItemClicked(position, viewHolder.check);
+                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
                 }
             });
 
             viewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mEventListener != null && !isScrolling) mEventListener.onItemLongClicked(position);
+                    if (mEventListener != null)
+                        mEventListener.onItemLongClicked(position, viewHolder.check);
                     return true;
                 }
             });
-
-            final int swipeState = viewHolder.getSwipeStateFlags();
-
-            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
-                int bgResId;
-
-                if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
-                    bgResId = R.drawable.bg_swipe_item_left;
-                } else {
-                    bgResId = R.color.colorWhite;
-                }
-
-                viewHolder.container.setBackgroundResource(bgResId);
-            }
-
-            // set swiping properties
-            viewHolder.setSwipeItemSlideAmount(
-                    item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
         } else {
             final ViewHolder1 viewHolder1 = (ViewHolder1) holder;
             viewHolder1.background.setBackgroundResource(cs.getCardDrawableStyle());
@@ -469,54 +364,27 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mEventListener != null) mEventListener.onItemLongClicked(position);
+                    if (mEventListener != null)
+                        mEventListener.onItemLongClicked(position, viewHolder1.subBackground);
                     return true;
                 }
             });
-
-            final int swipeState = viewHolder1.getSwipeStateFlags();
-
-            if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_IS_UPDATED) != 0) {
-                int bgResId;
-
-                if ((swipeState & RecyclerViewSwipeManager.STATE_FLAG_SWIPING) != 0) {
-                    bgResId = R.drawable.bg_swipe_item_left;
-                } else {
-                    bgResId = R.color.colorWhite;
-                }
-
-                viewHolder1.container.setBackgroundResource(bgResId);
-            }
-
-            // set swiping properties
-            viewHolder1.setSwipeItemSlideAmount(
-                    item.isPinnedToSwipeLeft() ? RecyclerViewSwipeManager.OUTSIDE_OF_THE_WINDOW_LEFT : 0);
         }
-    }
-
-    public void setScrolled(boolean scrolled){
-        isScrolling = scrolled;
-    }
-
-    public void removeItem(ReminderItem item){
-        int position = provider.indexOf(item);
-        provider.remove(position);
-        notifyItemRemoved(position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return provider.get(position).getViewType();
+        return provider.getItem(position).getViewType();
     }
 
     @Override
     public long getItemId(int position) {
-        return provider.get(position).getId();
+        return provider.getItem(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.size();
+        return provider.getCount();
     }
 
     public RecyclerListener getEventListener() {

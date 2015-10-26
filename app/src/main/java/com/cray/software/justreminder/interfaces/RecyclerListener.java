@@ -17,6 +17,6 @@ import android.support.v7.widget.SwitchCompat;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public interface RecyclerListener extends SwipeListener{
+public interface RecyclerListener extends SimpleListener{
     void onItemSwitched(int position, SwitchCompat switchCompat);
 }

@@ -355,7 +355,6 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             }
             adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
-            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else if (id.matches(GTasksHelper.TASKS_ALL)){
             ArrayList<Task> mData = new ArrayList<>();
@@ -378,7 +377,6 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
             }
             adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
-            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         } else {
             ArrayList<Task> mData = new ArrayList<>();
@@ -402,7 +400,6 @@ public class TasksFragment extends Fragment implements View.OnTouchListener {
 
             adapter = new TasksRecyclerAdapter(activity, mData, null);
             mList.setAdapter(adapter);
-            if (mCallbacks != null) mCallbacks.onListChange(mList);
             if (c != null) c.close();
         }
         if (i != 0) {

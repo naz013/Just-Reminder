@@ -30,29 +30,26 @@ import com.cray.software.justreminder.async.SyncNotes;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.Note;
 import com.cray.software.justreminder.datas.NoteDataProvider;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.interfaces.SwipeListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
-public class NotesFragment extends Fragment implements SyncListener, SimpleListener, SwipeListener {
+public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
     private NotesBase db;
     private SharedPrefs sPrefs;
     private RecyclerView currentList;
     private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
-    private NoteRecyclerAdapter adapter;
     private NoteDataProvider provider;
 
     private boolean onCreate = false;
@@ -249,22 +246,12 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void loaderAdapter(){
         provider = new NoteDataProvider(getActivity());
         reloadView();
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        adapter = new NoteRecyclerAdapter(getActivity(), provider);
+        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        currentList.setAdapter(adapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
-        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        if (mCallbacks != null) mCallbacks.onListChange(currentList, adapter);
     }
 
     private void reloadView() {
@@ -318,6 +305,22 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (c != null) c.close();
     }
 
+    private void previewNote(long id, View view){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(getActivity(), NotePreviewFragment.class);
+            intent.putExtra(Constants.EDIT_ID, id);
+            String transitionName = "image";
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view,
+                            transitionName);
+            getActivity().startActivity(intent, options.toBundle());
+        } else {
+            getActivity().startActivity(
+                    new Intent(getActivity(), NotePreviewFragment.class)
+                            .putExtra(Constants.EDIT_ID, id));
+        }
+    }
+
     @Override
     public void endExecution(boolean result) {
         if (result) {
@@ -331,19 +334,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         long id = provider.getItem(position).getId();
         sPrefs = new SharedPrefs(getActivity());
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Intent intent = new Intent(getActivity(), NotePreviewFragment.class);
-                intent.putExtra(Constants.EDIT_ID, id);
-                String transitionName = "image";
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view,
-                                transitionName);
-                getActivity().startActivity(intent, options.toBundle());
-            } else {
-                getActivity().startActivity(
-                        new Intent(getActivity(), NotePreviewFragment.class)
-                                .putExtra(Constants.EDIT_ID, id));
-            }
+            previewNote(id, view);
         } else {
             getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
                     .putExtra(Constants.EDIT_ID, id));
@@ -351,22 +342,37 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
-                .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
-    }
-
-    @Override
-    public void onSwipeToRight(int position) {
-        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
-                .putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        long id = provider.getItem(position).getId();
-        Note.deleteNote(id, getActivity(), mCallbacks);
-        provider.removeItem(position);
-        adapter.notifyItemRemoved(position);
+    public void onItemLongClicked(final int position, final View view) {
+        final CharSequence[] items = {getString(R.string.open), getString(R.string.share_note_title), getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                long id = provider.getItem(position).getId();
+                switch (item){
+                    case 0:
+                        previewNote(id, view);
+                        break;
+                    case 1:
+                        if (Note.shareNote(id, getActivity())){
+                            Messages.toast(getActivity(), R.string.message_note_shared);
+                        } else {
+                            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.error_sharing_note);
+                            else Messages.toast(getActivity(), R.string.error_sharing_note);
+                        }
+                        break;
+                    case 2:
+                        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                                .putExtra(Constants.EDIT_ID, id));
+                        break;
+                    case 3:
+                        Note.deleteNote(id, getActivity(), mCallbacks);
+                        loaderAdapter();
+                        break;
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

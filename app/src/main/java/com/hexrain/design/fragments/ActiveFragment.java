@@ -42,14 +42,11 @@ import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ActiveFragment extends Fragment implements RecyclerListener{
 
@@ -59,11 +56,11 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
 
     private DataBase DB;
     private SharedPrefs sPrefs;
-    private RemindersRecyclerAdapter adapter;
-    private List<ReminderItem> data;
+    private ReminderDataProvider provider;
 
     private boolean onCreate = false;
     private boolean enableGrid = false;
+    private ArrayList<String> ids;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -233,36 +230,26 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     public void loaderAdapter(String categoryId){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        ReminderDataProvider provider = new ReminderDataProvider(getActivity());
+        provider = new ReminderDataProvider(getActivity());
         if (categoryId != null) {
             provider.setCursor(DB.queryGroup(categoryId));
         } else {
             provider.setCursor(DB.queryGroup());
         }
-        data = new ArrayList<>();
-        data = provider.getData();
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-        adapter = new RemindersRecyclerAdapter(getActivity(), data);
+        RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         currentList.setHasFixedSize(true);
         currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
-        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        if (mCallbacks != null) mCallbacks.onListChange(currentList, adapter);
+        currentList.setAdapter(adapter);
     }
 
     private void reloadView() {
-        int size = data.size();
+        int size = provider.getCount();
         if (size > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -271,8 +258,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
             emptyItem.setVisibility(View.VISIBLE);
         }
     }
-
-    private ArrayList<String> ids;
 
     private void filterDialog(){
         ids = new ArrayList<>();
@@ -342,47 +327,34 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         new SyncTask(getActivity(), null).execute();
     }
 
-    @Override
-    public void onSwipeToRight(int position) {
-        Reminder.edit(data.get(position).getId(), getActivity());
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        ReminderItem item = data.get(position);
-        Reminder.moveToTrash(item.getId(), getActivity(), mCallbacks);
-        adapter.removeItem(item);
-        reloadView();
+    private void previewReminder(View view, long id){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
+            intent.putExtra(Constants.EDIT_ID, id);
+            String transitionName = "switch";
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            getActivity(), view, transitionName);
+            getActivity().startActivity(intent, options.toBundle());
+        } else {
+            getActivity().startActivity(
+                    new Intent(getActivity(), ReminderPreviewFragment.class)
+                            .putExtra(Constants.EDIT_ID, id));
+        }
     }
 
     @Override
     public void onItemSwitched(int position, SwitchCompat switchCompat) {
-        if (Reminder.toggle(data.get(position).getId(), getActivity(), mCallbacks)) {
-            //switchCompat.setChecked(true);
-            loaderAdapter(null);
-        } else {
-            loaderAdapter(null);
-        }
+        Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
+        loaderAdapter(null);
     }
 
     @Override
     public void onItemClicked(int position, View view) {
         sPrefs = new SharedPrefs(getActivity());
-        ReminderItem item = data.get(position);
+        ReminderItem item = provider.getItem(position);
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
-                intent.putExtra(Constants.EDIT_ID, item.getId());
-                String transitionName = "switch";
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                getActivity(), view, transitionName);
-                getActivity().startActivity(intent, options.toBundle());
-            } else {
-                getActivity().startActivity(
-                        new Intent(getActivity(), ReminderPreviewFragment.class)
-                                .putExtra(Constants.EDIT_ID, item.getId()));
-            }
+            previewReminder(view, item.getId());
         } else {
             if (Reminder.toggle(item.getId(), getActivity(), mCallbacks)){
                 loaderAdapter(null);
@@ -391,7 +363,26 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        Reminder.edit(data.get(position).getId(), getActivity());
+    public void onItemLongClicked(final int position, final View view) {
+        final CharSequence[] items = {getString(R.string.open), getString(R.string.edit), getString(R.string.move_to_archive)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                ReminderItem item1 = provider.getItem(position);
+                if (item == 0){
+                    previewReminder(view, item1.getId());
+                }
+                if (item == 1){
+                    Reminder.edit(item1.getId(), getActivity());
+                }
+                if (item == 2){
+                    Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
+                    loaderAdapter(null);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

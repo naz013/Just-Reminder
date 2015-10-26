@@ -1,6 +1,8 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,13 +36,8 @@ import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
@@ -49,8 +46,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     private AdView adView;
 
     private DataBase DB;
-    private RemindersRecyclerAdapter adapter;
-    private List<ReminderItem> data;
+    private ReminderDataProvider provider;
 
     private boolean onCreate = false;
     private boolean enableGrid = false;
@@ -209,30 +205,21 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     public void loaderAdapter(){
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
-        ReminderDataProvider provider = new ReminderDataProvider(getActivity());
+        provider = new ReminderDataProvider(getActivity());
         provider.setCursor(DB.getArchivedReminders());
-        data = provider.getData();
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
 
-        adapter = new RemindersRecyclerAdapter(getActivity(), data);
+        RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        currentList.setAdapter(adapter);  // requires *wrapped* adapter
         currentList.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(currentList);
-        mRecyclerViewSwipeManager.attachRecyclerView(currentList);
-        if (mCallbacks != null) mCallbacks.onListChange(currentList, adapter);
     }
 
     private void reloadView() {
-        int size = data.size();
+        int size = provider.getCount();
         if (size > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -258,27 +245,30 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     }
 
     @Override
-    public void onSwipeToRight(int position) {
-        Reminder.edit(data.get(position).getId(), getActivity());
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        ReminderItem item = data.get(position);
-        Reminder.delete(item.getId(), getActivity());
-        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_deleted);
-        adapter.removeItem(item);
-        reloadView();
-    }
-
-    @Override
     public void onItemClicked(int position, View view) {
-        Reminder.edit(data.get(position).getId(), getActivity());
+        Reminder.edit(provider.getItem(position).getId(), getActivity());
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        Reminder.edit(data.get(position).getId(), getActivity());
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                ReminderItem item1 = provider.getItem(position);
+                if (item == 0) {
+                    Reminder.edit(item1.getId(), getActivity());
+                }
+                if (item == 1) {
+                    Reminder.delete(item1.getId(), getActivity());
+                    if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_deleted);
+                    loaderAdapter();
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

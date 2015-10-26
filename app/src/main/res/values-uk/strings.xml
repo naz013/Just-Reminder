@@ -5,7 +5,7 @@
     <string name="action_settings">"Налаштування"</string>
     <string name="drawer_active_reminder">Нагадування</string>
     <string name="drawer_archive_reminder">Кошик</string>
-    <string name="copyright">"2015 \u00A9 Nazar Suhovich"</string>
+    <string name="copyright">"2015 \u00A9 Nazar Suhovych"</string>
     <string name="button_close">"Закрити"</string>
     <string name="menu_send_feedback">"Надіслати відгук"</string>
     <string name="menu_rate_application">"Оцінити додаток"</string>
@@ -440,7 +440,7 @@
     <string name="settings_sound_and_vibratioon">Звук і вібрація</string>
     <string name="gesture_list_swipe">Потягніть вліво або вправо, щоб видалити нагадування</string>
     <string name="gesture_single_tap">Натисніть, щоб увімкнути/вимкнути нагадування</string>
-    <string name="gesture_tap_a_hold">Натисніть і потримайте, щоб редагувати нагадування</string>
+    <string name="gesture_tap_a_hold">Натисніть і потримайте, щоб відкрити додаткове меню</string>
     <string name="gesture_swipe_type">Потягніть вліво або вправо, щоб переключатися між типами нагадувань</string>
     <string name="gesture_swipe_up_down">Потягніть вгору або вниз, щоб згорнути/розгорнути заголовок</string>
     <string name="tap_to_continue">Натисніть, щоб продовжити</string>
@@ -732,4 +732,10 @@
     <string name="empty_task">Порожнє завдання!</string>
     <string name="title">Заголовок</string>
     <string name="no_tasks_warming">Ви не додали жодного завдання!</string>
+    <string name="open">Open</string>
+    <string name="edit">Редагувати</string>
+    <string name="delete">Видалити</string>
+    <string name="move_to_archive">Перемістити до смітника</string>
+    <string name="message_note_shared">Нотатку успішно надіслано</string>
+    <string name="error_sharing_note">Помилка надсилання нотатки!</string>
 </resources>

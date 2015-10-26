@@ -1,6 +1,8 @@
 package com.hexrain.design.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,23 +26,20 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.SwipeListener;
+import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.h6ah4i.android.widget.advrecyclerview.swipeable.RecyclerViewSwipeManager;
-import com.h6ah4i.android.widget.advrecyclerview.touchguard.RecyclerViewTouchActionGuardManager;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
-public class PlacesFragment extends Fragment implements SwipeListener {
+public class PlacesFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyLayout, emptyItem;
     private AdView adView;
 
-    private PlaceRecyclerAdapter adapter;
     private PlaceDataProvider provider;
 
     private boolean onCreate = false;
@@ -169,22 +168,12 @@ public class PlacesFragment extends Fragment implements SwipeListener {
     private void loadPlaces(){
         provider = new PlaceDataProvider(getActivity());
         reloadView();
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        RecyclerViewTouchActionGuardManager mRecyclerViewTouchActionGuardManager = new RecyclerViewTouchActionGuardManager();
-        mRecyclerViewTouchActionGuardManager.setInterceptVerticalScrollingWhileAnimationRunning(true);
-        mRecyclerViewTouchActionGuardManager.setEnabled(true);
-        RecyclerViewSwipeManager mRecyclerViewSwipeManager = new RecyclerViewSwipeManager();
-
-        adapter = new PlaceRecyclerAdapter(getActivity(), provider);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        RecyclerView.Adapter mWrappedAdapter = mRecyclerViewSwipeManager.createWrappedAdapter(adapter);
         listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(mWrappedAdapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerViewTouchActionGuardManager.attachRecyclerView(listView);
-        mRecyclerViewSwipeManager.attachRecyclerView(listView);
-        if (mCallbacks != null) mCallbacks.onListChange(listView, adapter);
     }
 
     private void reloadView() {
@@ -204,27 +193,15 @@ public class PlacesFragment extends Fragment implements SwipeListener {
             DataBase db = new DataBase(getActivity());
             db.open();
             db.deletePlace(id);
-            provider.removeItem(position);
-            adapter.notifyItemRemoved(position);
-            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.delete_place_toast);
             db.close();
-            reloadView();
+            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.delete_place_toast);
+            loadPlaces();
         }
     }
 
     private void editPlace(int position){
         startActivity(new Intent(getActivity(), NewPlace.class)
-            .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
-    }
-
-    @Override
-    public void onSwipeToRight(int position) {
-        editPlace(position);
-    }
-
-    @Override
-    public void onSwipeToLeft(int position) {
-        deletePlace(position);
+                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
     @Override
@@ -233,7 +210,21 @@ public class PlacesFragment extends Fragment implements SwipeListener {
     }
 
     @Override
-    public void onItemLongClicked(int position) {
-        deletePlace(position);
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    editPlace(position);
+                }
+                if (item == 1) {
+                    deletePlace(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
