@@ -3,7 +3,6 @@ package com.hexrain.design.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -298,11 +297,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
             }
             mFab.setColorNormal(cSetter.getNoteDarkColor(color));
-            try {
-                mFab.setColorPressed(getResources().getColor(color));
-            } catch (Exception e){
-                mFab.setColorPressed(cSetter.getNoteColor(color));
-            }
+            mFab.setColorPressed(cSetter.getNoteColor(color));
             RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
             paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreviewFragment.this, 36)), 0, 0);
@@ -315,11 +310,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 params.height = QuickReturnUtils.dp2px(this, 256);
                 imageView.setLayoutParams(params);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                try {
-                    toolbar.setBackgroundColor(getResources().getColor(color));
-                } catch (Resources.NotFoundException e){
-                    toolbar.setBackgroundColor(color);
-                }
+                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
                 toolbar.getBackground().setAlpha(0);
             } else {
                 imageView.setBackgroundColor(cSetter.getNoteLightColor(color));
@@ -328,11 +319,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 imageView.setLayoutParams(params);
                 imageView.setVisibility(View.INVISIBLE);
                 paramsR.addRule(RelativeLayout.BELOW, R.id.noteText);
-                try {
-                    toolbar.setBackgroundColor(getResources().getColor(color));
-                } catch (Resources.NotFoundException e){
-                    toolbar.setBackgroundColor(color);
-                }
+                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
                 toolbar.getBackground().setAlpha(255);
             }
 

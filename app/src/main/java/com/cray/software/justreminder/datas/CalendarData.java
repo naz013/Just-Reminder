@@ -4,25 +4,32 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class CalendarData implements Parcelable {
-    private String type, name, number, time, dayDate;
-    private long id, date;
-
-    public CalendarData(String type, String name, String number, long id, long date){
-        this.type = type;
-        this.name = name;
-        this.id = id;
-        this.date = date;
-        this.number = number;
+    public enum ViewType {
+        REMINDER,
+        SHOPPING
     }
 
+    private String type, name, number, time, dayDate;
+    private long id, date;
+    private ViewType viewType;
+
     public CalendarData(String name, String number, long id, String time,
-                        String dayDate, long date){
+                        String dayDate, long date, ViewType viewType){
         this.time = time;
+        this.viewType = viewType;
         this.dayDate = dayDate;
         this.name = name;
         this.id = id;
         this.number = number;
         this.date = date;
+    }
+
+    public ViewType getViewType() {
+        return viewType;
+    }
+
+    public void setViewType(ViewType viewType) {
+        this.viewType = viewType;
     }
 
     public String getDayDate(){

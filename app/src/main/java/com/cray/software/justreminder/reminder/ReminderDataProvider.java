@@ -245,6 +245,39 @@ public class ReminderDataProvider {
         }
     }
 
+    public static ReminderItem getItem(Context mContext, long id){
+        ReminderItem item = null;
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Map<String, Integer> map = new HashMap<>();
+        Cursor cf = db.queryCategories();
+        if (cf != null && cf.moveToFirst()){
+            do {
+                String uuid = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                int color = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
+                map.put(uuid, color);
+            } while (cf.moveToNext());
+        }
+        if (cf != null) cf.close();
+        Cursor s = db.getReminder(id);
+        if (s != null && s.moveToNext()){
+            String title = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
+            String categoryId = s.getString(s.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String uuID = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
+            int archived = s.getInt(s.getColumnIndex(Constants.COLUMN_ARCHIVED));
+
+            int viewType = VIEW_SHOPPING_LIST;
+
+            int catColor = 0;
+            if (map.containsKey(categoryId)) catColor = map.get(categoryId);
+
+            item = new ReminderItem(title, null, null, catColor, uuID, isDone, 0, id, null, null,
+                    archived, viewType);
+        }
+        return item;
+    }
+
     public void sort(){
         SharedPrefs prefs = new SharedPrefs(mContext);
         String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);

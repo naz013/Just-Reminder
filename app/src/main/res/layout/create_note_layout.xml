@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:id="@+id/windowBackground"
     android:layout_height="match_parent"
-    tools:context=".ReminderManager">
+    tools:context=".NotesManager">
 
     <include layout="@layout/toolbar_note"
         android:id="@+id/toolbar"/>

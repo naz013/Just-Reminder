@@ -1224,81 +1224,6 @@ public class ColorSetter {
     }
 
     /**
-     * Get note primary color by code.
-     * @param code color code.
-     * @return Color resource
-     */
-    public int getNoteColor(int code){
-        int color;
-        if (Module.isPro()){
-            if (code == 0) {
-                color = R.color.colorRed;
-            } else if (code == 1) {
-                color = R.color.colorViolet;
-            } else if (code == 2) {
-                color = R.color.colorGreen;
-            } else if (code == 3) {
-                color = R.color.colorLightCreen;
-            } else if (code == 4) {
-                color = R.color.colorBlue;
-            } else if (code == 5) {
-                color = R.color.colorLightBlue;
-            } else if (code == 6) {
-                color = R.color.colorYellow;
-            } else if (code == 7) {
-                color = R.color.colorOrange;
-            } else if (code == 8) {
-                color = R.color.colorGrey;
-            } else if (code == 9) {
-                color = R.color.colorPink;
-            } else if (code == 10) {
-                color = R.color.colorSand;
-            } else if (code == 11) {
-                color = R.color.colorBrown;
-            } else if (code == 12) {
-                color = R.color.colorDeepPurple;
-            } else if (code == 13) {
-                color = R.color.colorDeepOrange;
-            } else if (code == 14) {
-                color = R.color.colorLime;
-            } else if (code == 15) {
-                color = R.color.colorIndigo;
-            } else {
-                color = R.color.colorGrey;
-            }
-        } else {
-            if (code == 0) {
-                color = R.color.colorRed;
-            } else if (code == 1) {
-                color = R.color.colorViolet;
-            } else if (code == 2) {
-                color = R.color.colorGreen;
-            } else if (code == 3) {
-                color = R.color.colorLightCreen;
-            } else if (code == 4) {
-                color = R.color.colorBlue;
-            } else if (code == 5) {
-                color = R.color.colorLightBlue;
-            } else if (code == 6) {
-                color = R.color.colorYellow;
-            } else if (code == 7) {
-                color = R.color.colorOrange;
-            } else if (code == 8) {
-                color = R.color.colorGrey;
-            } else if (code == 9) {
-                color = R.color.colorPink;
-            } else if (code == 10) {
-                color = R.color.colorSand;
-            } else if (code == 11) {
-                color = R.color.colorBrown;
-            } else {
-                color = R.color.colorGrey;
-            }
-        }
-        return color;
-    }
-
-    /**
      * Get reminder group indicator by code.
      * @param code indicator code.
      * @return Drawable resource
@@ -1437,152 +1362,209 @@ public class ColorSetter {
     }
 
     /**
-     * Get note dark color by primary color.
-     * @param primary primary color.
-     * @return Color
+     * Get note primary color by code.
+     * @param code color code.
+     * @return Color resource
      */
-    public int getNoteDarkColor(int primary){
+    public int getNoteColor(int code){
         int color;
-        if (Module.isPro()){
-            if (primary == R.color.colorRed) {
-                color = getColor(R.color.colorRedDark);
-            } else if (primary == R.color.colorViolet) {
-                color = getColor(R.color.colorVioletDark);
-            } else if (primary == R.color.colorGreen) {
-                color = getColor(R.color.colorGreenDark);
-            } else if (primary == R.color.colorLightCreen) {
-                color = getColor(R.color.colorLightCreenDark);
-            } else if (primary == R.color.colorBlue) {
-                color = getColor(R.color.colorBlueDark);
-            } else if (primary == R.color.colorLightBlue) {
-                color = getColor(R.color.colorLightBlueDark);
-            } else if (primary == R.color.colorYellow) {
-                color = getColor(R.color.colorYellowDark);
-            } else if (primary == R.color.colorOrange) {
-                color = getColor(R.color.colorOrangeDark);
-            } else if (primary == R.color.colorGrey) {
-                color = getColor(R.color.colorGreyDark);
-            } else if (primary == R.color.colorPink) {
-                color = getColor(R.color.colorPinkDark);
-            } else if (primary == R.color.colorSand) {
-                color = getColor(R.color.colorSandDark);
-            } else if (primary == R.color.colorBrown) {
-                color = getColor(R.color.colorBrownDark);
-            } else if (primary == R.color.colorDeepPurple) {
-                color = getColor(R.color.colorDeepPurpleDark);
-            } else if (primary == R.color.colorDeepOrange) {
-                color = getColor(R.color.colorDeepOrangeDark);
-            } else if (primary == R.color.colorLime) {
-                color = getColor(R.color.colorLimeDark);
-            } else if (primary == R.color.colorIndigo) {
-                color = getColor(R.color.colorIndigoDark);
-            } else {
-                color = getColor(R.color.colorGreyDark);
-            }
-        } else {
-            if (primary == R.color.colorRed) {
-                color = getColor(R.color.colorRedDark);
-            } else if (primary == R.color.colorViolet) {
-                color = getColor(R.color.colorVioletDark);
-            } else if (primary == R.color.colorGreen) {
-                color = getColor(R.color.colorGreenDark);
-            } else if (primary == R.color.colorLightCreen) {
-                color = getColor(R.color.colorLightCreenDark);
-            } else if (primary == R.color.colorBlue) {
-                color = getColor(R.color.colorBlueDark);
-            } else if (primary == R.color.colorLightBlue) {
-                color = getColor(R.color.colorLightBlueDark);
-            } else if (primary == R.color.colorYellow) {
-                color = getColor(R.color.colorYellowDark);
-            } else if (primary == R.color.colorOrange) {
-                color = getColor(R.color.colorOrangeDark);
-            } else if (primary == R.color.colorGrey) {
-                color = getColor(R.color.colorGreyDark);
-            } else if (primary == R.color.colorPink) {
-                color = getColor(R.color.colorPinkDark);
-            } else if (primary == R.color.colorSand) {
-                color = getColor(R.color.colorSandDark);
-            } else if (primary == R.color.colorBrown) {
-                color = getColor(R.color.colorBrownDark);
-            } else {
-                color = getColor(R.color.colorGreyDark);
-            }
+        switch (code){
+            case 0:
+                color = R.color.colorRed;
+                break;
+            case 1:
+                color = R.color.colorViolet;
+                break;
+            case 2:
+                color = R.color.colorGreen;
+                break;
+            case 3:
+                color = R.color.colorLightCreen;
+                break;
+            case 4:
+                color = R.color.colorBlue;
+                break;
+            case 5:
+                color = R.color.colorLightBlue;
+                break;
+            case 6:
+                color = R.color.colorYellow;
+                break;
+            case 7:
+                color = R.color.colorOrange;
+                break;
+            case 8:
+                color = R.color.colorGrey;
+                break;
+            case 9:
+                color = R.color.colorPink;
+                break;
+            case 10:
+                color = R.color.colorSand;
+                break;
+            case 11:
+                color = R.color.colorBrown;
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code){
+                        case 12:
+                            color = R.color.colorDeepPurple;
+                            break;
+                        case 13:
+                            color = R.color.colorDeepOrange;
+                            break;
+                        case 14:
+                            color = R.color.colorLime;
+                            break;
+                        case 15:
+                            color = R.color.colorIndigo;
+                            break;
+                        default:
+                            color = R.color.colorBlue;
+                            break;
+                    }
+                } else color = R.color.colorBlue;
+                break;
         }
-        return color;
+        return getColor(color);
     }
 
     /**
-     * Get note light color by primary color.
-     * @param primary primary color.
+     * Get note dark color by color code.
+     * @param code color code.
      * @return Color
      */
-    public int getNoteLightColor(int primary){
+    public int getNoteDarkColor(int code){
         int color;
-        if (Module.isPro()){
-            if (primary == R.color.colorRed) {
-                color = getColor(R.color.colorRedLight);
-            } else if (primary == R.color.colorViolet) {
-                color = getColor(R.color.colorVioletLight);
-            } else if (primary == R.color.colorGreen) {
-                color = getColor(R.color.colorGreenLight);
-            } else if (primary == R.color.colorLightCreen) {
-                color = getColor(R.color.colorLightCreenLight);
-            } else if (primary == R.color.colorBlue) {
-                color = getColor(R.color.colorBlueLight);
-            } else if (primary == R.color.colorLightBlue) {
-                color = getColor(R.color.colorLightBlueLight);
-            } else if (primary == R.color.colorYellow) {
-                color = getColor(R.color.colorYellowLight);
-            } else if (primary == R.color.colorOrange) {
-                color = getColor(R.color.colorOrangeLight);
-            } else if (primary == R.color.colorGrey) {
-                color = getColor(R.color.colorGreyLight);
-            } else if (primary == R.color.colorPink) {
-                color = getColor(R.color.colorPinkLight);
-            } else if (primary == R.color.colorSand) {
-                color = getColor(R.color.colorSandLight);
-            } else if (primary == R.color.colorBrown) {
-                color = getColor(R.color.colorBrownLight);
-            } else if (primary == R.color.colorDeepPurple) {
-                color = getColor(R.color.colorDeepPurpleLight);
-            } else if (primary == R.color.colorDeepOrange) {
-                color = getColor(R.color.colorDeepOrangeLight);
-            } else if (primary == R.color.colorLime) {
-                color = getColor(R.color.colorLimeLight);
-            } else if (primary == R.color.colorIndigo) {
-                color = getColor(R.color.colorIndigoLight);
-            } else {
-                color = getColor(R.color.colorGreyLight);
-            }
-        } else {
-            if (primary == R.color.colorRed) {
-                color = getColor(R.color.colorRedLight);
-            } else if (primary == R.color.colorViolet) {
-                color = getColor(R.color.colorVioletLight);
-            } else if (primary == R.color.colorGreen) {
-                color = getColor(R.color.colorGreenLight);
-            } else if (primary == R.color.colorLightCreen) {
-                color = getColor(R.color.colorLightCreenLight);
-            } else if (primary == R.color.colorBlue) {
-                color = getColor(R.color.colorBlueLight);
-            } else if (primary == R.color.colorLightBlue) {
-                color = getColor(R.color.colorLightBlueLight);
-            } else if (primary == R.color.colorYellow) {
-                color = getColor(R.color.colorYellowLight);
-            } else if (primary == R.color.colorOrange) {
-                color = getColor(R.color.colorOrangeLight);
-            } else if (primary == R.color.colorGrey) {
-                color = getColor(R.color.colorGreyLight);
-            } else if (primary == R.color.colorPink) {
-                color = getColor(R.color.colorPinkLight);
-            } else if (primary == R.color.colorSand) {
-                color = getColor(R.color.colorSandLight);
-            } else if (primary == R.color.colorBrown) {
-                color = getColor(R.color.colorBrownLight);
-            } else {
-                color = getColor(R.color.colorGreyLight);
-            }
+        switch (code){
+            case 0:
+                color = R.color.colorRedDark;
+                break;
+            case 1:
+                color = R.color.colorVioletDark;
+                break;
+            case 2:
+                color = R.color.colorGreenDark;
+                break;
+            case 3:
+                color = R.color.colorLightCreenDark;
+                break;
+            case 4:
+                color = R.color.colorBlueDark;
+                break;
+            case 5:
+                color = R.color.colorLightBlueDark;
+                break;
+            case 6:
+                color = R.color.colorYellowDark;
+                break;
+            case 7:
+                color = R.color.colorOrangeDark;
+                break;
+            case 8:
+                color = R.color.colorGreyDark;
+                break;
+            case 9:
+                color = R.color.colorPinkDark;
+                break;
+            case 10:
+                color = R.color.colorSandDark;
+                break;
+            case 11:
+                color = R.color.colorBrownDark;
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code){
+                        case 12:
+                            color = R.color.colorDeepPurpleDark;
+                            break;
+                        case 13:
+                            color = R.color.colorDeepOrangeDark;
+                            break;
+                        case 14:
+                            color = R.color.colorLimeDark;
+                            break;
+                        case 15:
+                            color = R.color.colorIndigoDark;
+                            break;
+                        default:
+                            color = R.color.colorBlueDark;
+                            break;
+                    }
+                } else color = R.color.colorBlueDark;
+                break;
         }
-        return color;
+        return getColor(color);
+    }
+
+    /**
+     * Get note light color by color code.
+     * @param code color code.
+     * @return Color
+     */
+    public int getNoteLightColor(int code){
+        int color;
+        switch (code){
+            case 0:
+                color = R.color.colorRedLight;
+                break;
+            case 1:
+                color = R.color.colorVioletLight;
+                break;
+            case 2:
+                color = R.color.colorGreenLight;
+                break;
+            case 3:
+                color = R.color.colorLightCreenLight;
+                break;
+            case 4:
+                color = R.color.colorBlueLight;
+                break;
+            case 5:
+                color = R.color.colorLightBlueLight;
+                break;
+            case 6:
+                color = R.color.colorYellowLight;
+                break;
+            case 7:
+                color = R.color.colorOrangeLight;
+                break;
+            case 8:
+                color = R.color.colorGreyLight;
+                break;
+            case 9:
+                color = R.color.colorPinkLight;
+                break;
+            case 10:
+                color = R.color.colorSandLight;
+                break;
+            case 11:
+                color = R.color.colorBrownLight;
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code){
+                        case 12:
+                            color = R.color.colorDeepPurpleLight;
+                            break;
+                        case 13:
+                            color = R.color.colorDeepOrangeLight;
+                            break;
+                        case 14:
+                            color = R.color.colorLimeLight;
+                            break;
+                        case 15:
+                            color = R.color.colorIndigoLight;
+                            break;
+                        default:
+                            color = R.color.colorBlueLight;
+                            break;
+                    }
+                } else color = R.color.colorBlueLight;
+                break;
+        }
+        return getColor(color);
     }
 }

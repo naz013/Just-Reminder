@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,12 +65,17 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         final ShoppingList item = provider.getItem(position);
         String title = item.getTitle();
 
-        holder.itemCheck.setChecked(item.isChecked());
+        boolean isChecked = item.isChecked();
+        if (isChecked){
+            holder.textView.setPaintFlags(holder.textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            holder.textView.setPaintFlags(holder.textView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+        }
+        holder.itemCheck.setChecked(isChecked);
         holder.textView.setText(title);
 
         if (listener == null){
             holder.clearButton.setVisibility(View.GONE);
-            //holder.itemCheck.setVisibility(View.GONE);
             holder.itemCheck.setEnabled(false);
             holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
         } else {
@@ -109,7 +115,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return provider.getCount();
     }
 
     public ShoppingListDataProvider getProvider(){

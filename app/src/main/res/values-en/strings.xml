@@ -732,7 +732,7 @@
     <string name="empty_task">Empty task!</string>
     <string name="title">Title</string>
     <string name="no_tasks_warming">You don\'t add any tasks!</string>
-    <string name="open">Open</string>
+    <string name="open">Preview</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="move_to_archive">Move to trash</string>

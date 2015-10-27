@@ -469,7 +469,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
                 spinner.setSelection(9);
             } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                //spinner.setSelection(10);
+                spinner.setSelection(10);
             } else {
                 spinner.setSelection(0);
             }
@@ -712,7 +712,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_white_24dp));
-            //navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_white_24dp));
         } else {
             navSpinner.add(new SpinnerItem(getString(R.string.by_date_title), R.drawable.ic_event_grey600_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_grey600_24dp));
@@ -724,7 +724,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_grey600_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_grey600_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_grey600_24dp));
-            //navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_grey600_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_grey600_24dp));
         }
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
@@ -807,7 +807,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (spinner.getSelectedItemPosition() == 7 && type.startsWith(Constants.TYPE_APPLICATION)) is = true;
         if (spinner.getSelectedItemPosition() == 8 && type.startsWith(Constants.TYPE_MONTHDAY)) is = true;
         if (spinner.getSelectedItemPosition() == 9 && type.startsWith(Constants.TYPE_LOCATION_OUT)) is = true;
-        //if (spinner.getSelectedItemPosition() == 10 && type.matches(Constants.TYPE_SHOPPING_LIST)) is = true;
+        if (spinner.getSelectedItemPosition() == 10 && type.matches(Constants.TYPE_SHOPPING_LIST)) is = true;
         return is;
     }
 
@@ -2812,8 +2812,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 attachLocationOutAction.setChecked(false);
             }
 
-            Log.d(Constants.LOG_TAG, "lat " + latitude + ", long " + longitude);
-
             taskField.setText(text);
             LatLng pos = new LatLng(latitude, longitude);
             if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
@@ -2852,7 +2850,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
 
                 int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
-                shoppingAdapter.notifyItemInserted(position);
+                shoppingAdapter.notifyDataSetChanged();
                 shopEdit.setText("");
             }
         });
@@ -2861,18 +2859,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
-                shoppingLists.getItem(position).setIsChecked(isChecked);
-                try {
-                    shoppingAdapter.notifyDataSetChanged();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                }
+                ShoppingList item = shoppingLists.getItem(position);
+                if (item.isChecked()) item.setIsChecked(false);
+                else item.setIsChecked(true);
+                shoppingAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onItemDelete(int position) {
                 shoppingLists.removeItem(position);
-                shoppingAdapter.notifyItemRemoved(position);
+                shoppingAdapter.notifyDataSetChanged();
             }
         });
         todoList.setLayoutManager(new LinearLayoutManager(this));
@@ -2885,18 +2881,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
                     @Override
                     public void onItemCheck(int position, boolean isChecked) {
-                        shoppingLists.getItem(position).setIsChecked(isChecked);
-                        try {
-                            shoppingAdapter.notifyDataSetChanged();
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                        }
+                        ShoppingList item = shoppingLists.getItem(position);
+                        if (item.isChecked()) item.setIsChecked(false);
+                        else item.setIsChecked(true);
+                        shoppingAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onItemDelete(int position) {
                         shoppingLists.removeItem(position);
-                        shoppingAdapter.notifyItemRemoved(position);
+                        shoppingAdapter.notifyDataSetChanged();
                     }
                 });
                 todoList.setAdapter(shoppingAdapter);
@@ -3025,14 +3019,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (id != 0){
             remControl.save(id, item);
             if (remControl instanceof ShoppingType){
-                Log.d(Constants.LOG_TAG, "Array size " + shoppingLists.getCount());
                 ((ShoppingType) remControl).saveShopList(id, shoppingLists.getData(), shoppingLists.getRemovedItems());
             }
         } else {
             long remId = remControl.save(item);
             if (remControl instanceof ShoppingType){
-                Log.d(Constants.LOG_TAG, "Array size " + shoppingLists.getCount());
-                ((ShoppingType) remControl).saveShopList(id, shoppingLists.getData(), null);
+                ((ShoppingType) remControl).saveShopList(remId, shoppingLists.getData(), null);
             }
         }
         finish();
@@ -4255,6 +4247,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
         }
+        if (isShoppingAttached()){
+            menu.getItem(0).setVisible(false);
+        }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
             menu.getItem(2).setVisible(true);
@@ -4269,6 +4264,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
+        }
+        if (isShoppingAttached()){
+            menu.getItem(0).setVisible(false);
         }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){

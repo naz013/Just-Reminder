@@ -25,6 +25,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -54,22 +56,27 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
+import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.datas.Category;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.ShoppingList;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.reminder.ShoppingType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.MonthDayReceiver;
@@ -273,6 +280,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     attachApplication();
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                     attachMonthDay();
+                }  else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+                    attachShoppingList();
                 } else {
                     Messages.toast(BackupFileEdit.this, getString(R.string.file_error_message));
                     finish();
@@ -319,6 +328,83 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
             Messages.toast(BackupFileEdit.this, getString(R.string.recognizer_not_found_error_message));
+        }
+    }
+
+    private EditText shopEdit;
+    private TaskListRecyclerAdapter shoppingAdapter;
+    private ShoppingListDataProvider shoppingLists;
+
+    private void attachShoppingList(){
+        taskField.setHint(R.string.title);
+
+        RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
+        ViewUtils.fadeInAnimation(shoppingLayout, isAnimation);
+
+        RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
+        RelativeLayout cardContainer = (RelativeLayout) findViewById(R.id.cardContainer);
+        cardContainer.setBackgroundResource(cSetter.getCardDrawableStyle());
+        shopEdit = (EditText) findViewById(R.id.shopEdit);
+        ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String task = shopEdit.getText().toString().trim();
+                if (task.matches("")) {
+                    shopEdit.setError(getString(R.string.empty_task));
+                    return;
+                }
+
+                int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
+                shoppingAdapter.notifyDataSetChanged();
+                shopEdit.setText("");
+            }
+        });
+
+        shoppingLists = new ShoppingListDataProvider(this);
+        shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
+            @Override
+            public void onItemCheck(int position, boolean isChecked) {
+                ShoppingList item = shoppingLists.getItem(position);
+                if (item.isChecked()) item.setIsChecked(false);
+                else item.setIsChecked(true);
+                shoppingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onItemDelete(int position) {
+                shoppingLists.removeItem(position);
+                shoppingAdapter.notifyDataSetChanged();
+            }
+        });
+        todoList.setLayoutManager(new LinearLayoutManager(this));
+        todoList.setAdapter(shoppingAdapter);
+        if (id != 0){
+            fdb.open();
+            Cursor c = fdb.getFile(id);
+            String text = "", fileLoc = null;
+            if (c != null && c.moveToFirst()) {
+                text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                fileLoc = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_LOCATION));
+            }
+            shoppingLists = new ShoppingListDataProvider(SyncHelper.getList(fileLoc));
+            shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
+                @Override
+                public void onItemCheck(int position, boolean isChecked) {
+                    ShoppingList item = shoppingLists.getItem(position);
+                    if (item.isChecked()) item.setIsChecked(false);
+                    else item.setIsChecked(true);
+                    shoppingAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemDelete(int position) {
+                    shoppingLists.removeItem(position);
+                    shoppingAdapter.notifyDataSetChanged();
+                }
+            });
+            todoList.setAdapter(shoppingAdapter);
+            taskField.setText(text);
         }
     }
 
@@ -2020,6 +2106,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    private boolean isShoppingAttached(){
+        RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
+        return shoppingLayout.getVisibility() == View.VISIBLE;
+    }
+
     private boolean isDateReminderAttached(){
         by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         return by_date_layout.getVisibility() == View.VISIBLE;
@@ -2071,26 +2162,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     private void clearForm(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        call_layout.setVisibility(View.GONE);
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        weekday_layout.setVisibility(View.GONE);
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        by_date_layout.setVisibility(View.GONE);
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        after_time_layout.setVisibility(View.GONE);
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        geolocationlayout.setVisibility(View.GONE);
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        message_layout.setVisibility(View.GONE);
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        skype_layout.setVisibility(View.GONE);
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        application_layout.setVisibility(View.GONE);
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        monthDayLayout.setVisibility(View.GONE);
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        locationOutLayout.setVisibility(View.GONE);
+        findViewById(R.id.call_layout).setVisibility(View.GONE);
+        findViewById(R.id.weekday_layout).setVisibility(View.GONE);
+        findViewById(R.id.by_date_layout).setVisibility(View.GONE);
+        findViewById(R.id.after_time_layout).setVisibility(View.GONE);
+        findViewById(R.id.geolocationlayout).setVisibility(View.GONE);
+        findViewById(R.id.message_layout).setVisibility(View.GONE);
+        findViewById(R.id.skype_layout).setVisibility(View.GONE);
+        findViewById(R.id.application_layout).setVisibility(View.GONE);
+        findViewById(R.id.monthDayLayout).setVisibility(View.GONE);
+        findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
     }
 
@@ -2228,11 +2309,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.widget_menu, menu);
@@ -2280,6 +2356,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 saveDateTask();
             } else if (isTimeReminderAttached()) {
                 saveTimeTask();
+            } else if (isShoppingAttached()) {
+                saveShoppingTask();
             } else if (isCallAttached()){
                 if (!checkNumber()) {
                     saveCallTask();
@@ -2326,6 +2404,35 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
+    }
+
+    private void saveShoppingTask() {
+        if (shoppingLists.getCount() == 0){
+            Messages.toast(BackupFileEdit.this, getString(R.string.no_tasks_warming));
+            return;
+        }
+        String task = taskField.getText().toString().trim();
+        String type = Constants.TYPE_SHOPPING_LIST;
+        String number = null;
+        DB = new DataBase(BackupFileEdit.this);
+        DB.open();
+        if (isUID(uuID)){
+            Messages.toast(BackupFileEdit.this, getString(R.string.same_uuid_error));
+            return;
+        }
+        if (categoryId == null) {
+            Cursor cf = DB.queryCategories();
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) cf.close();
+        }
+        long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, null,
+                0, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId);
+        DB.close();
+        new ShoppingType(this).saveShopList(ids, shoppingLists.getData(), null);
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        finish();
     }
 
     private String getWeekTaskType(){

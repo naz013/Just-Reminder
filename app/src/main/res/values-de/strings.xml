@@ -732,7 +732,7 @@
     <string name="empty_task">Leere Aufgabe!</string>
     <string name="title">Titel</string>
     <string name="no_tasks_warming">Sie haben noch keine Aufgaben hinzuzufügen!</string>
-    <string name="open">Open</string>
+    <string name="open">Vorschau</string>
     <string name="edit">Bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="move_to_archive">Ab in den Müll</string>

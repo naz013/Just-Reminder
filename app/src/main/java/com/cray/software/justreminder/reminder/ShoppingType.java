@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ShoppingList;
@@ -45,18 +44,16 @@ public class ShoppingType extends Type {
         db.open();
         for (ShoppingList item : newList){
             if (item.getId() != 0){
-                db.updateShopItem(item.getId(), item.getTitle(), item.getDateTime());
+                db.updateShopItem(item.getId(), item.getTitle(), item.getDateTime(), item.isChecked() ? 1 : 0);
             } else {
                 db.addShopItem(item.getTitle(), item.getDateTime(), item.getUuId(), remId);
             }
-            Log.d(Constants.LOG_TAG, "Saved with rem id " + remId);
         }
         if (removedList != null) {
             for (ShoppingList list : removedList) {
                 if (list.getId() != 0) {
                     db.deleteShopItem(list.getId());
                 }
-                Log.d(Constants.LOG_TAG, "Removed item id " + list.getId());
             }
         }
         db.close();

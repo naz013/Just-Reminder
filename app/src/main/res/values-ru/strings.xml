@@ -732,7 +732,7 @@
     <string name="empty_task">Пустое задание!</string>
     <string name="title">Заголовок</string>
     <string name="no_tasks_warming">Вы не добавили ни одного задания!</string>
-    <string name="open">Open</string>
+    <string name="open">Предварительный просмотр</string>
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="move_to_archive">Переместить в корзину</string>

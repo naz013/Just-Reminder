@@ -1242,12 +1242,31 @@ public class DataBase {
         return db.insert(SHOPPING_TABLE_NAME, null, cv);
     }
 
-    public boolean updateShopItem(long rowId, String task, long dateTime){
+    public long addShopItem (String task, long dateTime, String uuID, long remId, int checked) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(Constants.COLUMN_TEXT, task);
+        cv.put(Constants.COLUMN_DATE_TIME, dateTime);
+        cv.put(Constants.COLUMN_TECH_VAR, uuID);
+        cv.put(Constants.COLUMN_REMINDER_ID, remId);
+        cv.put(Constants.COLUMN_ARCHIVED, checked);
+        //Log.d(LOG_TAG, "data is inserted " + cv);
+        return db.insert(SHOPPING_TABLE_NAME, null, cv);
+    }
+
+    public boolean updateShopItem(long rowId, String task, long dateTime, int checked){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, task);
         args.put(Constants.COLUMN_DATE_TIME, dateTime);
-        args.put(Constants.COLUMN_ARCHIVED, 0);
+        args.put(Constants.COLUMN_ARCHIVED, checked);
+        return db.update(SHOPPING_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateShopItem(long rowId, int checked){
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_ARCHIVED, checked);
         return db.update(SHOPPING_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

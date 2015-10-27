@@ -8,6 +8,8 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -495,48 +497,48 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_reminder_widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/add_reminder_widget_metadata"></meta-data>
+                android:resource="@xml/add_reminder_widget_metadata"/>
         </receiver>
         <receiver
             android:name=".widgets.VoiceWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/voice_widget_title">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/voice_widget_metadata"></meta-data>
+                android:resource="@xml/voice_widget_metadata"/>
         </receiver>
         <receiver
             android:name=".widgets.AddBirthdayWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_birthday_widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/add_birthday_widget_metadata"></meta-data>
+                android:resource="@xml/add_birthday_widget_metadata"/>
         </receiver>
         <receiver
             android:name=".widgets.QuickReminderWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/quick_reminder_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/quick_reminder_widget_metadata"></meta-data>
+                android:resource="@xml/quick_reminder_widget_metadata"/>
         </receiver>
 
         <activity
@@ -601,52 +603,52 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/current_widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="justreminder.LOCATION_CHANGED" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/current_widget_metadata"></meta-data>
+                android:resource="@xml/current_widget_metadata"/>
         </receiver>
 
         <service
             android:name=".widgets.CurrentTaskService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <receiver
             android:name=".widgets.CurrentNotesWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/notes_widget_title">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/note_widget_metadata"></meta-data>
+                android:resource="@xml/note_widget_metadata"/>
         </receiver>
 
         <service
             android:name=".widgets.CurrentNotesService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <receiver
             android:name=".widgets.TasksWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/tasks_widget_title">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/tasks_widget_metadata"></meta-data>
+                android:resource="@xml/tasks_widget_metadata"/>
         </receiver>
 
         <service
             android:name=".widgets.TasksService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <activity
             android:name=".widgets.CalendarWidgetConfig"
@@ -662,20 +664,20 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/calendar_widget_name">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"></action>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/calendar_widget_metadata"></meta-data>
+                android:resource="@xml/calendar_widget_metadata"/>
         </receiver>
 
         <service
             android:name=".widgets.CalendarWeekdayService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
         <service
             android:name=".widgets.CalendarMonthService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <receiver android:name=".services.CallReceiver">
             <intent-filter>
@@ -717,14 +719,12 @@
         </activity>
 
         <service
-            android:name=".services.WearService"
-            android:enabled="true"
-            android:exported="true"></service>
+            android:name=".services.WearService"/>
 
         <activity
             android:name=".dialogs.ImagePreview"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/HomeWhiteFullscreen"></activity>
+            android:theme="@style/HomeWhiteFullscreen"/>
         <activity
             android:name="com.hexrain.design.ScreenManager"
             android:configChanges="keyboardHidden|orientation|keyboard"
@@ -735,12 +735,13 @@
         </activity>
         <activity
             android:name="com.hexrain.design.TestActivity"
-            android:label="@string/title_activity_test"
-            android:theme="@style/HomeWhite.Blue"></activity>
+            android:theme="@style/HomeWhite.Blue"/>
         <activity
             android:name="com.hexrain.design.MainActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/HomeWhite.Blue"></activity>
+            android:theme="@style/HomeWhite.Blue"/>
+        <activity
+            android:name="com.hexrain.design.fragments.ShoppingListPreview"
+            android:theme="@style/HomeWhite.Blue"/>
     </application>
 
 </manifest>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hexrain.design.fragments.ShoppingListPreview">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/windowBackground">
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_height="72dp"
+                android:id="@+id/shopTitle"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:textColor="@color/colorWhite"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:padding="15dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/todoList"
+            android:layout_width="match_parent"
+            android:overScrollMode="never"
+            android:visibility="visible"
+            android:layout_marginTop="15dp"
+            android:divider="@android:color/transparent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:focusable="false"
+            android:choiceMode="singleChoice"
+            android:fastScrollEnabled="true"/>
+
+    </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

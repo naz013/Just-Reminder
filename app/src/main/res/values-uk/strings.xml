@@ -732,7 +732,7 @@
     <string name="empty_task">Порожнє завдання!</string>
     <string name="title">Заголовок</string>
     <string name="no_tasks_warming">Ви не додали жодного завдання!</string>
-    <string name="open">Open</string>
+    <string name="open">Попередній перегляд</string>
     <string name="edit">Редагувати</string>
     <string name="delete">Видалити</string>
     <string name="move_to_archive">Перемістити до смітника</string>

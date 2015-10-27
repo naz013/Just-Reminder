@@ -230,7 +230,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         int ids = item.getItemId();
 
         if (ids == R.id.action_delete) {
-            Reminder.delete(id, ReminderPreviewFragment.this);
+            Reminder.moveToTrash(id, ReminderPreviewFragment.this, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else finish();
@@ -618,14 +618,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     Cursor c = new TasksData(mContext).getTasksList(reminderNote.getTaskListId());
                     if (c != null && c.moveToFirst()){
                         listColor.setBackgroundColor(
-                                mContext.getResources().getColor(
-                                        new ColorSetter(mContext)
-                                                .getNoteColor(c.getInt(
-                                                        c.getColumnIndex(TasksConstants.COLUMN_COLOR)))));
+                                new ColorSetter(mContext)
+                                        .getNoteColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR))));
                     } else {
-                        listColor.setBackgroundColor(
-                                mContext.getResources().getColor(
-                                        new ColorSetter(mContext).getNoteColor(8)));
+                        listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(8));
                     }
                     if (mNote != null && !mNote.matches("")) taskNote.setText(mNote);
                     else taskNote.setVisibility(View.GONE);

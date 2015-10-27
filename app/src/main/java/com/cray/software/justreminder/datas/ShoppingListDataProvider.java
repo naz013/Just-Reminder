@@ -28,23 +28,22 @@ public class ShoppingListDataProvider {
         load();
     }
 
-    public ShoppingListDataProvider(ShoppingListDataProvider provider){
-        data = new ArrayList<>();
-        data.addAll(provider.getData());
+    public ShoppingListDataProvider(ArrayList<ShoppingList> data){
+        this.data = new ArrayList<>();
+        this.data.addAll(data);
     }
 
     public ArrayList<ShoppingList> getRemovedItems(){
         long start = System.currentTimeMillis();
         ArrayList<ShoppingList> lists = new ArrayList<>();
+        Log.d(Constants.LOG_TAG, "Saved size " + data.size());
         for (ShoppingList item : initList){
-            boolean present = false;
-            for (ShoppingList shop : data){
-                if (item.getId() == shop.getId()) present = true;
+            long id = item.getId();
+            if (id != 0) {
+                lists.add(item);
             }
-            if (!present) lists.add(item);
         }
-        Log.d(Constants.LOG_TAG, "Calculate time " + (System.currentTimeMillis() - start));
-        Log.d(Constants.LOG_TAG, "List size " + lists.size());
+        Log.d(Constants.LOG_TAG, "Remove size " + lists.size());
         return lists;
     }
 
@@ -87,6 +86,7 @@ public class ShoppingListDataProvider {
                 ShoppingList item1 = data.get(i);
                 if (item.getUuId().matches(item1.getUuId())) {
                     data.remove(i);
+                    initList.add(item1);
                     res = i;
                     break;
                 }
@@ -96,6 +96,7 @@ public class ShoppingListDataProvider {
     }
 
     public void removeItem(int position){
+        initList.add(data.get(position));
         mLastRemovedData = data.remove(position);
         mLastRemovedPosition = position;
     }
@@ -157,11 +158,9 @@ public class ShoppingListDataProvider {
                 String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 int checked = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
                 data.add(new ShoppingList(id, title, checked == 1, uuId, remId));
-                Log.d(Constants.LOG_TAG, "Loaded item " + title + ", id " + id);
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         db.close();
-        initList = data;
     }
 }

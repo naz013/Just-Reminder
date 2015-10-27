@@ -25,5 +25,5 @@ public class Configs {
     /**
      * Number of reminders used in application.
      */
-    public static final int NUMBER_OF_REMINDERS = 9;
+    public static final int NUMBER_OF_REMINDERS = 10;
 }

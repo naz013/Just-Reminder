@@ -39,7 +39,6 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
         TextView textView;
         ViewGroup container;
         LinearLayout noteBackground;

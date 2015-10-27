@@ -1,5 +1,8 @@
 package com.cray.software.justreminder.datas;
 
+import android.content.Context;
+
+import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
 
 /**
@@ -38,6 +41,20 @@ public class ShoppingList {
         this.isChecked = isChecked;
         this.remId = remId;
         this.id = id;
+    }
+
+    public static void switchItem(Context context, long id, boolean checked){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateShopItem(id, checked ? 1 : 0);
+        db.close();
+    }
+
+    public static void removeItem(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.deleteShopItem(id);
+        db.close();
     }
 
     public long getId() {

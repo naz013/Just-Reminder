@@ -69,7 +69,6 @@ import java.util.Random;
 
 
 public class NotesManager extends AppCompatActivity {
-
     private int myHour = 0;
     private int myMinute = 0;
     private int myYear = 0;
@@ -169,8 +168,7 @@ public class NotesManager extends AppCompatActivity {
 
         layoutContainer = (RelativeLayout) findViewById(R.id.layoutContainer);
         imageContainer = (RelativeLayout) findViewById(R.id.imageContainer);
-        int rand = new Random().nextInt(15+1);
-        color = cSetter.getNoteColor(rand);
+        color = new Random().nextInt(15 + 1);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
         if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
             ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Prefs.ANIMATIONS));
@@ -397,11 +395,7 @@ public class NotesManager extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
         }
-        try {
-            mFab.setColorNormal(getResources().getColor(color));
-        } catch (Exception e){
-            mFab.setColorNormal(cSetter.getNoteColor(color));
-        }
+        mFab.setColorNormal(cSetter.getNoteColor(color));
         mFab.setColorPressed(cSetter.getNoteDarkColor(color));
     }
 
@@ -649,14 +643,13 @@ public class NotesManager extends AppCompatActivity {
                     }
                     break;
                 case Constants.REQUEST_CODE_THEME:
-                    int requestColor = data.getIntExtra(Constants.SELECTED_COLOR, 12);
-                    color = cSetter.getNoteColor(requestColor);
+                    color = data.getIntExtra(Constants.SELECTED_COLOR, 12);
                     layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
                     toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
                     }
-                    mFab.setColorNormal(getResources().getColor(color));
+                    mFab.setColorNormal(cSetter.getNoteColor(color));
                     mFab.setColorPressed(cSetter.getNoteDarkColor(color));
                     break;
                 case Constants.REQUEST_CODE_FONT_STYLE:

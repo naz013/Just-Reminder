@@ -3,12 +3,13 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.support.v7.widget.LinearLayoutManager;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -27,7 +29,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -58,16 +59,15 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public static class ViewHolder1 extends RecyclerView.ViewHolder {
-
         private final TextView taskTitle;
         private final ViewGroup container;
         private final RelativeLayout background;
-        private final RecyclerView todoList;
+        private final LinearLayout todoList;
         private final LinearLayout subBackground, titleContainer;
 
         public ViewHolder1(View v) {
             super(v);
-            todoList = (RecyclerView) v.findViewById(R.id.todoList);
+            todoList = (LinearLayout) v.findViewById(R.id.todoList);
             todoList.setVisibility(View.VISIBLE);
             background = (RelativeLayout) v.findViewById(R.id.background);
             subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
@@ -344,15 +344,38 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.todoList.setFocusable(false);
 
             ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId());
-            int size = provider.getCount();
-            if (size > 8) size = 8;
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewHolder1.todoList.getLayoutParams();
-            params.height = QuickReturnUtils.dp2px(mContext, size * 35);
-            viewHolder1.todoList.setLayoutParams(params);
-
-            TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(mContext, provider, null);
-            viewHolder1.todoList.setLayoutManager(new LinearLayoutManager(mContext));
-            viewHolder1.todoList.setAdapter(shoppingAdapter);
+            int count = 0;
+            for (ShoppingList list : provider.getData()){
+                View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_card, null, false);
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.itemCheck);
+                TextView textView = (TextView) view.findViewById(R.id.shopText);
+                checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mEventListener != null)
+                            mEventListener.onItemClicked(position, viewHolder1.subBackground);
+                    }
+                });
+                textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
+                if (list.isChecked()) {
+                    checkBox.setChecked(true);
+                    textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    checkBox.setChecked(false);
+                    textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+                count++;
+                if (count == 9) {
+                    checkBox.setVisibility(View.INVISIBLE);
+                    textView.setText("...");
+                    viewHolder1.todoList.addView(view);
+                    break;
+                } else {
+                    checkBox.setVisibility(View.VISIBLE);
+                    textView.setText(list.getTitle());
+                    viewHolder1.todoList.addView(view);
+                }
+            }
 
             viewHolder1.container.setOnClickListener(new View.OnClickListener() {
                 @Override

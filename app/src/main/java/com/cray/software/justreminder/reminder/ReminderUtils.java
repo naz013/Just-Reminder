@@ -217,6 +217,8 @@ public class ReminderUtils {
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
             String init = context.getString(R.string.reminder_type_open_link);
             res = init + " (" + getType(context, type) + ")";
+        } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
+            res = context.getString(R.string.shopping_list);
         } else {
             String init = context.getString(R.string.reminder_type);
             res = init + " (" + getType(context, type) + ")";

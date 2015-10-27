@@ -36,6 +36,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
+import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -48,7 +49,7 @@ import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
 
-public class ActiveFragment extends Fragment implements RecyclerListener{
+public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener {
 
     private RecyclerView currentList;
     private LinearLayout emptyLayout, emptyItem;
@@ -324,22 +325,33 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
     }
 
     private void startSync(){
-        new SyncTask(getActivity(), null).execute();
+        new SyncTask(getActivity(), this).execute();
     }
 
-    private void previewReminder(View view, long id){
+    private void previewReminder(View view, long id, String type){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "switch";
+            if (type.matches(Constants.TYPE_SHOPPING_LIST)){
+                intent = new Intent(getActivity(), ShoppingListPreview.class);
+                intent.putExtra(Constants.EDIT_ID, id);
+                transitionName = "toolbar";
+            }
             ActivityOptionsCompat options =
                     ActivityOptionsCompat.makeSceneTransitionAnimation(
                             getActivity(), view, transitionName);
             getActivity().startActivity(intent, options.toBundle());
         } else {
-            getActivity().startActivity(
-                    new Intent(getActivity(), ReminderPreviewFragment.class)
-                            .putExtra(Constants.EDIT_ID, id));
+            if (type.matches(Constants.TYPE_SHOPPING_LIST)){
+                getActivity().startActivity(
+                        new Intent(getActivity(), ShoppingListPreview.class)
+                                .putExtra(Constants.EDIT_ID, id));
+            } else {
+                getActivity().startActivity(
+                        new Intent(getActivity(), ReminderPreviewFragment.class)
+                                .putExtra(Constants.EDIT_ID, id));
+            }
         }
     }
 
@@ -354,7 +366,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         sPrefs = new SharedPrefs(getActivity());
         ReminderItem item = provider.getItem(position);
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
-            previewReminder(view, item.getId());
+            previewReminder(view, item.getId(), item.getType());
         } else {
             if (Reminder.toggle(item.getId(), getActivity(), mCallbacks)){
                 loaderAdapter(null);
@@ -371,7 +383,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
                 dialog.dismiss();
                 ReminderItem item1 = provider.getItem(position);
                 if (item == 0){
-                    previewReminder(view, item1.getId());
+                    previewReminder(view, item1.getId(), item1.getType());
                 }
                 if (item == 1){
                     Reminder.edit(item1.getId(), getActivity());
@@ -384,5 +396,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener{
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void endExecution(boolean result) {
+        loaderAdapter(null);
     }
 }
