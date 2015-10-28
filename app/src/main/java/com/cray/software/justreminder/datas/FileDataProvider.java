@@ -17,9 +17,9 @@ import java.util.Date;
 import java.util.List;
 
 public class FileDataProvider {
-    private List<FileItem> data;
+    private List<FileModel> data;
     private Context mContext;
-    private FileItem mLastRemovedData;
+    private FileModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
     private String where;
 
@@ -34,7 +34,7 @@ public class FileDataProvider {
         return where;
     }
 
-    public List<FileItem> getData(){
+    public List<FileModel> getData(){
         return data;
     }
 
@@ -42,11 +42,11 @@ public class FileDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(FileItem item){
+    public int getPosition(FileModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                FileItem item1 = data.get(i);
+                FileModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -56,11 +56,11 @@ public class FileDataProvider {
         return res;
     }
 
-    public int removeItem(FileItem item){
+    public int removeItem(FileModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                FileItem item1 = data.get(i);
+                FileModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -85,7 +85,7 @@ public class FileDataProvider {
             return;
         }
 
-        final FileItem item = data.remove(from);
+        final FileModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -111,7 +111,7 @@ public class FileDataProvider {
         }
     }
 
-    public FileItem getItem(int index) {
+    public FileModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -183,7 +183,7 @@ public class FileDataProvider {
                     date = String.format("%.5f", lat);
                     time = String.format("%.5f", longi);
                 }
-                data.add(new FileItem(title, fileNameS, ReminderUtils.getTypeString(mContext, typeS),
+                data.add(new FileModel(title, fileNameS, ReminderUtils.getTypeString(mContext, typeS),
                         TimeUtil.getDateTime(date1, is24), time, date, repeat, number, id));
             }
             while (c.moveToNext());

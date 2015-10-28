@@ -15,29 +15,36 @@ package com.cray.software.justreminder.datas;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class Template {
-    private String title;
-    private long id;
-    private boolean mPinnedToSwipeLeft;
+public class BirthdayModel {
+    private String name, age, date;
 
-    public Template(String title, long id){
-        this.title = title;
-        this.id = id;
+    public BirthdayModel(String name, String age, String date){
+        this.name = name;
+        this.age = age;
+        this.date = date;
     }
 
-    public long getId() {
-        return id;
+    public String getDate() {
+        return date;
     }
 
-    public String getTitle(){
-        return title;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
+    public String getAge() {
+        return age;
     }
 
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

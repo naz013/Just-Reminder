@@ -22,17 +22,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class Note {
+public class NoteModel {
 
     private String note;
     private int color, style;
     private byte[] image;
     private long id;
-    private boolean mPinnedToSwipeLeft;
 
-    public Note(){}
+    public NoteModel(){}
 
-    public Note(String note, int color, int style, byte[] image, long id){
+    public NoteModel(String note, int color, int style, byte[] image, long id){
         this.color = color;
         this.image = image;
         this.note = note;
@@ -80,20 +79,18 @@ public class Note {
         this.id = id;
     }
 
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
-    }
-
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
-    }
-
+    /**
+     * Create note file and send it to other users.
+     * @param id note identifier.
+     * @param context application context.
+     * @return Boolean
+     */
     public static boolean shareNote(long id, Context context) {
         SyncHelper sHelp = new SyncHelper(context);
-        NotesBase base = new NotesBase(context);
-        base.open();
+        NotesBase db = new NotesBase(context);
+        db.open();
         boolean res = false;
-        Cursor c = base.getNote(id);
+        Cursor c = db.getNote(id);
         if (c != null && c.moveToFirst()) {
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
             SharedPrefs sPrefs = new SharedPrefs(context);
@@ -129,21 +126,40 @@ public class Note {
         return res;
     }
 
+    /**
+     * Delete note from database and file from SDCard or Cloud.
+     * @param id note identifier.
+     * @param context application context.
+     * @param callbacks callback for toast or snackbar message.
+     */
     public static void deleteNote(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
-        NotesBase DB = new NotesBase(context);
-        DB.open();
+        NotesBase db = new NotesBase(context);
+        db.open();
         String uuId = null;
-        Cursor c = DB.getNote(id);
+        Cursor c = db.getNote(id);
         if (c != null && c.moveToFirst()){
             uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
         }
         if (c != null) c.close();
-        DB.deleteNote(id);
-        DB.close();
+        db.deleteNote(id);
+        db.close();
         new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
         if (callbacks != null) callbacks.showSnackbar(R.string.note_deleted);
         else Messages.toast(context, R.string.note_deleted);
+    }
+
+    /**
+     * Change note color.
+     * @param context application context.
+     * @param id note identifier.
+     * @param newColor new color code for note.
+     */
+    public static void setNewColor(Context context, long id, int newColor){
+        NotesBase db = new NotesBase(context);
+        db.open();
+        db.updateNoteColor(id, newColor);
+        db.close();
     }
 }

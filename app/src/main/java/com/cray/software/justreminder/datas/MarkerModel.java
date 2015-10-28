@@ -17,19 +17,18 @@ import com.google.android.gms.maps.model.LatLng;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class Marker {
+public class MarkerModel {
     private String title;
     private LatLng position;
     private int icon;
     private long id;
-    private boolean mPinnedToSwipeLeft;
 
-    public Marker(String title, long id){
+    public MarkerModel(String title, long id){
         this.title = title;
         this.id = id;
     }
 
-    public Marker(String title, LatLng position, int icon, long id){
+    public MarkerModel(String title, LatLng position, int icon, long id){
         this.position = position;
         this.title = title;
         this.icon = icon;
@@ -50,13 +49,5 @@ public class Marker {
 
     public int getIcon(){
         return icon;
-    }
-
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
-    }
-
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 }

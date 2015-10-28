@@ -21,7 +21,7 @@ public class Telephony {
     public static void sendMail(File file, Context context){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "NoteModel");
         Uri uri = Uri.fromFile(file);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         context.startActivity(Intent.createChooser(intent, "Send email..."));

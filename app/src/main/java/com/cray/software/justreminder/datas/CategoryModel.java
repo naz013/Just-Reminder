@@ -1,25 +1,41 @@
 package com.cray.software.justreminder.datas;
 
+import android.content.Context;
+
+import com.cray.software.justreminder.databases.DataBase;
+
 /**
  * Reminder category item constructor.
  */
-public class Category {
+public class CategoryModel {
     private String title;
     private String uuID;
     private int color;
     private long id;
-    private boolean mPinnedToSwipeLeft;
 
-    public Category(String title, String uuID){
+    public CategoryModel(String title, String uuID){
         this.uuID = uuID;
         this.title = title;
     }
 
-    public Category(String title, String uuID, int color, long id){
+    public CategoryModel(String title, String uuID, int color, long id){
         this.uuID = uuID;
         this.title = title;
         this.color = color;
         this.id = id;
+    }
+
+    /**
+     * Change group indicator color.
+     * @param context application context.
+     * @param id group identifier.
+     * @param code indicator color code.
+     */
+    public static void setNewIndicator(Context context, long id, int code){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateCategoryColor(id, code);
+        db.close();
     }
 
     public long getId() {
@@ -52,13 +68,5 @@ public class Category {
 
     public void setUuID(String uuID){
         this.uuID = uuID;
-    }
-
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
-    }
-
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 }

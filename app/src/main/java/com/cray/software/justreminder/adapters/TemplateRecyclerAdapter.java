@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.Template;
+import com.cray.software.justreminder.datas.TemplateModel;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -63,7 +63,7 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
-        final Template item = provider.getData().get(position);
+        final TemplateModel item = provider.getData().get(position);
         String title = item.getTitle();
 
         holder.textView.setTypeface(typeface);

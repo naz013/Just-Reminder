@@ -738,4 +738,8 @@
     <string name="move_to_archive">Переместить в корзину</string>
     <string name="message_note_shared">Заметка отправлена</string>
     <string name="error_sharing_note">Ошибка при отправке заметки!</string>
+    <string name="you_have_select_same_group">Вы выбрали ту же группу</string>
+    <string name="change_group">Сменить группу</string>
+    <string name="change_color">Сменить цвет</string>
+    <string name="birthday_permanent_explanation">Отметьте, чтобы позволить показывать предстоящие дни рождения в строке уведомлений</string>
 </resources>

@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateDataProvider {
-    private List<Template> data;
+    private List<TemplateModel> data;
     private Context mContext;
-    private Template mLastRemovedData;
+    private TemplateModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
     public TemplateDataProvider(Context mContext){
@@ -21,7 +21,7 @@ public class TemplateDataProvider {
         load();
     }
 
-    public List<Template> getData(){
+    public List<TemplateModel> getData(){
         return data;
     }
 
@@ -29,11 +29,11 @@ public class TemplateDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(Template item){
+    public int getPosition(TemplateModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Template item1 = data.get(i);
+                TemplateModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -43,11 +43,11 @@ public class TemplateDataProvider {
         return res;
     }
 
-    public int removeItem(Template item){
+    public int removeItem(TemplateModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Template item1 = data.get(i);
+                TemplateModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -72,7 +72,7 @@ public class TemplateDataProvider {
             return;
         }
 
-        final Template item = data.remove(from);
+        final TemplateModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -98,7 +98,7 @@ public class TemplateDataProvider {
         }
     }
 
-    public Template getItem(int index) {
+    public TemplateModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -115,7 +115,7 @@ public class TemplateDataProvider {
             do {
                 String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new Template(text, id));
+                data.add(new TemplateModel(text, id));
             } while (c.moveToNext());
         }
         if (c != null) c.close();

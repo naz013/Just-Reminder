@@ -738,4 +738,8 @@
     <string name="move_to_archive">Move to trash</string>
     <string name="message_note_shared">Note shared successfully</string>
     <string name="error_sharing_note">Error sharing note!</string>
+    <string name="you_have_select_same_group">You\'ve select same group</string>
+    <string name="change_group">Change group</string>
+    <string name="change_color">Change color</string>
+    <string name="birthday_permanent_explanation">Check to enable showing upcoming birthdays in status bar</string>
 </resources>

@@ -127,6 +127,13 @@ public class NotesBase {
         return db.update(NOTE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    public boolean updateNoteColor(long rowId, int color) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_COLOR, color);
+        return db.update(NOTE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
     public boolean linkToReminder(long rowId, long linkId) {
         openGuard();
         ContentValues args = new ContentValues();

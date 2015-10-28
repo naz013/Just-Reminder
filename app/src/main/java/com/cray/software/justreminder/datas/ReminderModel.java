@@ -15,15 +15,16 @@ package com.cray.software.justreminder.datas;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class ReminderItem {
-    private final String title, type, repeat, uuId, number;
+public class ReminderModel {
+    private final String title, type, repeat, uuId, number, groupId;
     private final int completed, archived, catColor, viewType;
     private final long due, id;
     private final double[] place;
-    private boolean mPinnedToSwipeLeft, selected;
+    private boolean selected;
 
-    public ReminderItem(String title, String type, String repeat, int catColor, String uuId,
-                        int completed, long due, long id, double[] place, String number, int archived, int viewType){
+    public ReminderModel(String title, String type, String repeat, int catColor, String uuId,
+                         int completed, long due, long id, double[] place, String number, int archived,
+                         int viewType, String groupId){
         this.catColor = catColor;
         this.viewType = viewType;
         this.title = title;
@@ -36,7 +37,12 @@ public class ReminderItem {
         this.repeat = repeat;
         this.number = number;
         this.archived = archived;
+        this.groupId = groupId;
         this.selected = false;
+    }
+
+    public String getGroupId() {
+        return groupId;
     }
 
     public int getViewType() {
@@ -93,13 +99,5 @@ public class ReminderItem {
 
     public String getNumber(){
         return number;
-    }
-
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
-    }
-
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 }

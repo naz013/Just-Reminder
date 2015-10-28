@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.Category;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -66,7 +66,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
-        final Category item = provider.getData().get(position);
+        final CategoryModel item = provider.getData().get(position);
         String title = item.getTitle();
         int indicator = item.getColor();
 

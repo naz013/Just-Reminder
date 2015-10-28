@@ -27,6 +27,10 @@ public class JustBootReceiver extends BroadcastReceiver {
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new AutoSyncAlarm().setAlarm(context);
         }
+        if (new SharedPrefs(context).loadBoolean(Prefs.BIRTHDAY_PERMANENT)){
+            new BirthdayPermanentAlarm().setAlarm(context);
+            new Notifier(context).showBirthdayPermanent();
+        }
 
         new DisableAsync(context).execute();
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

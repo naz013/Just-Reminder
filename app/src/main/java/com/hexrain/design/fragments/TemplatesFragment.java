@@ -170,8 +170,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listView.setAdapter(adapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(listView);
     }
 
     private void reloadView() {

@@ -31,7 +31,7 @@ import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.Category;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -88,7 +88,7 @@ public class TaskManager extends AppCompatActivity {
 
     private FloatingActionButton mFab;
 
-    private ArrayList<Category> categories = new ArrayList<>();
+    private ArrayList<CategoryModel> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -321,7 +321,7 @@ public class TaskManager extends AppCompatActivity {
             do {
                 String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                categories.add(new Category(listTitle, listId));
+                categories.add(new CategoryModel(listTitle, listId));
             } while (c.moveToNext());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

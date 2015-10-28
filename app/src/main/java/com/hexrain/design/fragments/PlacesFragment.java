@@ -172,8 +172,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(adapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(listView);
     }
 
     private void reloadView() {

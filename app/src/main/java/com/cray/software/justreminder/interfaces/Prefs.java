@@ -115,6 +115,7 @@ public class Prefs {
     public final static String CUSTOM_SOUND = "custom_sound";
     public final static String CUSTOM_SOUND_FILE = "sound_file";
     public final static String EXTRA_OPTIONS = "extra_options";
+    public final static String BIRTHDAY_PERMANENT = "birthday_permanent";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";

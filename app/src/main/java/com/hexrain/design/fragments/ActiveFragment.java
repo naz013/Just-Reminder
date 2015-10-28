@@ -30,8 +30,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -247,6 +248,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         currentList.setLayoutManager(mLayoutManager);
         currentList.setItemAnimator(new DefaultItemAnimator());
         currentList.setAdapter(adapter);
+        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
     }
 
     private void reloadView() {
@@ -266,11 +268,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 getActivity(),
                 android.R.layout.select_dialog_item);
         DB = new DataBase(getActivity());
-        if (DB != null) DB.open();
-        else {
-            DB = new DataBase(getActivity());
-            DB.open();
-        }
+        DB.open();
         arrayAdapter.add(getString(R.string.simple_all));
         Cursor c = DB.queryCategories();
         if (c != null && c.moveToFirst()){
@@ -328,6 +326,42 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         new SyncTask(getActivity(), this).execute();
     }
 
+    private void changeGroup(final String oldUuId, final long id){
+        ids = new ArrayList<>();
+        ids.clear();
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.select_dialog_item);
+        DB = new DataBase(getActivity());
+        DB.open();
+        Cursor c = DB.queryCategories();
+        if (c != null && c.moveToFirst()){
+            do {
+                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                arrayAdapter.add(title);
+                ids.add(catId);
+            } while (c.moveToNext());
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.string_select_category));
+        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                String catId = ids.get(which);
+                if (oldUuId.matches(catId)) {
+                    Messages.toast(getActivity(), R.string.you_have_select_same_group);
+                    return;
+                }
+                Reminder.setNewGroup(getActivity(), id, catId);
+                loaderAdapter(null);
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     private void previewReminder(View view, long id, String type){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
@@ -364,7 +398,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onItemClicked(int position, View view) {
         sPrefs = new SharedPrefs(getActivity());
-        ReminderItem item = provider.getItem(position);
+        ReminderModel item = provider.getItem(position);
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             previewReminder(view, item.getId(), item.getType());
         } else {
@@ -376,21 +410,27 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
-        final CharSequence[] items = {getString(R.string.open), getString(R.string.edit), getString(R.string.move_to_archive)};
+        final CharSequence[] items = {getString(R.string.open), getString(R.string.edit),
+                getString(R.string.change_group), getString(R.string.move_to_archive)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
-                ReminderItem item1 = provider.getItem(position);
-                if (item == 0){
-                    previewReminder(view, item1.getId(), item1.getType());
-                }
-                if (item == 1){
-                    Reminder.edit(item1.getId(), getActivity());
-                }
-                if (item == 2){
-                    Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
-                    loaderAdapter(null);
+                ReminderModel item1 = provider.getItem(position);
+                switch (item){
+                    case 0:
+                        previewReminder(view, item1.getId(), item1.getType());
+                        break;
+                    case 1:
+                        Reminder.edit(item1.getId(), getActivity());
+                        break;
+                    case 2:
+                        changeGroup(item1.getGroupId(), item1.getId());
+                        break;
+                    case 3:
+                        Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
+                        loaderAdapter(null);
+                        break;
                 }
             }
         });

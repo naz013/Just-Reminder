@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.Marker;
+import com.cray.software.justreminder.datas.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 
 import java.util.ArrayList;
@@ -19,11 +19,11 @@ import java.util.ArrayList;
 public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
 
     private LayoutInflater inflater;
-    private ArrayList<Marker> data;
+    private ArrayList<MarkerModel> data;
     private ColorSetter colorSetter;
 
     @SuppressWarnings("deprecation")
-    public MarkersCursorAdapter(Context context, ArrayList<Marker> data) {
+    public MarkersCursorAdapter(Context context, ArrayList<MarkerModel> data) {
         this.data = data;
         inflater = LayoutInflater.from(context);
         colorSetter = new ColorSetter(context);
@@ -56,7 +56,7 @@ public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
         TextView longitude = (TextView) convertView.findViewById(R.id.longitude);
         ImageView markerIcon = (ImageView) convertView.findViewById(R.id.markerIcon);
 
-        Marker item = data.get(position);
+        MarkerModel item = data.get(position);
 
         String title = item.getTitle();
 

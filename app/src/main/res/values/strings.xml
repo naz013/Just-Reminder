@@ -705,7 +705,7 @@
     <string name="twelve_hours">12 hours</string>
     <string name="one_day">1 day</string>
     <string name="dropbox">Dropbox</string>
-    <string name="deleting">Deleting...</string>
+    <string name="deleting">Deleting…</string>
     <string name="beta_version">BETA version!</string>
     <string name="beta_version_message">Remember it is BETA version, so application may contain errors!</string>
     <string name="move_to_list">Move to another list</string>
@@ -744,5 +744,9 @@
     <string name="message_note_shared">Note shared successfully</string>
     <string name="error_sharing_note">Error sharing note!</string>
     <string name="open">Preview</string>
+    <string name="you_have_select_same_group">You\'ve select same group</string>
+    <string name="change_group">Change group</string>
+    <string name="change_color">Change color</string>
+    <string name="birthday_permanent_explanation">Check to enable showing upcoming birthdays in status bar</string>
 
 </resources>

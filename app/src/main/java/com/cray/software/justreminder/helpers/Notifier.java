@@ -20,11 +20,14 @@ import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.BirthdayModel;
 import com.cray.software.justreminder.dialogs.ReminderDialog;
 import com.cray.software.justreminder.dialogs.WeekDayDialog;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.services.BirthdayPermanentService;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.hexrain.design.ScreenManager;
 
@@ -887,7 +890,64 @@ public class Notifier {
     }
 
     /**
-     * Remove permanent norification from status bar.
+     * Show status bar notification with feature birthdays.
+     */
+    public void showBirthdayPermanent(){
+        Intent dismissIntent = new Intent(mContext, BirthdayPermanentService.class);
+        PendingIntent piDismiss = PendingIntent.getService(mContext, 0, dismissIntent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+
+        DataBase db = new DataBase(mContext);
+        db.open();
+        ArrayList<BirthdayModel> list = new ArrayList<>();
+        Cursor c = db.getBirthdays(day, month);
+        if (c != null && c.moveToFirst()){
+            do {
+                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
+                String birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
+                String years = TimeUtil.getYears(birthDate) + " " + mContext.getString(R.string.years_string);
+                list.add(new BirthdayModel(name, years, birthDate));
+            } while (c.moveToNext());
+        }
+        db.close();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
+        builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
+        builder.setAutoCancel(false);
+        builder.setOngoing(true);
+        builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        builder.setContentTitle(mContext.getString(R.string.birthdays_dialog_title));
+        if (list.size() > 0) {
+            builder.setContentText(list.get(0).getDate() + " | " + list.get(0).getName() + " | " + list.get(0).getAge());
+            if (list.size() > 1) {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (BirthdayModel birthdayModel : list){
+                    stringBuilder.append(birthdayModel.getDate()).append(" | ").append(birthdayModel.getName()).append(" | ").append(birthdayModel.getAge());
+                    stringBuilder.append("\n");
+                }
+                builder.setStyle(new NotificationCompat.BigTextStyle().bigText(stringBuilder.toString()));
+            }
+            builder.addAction(R.drawable.ic_clear_white_24dp,
+                    mContext.getString(R.string.hide_dialog_button), piDismiss);
+
+            NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
+            notifier.notify(1115, builder.build());
+        }
+    }
+
+    /**
+     * Hide status bar notification with feature birthdays.
+     */
+    public void hideBirthdayPermanent(){
+        ((NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(1115);
+    }
+
+    /**
+     * Remove permanent notification from status bar.
      */
     public void hidePermanent(){
         ((NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(1);

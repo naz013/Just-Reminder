@@ -5,12 +5,10 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.helpers.Interval;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +17,10 @@ import java.util.Map;
 
 public class ReminderDataProvider {
     private Cursor c, old;
-    private List<ReminderItem> data;
+    private List<ReminderModel> data;
     private Context mContext;
     private Interval mInterval;
-    private ReminderItem mLastRemovedData;
+    private ReminderModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
     public static final int VIEW_REMINDER = 15666;
     public static final int VIEW_SHOPPING_LIST = 15667;
@@ -46,7 +44,7 @@ public class ReminderDataProvider {
         load();
     }
 
-    public List<ReminderItem> getData(){
+    public List<ReminderModel> getData(){
         return data;
     }
 
@@ -56,7 +54,7 @@ public class ReminderDataProvider {
 
     public boolean hasActive(){
         boolean res = false;
-        for (ReminderItem item : data){
+        for (ReminderModel item : data){
             if (item.getCompleted() == 0) {
                 res = true;
                 break;
@@ -66,7 +64,7 @@ public class ReminderDataProvider {
     }
 
     public void deselectItems(){
-        for (ReminderItem item : data){
+        for (ReminderModel item : data){
             item.setSelected(false);
         }
     }
@@ -75,11 +73,11 @@ public class ReminderDataProvider {
         return data != null && data.get(position).getCompleted() == 0;
     }
 
-    public int getPosition(ReminderItem item){
+    public int getPosition(ReminderModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                ReminderItem item1 = data.get(i);
+                ReminderModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -89,11 +87,11 @@ public class ReminderDataProvider {
         return res;
     }
 
-    public int removeItem(ReminderItem item){
+    public int removeItem(ReminderModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                ReminderItem item1 = data.get(i);
+                ReminderModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -118,7 +116,7 @@ public class ReminderDataProvider {
             return;
         }
 
-        final ReminderItem item = data.remove(from);
+        final ReminderModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -144,15 +142,15 @@ public class ReminderDataProvider {
         }
     }
 
-    public ArrayList<ReminderItem> getSelected(){
-        ArrayList<ReminderItem> list = new ArrayList<>();
-        for (ReminderItem item : data){
+    public ArrayList<ReminderModel> getSelected(){
+        ArrayList<ReminderModel> list = new ArrayList<>();
+        for (ReminderModel item : data){
             if (item.getSelected()) list.add(item);
         }
         return list;
     }
 
-    public ReminderItem getItem(int index) {
+    public ReminderModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -168,16 +166,7 @@ public class ReminderDataProvider {
         data.clear();
         DataBase db = new DataBase(mContext);
         db.open();
-        Map<String, Integer> map = new HashMap<>();
-        Cursor cf = db.queryCategories();
-        if (cf != null && cf.moveToFirst()){
-            do {
-                String uuid = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int color = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
-                map.put(uuid, color);
-            } while (cf.moveToNext());
-        }
-        if (cf != null) cf.close();
+        Map<String, Integer> map = getCategories(mContext);
         if (c != null && c.moveToNext()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
@@ -239,17 +228,16 @@ public class ReminderDataProvider {
                 int catColor = 0;
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-                data.add(new ReminderItem(title, type, repeat, catColor, uuID, isDone, due, id,
-                        new double[]{lat, lon}, number, archived, viewType));
+                data.add(new ReminderModel(title, type, repeat, catColor, uuID, isDone, due, id,
+                        new double[]{lat, lon}, number, archived, viewType, categoryId));
             } while (c.moveToNext());
         }
     }
 
-    public static ReminderItem getItem(Context mContext, long id){
-        ReminderItem item = null;
-        DataBase db = new DataBase(mContext);
-        db.open();
+    public static Map<String, Integer> getCategories(Context context) {
         Map<String, Integer> map = new HashMap<>();
+        DataBase db = new DataBase(context);
+        db.open();
         Cursor cf = db.queryCategories();
         if (cf != null && cf.moveToFirst()){
             do {
@@ -259,6 +247,15 @@ public class ReminderDataProvider {
             } while (cf.moveToNext());
         }
         if (cf != null) cf.close();
+        db.close();
+        return map;
+    }
+
+    public static ReminderModel getItem(Context mContext, long id){
+        ReminderModel item = null;
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Map<String, Integer> map = getCategories(mContext);
         Cursor s = db.getReminder(id);
         if (s != null && s.moveToNext()){
             String title = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
@@ -272,97 +269,9 @@ public class ReminderDataProvider {
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-            item = new ReminderItem(title, null, null, catColor, uuID, isDone, 0, id, null, null,
-                    archived, viewType);
+            item = new ReminderModel(title, null, null, catColor, uuID, isDone, 0, id, null, null,
+                    archived, viewType, categoryId);
         }
         return item;
-    }
-
-    public void sort(){
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
-        ArrayList<ReminderItem> list = new ArrayList<>();
-        list.clear();
-        if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
-            for (ReminderItem item : data){
-                long due = item.getDue();
-                if (list.size() > 0){
-                    int pos = 0;
-                    for (int i = 0; i < list.size(); i++){
-                        ReminderItem tmpItem = list.get(i);
-                        if (due > tmpItem.getDue()) pos = i + 1;
-                        else pos = i;
-                    }
-                    list.add(pos, item);
-                } else {
-                    list.add(0, item);
-                }
-            }
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_Z_A)){
-            for (ReminderItem item : data){
-                long due = item.getDue();
-                if (list.size() > 0){
-                    int pos = 0;
-                    for (int i = 0; i < list.size(); i++){
-                        ReminderItem tmpItem = list.get(i);
-                        if (due < tmpItem.getDue()) pos = i + 1;
-                        else pos = i;
-                    }
-                    list.add(pos, item);
-                } else {
-                    list.add(0, item);
-                }
-            }
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z)){
-            for (ReminderItem item : data){
-                long due = item.getDue();
-                int enabled = item.getCompleted();
-                if (list.size() > 0){
-                    int pos = 0;
-                    for (int i = 0; i < list.size(); i++){
-                        ReminderItem tmpItem = list.get(i);
-                        if (enabled > tmpItem.getCompleted()){
-                            pos = i + 1;
-                        }
-                        if (enabled == tmpItem.getCompleted()){
-                            if (due > tmpItem.getDue()) pos = i + 1;
-                            else pos = i;
-                        }
-                        if (enabled < tmpItem.getCompleted()){
-                            pos = i;
-                        }
-                    }
-                    list.add(pos, item);
-                } else {
-                    list.add(0, item);
-                }
-            }
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A)){
-            for (ReminderItem item : data){
-                long due = item.getDue();
-                int enabled = item.getCompleted();
-                if (list.size() > 0){
-                    int pos = 0;
-                    for (int i = 0; i < list.size(); i++){
-                        ReminderItem tmpItem = list.get(i);
-                        if (enabled > tmpItem.getCompleted()){
-                            pos = i + 1;
-                        }
-                        if (enabled == tmpItem.getCompleted()){
-                            if (due < tmpItem.getDue()) pos = i + 1;
-                            else pos = i;
-                        }
-                        if (enabled < tmpItem.getCompleted()){
-                            pos = i;
-                        }
-                    }
-                    list.add(pos, item);
-                } else {
-                    list.add(0, item);
-                }
-            }
-        }
-        data.clear();
-        this.data = list;
     }
 }

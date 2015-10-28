@@ -67,7 +67,7 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.Category;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
@@ -679,7 +679,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void changeCategory() {
         provider = new CategoryDataProvider(this);
         final ArrayList<String> categories = new ArrayList<>();
-        for (Category item : provider.getData()){
+        for (CategoryModel item : provider.getData()){
             categories.add(item.getTitle());
         }
 

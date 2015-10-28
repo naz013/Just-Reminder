@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -214,8 +214,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(adapter);  // requires *wrapped* adapter
+        currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
     }
 
     private void reloadView() {
@@ -256,7 +257,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
-                ReminderItem item1 = provider.getItem(position);
+                ReminderModel item1 = provider.getItem(position);
                 if (item == 0) {
                     Reminder.edit(item1.getId(), getActivity());
                 }

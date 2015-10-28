@@ -19,17 +19,20 @@ public class ShoppingListDataProvider {
 
     public ShoppingListDataProvider(Context mContext){
         data = new ArrayList<>();
+        initList = new ArrayList<>();
         this.mContext = mContext;
     }
 
     public ShoppingListDataProvider(Context mContext, long remId){
         this.mContext = mContext;
+        initList = new ArrayList<>();
         this.remId = remId;
         load();
     }
 
     public ShoppingListDataProvider(ArrayList<ShoppingList> data){
         this.data = new ArrayList<>();
+        initList = new ArrayList<>();
         this.data.addAll(data);
     }
 
@@ -146,7 +149,6 @@ public class ShoppingListDataProvider {
 
     public void load() {
         data = new ArrayList<>();
-        initList = new ArrayList<>();
         data.clear();
         DataBase db = new DataBase(mContext);
         db.open();

@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NoteDataProvider {
-    private List<Note> data;
+    private List<NoteModel> data;
     private Context mContext;
-    private Note mLastRemovedData;
+    private NoteModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
     public NoteDataProvider(Context mContext){
@@ -21,7 +21,7 @@ public class NoteDataProvider {
         load();
     }
 
-    public List<Note> getData(){
+    public List<NoteModel> getData(){
         return data;
     }
 
@@ -29,11 +29,11 @@ public class NoteDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(Note item){
+    public int getPosition(NoteModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Note item1 = data.get(i);
+                NoteModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -43,11 +43,11 @@ public class NoteDataProvider {
         return res;
     }
 
-    public int removeItem(Note item){
+    public int removeItem(NoteModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Note item1 = data.get(i);
+                NoteModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -72,7 +72,7 @@ public class NoteDataProvider {
             return;
         }
 
-        final Note item = data.remove(from);
+        final NoteModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -98,7 +98,7 @@ public class NoteDataProvider {
         }
     }
 
-    public Note getItem(int index) {
+    public NoteModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -118,7 +118,7 @@ public class NoteDataProvider {
                 int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
                 byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new Note(note, color, style, image, id));
+                data.add(new NoteModel(note, color, style, image, id));
             } while (c.moveToNext());
         }
         if (c != null) c.close();

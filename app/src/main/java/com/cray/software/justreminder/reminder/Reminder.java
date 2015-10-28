@@ -492,6 +492,19 @@ public class Reminder {
         db.close();
     }
 
+    /**
+     * Change reminder group.
+     * @param context application context.
+     * @param id reminder identifier.
+     * @param uuId unique identifier of new reminder group.
+     */
+    public static void setNewGroup(Context context, long id, String uuId){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateReminderGroup(id, uuId);
+        db.close();
+    }
+
     public long getLimit() {
         return limit;
     }

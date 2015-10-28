@@ -28,7 +28,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.NoteRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncNotes;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -250,8 +250,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setLayoutManager(mLayoutManager);
-        currentList.setAdapter(adapter);  // requires *wrapped* adapter
+        currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
     }
 
     private void reloadView() {
@@ -298,7 +299,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                Note.deleteNote(rowId, getActivity(), mCallbacks);
+                NoteModel.deleteNote(rowId, getActivity(), mCallbacks);
 
             }while (c.moveToNext());
         }
@@ -343,7 +344,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
-        final CharSequence[] items = {getString(R.string.open), getString(R.string.share_note_title), getString(R.string.edit), getString(R.string.delete)};
+        final CharSequence[] items = {getString(R.string.open), getString(R.string.share_note_title),
+                getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
@@ -354,7 +356,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                         previewNote(id, view);
                         break;
                     case 1:
-                        if (Note.shareNote(id, getActivity())){
+                        if (NoteModel.shareNote(id, getActivity())){
                             Messages.toast(getActivity(), R.string.message_note_shared);
                         } else {
                             if (mCallbacks != null) mCallbacks.showSnackbar(R.string.error_sharing_note);
@@ -362,14 +364,46 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                         }
                         break;
                     case 2:
+                        selectColor(id);
+                        break;
+                    case 3:
                         getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
                                 .putExtra(Constants.EDIT_ID, id));
                         break;
-                    case 3:
-                        Note.deleteNote(id, getActivity(), mCallbacks);
+                    case 4:
+                        NoteModel.deleteNote(id, getActivity(), mCallbacks);
                         loaderAdapter();
                         break;
                 }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void selectColor(final long id) {
+        CharSequence[] items = {getString(R.string.led_color_red), getString(R.string.color_purple),
+                getString(R.string.led_color_green), getString(R.string.led_color_green_light),
+                getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
+                getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
+                getString(R.string.color_grey), getString(R.string.led_color_pink),
+                getString(R.string.color_dark_green), getString(R.string.color_brown)};
+        if (Module.isPro()){
+            items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
+                    getString(R.string.led_color_green), getString(R.string.led_color_green_light),
+                    getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
+                    getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
+                    getString(R.string.color_grey), getString(R.string.led_color_pink),
+                    getString(R.string.color_dark_green), getString(R.string.color_brown),
+                    getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
+                    getString(R.string.color_lime), getString(R.string.color_indigo)};
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                NoteModel.setNewColor(getActivity(), id, item);
+                loaderAdapter();
             }
         });
         AlertDialog alert = builder.create();

@@ -738,4 +738,8 @@
     <string name="move_to_archive">Перемістити до смітника</string>
     <string name="message_note_shared">Нотатку успішно надіслано</string>
     <string name="error_sharing_note">Помилка надсилання нотатки!</string>
+    <string name="you_have_select_same_group">Ви обрали ту ж саму групу</string>
+    <string name="change_group">Змінити групу</string>
+    <string name="change_color">Змінити колір</string>
+    <string name="birthday_permanent_explanation">Відмітьте, щоб увімкнути відображення майбутніх днів народжень в панелі сповіщень</string>
 </resources>

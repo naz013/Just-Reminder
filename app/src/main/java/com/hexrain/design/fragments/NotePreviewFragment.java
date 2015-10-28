@@ -31,7 +31,7 @@ import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
@@ -342,7 +342,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void shareNote(){
-        if (!Note.shareNote(mParam1, this)) {
+        if (!NoteModel.shareNote(mParam1, this)) {
             Messages.toast(this, getString(R.string.attach_error_message));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
@@ -410,7 +410,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        Note.deleteNote(mParam1, this, null);
+        NoteModel.deleteNote(mParam1, this, null);
         sPrefs = new SharedPrefs(this);
         sPrefs.saveBoolean("isNew", true);
     }

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
+        android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/checkView"
         android:layout_centerVertical="true"
         android:id="@+id/shopText"/>

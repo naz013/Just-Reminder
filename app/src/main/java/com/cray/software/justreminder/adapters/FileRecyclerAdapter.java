@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.FileDataProvider;
-import com.cray.software.justreminder.datas.FileItem;
+import com.cray.software.justreminder.datas.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
@@ -66,7 +66,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.background.setBackgroundResource(cs.getCardDrawableStyle());
 
-        final FileItem item = provider.getData().get(position);
+        final FileModel item = provider.getData().get(position);
 
         holder.task.setText(item.getTitle());
         holder.date.setText(item.getDate());

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -105,7 +105,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     }
 
     private void loadUi() {
-        ReminderItem item = ReminderDataProvider.getItem(this, id);
+        ReminderModel item = ReminderDataProvider.getItem(this, id);
         if (item != null) {
             shopTitle.setText(item.getTitle());
             int catColor = item.getCatColor();

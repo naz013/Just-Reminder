@@ -24,6 +24,7 @@ import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -163,6 +164,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(listView);
     }
 
     private void removeGroup(int position){
@@ -191,18 +193,52 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
+        final CharSequence[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 dialog.dismiss();
-                if (item == 0) {
-                    startActivity(new Intent(getActivity(), CategoryManager.class)
-                            .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                switch (item){
+                    case 0:
+                        changeColor(provider.getItem(position).getId());
+                        break;
+                    case 1:
+                        startActivity(new Intent(getActivity(), CategoryManager.class)
+                                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                        break;
+                    case 2:
+                        removeGroup(position);
+                        break;
                 }
-                if (item == 1) {
-                    removeGroup(position);
-                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void changeColor(final long id) {
+        CharSequence[] items = {getString(R.string.led_color_red), getString(R.string.color_purple),
+                getString(R.string.led_color_green), getString(R.string.led_color_green_light),
+                getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
+                getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
+                getString(R.string.color_grey), getString(R.string.led_color_pink),
+                getString(R.string.color_dark_green), getString(R.string.color_brown)};
+        if (Module.isPro()){
+            items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
+                    getString(R.string.led_color_green), getString(R.string.led_color_green_light),
+                    getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
+                    getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
+                    getString(R.string.color_grey), getString(R.string.led_color_pink),
+                    getString(R.string.color_dark_green), getString(R.string.color_brown),
+                    getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
+                    getString(R.string.color_lime), getString(R.string.color_indigo)};
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                CategoryModel.setNewIndicator(getActivity(), id, item);
+                loadCategories();
             }
         });
         AlertDialog alert = builder.create();

@@ -9,7 +9,6 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,7 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.ReminderItem;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -138,7 +137,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        final ReminderItem item = provider.getItem(position);
+        final ReminderModel item = provider.getItem(position);
 
         if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
             final ViewHolder viewHolder = (ViewHolder) holder;
@@ -346,10 +345,10 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId());
             int count = 0;
             for (ShoppingList list : provider.getData()){
-                View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_card, null, false);
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.itemCheck);
+                View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
+                ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
                 TextView textView = (TextView) view.findViewById(R.id.shopText);
-                checkBox.setOnClickListener(new View.OnClickListener() {
+                checkView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mEventListener != null)
@@ -358,20 +357,20 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                 });
                 textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
                 if (list.isChecked()) {
-                    checkBox.setChecked(true);
+                    checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    checkBox.setChecked(false);
+                    checkView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
                 count++;
                 if (count == 9) {
-                    checkBox.setVisibility(View.INVISIBLE);
+                    checkView.setVisibility(View.INVISIBLE);
                     textView.setText("...");
                     viewHolder1.todoList.addView(view);
                     break;
                 } else {
-                    checkBox.setVisibility(View.VISIBLE);
+                    checkView.setVisibility(View.VISIBLE);
                     textView.setText(list.getTitle());
                     viewHolder1.todoList.addView(view);
                 }

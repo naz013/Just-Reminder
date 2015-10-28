@@ -13,7 +13,7 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.Marker;
+import com.cray.software.justreminder.datas.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -70,7 +70,7 @@ public class GeolocationFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 long i = markersCursorAdapter.getItemId(position);
-                Marker item = (Marker) markersCursorAdapter.getItem(position);
+                MarkerModel item = (MarkerModel) markersCursorAdapter.getItem(position);
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(item.getPosition(), 13));
             }
         });
@@ -110,7 +110,7 @@ public class GeolocationFragment extends Fragment {
         if (!DB.isOpen()) DB.open();
         Cursor c = DB.queryGroup();
         Random random = new Random();
-        ArrayList<Marker> list = new ArrayList<>();
+        ArrayList<MarkerModel> list = new ArrayList<>();
         if (c != null && c.moveToFirst()){
             ColorSetter cSetter = new ColorSetter(getActivity());
             do {
@@ -125,7 +125,7 @@ public class GeolocationFragment extends Fragment {
                 if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     int rand = random.nextInt(16-2)+1;
                     LatLng pos = new LatLng(latitude, longitude);
-                    list.add(new Marker(task, pos, rand, id));
+                    list.add(new MarkerModel(task, pos, rand, id));
                     googleMap.addMarker(new MarkerOptions()
                             .position(pos)
                             .title(task)
@@ -148,7 +148,7 @@ public class GeolocationFragment extends Fragment {
         DB.close();
     }
 
-    public void loaderAdapter(ArrayList<Marker> list){
+    public void loaderAdapter(ArrayList<MarkerModel> list){
         if (list.size() > 0) {
             markersCursorAdapter = new MarkersCursorAdapter(getActivity(), list);
             geoTasks.setAdapter(markersCursorAdapter);

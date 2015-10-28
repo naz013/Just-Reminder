@@ -23,6 +23,7 @@ import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.BirthdayImport;
 import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -30,6 +31,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.BirthdayAlarm;
 import com.cray.software.justreminder.services.BirthdayCheckAlarm;
+import com.cray.software.justreminder.services.BirthdayPermanentAlarm;
 import com.cray.software.justreminder.services.SetBirthdays;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -47,7 +49,8 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     private TextView text4;
     private RelativeLayout autoScan;
     private SwitchCompat contactsSwitch;
-    private CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck;
+    private CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck,
+            birthdayPermanentCheck;
     private DataBase db;
     private BirthdayAlarm alarmReceiver = new BirthdayAlarm();
 
@@ -121,6 +124,12 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         widgetShowCheck = (CheckBox) rootView.findViewById(R.id.widgetShowCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         widgetShowCheck.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS));
+
+        RelativeLayout birthdayPermanent = (RelativeLayout) rootView.findViewById(R.id.birthdayPermanent);
+        birthdayPermanent.setOnClickListener(this);
+
+        birthdayPermanentCheck = (CheckBox) rootView.findViewById(R.id.birthdayPermanentCheck);
+        birthdayPermanentCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_PERMANENT));
 
         checkEnabling();
         return rootView;
@@ -206,6 +215,21 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         }
     }
 
+    private void setBirthdayPermanentCheck(){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (birthdayPermanentCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, false);
+            birthdayPermanentCheck.setChecked(false);
+            new Notifier(getActivity()).hideBirthdayPermanent();
+            new BirthdayPermanentAlarm().cancelAlarm(getActivity());
+        } else {
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, true);
+            birthdayPermanentCheck.setChecked(true);
+            new Notifier(getActivity()).showBirthdayPermanent();
+            new BirthdayPermanentAlarm().setAlarm(getActivity());
+        }
+    }
+
     private void setContactsSwitch (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (contactsSwitch.isChecked()){
@@ -281,6 +305,9 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             case R.id.birthReminder:
                 birthCheck();
                 break;
+            case R.id.birthdayPermanent:
+                setBirthdayPermanentCheck();
+                break;
             case R.id.birthImport:
                 getActivity().getApplicationContext()
                         .startActivity(new Intent(getActivity().getApplicationContext(), BirthdayImport.class)
@@ -315,6 +342,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         if (birthReminderCheck.isChecked()){
             sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, false);
             birthReminderCheck.setChecked(false);
+            cleanBirthdays();
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
             birthReminderCheck.setChecked(true);

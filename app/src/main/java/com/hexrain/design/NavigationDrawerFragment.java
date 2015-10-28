@@ -565,6 +565,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         void onListIdChanged(long listId);
 
+        void onListChanged(RecyclerView list);
+
         void isDrawerOpen(boolean isOpen);
 
         void onUiChanged(int colorSetter, int colorStatus, int colorChooser);

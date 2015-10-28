@@ -15,13 +15,12 @@ package com.cray.software.justreminder.datas;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FileItem {
+public class FileModel {
     private String title, fileName, type, lastModified, time, date, repeat, number;
     private long id;
-    private boolean mPinnedToSwipeLeft;
 
-    public FileItem(String title, String fileName, String type, String lastModified, String time,
-                    String date, String repeat, String number, long id){
+    public FileModel(String title, String fileName, String type, String lastModified, String time,
+                     String date, String repeat, String number, long id){
         this.title = title;
         this.fileName = fileName;
         this.type = type;
@@ -67,13 +66,5 @@ public class FileItem {
 
     public String getType() {
         return type;
-    }
-
-    public boolean isPinnedToSwipeLeft() {
-        return mPinnedToSwipeLeft;
-    }
-
-    public void setPinnedToSwipeLeft(boolean pinedToSwipeLeft) {
-        mPinnedToSwipeLeft = pinedToSwipeLeft;
     }
 }

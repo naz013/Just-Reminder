@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryDataProvider {
-    private List<Category> data;
+    private List<CategoryModel> data;
     private Context mContext;
-    private Category mLastRemovedData;
+    private CategoryModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
     public CategoryDataProvider(Context mContext){
@@ -21,7 +21,7 @@ public class CategoryDataProvider {
         load();
     }
 
-    public List<Category> getData(){
+    public List<CategoryModel> getData(){
         return data;
     }
 
@@ -29,11 +29,11 @@ public class CategoryDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(Category item){
+    public int getPosition(CategoryModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Category item1 = data.get(i);
+                CategoryModel item1 = data.get(i);
                 if (item.getUuID().matches(item1.getUuID())) {
                     res = i;
                     break;
@@ -47,7 +47,7 @@ public class CategoryDataProvider {
         int res = -1;
         if (data.size() > 0 && uuId != null) {
             for (int i = 0; i < data.size(); i++){
-                Category item = data.get(i);
+                CategoryModel item = data.get(i);
                 if (item.getUuID().matches(uuId)) {
                     res = i;
                     break;
@@ -57,11 +57,11 @@ public class CategoryDataProvider {
         return res;
     }
 
-    public int removeItem(Category item){
+    public int removeItem(CategoryModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Category item1 = data.get(i);
+                CategoryModel item1 = data.get(i);
                 if (item.getUuID().matches(item1.getUuID())) {
                     data.remove(i);
                     res = i;
@@ -86,7 +86,7 @@ public class CategoryDataProvider {
             return;
         }
 
-        final Category item = data.remove(from);
+        final CategoryModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -112,7 +112,7 @@ public class CategoryDataProvider {
         }
     }
 
-    public Category getItem(int index) {
+    public CategoryModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -132,7 +132,7 @@ public class CategoryDataProvider {
                 int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
 
-                data.add(new Category(text, uuId, color, id));
+                data.add(new CategoryModel(text, uuId, color, id));
             } while (c.moveToNext());
         }
         if (c != null) c.close();

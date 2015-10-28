@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlaceDataProvider {
-    private List<Marker> data;
+    private List<MarkerModel> data;
     private Context mContext;
-    private Marker mLastRemovedData;
+    private MarkerModel mLastRemovedData;
     private int mLastRemovedPosition = -1;
 
     public PlaceDataProvider(Context mContext){
@@ -21,7 +21,7 @@ public class PlaceDataProvider {
         load();
     }
 
-    public List<Marker> getData(){
+    public List<MarkerModel> getData(){
         return data;
     }
 
@@ -29,11 +29,11 @@ public class PlaceDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(Marker item){
+    public int getPosition(MarkerModel item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Marker item1 = data.get(i);
+                MarkerModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -43,11 +43,11 @@ public class PlaceDataProvider {
         return res;
     }
 
-    public int removeItem(Marker item){
+    public int removeItem(MarkerModel item){
         int res = 0;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                Marker item1 = data.get(i);
+                MarkerModel item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     data.remove(i);
                     res = i;
@@ -72,7 +72,7 @@ public class PlaceDataProvider {
             return;
         }
 
-        final Marker item = data.remove(from);
+        final MarkerModel item = data.remove(from);
 
         data.add(to, item);
         mLastRemovedPosition = -1;
@@ -98,7 +98,7 @@ public class PlaceDataProvider {
         }
     }
 
-    public Marker getItem(int index) {
+    public MarkerModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -115,7 +115,7 @@ public class PlaceDataProvider {
             do {
                 String text = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
                 long id = c.getLong(c.getColumnIndex(Constants.LocationConstants.COLUMN_ID));
-                data.add(new Marker(text, id));
+                data.add(new MarkerModel(text, id));
             } while (c.moveToNext());
         }
         if (c != null) c.close();

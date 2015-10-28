@@ -3,18 +3,14 @@ package com.cray.software.justreminder.datas;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class CalendarData implements Parcelable {
-    public enum ViewType {
-        REMINDER,
-        SHOPPING
-    }
+public class CalendarModel implements Parcelable {
 
     private String type, name, number, time, dayDate;
     private long id, date;
-    private ViewType viewType;
+    private int viewType;
 
-    public CalendarData(String name, String number, long id, String time,
-                        String dayDate, long date, ViewType viewType){
+    public CalendarModel(String name, String number, long id, String time,
+                         String dayDate, long date, int viewType){
         this.time = time;
         this.viewType = viewType;
         this.dayDate = dayDate;
@@ -24,11 +20,11 @@ public class CalendarData implements Parcelable {
         this.date = date;
     }
 
-    public ViewType getViewType() {
+    public int getViewType() {
         return viewType;
     }
 
-    public void setViewType(ViewType viewType) {
+    public void setViewType(int viewType) {
         this.viewType = viewType;
     }
 
@@ -88,19 +84,19 @@ public class CalendarData implements Parcelable {
         this.number = number;
     }
 
-    public CalendarData(Parcel in) {
+    public CalendarModel(Parcel in) {
         super();
         readFromParcel(in);
     }
 
-    public static final Parcelable.Creator<CalendarData> CREATOR = new Parcelable.Creator<CalendarData>() {
-        public CalendarData createFromParcel(Parcel in) {
-            return new CalendarData(in);
+    public static final Parcelable.Creator<CalendarModel> CREATOR = new Parcelable.Creator<CalendarModel>() {
+        public CalendarModel createFromParcel(Parcel in) {
+            return new CalendarModel(in);
         }
 
-        public CalendarData[] newArray(int size) {
+        public CalendarModel[] newArray(int size) {
 
-            return new CalendarData[size];
+            return new CalendarModel[size];
         }
 
     };

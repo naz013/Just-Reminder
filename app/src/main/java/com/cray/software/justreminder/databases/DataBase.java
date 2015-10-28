@@ -752,6 +752,13 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    public boolean updateReminderGroup(long rowId, String group) {
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_CATEGORY, group);
+        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
     public boolean updateReminderCount(long rowId, long count) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -1201,6 +1208,13 @@ public class DataBase {
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, name);
         args.put(Constants.COLUMN_DATE_TIME, dateTime);
+        args.put(Constants.COLUMN_COLOR, color);
+        return db.update(CATEGORIES_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateCategoryColor(long rowId, int color){
+        openGuard();
+        ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_COLOR, color);
         return db.update(CATEGORIES_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }

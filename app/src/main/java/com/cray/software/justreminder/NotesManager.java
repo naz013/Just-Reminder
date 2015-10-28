@@ -33,7 +33,7 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.Note;
+import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.dialogs.ImagePreview;
 import com.cray.software.justreminder.dialogs.utils.ColorPicker;
 import com.cray.software.justreminder.dialogs.utils.FontStyleDialog;
@@ -545,7 +545,7 @@ public class NotesManager extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Note.deleteNote(id, NotesManager.this, null);
+                NoteModel.deleteNote(id, NotesManager.this, null);
                 dialog.dismiss();
                 new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
                 finish();

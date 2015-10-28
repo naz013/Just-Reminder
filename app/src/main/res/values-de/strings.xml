@@ -738,4 +738,8 @@
     <string name="move_to_archive">Ab in den Müll</string>
     <string name="message_note_shared">Hinweis erfolgreich freigegeben</string>
     <string name="error_sharing_note">Fehler Sharing Hinweis!</string>
+    <string name="you_have_select_same_group">Sie haben wählen Sie dieselbe Gruppe</string>
+    <string name="change_group">Gruppe wechseln</string>
+    <string name="change_color">Farbwechsel</string>
+    <string name="birthday_permanent_explanation">Prüfen Sie, welche anstehende Geburtstage in der Statusleiste zu aktivieren</string>
 </resources>

@@ -19,6 +19,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     private final View mFooter;
     private final int mMinFooterTranslation;
     private final boolean mIsSnappable; // Can Quick Return view snap into place?
+    private final boolean mIsGrid;
 
     private int mPrevScrollY = 0;
     private int mHeaderDiffTotal = 0;
@@ -38,6 +39,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         mColumnCount = builder.mColumnCount;
         mMinFooterTranslation = builder.mMinFooterTranslation;
         mIsSnappable = builder.mIsSnappable;
+        mIsGrid = builder.isGrid;
     }
     // endregion
 
@@ -151,7 +153,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
             }*/
             listener.onScrolled(recyclerView, dx, dy);
         }
-        int scrollY = QuickReturnUtils.getScrollY(recyclerView, mColumnCount);
+        int scrollY = QuickReturnUtils.getScrollY(recyclerView, mColumnCount, mIsGrid);
         int diff = mPrevScrollY - scrollY;
 
 //        Log.d(getClass().getSimpleName(), "onScroll() : scrollY - "+scrollY);
@@ -233,6 +235,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
         private boolean mIsSnappable = false;
         private int mColumnCount = 1;
         private CollapseListener mListener = null;
+        private boolean isGrid = false;
 
         public Builder(QuickReturnViewType quickReturnViewType) {
             mQuickReturnViewType = quickReturnViewType;
@@ -270,6 +273,11 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
 
         public Builder isSnappable(boolean isSnappable){
             mIsSnappable = isSnappable;
+            return this;
+        }
+
+        public Builder isGrid(boolean isGrid){
+            this.isGrid = isGrid;
             return this;
         }
 
