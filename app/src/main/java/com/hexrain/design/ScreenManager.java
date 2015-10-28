@@ -65,11 +65,14 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
+import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -653,6 +656,32 @@ public class ScreenManager extends AppCompatActivity
     @Override
     public void onListIdChanged(long listId) {
         this.listId = listId;
+    }
+
+    @Override
+    public void onListChanged(RecyclerView list) {
+        setListener(list);
+    }
+
+    private QuickReturnRecyclerViewOnScrollListener scrollListener;
+
+    private void setListener(RecyclerView list) {
+        if (list != null){
+            if (scrollListener != null) list.removeOnScrollListener(scrollListener);
+            boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+            boolean isGrid = mPrefs.loadBoolean(Prefs.LIST_GRID);
+            scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                            .footer(isExtended ? mainMenu : mFab)
+                            .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                            .isSnappable(true)
+                            .isGrid(isGrid)
+                            .build();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                list.addOnScrollListener(scrollListener);
+            } else {
+                list.setOnScrollListener(scrollListener);
+            }
+        }
     }
 
     @Override
