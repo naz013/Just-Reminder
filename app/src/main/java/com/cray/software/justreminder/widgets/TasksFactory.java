@@ -12,14 +12,16 @@ import android.widget.RemoteViewsService;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.datas.Task;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
@@ -28,6 +30,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     private int widgetID;
     private ColorSetter cs;
     private ArrayList<Task> mData;
+    private Map<String, Integer> map;
 
     TasksFactory(Context ctx, Intent intent) {
         mContext = ctx;
@@ -41,14 +44,26 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
         mData = new ArrayList<>();
         data = new TasksData(mContext);
         cs = new ColorSetter(mContext);
+        map = new HashMap<>();
     }
 
     @Override
     public void onDataSetChanged() {
         mData.clear();
+        map.clear();
         data.open();
-        Cursor c = data.getTasks();
-
+        Cursor c = data.getTasksLists();
+        if (c != null && c.moveToFirst()){
+            int position = 1;
+            do {
+                position++;
+                String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
+                map.put(listId, color);
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        c = data.getTasks();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
@@ -60,7 +75,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
                     String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                     long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
                     if (checks.matches(GTasksHelper.TASKS_NEED_ACTION)) {
-                        mData.add(new Task(title, mId, checks, taskId, date, listId, note));
+                        mData.add(new Task(title, mId, checks, taskId, date, listId, note, map.get(listId)));
                     }
                 }
             } while (c.moveToNext());
@@ -70,7 +85,8 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-
+        map.clear();
+        mData.clear();
     }
 
     @Override
@@ -90,17 +106,10 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
         rView.setTextColor(R.id.note, itemTextColor);
         rView.setTextColor(R.id.taskDate, itemTextColor);
 
-        cs = new ColorSetter(mContext);
         rView.setViewVisibility(R.id.checkDone, View.GONE);
 
         Cursor c = data.getTasksList(mData.get(i).getListId());
-        if (c != null && c.moveToFirst()){
-            rView.setInt(R.id.listColor, "setBackgroundColor", mContext.getResources().getColor(
-                    cs.getNoteColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)))));
-        } else {
-            rView.setInt(R.id.listColor, "setBackgroundColor", mContext.getResources().getColor(
-                    cs.getNoteColor(8)));
-        }
+        rView.setInt(R.id.listColor, "setBackgroundColor", cs.getNoteColor(map.get(mData.get(i).getListId())));
 
         final String name = mData.get(i).getTitle();
 

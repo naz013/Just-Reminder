@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.cray.software.justreminder.dialogs.MissedCallDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;

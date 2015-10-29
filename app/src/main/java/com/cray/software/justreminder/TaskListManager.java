@@ -347,205 +347,131 @@ public class TaskListManager extends AppCompatActivity {
     };
 
     private void colorSwitch(int checkId) {
-        if (Module.isPro()) {
-            switch (checkId) {
-                case R.id.red_checkbox:
-                    setColor(0);
-                    break;
-                case R.id.violet_checkbox:
-                    setColor(1);
-                    break;
-                case R.id.green_checkbox:
-                    setColor(2);
-                    break;
-                case R.id.light_green_checkbox:
-                    setColor(3);
-                    break;
-                case R.id.blue_checkbox:
-                    setColor(4);
-                    break;
-                case R.id.light_blue_checkbox:
-                    setColor(5);
-                    break;
-                case R.id.yellow_checkbox:
-                    setColor(6);
-                    break;
-                case R.id.orange_checkbox:
-                    setColor(7);
-                    break;
-                case R.id.grey_checkbox:
-                    setColor(8);
-                    break;
-                case R.id.pink_checkbox:
-                    setColor(9);
-                    break;
-                case R.id.sand_checkbox:
-                    setColor(10);
-                    break;
-                case R.id.brown_checkbox:
-                    setColor(11);
-                    break;
-                case R.id.deepPurple:
-                    setColor(12);
-                    break;
-                case R.id.deepOrange:
-                    setColor(13);
-                    break;
-                case R.id.limeCheckbox:
-                    setColor(14);
-                    break;
-                case R.id.indigoCheckbox:
-                    setColor(15);
-                    break;
-            }
-        } else {
-            switch (checkId) {
-                case R.id.red_checkbox:
-                    setColor(0);
-                    break;
-                case R.id.violet_checkbox:
-                    setColor(1);
-                    break;
-                case R.id.green_checkbox:
-                    setColor(2);
-                    break;
-                case R.id.light_green_checkbox:
-                    setColor(3);
-                    break;
-                case R.id.blue_checkbox:
-                    setColor(4);
-                    break;
-                case R.id.light_blue_checkbox:
-                    setColor(5);
-                    break;
-                case R.id.yellow_checkbox:
-                    setColor(6);
-                    break;
-                case R.id.orange_checkbox:
-                    setColor(7);
-                    break;
-                case R.id.grey_checkbox:
-                    setColor(8);
-                    break;
-                case R.id.pink_checkbox:
-                    setColor(9);
-                    break;
-                case R.id.sand_checkbox:
-                    setColor(10);
-                    break;
-                case R.id.brown_checkbox:
-                    setColor(11);
-                    break;
-            }
+        switch (checkId) {
+            case R.id.red_checkbox:
+                setColor(0);
+                break;
+            case R.id.violet_checkbox:
+                setColor(1);
+                break;
+            case R.id.green_checkbox:
+                setColor(2);
+                break;
+            case R.id.light_green_checkbox:
+                setColor(3);
+                break;
+            case R.id.blue_checkbox:
+                setColor(4);
+                break;
+            case R.id.light_blue_checkbox:
+                setColor(5);
+                break;
+            case R.id.yellow_checkbox:
+                setColor(6);
+                break;
+            case R.id.orange_checkbox:
+                setColor(7);
+                break;
+            case R.id.grey_checkbox:
+                setColor(8);
+                break;
+            case R.id.pink_checkbox:
+                setColor(9);
+                break;
+            case R.id.sand_checkbox:
+                setColor(10);
+                break;
+            case R.id.brown_checkbox:
+                setColor(11);
+                break;
+            default:
+                if (Module.isPro()) {
+                    switch (checkId) {
+                        case R.id.deepPurple:
+                            setColor(12);
+                            break;
+                        case R.id.deepOrange:
+                            setColor(13);
+                            break;
+                        case R.id.limeCheckbox:
+                            setColor(14);
+                            break;
+                        case R.id.indigoCheckbox:
+                            setColor(15);
+                            break;
+                    }
+                }
+                break;
         }
     }
 
     private void setColor(int i){
         color = i;
-        int colorTmp = cSetter.getNoteColor(i);
-        toolbar.setBackgroundColor(getResources().getColor(colorTmp));
+        toolbar.setBackgroundColor(cSetter.getNoteColor(i));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(colorTmp));
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
         }
     }
 
     public void setUpRadio(){
-        if (Module.isPro()) {
-            switch (color) {
-                case 0:
-                    red_checkbox.setChecked(true);
-                    break;
-                case 1:
-                    violet_checkbox.setChecked(true);
-                    break;
-                case 2:
-                    green_checkbox.setChecked(true);
-                    break;
-                case 3:
-                    light_green_checkbox.setChecked(true);
-                    break;
-                case 4:
-                    blue_checkbox.setChecked(true);
-                    break;
-                case 5:
-                    light_blue_checkbox.setChecked(true);
-                    break;
-                case 6:
-                    yellow_checkbox.setChecked(true);
-                    break;
-                case 7:
-                    orange_checkbox.setChecked(true);
-                    break;
-                case 8:
-                    grey_checkbox.setChecked(true);
-                    break;
-                case 9:
-                    pink_checkbox.setChecked(true);
-                    break;
-                case 10:
-                    sand_checkbox.setChecked(true);
-                    break;
-                case 11:
-                    brown_checkbox.setChecked(true);
-                    break;
-                case 12:
-                    deepPurple.setChecked(true);
-                    break;
-                case 13:
-                    deepOrange.setChecked(true);
-                    break;
-                case 14:
-                    limeCheckbox.setChecked(true);
-                    break;
-                case 15:
-                    indigoCheckbox.setChecked(true);
-                    break;
-                default:
-                    green_checkbox.setChecked(true);
-                    break;
-            }
-        } else {
-            switch (color) {
-                case 0:
-                    red_checkbox.setChecked(true);
-                    break;
-                case 1:
-                    violet_checkbox.setChecked(true);
-                    break;
-                case 2:
-                    green_checkbox.setChecked(true);
-                    break;
-                case 3:
-                    light_green_checkbox.setChecked(true);
-                    break;
-                case 4:
-                    blue_checkbox.setChecked(true);
-                    break;
-                case 5:
-                    light_blue_checkbox.setChecked(true);
-                    break;
-                case 6:
-                    yellow_checkbox.setChecked(true);
-                    break;
-                case 7:
-                    orange_checkbox.setChecked(true);
-                    break;
-                case 8:
-                    grey_checkbox.setChecked(true);
-                    break;
-                case 9:
-                    pink_checkbox.setChecked(true);
-                    break;
-                case 10:
-                    sand_checkbox.setChecked(true);
-                    break;
-                case 11:
-                    brown_checkbox.setChecked(true);
-                    break;
-                default:
-                    green_checkbox.setChecked(true);
-                    break;
-            }
+        switch (color) {
+            case 0:
+                red_checkbox.setChecked(true);
+                break;
+            case 1:
+                violet_checkbox.setChecked(true);
+                break;
+            case 2:
+                green_checkbox.setChecked(true);
+                break;
+            case 3:
+                light_green_checkbox.setChecked(true);
+                break;
+            case 4:
+                blue_checkbox.setChecked(true);
+                break;
+            case 5:
+                light_blue_checkbox.setChecked(true);
+                break;
+            case 6:
+                yellow_checkbox.setChecked(true);
+                break;
+            case 7:
+                orange_checkbox.setChecked(true);
+                break;
+            case 8:
+                grey_checkbox.setChecked(true);
+                break;
+            case 9:
+                pink_checkbox.setChecked(true);
+                break;
+            case 10:
+                sand_checkbox.setChecked(true);
+                break;
+            case 11:
+                brown_checkbox.setChecked(true);
+                break;
+            default:
+                if (Module.isPro()) {
+                    switch (color) {
+                        case 12:
+                            deepPurple.setChecked(true);
+                            break;
+                        case 13:
+                            deepOrange.setChecked(true);
+                            break;
+                        case 14:
+                            limeCheckbox.setChecked(true);
+                            break;
+                        case 15:
+                            indigoCheckbox.setChecked(true);
+                            break;
+                        default:
+                            green_checkbox.setChecked(true);
+                            break;
+                    }
+                }
+                break;
         }
     }
 

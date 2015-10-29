@@ -52,7 +52,6 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     private CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck,
             birthdayPermanentCheck;
     private DataBase db;
-    private BirthdayAlarm alarmReceiver = new BirthdayAlarm();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -285,7 +284,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.reminderTime:
-                alarmReceiver.cancelAlarm(getActivity(), 0);
+                new BirthdayAlarm().cancelAlarm(getActivity());
                 getActivity().stopService(new Intent(getActivity(), SetBirthdays.class));
                 DialogFragment timePickerFragment = new TimePickerFragment();
                 timePickerFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
@@ -314,7 +313,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.contactsScan:
-                if (new Permissions(getActivity()).checkPermission(Permissions.ACCESS_FINE_LOCATION)) {
+                if (new Permissions(getActivity()).checkPermission(Permissions.READ_CONTACTS)) {
                     new CheckBirthdaysAsync(getActivity(), true).execute();
                 } else {
                     new Permissions(getActivity())

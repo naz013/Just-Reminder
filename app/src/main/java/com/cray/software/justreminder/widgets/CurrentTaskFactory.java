@@ -175,7 +175,8 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onDestroy() {
-
+        map.clear();
+        data.clear();
     }
 
     @Override
@@ -264,6 +265,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             int count = 0;
             ArrayList<ShoppingList> lists = map.get(item.getId());
             int size = lists.size();
+            rView.removeAllViews(R.id.todoList);
             for (ShoppingList list : lists){
                 RemoteViews view = new RemoteViews(mContext.getPackageName(),
                         R.layout.list_item_task_item_widget);
@@ -278,6 +280,11 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 }
 
                 view.setTextColor(R.id.shopText, itemTextColor);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    view.setTextViewTextSize(R.id.shopText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                } else {
+                    view.setFloat(R.id.shopText, "setTextSize", itemTextSize);
+                }
 
                 count++;
                 if (count == 9) {
@@ -299,6 +306,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 fillInIntent.putExtra(Constants.EDIT_WIDGET, 2);
                 rView.setOnClickFillInIntent(R.id.taskText, fillInIntent);
                 rView.setOnClickFillInIntent(R.id.itemBg, fillInIntent);
+                rView.setOnClickFillInIntent(R.id.todoList, fillInIntent);
             }
         }
         return rView;

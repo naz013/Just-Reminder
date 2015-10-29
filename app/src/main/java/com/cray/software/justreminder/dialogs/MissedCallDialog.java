@@ -99,12 +99,10 @@ public class MissedCallDialog extends Activity {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
             buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
             buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
-            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_grey600_24dp));
         } else {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
             buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_white_24dp));
             buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_white_24dp));
-            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_white_24dp));
         }
 
         TextView remText = (TextView) findViewById(R.id.remText);
@@ -118,8 +116,8 @@ public class MissedCallDialog extends Activity {
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
-        else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+        if (isDark) buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+        else buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
 
         contactPhoto.setVisibility(View.VISIBLE);
         Bitmap photo = Contacts.getPhoto(this, id);
@@ -199,11 +197,11 @@ public class MissedCallDialog extends Activity {
     private void colorify(FloatingActionButton... fab){
         for (FloatingActionButton button:fab){
             if (isDark){
-                button.setColorNormal(getResources().getColor(R.color.colorWhite));
-                button.setColorPressed(getResources().getColor(R.color.colorGrayDark));
+                button.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+                button.setColorPressed(ViewUtils.getColor(this, R.color.colorGrayDark));
             } else {
-                button.setColorNormal(getResources().getColor(R.color.colorGrayDark));
-                button.setColorPressed(getResources().getColor(R.color.colorWhite));
+                button.setColorNormal(ViewUtils.getColor(this, R.color.colorGrayDark));
+                button.setColorPressed(ViewUtils.getColor(this, R.color.colorWhite));
             }
         }
     }

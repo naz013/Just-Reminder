@@ -28,11 +28,10 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -42,7 +41,7 @@ import java.util.Calendar;
 public class QuickAddReminder extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener{
 
-    private FloatingEditText task_text;
+    private EditText task_text;
     private EditText repeatDays;
     private CheckBox taskExport;
     private TextView dateField, timeField, dateYearField;
@@ -76,7 +75,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        task_text = (FloatingEditText) findViewById(R.id.task_text);
+        task_text = (EditText) findViewById(R.id.task_text);
 
         Intent i = getIntent();
         long receivedDate = i.getLongExtra("date", 0);

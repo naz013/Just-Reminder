@@ -16,9 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.dialogs.TemplatesList;
 import com.cray.software.justreminder.dialogs.utils.ContactGroups;
 import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
@@ -159,13 +161,25 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.missed:
-                missedChange();
+                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                    missedChange();
+                } else {
+                    new Permissions(getActivity())
+                            .requestPermission(getActivity(),
+                                    new String[]{Permissions.READ_PHONE_STATE}, 107);
+                }
                 break;
             case R.id.missedTime:
                 Dialog.dialogWithSeek(getActivity(), 60, Prefs.MISSED_CALL_TIME, getString(R.string.repeat_interval_dialog_title), this);
                 break;
             case R.id.quickSMS:
-                quickChange();
+                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                    quickChange();
+                } else {
+                    new Permissions(getActivity())
+                            .requestPermission(getActivity(),
+                                    new String[]{Permissions.READ_PHONE_STATE}, 108);
+                }
                 break;
             case R.id.templates:
                 getActivity().getApplicationContext()
@@ -173,7 +187,13 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.followReminder:
-                followChange();
+                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                    followChange();
+                } else {
+                    new Permissions(getActivity())
+                            .requestPermission(getActivity(),
+                                    new String[]{Permissions.READ_PHONE_STATE}, 109);
+                }
                 break;
             case R.id.contactGroups:
                 getActivity().getApplicationContext()

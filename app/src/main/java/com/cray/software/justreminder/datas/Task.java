@@ -11,8 +11,10 @@ public class Task implements Parcelable {
     private String note;
     private long date;
     private long id;
+    private int color;
 
-    public Task(String title, long id, String status, String taskId, long date, String listId, String note){
+    public Task(String title, long id, String status, String taskId, long date, String listId,
+                String note, int color){
         this.title = title;
         this.id = id;
         this.status = status;
@@ -20,6 +22,15 @@ public class Task implements Parcelable {
         this.taskId = taskId;
         this.listId = listId;
         this.note = note;
+        this.color = color;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public String getNote(){
@@ -103,6 +114,7 @@ public class Task implements Parcelable {
         taskId = in.readString();
         id = in.readLong();
         date = in.readLong();
+        color = in.readInt();
     }
 
     @Override
@@ -119,5 +131,6 @@ public class Task implements Parcelable {
         dest.writeString(taskId);
         dest.writeLong(id);
         dest.writeLong(date);
+        dest.writeInt(color);
     }
 }

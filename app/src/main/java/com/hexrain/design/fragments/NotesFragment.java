@@ -246,10 +246,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void loaderAdapter(){
         provider = new NoteDataProvider(getActivity());
         reloadView();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        currentList.setLayoutManager(mLayoutManager);
+        currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);

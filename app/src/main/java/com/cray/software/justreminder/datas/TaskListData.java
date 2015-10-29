@@ -3,29 +3,19 @@ package com.cray.software.justreminder.datas;
 import java.util.ArrayList;
 
 public class TaskListData {
-    private String title;
-    private long id;
-    private String listId;
-    private int color;
+    private TaskList taskList;
     private ArrayList<Task> mData;
-    private int position, current;
+    private int position;
 
-    public TaskListData(String title, long id, String listId, int color, ArrayList<Task> mData,
-                        int position, int current){
-        this.title = title;
-        this.id = id;
-        this.listId = listId;
-        this.color = color;
+    public TaskListData(TaskList taskList, ArrayList<Task> mData,
+                        int position){
+        this.taskList = taskList;
         this.mData = mData;
-        this.current = current;
         this.position = position;
     }
 
-    public TaskListData(String title, long id, String listId, int color){
-        this.title = title;
-        this.id = id;
-        this.listId = listId;
-        this.color = color;
+    public TaskListData(TaskList taskList){
+        this.taskList = taskList;
     }
 
     public int getPosition(){
@@ -36,14 +26,6 @@ public class TaskListData {
         this.position = position;
     }
 
-    public int getCurrent(){
-        return current;
-    }
-
-    public void setCurrent(int current){
-        this.current = current;
-    }
-
     public ArrayList<Task> getmData(){
         return mData;
     }
@@ -52,35 +34,11 @@ public class TaskListData {
         this.mData = mData;
     }
 
-    public int getColor(){
-        return color;
+    public TaskList getTaskList() {
+        return taskList;
     }
 
-    public void setColor(int color){
-        this.color = color;
-    }
-
-    public String getTitle(){
-        return title;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    public long getId(){
-        return id;
-    }
-
-    public void setId(long id){
-        this.id = id;
-    }
-
-    public String getListId(){
-        return listId;
-    }
-
-    public void setListId(String listId){
-        this.listId = listId;
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
     }
 }

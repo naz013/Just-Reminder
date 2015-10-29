@@ -742,4 +742,5 @@
     <string name="change_group">Change group</string>
     <string name="change_color">Change color</string>
     <string name="birthday_permanent_explanation">Check to enable showing upcoming birthdays in status bar</string>
+    <string name="no_google_tasks">This Google Task list is empty</string>
 </resources>

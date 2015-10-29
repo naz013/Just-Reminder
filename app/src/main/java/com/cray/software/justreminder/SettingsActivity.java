@@ -1,5 +1,6 @@
 package com.cray.software.justreminder;
 
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.fragments.BirthdaysSettingsFragment;
 import com.cray.software.justreminder.fragments.CalendarSettingsFragment;
 import com.cray.software.justreminder.fragments.ExportSettingsFragment;
@@ -23,6 +23,9 @@ import com.cray.software.justreminder.fragments.SettingsFragment;
 import com.cray.software.justreminder.fragments.TimePickerFragment;
 import com.cray.software.justreminder.fragments.VoiceSettingsFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.Calendar;
 
@@ -176,8 +179,26 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 106:
-                new CheckBirthdaysAsync(this, true).execute();
+            case 107:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new SharedPrefs(this).saveBoolean(Prefs.MISSED_CALL_REMINDER, true);
+                } else {
+                    new Permissions(SettingsActivity.this).showInfo(SettingsActivity.this, Permissions.READ_PHONE_STATE);
+                }
+                break;
+            case 108:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new SharedPrefs(this).saveBoolean(Prefs.QUICK_SMS, true);
+                } else {
+                    new Permissions(SettingsActivity.this).showInfo(SettingsActivity.this, Permissions.READ_PHONE_STATE);
+                }
+                break;
+            case 109:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    new SharedPrefs(this).saveBoolean(Prefs.FOLLOW_REMINDER, true);
+                } else {
+                    new Permissions(SettingsActivity.this).showInfo(SettingsActivity.this, Permissions.READ_PHONE_STATE);
+                }
                 break;
         }
     }

@@ -2,12 +2,11 @@ package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -28,80 +27,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class TasksRecyclerAdapter extends BaseAdapter {
+public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdapter.ViewHolder>  {
 
     private List<Task> mDataset;
-    private LayoutInflater inflater;
     private Context mContext;
-    private SyncListener mListener;
-    private TasksData data;
     private ColorSetter cs;
+    private SyncListener listener;
     private SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
-    public TasksRecyclerAdapter(Context context, ArrayList<Task> myDataset, SyncListener listener) {
+    public TasksRecyclerAdapter(Context context, ArrayList<Task> myDataset) {
         this.mDataset = myDataset;
         this.mContext = context;
-        this.mListener = listener;
-        data = new TasksData(context);
         cs = new ColorSetter(context);
-        inflater = LayoutInflater.from(context.getApplicationContext());
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        notifyDataSetChanged();
     }
 
-    @Override
-    public int getCount() {
-        return mDataset.size();
+    public void setListener(SyncListener listener) {
+        this.listener = listener;
     }
 
-    @Override
-    public Object getItem(int position) {
-        return mDataset.get(position);
-    }
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView txtTitle;
+        TextView txtDate;
+        CheckBox checkBox;
+        TextView listColor;
+        TextView note;
+        CardView card;
 
-    @Override
-    public long getItemId(int position) {
-        return mDataset.get(position).getId();
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        data.open();
-        final ViewHolder holder;
-        if (convertView == null) {
-            holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.list_item_task, null);
-
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkDone);
-            holder.txtTitle = (TextView) convertView.findViewById(R.id.task);
-            holder.txtDate = (TextView) convertView.findViewById(R.id.taskDate);
-            holder.listColor = (TextView) convertView.findViewById(R.id.listColor);
-            holder.note = (TextView) convertView.findViewById(R.id.note);
-            holder.card = (CardView) convertView.findViewById(R.id.card);
-            holder.checkBox.setFocusableInTouchMode(false);
-            holder.checkBox.setFocusable(false);
-            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    switchTask(position, isChecked);
-                }
-            });
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+        public ViewHolder(View v) {
+            super(v);
+            checkBox = (CheckBox) v.findViewById(R.id.checkDone);
+            txtTitle = (TextView) v.findViewById(R.id.task);
+            txtDate = (TextView) v.findViewById(R.id.taskDate);
+            listColor = (TextView) v.findViewById(R.id.listColor);
+            note = (TextView) v.findViewById(R.id.note);
+            card = (CardView) v.findViewById(R.id.card);
+            checkBox.setFocusableInTouchMode(false);
+            checkBox.setFocusable(false);
         }
+    }
 
-        Cursor c = data.getTasksList(mDataset.get(position).getListId());
-        if (c != null && c.moveToFirst()){
-            holder.listColor.setBackgroundColor(
-                    mContext.getResources().getColor(
-                            cs.getNoteColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)))));
-        } else {
-            holder.listColor.setBackgroundColor(
-                    mContext.getResources().getColor(cs.getNoteColor(8)));
-        }
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View itemLayoutView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item_task, parent, false);
 
+        // create ViewHolder
+
+        return new ViewHolder(itemLayoutView);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        holder.listColor.setBackgroundColor(cs.getNoteColor(mDataset.get(position).getColor()));
         holder.card.setCardBackgroundColor(cs.getCardStyle());
 
         final String name = mDataset.get(position).getTitle();
@@ -135,44 +113,60 @@ public class TasksRecyclerAdapter extends BaseAdapter {
         holder.txtDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(new Intent(mContext, TaskManager.class)
-                        .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
-                        .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
+                onItemClick(position);
             }
         });
 
         holder.note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(new Intent(mContext, TaskManager.class)
-                        .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
-                        .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
+                onItemClick(position);
             }
         });
 
-        return convertView;
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClick(position);
+            }
+        });
+
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switchTask(position, isChecked);
+            }
+        });
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mDataset.get(position).getId();
+    }
+
+    @Override
+    public int getItemCount() {
+        return mDataset.size();
+    }
+
+    private void onItemClick(int position){
+        mContext.startActivity(new Intent(mContext, TaskManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
+                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
     }
 
     private void switchTask(int position, boolean isDone){
-        data.open();
+        TasksData db = new TasksData(mContext);
+        db.open();
         if (isDone){
-            data.setTaskDone(mDataset.get(position).getId());
+            db.setTaskDone(mDataset.get(position).getId());
         } else {
-            data.setTaskUnDone(mDataset.get(position).getId());
+            db.setTaskUnDone(mDataset.get(position).getId());
         }
 
         new SwitchTaskAsync(mContext,
                 mDataset.get(position).getListId(),
-                mDataset.get(position).getTaskId(), isDone, mListener)
+                mDataset.get(position).getTaskId(), isDone, listener)
                 .execute();
-    }
-
-    public class ViewHolder {
-        public TextView txtTitle;
-        public TextView txtDate;
-        public CheckBox checkBox;
-        public TextView listColor;
-        public TextView note;
-        public CardView card;
     }
 }

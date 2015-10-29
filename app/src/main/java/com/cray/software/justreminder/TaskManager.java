@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -60,7 +60,7 @@ public class TaskManager extends AppCompatActivity {
 
     private long id;
     private Toolbar toolbar;
-    private FloatingEditText editField, noteField;
+    private EditText editField, noteField;
     private TextView dateField;
     private TextView dateYearField;
     private TextView timeField;
@@ -125,8 +125,8 @@ public class TaskManager extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.save_menu);
         toolbar.setTitle(getString(R.string.string_add_task));
 
-        editField = (FloatingEditText) findViewById(R.id.editField);
-        noteField = (FloatingEditText) findViewById(R.id.noteField);
+        editField = (EditText) findViewById(R.id.editField);
+        noteField = (EditText) findViewById(R.id.noteField);
         listText = (TextView) findViewById(R.id.listText);
         listText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -475,14 +475,13 @@ public class TaskManager extends AppCompatActivity {
 
     private void setColor(int i){
         color = i;
-        int colorTmp = cSetter.getNoteColor(i);
-        toolbar.setBackgroundColor(getResources().getColor(colorTmp));
+        toolbar.setBackgroundColor(cSetter.getNoteColor(i));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(colorTmp));
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
         }
 
-        mFab.setColorNormal(getResources().getColor(colorTmp));
-        mFab.setColorPressed(cSetter.getNoteDarkColor(colorTmp));
+        mFab.setColorNormal(cSetter.getNoteDarkColor(i));
+        mFab.setColorPressed(cSetter.getNoteLightColor(i));
     }
 
     protected Dialog dateDialog() {
@@ -585,8 +584,8 @@ public class TaskManager extends AppCompatActivity {
             TextView textView = (TextView) convertView.findViewById(R.id.textView);
             textView.setText(text);
 
-            CardView card = (CardView) convertView.findViewById(R.id.card);
-            card.setCardBackgroundColor(cs.getCardStyle());
+            RelativeLayout background = (RelativeLayout) convertView.findViewById(R.id.background);
+            background.setBackgroundResource(cs.getCardDrawableStyle());
 
             convertView.findViewById(R.id.indicator).setVisibility(View.GONE);
 

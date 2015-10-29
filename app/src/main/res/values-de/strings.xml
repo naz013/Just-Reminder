@@ -742,4 +742,5 @@
     <string name="change_group">Gruppe wechseln</string>
     <string name="change_color">Farbwechsel</string>
     <string name="birthday_permanent_explanation">Prüfen Sie, welche anstehende Geburtstage in der Statusleiste zu aktivieren</string>
+    <string name="no_google_tasks">Dieses Google Aufgabenliste ist leer</string>
 </resources>

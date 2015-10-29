@@ -1,10 +1,12 @@
 package com.cray.software.justreminder.dialogs;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialog;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -135,7 +138,13 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button:
-                importEvents();
+                Permissions permissions = new Permissions(EventsImport.this);
+                if (permissions.checkPermission(Permissions.READ_CALENDAR)) {
+                    importEvents();
+                } else {
+                    permissions.requestPermission(EventsImport.this, new String[]{Permissions.READ_CALENDAR,
+                            Permissions.WRITE_CALENDAR}, 102);
+                }
                 break;
         }
     }
@@ -176,7 +185,35 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                 else eventCalendar.setEnabled(false);
                 break;
             case R.id.autoCheck:
-                autoCheck(isChecked);
+                if (isChecked) {
+                    Permissions permissions = new Permissions(EventsImport.this);
+                    if (permissions.checkPermission(Permissions.READ_CALENDAR)) {
+                        autoCheck(true);
+                    } else {
+                        permissions.requestPermission(EventsImport.this, new String[]{Permissions.READ_CALENDAR,
+                                Permissions.WRITE_CALENDAR}, 101);
+                    }
+                } else autoCheck(false);
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    autoCheck(true);
+                } else {
+                    new Permissions(EventsImport.this).showInfo(EventsImport.this, Permissions.READ_CALENDAR);
+                }
+                break;
+            case 102:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    importEvents();
+                } else {
+                    new Permissions(EventsImport.this).showInfo(EventsImport.this, Permissions.READ_CALENDAR);
+                }
                 break;
         }
     }

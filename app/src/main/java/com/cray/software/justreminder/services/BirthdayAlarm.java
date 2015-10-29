@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Prefs;
+
 import java.util.Calendar;
 
 public class BirthdayAlarm extends BroadcastReceiver {
@@ -21,10 +24,13 @@ public class BirthdayAlarm extends BroadcastReceiver {
         context.startService(check);
     }
 
-    public void setBirthdaysAlarm(Context context, int hour, int minute){
+    public void setBirthdaysAlarm(Context context){
         Intent intent1 = new Intent(context, BirthdayAlarm.class);
         alarmIntent = PendingIntent.getBroadcast(context, 210, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        SharedPrefs sharedPrefs = new SharedPrefs(context);
+        int hour = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
@@ -34,10 +40,9 @@ public class BirthdayAlarm extends BroadcastReceiver {
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
-    public void cancelAlarm(Context context, long id) {
-        Integer i = (int) (long) id;
+    public void cancelAlarm(Context context) {
         Intent intent = new Intent(context, BirthdayAlarm.class);
-        alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmIntent = PendingIntent.getBroadcast(context, 210, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmMgr!= null) {
             alarmMgr.cancel(alarmIntent);

@@ -78,15 +78,8 @@ public class CallReceiver extends BroadcastReceiver {
                                 db.open();
 
                                 Cursor c = db.getMissedCall(incoming_nr);
-                                int size = 0;
-                                if (c != null){
-                                    size = c.getCount();
-                                }
-
                                 MissedCallAlarm alarm = new MissedCallAlarm();
-
-                                if (size > 0) {
-                                    c.moveToFirst();
+                                if (c != null && c.moveToFirst()){
                                     do {
                                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                                         db.deleteMissedCall(id);
@@ -99,6 +92,8 @@ public class CallReceiver extends BroadcastReceiver {
                                     long id = db.addMissedCall(incoming_nr, currTime);
                                     alarm.setAlarm(mContext, id, incoming_nr, currTime);
                                 }
+                                if (c != null) c.close();
+                                db.close();
                                 break;
                             }
                         } else {
