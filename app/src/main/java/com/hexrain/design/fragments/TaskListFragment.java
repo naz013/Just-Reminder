@@ -80,8 +80,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
     }
 
     private void reloadView() {
-        int size = datas.size();
-        if (size > 0){
+        if (datas != null && datas.size() > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
         } else {

@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.inputmethodservice.Keyboard;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -36,6 +37,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -2839,7 +2841,26 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         RelativeLayout cardContainer = (RelativeLayout) findViewById(R.id.cardContainer);
         cardContainer.setBackgroundResource(cSetter.getCardDrawableStyle());
         shopEdit = (EditText) findViewById(R.id.shopEdit);
+        shopEdit.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    String task = shopEdit.getText().toString().trim();
+                    if (task.matches("")) {
+                        shopEdit.setError(getString(R.string.empty_task));
+                        return false;
+                    }
+
+                    int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
+                    shoppingAdapter.notifyDataSetChanged();
+                    shopEdit.setText("");
+                    return true;
+                } else return false;
+            }
+        });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
+        if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
+        else addButton.setImageResource(R.drawable.ic_add_grey600_24dp);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

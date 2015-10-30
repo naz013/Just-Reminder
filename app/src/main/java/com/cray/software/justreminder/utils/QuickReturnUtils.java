@@ -99,13 +99,25 @@ public class QuickReturnUtils {
 
         int firstVisiblePosition;
         if (mIsGrid){
-            StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) rv.getLayoutManager();
-            int[] pos = new int[4];
-            layoutManager.findFirstVisibleItemPositions(pos);
-            firstVisiblePosition = pos[0];
+            try {
+                StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) rv.getLayoutManager();
+                int[] pos = new int[4];
+                layoutManager.findFirstVisibleItemPositions(pos);
+                firstVisiblePosition = pos[0];
+            } catch (ClassCastException e){
+                LinearLayoutManager layoutManager = (LinearLayoutManager) rv.getLayoutManager();
+                firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+            }
         } else {
-            LinearLayoutManager layoutManager = (LinearLayoutManager)rv.getLayoutManager();
-            firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+            try {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) rv.getLayoutManager();
+                firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+            } catch (ClassCastException e){
+                StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager) rv.getLayoutManager();
+                int[] pos = new int[4];
+                layoutManager.findFirstVisibleItemPositions(pos);
+                firstVisiblePosition = pos[0];
+            }
         }
 
         int scrollY = -(c.getTop());

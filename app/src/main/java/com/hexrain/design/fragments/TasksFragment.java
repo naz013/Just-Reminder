@@ -298,7 +298,23 @@ public class TasksFragment extends Fragment {
             }
         });
 
-        pager.setCurrentItem(0);
+        pager.setCurrentItem(pos < taskListDatum.size() ? pos : 0);
+        if (mCallbacks != null) {
+            ColorSetter mColor = new ColorSetter(activity);
+            if (pos == 0) {
+                mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
+                mCallbacks.onUiChanged(mColor.colorSetter(), mColor.colorStatus(), mColor.colorChooser());
+                mCallbacks.onListIdChanged(0);
+            } else {
+                TaskList taskList = taskListDatum.get(pos).getTaskList();
+                mCallbacks.onTitleChanged(taskList.getTitle());
+                int tmp = taskList.getColor();
+                mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
+                        mColor.getNoteLightColor(tmp));
+                long idS = taskList.getId();
+                mCallbacks.onListIdChanged(idS);
+            }
+        }
     }
 
     private ArrayList<TaskList> getTaskLists() {

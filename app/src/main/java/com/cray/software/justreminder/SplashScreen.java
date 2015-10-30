@@ -55,7 +55,7 @@ public class SplashScreen extends Activity{
         splashBg.setBackgroundColor(cs.colorSetter());
 
         sPrefs = new SharedPrefs(SplashScreen.this);
-        if (SyncHelper.isSdPresent()){
+        if (SyncHelper.isSdPresent() && sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
             sPrefs.loadPrefsFromFile();
         }
         initPrefs();
@@ -143,6 +143,7 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
             uiEd.putBoolean(Prefs.LIST_GRID, false);
             uiEd.putBoolean(Prefs.EXTRA_OPTIONS, false);
+            uiEd.putBoolean(Prefs.BIRTHDAY_PERMANENT, false);
 
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
@@ -419,6 +420,9 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.FOLLOW_REMINDER)){
             sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, false);
+        }
+        if (!sPrefs.isString(Prefs.BIRTHDAY_PERMANENT)){
+            sPrefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, false);
         }
 
         if (Module.isPro()) {

@@ -670,11 +670,14 @@ public class ScreenManager extends AppCompatActivity
             if (scrollListener != null) list.removeOnScrollListener(scrollListener);
             boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
             boolean isGrid = mPrefs.loadBoolean(Prefs.LIST_GRID);
+            boolean isMain = false;
+            if (mTag != null && (mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_ARCHIVE)))
+                isMain = true;
             scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
                             .footer(isExtended ? mainMenu : mFab)
                             .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                             .isSnappable(true)
-                            .isGrid(isGrid)
+                            .isGrid(isMain && isGrid)
                             .build();
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                 list.addOnScrollListener(scrollListener);
