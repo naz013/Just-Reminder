@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -15,7 +16,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
-    private static final int DB_VERSION = 12;
+    private static final int DB_VERSION = 13;
     private static final String CURRENT_TABLE_NAME = "current_task_table";
     private static final String CURRENT_CACHE_TABLE_NAME = "current_cache_task_table";
     private static final String CONTACTS_TABLE_NAME = "contacts_task_table";
@@ -146,8 +147,12 @@ public class DataBase {
                     Constants.COLUMN_COLOR + " INTEGER, " +
                     Constants.COLUMN_TECH_VAR + " VARCHAR(255), " +
                     Constants.COLUMN_CATEGORY + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_3 + " VARCHAR(255), " +
+                    Constants.COLUMN_EXTRA_4 + " VARCHAR(255), " +
                     Constants.COLUMN_REMINDER_ID + " INTEGER, " +
                     Constants.COLUMN_ARCHIVED + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_1 + " INTEGER, " +
+                    Constants.COLUMN_EXTRA_2 + " INTEGER, " +
                     Constants.COLUMN_DATE_TIME + " INTEGER " +
                     ");";
 
@@ -226,6 +231,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 2:
                     db.execSQL(LOCATION_TABLE_CREATE);
@@ -279,6 +294,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 3:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -331,6 +356,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 4:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -384,6 +419,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 5:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -436,6 +481,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 6:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -483,6 +538,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 7:
                     db.execSQL(CALLS_TABLE_CREATE);
@@ -514,6 +579,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 8:
                     db.execSQL(CATEGORIES_TABLE_CREATE);
@@ -543,6 +618,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 10:
                     db.execSQL(SHOPPING_TABLE_CREATE);
@@ -572,6 +657,16 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 11:
                     db.execSQL(SHOPPING_TABLE_CREATE);
@@ -600,6 +695,27 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
+
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
+                    break;
+                case 12:
+                    //Add new fields to shopping table
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
+                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
+                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
             }
         }
@@ -909,6 +1025,12 @@ public class DataBase {
                 null, null);
     }
 
+    public Cursor getReminder(String uuID) throws SQLException {
+        openGuard();
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TECH_VAR  + "='" + uuID + "'", null, null, null,
+                null, null);
+    }
+
     public Cursor getReminders(int hour, int minute) throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null,
@@ -1171,7 +1293,7 @@ public class DataBase {
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, text);
         args.put(Constants.COLUMN_DATE_TIME, dateTime);
-        return db.update(MESSAGES_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.update(MESSAGES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public Cursor getTemplate(long id) throws SQLException {
@@ -1209,14 +1331,14 @@ public class DataBase {
         args.put(Constants.COLUMN_TEXT, name);
         args.put(Constants.COLUMN_DATE_TIME, dateTime);
         args.put(Constants.COLUMN_COLOR, color);
-        return db.update(CATEGORIES_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.update(CATEGORIES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public boolean updateCategoryColor(long rowId, int color){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_COLOR, color);
-        return db.update(CATEGORIES_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.update(CATEGORIES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public Cursor getCategory(long id) throws SQLException {
@@ -1244,23 +1366,25 @@ public class DataBase {
 
     //Working with reminder shopping list type table
 
-    public long addShopItem (String task, long dateTime, String uuID, long remId) {
+    public long addShopItem (String task, String uuID, long remId) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_TEXT, task);
-        cv.put(Constants.COLUMN_DATE_TIME, dateTime);
+        cv.put(Constants.COLUMN_DATE_TIME, System.currentTimeMillis());
         cv.put(Constants.COLUMN_TECH_VAR, uuID);
         cv.put(Constants.COLUMN_REMINDER_ID, remId);
         cv.put(Constants.COLUMN_ARCHIVED, 0);
+        cv.put(Constants.COLUMN_EXTRA_1, ShoppingList.ACTIVE);
         //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(SHOPPING_TABLE_NAME, null, cv);
     }
 
-    public long addShopItem (String task, long dateTime, String uuID, long remId, int checked) {
+    public long addShopItem (String task, String uuID, long remId, int checked, long dateTime) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_TEXT, task);
         cv.put(Constants.COLUMN_DATE_TIME, dateTime);
+        cv.put(Constants.COLUMN_EXTRA_1, ShoppingList.ACTIVE);
         cv.put(Constants.COLUMN_TECH_VAR, uuID);
         cv.put(Constants.COLUMN_REMINDER_ID, remId);
         cv.put(Constants.COLUMN_ARCHIVED, checked);
@@ -1268,20 +1392,26 @@ public class DataBase {
         return db.insert(SHOPPING_TABLE_NAME, null, cv);
     }
 
-    public boolean updateShopItem(long rowId, String task, long dateTime, int checked){
+    public boolean updateShopItem(long rowId, String task, int checked){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, task);
-        args.put(Constants.COLUMN_DATE_TIME, dateTime);
         args.put(Constants.COLUMN_ARCHIVED, checked);
-        return db.update(SHOPPING_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public boolean updateShopItem(long rowId, int checked){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_ARCHIVED, checked);
-        return db.update(SHOPPING_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateShopItemStatus(long rowId, int status){
+        openGuard();
+        ContentValues args = new ContentValues();
+        args.put(Constants.COLUMN_EXTRA_1, status);
+        return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public Cursor getShopItem(long id) throws SQLException {
@@ -1299,15 +1429,21 @@ public class DataBase {
 
     public Cursor getShopItems() throws SQLException {
         openGuard();
-        return db.query(SHOPPING_TABLE_NAME, null, null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " +
-                Constants.COLUMN_DATE_TIME + " ASC", null);
+        return db.query(SHOPPING_TABLE_NAME, null, null, null, null,
+                Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
     }
 
-    public Cursor getShopItems(long id) throws SQLException {
+    public Cursor getShopItems(long remId) throws SQLException {
         openGuard();
-        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID +
-                "=" + id, null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " +
-                Constants.COLUMN_DATE_TIME + " ASC", null);
+        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId,
+                null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
+    }
+
+    public Cursor getShopItemsActive(long remId) throws SQLException {
+        openGuard();
+        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId +
+                " AND "+ Constants.COLUMN_EXTRA_1 + "=" + 1, null, null, null,
+                Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
     }
 
     public boolean deleteShopItem(long rowId) {

@@ -73,7 +73,58 @@ public class Type {
             c.close();
             db.close();
 
-            return new Reminder(text, type, weekdays, melody, catId, uuId,
+            return new Reminder(id, text, type, weekdays, melody, catId, uuId,
+                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
+                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
+                    voice, notificationRepeat, wake, unlock, auto, limit);
+        } else return null;
+    }
+
+    /**
+     * Get reminder object.
+     * @param uuId reminder unique identifier.
+     * @return reminder object
+     */
+    public Reminder getItem(String uuId){
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor c = db.getReminder(uuId);
+        if (c != null && c.moveToFirst()){
+            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+            int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+            int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+            int mySeconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
+            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
+            long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+            int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+            int voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
+            int vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
+            int notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
+            int wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
+            int unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
+            int auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
+            long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
+            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+            String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+
+            c.close();
+            db.close();
+
+            return new Reminder(id, text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
                     voice, notificationRepeat, wake, unlock, auto, limit);

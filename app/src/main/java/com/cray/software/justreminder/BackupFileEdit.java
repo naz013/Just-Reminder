@@ -356,7 +356,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                         return false;
                     }
 
-                    int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
+                    int position = shoppingLists.addItem(new ShoppingList(task));
                     shoppingAdapter.notifyDataSetChanged();
                     shopEdit.setText("");
                     return true;
@@ -375,7 +375,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
+                int position = shoppingLists.addItem(new ShoppingList(task));
                 shoppingAdapter.notifyDataSetChanged();
                 shopEdit.setText("");
             }
@@ -386,8 +386,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemCheck(int position, boolean isChecked) {
                 ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked()) item.setIsChecked(false);
-                else item.setIsChecked(true);
+                if (item.isChecked() == 1) item.setIsChecked(0);
+                else item.setIsChecked(1);
                 shoppingAdapter.notifyDataSetChanged();
             }
 
@@ -395,6 +395,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             public void onItemDelete(int position) {
                 shoppingLists.removeItem(position);
                 shoppingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onItemChange(int position) {
+
             }
         });
         todoList.setLayoutManager(new LinearLayoutManager(this));
@@ -406,14 +411,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 fileLoc = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_LOCATION));
+                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             shoppingLists = new ShoppingListDataProvider(SyncHelper.getList(fileLoc));
             shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
                 @Override
                 public void onItemCheck(int position, boolean isChecked) {
                     ShoppingList item = shoppingLists.getItem(position);
-                    if (item.isChecked()) item.setIsChecked(false);
-                    else item.setIsChecked(true);
+                    if (item.isChecked() == 1) item.setIsChecked(0);
+                    else item.setIsChecked(1);
                     shoppingAdapter.notifyDataSetChanged();
                 }
 
@@ -421,6 +427,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 public void onItemDelete(int position) {
                     shoppingLists.removeItem(position);
                     shoppingAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemChange(int position) {
+
                 }
             });
             todoList.setAdapter(shoppingAdapter);

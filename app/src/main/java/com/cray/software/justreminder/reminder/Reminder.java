@@ -45,50 +45,12 @@ public class Reminder {
     private long id, repMinute, due, count, limit;
     private double[] place;
 
-    public Reminder(){
-    }
-
-    public Reminder(String title, String type, String weekdays, String melody, String categoryId,
-                    String uuId, double[] place, String number, int day, int month, int year,
-                    int hour, int minute, int seconds, int repCode, int export, int radius,
-                    int color, int code, long repMinute, long due, int vibration, int voice,
-                    int notificationRepeat, int wake, int unlock, int auto, long limit){
-        this.title = title;
-        this.type = type;
-        this.weekdays = weekdays;
-        this.melody = melody;
-        this.categoryId = categoryId;
-        this.uuId = uuId;
-        this.place = place;
-        this.number = number;
-        this.day = day;
-        this.month = month;
-        this.year = year;
-        this.hour = hour;
-        this.minute = minute;
-        this.seconds = seconds;
-        this.repCode = repCode;
-        this.export = export;
-        this.radius = radius;
-        this.color = color;
-        this.code = code;
-        this.repMinute = repMinute;
-        this.due = due;
-        this.count = 0;
-        this.vibration = vibration;
-        this.voice = voice;
-        this.notificationRepeat = notificationRepeat;
-        this.wake = wake;
-        this.unlock = unlock;
-        this.auto = auto;
-        this.limit = limit;
-    }
-
-    public Reminder(String title, String type, String weekdays, String melody, String categoryId,
+    public Reminder(long id, String title, String type, String weekdays, String melody, String categoryId,
                     String uuId, double[] place, String number, int day, int month, int year,
                     int hour, int minute, int seconds, int repCode, int export, int radius,
                     int color, int code, long repMinute, long due, long count, int vibration, int voice,
                     int notificationRepeat, int wake, int unlock, int auto, long limit){
+        this.id = id;
         this.title = title;
         this.type = type;
         this.weekdays = weekdays;

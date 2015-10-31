@@ -330,7 +330,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         } else {
             final ViewHolder1 viewHolder1 = (ViewHolder1) holder;
             viewHolder1.background.setBackgroundResource(cs.getCardDrawableStyle());
-            viewHolder1.subBackground.setBackgroundColor(mContext.getResources().getColor(cs.getCategoryColor(item.getCatColor())));
+            viewHolder1.subBackground.setBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(item.getCatColor())));
 
             String title = item.getTitle();
             viewHolder1.taskTitle.setText(title);
@@ -342,7 +342,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.todoList.setFocusableInTouchMode(false);
             viewHolder1.todoList.setFocusable(false);
 
-            ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId());
+            ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId(), ShoppingList.ACTIVE);
             int count = 0;
             for (ShoppingList list : provider.getData()){
                 View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
@@ -356,7 +356,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 });
                 textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
-                if (list.isChecked()) {
+                if (list.isChecked() == 1) {
                     checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {

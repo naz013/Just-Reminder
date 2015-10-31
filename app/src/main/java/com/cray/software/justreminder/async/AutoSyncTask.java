@@ -51,20 +51,20 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
 
         //export & import reminders
 
-        ioHelper.backupReminder(true);
         ioHelper.restoreReminder(true);
+        ioHelper.backupReminder(true);
 
         //export & import notes
         SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
-            ioHelper.backupNote(true);
             ioHelper.restoreNote(true);
+            ioHelper.backupNote(true);
         }
 
         //export & import birthdays
         if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
-            ioHelper.backupBirthday(true);
             ioHelper.restoreBirthday(true);
+            ioHelper.backupBirthday(true);
         }
 
         DB.close();

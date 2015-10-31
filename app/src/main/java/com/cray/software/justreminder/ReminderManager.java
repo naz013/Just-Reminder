@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.inputmethodservice.Keyboard;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -69,8 +68,8 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.dialogs.utils.ContactsList;
@@ -2849,12 +2848,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (task.matches("")) {
                         shopEdit.setError(getString(R.string.empty_task));
                         return false;
+                    } else {
+                        int position = shoppingLists.addItem(new ShoppingList(task));
+                        shoppingAdapter.notifyDataSetChanged();
+                        shopEdit.setText("");
+                        return true;
                     }
-
-                    int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
-                    shoppingAdapter.notifyDataSetChanged();
-                    shopEdit.setText("");
-                    return true;
                 } else return false;
             }
         });
@@ -2870,7 +2869,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     return;
                 }
 
-                int position = shoppingLists.addItem(new ShoppingList(task, System.currentTimeMillis()));
+                int position = shoppingLists.addItem(new ShoppingList(task));
                 shoppingAdapter.notifyDataSetChanged();
                 shopEdit.setText("");
             }
@@ -2881,8 +2880,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onItemCheck(int position, boolean isChecked) {
                 ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked()) item.setIsChecked(false);
-                else item.setIsChecked(true);
+                if (item.isChecked() == 1) item.setIsChecked(0);
+                else item.setIsChecked(1);
                 shoppingAdapter.notifyDataSetChanged();
             }
 
@@ -2891,6 +2890,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 shoppingLists.removeItem(position);
                 shoppingAdapter.notifyDataSetChanged();
             }
+
+            @Override
+            public void onItemChange(int position) {
+
+            }
         });
         todoList.setLayoutManager(new LinearLayoutManager(this));
         todoList.setAdapter(shoppingAdapter);
@@ -2898,13 +2902,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (id != 0 && isSame()){
             if (remControl instanceof ShoppingType) {
                 shoppingLists.clear();
-                shoppingLists = new ShoppingListDataProvider(this, id);
+                shoppingLists = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
                 shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
                     @Override
                     public void onItemCheck(int position, boolean isChecked) {
                         ShoppingList item = shoppingLists.getItem(position);
-                        if (item.isChecked()) item.setIsChecked(false);
-                        else item.setIsChecked(true);
+                        if (item.isChecked() == 1) item.setIsChecked(0);
+                        else item.setIsChecked(1);
                         shoppingAdapter.notifyDataSetChanged();
                     }
 
@@ -2912,6 +2916,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     public void onItemDelete(int position) {
                         shoppingLists.removeItem(position);
                         shoppingAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onItemChange(int position) {
+
                     }
                 });
                 todoList.setAdapter(shoppingAdapter);
@@ -3344,9 +3353,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
                 wake + ", U " + unlock + ", A " + auto + ", L " + limit);
 
-        return new Reminder(task, type, weekdays, melody, categoryId, uuId,
+        return new Reminder(0, task, type, weekdays, melody, categoryId, uuId,
                 new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, vibro, voice,
+                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
                 notification, wake, unlock, auto, limit);
     }
 

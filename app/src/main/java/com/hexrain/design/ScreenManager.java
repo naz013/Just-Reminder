@@ -671,8 +671,11 @@ public class ScreenManager extends AppCompatActivity
             boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
             boolean isGrid = mPrefs.loadBoolean(Prefs.LIST_GRID);
             boolean isMain = false;
-            if (mTag != null && (mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_ARCHIVE)))
+            if (mTag != null && (mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_ARCHIVE) ||
+                    mTag.matches(FRAGMENT_NOTE))) {
                 isMain = true;
+                if (mTag.matches(FRAGMENT_NOTE)) isGrid = mPrefs.loadBoolean(Prefs.NOTES_LIST_STYLE);
+            }
             scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
                             .footer(isExtended ? mainMenu : mFab)
                             .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
@@ -749,7 +752,7 @@ public class ScreenManager extends AppCompatActivity
                 replace(PlacesFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_TEMPLATES)) {
                 replace(TemplatesFragment.newInstance(), tag);
-            } else if (tag.matches(FRAGMENT_TASKS)) {
+            } else if (tag.matches(FRAGMENT_TASKS) && new GTasksHelper(this).isLinked()) {
                 replace(TasksFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_BACKUPS)) {
                 replace(BackupsFragment.newInstance(), tag);

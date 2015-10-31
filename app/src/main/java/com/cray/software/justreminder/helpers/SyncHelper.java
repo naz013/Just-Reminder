@@ -21,6 +21,7 @@ import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ShoppingType;
 import com.cray.software.justreminder.reminder.TimerType;
+import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
@@ -48,6 +49,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -243,14 +245,15 @@ public class SyncHelper {
 
                     if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                         JSONObject shopObject = new JSONObject();
-                        ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, id);
+                        ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, id, ShoppingList.ACTIVE);
                         for (ShoppingList item : provider.getData()){
                             JSONObject itemObject = new JSONObject();
                             itemObject.put(Constants.COLUMN_TEXT, item.getTitle());
-                            itemObject.put(Constants.COLUMN_DATE_TIME, item.getDateTime());
+                            itemObject.put(Constants.COLUMN_DATE_TIME, item.getTime());
+                            itemObject.put(Constants.COLUMN_EXTRA_1, item.getStatus());
                             itemObject.put(Constants.COLUMN_TECH_VAR, item.getUuId());
                             itemObject.put(Constants.COLUMN_REMINDER_ID, item.getRemId());
-                            itemObject.put(Constants.COLUMN_ARCHIVED, item.isChecked() ? 1 : 0);
+                            itemObject.put(Constants.COLUMN_ARCHIVED, item.isChecked());
                             shopObject.put(item.getUuId(), itemObject);
                         }
                         jObjectData.put(SHOPPING_REMINDER_LIST, shopObject);
@@ -898,38 +901,26 @@ public class SyncHelper {
      */
     public void reminderFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(mContext);
-            DB.open();
-            List<String> namesPass = new ArrayList<>();
-            Cursor e = DB.queryGroup();
-            while (e.moveToNext()) {
-                for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                    namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                }
-            }
-            e.close();
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
-                if (!namesPass.contains(fileNameS)) {
-                    FileInputStream stream = new FileInputStream(file);
-                    Writer writer = new StringWriter();
-                    char[] buffer = new char[1024];
-                    try {
-                        BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(stream, "UTF-8")
-                        );
-                        int n;
-                        while ((n = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, n);
-                        }
-                    } finally {
-                        stream.close();
+                FileInputStream stream = new FileInputStream(file);
+                Writer writer = new StringWriter();
+                char[] buffer = new char[1024];
+                try {
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(stream, "UTF-8")
+                    );
+                    int n;
+                    while ((n = reader.read(buffer)) != -1) {
+                        writer.write(buffer, 0, n);
                     }
-                    String jsonText = writer.toString();
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    reminderObject(jsonObj);
+                } finally {
+                    stream.close();
                 }
+                String jsonText = writer.toString();
+                JSONObject jsonObj = new JSONObject(jsonText);
+                reminderObject(jsonObj);
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
@@ -941,28 +932,25 @@ public class SyncHelper {
                         int pos = fileName.lastIndexOf(".");
                         String fileLoc = sdPathDr + "/" + fileName;
                         String fileNameS = fileName.substring(0, pos);
-                        if (!namesPass.contains(fileNameS)) {
-                            FileInputStream stream = new FileInputStream(fileLoc);
-                            Writer writer = new StringWriter();
-                            char[] buffer = new char[1024];
-                            try {
-                                BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(stream, "UTF-8")
-                                );
-                                int n;
-                                while ((n = reader.read(buffer)) != -1) {
-                                    writer.write(buffer, 0, n);
-                                }
-                            } finally {
-                                stream.close();
+                        FileInputStream stream = new FileInputStream(fileLoc);
+                        Writer writer = new StringWriter();
+                        char[] buffer = new char[1024];
+                        try {
+                            BufferedReader reader = new BufferedReader(
+                                    new InputStreamReader(stream, "UTF-8")
+                            );
+                            int n;
+                            while ((n = reader.read(buffer)) != -1) {
+                                writer.write(buffer, 0, n);
                             }
-                            String jsonText = writer.toString();
-                            JSONObject jsonObj = new JSONObject(jsonText);
-                            reminderObject(jsonObj);
+                        } finally {
+                            stream.close();
                         }
+                        String jsonText = writer.toString();
+                        JSONObject jsonObj = new JSONObject(jsonText);
+                        reminderObject(jsonObj);
                     }
                 }
-                DB.close();
             }
         }
     }
@@ -1059,64 +1047,107 @@ public class SyncHelper {
             }
         }
         e.close();
-        if (type != null && !uuIdArray.contains(uuID)) {
-            if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                if (!uuIdArray.contains(uuID)) {
-                    long due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
-                    new WeekdayType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
+        if (type != null) {
+            if (!uuIdArray.contains(uuID)) {
+                if (type.startsWith(Constants.TYPE_WEEKDAY)) {
+                    if (!uuIdArray.contains(uuID)) {
+                        long due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
+                        new WeekdayType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
+                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
+                                notificationRepeat, wake, unlock, auto, limit));
+                    }
+                } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                    long due = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
+                    new MonthdayType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                             uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                            minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
+                            minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
                             notificationRepeat, wake, unlock, auto, limit));
-                }
-            } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                long due = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
-                new MonthdayType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
-                        uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                        minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
-                        notificationRepeat, wake, unlock, auto, limit));
-            } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
-                if (jsonObj.has(SHOPPING_REMINDER_LIST)){
-                    JSONObject listObject = jsonObj.getJSONObject(SHOPPING_REMINDER_LIST);
-                    ShoppingType shoppingType = new ShoppingType(mContext);
-                    long id = shoppingType.save(new Reminder(text, type, weekdays, melody, categoryId,
-                            uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                            minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, 0, vibration, voice,
-                            notificationRepeat, wake, unlock, auto, limit));
-                    ArrayList<ShoppingList> arrayList = new ArrayList<>();
-                    Iterator<?> keys = listObject.keys();
-                    while(keys.hasNext()) {
-                        String key = (String)keys.next();
-                        JSONObject item = (JSONObject) listObject.get(key);
-                        if (item != null) {
-                            String title = item.getString(Constants.COLUMN_TEXT);
-                            String uuId = item.getString(Constants.COLUMN_TECH_VAR);
-                            long dateTime = item.getLong(Constants.COLUMN_DATE_TIME);
-                            int checked = item.getInt(Constants.COLUMN_ARCHIVED);
-                            arrayList.add(new ShoppingList(0, title, checked == 1, uuId, id));
+                } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+                    if (jsonObj.has(SHOPPING_REMINDER_LIST)) {
+                        JSONObject listObject = jsonObj.getJSONObject(SHOPPING_REMINDER_LIST);
+                        ShoppingType shoppingType = new ShoppingType(mContext);
+                        long id = shoppingType.save(new Reminder(0, text, type, weekdays, melody, categoryId,
+                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, 0, count, vibration, voice,
+                                notificationRepeat, wake, unlock, auto, limit));
+                        ArrayList<ShoppingList> arrayList = new ArrayList<>();
+                        Iterator<?> keys = listObject.keys();
+                        while (keys.hasNext()) {
+                            String key = (String) keys.next();
+                            JSONObject item = (JSONObject) listObject.get(key);
+                            if (item != null) {
+                                String title = item.getString(Constants.COLUMN_TEXT);
+                                String uuId = item.getString(Constants.COLUMN_TECH_VAR);
+                                long time = item.getInt(Constants.COLUMN_DATE_TIME);
+                                int status = 1;
+                                if (item.has(Constants.COLUMN_EXTRA_1)) status = item.getInt(Constants.COLUMN_EXTRA_1);
+                                int checked = item.getInt(Constants.COLUMN_ARCHIVED);
+                                arrayList.add(new ShoppingList(0, title, checked, uuId, id, status, time));
+                            }
+                        }
+                        shoppingType.saveShopList(id, arrayList, null);
+                    }
+                } else {
+                    if (timeCount.isNext(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
+                        if (type.matches(Constants.TYPE_TIME)) {
+                            long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                            new TimerType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
+                                    uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                    minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
+                                    notificationRepeat, wake, unlock, auto, limit));
+                        } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                            long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                            new LocationType(mContext, type).save(new Reminder(0, text, type, weekdays, melody, categoryId,
+                                    uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                    minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
+                                    notificationRepeat, wake, unlock, auto, limit));
+                        } else {
+                            long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
+                            new DateType(mContext, type).save(new Reminder(0, text, type, weekdays, melody, categoryId,
+                                    uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                    minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
+                                    notificationRepeat, wake, unlock, auto, limit));
                         }
                     }
-                    shoppingType.saveShopList(id, arrayList, null);
                 }
             } else {
-                if (timeCount.isNext(year, month, day, hour, minute, seconds, repMinute, repeatCode, i)) {
-                    if (type.matches(Constants.TYPE_TIME)) {
-                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
-                        new TimerType(mContext).save(new Reminder(text, type, weekdays, melody, categoryId,
-                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
-                                notificationRepeat, wake, unlock, auto, limit));
-                    } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
-                        new LocationType(mContext, type).save(new Reminder(text, type, weekdays, melody, categoryId,
-                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
-                                notificationRepeat, wake, unlock, auto, limit));
-                    } else {
-                        long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
-                        new DateType(mContext, type).save(new Reminder(text, type, weekdays, melody, categoryId,
-                                uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
-                                minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, vibration, voice,
-                                notificationRepeat, wake, unlock, auto, limit));
+                if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+                    if (jsonObj.has(SHOPPING_REMINDER_LIST)) {
+                        Reminder reminder = new Type(mContext).getItem(uuID);
+                        if (reminder != null) {
+                            long remId = reminder.getId();
+                            JSONObject listObject = jsonObj.getJSONObject(SHOPPING_REMINDER_LIST);
+                            ShoppingType shoppingType = new ShoppingType(mContext);
+                            shoppingType.save(remId, new Reminder(0, text, type, weekdays, melody, categoryId,
+                                    uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
+                                    minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, 0, count, vibration, voice,
+                                    notificationRepeat, wake, unlock, auto, limit));
+                            ArrayList<ShoppingList> arrayList = new ArrayList<>();
+                            Map<String, Long> uuIds = ShoppingList.getUuIds(mContext, remId);
+                            Iterator<?> keys = listObject.keys();
+                            while (keys.hasNext()) {
+                                String key = (String) keys.next();
+                                JSONObject item = (JSONObject) listObject.get(key);
+                                if (item != null) {
+                                    String title = item.getString(Constants.COLUMN_TEXT);
+                                    String uuId = item.getString(Constants.COLUMN_TECH_VAR);
+                                    long time = item.getLong(Constants.COLUMN_DATE_TIME);
+                                    int status = 1;
+                                    if (item.has(Constants.COLUMN_EXTRA_1))
+                                        status = item.getInt(Constants.COLUMN_EXTRA_1);
+                                    int checked = item.getInt(Constants.COLUMN_ARCHIVED);
+                                    if (uuIds.containsKey(uuId)) {
+                                        arrayList.add(new ShoppingList(uuIds.get(uuId), title, checked, uuId,
+                                                remId, status, time));
+                                    } else {
+                                        arrayList.add(new ShoppingList(0, title, checked, uuId,
+                                                remId, status, time));
+                                    }
+                                }
+                            }
+                            shoppingType.saveShopList(remId, arrayList, null);
+                        }
                     }
                 }
             }
@@ -1628,9 +1659,12 @@ public class SyncHelper {
                     if (item != null) {
                         String title = item.getString(Constants.COLUMN_TEXT);
                         String uuId = item.getString(Constants.COLUMN_TECH_VAR);
-                        long dateTime = item.getLong(Constants.COLUMN_DATE_TIME);
+                        long time = item.getInt(Constants.COLUMN_DATE_TIME);
+                        int status = 1;
+                        if (item.has(Constants.COLUMN_EXTRA_1))
+                            status = item.getInt(Constants.COLUMN_EXTRA_1);
                         int checked = item.getInt(Constants.COLUMN_ARCHIVED);
-                        list.add(new ShoppingList(0, title, checked == 1, uuId, 0));
+                        list.add(new ShoppingList(0, title, checked, uuId, 0, status, time));
                     }
                 }
             }

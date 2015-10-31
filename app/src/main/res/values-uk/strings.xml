@@ -743,4 +743,5 @@
     <string name="change_color">Змінити колір</string>
     <string name="birthday_permanent_explanation">Відмітьте, щоб увімкнути відображення майбутніх днів народжень в панелі сповіщень</string>
     <string name="no_google_tasks">Цей список завдань є порожнім</string>
+    <string name="show_hidden_tasks">Show hidden tasks</string>
 </resources>

@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +54,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private NoteDataProvider provider;
 
     private boolean onCreate = false;
+    private boolean enableGrid = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -85,6 +87,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (db.getCount() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
         }
+        MenuItem item = menu.findItem(R.id.action_list);
+        if (item != null){
+            item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
+            item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -93,13 +100,19 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         switch (item.getItemId()) {
             case R.id.action_sync:
                 new SyncNotes(getActivity(), this).execute();
-                return true;
+                break;
             case R.id.action_order:
                 showDialog();
-                return true;
+                break;
             case MENU_ITEM_DELETE:
                 deleteDialog();
-                return true;
+                break;
+            case R.id.action_list:
+                enableGrid = !enableGrid;
+                new SharedPrefs(getActivity()).saveBoolean(Prefs.NOTES_LIST_STYLE, enableGrid);
+                loaderAdapter();
+                getActivity().invalidateOptionsMenu();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -110,6 +123,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         sPrefs = new SharedPrefs(getActivity());
+        enableGrid = sPrefs.loadBoolean(Prefs.NOTES_LIST_STYLE);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -248,7 +262,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         reloadView();
         NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.NOTES_LIST_STYLE)){
+            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        }
+        currentList.setLayoutManager(layoutManager);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);

@@ -1,9 +1,13 @@
 package com.cray.software.justreminder.datas;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.Constants;
+
+import java.util.HashMap;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -24,29 +28,54 @@ public class ShoppingList {
 
     private String title;
     private int position;
-    private boolean isChecked;
-    private String uuId;
-    private long remId, dateTime, id;
 
-    public ShoppingList(String title, long dateTime){
+    /**
+     * Task mark flag. 1 - completed, 0 - active.
+     */
+    private int isChecked;
+    private String uuId;
+    private long remId, id, time;
+    private int status;
+
+    public static final int DELETED = -1;
+    public static final int ACTIVE = 1;
+
+    public ShoppingList(String title){
         this.uuId = SyncHelper.generateID();
         this.title = title;
-        this.dateTime = dateTime;
-        this.isChecked = false;
+        this.status = ACTIVE;
+        this.isChecked = 0;
+        this.time = System.currentTimeMillis();
     }
 
-    public ShoppingList(long id, String title, boolean isChecked, String uuId, long remId){
+    public ShoppingList(long id, String title, int isChecked, String uuId, long remId, int status, long time){
         this.uuId = uuId;
         this.title = title;
         this.isChecked = isChecked;
         this.remId = remId;
         this.id = id;
+        this.status = status;
+        this.time = time;
     }
 
     public static void switchItem(Context context, long id, boolean checked){
         DataBase db = new DataBase(context);
         db.open();
         db.updateShopItem(id, checked ? 1 : 0);
+        db.close();
+    }
+
+    public static void hideItem(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateShopItemStatus(id, DELETED);
+        db.close();
+    }
+
+    public static void showItem(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        db.updateShopItemStatus(id, ACTIVE);
         db.close();
     }
 
@@ -57,6 +86,35 @@ public class ShoppingList {
         db.close();
     }
 
+    public static HashMap<String, Long> getUuIds(Context context, long remId){
+        DataBase db = new DataBase(context);
+        db.open();
+        HashMap<String, Long> ids = new HashMap<>();
+        Cursor c = db.getShopItems(remId);
+        if (c != null && c.moveToFirst()){
+            do {
+                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                ids.put(uuId, id);
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        db.close();
+        return ids;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public int getIsChecked() {
+        return isChecked;
+    }
+
     public long getId() {
         return id;
     }
@@ -65,12 +123,12 @@ public class ShoppingList {
         this.id = id;
     }
 
-    public long getDateTime() {
-        return dateTime;
+    public long getStatus() {
+        return status;
     }
 
-    public void setDateTime(long dateTime) {
-        this.dateTime = dateTime;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public long getRemId() {
@@ -89,11 +147,11 @@ public class ShoppingList {
         this.uuId = uuId;
     }
 
-    public boolean isChecked() {
+    public int isChecked() {
         return isChecked;
     }
 
-    public void setIsChecked(boolean isChecked) {
+    public void setIsChecked(int isChecked) {
         this.isChecked = isChecked;
     }
 

@@ -130,7 +130,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                             due = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
                         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
                             viewType = 2;
-                            map.put(id, new ShoppingListDataProvider(mContext, id).getData());
+                            map.put(id, new ShoppingListDataProvider(mContext, id, ShoppingList.ACTIVE).getData());
                         } else {
                             due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime, repCode, repCount, delay);
                             String[] dT = mCount.getNextDateTime(due);
@@ -271,7 +271,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         R.layout.list_item_task_item_widget);
 
                 boolean isBlack = widgetButton == R.drawable.ic_add_black_24dp;
-                if (list.isChecked()) {
+                if (list.isChecked() == 1) {
                     if (isBlack) view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_black_24dp);
                     else view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_white_24dp);
                 } else {

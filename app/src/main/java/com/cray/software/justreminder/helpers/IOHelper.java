@@ -157,20 +157,10 @@ public class IOHelper {
      * @param isCloud restore from cloud.
      */
     public void restoreReminder(boolean isCloud){
-        if (SyncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_SD);
-            if (sdPathDr.exists()) {
-                File[] files = sdPathDr.listFiles();
-                final int x = files.length;
-                if (x > 0) {
-                    try {
-                        new SyncHelper(mContext).reminderFromJson(null, null);
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        try {
+            new SyncHelper(mContext).reminderFromJson(null, null);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
         }
         if (isConnected && isCloud) {
             new DropboxHelper(mContext).downloadReminder();

@@ -25,7 +25,7 @@ public class ShoppingType extends Type {
      * @return ShoppingListDataProvider
      */
     public ShoppingListDataProvider getProvider(long remId){
-        return new ShoppingListDataProvider(mContext, remId);
+        return new ShoppingListDataProvider(mContext, remId, ShoppingList.ACTIVE);
     }
 
     @Override
@@ -42,17 +42,18 @@ public class ShoppingType extends Type {
     public void saveShopList(long remId, ArrayList<ShoppingList> newList, ArrayList<ShoppingList> removedList){
         DataBase db = new DataBase(mContext);
         db.open();
+
         for (ShoppingList item : newList){
             if (item.getId() != 0){
-                db.updateShopItem(item.getId(), item.getTitle(), item.getDateTime(), item.isChecked() ? 1 : 0);
+                db.updateShopItem(item.getId(), item.getTitle(), item.isChecked());
             } else {
-                db.addShopItem(item.getTitle(), item.getDateTime(), item.getUuId(), remId);
+                db.addShopItem(item.getTitle(), item.getUuId(), remId, item.isChecked(), item.getTime());
             }
         }
         if (removedList != null) {
             for (ShoppingList list : removedList) {
                 if (list.getId() != 0) {
-                    db.deleteShopItem(list.getId());
+                    db.updateShopItemStatus(list.getId(), ShoppingList.DELETED);
                 }
             }
         }

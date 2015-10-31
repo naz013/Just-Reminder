@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +40,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     private ColorSetter cSetter;
 
     private long id;
+    private boolean isHIdden = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,15 @@ public class ShoppingListPreview extends AppCompatActivity {
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
         shopTitle = (TextView) findViewById(R.id.shopTitle);
+
+        CheckBox showHidden = (CheckBox) findViewById(R.id.showHidden);
+        showHidden.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isHIdden = isChecked;
+                loadData();
+            }
+        });
 
         todoList = (RecyclerView) findViewById(R.id.todoList);
         todoList.setLayoutManager(new LinearLayoutManager(this));
@@ -119,7 +131,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     }
 
     private void loadData() {
-        provider = new ShoppingListDataProvider(this, id);
+        provider = new ShoppingListDataProvider(this, id, isHIdden ? ShoppingList.DELETED : ShoppingList.ACTIVE);
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
@@ -129,7 +141,13 @@ public class ShoppingListPreview extends AppCompatActivity {
 
             @Override
             public void onItemDelete(int position) {
-                ShoppingList.removeItem(ShoppingListPreview.this, provider.getItem(position).getId());
+                ShoppingList.hideItem(ShoppingListPreview.this, provider.getItem(position).getId());
+                loadData();
+            }
+
+            @Override
+            public void onItemChange(int position) {
+                ShoppingList.showItem(ShoppingListPreview.this, provider.getItem(position).getId());
                 loadData();
             }
         });

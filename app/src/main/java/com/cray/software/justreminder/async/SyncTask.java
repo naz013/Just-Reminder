@@ -70,9 +70,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
             Cursor c = DB.queryGroup();
             if (c != null && c.moveToFirst()) {
-                do {
-                    DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
-                } while (c.moveToNext());
+                DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
             }
             if (c != null) c.close();
         }
@@ -80,22 +78,22 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         //export & import reminders
         publishProgress(mContext.getString(R.string.message_sync_reminders));
 
-        ioHelper.backupReminder(true);
         ioHelper.restoreReminder(true);
+        ioHelper.backupReminder(true);
 
         //export & import notes
         SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
             publishProgress(mContext.getString(R.string.message_sync_notes));
-            ioHelper.backupNote(true);
             ioHelper.restoreNote(true);
+            ioHelper.backupNote(true);
         }
 
         //export & import birthdays
         if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(mContext.getString(R.string.message_sync_birthdays));
-            ioHelper.backupBirthday(true);
             ioHelper.restoreBirthday(true);
+            ioHelper.backupBirthday(true);
         }
 
         DB.close();

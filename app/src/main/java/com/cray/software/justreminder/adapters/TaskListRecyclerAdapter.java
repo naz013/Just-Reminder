@@ -65,13 +65,13 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         final ShoppingList item = provider.getItem(position);
         String title = item.getTitle();
 
-        boolean isChecked = item.isChecked();
-        if (isChecked){
+        int isChecked = item.isChecked();
+        if (isChecked == 1){
             holder.textView.setPaintFlags(holder.textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
             holder.textView.setPaintFlags(holder.textView.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
         }
-        holder.itemCheck.setChecked(isChecked);
+        holder.itemCheck.setChecked(isChecked == 1);
         holder.textView.setText(title);
 
         if (listener == null){
@@ -94,12 +94,24 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
                 }
             });
 
+            holder.textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null && item.getStatus() == ShoppingList.DELETED)
+                        listener.onItemChange(position);
+                }
+            });
+
             holder.itemCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (listener != null) listener.onItemCheck(position, isChecked);
                 }
             });
+        }
+
+        if (item.getStatus() == ShoppingList.DELETED){
+            holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorRedDark));
         }
     }
 
@@ -125,5 +137,6 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
     public interface ActionListener{
         void onItemCheck(int position, boolean isChecked);
         void onItemDelete(int position);
+        void onItemChange(int position);
     }
 }

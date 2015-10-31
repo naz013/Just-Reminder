@@ -98,24 +98,23 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 startSync();
-                return true;
+                break;
             case R.id.action_voice:
                 if (mCallbacks != null){
                     mCallbacks.onNavigationDrawerItemSelected(ScreenManager.VOICE_RECOGNIZER);
                 }
-                return true;
+                break;
             case R.id.action_order:
                 showDialog();
-                return true;
+                break;
             case R.id.action_filter:
                 filterDialog();
-                return true;
+                break;
             case R.id.action_exit:
                 getActivity().finish();
-                return true;
+                break;
             case R.id.action_list:
                 enableGrid = !enableGrid;
-                Log.d(Constants.LOG_TAG, "Is grid " + enableGrid);
                 new SharedPrefs(getActivity()).saveBoolean(Prefs.LIST_GRID, enableGrid);
                 loaderAdapter(null);
                 getActivity().invalidateOptionsMenu();
