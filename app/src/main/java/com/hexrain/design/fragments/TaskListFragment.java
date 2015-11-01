@@ -20,6 +20,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.hexrain.design.NavigationDrawerFragment;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,14 @@ public class TaskListFragment extends Fragment implements SyncListener {
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_PAGE_DATA = "arg_page_data";
 
+    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+
     public void setData(ArrayList<Task> datas){
         this.datas = datas;
+    }
+
+    public void setmCallbacks(NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks) {
+        this.mCallbacks = mCallbacks;
     }
 
     public static TaskListFragment newInstance() {
@@ -76,6 +83,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
         currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
         currentList.setAdapter(customAdapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
+        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
         reloadView();
     }
 

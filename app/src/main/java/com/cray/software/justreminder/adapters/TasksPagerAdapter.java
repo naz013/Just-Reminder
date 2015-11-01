@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.cray.software.justreminder.datas.TaskListData;
+import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.fragments.TaskListFragment;
 
 import java.util.ArrayList;
@@ -28,16 +29,22 @@ import java.util.ArrayList;
 public class TasksPagerAdapter extends FragmentStatePagerAdapter {
 
     private ArrayList<TaskListData> datas;
+    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
     public TasksPagerAdapter(FragmentManager fm, ArrayList<TaskListData> datas) {
         super(fm);
         this.datas = datas;
     }
 
+    public void setCallbacks(NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
+        this.mCallbacks = callbacks;
+    }
+
     @Override
     public Fragment getItem(int position) {
         TaskListFragment fragment = new TaskListFragment();
         fragment.setData(datas.get(position).getmData());
+        fragment.setmCallbacks(mCallbacks);
         return fragment;
     }
 

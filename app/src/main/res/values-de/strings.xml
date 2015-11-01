@@ -743,5 +743,5 @@
     <string name="change_color">Farbwechsel</string>
     <string name="birthday_permanent_explanation">Prüfen Sie, welche anstehende Geburtstage in der Statusleiste zu aktivieren</string>
     <string name="no_google_tasks">Dieses Google Aufgabenliste ist leer</string>
-    <string name="show_hidden_tasks">Show hidden tasks</string>
+    <string name="show_hidden_tasks">Versteckte Aufgaben anzeigen</string>
 </resources>

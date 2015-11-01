@@ -743,5 +743,5 @@
     <string name="change_color">Сменить цвет</string>
     <string name="birthday_permanent_explanation">Отметьте, чтобы позволить показывать предстоящие дни рождения в строке уведомлений</string>
     <string name="no_google_tasks">Этот список Заданий Google пуст</string>
-    <string name="show_hidden_tasks">Show hidden tasks</string>
+    <string name="show_hidden_tasks">Показать скрытые задачи</string>
 </resources>

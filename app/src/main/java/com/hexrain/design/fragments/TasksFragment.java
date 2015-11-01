@@ -260,6 +260,7 @@ public class TasksFragment extends Fragment {
 
         final TasksPagerAdapter pagerAdapter =
                 new TasksPagerAdapter(getChildFragmentManager(), taskListDatum);
+        pagerAdapter.setCallbacks(mCallbacks);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

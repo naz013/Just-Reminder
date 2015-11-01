@@ -1,2 +1,1 @@
-include ':app', ':photoPreview', ':fab', ':box-content-sdk', ':flextcal'
-include ':calDroid'
+include ':app', ':photoPreview', ':fab', ':flextcal'
