@@ -30,7 +30,7 @@ public class ViewUtils {
      * Get drawable from resource.
      * @param context application context.
      * @param resource drawable resource.
-     * @return
+     * @return Drawable
      */
     public static Drawable getDrawable (Context context, int resource){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -44,7 +44,7 @@ public class ViewUtils {
      * Get color from resource.
      * @param context application context.
      * @param resource color resource.
-     * @return
+     * @return Color
      */
     public static int getColor(Context context, int resource){
         if (Module.isMarshmallow()) return context.getResources().getColor(resource, null);
@@ -54,7 +54,7 @@ public class ViewUtils {
     /**
      * Get icon for reminder type.
      * @param typePrefs type of reminder.
-     * @return
+     * @return Drawable resource
      */
     public static int getIcon(String typePrefs) {
         int icon;

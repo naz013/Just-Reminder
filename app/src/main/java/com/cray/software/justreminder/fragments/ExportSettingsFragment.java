@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.CloudDrives;
 import com.cray.software.justreminder.helpers.CalendarManager;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
@@ -159,7 +159,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 selectCalendar.setEnabled(true);
                 checkEnabling();
                 ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
-                Dialog.selectCalendar(getActivity(), list);
+                Dialogues.selectCalendar(getActivity(), list);
             } else {
                 Toast.makeText(getActivity(),
                         getActivity().getString(R.string.no_google_calendars_found), Toast.LENGTH_LONG).show();
@@ -186,11 +186,11 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 exportToCalendarChange();
                 break;
             case R.id.eventDuration:
-                Dialog.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration_title), this);
                 break;
             case R.id.selectCalendar:
                 ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
-                Dialog.selectCalendar(getActivity(), list);
+                Dialogues.selectCalendar(getActivity(), list);
                 break;
             case R.id.autoBackup:
                 autoBackupChange();
@@ -201,13 +201,13 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.clean:
-                Dialog.cleanFolders(getActivity());
+                Dialogues.cleanFolders(getActivity());
                 break;
             case R.id.syncSettings:
                 prefsChange();
                 break;
             case R.id.syncInterval:
-                Dialog.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
+                Dialogues.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
                 break;
         }
     }

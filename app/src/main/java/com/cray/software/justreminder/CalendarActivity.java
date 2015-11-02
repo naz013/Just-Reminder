@@ -1,7 +1,6 @@
 package com.cray.software.justreminder;
 
 import android.app.AlarmManager;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -30,6 +29,7 @@ import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -76,7 +76,7 @@ public class CalendarActivity extends AppCompatActivity {
         voiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startVoiceRecognitionActivity();
+                SuperUtil.startVoiceRecognitionActivity(CalendarActivity.this, VOICE_RECOGNITION_REQUEST_CODE);
             }
         });
 
@@ -160,20 +160,6 @@ public class CalendarActivity extends AppCompatActivity {
             cal.setTimeInMillis(System.currentTimeMillis());
             showEvents(cal.getTime());
             sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
-        }
-    }
-
-    public void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        sPrefs = new SharedPrefs(this);
-        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
-        try {
-            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } catch (ActivityNotFoundException e){
-            Messages.toast(CalendarActivity.this, getString(R.string.recognizer_not_found_error_message));
         }
     }
 
@@ -267,7 +253,7 @@ public class CalendarActivity extends AppCompatActivity {
                 int day = pagerData.get(i).getDay();
                 int month = pagerData.get(i).getMonth();
                 int year = pagerData.get(i).getYear();
-                currentEvent.setText(day + "/" + (month + 1) + "/" + year);
+                currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
                 ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
                 if (data.size() > 0) dateMills = data.get(0).getDate();
             }
@@ -284,7 +270,7 @@ public class CalendarActivity extends AppCompatActivity {
         int day = pagerData.get(i).getDay();
         int month = pagerData.get(i).getMonth();
         int year = pagerData.get(i).getYear();
-        currentEvent.setText(day + "/" + (month + 1) + "/" + year);
+        currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
         ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
         if (data.size() > 0) dateMills = data.get(0).getDate();
 

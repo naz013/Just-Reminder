@@ -51,7 +51,6 @@ public class DeleteNoteFilesAsync extends AsyncTask<String, Void, Boolean> {
                 if (isConnected) {
                     new DropboxHelper(mContext).deleteNote(uuID);
                     new GDriveHelper(mContext).deleteNote(uuID);
-                    //new BoxHelper(mContext).deleteNoteFile(uuID);
                 }
             }
         }

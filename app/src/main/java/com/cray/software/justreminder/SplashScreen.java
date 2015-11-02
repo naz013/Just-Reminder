@@ -27,7 +27,11 @@ import com.hexrain.design.ScreenManager;
 import java.io.File;
 import java.util.Locale;
 
+/**
+ * Application splash screen for checking preferences.
+ */
 public class SplashScreen extends Activity{
+
     private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(SplashScreen.this);
 
@@ -61,6 +65,9 @@ public class SplashScreen extends Activity{
         initPrefs();
     }
 
+    /**
+     * Save initial argument on first application run.
+     */
     private void initPrefs() {
         File settingsUI = new File("/data/data/" + getPackageName() + "/shared_prefs/" + APP_UI_PREFERENCES + ".xml");
         if(!settingsUI.exists()){
@@ -216,6 +223,9 @@ public class SplashScreen extends Activity{
         finish();
     }
 
+    /**
+     * Check if preference exist. If no save default.
+     */
     private void checkPrefs(){
         sPrefs = new SharedPrefs(SplashScreen.this);
         if (!sPrefs.isString(Prefs.CURRENT_COLOR)){
@@ -463,6 +473,10 @@ public class SplashScreen extends Activity{
         }
     }
 
+    /**
+     * Check if application runs first time.
+     * @return
+     */
     private boolean isFirstTime() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         boolean ranBefore = preferences.getBoolean(Prefs.TECH_ONE, false);

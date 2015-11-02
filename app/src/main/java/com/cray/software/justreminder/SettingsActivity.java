@@ -29,6 +29,9 @@ import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.Calendar;
 
+/**
+ * Custom setting activity.
+ */
 public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnHeadlineSelectedListener,
         TimePickerFragment.TimePickedListener{
 
@@ -77,8 +80,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     protected void onResume() {
         super.onResume();
         setRequestedOrientation(cSetter.getRequestOrientation());
+        if (new SharedPrefs(this).loadBoolean(Prefs.UI_CHANGED)) recreate();
+        new SharedPrefs(this).saveBoolean(Prefs.UI_CHANGED, false);
     }
 
+    /**
+     * Attach settings fragment.
+     * @param position list position.
+     */
     public void onArticleSelected(int position) {
         if (position == 0){
             GeneralSettingsFragment newFragment = new GeneralSettingsFragment();

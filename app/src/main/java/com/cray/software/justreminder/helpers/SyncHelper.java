@@ -1725,7 +1725,7 @@ public class SyncHelper {
      * @param string string to decrypt.
      * @return
      */
-    public String decrypt(String string){
+    public static String decrypt(String string){
         String result = "";
         byte[] byte_string = Base64.decode(string, Base64.DEFAULT);
         try {
@@ -1741,7 +1741,7 @@ public class SyncHelper {
      * @param string string to encrypt.
      * @return
      */
-    public String encrypt(String string){
+    public static String encrypt(String string){
         byte[] string_byted = null;
         try {
             string_byted = string.getBytes("UTF-8");

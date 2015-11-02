@@ -1,28 +1,19 @@
 package com.cray.software.justreminder;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,7 +21,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,18 +48,18 @@ import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
+import com.cray.software.justreminder.async.GeocoderTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.FilesDataBase;
-import com.cray.software.justreminder.datas.CategoryModel;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -85,6 +75,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -92,34 +83,138 @@ import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener,
-        MapListener {
+        MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener {
 
-    private LinearLayout call_layout, by_date_layout, after_time_layout, geolocationlayout, message_layout,
-            weekday_layout, action_layout, skype_layout, application_layout, monthDayLayout;
-    private FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
-    private TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
-            messageDate, messageYearDate, messageTime, weekTimeField;
+    /**
+     * Date reminder type variables.
+     */
+    private CheckBox dateTaskExport;
+    private EditText repeatDays;
+    private TextView dateField, timeField, dateYearField;
+
+    /**
+     * Weekday reminder type variables.
+     */
+    private LinearLayout action_layout;
+    private FloatingEditText weekPhoneNumber;
+    private TextView weekTimeField;
     private ImageButton weekAddNumberButton;
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    private RadioButton callCheck, messageCheck;
+    private CheckBox attachAction, weekTaskExport;
 
+    /**
+     * Monthday reminder type variables.
+     */
+    private CheckBox monthDayTaskExport, monthDayAttachAction;
+    private LinearLayout monthDayActionLayout;
+    private TextView monthDayField, monthDayTimeField;
+    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    private ImageButton monthDayAddNumberButton;
+    private FloatingEditText monthDayPhoneNumber;
+
+    /**
+     * Call reminder variables.
+     */
+    private FloatingEditText phoneNumber;
+    private TextView callDate, callTime, callYearDate;
+    private CheckBox callTaskExport;
+    private EditText repeatDaysCall;
+
+    /**
+     * Message reminder variables.
+     */
+    private FloatingEditText messageNumber;
+    private TextView messageDate, messageYearDate, messageTime;
+    private CheckBox messageTaskExport;
+    private EditText repeatDaysMessage;
+
+    /**
+     * Time reminder variables.
+     */
+    private CheckBox timeTaskExport;
+    private TextView hoursView, minutesView, secondsView;
+    private ImageButton deleteButton;
+    private EditText repeatMinutes;
+    private String timeString = "000000";
+
+    /**
+     * Application reminder type variables.
+     */
+    private CheckBox appTaskExport;
+    private EditText browseLink, repeatDaysApp;
+    private RadioButton application, browser;
+    private TextView appDate, appYearDate, appTime, applicationName;
+
+    /**
+     * Skype reminder type variables.
+     */
+    private CheckBox skypeTaskExport;
+    private EditText skypeUser, repeatDaysSkype;
+    private RadioButton skypeCall;
+    private RadioButton skypeVideo;
+    private TextView skypeDate, skypeYearDate, skypeTime;
+
+    /**
+     * Location reminder variables.
+     */
     private LinearLayout delayLayout;
     private CheckBox attackDelay;
+    private ImageButton addNumberButtonLocation;
+    private LinearLayout actionLocation;
+    private RelativeLayout mapContainer;
+    private ScrollView specsContainer;
+    private CheckBox attachLocationAction;
+    private RadioButton callCheckLocation, messageCheckLocation;
+    private FloatingEditText phoneNumberLocation;
+    private MapFragment map;
+    private TextView locationDateField, locationDateYearField, locationTimeField;
+    private AutoCompleteTextView searchField;
 
+    /**
+     * LocationOut reminder type variables.
+     */
+    private ImageButton addNumberButtonLocationOut;
+    private LinearLayout actionLocationOut;
+    private LinearLayout delayLayoutOut;
+    private RelativeLayout mapContainerOut;
+    private ScrollView specsContainerOut;
+    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, mapLocation,
+            radiusMark, currentLocation;
+    private CheckBox attachLocationOutAction, attachDelayOut;
+    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    private FloatingEditText phoneNumberLocationOut;
+    private MapFragment mapOut;
+
+    /**
+     * Shopping list reminder type variables.
+     */
+    private EditText shopEdit;
+    private TaskListRecyclerAdapter shoppingAdapter;
+    private ShoppingListDataProvider shoppingLists;
+
+    /**
+     * General views.
+     */
+    private Toolbar toolbar;
+    private FloatingEditText taskField;
+    private TextView category;
+
+    /**
+     * Reminder preferences flags.
+     */
     private int myHour = 0;
     private int myMinute = 0;
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
     private String uuID = "";
-
     private int vibration = -1;
     private int voice = -1;
     private int notificationRepeat = -1;
@@ -127,32 +222,26 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private int unlock = -1;
     private int auto = -1;
     private long limits = -1;
-
-    private ProgressDialog pd;
-    private DataBase DB = new DataBase(BackupFileEdit.this);
-    private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
-
-    private AlarmReceiver alarm = new AlarmReceiver();
-    protected LocationManager locationManager;
-
-    private ColorSetter cSetter = new ColorSetter(BackupFileEdit.this);
-    private SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
-    private GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
-
     private long id;
     private String type, selectedPackage = null;
     private String categoryId;
+    private List<Address> foundPlaces;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> namesList;
+    private LatLng curPlace;
 
-    private Toolbar toolbar;
-    private FloatingEditText taskField;
-    private TextView category;
+    private DataBase DB = new DataBase(BackupFileEdit.this);
+    private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
+    private AlarmReceiver alarm = new AlarmReceiver();
+    private ColorSetter cSetter = new ColorSetter(BackupFileEdit.this);
+    private SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
+    private GTasksHelper gtx = new GTasksHelper(BackupFileEdit.this);
+    private LocationManager mLocationManager;
+    private LocationListener mLocList;
+    private GeocoderTask task;
 
     private  static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
-    private boolean isLocationMessage = false;
-    private boolean isLocationOutMessage = false;
-    private boolean isWeekMessage = false;
-    private boolean isMonthMessage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,7 +285,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         category.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeCategory();
+                Dialogues.selectCategory(BackupFileEdit.this, categoryId, BackupFileEdit.this);
             }
         });
 
@@ -209,14 +298,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         TextView frameLabel = (TextView) findViewById(R.id.repeatLabel);
         frameLabel.setVisibility(View.GONE);
 
-        LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
         ImageButton insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startVoiceRecognitionActivity();
+                SuperUtil.startVoiceRecognitionActivity(BackupFileEdit.this, VOICE_RECOGNITION_REQUEST_CODE);
             }
         });
 
@@ -294,48 +382,25 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CategoryDataProvider provider;
-
-    private void changeCategory() {
-        provider = new CategoryDataProvider(this);
-        final ArrayList<String> categories = new ArrayList<>();
-        for (CategoryModel item : provider.getData()){
-            categories.add(item.getTitle());
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.string_select_category));
-        builder.setSingleChoiceItems(new ArrayAdapter<>(BackupFileEdit.this,
-                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                category.setText(provider.getItem(which).getTitle());
-                categoryId = provider.getItem(which).getUuID();
+    /**
+     * Select contact button click listener.
+     */
+    private View.OnClickListener contactClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Permissions permissions = new Permissions(BackupFileEdit.this);
+            if (permissions.checkPermission(Permissions.READ_CONTACTS)) {
+                SuperUtil.selectContact(BackupFileEdit.this, Constants.REQUEST_CODE_CONTACTS);
+            } else {
+                permissions.requestPermission(BackupFileEdit.this,
+                        new String[]{Permissions.READ_CONTACTS}, 107);
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    public void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        SharedPrefs sPrefs = new SharedPrefs(BackupFileEdit.this);
-        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
-        try {
-            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } catch (ActivityNotFoundException e){
-            Messages.toast(BackupFileEdit.this, getString(R.string.recognizer_not_found_error_message));
         }
-    }
+    };
 
-    private EditText shopEdit;
-    private TaskListRecyclerAdapter shoppingAdapter;
-    private ShoppingListDataProvider shoppingLists;
-
+    /**
+     * Show shopping list reminder type creation layout.
+     */
     private void attachShoppingList(){
         taskField.setHint(R.string.title);
 
@@ -356,7 +421,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                         return false;
                     }
 
-                    int position = shoppingLists.addItem(new ShoppingList(task));
+                    shoppingLists.addItem(new ShoppingList(task));
                     shoppingAdapter.notifyDataSetChanged();
                     shopEdit.setText("");
                     return true;
@@ -375,7 +440,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     return;
                 }
 
-                int position = shoppingLists.addItem(new ShoppingList(task));
+                shoppingLists.addItem(new ShoppingList(task));
                 shoppingAdapter.notifyDataSetChanged();
                 shopEdit.setText("");
             }
@@ -439,11 +504,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CheckBox dateTaskExport;
-    private EditText repeatDays;
-
+    /**
+     * Show simple date reminder creation layout.
+     */
     private void attachDateReminder(){
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
+        LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         ViewUtils.fadeInAnimation(by_date_layout, isAnimation);
 
         final Calendar cal = Calendar.getInstance();
@@ -478,7 +543,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        dateField.setText(dayStr + "/" + monthStr);
+        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
@@ -533,25 +598,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             timeField.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            dateField.setText(dayStr + "/" + monthStr);
+            dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(repCode);
             repeatDays.setText(String.valueOf(repCode));
         }
     }
 
-    private CheckBox monthDayTaskExport;
-    private CheckBox monthDayAttachAction;
-    private LinearLayout monthDayActionLayout;
-    private TextView monthDayField, monthDayTimeField;
-    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    private ImageButton monthDayAddNumberButton;
-    private FloatingEditText monthDayPhoneNumber;
-
+    /**
+     * Show by day of month reminder creation layout.
+     */
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
+        LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         ViewUtils.fadeInAnimation(monthDayLayout, isAnimation);
 
         final Calendar cal = Calendar.getInstance();
@@ -625,13 +685,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                         ViewUtils.expand(monthDayActionLayout);
                     } else action_layout.setVisibility(View.VISIBLE);
                     monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
-                    monthDayAddNumberButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    monthDayAddNumberButton.setOnClickListener(contactClick);
                     ViewUtils.setImage(monthDayAddNumberButton, isDark);
 
                     monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
@@ -761,13 +815,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    private RadioButton callCheck, messageCheck;
-    private CheckBox attachAction, weekTaskExport;
-
+    /**
+     * Show alarm clock reminder type creation layout.
+     */
     private void attachWeekDayReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
+        LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
         ViewUtils.fadeInAnimation(weekday_layout, isAnimation);
 
         final Calendar c = Calendar.getInstance();
@@ -815,16 +868,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         attachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     action_layout.setVisibility(View.VISIBLE);
                     weekAddNumberButton = (ImageButton) findViewById(R.id.weekAddNumberButton);
-                    weekAddNumberButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(BackupFileEdit.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    weekAddNumberButton.setOnClickListener(contactClick);
                     ViewUtils.setImage(weekAddNumberButton, isDark);
 
                     weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
@@ -890,6 +937,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Check days toggle buttons depends on weekday string.
+     * @param weekdays weekday string.
+     */
     private void setCheckForDays(String weekdays){
         if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))
             mondayCheck.setChecked(true);
@@ -920,15 +971,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else sundayCheck.setChecked(false);
     }
 
-    private CheckBox timeTaskExport;
-    private TextView hoursView, minutesView, secondsView;
-    private ImageButton deleteButton;
-    private EditText repeatMinutes;
-    private String timeString = "000000";
-
+    /**
+     * Show timer reminder type creation layout.
+     */
     private void attachTimeReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
+        LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
         ViewUtils.fadeInAnimation(after_time_layout, isAnimation);
 
         timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
@@ -1018,30 +1066,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (c != null) c.close();
             taskField.setText(text);
             repeatMinutesSeek.setProgress(repeat);
-            generateString(afterTime);
+            timeString = TimeUtil.generateAfterString(afterTime);
+            updateTimeView();
         }
     }
 
-    private void generateString(long time){
-        long s = 1000;
-        long m = s * 60;
-        long h = m * 60;
-        long hours = (time / h);
-        long minutes = ((time - hours * h) / (m));
-        long seconds = ((time - (hours * h) - (minutes * m)) / (s));
-        String hourStr;
-        if (hours < 10) hourStr = "0" + hours;
-        else hourStr = String.valueOf(hours);
-        String minuteStr;
-        if (minutes < 10) minuteStr = "0" + minutes;
-        else minuteStr = String.valueOf(minutes);
-        String secondStr;
-        if (seconds < 10) secondStr = "0" + seconds;
-        else secondStr = String.valueOf(seconds);
-        timeString = hourStr + minuteStr + secondStr;
-        updateTimeView();
-    }
-
+    /**
+     * Set time in time view fields.
+     */
     private void updateTimeView() {
         if (timeString.matches("000000")) deleteButton.setEnabled(false);
         else deleteButton.setEnabled(true);
@@ -1055,16 +1087,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CheckBox skypeTaskExport;
-    private EditText skypeUser, repeatDaysSkype;
-    private RadioButton skypeCall;
-    private RadioButton skypeVideo;
-    private TextView skypeDate, skypeYearDate, skypeTime;
-
+    /**
+     * Show Skype reminder type creation layout.
+     */
     private void attachSkype(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
+        LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
         ViewUtils.fadeInAnimation(skype_layout, isAnimation);
 
         skypeUser = (EditText) findViewById(R.id.skypeUser);
@@ -1111,7 +1140,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         skypeDate = (TextView) findViewById(R.id.skypeDate);
-        skypeDate.setText(dayStr + "/" + monthStr);
+        skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         skypeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1182,7 +1211,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             skypeUser.setText(number);
-            skypeDate.setText(dayStr + "/" + monthStr);
+            skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1191,15 +1220,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CheckBox appTaskExport;
-    private EditText browseLink, repeatDaysApp;
-    private RadioButton application, browser;
-    private TextView appDate, appYearDate, appTime, applicationName;
-
+    /**
+     * Show application reminder type creation layout.
+     */
     private void attachApplication(){
         taskField.setHint(getString(R.string.tast_hint));
 
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
+        LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
         ViewUtils.fadeInAnimation(application_layout, isAnimation);
 
         browseLink = (EditText) findViewById(R.id.browseLink);
@@ -1250,7 +1277,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         appDate = (TextView) findViewById(R.id.appDate);
-        appDate.setText(dayStr + "/" + monthStr);
+        appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         appDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1332,7 +1359,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
 
-            appDate.setText(dayStr + "/" + monthStr);
+            appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1341,21 +1368,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CheckBox callTaskExport;
-    private EditText repeatDaysCall;
-
+    /**
+     * Show call reminder type creation layout.
+     */
     private void attachCall(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
+        LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
         ViewUtils.fadeInAnimation(call_layout, isAnimation);
 
         ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
-        addNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(BackupFileEdit.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                pickContacts(pd);
-            }
-        });
+        addNumberButton.setOnClickListener(contactClick);
         ViewUtils.setImage(addNumberButton, isDark);
 
         phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
@@ -1386,7 +1407,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         callDate = (TextView) findViewById(R.id.callDate);
-        callDate.setText(dayStr + "/" + monthStr);
+        callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         callDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1447,7 +1468,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             phoneNumber.setText(number);
-            callDate.setText(dayStr + "/" + monthStr);
+            callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1456,21 +1477,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private CheckBox messageTaskExport;
-    private EditText repeatDaysMessage;
-
+    /**
+     * Show message reminder type creation layout.
+     */
     private void attachMessage(){
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
+        LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
         ViewUtils.fadeInAnimation(message_layout, isAnimation);
 
         ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
-        addMessageNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(BackupFileEdit.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                pickContacts(pd);
-            }
-        });
+        addMessageNumberButton.setOnClickListener(contactClick);
         ViewUtils.setImage(addMessageNumberButton, isDark);
 
         messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
@@ -1501,7 +1516,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         messageDate = (TextView) findViewById(R.id.messageDate);
-        messageDate.setText(dayStr + "/" + monthStr);
+        messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         messageDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1562,7 +1577,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             messageNumber.setText(number);
-            messageDate.setText(dayStr + "/" + monthStr);
+            messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1570,14 +1585,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             repeatDaysMessage.setText(String.valueOf(repCode));
         }
     }
-
-    private TextView locationDateField, locationDateYearField, locationTimeField;
-    private AutoCompleteTextView searchField;
-    private List<Address> foundPlaces;
-    private ArrayAdapter<String> adapter;
-    private GeocoderTask task;
-    private ArrayList<String> namesList;
-    private LatLng curPlace;
 
     @Override
     public void place(LatLng place) {
@@ -1602,62 +1609,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
-
-        @Override
-        protected List<Address> doInBackground(String... locationName) {
-            // Creating an instance of Geocoder class
-            Geocoder geocoder = new Geocoder(BackupFileEdit.this);
-            List<Address> addresses = null;
-
-            try {
-                // Getting a maximum of 3 Address that matches the input text
-                addresses = geocoder.getFromLocationName(locationName[0], 3);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return addresses;
-        }
-
-        @Override
-        protected void onPostExecute(List<Address> addresses) {
-            if(addresses==null || addresses.size()==0){
-                Log.d(Constants.LOG_TAG,  "No Location found");
-            } else {
-                foundPlaces = addresses;
-
-                namesList = new ArrayList<>();
-                namesList.clear();
-                for (Address selected:addresses){
-                    String addressText = String.format("%s, %s%s",
-                            selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
-                            selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
-                            selected.getCountryName());
-                    namesList.add(addressText);
-                }
-                adapter = new ArrayAdapter<>(
-                        BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
-                searchField.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    private ImageButton addNumberButtonLocation;
-    private LinearLayout actionLocation;
-    private RelativeLayout mapContainer;
-    private ScrollView specsContainer;
-    private CheckBox attachLocationAction;
-    private RadioButton callCheckLocation, messageCheckLocation;
-    private FloatingEditText phoneNumberLocation;
-    private MapFragment map;
-
-    private boolean isMapVisible(){
-        return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
-    }
-
+    /**
+     * Show location reminder type creation layout.
+     */
     private void attachLocation() {
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
+        LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
         ViewUtils.fadeInAnimation(geolocationlayout, isAnimation);
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
@@ -1725,7 +1681,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
+                task = new GeocoderTask(BackupFileEdit.this, BackupFileEdit.this);
                 task.execute(s.toString());
             }
 
@@ -1761,13 +1717,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (b) {
                     ViewUtils.showOver(actionLocation, isAnimation);
                     addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
-                    addNumberButtonLocation.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    addNumberButtonLocation.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocation, isDark);
 
                     phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
@@ -1815,7 +1765,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         locationDateField = (TextView) findViewById(R.id.locationDateField);
         locationDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationDateField.setText(dayStr + "/" + monthStr);
+        locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
         locationTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -1861,7 +1811,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationDateField.setText(dayStr + "/" + monthStr);
+                locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
                 locationDateYearField.setText(String.valueOf(myYear));
                 attackDelay.setChecked(true);
             } else {
@@ -1889,27 +1839,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private ImageButton addNumberButtonLocationOut;
-    private LinearLayout actionLocationOut;
-    private LinearLayout locationOutLayout;
-    private LinearLayout delayLayoutOut;
-    private RelativeLayout mapContainerOut;
-    private ScrollView specsContainerOut;
-    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
-            mapLocation, radiusMark;
-    private CheckBox attachLocationOutAction, attachDelayOut;
-    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    private FloatingEditText phoneNumberLocationOut;
-    private MapFragment mapOut;
-
-    private boolean isMapOutVisible(){
-        return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
-    }
-
+    /**
+     * Show location out reminder type creation layout.
+     */
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.tast_hint));
 
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
+        LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
         ViewUtils.fadeInAnimation(locationOutLayout, isAnimation);
 
         delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
@@ -1998,13 +1934,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (b) {
                     ViewUtils.showOver(actionLocationOut, isAnimation);
                     addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
-                    addNumberButtonLocationOut.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(BackupFileEdit.this, null, getString(R.string.load_contats), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    addNumberButtonLocationOut.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocationOut, isDark);
 
                     phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
@@ -2052,7 +1982,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         locationOutDateField = (TextView) findViewById(R.id.locationOutDateField);
         locationOutDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationOutDateField.setText(dayStr + "/" + monthStr);
+        locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         locationOutDateYearField = (TextView) findViewById(R.id.locationOutDateYearField);
         locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
         locationOutTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -2104,7 +2034,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationOutDateField.setText(dayStr + "/" + monthStr);
+                locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
                 locationOutDateYearField.setText(String.valueOf(myYear));
                 attachDelayOut.setChecked(true);
             } else {
@@ -2137,61 +2067,97 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Check if shopping list reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isShoppingAttached(){
-        RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
-        return shoppingLayout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.shoppingLayout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if date reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isDateReminderAttached(){
-        by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        return by_date_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.by_date_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if weekday reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isWeekDayReminderAttached(){
-        weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        return weekday_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.weekday_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if application reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isApplicationAttached(){
-        application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        return application_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.application_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if time reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isTimeReminderAttached(){
-        after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        return after_time_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.after_time_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if Skype reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isSkypeAttached(){
-        skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        return skype_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.skype_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if call reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isCallAttached(){
-        call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        return call_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.call_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if message reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isMessageAttached(){
-        message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        return message_layout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.message_layout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if location reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isLocationAttached(){
-        geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        return geolocationlayout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.geolocationlayout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if monthday reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isMonthDayAttached(){
-        monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        return monthDayLayout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.monthDayLayout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Check if location out reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isLocationOutAttached(){
-        locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        return locationOutLayout.getVisibility() == View.VISIBLE;
+        return findViewById(R.id.locationOutLayout).getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Hide all reminder types layouts.
+     */
     private void clearForm(){
         findViewById(R.id.call_layout).setVisibility(View.GONE);
         findViewById(R.id.weekday_layout).setVisibility(View.GONE);
@@ -2206,6 +2172,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
     }
 
+    /**
+     * Get type for simple reminder family.
+     * @return Type string
+     */
     private String getTaskType(){
         String type="";
         if (isDateReminderAttached()){
@@ -2228,58 +2198,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             } else type = Constants.TYPE_LOCATION_OUT;
         }
         return type;
-    }
-
-    private void pickContacts(final ProgressDialog pd) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-                final ArrayList<String> contacts = new ArrayList<>();
-                while (cursor.moveToNext()) {
-                    String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-                    if (hasPhone.equalsIgnoreCase("1"))
-                        hasPhone = "true";
-                    else
-                        hasPhone = "false" ;
-                    if (name != null) {
-                        if (Boolean.parseBoolean(hasPhone)) {
-                            contacts.add(name);
-                        }
-                    }
-                }
-                cursor.close();
-                try {
-                    Collections.sort(contacts, new Comparator<String>() {
-                        @Override
-                        public int compare(String e1, String e2) {
-                            return e1.compareToIgnoreCase(e2);
-                        }
-                    });
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if ((pd != null) && pd.isShowing()) {
-                                pd.dismiss();
-                            }
-                        } catch (final Exception e) {
-                            // Handle or log or ignore
-                        }
-                        Intent i = new Intent(BackupFileEdit.this, ContactsList.class);
-                        i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
-                        startActivityForResult(i, Constants.REQUEST_CODE_CONTACTS);
-                    }
-                });
-            }
-        }).start();
     }
 
     @Override
@@ -2318,27 +2236,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void showSettingsAlert(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(BackupFileEdit.this);
-        alertDialog.setTitle(getString(R.string.gps_title));
-        alertDialog.setMessage(getString(R.string.gps_text));
-
-        alertDialog.setPositiveButton(getString(R.string.action_settings), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        });
-
-        alertDialog.setNegativeButton(getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -2360,27 +2257,25 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Save reminder to database.
+     */
     private void saveTask(){
         if (isLocationAttached() || isLocationOutAttached()){
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            boolean isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-            boolean isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (isGPSEnabled || isNetworkEnabled) {
+            if (LocationUtil.checkLocationEnable(this)) {
                 if (isLocationOutAttached()){
-                    if (attachLocationOutAction.isChecked() && !checkNumber()) addLocationOut();
+                    if (attachLocationOutAction.isChecked() && !checkNumber()) saveLocationOut();
                     else if (attachLocationOutAction.isChecked() && checkNumber())
                         phoneNumberLocationOut.setError(getString(R.string.number_error));
-                    else addLocationOut();
+                    else saveLocationOut();
                 } else {
-                    if (attachLocationAction.isChecked() && !checkNumber()) addLocation();
+                    if (attachLocationAction.isChecked() && !checkNumber()) saveLocation();
                     else if (attachLocationAction.isChecked() && checkNumber())
                         phoneNumberLocation.setError(getString(R.string.number_error));
-                    else addLocation();
+                    else saveLocation();
                 }
             } else {
-                showSettingsAlert();
+                LocationUtil.showLocationAlert(this);
             }
         } else {
             if (isDateReminderAttached()) {
@@ -2437,6 +2332,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Save shopping list reminder type to database.
+     */
     private void saveShoppingTask() {
         if (shoppingLists.getCount() == 0){
             Messages.toast(BackupFileEdit.this, getString(R.string.no_tasks_warming));
@@ -2444,7 +2342,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String task = taskField.getText().toString().trim();
         String type = Constants.TYPE_SHOPPING_LIST;
-        String number = null;
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
@@ -2466,6 +2363,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Get type for alarm clock reminder.
+     * @return Type string
+     */
     private String getWeekTaskType(){
         String type;
         if (attachAction.isChecked()){
@@ -2478,6 +2379,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return type;
     }
 
+    /**
+     * Get type for monthday reminder.
+     * @return Type string
+     */
     private String getMonthTaskType(){
         String type;
         if (monthDayAttachAction.isChecked()){
@@ -2495,6 +2400,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return type;
     }
 
+    /**
+     * Get type for application reminder.
+     * @return Type string
+     */
     private String getAppTaskType(){
         String type;
         if (application.isChecked()){
@@ -2505,6 +2414,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return type;
     }
 
+    /**
+     * Get type for Skype reminder.
+     * @return Type string
+     */
     private String getSkypeTaskType(){
         String type;
         if (skypeCall.isChecked()){
@@ -2517,6 +2430,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         return type;
     }
 
+    /**
+     * Save alarm clock reminder type to database.
+     */
     private void saveWeekTask() {
         String task = taskField.getText().toString().trim();
         if (task.matches("")) {
@@ -2565,6 +2481,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Save application reminder type to database.
+     */
     private void saveAppTask() {
         String task = taskField.getText().toString().trim();
         if (task.matches("")) {
@@ -2610,6 +2529,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Save Skype reminder type to database.
+     */
     private void saveSkypeTask() {
         String task = taskField.getText().toString().trim();
         if (task.matches("")) {
@@ -2647,6 +2569,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Check if user select or insert contact number.
+     * @return Boolean
+     */
     private boolean checkNumber(){
         if (isCallAttached()) {
             return phoneNumber.getText().toString().trim().matches("");
@@ -2665,12 +2591,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         } else return false;
     }
 
-    private boolean checkApplication(){
+    /**
+     * Check if user select application.
+     * @return Boolean
+     */
+    private boolean checkApplication() {
         if (application.isChecked()) {
             return applicationName.getText().toString().trim().matches("");
         } else return browser.isChecked() && browseLink.getText().toString().trim().matches("");
     }
 
+    /**
+     * Check if message not empty.
+     * @return Boolean
+     */
     private boolean checkMessage(){
         if (isMessageAttached()){
             return taskField.getText().toString().trim().matches("");
@@ -2681,6 +2615,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Save monthday reminder type to database.
+     */
     private void saveMonthTask(){
         String text = taskField.getText().toString().trim();
         if (text.matches("")){
@@ -2725,6 +2662,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Save simple date reminder type to database.
+     */
     private void saveDateTask(){
         String text = taskField.getText().toString().trim();
         if (text.matches("")){
@@ -2760,6 +2700,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Save time reminder type to database.
+     */
     private void saveTimeTask(){
         String text = taskField.getText().toString().trim();
         if (text.matches("")){
@@ -2767,7 +2710,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
         String type = getTaskType();
-        long time = getAfterTime();
+        long time = SuperUtil.getAfterTime(this, timeString);
         if (time == 0) return;
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
@@ -2806,23 +2749,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private long getAfterTime() {
-        long res = 0;
-        if (timeString.length() == 6 && !timeString.matches("000000")){
-            String hours = timeString.substring(0, 2);
-            String minutes = timeString.substring(2, 4);
-            String seconds = timeString.substring(4, 6);
-            int hour = Integer.parseInt(hours);
-            int minute = Integer.parseInt(minutes);
-            int sec = Integer.parseInt(seconds);
-            long s = 1000;
-            long m = s * 60;
-            long h = m * 60;
-            res = (hour * h) + (minute * m) + (sec * s);
-        } else Messages.toast(BackupFileEdit.this, getString(R.string.string_timer_warming));
-        return res;
-    }
-
+    /**
+     * Save call reminder type to database.
+     */
     private void saveCallTask(){
         String text = taskField.getText().toString().trim();
         if (text.matches("")){
@@ -2862,6 +2791,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Save message reminder type to database.
+     */
     private void saveMessageTask(){
         String text = taskField.getText().toString().trim();
         if (text.matches("")){
@@ -2901,9 +2833,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private PositionDelayReceiver positionDelayReceiver = new PositionDelayReceiver();
-
-    private void addLocation(){
+    /**
+     * Save location reminder type to database.
+     */
+    private void saveLocation(){
         String task = taskField.getText().toString().trim();
         if (task.matches("")){
             taskField.setError(getString(R.string.empty_field_error));
@@ -2950,7 +2883,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
             DB.updateReminderDateTime(ids);
             DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
-            positionDelayReceiver.setDelay(BackupFileEdit.this, ids);
+            new PositionDelayReceiver().setDelay(BackupFileEdit.this, ids);
         } else {
             long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
                     0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
@@ -2964,7 +2897,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private void addLocationOut() {
+    /**
+     * Save location out reminder type to database.
+     */
+    private void saveLocationOut() {
         String task = taskField.getText().toString().trim();
         if (task.matches("")){
             taskField.setError(getString(R.string.empty_field_error));
@@ -3012,7 +2948,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     number, 0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
             DB.updateReminderDateTime(ids);
             DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
-            positionDelayReceiver.setDelay(BackupFileEdit.this, ids);
+            new PositionDelayReceiver().setDelay(BackupFileEdit.this, ids);
         } else {
             long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, number,
                     0, 0, 0, latitude, longitude, uuID, null, 0, null, 0, -1, 0, categoryId);
@@ -3026,6 +2962,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    /**
+     * Check if reminder unique identifier also exist in database.
+     * @param uuId reminder unique identifier.
+     * @return Boolean
+     */
     private boolean isUID(String uuId){
         ArrayList<String> ids = new ArrayList<>();
         DB = new DataBase(BackupFileEdit.this);
@@ -3114,6 +3055,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    /**
+     * Show date picker dialog.
+     */
     protected void dateDialog() {
         final DatePickerDialog datePickerDialog =
                 DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
@@ -3137,7 +3081,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         else monthStr = String.valueOf(myMonth + 1);
 
         if (isCallAttached()){
-            callDate.setText(dayStr + "/" + monthStr);
+            callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             callYearDate.setText(String.valueOf(myYear));
         }
         if (isMonthDayAttached()){
@@ -3148,25 +3092,25 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         }
         if (isSkypeAttached()){
-            skypeDate.setText(dayStr + "/" + monthStr);
+            skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             skypeYearDate.setText(String.valueOf(myYear));
         }
         if (isApplicationAttached()){
-            appDate.setText(dayStr + "/" + monthStr);
+            appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             appYearDate.setText(String.valueOf(myYear));
         }
         if (isDateReminderAttached()){
-            dateField.setText(dayStr + "/" + monthStr);
+            dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             dateYearField.setText(String.valueOf(myYear));
         }
         if (isMessageAttached()){
-            messageDate.setText(dayStr + "/" + monthStr);
+            messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             messageYearDate.setText(String.valueOf(myYear));
         }
         if (isLocationAttached()){
             if (attackDelay.isChecked()){
                 if (delayLayout.getVisibility() == View.VISIBLE) {
-                    locationDateField.setText(dayStr + "/" + monthStr);
+                    locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
                     locationDateYearField.setText(String.valueOf(myYear));
                 }
             }
@@ -3174,18 +3118,25 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (isLocationOutAttached()){
             if (attachDelayOut.isChecked()){
                 if (delayLayoutOut.getVisibility() == View.VISIBLE) {
-                    locationOutDateField.setText(dayStr + "/" + monthStr);
+                    locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
                     locationOutDateYearField.setText(String.valueOf(myYear));
                 }
             }
         }
     }
 
+    /**
+     * Create time picker dialog.
+     * @return Time picker dialog
+     */
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
+    /**
+     * Time selection callback.
+     */
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             myHour = hourOfDay;
@@ -3247,8 +3198,30 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
-    private LocationManager mLocationManager;
-    private LocationListener mLocList;
+    @Override
+    public void onAddressReceived(List<Address> addresses) {
+        foundPlaces = addresses;
+
+        namesList = new ArrayList<>();
+        namesList.clear();
+        for (Address selected:addresses){
+            String addressText = String.format("%s, %s%s",
+                    selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
+                    selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
+                    selected.getCountryName());
+            namesList.add(addressText);
+        }
+        adapter = new ArrayAdapter<>(
+                BackupFileEdit.this, android.R.layout.simple_dropdown_item_1line, namesList);
+        searchField.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void OnCategory(String catId, String title) {
+        category.setText(title);
+        categoryId = catId;
+    }
 
     public class CurrentLocation implements LocationListener {
 
@@ -3259,7 +3232,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             curPlace = new LatLng(currentLat, currentLong);
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = taskField.getText().toString().trim();
-            if (text == null || text.matches("")) text = _Location;
+            if (text.matches("")) text = _Location;
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 if (mapOut != null) {

@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
 import com.cray.software.justreminder.datas.Task;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -27,11 +26,8 @@ import java.util.ArrayList;
 public class TaskListFragment extends Fragment implements SyncListener {
 
     private RecyclerView currentList;
-    private LinearLayout emptyLayout, emptyItem;
-    private ColorSetter cs;
+    private LinearLayout emptyItem;
     private ArrayList<Task> datas;
-    static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
-    static final String ARGUMENT_PAGE_DATA = "arg_page_data";
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 

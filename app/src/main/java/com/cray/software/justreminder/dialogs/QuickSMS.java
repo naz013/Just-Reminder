@@ -27,6 +27,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 
 public class QuickSMS extends Activity {
 
@@ -87,7 +88,7 @@ public class QuickSMS extends Activity {
 
         TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(typeface);
-        contactInfo.setText(name + "\n" + number);
+        contactInfo.setText(SuperUtil.appendString(name, "\n", number));
 
         loadTemplates();
         if (messagesList.getAdapter().getCount() > 0) {

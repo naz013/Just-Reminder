@@ -55,22 +55,6 @@ public class ReminderUtils {
     }
 
     /**
-     * Check if Skype client installed on device.
-     * @param context application context.
-     * @return
-     */
-    public static boolean isSkypeClientInstalled(Context context) {
-        PackageManager myPackageMgr = context.getPackageManager();
-        try {
-            myPackageMgr.getPackageInfo("com.skype.raider", PackageManager.GET_ACTIVITIES);
-        }
-        catch (PackageManager.NameNotFoundException e) {
-            return (false);
-        }
-        return (true);
-    }
-
-    /**
      * Generate sync code for reminder.
      * @param tasks Checkbox.
      * @return

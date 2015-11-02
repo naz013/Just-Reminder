@@ -31,6 +31,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -74,7 +75,6 @@ public class QuickAddReminder extends AppCompatActivity implements
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         task_text = (EditText) findViewById(R.id.task_text);
 
         Intent i = getIntent();
@@ -122,7 +122,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        dateField.setText(dayStr + "/" + monthStr);
+        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);

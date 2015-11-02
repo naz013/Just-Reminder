@@ -22,7 +22,7 @@ public class TimeUtil {
     /**
      * Get user age from birth date string.
      * @param dateOfBirth date of birth.
-     * @return
+     * @return Intefer
      */
     public static int getYears(String dateOfBirth){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -49,7 +49,7 @@ public class TimeUtil {
      * Get date and time string from date.
      * @param date date to convert.
      * @param is24 24H time format flag.
-     * @return
+     * @return Date string
      */
     public static String getDateTime(Date date, boolean is24){
         if (is24) return format24.format(date);
@@ -60,7 +60,7 @@ public class TimeUtil {
      * Get time from date object.
      * @param date date to convert.
      * @param is24 24H time format flag.
-     * @return
+     * @return Time string
      */
     public static String getTime(Date date, boolean is24){
         if (is24) return time24.format(date);
@@ -70,7 +70,7 @@ public class TimeUtil {
     /**
      * Get age from year of birth.
      * @param year year.
-     * @return
+     * @return Integer
      */
     public static int getAge(int year){
         Calendar calendar = Calendar.getInstance();
@@ -84,7 +84,7 @@ public class TimeUtil {
      * @param year year.
      * @param month month.
      * @param day day.
-     * @return
+     * @return Date
      */
     public static Date getDate(int year, int month, int day) {
         Calendar cal1 = Calendar.getInstance();
@@ -99,9 +99,9 @@ public class TimeUtil {
     }
 
     /**
-     * Get after time for timer.
-     * @param time milliseconds.
-     * @return
+     * Generate human readable string from time.
+     * @param time time in milliseconds.
+     * @return Time string
      */
     public static String generateAfterString(long time){
         long s = 1000;

@@ -53,7 +53,7 @@ public class GDriveHelper {
     public void authorize(){
         prefs = new SharedPrefs(mContext);
         GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(DriveScopes.DRIVE));
-        m_credential.setSelectedAccountName(new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
+        m_credential.setSelectedAccountName(SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         m_client = new com.google.api.services.drive.Drive.Builder(
                 m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
                 .build();
@@ -65,7 +65,7 @@ public class GDriveHelper {
      */
     public boolean isLinked(){
         prefs = new SharedPrefs(mContext);
-        return new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
+        return SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     /**

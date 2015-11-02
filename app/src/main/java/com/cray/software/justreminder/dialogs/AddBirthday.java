@@ -1,12 +1,9 @@
 package com.cray.software.justreminder.dialogs;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -21,23 +18,20 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -168,8 +162,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 dateDialog();
                 break;
             case R.id.contactLayout:
-                ProgressDialog pd = ProgressDialog.show(AddBirthday.this, getString(R.string.load_contats), getString(R.string.loading_wait), true);
-                pickContacts(pd);
+                SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
                 break;
         }
     }
@@ -218,50 +211,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         db.close();
     }
 
-    private void pickContacts(final ProgressDialog pd) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-                final ArrayList<String> contactsArray = new ArrayList<>();
-                while (cursor.moveToNext()) {
-                    String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    if (name != null) {
-                        contactsArray.add(name);
-                    }
-                }
-                cursor.close();
-                try {
-                    Collections.sort(contactsArray, new Comparator<String>() {
-                        @Override
-                        public int compare(String e1, String e2) {
-                            return e1.compareToIgnoreCase(e2);
-                        }
-                    });
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if ((pd != null) && pd.isShowing()) {
-                                pd.dismiss();
-                            }
-                        } catch (final Exception e) {
-                            // Handle or log or ignore
-                        }
-                        Intent i = new Intent(AddBirthday.this, ContactsList.class);
-                        i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contactsArray);
-                        startActivityForResult(i, Constants.REQUEST_CODE_CONTACTS);
-                    }
-                });
-            }
-        }).start();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_CODE_CONTACTS) {
@@ -297,7 +246,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         if (myDay < 10){
             dayStr = "0" + myDay;
         } else dayStr = String.valueOf(myDay);
-        birthDate.setText(myYear + "-" + monthStr + "-" + dayStr);
+        birthDate.setText(SuperUtil.appendString(String.valueOf(myYear), "-", monthStr, "-", dayStr));
     }
 
     @Override

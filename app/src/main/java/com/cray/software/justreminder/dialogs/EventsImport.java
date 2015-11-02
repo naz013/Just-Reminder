@@ -22,7 +22,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -83,7 +83,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         syncInterval.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
+                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
             }
         });
 

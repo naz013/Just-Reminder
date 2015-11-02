@@ -137,7 +137,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
 
-        Typeface typefaceLight = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
         typefaceMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Medium.ttf");
         typefaceThin = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Thin.ttf");
 
@@ -279,7 +278,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
                     do {
-                        String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         deleteFile(id);
                     }
@@ -317,7 +315,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        filesCloudList.setAdapter(adapter);  // requires *wrapped* adapter
+        filesCloudList.setAdapter(adapter);
         filesCloudList.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -389,8 +387,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         TextView googleUser = (TextView) rootView.findViewById(R.id.googleUser);
         googleUser.setTypeface(typefaceThin);
 
-        PieGraph googleSizeGraph = (PieGraph) rootView.findViewById(R.id.googleSizeGraph);
-
         TextView googleText = (TextView) rootView.findViewById(R.id.googleText);
         googleText.setTypeface(typefaceThin);
 
@@ -426,7 +422,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
                 if (c != null && c.moveToFirst()) {
                     do {
-                        String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         deleteGoogleFile(id);
                     }
@@ -464,7 +459,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         adapter = new FileRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         filesGoogleList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        filesGoogleList.setAdapter(adapter);  // requires *wrapped* adapter
+        filesGoogleList.setAdapter(adapter);
         filesGoogleList.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -664,7 +659,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_LOCAL);
                 if (c != null && c.moveToFirst()) {
                     do {
-                        String uuID;
                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                         deleteLocalFile(id);
                     }
@@ -736,7 +730,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             filesDataBase.close();
             if (mCallbacks != null) mCallbacks.showSnackbar(R.string.file_delted);
             loadLocalList();
-            boolean isLocalDeleted = true;
         }
     }
 

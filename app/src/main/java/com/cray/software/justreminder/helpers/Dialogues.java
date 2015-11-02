@@ -14,6 +14,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.LoadSounds;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
@@ -40,7 +42,38 @@ import java.util.Locale;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class Dialog {
+public class Dialogues {
+
+    public interface OnCategorySelectListener{
+        void OnCategory(String catId, String title);
+    }
+
+    /**
+     * Reminder category selection dialog.
+     * @param context application context.
+     * @param categoryId current category unique identifier.
+     * @param listener dialog callback listener.
+     */
+    public static void selectCategory(Context context, String categoryId, final OnCategorySelectListener listener) {
+        final CategoryDataProvider provider = new CategoryDataProvider(context);
+        final ArrayList<String> categories = new ArrayList<>();
+        for (CategoryModel item : provider.getData()){
+            categories.add(item.getTitle());
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.string_select_category));
+        builder.setSingleChoiceItems(new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                if (listener != null) listener.OnCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     /**
      * Create and AlertDialog with customizable seekbar.

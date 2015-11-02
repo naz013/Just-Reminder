@@ -21,7 +21,6 @@ import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -100,13 +99,10 @@ public class EventsFragment extends Fragment {
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
 
-        CircularProgress progress = (CircularProgress) rootView.findViewById(R.id.progress);
-
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
 
         if (dateMills != 0) cal.setTimeInMillis(dateMills);
-        //showEvents(cal.getTime());
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
         sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);

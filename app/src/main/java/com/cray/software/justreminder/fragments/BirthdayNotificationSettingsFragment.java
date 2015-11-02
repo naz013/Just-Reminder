@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
@@ -120,7 +120,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
          chooseLedColor.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Dialog.ledColor(getActivity(), Prefs.BIRTHDAY_LED_COLOR);
+                    Dialogues.ledColor(getActivity(), Prefs.BIRTHDAY_LED_COLOR);
              }
             });
         textLed2 = (TextView) rootView.findViewById(R.id.textLed2);
@@ -156,7 +156,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         locale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
+                Dialogues.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
             }
         });
 
@@ -281,7 +281,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, true);
             ttsCheck.setChecked(true);
-            Dialog.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
+            Dialogues.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
         }
         checkTTS();
     }
@@ -441,7 +441,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
                 infiniteSoundChange();
                 break;
             case R.id.chooseSound:
-                Dialog.melodyType(getActivity(), Prefs.BIRTHDAY_CUSTOM_SOUND, this);
+                Dialogues.melodyType(getActivity(), Prefs.BIRTHDAY_CUSTOM_SOUND, this);
                 break;
         }
     }

@@ -19,7 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.CalendarStyle;
 import com.cray.software.justreminder.dialogs.EventsImport;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -204,7 +204,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
                 getActivity().startActivity(iz);
                 break;
             case R.id.startDay:
-                Dialog.firstDay(getActivity());
+                Dialogues.firstDay(getActivity());
                 break;
             case R.id.reminderInCalendar:
                 remindersChange();

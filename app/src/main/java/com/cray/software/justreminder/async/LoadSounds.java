@@ -8,7 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -89,7 +89,7 @@ public class LoadSounds extends AsyncTask<Void, Void, ArrayList<File>> {
             // Handle or log or ignore
         }
         if (files != null) {
-            Dialog.customMelody(mContext, prefs, names, foldersFile, listener);
+            Dialogues.customMelody(mContext, prefs, names, foldersFile, listener);
         } else {
             Messages.toast(mContext, R.string.no_music);
         }

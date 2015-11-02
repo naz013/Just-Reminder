@@ -44,7 +44,6 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -408,7 +407,6 @@ public class TaskManager extends AppCompatActivity {
         String type = Constants.TYPE_REMINDER;
         DataBase DB = new DataBase(TaskManager.this);
         DB.open();
-        SyncHelper sHelp = new SyncHelper(TaskManager.this);
         String uuID = SyncHelper.generateID();
         Cursor cf = DB.queryCategories();
         String categoryId = null;
@@ -579,7 +577,6 @@ public class TaskManager extends AppCompatActivity {
             }
 
             String text = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-            int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
 
             TextView textView = (TextView) convertView.findViewById(R.id.textView);
             textView.setText(text);

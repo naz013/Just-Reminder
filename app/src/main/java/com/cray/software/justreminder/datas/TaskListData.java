@@ -14,10 +14,6 @@ public class TaskListData {
         this.position = position;
     }
 
-    public TaskListData(TaskList taskList){
-        this.taskList = taskList;
-    }
-
     public int getPosition(){
         return position;
     }
@@ -30,15 +26,7 @@ public class TaskListData {
         return mData;
     }
 
-    public void setmData(ArrayList<Task> mData){
-        this.mData = mData;
-    }
-
     public TaskList getTaskList() {
         return taskList;
-    }
-
-    public void setTaskList(TaskList taskList) {
-        this.taskList = taskList;
     }
 }

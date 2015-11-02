@@ -82,6 +82,8 @@ public class LogInActivity extends Activity {
     private Context ctx = this;
     private Activity a = this;
 
+    private boolean enabled = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,13 +113,16 @@ public class LogInActivity extends Activity {
         connectDropbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean isIn;
-                if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
-                else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
-                if (isIn) {
-                    checkDialog().show();
-                } else {
-                    dbx.startLink();
+                if (enabled) {
+                    boolean isIn;
+                    if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
+                    else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
+                    if (isIn) {
+                        checkDialog().show();
+                    } else {
+                        dbx.startLink();
+                        enabled = false;
+                    }
                 }
             }
         });
@@ -125,14 +130,17 @@ public class LogInActivity extends Activity {
         connectGDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new Permissions(LogInActivity.this).checkPermission(Permissions.GET_ACCOUNTS)) {
-                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{"com.google"}, false, null, null, null, null);
-                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
-                } else {
-                    new Permissions(LogInActivity.this).requestPermission(LogInActivity.this,
-                            new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                    Permissions.WRITE_EXTERNAL}, 103);
+                if (enabled) {
+                    if (new Permissions(LogInActivity.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                                new String[]{"com.google"}, false, null, null, null, null);
+                        startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                        enabled = false;
+                    } else {
+                        new Permissions(LogInActivity.this).requestPermission(LogInActivity.this,
+                                new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                        Permissions.WRITE_EXTERNAL}, 103);
+                    }
                 }
             }
         });
@@ -140,13 +148,16 @@ public class LogInActivity extends Activity {
         skipButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Permissions permissions = new Permissions(LogInActivity.this);
-                if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                        permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
-                    new LocalSync(LogInActivity.this, progress, progressMesage).execute();
-                } else {
-                    permissions.requestPermission(LogInActivity.this,
-                            new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 101);
+                if (enabled) {
+                    Permissions permissions = new Permissions(LogInActivity.this);
+                    if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
+                            permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                        new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                        enabled = false;
+                    } else {
+                        permissions.requestPermission(LogInActivity.this,
+                                new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 101);
+                    }
                 }
             }
         });
@@ -159,6 +170,7 @@ public class LogInActivity extends Activity {
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                    enabled = false;
                 } else {
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
@@ -167,6 +179,7 @@ public class LogInActivity extends Activity {
             case 102:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     new ImportBirthdays(LogInActivity.this).execute();
+                    enabled = false;
                 } else {
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
@@ -177,6 +190,7 @@ public class LogInActivity extends Activity {
                     Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                             new String[]{"com.google"}, false, null, null, null, null);
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                    enabled = false;
                 } else {
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
@@ -185,6 +199,7 @@ public class LogInActivity extends Activity {
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                    enabled = false;
                 } else {
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
@@ -209,6 +224,7 @@ public class LogInActivity extends Activity {
                 if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
                         permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                    enabled = false;
                 } else {
                     permissions.requestPermission(LogInActivity.this,
                             new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
@@ -223,6 +239,7 @@ public class LogInActivity extends Activity {
             if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
                     permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                enabled = false;
             } else {
                 permissions.requestPermission(LogInActivity.this,
                         new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
@@ -321,7 +338,7 @@ public class LogInActivity extends Activity {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
+            sPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             progressMesage.setText(getString(R.string.string_successfully_logged));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
@@ -337,7 +354,7 @@ public class LogInActivity extends Activity {
             }
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            sPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(LogInActivity.this).encrypt(accountName));
+            sPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);

@@ -17,7 +17,7 @@ import com.cray.software.justreminder.dialogs.PlacesList;
 import com.cray.software.justreminder.dialogs.utils.MarkerStyle;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.dialogs.utils.TrackerOption;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
@@ -120,7 +120,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mapType:
-                Dialog.mapType(getActivity());
+                Dialogues.mapType(getActivity());
                 break;
             case R.id.notificationOption:
                 notificationChange();

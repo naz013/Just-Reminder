@@ -3,7 +3,6 @@ package com.cray.software.justreminder.helpers;
 import android.content.Context;
 import android.os.Environment;
 
-import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -59,7 +58,6 @@ public class IOHelper {
         if (isConnected){
             new DropboxHelper(mContext).deleteReminder(name);
             new GDriveHelper(mContext).deleteReminder(name);
-            //new BoxHelper(mContext).deleteReminder(name);
         }
     }
 
@@ -96,7 +94,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(mContext).uploadGroup();
         }
     }
 
@@ -127,7 +124,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(mContext).downloadGroup();
         }
     }
 
@@ -148,7 +144,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(mContext).uploadReminder();
         }
     }
 
@@ -169,7 +164,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(mContext).downloadReminder();
         }
     }
 
@@ -190,7 +184,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(mContext).uploadNote();
         }
     }
 
@@ -211,7 +204,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(mContext).downloadNote();
         }
     }
 
@@ -232,7 +224,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(mContext).uploadBirthday();
         }
     }
 
@@ -253,7 +244,6 @@ public class IOHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(mContext).downloadBirthday();
         }
     }
 }

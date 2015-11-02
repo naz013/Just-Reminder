@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -162,10 +162,10 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
                 deleteChange();
                 break;
             case R.id.noteReminderTime:
-                Dialog.dialogWithSeek(getActivity(), 120, Prefs.QUICK_NOTE_REMINDER_TIME, getString(R.string.note_reminder_time_dialog), this);
+                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.QUICK_NOTE_REMINDER_TIME, getString(R.string.note_reminder_time_dialog), this);
                 break;
             case R.id.textSize:
-                Dialog.dialogWithSeek(getActivity(), 18, Prefs.TEXT_SIZE, getString(R.string.text_size_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 18, Prefs.TEXT_SIZE, getString(R.string.text_size_dialog_title), this);
                 break;
         }
     }

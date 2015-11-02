@@ -6,7 +6,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -63,14 +62,12 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new BoxHelper(mContext).uploadNote();
             new DropboxHelper(mContext).downloadNote();
             try {
                 new GDriveHelper(mContext).downloadNote();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //new BoxHelper(mContext).downloadNote();
         }
         return true;
     }

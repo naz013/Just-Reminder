@@ -28,6 +28,7 @@ import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.MissedCallAlarm;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
@@ -111,8 +112,8 @@ public class MissedCallDialog extends Activity {
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
-            remText.setText(name + "\n" + number + "\n\n" + "\n" + "\n" + getString(R.string.string_last_called) +
-                    "\n" + formattedTime);
+            remText.setText(SuperUtil.appendString(name, "\n", number, "\n\n\n\n", getString(R.string.string_last_called),
+                    "\n", formattedTime));
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }

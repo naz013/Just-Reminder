@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.ThemerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -284,7 +284,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
                 smartFoldChange();
                 break;
             case R.id.screenOrientation:
-                Dialog.orientationDialog(getActivity(), this);
+                Dialogues.orientationDialog(getActivity(), this);
                 break;
         }
     }

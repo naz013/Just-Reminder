@@ -53,7 +53,7 @@ public class GTasksHelper {
     public void authorize(){
         prefs = new SharedPrefs(mContext);
         GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(TasksScopes.TASKS));
-        m_credential.setSelectedAccountName(new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
+        m_credential.setSelectedAccountName(SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
         service = new Tasks.Builder(m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME).build();
     }
 
@@ -63,7 +63,7 @@ public class GTasksHelper {
      */
     public boolean isLinked(){
         prefs = new SharedPrefs(mContext);
-        return new SyncHelper(mContext).decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
+        return SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     /**

@@ -58,6 +58,12 @@ public class ShoppingList {
         this.time = time;
     }
 
+    /**
+     * Mark task in shopping list done/undone.
+     * @param context application context.
+     * @param id task identifier.
+     * @param checked task status.
+     */
     public static void switchItem(Context context, long id, boolean checked){
         DataBase db = new DataBase(context);
         db.open();
@@ -65,6 +71,11 @@ public class ShoppingList {
         db.close();
     }
 
+    /**
+     * Hide task from shopping list.
+     * @param context application context.
+     * @param id task identifier.
+     */
     public static void hideItem(Context context, long id){
         DataBase db = new DataBase(context);
         db.open();
@@ -72,6 +83,11 @@ public class ShoppingList {
         db.close();
     }
 
+    /**
+     * Show task in shopping list.
+     * @param context application context.
+     * @param id task identifier.
+     */
     public static void showItem(Context context, long id){
         DataBase db = new DataBase(context);
         db.open();
@@ -79,6 +95,11 @@ public class ShoppingList {
         db.close();
     }
 
+    /**
+     * Remove task from database.
+     * @param context application context.
+     * @param id task identifier.
+     */
     public static void removeItem(Context context, long id){
         DataBase db = new DataBase(context);
         db.open();
@@ -86,6 +107,12 @@ public class ShoppingList {
         db.close();
     }
 
+    /**
+     * Get all tasks unique identifiers.
+     * @param context application context.
+     * @param remId reminder identifier.
+     * @return Map with unique identifier as key and database identifier as value
+     */
     public static HashMap<String, Long> getUuIds(Context context, long remId){
         DataBase db = new DataBase(context);
         db.open();

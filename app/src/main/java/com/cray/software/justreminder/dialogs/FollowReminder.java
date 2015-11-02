@@ -31,6 +31,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -101,7 +102,7 @@ public class FollowReminder extends AppCompatActivity implements
         TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(AssetsUtil.getMediumTypeface(this));
         if (name != null && !name.matches("")) {
-            contactInfo.setText(name + "\n" + number);
+            contactInfo.setText(SuperUtil.appendString(name, "\n", number));
         } else {
             contactInfo.setText(number);
         }

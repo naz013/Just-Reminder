@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,14 +23,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ReminderModel;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -131,7 +128,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        ColorSetter cSetter = new ColorSetter(getActivity());
         sPrefs = new SharedPrefs(getActivity());
         enableGrid = sPrefs.loadBoolean(Prefs.LIST_GRID);
 
@@ -173,8 +169,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                     adView.setVisibility(View.VISIBLE);
                 }
             });
-
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
         return rootView;
     }

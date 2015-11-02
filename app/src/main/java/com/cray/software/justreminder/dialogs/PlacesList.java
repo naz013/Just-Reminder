@@ -38,7 +38,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 public class PlacesList extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
-    private LinearLayout emptyLayout, emptyItem;
+    private LinearLayout emptyItem;
     private ColorSetter cs = new ColorSetter(PlacesList.this);
     private AddFloatingActionButton mFab;
 
@@ -106,7 +106,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(this, provider);
         adapter.setEventListener(this);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(adapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
         QuickReturnRecyclerViewOnScrollListener scrollListener = new
                 QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)

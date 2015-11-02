@@ -1,30 +1,20 @@
 package com.cray.software.justreminder;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
-import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -66,19 +56,16 @@ import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
+import com.cray.software.justreminder.async.GeocoderTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.dialogs.utils.ContactsList;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
-import com.cray.software.justreminder.dialogs.utils.SelectApplication;
-import com.cray.software.justreminder.dialogs.utils.SelectMelody;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -111,6 +98,7 @@ import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -119,42 +107,160 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-
+/**
+ * Reminder creation activity.
+ */
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, AdapterView.OnItemSelectedListener, View.OnTouchListener,
-        DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener, MapListener {
+        DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener, MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener {
 
+    /**
+     * Date reminder type variables.
+     */
+    private CheckBox dateTaskExport;
+    private EditText repeatDays;
+    private TextView dateField, timeField, dateYearField;
+    private CheckBox dateExport;
+
+    /**
+     * Weekday reminder type variables.
+     */
     private LinearLayout action_layout;
-    private FloatingEditText phoneNumber, messageNumber, weekPhoneNumber;
-    private TextView callDate, callTime, dateField, timeField, callYearDate, dateYearField,
-            messageDate, messageYearDate, messageTime, weekTimeField;
+    private FloatingEditText weekPhoneNumber;
+    private TextView weekTimeField;
     private ImageButton weekAddNumberButton;
+    private CheckBox weekExport;
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    private RadioButton callCheck, messageCheck;
+    private CheckBox attachAction, weekTaskExport;
 
+    /**
+     * Monthday reminder type variables.
+     */
+    private CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
+    private LinearLayout monthDayActionLayout;
+    private TextView monthDayField, monthDayTimeField;
+    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
+    private ImageButton monthDayAddNumberButton;
+    private FloatingEditText monthDayPhoneNumber;
+
+    /**
+     * Call reminder variables.
+     */
+    private FloatingEditText phoneNumber;
+    private TextView callDate, callTime, callYearDate;
+    private CheckBox callExport;
+    private CheckBox callTaskExport;
+    private EditText repeatDaysCall;
+
+    /**
+     * Message reminder variables.
+     */
+    private FloatingEditText messageNumber;
+    private TextView messageDate, messageYearDate, messageTime;
+    private CheckBox messageExport;
+    private CheckBox messageTaskExport;
+    private EditText repeatDaysMessage;
+
+    /**
+     * Time reminder variables.
+     */
+    private CheckBox timeExport;
+    private CheckBox timeTaskExport;
+    private TextView hoursView, minutesView, secondsView;
+    private ImageButton deleteButton;
+    private EditText repeatMinutes;
+    private String timeString = "000000";
+
+    /**
+     * Application reminder type variables.
+     */
+    private CheckBox appExport, appTaskExport;
+    private EditText browseLink, repeatDaysApp;
+    private RadioButton application, browser;
+    private TextView appDate, appYearDate, appTime, applicationName;
+    private RelativeLayout applicationLayout;
+
+    /**
+     * Skype reminder type variables.
+     */
+    private CheckBox skypeExport, skypeTaskExport;
+    private EditText skypeUser, repeatDaysSkype;
+    private RadioButton skypeCall;
+    private RadioButton skypeVideo;
+    private TextView skypeDate, skypeYearDate, skypeTime;
+
+    /**
+     * Location reminder variables.
+     */
     private LinearLayout delayLayout;
-    private LinearLayout navContainer;
     private CheckBox attackDelay;
-    private CheckBox timeExport, messageExport, dateExport, callExport, weekExport;
+    private ImageButton addNumberButtonLocation;
+    private LinearLayout actionLocation;
+    private RelativeLayout mapContainer;
+    private ScrollView specsContainer;
+    private CheckBox attachLocationAction;
+    private RadioButton callCheckLocation, messageCheckLocation;
+    private FloatingEditText phoneNumberLocation;
+    private MapFragment map;
+    private TextView locationDateField, locationDateYearField, locationTimeField;
+    private AutoCompleteTextView searchField;
+
+    /**
+     * LocationOut reminder type variables.
+     */
+    private ImageButton addNumberButtonLocationOut;
+    private LinearLayout actionLocationOut;
+    private LinearLayout delayLayoutOut;
+    private RelativeLayout mapContainerOut;
+    private ScrollView specsContainerOut;
+    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
+            mapLocation, radiusMark;
+    private CheckBox attachLocationOutAction, attachDelayOut;
+    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
+    private FloatingEditText phoneNumberLocationOut;
+    private MapFragment mapOut;
+
+    /**
+     * Shopping list reminder type variables.
+     */
+    private EditText shopEdit;
+    private TaskListRecyclerAdapter shoppingAdapter;
+    private ShoppingListDataProvider shoppingLists;
+
+    /**
+     * Extra options views.
+     */
     private ScrollView extraScroll;
     private ImageButton extraVibration, extraUnlock, extraVoice, extraWake, extraRepeat, extraAuto,
             extraLimit, extraSwitch;
-    private RelativeLayout extraHolder, shoppingLayout;
+    private RelativeLayout extraHolder;
     private FrameLayout repeatFrame;
     private TextView repeatLabel;
 
+    /**
+     * General views.
+     */
+    private Toolbar toolbar;
+    private Spinner spinner;
+    private FloatingEditText taskField;
+    private TextView category;
+    private FloatingActionButton mFab;
+    private LinearLayout navContainer;
+
+    /**
+     * Reminder preferences flags.
+     */
     private int myHour = 0;
     private int myMinute = 0;
     private int mySeconds = 0;
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
-
     private int vibration = -1;
     private int voice = -1;
     private int notificationRepeat = -1;
@@ -162,23 +268,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private int unlock = -1;
     private int auto = -1;
     private long repeats = -1;
-
-    private ProgressDialog pd;
-    private boolean isDelayed = false;
-
-    private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
-    private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
-    private GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
-
     private long id;
     private String categoryId;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = 0;
-    private Toolbar toolbar;
-    private Spinner spinner;
-    private FloatingEditText taskField;
-    private TextView category;
-    private FloatingActionButton mFab;
+    private List<Address> foundPlaces;
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> namesList;
+    private LatLng curPlace;
+
+    private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
+    private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
+    private GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
@@ -187,10 +288,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private boolean isLocationOutMessage = false;
     private boolean isWeekMessage = false;
     private boolean isMonthMessage = false;
+    private boolean isDelayed = false;
 
     private Type remControl = new Type(this);
     private Reminder item;
     private Handler handler = new Handler();
+    private GeocoderTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,16 +320,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_add:
-                                saveTask();
+                                save();
                                 return true;
                             case R.id.action_custom_melody:
-                                loadMelody();
+                                SuperUtil.selectMelody(ReminderManager.this, Constants.REQUEST_CODE_SELECTED_MELODY);
                                 return true;
                             case R.id.action_custom_radius:
                                 selectRadius();
                                 return true;
                             case R.id.action_custom_color:
-                                selectColor();
+                                chooseLEDColor();
                                 return true;
                             case MENU_ITEM_DELETE:
                                 deleteReminder();
@@ -330,7 +433,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startVoiceRecognitionActivity();
+                SuperUtil.startVoiceRecognitionActivity(ReminderManager.this, VOICE_RECOGNITION_REQUEST_CODE);
             }
         });
 
@@ -338,11 +441,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         category.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeCategory();
+                Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this);
             }
         });
 
-        LinearLayout layoutContainer = (LinearLayout) findViewById(R.id.layoutContainer);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         findViewById(R.id.windowBackground).setOnTouchListener(this);
 
@@ -383,7 +485,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveTask();
+                save();
             }
         });
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
@@ -478,6 +580,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         clearViews();
     }
 
+    /**
+     * Long click listener for extra options buttons.
+     * Show toast with button action explanation.
+     */
     private View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -512,6 +618,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+    /**
+     * Extra options button click listener.
+     * Switch button state (selected/don't selected).
+     */
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -527,11 +637,33 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+    /**
+     * Select contact button click listener.
+     */
+    private View.OnClickListener contactClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Permissions permissions = new Permissions(ReminderManager.this);
+            if (permissions.checkPermission(Permissions.READ_CONTACTS)) {
+                SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
+            } else {
+                permissions.requestPermission(ReminderManager.this,
+                        new String[]{Permissions.READ_CONTACTS}, 107);
+            }
+        }
+    };
+
+    /**
+     * Delayed handler for hiding extra options container.
+     */
     private void addHandler(){
         handler.removeCallbacks(runnable);
         handler.postDelayed(runnable, 5000);
     }
 
+    /**
+     * Runnable for hiding repeat limit seekbar.
+     */
     private Runnable seek = new Runnable() {
         @Override
         public void run() {
@@ -543,6 +675,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+    /**
+     * Runnable for hiding extra options container.
+     */
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -553,6 +688,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+    /**
+     * Show extra button depending on reminder type.
+     */
     private void invalidateButtons(){
         if (isShoppingAttached()){
             if (extraHolder.getVisibility() == View.VISIBLE) ViewUtils.hideOver(extraHolder, isAnimation);
@@ -600,6 +738,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Set extra option button image depending on dark or light theme.
+     */
     private void colorifyButtons() {
         if (isDark){
             extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
@@ -622,10 +763,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Check if extra options button container is visible.
+     * @return Boolean
+     */
     private boolean isOptionsVisible(){
         return extraScroll.getVisibility() == View.VISIBLE;
     }
 
+    /**
+     * Show/hide extra container.
+     */
     private void switchOptions(){
         if (isOptionsVisible()) {
             ViewUtils.hideReveal(extraScroll, isAnimation);
@@ -638,6 +786,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         switchIcon();
     }
 
+    /**
+     * Set image to extra container show/hide button.
+     */
     private void switchIcon() {
         if (isOptionsVisible()) {
             if (isDark){
@@ -654,6 +805,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Hide all reminder types layouts.
+     */
     private void clearViews() {
         findViewById(R.id.by_date_layout).setVisibility(View.GONE);
         findViewById(R.id.call_layout).setVisibility(View.GONE);
@@ -668,37 +822,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
     }
 
-    private void showHelp() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ReminderManager.this);
-        alertDialog.setMessage(getString(R.string.gps_text));
-        alertDialog.setCancelable(true);
-        alertDialog.show();
-    }
-
-    private CategoryDataProvider provider;
-
-    private void changeCategory() {
-        provider = new CategoryDataProvider(this);
-        final ArrayList<String> categories = new ArrayList<>();
-        for (CategoryModel item : provider.getData()){
-            categories.add(item.getTitle());
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.string_select_category));
-        builder.setSingleChoiceItems(new ArrayAdapter<>(ReminderManager.this,
-                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                category.setText(provider.getItem(which).getTitle());
-                categoryId = provider.getItem(which).getUuID();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
+    /**
+     * Set selecting reminder type spinner adapter.
+     */
     private void setUpNavigation() {
         ArrayList<SpinnerItem> navSpinner = new ArrayList<>();
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
@@ -733,6 +859,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         spinner.setOnItemSelectedListener(this);
     }
 
+    /**
+     * Delete or move to trash reminder.
+     */
     private void deleteReminder() {
         DataBase db = new DataBase(this);
         db.open();
@@ -749,40 +878,26 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         db.close();
     }
 
+    /**
+     * Show location radius selection dialog.
+     */
     private void selectRadius() {
         Intent i = new Intent(ReminderManager.this, TargetRadius.class);
         i.putExtra("item", 1);
         startActivityForResult(i, Constants.REQUEST_CODE_SELECTED_RADIUS);
     }
 
-    private void selectColor() {
+    /**
+     * Open LED indicator color selecting window.
+     */
+    private void chooseLEDColor() {
         Intent i = new Intent(ReminderManager.this, LedColor.class);
         i.putExtra(Constants.BIRTHDAY_INTENT_ID, 4);
         startActivityForResult(i, Constants.REQUEST_CODE_SELECTED_COLOR);
     }
 
-    private void loadMelody() {
-        pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.sounds_loading_text), true);
-        pickSounds(pd);
-    }
-
-    public void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
-        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
-        try {
-            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } catch (ActivityNotFoundException e){
-            Messages.toast(ReminderManager.this, getString(R.string.recognizer_not_found_error_message));
-        }
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        boolean is;
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mFab.getVisibility() == View.GONE){
@@ -796,6 +911,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Check if selected reminder in spinner matches type that was edited.
+     * @return Boolean
+     */
     private boolean isSame(){
         boolean is = false;
         if (spinner.getSelectedItemPosition() == 0 && type.matches(Constants.TYPE_REMINDER)) is = true;
@@ -812,9 +931,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return is;
     }
 
-    private CheckBox dateTaskExport;
-    private EditText repeatDays;
-
+    /**
+     * Show simple date reminder creation layout.
+     */
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -871,7 +990,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        dateField.setText(dayStr + "/" + monthStr);
+        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         dateYearField = (TextView) findViewById(R.id.dateYearField);
@@ -934,7 +1053,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             timeField.setText(TimeUtil.getTime(cal.getTime(), sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            dateField.setText(dayStr + "/" + monthStr);
+            dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
             dateYearField.setText(String.valueOf(myYear));
             repeatDateInt.setProgress(repCode);
             repeatDays.setText(String.valueOf(repCode));
@@ -942,13 +1061,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
-    private LinearLayout monthDayActionLayout;
-    private TextView monthDayField, monthDayTimeField;
-    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    private ImageButton monthDayAddNumberButton;
-    private FloatingEditText monthDayPhoneNumber;
-
+    /**
+     * Show by day of month reminder creation layout.
+     */
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1029,13 +1144,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)) {
                         ViewUtils.showOver(monthDayActionLayout, isAnimation);
                         monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
-                        monthDayAddNumberButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                                pickContacts(pd);
-                            }
-                        });
+                        monthDayAddNumberButton.setOnClickListener(contactClick);
                         ViewUtils.setImage(monthDayAddNumberButton, isDark);
 
                         monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
@@ -1174,10 +1283,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    private RadioButton callCheck, messageCheck;
-    private CheckBox attachAction, weekTaskExport;
-
+    /**
+     * Show alarm clock reminder type creation layout.
+     */
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1253,13 +1361,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)){
                         ViewUtils.showOver(action_layout, isAnimation);
                         weekAddNumberButton = (ImageButton) findViewById(R.id.weekAddNumberButton);
-                        weekAddNumberButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                                pickContacts(pd);
-                            }
-                        });
+                        weekAddNumberButton.setOnClickListener(contactClick);
                         ViewUtils.setImage(weekAddNumberButton, isDark);
 
                         weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
@@ -1346,6 +1448,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Check days toggle buttons depends on weekday string.
+     * @param weekdays weekday string.
+     */
     private void setCheckForDays(String weekdays){
         if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))
             mondayCheck.setChecked(true);
@@ -1376,12 +1482,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else sundayCheck.setChecked(false);
     }
 
-    private CheckBox timeTaskExport;
-    private TextView hoursView, minutesView, secondsView;
-    private ImageButton deleteButton;
-    private EditText repeatMinutes;
-    private String timeString = "000000";
-
+    /**
+     * Show timer reminder type creation layout.
+     */
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1485,45 +1588,27 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 repeat = item.getRepCode();
             }
 
-            generateString(afterTime);
+            timeString = TimeUtil.generateAfterString(afterTime);
+            updateTimeView();
 
             if (exp == 1){
                 timeExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL) {
                 timeTaskExport.setChecked(true);
             }
 
             if (repeat < repeatMinutesSeek.getMax()) repeatMinutesSeek.setProgress(repeat);
             repeatMinutes.setText(String.valueOf(repeat));
-
             taskField.setText(text);
-
             invalidateButtons();
         }
     }
 
-    private void generateString(long time){
-        long s = 1000;
-        long m = s * 60;
-        long h = m * 60;
-        long hours = (time / h);
-        long minutes = ((time - hours * h) / (m));
-        long seconds = ((time - (hours * h) - (minutes * m)) / (s));
-        String hourStr;
-        if (hours < 10) hourStr = "0" + hours;
-        else hourStr = String.valueOf(hours);
-        String minuteStr;
-        if (minutes < 10) minuteStr = "0" + minutes;
-        else minuteStr = String.valueOf(minutes);
-        String secondStr;
-        if (seconds < 10) secondStr = "0" + seconds;
-        else secondStr = String.valueOf(seconds);
-        timeString = hourStr + minuteStr + secondStr;
-        updateTimeView();
-    }
-
+    /**
+     * Set time in time view fields.
+     */
     private void updateTimeView() {
         if (timeString.matches("000000")) deleteButton.setEnabled(false);
         else deleteButton.setEnabled(true);
@@ -1537,12 +1622,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private CheckBox skypeExport, skypeTaskExport;
-    private EditText skypeUser, repeatDaysSkype;
-    private RadioButton skypeCall;
-    private RadioButton skypeVideo;
-    private TextView skypeDate, skypeYearDate, skypeTime;
-
+    /**
+     * Show Skype reminder type creation layout.
+     */
     private void attachSkype(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1611,7 +1693,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else monthStr = String.valueOf(myMonth + 1);
 
         skypeDate = (TextView) findViewById(R.id.skypeDate);
-        skypeDate.setText(dayStr + "/" + monthStr);
+        skypeDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         skypeDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1693,7 +1775,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             skypeUser.setText(number);
-            skypeDate.setText(dayStr + "/" + monthStr);
+            skypeDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             skypeYearDate.setText(String.valueOf(myYear));
             skypeTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1704,12 +1786,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private CheckBox appExport, appTaskExport;
-    private EditText browseLink, repeatDaysApp;
-    private RadioButton application, browser;
-    private TextView appDate, appYearDate, appTime, applicationName;
-    private RelativeLayout applicationLayout;
-
+    /**
+     * Show application reminder type creation layout.
+     */
     private void attachApplication(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1730,8 +1809,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         pickApplication.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.loading_applications_message), true);
-                pickApplications(pd);
+                SuperUtil.selectApplication(ReminderManager.this, Constants.REQUEST_CODE_APPLICATION);
             }
         });
         sPrefs = new SharedPrefs(ReminderManager.this);
@@ -1810,7 +1888,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else monthStr = String.valueOf(myMonth + 1);
 
         appDate = (TextView) findViewById(R.id.appDate);
-        appDate.setText(dayStr + "/" + monthStr);
+        appDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         appDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1900,7 +1978,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
 
-            appDate.setText(dayStr + "/" + monthStr);
+            appDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             appYearDate.setText(String.valueOf(myYear));
             appTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -1910,9 +1988,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private CheckBox callTaskExport;
-    private EditText repeatDaysCall;
-
+    /**
+     * Show call reminder type creation layout.
+     */
     private void attachCall(){
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -1924,13 +2002,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         remControl = dateType;
 
         ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
-        addNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                pickContacts(pd);
-            }
-        });
+        addNumberButton.setOnClickListener(contactClick);
         ViewUtils.setImage(addNumberButton, isDark);
 
         phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
@@ -1974,7 +2046,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else monthStr = String.valueOf(myMonth + 1);
 
         callDate = (TextView) findViewById(R.id.callDate);
-        callDate.setText(dayStr + "/" + monthStr);
+        callDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         callDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2045,7 +2117,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             phoneNumber.setText(number);
-            callDate.setText(dayStr + "/" + monthStr);
+            callDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             callYearDate.setText(String.valueOf(myYear));
             callTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -2055,9 +2127,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private CheckBox messageTaskExport;
-    private EditText repeatDaysMessage;
-
+    /**
+     * Show message reminder type creation layout.
+     */
     private void attachMessage(){
         taskField.setHint(getString(R.string.message_field_hint));
 
@@ -2069,13 +2141,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         remControl = dateType;
 
         ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
-        addMessageNumberButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                pickContacts(pd);
-            }
-        });
+        addMessageNumberButton.setOnClickListener(contactClick);
         ViewUtils.setImage(addMessageNumberButton, isDark);
 
         messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
@@ -2120,7 +2186,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else monthStr = String.valueOf(myMonth + 1);
 
         messageDate = (TextView) findViewById(R.id.messageDate);
-        messageDate.setText(dayStr + "/" + monthStr);
+        messageDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         messageDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2191,7 +2257,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             messageNumber.setText(number);
-            messageDate.setText(dayStr + "/" + monthStr);
+            messageDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             messageYearDate.setText(String.valueOf(myYear));
             messageTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -2200,14 +2266,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             invalidateButtons();
         }
     }
-
-    private TextView locationDateField, locationDateYearField, locationTimeField;
-    private AutoCompleteTextView searchField;
-    private List<Address> foundPlaces;
-    private ArrayAdapter<String> adapter;
-    private GeocoderTask task;
-    private ArrayList<String> namesList;
-    private LatLng curPlace;
 
     @Override
     public void place(LatLng place) {
@@ -2232,62 +2290,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private class GeocoderTask extends AsyncTask<String, Void, List<Address>> {
-
-        @Override
-        protected List<Address> doInBackground(String... locationName) {
-            // Creating an instance of Geocoder class
-            Geocoder geocoder = new Geocoder(ReminderManager.this);
-            List<Address> addresses = null;
-
-            try {
-                // Getting a maximum of 3 Address that matches the input text
-                addresses = geocoder.getFromLocationName(locationName[0], 3);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return addresses;
-        }
-
-        @Override
-        protected void onPostExecute(List<Address> addresses) {
-            if(addresses == null || addresses.size() == 0){
-                Log.d(Constants.LOG_TAG,  "No Location found");
-            } else {
-                foundPlaces = addresses;
-
-                namesList = new ArrayList<>();
-                namesList.clear();
-                for (Address selected:addresses){
-                    String addressText = String.format("%s, %s%s",
-                            selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
-                            selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
-                            selected.getCountryName());
-                    namesList.add(addressText);
-                }
-                adapter = new ArrayAdapter<>(
-                        ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
-                if (isLocationAttached()){
-                    searchField.setAdapter(adapter);
-                }
-                adapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    private ImageButton addNumberButtonLocation;
-    private LinearLayout actionLocation;
-    private RelativeLayout mapContainer;
-    private ScrollView specsContainer;
-    private CheckBox attachLocationAction;
-    private RadioButton callCheckLocation, messageCheckLocation;
-    private FloatingEditText phoneNumberLocation;
-    private MapFragment map;
-
-    private boolean isMapVisible(){
-        return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
-    }
-
+    /**
+     * Show location reminder type creation layout.
+     */
     private void attachLocation() {
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -2375,7 +2380,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (task != null && !task.isCancelled()) task.cancel(true);
-                task = new GeocoderTask();
+                task = new GeocoderTask(ReminderManager.this, ReminderManager.this);
                 task.execute(s.toString());
             }
 
@@ -2410,13 +2415,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (b) {
                     ViewUtils.showOver(actionLocation, isAnimation);
                     addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
-                    addNumberButtonLocation.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    addNumberButtonLocation.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocation, isDark);
 
                     phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
@@ -2477,7 +2476,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         locationDateField = (TextView) findViewById(R.id.locationDateField);
         locationDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationDateField.setText(dayStr + "/" + monthStr);
+        locationDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
         locationTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -2523,7 +2522,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationDateField.setText(dayStr + "/" + monthStr);
+                locationDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
                 locationDateYearField.setText(String.valueOf(myYear));
                 attackDelay.setChecked(true);
                 isDelayed = true;
@@ -2554,22 +2553,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private ImageButton addNumberButtonLocationOut;
-    private LinearLayout actionLocationOut;
-    private LinearLayout delayLayoutOut;
-    private RelativeLayout mapContainerOut;
-    private ScrollView specsContainerOut;
-    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, currentLocation,
-            mapLocation, radiusMark;
-    private CheckBox attachLocationOutAction, attachDelayOut;
-    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    private FloatingEditText phoneNumberLocationOut;
-    private MapFragment mapOut;
-
-    private boolean isMapOutVisible(){
-        return mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE;
-    }
-
+    /**
+     * Show location out reminder type creation layout.
+     */
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.tast_hint));
 
@@ -2672,13 +2658,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (b) {
                     ViewUtils.showOver(actionLocationOut, isAnimation);
                     addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
-                    addNumberButtonLocationOut.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                            pickContacts(pd);
-                        }
-                    });
+                    addNumberButtonLocationOut.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocationOut, isDark);
 
                     phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
@@ -2739,7 +2719,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         locationOutDateField = (TextView) findViewById(R.id.locationOutDateField);
         locationOutDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationOutDateField.setText(dayStr + "/" + monthStr);
+        locationOutDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
         locationOutDateYearField = (TextView) findViewById(R.id.locationOutDateYearField);
         locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
         locationOutTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -2790,7 +2770,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationOutDateField.setText(dayStr + "/" + monthStr);
+                locationOutDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
                 locationOutDateYearField.setText(String.valueOf(myYear));
                 attachDelayOut.setChecked(true);
                 isDelayed = true;
@@ -2822,10 +2802,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private EditText shopEdit;
-    private TaskListRecyclerAdapter shoppingAdapter;
-    private ShoppingListDataProvider shoppingLists;
-
+    /**
+     * Show shopping list reminder type creation layout.
+     */
     private void attachShoppingList(){
         taskField.setHint(R.string.title);
 
@@ -2849,7 +2828,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         shopEdit.setError(getString(R.string.empty_task));
                         return false;
                     } else {
-                        int position = shoppingLists.addItem(new ShoppingList(task));
+                        shoppingLists.addItem(new ShoppingList(task));
                         shoppingAdapter.notifyDataSetChanged();
                         shopEdit.setText("");
                         return true;
@@ -2869,7 +2848,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     return;
                 }
 
-                int position = shoppingLists.addItem(new ShoppingList(task));
+                shoppingLists.addItem(new ShoppingList(task));
                 shoppingAdapter.notifyDataSetChanged();
                 shopEdit.setText("");
             }
@@ -2930,119 +2909,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Hide currently attached layout.
+     */
     private void detachCurrentView(){
         if (remControl.getView() != 0) {
             ViewUtils.fadeOutAnimation(findViewById(remControl.getView()), isAnimation);
         }
     }
 
-    private String getTaskType(){
-        return remControl.getType();
-    }
-
-    private void pickApplications(final ProgressDialog pd) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-
-                final ArrayList<String> contacts = new ArrayList<>();
-                contacts.clear();
-                final PackageManager pm = getPackageManager();
-                List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-                for (ApplicationInfo packageInfo : packages) {
-                    contacts.add(packageInfo.packageName);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if ((pd != null) && pd.isShowing()) {
-                                pd.dismiss();
-                            }
-                        } catch (final Exception e) {
-                            // Handle or log or ignore
-                        }
-                        Intent i = new Intent(ReminderManager.this, SelectApplication.class);
-                        i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
-                        startActivityForResult(i, Constants.REQUEST_CODE_APPLICATION);
-                    }
-                });
-            }
-        }).start();
-    }
-
-    private void pickContacts(final ProgressDialog pd) {
-        Permissions permissions = new Permissions(this);
-        if (permissions.checkPermission(Permissions.READ_CONTACTS)) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-
-                    Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
-                            null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
-                    final ArrayList<String> contacts = new ArrayList<>();
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                        String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-                        if (hasPhone.equalsIgnoreCase("1"))
-                            hasPhone = "true";
-                        else
-                            hasPhone = "false";
-                        if (name != null) {
-                            if (Boolean.parseBoolean(hasPhone)) {
-                                contacts.add(name);
-                            }
-                        }
-                    }
-                    cursor.close();
-                    try {
-                        Collections.sort(contacts, new Comparator<String>() {
-                            @Override
-                            public int compare(String e1, String e2) {
-                                return e1.compareToIgnoreCase(e2);
-                            }
-                        });
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if ((pd != null) && pd.isShowing()) {
-                                    pd.dismiss();
-                                }
-                            } catch (final Exception e) {
-                                // Handle or log or ignore
-                            }
-                            Intent i = new Intent(ReminderManager.this, ContactsList.class);
-                            i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
-                            startActivityForResult(i, Constants.REQUEST_CODE_CONTACTS);
-                        }
-                    });
-                }
-            }).start();
-        } else {
-            try {
-                if ((pd != null) && pd.isShowing()) {
-                    pd.dismiss();
-                }
-            } catch (final Exception e) {
-                // Handle or log or ignore
-            }
-            permissions.requestPermission(ReminderManager.this,
-                    new String[]{Permissions.READ_CONTACTS}, 107);
-        }
-    }
-
-    private void saveTask(){
-        save();
-    }
-
+    /**
+     * Save new or update current reminder.
+     */
     private void save() {
         Reminder item = getData();
         if (item == null) return;
@@ -3060,57 +2938,105 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         finish();
     }
 
+    /**
+     * Check if location reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isLocationAttached() {
         return remControl.getType() != null &&
                 remControl.getType().startsWith(Constants.TYPE_LOCATION);
     }
 
+    /**
+     * Check if location out reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isLocationOutAttached() {
         return remControl.getType() != null &&
                 remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT);
     }
 
+    /**
+     * Check if date reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isDateReminderAttached() {
         return remControl.getType() != null &&
                 remControl.getType().matches(Constants.TYPE_REMINDER);
     }
 
+    /**
+     * Check if time reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isTimeReminderAttached() {
         return remControl instanceof TimerType;
     }
 
+    /**
+     * Check if call reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isCallAttached() {
         return remControl.getType() != null &&
                 remControl.getType().matches(Constants.TYPE_CALL);
     }
 
+    /**
+     * Check if Skype reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isSkypeAttached() {
         return remControl.getType() != null &&
                 remControl.getType().startsWith(Constants.TYPE_SKYPE);
     }
 
+    /**
+     * Check if application reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isApplicationAttached() {
         return remControl.getType() != null &&
                 remControl.getType().startsWith(Constants.TYPE_APPLICATION);
     }
 
+    /**
+     * Check if weekday reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isWeekDayReminderAttached() {
         return remControl instanceof WeekdayType;
     }
 
+    /**
+     * Check if message reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isMessageAttached() {
         return remControl.getType() != null &&
                 remControl.getType().matches(Constants.TYPE_MESSAGE);
     }
 
+    /**
+     * Check if monthday reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isMonthDayAttached() {
         return remControl instanceof MonthdayType;
     }
 
+    /**
+     * Check if shopping list reminder type layout visible.
+     * @return Boolean
+     */
     private boolean isShoppingAttached() {
         return remControl instanceof ShoppingType;
     }
 
+    /**
+     * Get reminder type string.
+     * @return String
+     */
     private String getType(){
         String type;
         if (remControl instanceof MonthdayType){
@@ -3168,57 +3094,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return type;
     }
 
-    private String getWeekTaskType(){
-        String type;
-        if (attachAction.isChecked()){
-            if (callCheck.isChecked()){
-                type = Constants.TYPE_WEEKDAY_CALL;
-            } else type = Constants.TYPE_WEEKDAY_MESSAGE;
-        } else {
-            type = Constants.TYPE_WEEKDAY;
-        }
-        return type;
-    }
-
-    private String getMonthTaskType(){
-        String type;
-        if (monthDayAttachAction.isChecked()){
-            if (monthDayCallCheck.isChecked()){
-                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
-                else type = Constants.TYPE_MONTHDAY_CALL;
-            } else {
-                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
-                else type = Constants.TYPE_MONTHDAY_MESSAGE;
-            }
-        } else {
-            if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
-            else type = Constants.TYPE_MONTHDAY;
-        }
-        return type;
-    }
-
-    private String getSkypeTaskType(){
-        String type;
-        if (skypeCall.isChecked()){
-            type = Constants.TYPE_SKYPE;
-        } else if (skypeVideo.isChecked()){
-            type = Constants.TYPE_SKYPE_VIDEO;
-        } else {
-            type = Constants.TYPE_SKYPE_CHAT;
-        }
-        return type;
-    }
-
-    private String getAppTaskType(){
-        String type;
-        if (application.isChecked()){
-            type = Constants.TYPE_APPLICATION;
-        } else {
-            type = Constants.TYPE_APPLICATION_BROWSER;
-        }
-        return type;
-    }
-
+    /**
+     * Create reminder object.
+     * @return Reminder object
+     */
     private Reminder getData() {
         if (isShoppingAttached() && shoppingLists.getCount() == 0){
             Messages.toast(ReminderManager.this, getString(R.string.no_tasks_warming));
@@ -3226,139 +3105,146 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
         String type = getType();
         Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
-        String weekdays = null;
-        if (isWeekDayReminderAttached()) {
-            Interval interval = new Interval(ReminderManager.this);
-            weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
-                    thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-            if (weekdays.matches(Constants.NOTHING_CHECKED)) {
-                Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
-                return null;
-            }
-        }
-        String task = taskField.getText().toString().trim();
-        if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
-                type.matches(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
-                type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_CALL) ||
-                type.matches(Constants.TYPE_SHOPPING_LIST)) {
-
-        } else {
-            if (task.matches("")) {
-                taskField.setError(getString(R.string.empty_field_error));
-                return null;
-            }
-        }
-        if (checkNumber()) return null;
-        String number = getNumber();
-        if (isApplicationAttached()){
-            if (application.isChecked()){
-                number = selectedPackage;
-                if (number == null){
-                    Messages.toast(ReminderManager.this, getString(R.string.dont_selected_application_message));
+        if (type != null) {
+            String weekdays = null;
+            if (isWeekDayReminderAttached()) {
+                Interval interval = new Interval(ReminderManager.this);
+                weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
+                        thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
+                if (weekdays.matches(Constants.NOTHING_CHECKED)) {
+                    Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
                     return null;
                 }
-            } else if (browser.isChecked()){
-                number = browseLink.getText().toString().trim();
-                if (number == null || number.matches("") || number.matches(".*https?://")) return null;
-                if (!number.startsWith("http://") && !number.startsWith("https://"))
-                    number = "http://" + number;
             }
-        }
-        Log.d(Constants.LOG_TAG, "Task number " + (number != null ? number : "no number"));
-        String uuId = SyncHelper.generateID();
+            String task = taskField.getText().toString().trim();
+            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
+                    type.matches(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
+                    type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_CALL) ||
+                    type.matches(Constants.TYPE_SHOPPING_LIST)) {
 
-        Double latitude = 0.0;
-        Double longitude = 0.0;
-        if (isLocationAttached() || isLocationOutAttached()){
-            if (!LocationUtil.checkLocationEnable(this)){
-                LocationUtil.showLocationAlert(this);
-                return null;
+            } else {
+                if (task.matches("")) {
+                    taskField.setError(getString(R.string.empty_field_error));
+                    return null;
+                }
             }
-            LatLng dest = null;
-            boolean isNull = true;
-            if (curPlace != null) {
-                dest = curPlace;
-                isNull = false;
+            if (checkNumber()) return null;
+            String number = getNumber();
+            if (isApplicationAttached()) {
+                if (application.isChecked()) {
+                    number = selectedPackage;
+                    if (number == null) {
+                        Messages.toast(ReminderManager.this, getString(R.string.dont_selected_application_message));
+                        return null;
+                    }
+                } else if (browser.isChecked()) {
+                    number = browseLink.getText().toString().trim();
+                    if (number.matches("") || number.matches(".*https?://"))
+                        return null;
+                    if (!number.startsWith("http://") && !number.startsWith("https://"))
+                        number = "http://" + number;
+                }
             }
-            if (isNull) {
-                Messages.toast(ReminderManager.this, getString(R.string.point_warning));
-                return null;
+            Log.d(Constants.LOG_TAG, "Task number " + (number != null ? number : "no number"));
+            String uuId = SyncHelper.generateID();
+
+            Double latitude = 0.0;
+            Double longitude = 0.0;
+            if (isLocationAttached() || isLocationOutAttached()) {
+                if (!LocationUtil.checkLocationEnable(this)) {
+                    LocationUtil.showLocationAlert(this);
+                    return null;
+                }
+                LatLng dest = null;
+                boolean isNull = true;
+                if (curPlace != null) {
+                    dest = curPlace;
+                    isNull = false;
+                }
+                if (isNull) {
+                    Messages.toast(ReminderManager.this, getString(R.string.point_warning));
+                    return null;
+                }
+
+                latitude = dest.latitude;
+                longitude = dest.longitude;
+            }
+            Log.d(Constants.LOG_TAG, "Place coords " + latitude + "," + longitude);
+
+            if (isTimeReminderAttached()) {
+                final Calendar c = Calendar.getInstance();
+                c.setTimeInMillis(System.currentTimeMillis());
+                myYear = c.get(Calendar.YEAR);
+                myMonth = c.get(Calendar.MONTH);
+                myDay = c.get(Calendar.DAY_OF_MONTH);
+                myHour = c.get(Calendar.HOUR_OF_DAY);
+                myMinute = c.get(Calendar.MINUTE);
+                mySeconds = c.get(Calendar.SECOND);
             }
 
-            latitude = dest.latitude;
-            longitude = dest.longitude;
-        }
-        Log.d(Constants.LOG_TAG, "Place coords " + latitude + "," + longitude);
+            int repeat = getRepeat();
+            Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
 
-        if (isTimeReminderAttached()){
-            final Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(System.currentTimeMillis());
-            myYear = c.get(Calendar.YEAR);
-            myMonth = c.get(Calendar.MONTH);
-            myDay = c.get(Calendar.DAY_OF_MONTH);
-            myHour = c.get(Calendar.HOUR_OF_DAY);
-            myMinute = c.get(Calendar.MINUTE);
-            mySeconds = c.get(Calendar.SECOND);
-        }
+            int sync = getSyncCode();
+            Log.d(Constants.LOG_TAG, "Task sync code " + sync);
 
-        int repeat = getRepeat();
-        Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
-
-        int sync = getSyncCode();
-        Log.d(Constants.LOG_TAG, "Task sync code " + sync);
-
-        long repMinute = 0;
-        if (isTimeReminderAttached()){
-            repMinute = getAfterTime();
-            if (repMinute == 0) return null;
-        }
-        Log.d(Constants.LOG_TAG, "Task after minute " + repMinute);
-
-        int export = getExportCode();
-        Log.d(Constants.LOG_TAG, "Task export code " + export);
-
-        if (isMonthDayAttached()){
-            if (type != null && type.endsWith("_last")) myDay = 0;
-        }
-
-        long due = getDue(weekdays, repMinute);
-        Log.d(Constants.LOG_TAG, "Task due " + due);
-
-        if (isLocationAttached() || isLocationOutAttached()){
-            if (isLocationAttached() && !attackDelay.isChecked()) {
-                myDay = 0;
-                myMonth = 0;
-                myYear = 0;
-                myHour = 0;
-                myMinute = 0;
+            long repMinute = 0;
+            if (isTimeReminderAttached()) {
+                repMinute = SuperUtil.getAfterTime(this, timeString);
+                if (repMinute == 0) return null;
             }
-            if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
-                myDay = 0;
-                myMonth = 0;
-                myYear = 0;
-                myHour = 0;
-                myMinute = 0;
+            Log.d(Constants.LOG_TAG, "Task after minute " + repMinute);
+
+            int export = getExportCode();
+            Log.d(Constants.LOG_TAG, "Task export code " + export);
+
+            if (isMonthDayAttached()) {
+                if (type.endsWith("_last")) myDay = 0;
             }
-        }
 
-        int vibro = getVibro();
-        int voice = getVoice();
-        int notification = getNotification();
-        int wake = getWake();
-        int unlock = getUnlock();
-        int auto = getAuto();
-        long limit = getLimit();
-        if (repeat == 0) limit = -1;
+            long due = getDue(weekdays, repMinute);
+            Log.d(Constants.LOG_TAG, "Task due " + due);
 
-        Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
-                wake + ", U " + unlock + ", A " + auto + ", L " + limit);
+            if (isLocationAttached() || isLocationOutAttached()) {
+                if (isLocationAttached() && !attackDelay.isChecked()) {
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                }
+                if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                }
+            }
 
-        return new Reminder(0, task, type, weekdays, melody, categoryId, uuId,
-                new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
-                notification, wake, unlock, auto, limit);
+            int vibro = getVibro();
+            int voice = getVoice();
+            int notification = getNotification();
+            int wake = getWake();
+            int unlock = getUnlock();
+            int auto = getAuto();
+            long limit = getLimit();
+            if (repeat == 0) limit = -1;
+
+            Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
+                    wake + ", U " + unlock + ", A " + auto + ", L " + limit);
+
+            return new Reminder(0, task, type, weekdays, melody, categoryId, uuId,
+                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
+                    mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
+                    notification, wake, unlock, auto, limit);
+        } else return null;
     }
 
+    /**
+     * Get repeat limit for reminder.
+     * @return Long
+     */
     private long getLimit() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraLimit.isEnabled()) {
@@ -3368,6 +3254,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get auto action for reminder.
+     * @return Integer
+     */
     private int getAuto() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraAuto.isEnabled()) {
@@ -3377,6 +3267,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get unlock screen flag for reminder.
+     * @return Integer
+     */
     private int getUnlock() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraUnlock.isSelected()) return 1;
@@ -3384,6 +3278,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get awake screen flag for reminder.
+     * @return Integer
+     */
     private int getWake() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraWake.isSelected()) return 1;
@@ -3391,6 +3289,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get notification repeat flag for reminder.
+     * @return Integer
+     */
     private int getNotification() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (isOptionsVisible() && extraRepeat.isEnabled()) {
@@ -3400,6 +3302,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get voice notification flag for reminder.
+     * @return Integer
+     */
     private int getVoice() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraVoice.isSelected()) return 1;
@@ -3407,6 +3313,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get vibration flag for reminder.
+     * @return Integer
+     */
     private int getVibro() {
         if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
             if (extraVibration.isSelected()) return 1;
@@ -3414,6 +3324,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return -1;
     }
 
+    /**
+     * Get export to calendar code for reminder.
+     * @return Integer
+     */
     private int getExportCode() {
         if (isStock || isCalendar){
             if (isMonthDayAttached()) return monthDayExport.isChecked() ? 1 : 0;
@@ -3428,6 +3342,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return 0;
     }
 
+    /**
+     * Calculate due time for reminder.
+     * @param weekdays selected day of week string.
+     * @param time current time in millisecond for timer.
+     * @return time in milliseconds.
+     */
     private long getDue(String weekdays, long time) {
         if (isWeekDayReminderAttached()){
             return ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
@@ -3438,6 +3358,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
     }
 
+    /**
+     * Get Google Tasks export code for reminder.
+     * @return Integer
+     */
     private int getSyncCode() {
         if (isWeekDayReminderAttached()){
             return ReminderUtils.getSyncCode(weekTaskExport);
@@ -3458,6 +3382,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return 0;
     }
 
+    /**
+     * Get repeat code for reminder .
+     * @return Integer
+     */
     private int getRepeat() {
         if (isSkypeAttached()){
             return Integer.parseInt(repeatDaysSkype.getText().toString().trim());
@@ -3479,6 +3407,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return 0;
     }
 
+    /**
+     * Get number for reminder.
+     * @return String
+     */
     private String getNumber() {
         if (isCallAttached()) {
             return phoneNumber.getText().toString().trim();
@@ -3497,12 +3429,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else return null;
     }
 
-    private boolean checkApplication(){
-        if (application.isChecked()) {
-            return applicationName.getText().toString().trim().matches("");
-        } else return browser.isChecked() && browseLink.getText().toString().trim().matches("");
-    }
-
+    /**
+     * Check if number inserted.
+     * @return Boolean
+     */
     private boolean checkNumber(){
         if (isCallAttached()) {
             boolean is = phoneNumber.getText().toString().trim().matches("");
@@ -3547,27 +3477,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 return true;
             } else return false;
         } else return false;
-    }
-
-    private boolean checkMessage(){
-        return taskField.getText().toString().trim().matches("");
-    }
-
-    private long getAfterTime() {
-        long res = 0;
-        if (timeString.length() == 6 && !timeString.matches("000000")){
-            String hours = timeString.substring(0, 2);
-            String minutes = timeString.substring(2, 4);
-            String seconds = timeString.substring(4, 6);
-            int hour = Integer.parseInt(hours);
-            int minute = Integer.parseInt(minutes);
-            int sec = Integer.parseInt(seconds);
-            long s = 1000;
-            long m = s * 60;
-            long h = m * 60;
-            res = (hour * h) + (minute * m) + (sec * s);
-        } else Messages.toast(ReminderManager.this, getString(R.string.string_timer_warming));
-        return res;
     }
 
     @Override
@@ -3637,10 +3546,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private void detachLayout(){
-        detachCurrentView();
-    }
-
+    /**
+     * Show date picker dialog.
+     */
     protected void dateDialog() {
         final DatePickerDialog datePickerDialog =
                 DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
@@ -3671,29 +3579,29 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
         if (isCallAttached()){
-            callDate.setText(dayStr + "/" + monthStr);
+            callDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             callYearDate.setText(String.valueOf(myYear));
         }
         if (isSkypeAttached()){
-            skypeDate.setText(dayStr + "/" + monthStr);
+            skypeDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             skypeYearDate.setText(String.valueOf(myYear));
         }
         if (isApplicationAttached()){
-            appDate.setText(dayStr + "/" + monthStr);
+            appDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             appYearDate.setText(String.valueOf(myYear));
         }
         if (isDateReminderAttached()){
-            dateField.setText(dayStr + "/" + monthStr);
+            dateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             dateYearField.setText(String.valueOf(myYear));
         }
         if (isMessageAttached()){
-            messageDate.setText(dayStr + "/" + monthStr);
+            messageDate.setText(SuperUtil.appendString(dayStr,"/",monthStr));
             messageYearDate.setText(String.valueOf(myYear));
         }
         if (isLocationAttached()){
             if (attackDelay.isChecked()){
                 if (delayLayout.getVisibility() == View.VISIBLE) {
-                    locationDateField.setText(dayStr + "/" + monthStr);
+                    locationDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
                     locationDateYearField.setText(String.valueOf(myYear));
                 }
             }
@@ -3701,18 +3609,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationOutAttached()){
             if (attachDelayOut.isChecked()){
                 if (delayLayoutOut.getVisibility() == View.VISIBLE) {
-                    locationOutDateField.setText(dayStr + "/" + monthStr);
+                    locationOutDateField.setText(SuperUtil.appendString(dayStr,"/",monthStr));
                     locationOutDateYearField.setText(String.valueOf(myYear));
                 }
             }
         }
     }
 
+    /**
+     * Create time picker dialog.
+     * @return Time picker dialog
+     */
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
+    /**
+     * Time selection callback.
+     */
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             myHour = hourOfDay;
@@ -3774,6 +3689,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         restoreTask();
     }
 
+    /**
+     * Restore currently edited reminder.
+     */
     private void restoreTask(){
         if (id != 0) {
             DataBase db = new DataBase(this);
@@ -3890,6 +3808,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return false;
     }
 
+    /**
+     * Show toolbar.
+     */
     private void onDownSwipe() {
         if (navContainer.getVisibility() == View.GONE) {
             if (isAnimation) {
@@ -3898,6 +3819,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Hide toolbar.
+     */
     private void onUpSwipe() {
         if (navContainer.getVisibility() == View.VISIBLE) {
             if (isAnimation) {
@@ -3906,6 +3830,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Switch to previous reminder type in list.
+     */
     private void onLeftSwipe() {
         int current = spinner.getSelectedItemPosition();
         if (current > 0){
@@ -3918,6 +3845,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Switch to next reminder type in list.
+     */
     private void onRightSwipe() {
         int current = spinner.getSelectedItemPosition();
         if (current < Configs.NUMBER_OF_REMINDERS){
@@ -3930,24 +3860,28 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Show reminder layout.
+     * @param position spinner position.
+     */
     private void switchIt(int position){
         radius = -1;
         selectedPackage = null;
         switch (position){
             case 0:
-                detachLayout();
+                detachCurrentView();
                 attachDateReminder();
                 break;
             case 2:
-                detachLayout();
+                detachCurrentView();
                 attachWeekDayReminder();
                 break;
             case 1:
-                detachLayout();
+                detachCurrentView();
                 attachTimeReminder();
                 break;
             case 3:
-                detachLayout();
+                detachCurrentView();
                 if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)) {
                     attachCall();
                 } else {
@@ -3957,7 +3891,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 4:
-                detachLayout();
+                detachCurrentView();
                 if (new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)) {
                     attachMessage();
                 } else {
@@ -3967,7 +3901,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 5:
-                detachLayout();
+                detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_FINE_LOCATION)) {
                         attachLocation();
@@ -3983,24 +3917,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 6:
-                detachLayout();
-                if (ReminderUtils.isSkypeClientInstalled(ReminderManager.this)) {
+                detachCurrentView();
+                if (SuperUtil.isSkypeClientInstalled(ReminderManager.this)) {
                     attachSkype();
                 } else {
                     spinner.setSelection(0);
-                    goToMarket();
+                    SuperUtil.installSkype(ReminderManager.this);
                 }
                 break;
             case 7:
-                detachLayout();
+                detachCurrentView();
                 attachApplication();
                 break;
             case 8:
-                detachLayout();
+                detachCurrentView();
                 attachMonthDay();
                 break;
             case 9:
-                detachLayout();
+                detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_FINE_LOCATION)) {
                         attachLocationOut();
@@ -4016,7 +3950,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 10:
-                detachLayout();
+                detachCurrentView();
                 attachShoppingList();
                 break;
         }
@@ -4044,8 +3978,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case 107:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    pd = ProgressDialog.show(ReminderManager.this, null, getString(R.string.load_contats), true);
-                    pickContacts(pd);
+                    SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
                 } else {
                     new Permissions(ReminderManager.this)
                             .showInfo(ReminderManager.this, Permissions.READ_CONTACTS);
@@ -4083,86 +4016,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
         }
-    }
-
-    public void goToMarket() {
-        Uri marketUri = Uri.parse("market://details?id=com.skype.raider");
-        Intent myIntent = new Intent(Intent.ACTION_VIEW, marketUri);
-        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(myIntent);
-    }
-
-    private ArrayList<String> names, foldersFile;
-    private ArrayList<File> fileList;
-    private void pickSounds(final ProgressDialog pd) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                fileList = new ArrayList<>();
-                fileList.clear();
-                File dir;
-                if (SyncHelper.isSdPresent()) {
-                    dir = new File(Environment.getExternalStorageDirectory()
-                            .toString());
-                    listf(dir.toString(), fileList);
-                } else {
-                    dir = new File(Environment.getDataDirectory().toString());
-                    listf(dir.toString(), fileList);
-                }
-                Collections.sort(fileList);
-                names = new ArrayList<>();
-                foldersFile = new ArrayList<>();
-                names.clear();
-                foldersFile.clear();
-                for (File aFile : fileList) {
-                    names.add(aFile.getName());
-                    String folder = aFile.toString();
-                    foldersFile.add(folder);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if ((pd != null) && pd.isShowing()) {
-                                pd.dismiss();
-                            }
-                        } catch (final Exception ignored) {
-                        }
-                        if (fileList != null){
-                            Intent i = new Intent(ReminderManager.this, SelectMelody.class);
-                            i.putStringArrayListExtra("names", names);
-                            i.putStringArrayListExtra("folders", foldersFile);
-                            i.putExtra(Constants.BIRTHDAY_INTENT_ID, 1);
-                            startActivityForResult(i, Constants.REQUEST_CODE_SELECTED_MELODY);
-                        } else {
-                            Messages.toast(ReminderManager.this, getString(R.string.no_music));
-                        }
-                    }
-                });
-            }
-        }).start();
-    }
-
-    public void listf(String directoryName, ArrayList<File> files) {
-        File directory = new File(directoryName);
-
-        File[] fList = directory.listFiles();
-        if (fList != null) {
-            for (File file : fList) {
-                if (file.canRead()) {
-                    if (file.isFile()) {
-                        if (file.getName().endsWith(".mp3") || file.getName().endsWith(".ogg")) {
-                            files.add(file);
-                        }
-                    } else if (file.isDirectory()) {
-                        listf(file.toString(), files);
-                    }
-                } else {
-                    Log.d(Constants.LOG_TAG, "secure file");
-                }
-            }
-        } else Log.i(Constants.LOG_TAG, "No files");
     }
 
     @Override
@@ -4336,6 +4189,33 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private LocationManager mLocationManager;
     private LocationListener mLocList;
+
+    @Override
+    public void onAddressReceived(List<Address> addresses) {
+        foundPlaces = addresses;
+
+        namesList = new ArrayList<>();
+        namesList.clear();
+        for (Address selected:addresses){
+            String addressText = String.format("%s, %s%s",
+                    selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
+                    selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
+                    selected.getCountryName());
+            namesList.add(addressText);
+        }
+        adapter = new ArrayAdapter<>(
+                ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
+        if (isLocationAttached()){
+            searchField.setAdapter(adapter);
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void OnCategory(String catId, String title) {
+        category.setText(title);
+        categoryId = catId;
+    }
 
     public class CurrentLocation implements LocationListener {
 

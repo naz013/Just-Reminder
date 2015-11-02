@@ -62,32 +62,16 @@ public class QuickReturnUtils {
 
         int firstVisiblePosition = lv.getFirstVisiblePosition();
         int scrollY = -(c.getTop());
-//        int scrollY = 0;
-
-
 
         sListViewItemHeights.put(lv.getFirstVisiblePosition(), c.getHeight());
-
-//        if(scrollY>0)
-//            Log.d("QuickReturnUtils", "getScrollY() : -(c.getTop()) - "+ -(c.getTop()));
-//        else
-//            Log.i("QuickReturnUtils", "getScrollY() : -(c.getTop()) - "+ -(c.getTop()));
 
         if(scrollY<0)
             scrollY = 0;
 
         for (int i = 0; i < firstVisiblePosition; ++i) {
-//            Log.d("QuickReturnUtils", "getScrollY() : i - "+i);
-
-//            Log.d("QuickReturnUtils", "getScrollY() : sListViewItemHeights.get(i) - "+sListViewItemHeights.get(i));
-
             if (sListViewItemHeights.get(i) != null) // (this is a sanity check)
                 scrollY += sListViewItemHeights.get(i); //add all heights of the views that are gone
-
         }
-
-//        Log.d("QuickReturnUtils", "getScrollY() : scrollY - "+scrollY);
-
         return scrollY;
     }
 

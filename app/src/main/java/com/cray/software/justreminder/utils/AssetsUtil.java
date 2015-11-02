@@ -11,11 +11,6 @@ public class AssetsUtil {
         return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Thin.ttf");
     }
 
-    public static Typeface getThinTypeface(Context context, boolean italic){
-        if (italic) return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-ThinItalic.ttf");
-        else return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Thin.ttf");
-    }
-
     public static Typeface getLightTypeface(Context context){
         return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Light.ttf");
     }
@@ -27,10 +22,5 @@ public class AssetsUtil {
 
     public static Typeface getMediumTypeface(Context context){
         return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Medium.ttf");
-    }
-
-    public static Typeface getMediumTypeface(Context context, boolean italic){
-        if (italic) return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-MediumItalic.ttf");
-        else return Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Medium.ttf");
     }
 }

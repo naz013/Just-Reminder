@@ -191,7 +191,7 @@ public class SharedPrefs {
                         mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
                 Map<String, ?> list = pref.getAll();
                 if (list.containsKey(Prefs.CONTACTS_IMPORT_DIALOG)) list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
-                if (list.containsKey(Prefs.DRIVE_USER)) list.remove(Prefs.DRIVE_USER);
+                //if (list.containsKey(Prefs.DRIVE_USER)) list.remove(Prefs.DRIVE_USER);
                 output.writeObject(list);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -220,7 +220,7 @@ public class SharedPrefs {
             try {
                 input = new ObjectInputStream(new FileInputStream(prefs));
                 SharedPreferences.Editor prefEdit = mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE).edit();
-                //prefEdit.clear();
+                prefEdit.clear();
                 Map<String, ?> entries = (Map<String, ?>) input.readObject();
                 for (Map.Entry<String, ?> entry : entries.entrySet()) {
                     Object v = entry.getValue();

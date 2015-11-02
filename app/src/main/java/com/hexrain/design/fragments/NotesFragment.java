@@ -82,15 +82,15 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.notes_menu, menu);
-        db = new NotesBase(getActivity());
-        if (!db.isOpen()) db.open();
-        if (db.getCount() != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
-        }
         MenuItem item = menu.findItem(R.id.action_list);
         if (item != null){
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
             item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
+        }
+        db = new NotesBase(getActivity());
+        if (!db.isOpen()) db.open();
+        if (db.getCount() != 0) {
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
         }
         super.onCreateOptionsMenu(menu, inflater);
     }

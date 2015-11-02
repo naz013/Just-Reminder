@@ -22,7 +22,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.utils.BirthdayImport;
-import com.cray.software.justreminder.helpers.Dialog;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -322,7 +322,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 }
                 break;
             case R.id.daysTo:
-                Dialog.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
                 break;
             case R.id.birthdayNotification:
                 BirthdayNotificationSettingsFragment newFragment = new BirthdayNotificationSettingsFragment();

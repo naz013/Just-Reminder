@@ -25,11 +25,11 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
-import com.cray.software.justreminder.cloud.BoxHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ExchangeConstants;
@@ -43,6 +43,7 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
+import com.hexrain.design.ScreenManager;
 
 import java.io.IOException;
 
@@ -50,11 +51,10 @@ public class CloudDrives extends AppCompatActivity {
 
     private DropboxHelper dbx = new DropboxHelper(CloudDrives.this);
     private GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
-    private BoxHelper box = new BoxHelper(CloudDrives.this);
     private SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
-    private Button linkDropbox, linkGDrive, linkExchange, linkBox;
-    private TextView gDriveTitle, dropboxTitle, exchangeTitle, boxTitle;
+    private Button linkDropbox, linkGDrive, linkExchange;
+    private TextView gDriveTitle, dropboxTitle, exchangeTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -108,47 +108,17 @@ public class CloudDrives extends AppCompatActivity {
             }
         });
 
-        linkBox = (Button) findViewById(R.id.linkBox);
-        linkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (box.isLogged()) {
-                    box.logout();
-                    linkBox.setText(getString(R.string.login_button));
-                } else {
-                    box.authMultiple();
-                }
-            }
-        });
-
         linkGDrive = (Button) findViewById(R.id.linkGDrive);
         linkGDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gdx.isLinked()){
-                    gdx.unlink();
-                    setUpButton();
-                    TasksData data = new TasksData(CloudDrives.this);
-                    Cursor c = data.getTasks();
-                    if (c != null && c.moveToFirst()){
-                        do {
-                            data.deleteTask(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)));
-                        } while (c.moveToNext());
-                    }
-                    if (c != null) c.close();
-
-                    Cursor s = data.getTasksLists();
-                    if (s != null && s.moveToFirst()){
-                        do {
-                            data.deleteTasksList(s.getLong(s.getColumnIndex(TasksConstants.COLUMN_ID)));
-                        } while (s.moveToNext());
-                    }
+                if (new Permissions(CloudDrives.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                    switchGdrive();
                 } else {
-                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{"com.google"}, false, null, null, null, null);
-                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                    new Permissions(CloudDrives.this).requestPermission(CloudDrives.this,
+                            new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                    Permissions.WRITE_EXTERNAL}, 103);
                 }
-                prefs.saveBoolean(Prefs.UI_CHANGED, true);
             }
         });
 
@@ -182,6 +152,33 @@ public class CloudDrives extends AppCompatActivity {
         setImage();
     }
 
+    private void switchGdrive() {
+        if (gdx.isLinked()){
+            gdx.unlink();
+            setUpButton();
+            TasksData data = new TasksData(CloudDrives.this);
+            Cursor c = data.getTasks();
+            if (c != null && c.moveToFirst()){
+                do {
+                    data.deleteTask(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)));
+                } while (c.moveToNext());
+            }
+            if (c != null) c.close();
+
+            Cursor s = data.getTasksLists();
+            if (s != null && s.moveToFirst()){
+                do {
+                    data.deleteTasksList(s.getLong(s.getColumnIndex(TasksConstants.COLUMN_ID)));
+                } while (s.moveToNext());
+            }
+        } else {
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{"com.google"}, false, null, null, null, null);
+            startActivityForResult(intent, REQUEST_AUTHORIZATION);
+        }
+        prefs.saveBoolean(Prefs.UI_CHANGED, true);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -190,6 +187,20 @@ public class CloudDrives extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode){
+            case 103:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    switchGdrive();
+                } else {
+                    startActivity(new Intent(CloudDrives.this, ScreenManager.class));
+                    finish();
+                }
+                break;
         }
     }
 
@@ -241,12 +252,6 @@ public class CloudDrives extends AppCompatActivity {
             linkGDrive.setText(getString(R.string.logout_button));
         } else {
             linkGDrive.setText(getString(R.string.login_button));
-        }
-
-        if (box.isLogged()){
-            linkBox.setText(getString(R.string.logout_button));
-        } else {
-            linkBox.setText(getString(R.string.login_button));
         }
 
         TasksData data = new TasksData(CloudDrives.this);
@@ -356,12 +361,15 @@ public class CloudDrives extends AppCompatActivity {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            prefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
-            new GetTasksListsAsync(CloudDrives.this, null).execute();
+            startSync(accountName);
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            prefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(CloudDrives.this).encrypt(accountName));
-            new GetTasksListsAsync(CloudDrives.this, null).execute();
+            startSync(accountName);
         }
+    }
+
+    private void startSync(String accountName) {
+        prefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+        new GetTasksListsAsync(CloudDrives.this, null).execute();
     }
 }

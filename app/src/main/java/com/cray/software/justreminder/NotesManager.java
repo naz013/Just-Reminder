@@ -46,6 +46,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -298,7 +299,7 @@ public class NotesManager extends AppCompatActivity {
             if (c != null && c.moveToFirst()){
                 String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                 if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                    note = new SyncHelper(NotesManager.this).decrypt(note);
+                    note = SyncHelper.decrypt(note);
                 }
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
                 taskField.setText(note);
@@ -350,7 +351,7 @@ public class NotesManager extends AppCompatActivity {
                 SyncHelper helper = new SyncHelper(NotesManager.this);
                 ArrayList<String> data = helper.getNote(null, object);
                 String note = data.get(0);
-                note = helper.decrypt(note);
+                note = SyncHelper.decrypt(note);
                 taskField.setText(note);
                 taskField.setSelection(taskField.getText().length());
                 color = helper.getColor(null, object);
@@ -370,7 +371,7 @@ public class NotesManager extends AppCompatActivity {
                 SyncHelper helper = new SyncHelper(NotesManager.this);
                 ArrayList<String> data = helper.getNote(file, null);
                 String note = data.get(0);
-                note = helper.decrypt(note);
+                note = SyncHelper.decrypt(note);
                 taskField.setText(note);
                 taskField.setSelection(taskField.getText().length());
                 color = helper.getColor(file, null);
@@ -466,7 +467,6 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void saveNote() {
-        SyncHelper sHelp = new SyncHelper(NotesManager.this);
         String note = taskField.getText().toString();
         if (note.matches("")) {
             taskField.setError(getString(R.string.empty_field_error));
@@ -489,13 +489,13 @@ public class NotesManager extends AppCompatActivity {
         DB.open();
         if (id != 0){
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                DB.updateNote(id, sHelp.encrypt(note), date, color, uuID, image, style);
+                DB.updateNote(id, SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
                 DB.updateNote(id, note, date, color, uuID, image, style);
             }
         } else {
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                id = DB.saveNote(sHelp.encrypt(note), date, color, uuID, image, style);
+                id = DB.saveNote(SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
                 id = DB.saveNote(note, date, color, uuID, image, style);
             }
@@ -545,8 +545,8 @@ public class NotesManager extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                NoteModel.deleteNote(id, NotesManager.this, null);
                 dialog.dismiss();
+                NoteModel.deleteNote(id, NotesManager.this, null);
                 new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
                 finish();
             }
@@ -705,7 +705,7 @@ public class NotesManager extends AppCompatActivity {
 
             if (myMonth < 9) monthStr = "0" + (myMonth + 1);
             else monthStr = String.valueOf(myMonth + 1);
-            remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
+            remindDate.setText(SuperUtil.appendString(dayStr, "/", monthStr, "/", String.valueOf(myYear)));
         }
     };
 
