@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.EventsPagerItem;
+import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -24,16 +24,11 @@ public class BirthdaysList extends Fragment{
 
     private ListView contactsList;
     private CalendarEventsAdapter customAdapter;
-    private ArrayList<EventsPagerItem> datas;
+    private ArrayList<EventsDataProvider.EventsItem> datas;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
-    private int pageNumber;
 
-    public void setData(ArrayList<EventsPagerItem> datas){
+    public void setData(ArrayList<EventsDataProvider.EventsItem> datas){
         this.datas = datas;
-    }
-
-    public void setPageNumber(int number){
-        this.pageNumber = number;
     }
 
     public static BirthdaysList newInstance(int page) {
@@ -92,7 +87,7 @@ public class BirthdaysList extends Fragment{
     }
 
     public void loaderAdapter(){
-        customAdapter = new CalendarEventsAdapter(getActivity(), datas.get(pageNumber).getDatas());
+        customAdapter = new CalendarEventsAdapter(getActivity(), datas);
         contactsList.setAdapter(customAdapter);
     }
 }

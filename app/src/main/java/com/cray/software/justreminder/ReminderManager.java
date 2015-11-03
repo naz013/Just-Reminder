@@ -495,7 +495,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 return false;
             }
         });
-        mFab.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_NORMAL);
+        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
         mFab.setIcon(R.drawable.ic_done_white_24dp);
 
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);

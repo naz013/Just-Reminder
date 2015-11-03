@@ -375,7 +375,7 @@ public class EventsDataProvider {
             readFromParcel(in);
         }
 
-        public final Parcelable.Creator<EventsItem> CREATOR = new Parcelable.Creator<EventsItem>() {
+        public final Creator<EventsItem> CREATOR = new Creator<EventsItem>() {
             public EventsItem createFromParcel(Parcel in) {
                 return new EventsItem(in);
             }

@@ -39,6 +39,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -105,7 +106,7 @@ public class LogInActivity extends Activity {
         checkBox.setChecked(true);
         skipButton = (TextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
-        skipButton.setText(text + " (" + getString(R.string.string_local_sync) + ")");
+        skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.string_local_sync), ")"));
         progressMesage = (TextView) findViewById(R.id.progressMesage);
         progress = (CircularProgress) findViewById(R.id.progress);
         progress.setVisibility(View.INVISIBLE);
@@ -449,6 +450,7 @@ public class LogInActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            sPrefs = new SharedPrefs(LogInActivity.this);
             if (checkBox.isChecked()) {
                 sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
@@ -508,7 +510,6 @@ public class LogInActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Looper.prepare();
             DataBase DB = new DataBase(mContext);
             DB.open();
 
@@ -526,9 +527,7 @@ public class LogInActivity extends Activity {
                 DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
                 Cursor c = DB.queryGroup();
                 if (c != null && c.moveToFirst()){
-                    do {
-                        DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
-                    } while (c.moveToNext());
+                    DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
                 }
                 if (c != null) c.close();
             }
@@ -749,7 +748,6 @@ public class LogInActivity extends Activity {
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
                         String number = Contacts.getNumber(name, mContext);
-                        String email = cc.getMail(id);
                         if (!names.contains(name) && !ids.contains(id)) {
                             Calendar calendar = Calendar.getInstance();
                             for (SimpleDateFormat f : birthdayFormats) {

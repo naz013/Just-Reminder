@@ -146,7 +146,7 @@ public class ContactGroups extends AppCompatActivity {
         }
 
         @Override
-        public SimpleRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+        public ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                   int viewType) {
             // create a new view
             View itemLayoutView = LayoutInflater.from(parent.getContext())

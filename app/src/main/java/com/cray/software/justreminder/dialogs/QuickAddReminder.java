@@ -191,7 +191,7 @@ public class QuickAddReminder extends AppCompatActivity implements
     }
 
     @Override
-    public void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
+    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
         myYear = year;
         myMonth = monthOfYear;
         myDay = dayOfMonth;

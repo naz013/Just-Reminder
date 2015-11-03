@@ -570,7 +570,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             readFromParcel(in);
         }
 
-        public final Parcelable.Creator<ThemeItem> CREATOR = new Parcelable.Creator<ThemeItem>() {
+        public final Creator<ThemeItem> CREATOR = new Creator<ThemeItem>() {
             public ThemeItem createFromParcel(Parcel in) {
                 return new ThemeItem(in);
             }

@@ -94,7 +94,7 @@ public class Task implements Parcelable {
         readFromParcel(in);
     }
 
-    public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
+    public static final Creator<Task> CREATOR = new Creator<Task>() {
         public Task createFromParcel(Parcel in) {
             return new Task(in);
         }

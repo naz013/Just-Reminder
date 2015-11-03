@@ -37,8 +37,7 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         BirthdaysList fragment = new BirthdaysList();
-        fragment.setData(datas);
-        fragment.setPageNumber(position);
+        fragment.setData(datas.get(position).getDatas());
         return fragment;
     }
 

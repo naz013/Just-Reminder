@@ -89,7 +89,7 @@ public class CalendarModel implements Parcelable {
         readFromParcel(in);
     }
 
-    public static final Parcelable.Creator<CalendarModel> CREATOR = new Parcelable.Creator<CalendarModel>() {
+    public static final Creator<CalendarModel> CREATOR = new Creator<CalendarModel>() {
         public CalendarModel createFromParcel(Parcel in) {
             return new CalendarModel(in);
         }

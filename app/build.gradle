@@ -112,13 +112,6 @@ repositories {
     mavenCentral()
 }
 
-
-
-
-
-
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.apis:google-api-services-calendar:v3-rev137-1.20.0' exclude module: 'httpclient'

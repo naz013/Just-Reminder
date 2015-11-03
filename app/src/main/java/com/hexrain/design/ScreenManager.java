@@ -20,8 +20,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -33,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -123,14 +120,10 @@ public class ScreenManager extends AppCompatActivity
     private TextView buttonNo;
     private TextView buttonReminderYes;
     private TextView buttonReminderNo;
-    private AppBarLayout bar;
     private FloatingActionsMenu mainMenu;
     private FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
             addPlace, addGroup;
     private FloatingActionButton[] prevButtons;
-    private RecyclerView currentList;
-    private ListView currentListView;
-    private CoordinatorLayout coordinatorLayout;
 
     private ColorSetter cSetter = new ColorSetter(this);
     private SharedPrefs mPrefs = new SharedPrefs(this);
@@ -185,8 +178,6 @@ public class ScreenManager extends AppCompatActivity
 
         isAnimation = mPrefs.loadBoolean(Prefs.ANIMATIONS);
 
-        bar = (AppBarLayout) findViewById(R.id.bar);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -216,8 +207,6 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderYes = (TextView) findViewById(R.id.buttonReminderYes);
         buttonReminderNo = (TextView) findViewById(R.id.buttonReminderNo);
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-
         initButton();
 
         NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -239,8 +228,8 @@ public class ScreenManager extends AppCompatActivity
         fab.setTitle(title);
         fab.setSize(size);
         fab.setIcon(icon);
-        fab.setColorNormal(getResources().getColor(R.color.colorWhite));
-        fab.setColorPressed(getResources().getColor(R.color.grey_light));
+        fab.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        fab.setColorPressed(ViewUtils.getColor(this, R.color.grey_light));
         fab.setOnClickListener(listener);
     }
 
@@ -807,26 +796,28 @@ public class ScreenManager extends AppCompatActivity
     }
 
     public void onSectionAttached(String tag) {
-        if (tag.matches(FRAGMENT_ACTIVE)) {
-            mTitle = getString(R.string.drawer_active_reminder);
-        } else if (tag.matches(FRAGMENT_ARCHIVE)){
-            mTitle = getString(R.string.drawer_archive_reminder);
-        } else if (tag.matches(ACTION_CALENDAR)){
-            mTitle = getString(R.string.calendar_fragment);
-        } else if (tag.matches(FRAGMENT_EVENTS)){
-            mTitle = getString(R.string.birthdays_dialog_title);
-        } else if (tag.matches(FRAGMENT_NOTE)){
-            mTitle = getString(R.string.fragment_notes);
-        } else if (tag.matches(FRAGMENT_GROUPS)){
-            mTitle = getString(R.string.string_manage_categories);
-        } else if (tag.matches(FRAGMENT_PLACES)){
-            mTitle = getString(R.string.settings_places);
-        } else if (tag.matches(FRAGMENT_TEMPLATES)){
-            mTitle = getString(R.string.settings_sms_templates_title);
-        } else if (tag.matches(FRAGMENT_LOCATIONS)){
-            mTitle = getString(R.string.geo_fragment);
-        } else if (tag.matches(FRAGMENT_BACKUPS)){
-            mTitle = getString(R.string.manage_backup_title);
+        if(tag != null) {
+            if (tag.matches(FRAGMENT_ACTIVE)) {
+                mTitle = getString(R.string.drawer_active_reminder);
+            } else if (tag.matches(FRAGMENT_ARCHIVE)) {
+                mTitle = getString(R.string.drawer_archive_reminder);
+            } else if (tag.matches(ACTION_CALENDAR)) {
+                mTitle = getString(R.string.calendar_fragment);
+            } else if (tag.matches(FRAGMENT_EVENTS)) {
+                mTitle = getString(R.string.birthdays_dialog_title);
+            } else if (tag.matches(FRAGMENT_NOTE)) {
+                mTitle = getString(R.string.fragment_notes);
+            } else if (tag.matches(FRAGMENT_GROUPS)) {
+                mTitle = getString(R.string.string_manage_categories);
+            } else if (tag.matches(FRAGMENT_PLACES)) {
+                mTitle = getString(R.string.settings_places);
+            } else if (tag.matches(FRAGMENT_TEMPLATES)) {
+                mTitle = getString(R.string.settings_sms_templates_title);
+            } else if (tag.matches(FRAGMENT_LOCATIONS)) {
+                mTitle = getString(R.string.geo_fragment);
+            } else if (tag.matches(FRAGMENT_BACKUPS)) {
+                mTitle = getString(R.string.manage_backup_title);
+            }
         }
     }
 
@@ -972,7 +963,7 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mTag.matches(ACTION_CALENDAR)) {
+        if (mTag != null && mTag.matches(ACTION_CALENDAR)) {
             getMenuInflater().inflate(R.menu.calendar_menu, menu);
             menu.findItem(R.id.action_month).setVisible(false);
             Calendar calendar = Calendar.getInstance();
@@ -1054,7 +1045,7 @@ public class ScreenManager extends AppCompatActivity
         boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         HashMap<DateTime, String> dates = new HashMap<>();
         dates.clear();
-        calendarView.setBackgroundForOne(cSetter.colorReminderCalendar());
+        calendarView.setBackgroundForOne(ViewUtils.getColor(this, cSetter.colorReminderCalendar()));
         Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()){
             do {
@@ -1168,7 +1159,7 @@ public class ScreenManager extends AppCompatActivity
         DataBase db = new DataBase(this);
         if (!db.isOpen()) db.open();
         HashMap<DateTime, String> dates = new HashMap<>();
-        calendarView.setBackgroundForTwo(cSetter.colorBirthdayCalendar());
+        calendarView.setBackgroundForTwo(ViewUtils.getColor(this, cSetter.colorBirthdayCalendar()));
         Cursor c = db.getBirthdays();
         if (c != null && c.moveToFirst()){
             do {
@@ -1291,7 +1282,6 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void saveNote() {
-        SyncHelper sHelp = new SyncHelper(ScreenManager.this);
         final String note = quickNote.getText().toString();
         if (note.matches("")) {
             quickNote.setError(getString(R.string.empty_field_error));
@@ -1309,7 +1299,7 @@ public class ScreenManager extends AppCompatActivity
         int color = r.nextInt(15);
         final long id;
         if (mPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            id = db.saveNote(sHelp.encrypt(note), date, cSetter.getNoteColor(color), uuID, null, 5);
+            id = db.saveNote(SyncHelper.encrypt(note), date, cSetter.getNoteColor(color), uuID, null, 5);
         } else {
             id = db.saveNote(note, date, cSetter.getNoteColor(color), uuID, null, 5);
         }
@@ -1539,11 +1529,11 @@ public class ScreenManager extends AppCompatActivity
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            mPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            mPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            mPrefs.savePrefs(Prefs.DRIVE_USER, new SyncHelper(this).encrypt(accountName));
+            mPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         }
     }

@@ -40,7 +40,7 @@ public class GDriveHelper {
 
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance();
-    private com.google.api.services.drive.Drive m_client;
+    private Drive m_client;
     private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
 
     public GDriveHelper(Context context){
@@ -54,7 +54,7 @@ public class GDriveHelper {
         prefs = new SharedPrefs(mContext);
         GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(DriveScopes.DRIVE));
         m_credential.setSelectedAccountName(SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
-        m_client = new com.google.api.services.drive.Drive.Builder(
+        m_client = new Drive.Builder(
                 m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
                 .build();
     }
@@ -138,7 +138,7 @@ public class GDriveHelper {
 
                     deleteReminder(file.getName());
 
-                    com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
+                    Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();
                     uploader.setDirectUploadEnabled(true);
                     insert.execute();
@@ -175,7 +175,7 @@ public class GDriveHelper {
 
                     deleteNote(file.getName());
 
-                    com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
+                    Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();
                     uploader.setDirectUploadEnabled(true);
                     insert.execute();
@@ -212,7 +212,7 @@ public class GDriveHelper {
 
                     deleteGroup(file.getName());
 
-                    com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
+                    Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();
                     uploader.setDirectUploadEnabled(true);
                     insert.execute();
@@ -249,7 +249,7 @@ public class GDriveHelper {
 
                     deleteBirthday(file.getName());
 
-                    com.google.api.services.drive.Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
+                    Drive.Files.Insert insert = m_client.files().insert(fileMetadata, mediaContent);
                     MediaHttpUploader uploader = insert.getMediaHttpUploader();
                     uploader.setDirectUploadEnabled(true);
                     insert.execute();
@@ -742,7 +742,7 @@ public class GDriveHelper {
         com.google.api.services.drive.model.File folder = new com.google.api.services.drive.model.File();
         folder.setTitle("Just Reminder");
         folder.setMimeType("application/vnd.google-apps.folder");
-        com.google.api.services.drive.Drive.Files.Insert folderInsert = null;
+        Drive.Files.Insert folderInsert = null;
         try {
             folderInsert = m_client.files().insert(folder);
         } catch (IOException e) {

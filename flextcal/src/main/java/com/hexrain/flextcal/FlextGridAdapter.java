@@ -283,8 +283,8 @@ public class FlextGridAdapter extends BaseAdapter {
         TextView cellView = (TextView) view.findViewById(R.id.textView);
         TextView task1 = (TextView) view.findViewById(R.id.task1);
         TextView task2 = (TextView) view.findViewById(R.id.task2);
-		if (backgroundForEventOne != -1) task1.setTextColor(resources.getColor(backgroundForEventOne));
-		if (backgroundForEventTwo != -1) task2.setTextColor(resources.getColor(backgroundForEventTwo));
+		if (backgroundForEventOne != -1) task1.setTextColor(backgroundForEventOne);
+		if (backgroundForEventTwo != -1) task2.setTextColor(backgroundForEventTwo);
 		customizeTextView(position, cellView, task1, task2);
 		return view;
 	}
