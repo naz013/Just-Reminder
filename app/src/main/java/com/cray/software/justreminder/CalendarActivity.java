@@ -48,6 +48,8 @@ public class CalendarActivity extends AppCompatActivity {
     private ViewPager pager;
     private FrameLayout calendarLayout;
     private CircularProgress progress;
+    private ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
+    private int lastPosition = -1;
 
     public static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
 
@@ -180,8 +182,6 @@ public class CalendarActivity extends AppCompatActivity {
         } else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
     }
 
-    ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
-
     private void showEvents(Date date) {
         progress.setVisibility(View.VISIBLE);
         Calendar calendar = Calendar.getInstance();
@@ -256,6 +256,7 @@ public class CalendarActivity extends AppCompatActivity {
                 currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
                 ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
                 if (data.size() > 0) dateMills = data.get(0).getDate();
+                lastPosition = i;
             }
 
             @Override
@@ -264,7 +265,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        pager.setCurrentItem(targetPosition);
+        pager.setCurrentItem(lastPosition != -1 ? lastPosition : targetPosition);
 
         int i = pager.getCurrentItem();
         int day = pagerData.get(i).getDay();

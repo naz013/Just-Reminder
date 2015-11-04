@@ -153,7 +153,7 @@ public class IOHelper {
      */
     public void restoreReminder(boolean isCloud){
         try {
-            new SyncHelper(mContext).reminderFromJson(null, null);
+            new SyncHelper(mContext).reminderFromJson(null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

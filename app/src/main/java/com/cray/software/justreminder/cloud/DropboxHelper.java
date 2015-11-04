@@ -455,7 +455,7 @@ public class DropboxHelper {
                         }
                         //restore tmp files after downloading
                         try {
-                            new SyncHelper(mContext).reminderFromJson(localFile.toString(), fileName);
+                            new SyncHelper(mContext).reminderFromJson(localFile.toString());
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }

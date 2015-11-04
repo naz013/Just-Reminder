@@ -8,12 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -35,7 +36,6 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 
@@ -162,25 +162,6 @@ public class QuickAddReminder extends AppCompatActivity implements
             }
         });
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
-
-        FloatingActionButton mFab = new FloatingActionButton(QuickAddReminder.this);
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveDateTask();
-            }
-        });
     }
 
     protected void dateDialog() {
@@ -205,7 +186,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         if (myMonth < 9) monthStr = "0" + (myMonth + 1);
         else monthStr = String.valueOf(myMonth + 1);
 
-        dateField.setText(dayStr + "/" + monthStr);
+        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
         dateYearField.setText(String.valueOf(myYear));
     }
 
@@ -269,8 +250,18 @@ public class QuickAddReminder extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_add:
+                saveDateTask();
+                return true;
             case android.R.id.home:
                 finish();
                 return true;

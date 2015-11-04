@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +29,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,6 +92,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
         Intent i = getIntent();
         id = i.getLongExtra("BDid", 0);
+        long receivedDate = i.getLongExtra("date", 0);
         if (id != 0) {
             db = new DataBase(AddBirthday.this);
             db.open();
@@ -123,6 +125,8 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
             toolbar.setTitle(getString(R.string.edit_birthday_title));
             if (number != null) contactCheck.setChecked(true);
+        } else if (receivedDate != 0){
+            calendar.setTimeInMillis(receivedDate);
         }
 
         myYear = calendar.get(Calendar.YEAR);
@@ -134,25 +138,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         Button pickContact = (Button) findViewById(R.id.pickContact);
         ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         contactLayout.setOnClickListener(this);
-
-        FloatingActionButton mFab = new FloatingActionButton(AddBirthday.this);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveBirthday();
-            }
-        });
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
     }
 
     @Override
@@ -250,8 +235,18 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_add:
+                saveBirthday();
+                return true;
             case android.R.id.home:
                 finish();
                 return true;

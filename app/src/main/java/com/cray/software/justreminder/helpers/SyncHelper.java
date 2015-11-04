@@ -400,12 +400,14 @@ public class SyncHelper {
             db.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = db.getNotes();
-            while (e.moveToNext()) {
-                for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                    namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_UUID)));
+            if (e != null) {
+                while (e.moveToNext()) {
+                    for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                        namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_UUID)));
+                    }
                 }
+                e.close();
             }
-            if (e != null) e.close();
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
@@ -426,39 +428,36 @@ public class SyncHelper {
                     }
                     String jsonText = writer.toString();
                     JSONObject jsonObj = new JSONObject(jsonText);
-                    reminderObject(jsonObj);
+                    noteObject(jsonObj);
                 }
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD);
                 File[] files = sdPathDr.listFiles();
                 if (files != null) {
-                    int f = files.length;
-                    if (f > 0) {
-                        for (File file1 : files) {
-                            String fileName = file1.getName();
-                            int pos = fileName.lastIndexOf(".");
-                            String fileLoc = sdPathDr + "/" + fileName;
-                            String fileNameS = fileName.substring(0, pos);
-                            if (!namesPass.contains(fileNameS)) {
-                                FileInputStream stream = new FileInputStream(fileLoc);
-                                Writer writer = new StringWriter();
-                                char[] buffer = new char[1024];
-                                try {
-                                    BufferedReader reader = new BufferedReader(
-                                            new InputStreamReader(stream, "UTF-8")
-                                    );
-                                    int n;
-                                    while ((n = reader.read(buffer)) != -1) {
-                                        writer.write(buffer, 0, n);
-                                    }
-                                } finally {
-                                    stream.close();
+                    for (File file1 : files) {
+                        String fileName = file1.getName();
+                        int pos = fileName.lastIndexOf(".");
+                        String fileLoc = sdPathDr + "/" + fileName;
+                        String fileNameS = fileName.substring(0, pos);
+                        if (!namesPass.contains(fileNameS)) {
+                            FileInputStream stream = new FileInputStream(fileLoc);
+                            Writer writer = new StringWriter();
+                            char[] buffer = new char[1024];
+                            try {
+                                BufferedReader reader = new BufferedReader(
+                                        new InputStreamReader(stream, "UTF-8")
+                                );
+                                int n;
+                                while ((n = reader.read(buffer)) != -1) {
+                                    writer.write(buffer, 0, n);
                                 }
-                                String jsonText = writer.toString();
-                                JSONObject jsonObj = new JSONObject(jsonText);
-                                noteObject(jsonObj);
+                            } finally {
+                                stream.close();
                             }
+                            String jsonText = writer.toString();
+                            JSONObject jsonObj = new JSONObject(jsonText);
+                            noteObject(jsonObj);
                         }
                     }
                 }
@@ -511,7 +510,7 @@ public class SyncHelper {
      * Get note content from file or JSON object.
      * @param file note file.
      * @param object JSON object.
-     * @return
+     * @return Note content
      */
     public ArrayList<String> getNote(File file, JSONObject object) {
         ArrayList<String> data = new ArrayList<>();
@@ -574,7 +573,7 @@ public class SyncHelper {
      * Get note color from file or JSON object.
      * @param file note file.
      * @param object JSON object.
-     * @return
+     * @return Note color code
      */
     public int getColor(File file, JSONObject object){
         int data = 0;
@@ -636,7 +635,7 @@ public class SyncHelper {
      * Get font style from file or JSON object.
      * @param file note file.
      * @param object JSON object.
-     * @return
+     * @return Font style code
      */
     public int getFontStyle(File file, JSONObject object){
         int data = 5;
@@ -698,7 +697,7 @@ public class SyncHelper {
      * Get flag is note is encrypted from file or object.
      * @param file note file.
      * @param object JSON object.
-     * @return
+     * @return Encrypt flag
      */
     @Deprecated
     public int getEncrypt(File file, JSONObject object){
@@ -761,7 +760,7 @@ public class SyncHelper {
      * Get attached to note image from file or JSON object.
      * @param file note file.
      * @param object JSON object.
-     * @return
+     * @return Image byte array
      */
     public byte[] getImage(File file, JSONObject object){
         byte[] data = null;
@@ -822,7 +821,7 @@ public class SyncHelper {
     /**
      * Get note content and unique identifier from JSON object.
      * @param jsonObj JSON object.
-     * @return
+     * @return Note content and note unique identifier
      * @throws JSONException
      */
     private ArrayList<String> getNoteString(JSONObject jsonObj) throws JSONException {
@@ -845,7 +844,7 @@ public class SyncHelper {
     /**
      * Get note color from JSON object.
      * @param jsonObj JSON object.
-     * @return
+     * @return Note color code
      * @throws JSONException
      */
     private int getNoteColor(JSONObject jsonObj) throws JSONException {
@@ -855,7 +854,7 @@ public class SyncHelper {
     /**
      * Get note font style from JSON object.
      * @param jsonObj JSON object.
-     * @return
+     * @return Note font style code
      * @throws JSONException
      */
     private int getNoteFontStyle(JSONObject jsonObj) throws JSONException {
@@ -869,7 +868,7 @@ public class SyncHelper {
     /**
      * Get note encrypt flag from JSON object.
      * @param jsonObj JSON object.
-     * @return
+     * @return Note encryption flag
      * @throws JSONException
      */
     @Deprecated
@@ -880,7 +879,7 @@ public class SyncHelper {
     /**
      * Get note attached image from JSON object.
      * @param jsonObj JSON object.
-     * @return
+     * @return Note image byte array
      * @throws JSONException
      */
     private byte[] getNoteImage(JSONObject jsonObj) throws JSONException {
@@ -895,15 +894,12 @@ public class SyncHelper {
      * Restore reminder from JSON file to database.
      * Application restore reminders only with actual date.
      * @param file reminder file path.
-     * @param fileNameR file name.
      * @throws IOException
      * @throws JSONException
      */
-    public void reminderFromJson(String file, String fileNameR) throws IOException, JSONException {
+    public void reminderFromJson(String file) throws IOException, JSONException {
         if (isSdPresent()){
             if (file != null){
-                int pos = fileNameR.lastIndexOf(".");
-                String fileNameS = fileNameR.substring(0, pos);
                 FileInputStream stream = new FileInputStream(file);
                 Writer writer = new StringWriter();
                 char[] buffer = new char[1024];
@@ -925,13 +921,10 @@ public class SyncHelper {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
                 File[] files = sdPathDr.listFiles();
-                int f = files.length;
-                if (f > 0) {
+                if (files != null) {
                     for (File file1 : files) {
                         String fileName = file1.getName();
-                        int pos = fileName.lastIndexOf(".");
                         String fileLoc = sdPathDr + "/" + fileName;
-                        String fileNameS = fileName.substring(0, pos);
                         FileInputStream stream = new FileInputStream(fileLoc);
                         Writer writer = new StringWriter();
                         char[] buffer = new char[1024];
@@ -1199,8 +1192,7 @@ public class SyncHelper {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
                 File[] files = sdPathDr.listFiles();
-                int f = files.length;
-                if (f > 0) {
+                if (files != null){
                     for (File file1 : files) {
                         String fileName = file1.getName();
                         int pos = fileName.lastIndexOf(".");
@@ -1436,7 +1428,7 @@ public class SyncHelper {
             if (e != null && e.moveToFirst()){
                 do{
                     long rowId = e.getLong(e.getColumnIndex(Constants.COLUMN_ID));
-                    if (rowId != 0 && fdb != null) {
+                    if (rowId != 0) {
                         fdb.deleteFile(rowId);
                     }
                 }while (e.moveToNext());
@@ -1447,8 +1439,7 @@ public class SyncHelper {
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
             if (!sdPathDr.exists()) sdPathDr.mkdirs();
             File[] files = sdPathDr.listFiles();
-            int f = files.length;
-            if (f > 0) {
+            if (files != null){
                 for (File file1 : files) {
                     String fileName = file1.getName();
                     long lastEdit = file1.lastModified();
@@ -1476,8 +1467,7 @@ public class SyncHelper {
             File sdPathDrop = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
             if (!sdPathDrop.exists()) sdPathDrop.mkdirs();
             File[] dFiles = sdPathDrop.listFiles();
-            int d = dFiles.length;
-            if (d > 0) {
+            if (dFiles != null){
                 for (File file1 : dFiles) {
                     String fileName = file1.getName();
                     long lastEdit = file1.lastModified();
@@ -1505,8 +1495,7 @@ public class SyncHelper {
             File gFolder = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
             if (!gFolder.exists()) gFolder.mkdirs();
             File[] gFiles = gFolder.listFiles();
-            int g = gFiles.length;
-            if (g > 0) {
+            if (gFiles != null){
                 for (File file1 : gFiles) {
                     String fileName = file1.getName();
                     long lastEdit = file1.lastModified();
@@ -1676,7 +1665,7 @@ public class SyncHelper {
 
     /**
      * Generate unique identifier.
-     * @return
+     * @return New generated Unique identifier
      */
     public static String generateID(){
         return UUID.randomUUID().toString();
@@ -1684,7 +1673,7 @@ public class SyncHelper {
 
     /**
      * Check if device has SD Card.
-     * @return
+     * @return Boolean
      */
     public static boolean isSdPresent() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
@@ -1693,7 +1682,7 @@ public class SyncHelper {
     /**
      * Check for internet connection.
      * @param context application context.
-     * @return
+     * @return Boolean
      */
     public static boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager)context
@@ -1723,7 +1712,7 @@ public class SyncHelper {
     /**
      * Decrypt string to human readable format.
      * @param string string to decrypt.
-     * @return
+     * @return Decrypted string
      */
     public static String decrypt(String string){
         String result = "";
@@ -1739,7 +1728,7 @@ public class SyncHelper {
     /**
      * Encrypt string.
      * @param string string to encrypt.
-     * @return
+     * @return Encrypted string
      */
     public static String encrypt(String string){
         byte[] string_byted = null;

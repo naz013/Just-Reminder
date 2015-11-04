@@ -32,13 +32,17 @@ public class EventsFragment extends Fragment {
 
     private long dateMills;
     private ViewPager pager;
+    private ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
+    private int lastPosition = -1;
+    private String dayString;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
-    public static EventsFragment newInstance(long date) {
+    public static EventsFragment newInstance(long date, int lastPosition) {
         EventsFragment pageFragment = new EventsFragment();
         Bundle arguments = new Bundle();
         arguments.putLong("date", date);
+        arguments.putInt("pos", lastPosition);
         pageFragment.setArguments(arguments);
         return pageFragment;
     }
@@ -52,6 +56,7 @@ public class EventsFragment extends Fragment {
 
         Bundle intent = getArguments();
         dateMills = intent.getLong("date", 0);
+        lastPosition = intent.getInt("pos", -1);
     }
 
     @Override
@@ -126,8 +131,6 @@ public class EventsFragment extends Fragment {
         mCallbacks = null;
     }
 
-    String dayString;
-
     private void updateMenuTitles(String title) {
         dayString = title;
         getActivity().invalidateOptionsMenu();
@@ -145,9 +148,6 @@ public class EventsFragment extends Fragment {
             showEvents(calendar.getTime());
         }
     }
-
-    ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
-    int targetPosition = -1;
 
     private void showEvents(Date date) {
         pagerData.clear();
@@ -181,7 +181,7 @@ public class EventsFragment extends Fragment {
         provider.fillArray();
 
         int position = 0;
-        targetPosition = -1;
+        int targetPosition = -1;
         while (position < Configs.MAX_DAYS_COUNT) {
             int mDay = calendar.get(Calendar.DAY_OF_MONTH);
             int mMonth = calendar.get(Calendar.MONTH);
@@ -220,7 +220,8 @@ public class EventsFragment extends Fragment {
                 calendar1.set(Calendar.MONTH, month);
                 calendar1.set(Calendar.YEAR, year);
                 dateMills = calendar1.getTimeInMillis();
-                if (mCallbacks != null) mCallbacks.onDateChanged(dateMills);
+                lastPosition = i;
+                if (mCallbacks != null) mCallbacks.onDateChanged(dateMills, i);
             }
 
             @Override
@@ -229,6 +230,6 @@ public class EventsFragment extends Fragment {
             }
         });
 
-        pager.setCurrentItem(targetPosition);
+        pager.setCurrentItem(lastPosition != -1 ? lastPosition : targetPosition);
     }
 }

@@ -307,7 +307,7 @@ public class GDriveHelper {
                         downloader.setDirectDownloadEnabled(true);
                         downloader.download(new GenericUrl(f.getDownloadUrl()), out);
                         try {
-                            new SyncHelper(mContext).reminderFromJson(file.toString(), title);
+                            new SyncHelper(mContext).reminderFromJson(file.toString());
                         } catch (IOException | JSONException e1) {
                             e1.printStackTrace();
                         }

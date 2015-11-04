@@ -9,11 +9,6 @@
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/wrapper"
-        android:layout_height="match_parent">
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -46,8 +41,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_above="@+id/button"
-                android:background="@color/grey_dark"/>
+                android:background="?attr/colorAccent"/>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -106,8 +100,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_above="@+id/button"
-                android:background="@color/grey_dark"/>
+                android:background="?attr/colorAccent"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -173,8 +166,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_above="@+id/button"
-                android:background="@color/grey_dark"/>
+                android:background="?attr/colorAccent"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
@@ -191,5 +183,4 @@
         </LinearLayout>
 
     </ScrollView>
-    </RelativeLayout>
 </LinearLayout>

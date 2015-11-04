@@ -561,7 +561,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         void showSnackbar(int message);
 
-        void onDateChanged(long dateMills);
+        void onDateChanged(long dateMills, int position);
 
         void onListIdChanged(long listId);
 

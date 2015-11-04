@@ -44,6 +44,7 @@ import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
@@ -157,6 +158,7 @@ public class ScreenManager extends AppCompatActivity
     private long dateMills;
     private boolean isAnimation = false;
     private boolean doubleBackToExitPressedOnce = false;
+    private int lastEventPosition = -1;
 
     private Context ctx = this;
     private Activity a = this;
@@ -336,7 +338,8 @@ public class ScreenManager extends AppCompatActivity
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                startActivity(new Intent(ScreenManager.this, AddBirthday.class));
+                                startActivity(new Intent(ScreenManager.this, AddBirthday.class)
+                                        .putExtra("date", dateMills));
                             }
                         }, 150);
                     }
@@ -680,8 +683,9 @@ public class ScreenManager extends AppCompatActivity
     }
 
     @Override
-    public void onDateChanged(long dateMills) {
+    public void onDateChanged(long dateMills, int position) {
         if (dateMills != 0) this.dateMills = dateMills;
+        lastEventPosition = position;
     }
 
     @Override
@@ -760,7 +764,7 @@ public class ScreenManager extends AppCompatActivity
                 if (eventsDate != null) {
                     cal.setTime(eventsDate);
                 }
-                replace(EventsFragment.newInstance(cal.getTimeInMillis()), tag);
+                replace(EventsFragment.newInstance(cal.getTimeInMillis(), lastEventPosition), tag);
                 mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
@@ -873,7 +877,7 @@ public class ScreenManager extends AppCompatActivity
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, minute);
                 long dateMills = calendar.getTimeInMillis();
-                startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
+                startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
                         .putExtra("date", dateMills));
             }
 
