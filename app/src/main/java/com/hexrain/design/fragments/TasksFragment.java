@@ -122,7 +122,6 @@ public class TasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         pager = (ViewPager) rootView.findViewById(R.id.pager);
-        CircularProgress progress = (CircularProgress) rootView.findViewById(R.id.progress);
         loadData();
         onCreate = true;
 
@@ -327,9 +326,7 @@ public class TasksFragment extends Fragment {
         db.open();
         Cursor c = db.getTasksLists();
         if (c != null && c.moveToFirst()){
-            int position = 1;
             do {
-                position++;
                 String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                 String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -22,10 +21,7 @@ import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
@@ -65,9 +61,6 @@ public class PlacesFragment extends Fragment implements SimpleListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        ColorSetter cSetter = new ColorSetter(getActivity());
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
@@ -75,11 +68,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getActivity().getString(R.string.empty_places_list_text));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            emptyImage.setImageResource(R.drawable.ic_place_white_24dp);
-        } else {
-            emptyImage.setImageResource(R.drawable.ic_place_grey600_24dp);
-        }
+        emptyImage.setImageResource(R.drawable.place);
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
 
@@ -109,8 +98,6 @@ public class PlacesFragment extends Fragment implements SimpleListener {
                     adView.setVisibility(View.VISIBLE);
                 }
             });
-
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
 
         return rootView;

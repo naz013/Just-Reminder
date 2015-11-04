@@ -1,12 +1,11 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -15,41 +14,124 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CalendarEventsAdapter extends BaseAdapter{
+public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAdapter.ViewHolder> {
 
-    private LayoutInflater inflater;
     private ArrayList<EventsDataProvider.EventsItem> mDatas;
     private Context mContext;
     private ColorSetter cs;
-    private Typeface typeface;
     private SharedPrefs prefs;
+    private SimpleListener mEventListener;
 
     @SuppressWarnings("deprecation")
     public CalendarEventsAdapter(Context context, ArrayList<EventsDataProvider.EventsItem> datas) {
         this.mContext = context;
         this.mDatas = datas;
-        inflater = LayoutInflater.from(context);
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         cs = new ColorSetter(context);
-        typeface = AssetsUtil.getLightTypeface(context);
         prefs = new SharedPrefs(context);
     }
 
-    @Override
-    public int getCount() {
-        return mDatas.size();
+    public void setmEventListener(SimpleListener mEventListener) {
+        this.mEventListener = mEventListener;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView eventText, eventColor, eventType, eventDate, eventNumber;
+        ViewGroup container;
+        RelativeLayout background;
+
+        public ViewHolder(View v) {
+            super(v);
+            eventText = (TextView) v.findViewById(R.id.eventText);
+            eventColor = (TextView) v.findViewById(R.id.eventColor);
+            eventType = (TextView) v.findViewById(R.id.eventType);
+            eventDate = (TextView) v.findViewById(R.id.eventDate);
+            eventNumber = (TextView) v.findViewById(R.id.eventNumber);
+            container = (ViewGroup) v.findViewById(R.id.container);
+            background = (RelativeLayout) v.findViewById(R.id.background);
+        }
     }
 
     @Override
-    public Object getItem(int position) {
-        return mDatas.get(position).getType();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // create a new view
+        View itemLayoutView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item_events, parent, false);
+        return new ViewHolder(itemLayoutView);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
+
+        final EventsDataProvider.EventsItem item = mDatas.get(position);
+        EventsDataProvider.Type type = item.getInn();
+        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
+
+        if (type == EventsDataProvider.Type.birthday) {
+            holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext, cs.colorBirthdayCalendar()));
+            holder.eventType.setText(mContext.getString(R.string.birthday_text));
+            String title = item.getName();
+            String phone = item.getNumber();
+            if (phone == null || phone.matches("")) phone = Contacts.getNumber(title, mContext);
+            if (phone != null && !phone.matches("")){
+                holder.eventNumber.setText(phone);
+            } else {
+                holder.eventNumber.setText("");
+            }
+            holder.eventText.setText(title);
+
+            Calendar cl = Calendar.getInstance();
+            cl.setTimeInMillis(item.getDate());
+            Date time = cl.getTime();
+            holder.eventDate.setText(SuperUtil.appendString(TimeUtil.getDateTime(time, is24),
+                    "\n", String.valueOf(TimeUtil.getAge(item.getYear())), " " ,
+                    mContext.getString(R.string.years_string)));
+        } else {
+            holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(item.getColor())));
+            holder.eventType.setText(mContext.getString(R.string.reminder_type));
+
+            String number = item.getNumber();
+
+            Calendar cl = Calendar.getInstance();
+            cl.setTimeInMillis(item.getDate());
+
+            holder.eventText.setText(item.getName());
+
+            if (!number.matches("0")) {
+                String contactName = Contacts.getContactNameFromNumber(number, mContext);
+                holder.eventNumber.setText(SuperUtil.appendString(number, "\n", contactName));
+            } else {
+                holder.eventNumber.setText("");
+            }
+
+            Date time = cl.getTime();
+            holder.eventDate.setText(TimeUtil.getDateTime(time, is24));
+        }
+
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mEventListener != null) mEventListener.onItemClicked(position, holder.background);
+            }
+        });
+
+        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (mEventListener != null)
+                    mEventListener.onItemLongClicked(position, holder.background);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -58,68 +140,7 @@ public class CalendarEventsAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        EventsDataProvider.Type type = mDatas.get(position).getInn();
-        if (convertView == null) {
-            convertView = inflater.inflate(R.layout.list_item_events, null);
-        }
-
-        CardView card = (CardView) convertView.findViewById(R.id.card);
-        card.setCardBackgroundColor(cs.getCardStyle());
-
-        TextView eventColor = (TextView) convertView.findViewById(R.id.eventColor);
-        TextView eventType = (TextView) convertView.findViewById(R.id.eventType);
-        eventType.setTypeface(typeface);
-        TextView eventDate = (TextView) convertView.findViewById(R.id.eventDate);
-        eventDate.setTypeface(typeface);
-        TextView eventText = (TextView) convertView.findViewById(R.id.eventText);
-        eventText.setTypeface(typeface);
-        TextView eventNumber = (TextView) convertView.findViewById(R.id.eventNumber);
-        eventNumber.setTypeface(typeface);
-        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-
-        EventsDataProvider.EventsItem item = mDatas.get(position);
-
-        if (type == EventsDataProvider.Type.birthday) {
-            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.colorBirthdayCalendar()));
-            eventType.setText(mContext.getString(R.string.birthday_text));
-            String title = item.getName();
-            String phone = item.getNumber();
-            if (phone == null || phone.matches("")) phone = Contacts.getNumber(title, mContext);
-            if (phone != null && !phone.matches("")){
-                eventNumber.setText(phone);
-            } else {
-                eventNumber.setText("");
-            }
-            eventText.setText(title);
-
-            Calendar cl = Calendar.getInstance();
-            cl.setTimeInMillis(item.getDate());
-            Date time = cl.getTime();
-            eventDate.setText(TimeUtil.getDateTime(time, is24) + "\n" + TimeUtil.getAge(item.getYear()) +
-                    " " + mContext.getString(R.string.years_string));
-        } else {
-            eventColor.setBackgroundColor(mContext.getResources().getColor(cs.getCategoryColor(item.getColor())));
-            eventType.setText(mContext.getString(R.string.reminder_type));
-
-            String number = item.getNumber();
-
-            Calendar cl = Calendar.getInstance();
-            cl.setTimeInMillis(item.getDate());
-
-            eventText.setText(item.getName());
-
-            if (!number.matches("0")) {
-                String contactName = Contacts.getContactNameFromNumber(number, mContext);
-                eventNumber.setText(number + "\n" + contactName);
-            } else {
-                eventNumber.setText("");
-            }
-
-            Date time = cl.getTime();
-            eventDate.setText(TimeUtil.getDateTime(time, is24));
-        }
-
-        return convertView;
+    public int getItemCount() {
+        return mDatas.size();
     }
 }

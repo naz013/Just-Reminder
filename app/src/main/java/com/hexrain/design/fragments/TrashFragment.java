@@ -114,11 +114,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyText.setText(getActivity().getString(R.string.string_no_archived));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            emptyImage.setImageResource(R.drawable.ic_delete_white_24dp);
-        } else {
-            emptyImage.setImageResource(R.drawable.ic_delete_grey600_24dp);
-        }
+        emptyImage.setImageResource(R.drawable.delete);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         loaderAdapter();

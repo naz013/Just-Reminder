@@ -24,9 +24,7 @@ import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.SimpleListener;
@@ -37,7 +35,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
-    private LinearLayout emptyLayout, emptyItem;
+    private LinearLayout emptyItem;
     private ColorSetter cs = new ColorSetter(TemplatesList.this);
     private AddFloatingActionButton mFab;
 
@@ -67,14 +65,8 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         TextView emptyText = (TextView) findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.message_list_empty_text));
 
-        SharedPrefs sPrefs = new SharedPrefs(TemplatesList.this);
-
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            emptyImage.setImageResource(R.drawable.ic_place_white_24dp);
-        } else {
-            emptyImage.setImageResource(R.drawable.ic_place_grey600_24dp);
-        }
+        emptyImage.setImageResource(R.drawable.textsms);
 
         listView = (RecyclerView) findViewById(R.id.currentList);
 

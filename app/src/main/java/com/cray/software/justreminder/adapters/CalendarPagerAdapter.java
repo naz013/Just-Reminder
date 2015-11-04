@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.cray.software.justreminder.datas.EventsPagerItem;
-import com.cray.software.justreminder.dialogs.BirthdaysList;
+import com.cray.software.justreminder.dialogs.EventsListFragment;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        BirthdaysList fragment = new BirthdaysList();
+        EventsListFragment fragment = new EventsListFragment();
         fragment.setData(datas.get(position).getDatas());
         return fragment;
     }

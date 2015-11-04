@@ -556,19 +556,12 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     public interface NavigationDrawerCallbacks {
         void onNavigationDrawerItemSelected(String tag);
-
         void onTitleChanged(String title);
-
         void showSnackbar(int message);
-
         void onDateChanged(long dateMills, int position);
-
         void onListIdChanged(long listId);
-
         void onListChanged(RecyclerView list);
-
         void isDrawerOpen(boolean isOpen);
-
         void onUiChanged(int colorSetter, int colorStatus, int colorChooser);
     }
 }

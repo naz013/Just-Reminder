@@ -101,8 +101,6 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     adView.setVisibility(View.VISIBLE);
                 }
             });
-
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
         return rootView;
     }

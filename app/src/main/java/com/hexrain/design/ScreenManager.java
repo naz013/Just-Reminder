@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -55,6 +56,7 @@ import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -71,6 +73,7 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -309,10 +312,7 @@ public class ScreenManager extends AppCompatActivity
             setUpButton(addReminder, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mainMenu.isExpanded()) mainMenu.collapse();
-                    if (isNoteVisible()) {
-                        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                    }
+                    collapseViews();
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -327,10 +327,7 @@ public class ScreenManager extends AppCompatActivity
             setUpButton(addBirthday, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mainMenu.isExpanded()) mainMenu.collapse();
-                    if (isNoteVisible()) {
-                        ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                    }
+                    collapseViews();
 
                     if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
                         Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
@@ -359,10 +356,7 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addReminder, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -375,10 +369,7 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addBirthday, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
                                 Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
@@ -397,9 +388,7 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             if (mainMenu.isExpanded()) mainMenu.collapse();
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                                if (isNoteVisible()) {
-                                    ViewUtils.hideReveal(noteCard, isAnimation);
-                                }
+                                collapseViews();
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -417,10 +406,7 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addNote, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
-                            if (isNoteVisible()) {
-                                ViewUtils.hideReveal(noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -450,10 +436,7 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addReminder, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -467,10 +450,7 @@ public class ScreenManager extends AppCompatActivity
                         setUpButton(addPlace, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (mainMenu.isExpanded()) mainMenu.collapse();
-                                if (isNoteVisible()) {
-                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                                }
+                                collapseViews();
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -488,10 +468,7 @@ public class ScreenManager extends AppCompatActivity
                         setUpButton(addGroup, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if (mainMenu.isExpanded()) mainMenu.collapse();
-                                        if (isNoteVisible()) {
-                                            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                                        }
+                                        collapseViews();
 
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
@@ -508,10 +485,7 @@ public class ScreenManager extends AppCompatActivity
                         setUpButton(addTemplate, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if (mainMenu.isExpanded()) mainMenu.collapse();
-                                        if (isNoteVisible()) {
-                                            ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                                        }
+                                        collapseViews();
 
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
@@ -534,9 +508,7 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -552,9 +524,7 @@ public class ScreenManager extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                                if (isNoteVisible()) {
-                                    ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                                }
+                                collapseViews();
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -574,9 +544,7 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -591,9 +559,7 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -608,9 +574,7 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -627,9 +591,7 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (isNoteVisible()) {
-                                ViewUtils.hide(ScreenManager.this, noteCard, isAnimation);
-                            }
+                            collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -642,6 +604,13 @@ public class ScreenManager extends AppCompatActivity
                     mFab.setVisibility(View.VISIBLE);
                 }
             }
+        }
+    }
+
+    private void collapseViews() {
+        if (mainMenu.isExpanded()) mainMenu.collapse();
+        if (isNoteVisible()) {
+            ViewUtils.hideReveal(noteCard, isAnimation);
         }
     }
 
@@ -784,12 +753,18 @@ public class ScreenManager extends AppCompatActivity
                 Intent intentS = new Intent(this, com.cray.software.justreminder.SettingsActivity.class);
                 startActivity(intentS);
             } else if (tag.matches(VOICE_RECOGNIZER)) {
-                startVoiceRecognitionActivity();
+                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
                 if (!new GTasksHelper(this).isLinked()) {
-                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{"com.google"}, false, null, null, null, null);
-                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                    if (new Permissions(ScreenManager.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                                new String[]{"com.google"}, false, null, null, null, null);
+                        startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                    } else {
+                        new Permissions(ScreenManager.this).requestPermission(ScreenManager.this,
+                                new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                        Permissions.WRITE_EXTERNAL}, 103);
+                    }
                 }
             } else {
                 replace(ActiveFragment.newInstance(), tag);
@@ -994,7 +969,7 @@ public class ScreenManager extends AppCompatActivity
                 onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
                 return true;
             case R.id.action_voice:
-                startVoiceRecognitionActivity();
+                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -1450,21 +1425,6 @@ public class ScreenManager extends AppCompatActivity
         }, 2000);
     }
 
-    public void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mPrefs = new SharedPrefs(this);
-        if (!mPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, mPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
-        try {
-            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } catch (ActivityNotFoundException e){
-            Messages.toast(ScreenManager.this, getString(R.string.recognizer_not_found_error_message));
-        }
-    }
-
-
     void getAndUseAuthTokenInAsyncTask(Account account) {
         AsyncTask<Account, String, String> task = new AsyncTask<Account, String, String>() {
             ProgressDialog progressDlg;
@@ -1539,6 +1499,19 @@ public class ScreenManager extends AppCompatActivity
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             mPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case 103:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                }
+                break;
         }
     }
 

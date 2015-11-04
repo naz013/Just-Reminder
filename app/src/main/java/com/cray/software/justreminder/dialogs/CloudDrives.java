@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import com.cray.software.justreminder.interfaces.ExchangeConstants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -125,8 +127,7 @@ public class CloudDrives extends AppCompatActivity {
         dropboxTitle = (TextView) findViewById(R.id.dropboxTitle);
         exchangeTitle = (TextView) findViewById(R.id.exchangeTitle);
         gDriveTitle = (TextView) findViewById(R.id.gDriveTitle);
-        gDriveTitle.setText(gDriveTitle.getText() + " " + getString(R.string.string_and) +
-                " " + getString(R.string.google_tasks_title));
+        gDriveTitle.setText(SuperUtil.appendString(gDriveTitle.getText().toString(), " ", getString(R.string.string_and), " ", getString(R.string.google_tasks_title)));
 
         linkExchange = (Button) findViewById(R.id.linkExchange);
         linkExchange.setOnClickListener(new View.OnClickListener() {
@@ -191,14 +192,11 @@ public class CloudDrives extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode){
             case 103:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     switchGdrive();
-                } else {
-                    startActivity(new Intent(CloudDrives.this, ScreenManager.class));
-                    finish();
                 }
                 break;
         }
