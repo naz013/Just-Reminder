@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -18,12 +19,11 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.views.FloatingEditText;
 
 public class NewTemplate extends AppCompatActivity {
 
     private ColorSetter cs = new ColorSetter(NewTemplate.this);
-    private FloatingEditText placeName;
+    private EditText placeName;
     private DataBase db = new DataBase(NewTemplate.this);
     private TextView leftCharacters;
     private long id;
@@ -45,13 +45,14 @@ public class NewTemplate extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.new_template_title));
+        //toolbar.setTitle(getString(R.string.new_template_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         leftCharacters = (TextView) findViewById(R.id.leftCharacters);
+        leftCharacters.setText("");
 
-        placeName = (FloatingEditText) findViewById(R.id.placeName);
+        placeName = (EditText) findViewById(R.id.placeName);
         if (id != 0) {
             db.open();
             Cursor c = db.getTemplate(id);

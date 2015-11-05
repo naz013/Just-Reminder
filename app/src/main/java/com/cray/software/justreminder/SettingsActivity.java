@@ -36,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         TimePickerFragment.TimePickedListener{
 
     private ColorSetter cSetter = new ColorSetter(SettingsActivity.this);
+    private boolean isCreate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         getSupportActionBar().setTitle(R.string.action_settings);
 
         findViewById(R.id.fragment_container).setBackgroundColor(cSetter.getBackgroundStyle());
+
+        isCreate = true;
 
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) {
@@ -80,8 +83,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     protected void onResume() {
         super.onResume();
         setRequestedOrientation(cSetter.getRequestOrientation());
-        if (new SharedPrefs(this).loadBoolean(Prefs.UI_CHANGED)) recreate();
-        new SharedPrefs(this).saveBoolean(Prefs.UI_CHANGED, false);
+        if (new SharedPrefs(this).loadBoolean(Prefs.UI_CHANGED) && !isCreate) recreate();
+        isCreate = false;
+        //new SharedPrefs(this).saveBoolean(Prefs.UI_CHANGED, false);
     }
 
     /**

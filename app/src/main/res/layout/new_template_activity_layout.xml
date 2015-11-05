@@ -8,37 +8,38 @@
     android:layout_gravity="center"
     android:id="@+id/windowBackground">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
-
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/wrapper"
-        android:layout_height="match_parent">
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <com.cray.software.justreminder.views.FloatingEditText
-            app:floating_edit_text_highlighted_color="?attr/colorAccent"
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="72dp"
             android:id="@+id/placeName"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp"
-            android:singleLine="false"
-            android:maxLength="120"
-            android:textSize="@dimen/create_text_size_primary"
-            android:inputType="textMultiLine"
-            android:hint="@string/message_field_hint" />
+            android:textSize="@dimen/create_text_size_secondary"
+            android:hint="@string/message_field_hint"
+            android:textColorHint="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="@dimen/create_margin"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:textSize="@dimen/create_text_size_normal"
-            android:layout_below="@+id/placeName"
-            android:id="@+id/leftCharacters"/>
+    </android.support.v7.widget.Toolbar>
 
-    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/create_margin"
+        android:layout_marginRight="@dimen/create_margin"
+        android:layout_marginTop="@dimen/create_margin"
+        android:text="152"
+        android:textSize="@dimen/create_text_size_normal"
+        android:id="@+id/leftCharacters"/>
 </LinearLayout>

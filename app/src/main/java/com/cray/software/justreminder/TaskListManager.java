@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -24,7 +25,6 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 
@@ -39,7 +39,7 @@ public class TaskListManager extends AppCompatActivity {
 
     private long id;
     private Toolbar toolbar;
-    private FloatingEditText editField;
+    private EditText editField;
     private int color, sysDef;
 
     private TasksData data = new TasksData(TaskListManager.this);
@@ -60,7 +60,12 @@ public class TaskListManager extends AppCompatActivity {
         sPrefs = new SharedPrefs(TaskListManager.this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         toolbar.setOnMenuItemClickListener(
                 new Toolbar.OnMenuItemClickListener() {
@@ -80,14 +85,8 @@ public class TaskListManager extends AppCompatActivity {
 
         toolbar.inflateMenu(R.menu.save_menu);
 
-        editField = (FloatingEditText) findViewById(R.id.editField);
+        editField = (EditText) findViewById(R.id.editField);
         defaultCheck = (CheckBox) findViewById(R.id.defaultCheck);
-
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setElevation(0f);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 

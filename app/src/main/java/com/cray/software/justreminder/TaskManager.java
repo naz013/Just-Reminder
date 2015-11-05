@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,6 @@ import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -45,13 +45,9 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
-
 
 public class TaskManager extends AppCompatActivity {
     private ColorSetter cSetter = new ColorSetter(TaskManager.this);
@@ -61,7 +57,6 @@ public class TaskManager extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText editField, noteField;
     private TextView dateField;
-    private TextView dateYearField;
     private TextView timeField;
     private TextView listText;
     private LinearLayout dueContainer;
@@ -83,9 +78,6 @@ public class TaskManager extends AppCompatActivity {
 
     private static final int MENU_ITEM_DELETE = 12;
     private static final int MENU_ITEM_MOVE = 14;
-    private SimpleDateFormat full24Format = new SimpleDateFormat("EEE, dd MMMM", Locale.getDefault());
-
-    private FloatingActionButton mFab;
 
     private ArrayList<CategoryModel> categories = new ArrayList<>();
 
@@ -103,26 +95,12 @@ public class TaskManager extends AppCompatActivity {
         sPrefs = new SharedPrefs(TaskManager.this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
-
-        toolbar.setOnMenuItemClickListener(
-                new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case MENU_ITEM_DELETE:
-                                deleteDialog();
-                                break;
-                            case MENU_ITEM_MOVE:
-                                selectList(true);
-                                break;
-                        }
-                        return true;
-                    }
-                });
-
-        toolbar.inflateMenu(R.menu.save_menu);
-        toolbar.setTitle(getString(R.string.string_add_task));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         editField = (EditText) findViewById(R.id.editField);
         noteField = (EditText) findViewById(R.id.noteField);
@@ -150,33 +128,7 @@ public class TaskManager extends AppCompatActivity {
             }
         });
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setElevation(0f);
-
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
-        mFab = new FloatingActionButton(TaskManager.this);
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveTask();
-            }
-        });
-        mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorChooser());
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -189,15 +141,8 @@ public class TaskManager extends AppCompatActivity {
         reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
         reminderContainer.setVisibility(View.GONE);
 
-        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
         dueContainer = (LinearLayout) findViewById(R.id.dueContainer);
         dueContainer.setVisibility(View.GONE);
-        dateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dateDialog().show();
-            }
-        });
 
         dateField = (TextView) findViewById(R.id.dateField);
         dateField.setOnClickListener(new View.OnClickListener() {
@@ -207,7 +152,7 @@ public class TaskManager extends AppCompatActivity {
             }
         });
 
-        dateField.setText(full24Format.format(calendar.getTime()));
+        dateField.setText(TimeUtil.getDate(calendar.getTime()));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
@@ -221,10 +166,6 @@ public class TaskManager extends AppCompatActivity {
 
         timeField.setText(TimeUtil.getTime(calendar.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-
-        dateYearField = (TextView) findViewById(R.id.dateYearField);
-        dateYearField.setText(String.valueOf(myYear));
-        dateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
 
         Intent intent = getIntent();
         long tmp = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
@@ -281,7 +222,7 @@ public class TaskManager extends AppCompatActivity {
                         myMonth = calendar.get(Calendar.MONTH);
                         myDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-                        dateField.setText(full24Format.format(calendar.getTime()));
+                        dateField.setText(TimeUtil.getDate(calendar.getTime()));
 
                         dueCheck.setChecked(true);
                     }
@@ -334,11 +275,24 @@ public class TaskManager extends AppCompatActivity {
                 else {
                     listText.setText(categories.get(which).getTitle());
                     listId = categories.get(which).getUuID();
+                    reloadColor(listId);
                 }
             }
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    private void reloadColor(String listId) {
+        TasksData db = new TasksData(this);
+        db.open();
+        Cursor x = db.getTasksList(listId);
+        if (x != null && x.moveToFirst()) {
+            color = x.getInt(x.getColumnIndex(TasksConstants.COLUMN_COLOR));
+            setColor(color);
+        }
+        if (x != null) x.close();
+        db.close();
     }
 
     private void saveTask() {
@@ -354,12 +308,7 @@ public class TaskManager extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.YEAR, myYear);
-        calendar.set(Calendar.MONTH, myMonth);
-        calendar.set(Calendar.DAY_OF_MONTH, myDay);
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
+        calendar.set(myYear, myMonth, myDay, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
         long due = 0;
@@ -369,8 +318,8 @@ public class TaskManager extends AppCompatActivity {
         data.open();
         if (action.matches(TasksConstants.CREATE)){
             long localId = data.addTask(taskName, null, 0, false, due, null, null, note,
-                    null, null, null, 0, remId, initListId, GTasksHelper.TASKS_NEED_ACTION, false);
-            new TaskAsync(TaskManager.this, taskName, initListId, null, TasksConstants.INSERT_TASK,
+                    null, null, null, 0, remId, listId != null ? listId : initListId, GTasksHelper.TASKS_NEED_ACTION, false);
+            new TaskAsync(TaskManager.this, taskName, listId != null ? listId : initListId, null, TasksConstants.INSERT_TASK,
                     due, note, localId).execute();
         }
         if (action.matches(TasksConstants.EDIT)) {
@@ -390,17 +339,6 @@ public class TaskManager extends AppCompatActivity {
         }
         if (data != null) data.close();
         finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private long saveReminder(String task){
@@ -462,8 +400,18 @@ public class TaskManager extends AppCompatActivity {
         if (c != null) c.close();
     }
 
+    private void setColor(int i){
+        color = i;
+        toolbar.setBackgroundColor(cSetter.getNoteColor(i));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
         if (id != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task));
             menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, getString(R.string.move_to_list));
@@ -471,15 +419,24 @@ public class TaskManager extends AppCompatActivity {
         return true;
     }
 
-    private void setColor(int i){
-        color = i;
-        toolbar.setBackgroundColor(cSetter.getNoteColor(i));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_ITEM_DELETE:
+                deleteDialog();
+                return true;
+            case MENU_ITEM_MOVE:
+                selectList(true);
+                return true;
+            case R.id.action_add:
+                saveTask();
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        mFab.setColorNormal(cSetter.getNoteDarkColor(i));
-        mFab.setColorPressed(cSetter.getNoteLightColor(i));
     }
 
     protected Dialog dateDialog() {
@@ -496,12 +453,9 @@ public class TaskManager extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, monthOfYear);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            calendar.set(year, monthOfYear, dayOfMonth);
 
-            dateField.setText(full24Format.format(calendar.getTime()));
-            dateYearField.setText(String.valueOf(myYear));
+            dateField.setText(TimeUtil.getDate(calendar.getTime()));
         }
     };
 
@@ -566,25 +520,20 @@ public class TaskManager extends AppCompatActivity {
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return inflater.inflate(R.layout.list_item_category_card, null);
+            return inflater.inflate(android.R.layout.simple_list_item_1, null);
         }
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             c.moveToPosition(position);
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.list_item_category_card, null);
+                convertView = inflater.inflate(android.R.layout.simple_list_item_1, null);
             }
 
             String text = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
 
-            TextView textView = (TextView) convertView.findViewById(R.id.textView);
+            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
             textView.setText(text);
-
-            RelativeLayout background = (RelativeLayout) convertView.findViewById(R.id.background);
-            background.setBackgroundResource(cs.getCardDrawableStyle());
-
-            convertView.findViewById(R.id.indicator).setVisibility(View.GONE);
 
             return convertView;
         }

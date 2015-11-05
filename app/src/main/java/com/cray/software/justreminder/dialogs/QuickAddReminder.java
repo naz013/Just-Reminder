@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -32,7 +31,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -45,7 +43,7 @@ public class QuickAddReminder extends AppCompatActivity implements
     private EditText task_text;
     private EditText repeatDays;
     private CheckBox taskExport;
-    private TextView dateField, timeField, dateYearField;
+    private TextView dateField, timeField;
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -71,7 +69,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.add_reminder_dialog_title));
+        //toolbar.setTitle(getString(R.string.add_reminder_dialog_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -97,14 +95,6 @@ public class QuickAddReminder extends AppCompatActivity implements
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
-        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
-        dateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dateDialog();
-            }
-        });
-
         dateField = (TextView) findViewById(R.id.dateField);
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,21 +103,8 @@ public class QuickAddReminder extends AppCompatActivity implements
             }
         });
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
+        dateField.setText(TimeUtil.getDate(c.getTime()));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        dateYearField = (TextView) findViewById(R.id.dateYearField);
-        dateYearField.setText(String.valueOf(myYear));
-        dateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
@@ -177,17 +154,11 @@ public class QuickAddReminder extends AppCompatActivity implements
         myMonth = monthOfYear;
         myDay = dayOfMonth;
 
-        String dayStr;
-        String monthStr;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(myYear, myMonth, myDay);
 
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        dateYearField.setText(String.valueOf(myYear));
+        dateField.setText(TimeUtil.getDate(calendar.getTime()));
     }
 
     protected Dialog timeDialog() {

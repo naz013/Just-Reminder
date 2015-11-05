@@ -28,11 +28,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -42,7 +38,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private ReminderDataProvider provider;
     private RecyclerListener mEventListener;
     private boolean isDark;
-    private boolean is24;
     private boolean isGrid;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
@@ -52,7 +47,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
-        is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         isGrid = prefs.loadBoolean(Prefs.LIST_GRID);
         setHasStableIds(true);
     }
@@ -187,14 +181,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                         getDifference(due));
                 viewHolder.repeatInterval.setVisibility(View.GONE);
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(due);
-                Date mTime = calendar.getTime();
-                viewHolder.viewTime.setText(TimeUtil.getTime(mTime, is24));
-                viewHolder.taskDate.setText(TimeUtil.dateFormat.format(calendar.getTime()));
+                String[] dT = mCount.getNextDateTime(due);
+                viewHolder.taskDate.setText(dT[0]);
+                viewHolder.viewTime.setText(dT[1]);
+
                 if (isDone == 0) {
-                    String remaining = mCount.getRemaining(due);
-                    viewHolder.leftTime.setText(remaining);
+                    viewHolder.leftTime.setText(mCount.getRemaining(due));
                 }
             } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
@@ -213,15 +205,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                         getDifference(due));
                 viewHolder.repeatInterval.setVisibility(View.GONE);
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(due);
-
-                viewHolder.taskDate.setText(repeat);
+                String[] dT = mCount.getNextDateTime(due);
                 if (isDone == 0) {
-                    String remaining = mCount.getRemaining(due);
-                    viewHolder.leftTime.setText(remaining);
+                    viewHolder.leftTime.setText(mCount.getRemaining(due));
                 }
-                viewHolder.viewTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
+                viewHolder.taskDate.setText(dT[0]);
+                viewHolder.viewTime.setText(dT[1]);
             } else {
                 if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                         type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
@@ -273,19 +262,15 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                     }
                 }
 
-                String[] dT = mCount.
-                        getNextDateTime(due);
+                String[] dT = mCount.getNextDateTime(due);
+
                 if (lat != 0.0 || lon != 0.0) {
                     viewHolder.taskDate.setText(String.format("%.5f", lat));
                     viewHolder.viewTime.setText(String.format("%.5f", lon));
                     if (archived > 0) viewHolder.leftTime.setVisibility(View.GONE);
                     else viewHolder.leftTime.setVisibility(View.GONE);
                 } else {
-                    if (isDone == 0) {
-                        viewHolder.leftTime.setText(mCount.
-                                getRemaining(due));
-                    }
-
+                    if (isDone == 0) viewHolder.leftTime.setText(mCount.getRemaining(due));
                     viewHolder.taskDate.setText(dT[0]);
                     viewHolder.viewTime.setText(dT[1]);
                 }
@@ -379,7 +364,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder1.subBackground);
+                    if (mEventListener != null)
+                        mEventListener.onItemClicked(position, viewHolder1.subBackground);
                 }
             });
 

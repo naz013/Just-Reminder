@@ -9,12 +9,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Wearable" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/calDroid" />
-            <option value="$PROJECT_DIR$/lvl" />
+            <option value="$PROJECT_DIR$/fab" />
+            <option value="$PROJECT_DIR$/flextcal" />
             <option value="$PROJECT_DIR$/photoPreview" />
-            <option value="$PROJECT_DIR$/swipe_actions" />
           </set>
         </option>
       </GradleProjectSettings>

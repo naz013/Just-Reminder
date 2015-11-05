@@ -6,8 +6,30 @@
     android:id="@+id/windowBackground"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar_note"
-        android:id="@+id/toolbar"/>
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/editField"
+            android:textSize="@dimen/create_text_size_secondary"
+            android:hint="@string/hint_list_name"
+            android:textColorHint="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="@dimen/create_margin"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,18 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <com.cray.software.justreminder.views.FloatingEditText
-                app:floating_edit_text_highlighted_color="?attr/colorAccent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editField"
-                android:textSize="@dimen/create_text_size_secondary"
-                android:hint="@string/hint_list_name"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/category_margin"
-                android:layout_marginRight="@dimen/category_margin"/>
 
             <CheckBox
                 android:layout_width="wrap_content"

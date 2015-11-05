@@ -65,7 +65,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.add_birthday_button));
+        //toolbar.setTitle(getString(R.string.add_birthday_button));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 

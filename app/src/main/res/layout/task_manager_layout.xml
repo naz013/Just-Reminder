@@ -5,13 +5,30 @@
     android:id="@+id/windowBackground"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar_note"
-        android:id="@+id/toolbar"/>
-
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/wrapper"
-        android:layout_height="match_parent">
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/toolbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:id="@+id/editField"
+            android:textSize="@dimen/create_text_size_secondary"
+            android:hint="@string/tast_hint"
+            android:textColorHint="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="@dimen/create_margin"/>
+
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,38 +43,20 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editField"
-                android:textSize="@dimen/create_text_size_secondary"
-                android:hint="@string/tast_hint"
-                android:layout_gravity="center_horizontal"
-                android:background="@android:color/transparent"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="15dp"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/grey_dark"/>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:id="@+id/noteField"
+                android:layout_marginTop="@dimen/create_margin"
                 android:textSize="@dimen/create_text_size_secondary"
                 android:hint="@string/quick_note_hint"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:background="@color/grey_dark"/>
 
             <CheckBox
@@ -65,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/dueCheck"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:layout_gravity="center"
                 android:text="@string/string_add_due"/>
 
@@ -74,69 +73,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:id="@+id/dueContainer">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/simple_date"
-                    android:textStyle="bold"
-                    android:clickable="false"
-                    android:textAllCaps="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_vertical"
-                    android:textSize="@dimen/create_text_size_normal" />
+                    android:text="Tue, 5 Nov 2015"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:id="@+id/dateField" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:id="@+id/dateRing"
-                        android:gravity="center"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:text="23/06"
-                            android:textSize="@dimen/create_text_size_primary"
-                            android:id="@+id/dateField" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:text="2014"
-                            android:textSize="@dimen/create_text_size_secondary"
-                            android:id="@+id/dateYearField" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                </LinearLayout>
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:background="@color/grey_dark"/>
 
             <CheckBox
@@ -144,8 +100,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/reminderCheck"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:layout_gravity="center"
                 android:text="@string/string_add_reminder"/>
 
@@ -153,43 +109,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:id="@+id/reminderContainer">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/simple_time"
-                    android:textStyle="bold"
-                    android:clickable="false"
-                    android:textAllCaps="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_vertical"
-                    android:textSize="@dimen/create_text_size_normal" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:text="14:05"
+                    android:layout_alignParentRight="true"
                     android:ems="10"
-                    android:text="19:45"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:textSize="@dimen/create_text_size_primary"
-                    android:layout_marginTop="10dp"
                     android:id="@+id/timeField" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:background="@color/grey_dark"/>
 
             <TextView
@@ -198,9 +137,9 @@
                 android:textStyle="bold"
                 android:clickable="false"
                 android:textAllCaps="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/create_text_size_normal"
@@ -209,31 +148,27 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:textAllCaps="true"
                 android:id="@+id/listText"
                 android:text="Reminder"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                android:layout_marginBottom="@dimen/create_margin"
                 android:gravity="center"
-                android:textSize="@dimen/create_text_size_primary"
-                android:layout_marginTop="10dp" />
+                android:textSize="@dimen/create_text_size_normal"
+                android:layout_marginTop="@dimen/create_margin" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:background="@color/grey_dark"/>
 
         </LinearLayout>
 
     </ScrollView>
-
-    </RelativeLayout>
 
 </LinearLayout>

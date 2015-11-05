@@ -23,9 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/export_check_title"
                 android:id="@+id/dateExport" />
 
@@ -33,63 +33,41 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_google_tasks"
                 android:id="@+id/dateTaskExport" />
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
                 android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:id="@+id/dateRing">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="25/06"
-                        android:ems="10"
-                        android:clickable="false"
-                        android:gravity="center"
-                        android:textSize="@dimen/create_text_size_primary"
-                        android:id="@+id/dateField" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2014"
-                        android:ems="10"
-                        android:clickable="false"
-                        android:gravity="center"
-                        android:textSize="@dimen/create_text_size_secondary"
-                        android:id="@+id/dateYearField" />
-
-                </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textSize="@dimen/create_text_size_primary"
+                    android:layout_height="wrap_content"
+                    android:text="Tue, 5 Nov 2015"
+                    android:ems="10"
+                    android:gravity="center|left"
+                    android:layout_toLeftOf="@+id/timeField"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:id="@+id/dateField" />
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|right"
+                    android:textSize="@dimen/create_text_size_normal"
                     android:text="14:05"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:layout_marginLeft="10dp"
+                    android:layout_alignParentRight="true"
                     android:ems="10"
                     android:id="@+id/timeField" />
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -125,7 +103,7 @@
                         android:inputType="number"
                         android:gravity="center"
                         android:layout_marginLeft="@dimen/create_margin"
-                        android:textSize="@dimen/create_text_size_primary"
+                        android:textSize="@dimen/create_text_size_normal"
                         android:id="@+id/repeatDays"/>
 
                     <TextView

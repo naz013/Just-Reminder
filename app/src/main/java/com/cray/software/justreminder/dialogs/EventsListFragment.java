@@ -30,6 +30,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     private RecyclerView listView;
     private LinearLayout emptyItem;
+    private boolean isCreate = false;
 
     public void setData(ArrayList<EventsDataProvider.EventsItem> datas){
         this.datas = datas;
@@ -65,8 +66,16 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         listView = (RecyclerView) view.findViewById(R.id.currentList);
 
         loaderAdapter();
+        isCreate = true;
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isCreate) loaderAdapter();
+        isCreate = false;
     }
 
     public void loaderAdapter(){

@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="date4j">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/calDroid/libs/date4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/flextcal/libs/date4j.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginBottom="5dp">
+    android:layout_width="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -15,7 +12,6 @@
             android:layout_width="match_parent"
             android:layout_height="90dp"
             android:id="@+id/background"
-            android:padding="10dp"
             android:background="@drawable/patch_card_bg"
             android:focusable="false">
 
@@ -38,8 +34,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -58,15 +55,15 @@
                         android:gravity="center"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:paddingBottom="5dp"
                         android:id="@+id/eventDate"/>
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -85,7 +82,6 @@
                         android:gravity="center"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:layout_marginBottom="5dp"
                         android:id="@+id/eventNumber"/>
 
                 </LinearLayout>

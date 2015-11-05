@@ -6,31 +6,29 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.views.FloatingEditText;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class CategoryManager extends AppCompatActivity {
 
     private ColorSetter cs = new ColorSetter(CategoryManager.this);
-    private FloatingEditText editField;
+    private EditText editField;
     private RadioButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox, blue_checkbox, light_blue_checkbox,
             yellow_checkbox, orange_checkbox, grey_checkbox, pink_checkbox, sand_checkbox, brown_checkbox,
             deepPurple, indigoCheckbox, limeCheckbox, deepOrange;
     private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroupPro;
-    private SharedPrefs sPrefs = new SharedPrefs(CategoryManager.this);
     private DataBase db;
     private long id;
     private int color = 0;
@@ -52,11 +50,11 @@ public class CategoryManager extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.string_new_category));
+        //toolbar.setTitle(getString(R.string.string_new_category));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        editField = (FloatingEditText) findViewById(R.id.editField);
+        editField = (EditText) findViewById(R.id.editField);
         if (id != 0) {
             db = new DataBase(CategoryManager.this);
             db.open();
@@ -69,25 +67,6 @@ public class CategoryManager extends AppCompatActivity {
             db.close();
             toolbar.setTitle(getString(R.string.string_edit_category));
         }
-
-        FloatingActionButton mFab = new FloatingActionButton(CategoryManager.this);
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addTemplate();
-            }
-        });
 
         initRadio();
     }
@@ -131,7 +110,7 @@ public class CategoryManager extends AppCompatActivity {
         setUpRadio();
     }
 
-    private void addTemplate(){
+    private void saveCategory(){
         String text = editField.getText().toString().trim();
         if (text.length() == 0) {
             editField.setError(getString(R.string.empty_field_error));
@@ -149,8 +128,18 @@ public class CategoryManager extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.save_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_add:
+                saveCategory();
+                return true;
             case android.R.id.home:
                 finish();
                 return true;

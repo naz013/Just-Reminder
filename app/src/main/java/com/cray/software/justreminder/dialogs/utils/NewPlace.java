@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
@@ -18,13 +19,12 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.google.android.gms.maps.model.LatLng;
 
 public class NewPlace extends AppCompatActivity implements MapListener {
 
     private ColorSetter cs = new ColorSetter(NewPlace.this);
-    private FloatingEditText placeName;
+    private EditText placeName;
     private SharedPrefs sPrefs = new SharedPrefs(NewPlace.this);
     private DataBase db = new DataBase(NewPlace.this);
 
@@ -46,13 +46,13 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.new_place_title));
+        //toolbar.setTitle(getString(R.string.new_place_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
-        placeName = (FloatingEditText) findViewById(R.id.placeName);
+        placeName = (EditText) findViewById(R.id.placeName);
         MapFragment googleMap = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap.enableTouch(true);
         googleMap.enableCloseButton(false);

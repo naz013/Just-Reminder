@@ -96,7 +96,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private CheckBox dateTaskExport;
     private EditText repeatDays;
-    private TextView dateField, timeField, dateYearField;
+    private TextView dateField, timeField;
 
     /**
      * Weekday reminder type variables.
@@ -123,7 +123,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Call reminder variables.
      */
     private FloatingEditText phoneNumber;
-    private TextView callDate, callTime, callYearDate;
+    private TextView callDate, callTime;
     private CheckBox callTaskExport;
     private EditText repeatDaysCall;
 
@@ -131,7 +131,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Message reminder variables.
      */
     private FloatingEditText messageNumber;
-    private TextView messageDate, messageYearDate, messageTime;
+    private TextView messageDate, messageTime;
     private CheckBox messageTaskExport;
     private EditText repeatDaysMessage;
 
@@ -150,7 +150,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private CheckBox appTaskExport;
     private EditText browseLink, repeatDaysApp;
     private RadioButton application, browser;
-    private TextView appDate, appYearDate, appTime, applicationName;
+    private TextView appDate, appTime, applicationName;
 
     /**
      * Skype reminder type variables.
@@ -159,7 +159,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private EditText skypeUser, repeatDaysSkype;
     private RadioButton skypeCall;
     private RadioButton skypeVideo;
-    private TextView skypeDate, skypeYearDate, skypeTime;
+    private TextView skypeDate, skypeTime;
 
     /**
      * Location reminder variables.
@@ -174,7 +174,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private RadioButton callCheckLocation, messageCheckLocation;
     private FloatingEditText phoneNumberLocation;
     private MapFragment map;
-    private TextView locationDateField, locationDateYearField, locationTimeField;
+    private TextView locationDateField, locationTimeField;
     private AutoCompleteTextView searchField;
 
     /**
@@ -185,7 +185,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private LinearLayout delayLayoutOut;
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
-    private TextView locationOutDateField, locationOutDateYearField, locationOutTimeField, mapLocation,
+    private TextView locationOutDateField, locationOutTimeField, mapLocation,
             radiusMark, currentLocation;
     private CheckBox attachLocationOutAction, attachDelayOut;
     private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
@@ -399,6 +399,26 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     };
 
     /**
+     * Click listener for date fields.
+     */
+    private View.OnClickListener dateClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dateDialog();
+        }
+    };
+
+    /**
+     * Click listener for time fields.
+     */
+    private View.OnClickListener timeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            timeDialog().show();
+        }
+    };
+
+    /**
      * Show shopping list reminder type creation layout.
      */
     private void attachShoppingList(){
@@ -518,45 +538,19 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        LinearLayout dateRing = (LinearLayout) findViewById(R.id.dateRing);
-        dateRing.setOnClickListener(this);
-
         dateField = (TextView) findViewById(R.id.dateField);
-        dateField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        dateField.setOnClickListener(dateClick);
 
         dateTaskExport = (CheckBox) findViewById(R.id.dateTaskExport);
         if (gtx.isLinked()){
             dateTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
+        dateField.setText(TimeUtil.getDate(cal.getTime()));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        dateYearField = (TextView) findViewById(R.id.dateYearField);
-        dateYearField.setText(String.valueOf(myYear));
-        dateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
-
         timeField = (TextView) findViewById(R.id.timeField);
-        timeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        timeField.setOnClickListener(timeClick);
         timeField.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -585,21 +579,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (c != null) c.close();
-
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
             timeField.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            dateYearField.setText(String.valueOf(myYear));
+            dateField.setText(TimeUtil.getDate(cal.getTime()));
             repeatDateInt.setProgress(repCode);
             repeatDays.setText(String.valueOf(repCode));
         }
@@ -617,11 +602,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         if (myYear > 0){
-            cal.set(Calendar.YEAR, myYear);
-            cal.set(Calendar.MONTH, myMonth);
-            cal.set(Calendar.DAY_OF_MONTH, myDay);
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
         } else {
             myYear = cal.get(Calendar.YEAR);
             myMonth = cal.get(Calendar.MONTH);
@@ -631,12 +612,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         monthDayField = (TextView) findViewById(R.id.monthDayField);
-        monthDayField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        monthDayField.setOnClickListener(dateClick);
 
         CheckBox monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
         if ((isCalendar || isStock)){
@@ -657,12 +633,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         monthDayField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
-        monthDayTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        monthDayTimeField.setOnClickListener(timeClick);
         monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -740,8 +711,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (myDay < 10) dayStr = "0" + myDay;
             else dayStr = String.valueOf(myDay);
 
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
             monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
@@ -836,12 +806,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         weekTimeField = (TextView) findViewById(R.id.weekTimeField);
-        weekTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        weekTimeField.setOnClickListener(timeClick);
         weekTimeField.setText(TimeUtil.getTime(c.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         weekTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -1117,41 +1082,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        LinearLayout skypeDateRing = (LinearLayout) findViewById(R.id.skypeDateRing);
-        skypeDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
         skypeTaskExport = (CheckBox) findViewById(R.id.skypeTaskExport);
         if (gtx.isLinked()){
             skypeTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
         skypeDate = (TextView) findViewById(R.id.skypeDate);
-        skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        skypeDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        skypeDate.setText(TimeUtil.getDate(cal.getTime()));
+        skypeDate.setOnClickListener(dateClick);
         skypeDate.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        skypeYearDate = (TextView) findViewById(R.id.skypeYearDate);
-        skypeYearDate.setText(String.valueOf(myYear));
-        skypeYearDate.setTypeface(AssetsUtil.getThinTypeface(this));
 
         skypeTime = (TextView) findViewById(R.id.skypeTime);
         skypeTime.setText(TimeUtil.getTime(cal.getTime(),
@@ -1200,19 +1139,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 skypeChat.setChecked(true);
             }
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
             skypeUser.setText(number);
-            skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            skypeYearDate.setText(String.valueOf(myYear));
+            skypeDate.setText(TimeUtil.getDate(cal.getTime()));
             skypeTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatSkype.setProgress(repCode);
@@ -1254,51 +1185,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        LinearLayout appDateRing = (LinearLayout) findViewById(R.id.appDateRing);
-        appDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
         appTaskExport = (CheckBox) findViewById(R.id.appTaskExport);
         if (gtx.isLinked()){
             appTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
         appDate = (TextView) findViewById(R.id.appDate);
-        appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        appDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        appDate.setText(TimeUtil.getDate(cal.getTime()));
+        appDate.setOnClickListener(dateClick);
         appDate.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        appYearDate = (TextView) findViewById(R.id.appYearDate);
-        appYearDate.setText(String.valueOf(myYear));
-        appYearDate.setTypeface(AssetsUtil.getThinTypeface(this));
 
         appTime = (TextView) findViewById(R.id.appTime);
         appTime.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        appTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        appTime.setOnClickListener(timeClick);
         appTime.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
@@ -1348,19 +1248,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 browseLink.setText(number);
             }
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
-
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
             taskField.setText(text);
 
-            appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            appYearDate.setText(String.valueOf(myYear));
+            appDate.setText(TimeUtil.getDate(cal.getTime()));
             appTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatApp.setProgress(repCode);
@@ -1389,46 +1280,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        LinearLayout callDateRing = (LinearLayout) findViewById(R.id.callDateRing);
-        callDateRing.setOnClickListener(this);
-
         callTaskExport = (CheckBox) findViewById(R.id.callTaskExport);
         if (gtx.isLinked()){
             callTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
         callDate = (TextView) findViewById(R.id.callDate);
-        callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        callDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        callDate.setText(TimeUtil.getDate(cal.getTime()));
+        callDate.setOnClickListener(dateClick);
         callDate.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        callYearDate = (TextView) findViewById(R.id.callYearDate);
-        callYearDate.setText(String.valueOf(myYear));
-        callYearDate.setTypeface(AssetsUtil.getThinTypeface(this));
 
         callTime = (TextView) findViewById(R.id.callTime);
         callTime.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        callTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        callTime.setOnClickListener(timeClick);
         callTime.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
@@ -1457,19 +1322,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (c != null) c.close();
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
             phoneNumber.setText(number);
-            callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            callYearDate.setText(String.valueOf(myYear));
+            callDate.setText(TimeUtil.getDate(cal.getTime()));
             callTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatCallInt.setProgress(repCode);
@@ -1498,46 +1355,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        LinearLayout messageDateRing = (LinearLayout) findViewById(R.id.messageDateRing);
-        messageDateRing.setOnClickListener(this);
-
         messageTaskExport = (CheckBox) findViewById(R.id.messageTaskExport);
         if (gtx.isLinked()){
             messageTaskExport.setVisibility(View.VISIBLE);
         }
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
         messageDate = (TextView) findViewById(R.id.messageDate);
-        messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        messageDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        messageDate.setText(TimeUtil.getDate(cal.getTime()));
+        messageDate.setOnClickListener(dateClick);
         messageDate.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        messageYearDate = (TextView) findViewById(R.id.messageYearDate);
-        messageYearDate.setText(String.valueOf(myYear));
-        messageYearDate.setTypeface(AssetsUtil.getThinTypeface(this));
 
         messageTime = (TextView) findViewById(R.id.messageTime);
         messageTime.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        messageTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        messageTime.setOnClickListener(timeClick);
         messageTime.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
@@ -1566,19 +1397,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (c != null) c.close();
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
-
-            cal.set(Calendar.HOUR_OF_DAY, myHour);
-            cal.set(Calendar.MINUTE, myMinute);
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
             messageNumber.setText(number);
-            messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            messageYearDate.setText(String.valueOf(myYear));
+            messageDate.setText(TimeUtil.getDate(cal.getTime()));
             messageTime.setText(TimeUtil.getTime(cal.getTime(),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             repeatMessageInt.setProgress(repCode);
@@ -1746,39 +1569,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        LinearLayout locationDateRing = (LinearLayout) findViewById(R.id.locationDateRing);
-        locationDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
         locationDateField = (TextView) findViewById(R.id.locationDateField);
         locationDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        locationDateYearField = (TextView) findViewById(R.id.locationDateYearField);
+        locationDateField.setText(TimeUtil.getDate(cal.getTime()));
+        locationDateField.setOnClickListener(dateClick);
+
         locationTimeField = (TextView) findViewById(R.id.locationTimeField);
         locationTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
         locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        locationTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
-        locationDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
-        locationDateYearField.setText(String.valueOf(myYear));
+        locationTimeField.setOnClickListener(timeClick);
 
         if (id != 0) {
             fdb.open();
@@ -1800,19 +1600,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (c != null) c.close();
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
-                if (myDay < 10) dayStr = "0" + myDay;
-                else dayStr = String.valueOf(myDay);
-
-                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-                else monthStr = String.valueOf(myMonth + 1);
-
-                cal.set(Calendar.HOUR_OF_DAY, myHour);
-                cal.set(Calendar.MINUTE, myMinute);
+                cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-                locationDateYearField.setText(String.valueOf(myYear));
+                locationDateField.setText(TimeUtil.getDate(cal.getTime()));
                 attackDelay.setChecked(true);
             } else {
                 attackDelay.setChecked(false);
@@ -1963,39 +1755,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myHour = cal.get(Calendar.HOUR_OF_DAY);
         myMinute = cal.get(Calendar.MINUTE);
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
-
-        LinearLayout locationOutDateRing = (LinearLayout) findViewById(R.id.locationOutDateRing);
-        locationOutDateRing.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-
         locationOutDateField = (TextView) findViewById(R.id.locationOutDateField);
         locationOutDateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-        locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-        locationOutDateYearField = (TextView) findViewById(R.id.locationOutDateYearField);
+        locationOutDateField.setText(TimeUtil.getDate(cal.getTime()));
+        locationOutDateField.setOnClickListener(dateClick);
+
         locationOutTimeField = (TextView) findViewById(R.id.locationOutTimeField);
         locationOutTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
         locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        locationOutTimeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
-        locationOutDateYearField.setTypeface(AssetsUtil.getThinTypeface(this));
-        locationOutDateYearField.setText(String.valueOf(myYear));
+        locationOutTimeField.setOnClickListener(timeClick);
 
         if (curPlace != null) {
             int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
@@ -2023,19 +1792,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (c != null) c.close();
 
             if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
-                if (myDay < 10) dayStr = "0" + myDay;
-                else dayStr = String.valueOf(myDay);
-
-                if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-                else monthStr = String.valueOf(myMonth + 1);
-
-                cal.set(Calendar.HOUR_OF_DAY, myHour);
-                cal.set(Calendar.MINUTE, myMinute);
+                cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
                         sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-                locationOutDateYearField.setText(String.valueOf(myYear));
+                locationOutDateField.setText(TimeUtil.getDate(cal.getTime()));
                 attachDelayOut.setChecked(true);
             } else {
                 attachDelayOut.setChecked(false);
@@ -3000,20 +2761,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         }
         switch (v.getId()){
-            case R.id.callDateRing:
-                dateDialog();
-                break;
             case R.id.callTime:
                 timeDialog().show();
                 break;
-            case R.id.messageDateRing:
-                dateDialog();
-                break;
             case R.id.messageTime:
                 timeDialog().show();
-                break;
-            case R.id.dateRing:
-                dateDialog();
                 break;
             case R.id.timeField:
                 timeDialog().show();
@@ -3071,55 +2823,43 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myMonth = monthOfYear;
         myDay = dayOfMonth;
 
-        String dayStr;
-        String monthStr;
-
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(year, monthOfYear, dayOfMonth);
 
         if (isCallAttached()){
-            callDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            callYearDate.setText(String.valueOf(myYear));
+            callDate.setText(TimeUtil.getDate(calendar.getTime()));
         }
         if (isMonthDayAttached()){
-            if (myDay < 29) monthDayField.setText(dayStr);
+            if (myDay < 29) monthDayField.setText(dayOfMonth);
             else {
                 myDay = 28;
                 Messages.toast(BackupFileEdit.this, getString(R.string.string_max_day_message));
             }
         }
         if (isSkypeAttached()){
-            skypeDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            skypeYearDate.setText(String.valueOf(myYear));
+            skypeDate.setText(TimeUtil.getDate(calendar.getTime()));
         }
         if (isApplicationAttached()){
-            appDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            appYearDate.setText(String.valueOf(myYear));
+            appDate.setText(TimeUtil.getDate(calendar.getTime()));
         }
         if (isDateReminderAttached()){
-            dateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            dateYearField.setText(String.valueOf(myYear));
+            dateField.setText(TimeUtil.getDate(calendar.getTime()));
         }
         if (isMessageAttached()){
-            messageDate.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-            messageYearDate.setText(String.valueOf(myYear));
+            messageDate.setText(TimeUtil.getDate(calendar.getTime()));
         }
         if (isLocationAttached()){
             if (attackDelay.isChecked()){
                 if (delayLayout.getVisibility() == View.VISIBLE) {
-                    locationDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-                    locationDateYearField.setText(String.valueOf(myYear));
+                    locationDateField.setText(TimeUtil.getDate(calendar.getTime()));
                 }
             }
         }
         if (isLocationOutAttached()){
             if (attachDelayOut.isChecked()){
                 if (delayLayoutOut.getVisibility() == View.VISIBLE) {
-                    locationOutDateField.setText(SuperUtil.appendString(dayStr, "/", monthStr));
-                    locationOutDateYearField.setText(String.valueOf(myYear));
+                    locationOutDateField.setText(TimeUtil.getDate(calendar.getTime()));
                 }
             }
         }

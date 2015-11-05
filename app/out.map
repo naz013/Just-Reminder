@@ -17069,211 +17069,206 @@ com.cray.software.justreminder.BackupFileEdit -> com.cray.software.justreminder.
     android.widget.EditText repeatDays -> c
     android.widget.TextView dateField -> d
     android.widget.TextView timeField -> e
-    android.widget.TextView dateYearField -> f
-    android.widget.LinearLayout action_layout -> g
-    com.cray.software.justreminder.views.FloatingEditText weekPhoneNumber -> h
-    android.widget.TextView weekTimeField -> i
-    android.widget.ImageButton weekAddNumberButton -> j
-    android.widget.ToggleButton mondayCheck -> k
-    android.widget.ToggleButton tuesdayCheck -> l
-    android.widget.ToggleButton wednesdayCheck -> m
-    android.widget.ToggleButton thursdayCheck -> n
-    android.widget.ToggleButton fridayCheck -> o
-    android.widget.ToggleButton saturdayCheck -> p
-    android.widget.ToggleButton sundayCheck -> q
-    android.widget.RadioButton callCheck -> r
-    android.widget.RadioButton messageCheck -> s
-    android.widget.CheckBox attachAction -> t
-    android.widget.CheckBox weekTaskExport -> u
-    android.widget.CheckBox monthDayTaskExport -> v
-    android.widget.CheckBox monthDayAttachAction -> w
-    android.widget.LinearLayout monthDayActionLayout -> x
-    android.widget.TextView monthDayField -> y
-    android.widget.TextView monthDayTimeField -> z
-    android.widget.RadioButton monthDayCallCheck -> A
-    android.widget.RadioButton monthDayMessageCheck -> B
-    android.widget.RadioButton dayCheck -> C
-    android.widget.RadioButton lastCheck -> D
-    android.widget.ImageButton monthDayAddNumberButton -> E
-    com.cray.software.justreminder.views.FloatingEditText monthDayPhoneNumber -> F
-    com.cray.software.justreminder.views.FloatingEditText phoneNumber -> G
-    android.widget.TextView callDate -> H
-    android.widget.TextView callTime -> I
-    android.widget.TextView callYearDate -> J
-    android.widget.CheckBox callTaskExport -> K
-    android.widget.EditText repeatDaysCall -> L
-    com.cray.software.justreminder.views.FloatingEditText messageNumber -> M
-    android.widget.TextView messageDate -> N
-    android.widget.TextView messageYearDate -> O
-    android.widget.TextView messageTime -> P
-    android.widget.CheckBox messageTaskExport -> Q
-    android.widget.EditText repeatDaysMessage -> R
-    android.widget.CheckBox timeTaskExport -> S
-    android.widget.TextView hoursView -> T
-    android.widget.TextView minutesView -> U
-    android.widget.TextView secondsView -> V
-    android.widget.ImageButton deleteButton -> W
-    android.widget.EditText repeatMinutes -> X
-    java.lang.String timeString -> Y
-    android.widget.CheckBox appTaskExport -> Z
-    android.widget.EditText browseLink -> aa
-    android.widget.EditText repeatDaysApp -> ab
-    android.widget.RadioButton application -> ac
-    android.widget.RadioButton browser -> ad
-    android.widget.TextView appDate -> ae
-    android.widget.TextView appYearDate -> af
-    android.widget.TextView appTime -> ag
-    android.widget.TextView applicationName -> ah
-    android.widget.CheckBox skypeTaskExport -> ai
-    android.widget.EditText skypeUser -> aj
-    android.widget.EditText repeatDaysSkype -> ak
-    android.widget.RadioButton skypeCall -> al
-    android.widget.RadioButton skypeVideo -> am
-    android.widget.TextView skypeDate -> an
-    android.widget.TextView skypeYearDate -> ao
-    android.widget.TextView skypeTime -> ap
-    android.widget.LinearLayout delayLayout -> aq
-    android.widget.CheckBox attackDelay -> ar
-    android.widget.ImageButton addNumberButtonLocation -> as
-    android.widget.LinearLayout actionLocation -> at
-    android.widget.RelativeLayout mapContainer -> au
-    android.widget.ScrollView specsContainer -> av
-    android.widget.CheckBox attachLocationAction -> aw
-    android.widget.RadioButton callCheckLocation -> ax
-    android.widget.RadioButton messageCheckLocation -> ay
-    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocation -> az
-    com.cray.software.justreminder.fragments.MapFragment map -> aA
-    android.widget.TextView locationDateField -> aB
-    android.widget.TextView locationDateYearField -> aC
-    android.widget.TextView locationTimeField -> aD
-    android.widget.AutoCompleteTextView searchField -> aE
-    android.widget.ImageButton addNumberButtonLocationOut -> aF
-    android.widget.LinearLayout actionLocationOut -> aG
-    android.widget.LinearLayout delayLayoutOut -> aH
-    android.widget.RelativeLayout mapContainerOut -> aI
-    android.widget.ScrollView specsContainerOut -> aJ
-    android.widget.TextView locationOutDateField -> aK
-    android.widget.TextView locationOutDateYearField -> aL
-    android.widget.TextView locationOutTimeField -> aM
-    android.widget.TextView mapLocation -> aN
-    android.widget.TextView radiusMark -> aO
-    android.widget.TextView currentLocation -> aP
-    android.widget.CheckBox attachLocationOutAction -> aQ
-    android.widget.CheckBox attachDelayOut -> aR
-    android.widget.RadioButton callCheckLocationOut -> aS
-    android.widget.RadioButton messageCheckLocationOut -> aT
-    android.widget.RadioButton currentCheck -> aU
-    android.widget.RadioButton mapCheck -> aV
-    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocationOut -> aW
-    com.cray.software.justreminder.fragments.MapFragment mapOut -> aX
-    android.widget.EditText shopEdit -> aY
-    com.cray.software.justreminder.adapters.TaskListRecyclerAdapter shoppingAdapter -> aZ
-    com.cray.software.justreminder.datas.ShoppingListDataProvider shoppingLists -> ba
-    android.support.v7.widget.Toolbar toolbar -> bb
-    com.cray.software.justreminder.views.FloatingEditText taskField -> bc
-    android.widget.TextView category -> bd
-    int myHour -> be
-    int myMinute -> bf
-    int myYear -> bg
-    int myMonth -> bh
-    int myDay -> bi
-    java.lang.String uuID -> bj
-    int vibration -> bk
-    int voice -> bl
-    int notificationRepeat -> bm
-    int wake -> bn
-    int unlock -> bo
-    int auto -> bp
-    long limits -> bq
-    long id -> br
-    java.lang.String type -> bs
-    java.lang.String selectedPackage -> bt
-    java.lang.String categoryId -> bu
-    java.util.List foundPlaces -> bv
-    android.widget.ArrayAdapter adapter -> bw
-    java.util.ArrayList namesList -> bx
-    com.google.android.gms.maps.model.LatLng curPlace -> by
-    com.cray.software.justreminder.databases.DataBase DB -> bz
-    com.cray.software.justreminder.databases.FilesDataBase fdb -> bA
-    com.cray.software.justreminder.services.AlarmReceiver alarm -> bB
-    com.cray.software.justreminder.helpers.ColorSetter cSetter -> bC
-    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> bD
-    com.cray.software.justreminder.cloud.GTasksHelper gtx -> bE
-    android.location.LocationManager mLocationManager -> bF
-    android.location.LocationListener mLocList -> bG
-    com.cray.software.justreminder.async.GeocoderTask task -> bH
-    boolean isAnimation -> bI
-    boolean isCalendar -> bJ
-    boolean isStock -> bK
-    boolean isDark -> bL
-    android.view.View$OnClickListener contactClick -> bM
+    android.widget.LinearLayout action_layout -> f
+    com.cray.software.justreminder.views.FloatingEditText weekPhoneNumber -> g
+    android.widget.TextView weekTimeField -> h
+    android.widget.ImageButton weekAddNumberButton -> i
+    android.widget.ToggleButton mondayCheck -> j
+    android.widget.ToggleButton tuesdayCheck -> k
+    android.widget.ToggleButton wednesdayCheck -> l
+    android.widget.ToggleButton thursdayCheck -> m
+    android.widget.ToggleButton fridayCheck -> n
+    android.widget.ToggleButton saturdayCheck -> o
+    android.widget.ToggleButton sundayCheck -> p
+    android.widget.RadioButton callCheck -> q
+    android.widget.RadioButton messageCheck -> r
+    android.widget.CheckBox attachAction -> s
+    android.widget.CheckBox weekTaskExport -> t
+    android.widget.CheckBox monthDayTaskExport -> u
+    android.widget.CheckBox monthDayAttachAction -> v
+    android.widget.LinearLayout monthDayActionLayout -> w
+    android.widget.TextView monthDayField -> x
+    android.widget.TextView monthDayTimeField -> y
+    android.widget.RadioButton monthDayCallCheck -> z
+    android.widget.RadioButton monthDayMessageCheck -> A
+    android.widget.RadioButton dayCheck -> B
+    android.widget.RadioButton lastCheck -> C
+    android.widget.ImageButton monthDayAddNumberButton -> D
+    com.cray.software.justreminder.views.FloatingEditText monthDayPhoneNumber -> E
+    com.cray.software.justreminder.views.FloatingEditText phoneNumber -> F
+    android.widget.TextView callDate -> G
+    android.widget.TextView callTime -> H
+    android.widget.CheckBox callTaskExport -> I
+    android.widget.EditText repeatDaysCall -> J
+    com.cray.software.justreminder.views.FloatingEditText messageNumber -> K
+    android.widget.TextView messageDate -> L
+    android.widget.TextView messageTime -> M
+    android.widget.CheckBox messageTaskExport -> N
+    android.widget.EditText repeatDaysMessage -> O
+    android.widget.CheckBox timeTaskExport -> P
+    android.widget.TextView hoursView -> Q
+    android.widget.TextView minutesView -> R
+    android.widget.TextView secondsView -> S
+    android.widget.ImageButton deleteButton -> T
+    android.widget.EditText repeatMinutes -> U
+    java.lang.String timeString -> V
+    android.widget.CheckBox appTaskExport -> W
+    android.widget.EditText browseLink -> X
+    android.widget.EditText repeatDaysApp -> Y
+    android.widget.RadioButton application -> Z
+    android.widget.RadioButton browser -> aa
+    android.widget.TextView appDate -> ab
+    android.widget.TextView appTime -> ac
+    android.widget.TextView applicationName -> ad
+    android.widget.CheckBox skypeTaskExport -> ae
+    android.widget.EditText skypeUser -> af
+    android.widget.EditText repeatDaysSkype -> ag
+    android.widget.RadioButton skypeCall -> ah
+    android.widget.RadioButton skypeVideo -> ai
+    android.widget.TextView skypeDate -> aj
+    android.widget.TextView skypeTime -> ak
+    android.widget.LinearLayout delayLayout -> al
+    android.widget.CheckBox attackDelay -> am
+    android.widget.ImageButton addNumberButtonLocation -> an
+    android.widget.LinearLayout actionLocation -> ao
+    android.widget.RelativeLayout mapContainer -> ap
+    android.widget.ScrollView specsContainer -> aq
+    android.widget.CheckBox attachLocationAction -> ar
+    android.widget.RadioButton callCheckLocation -> as
+    android.widget.RadioButton messageCheckLocation -> at
+    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocation -> au
+    com.cray.software.justreminder.fragments.MapFragment map -> av
+    android.widget.TextView locationDateField -> aw
+    android.widget.TextView locationTimeField -> ax
+    android.widget.AutoCompleteTextView searchField -> ay
+    android.widget.ImageButton addNumberButtonLocationOut -> az
+    android.widget.LinearLayout actionLocationOut -> aA
+    android.widget.LinearLayout delayLayoutOut -> aB
+    android.widget.RelativeLayout mapContainerOut -> aC
+    android.widget.ScrollView specsContainerOut -> aD
+    android.widget.TextView locationOutDateField -> aE
+    android.widget.TextView locationOutTimeField -> aF
+    android.widget.TextView mapLocation -> aG
+    android.widget.TextView radiusMark -> aH
+    android.widget.TextView currentLocation -> aI
+    android.widget.CheckBox attachLocationOutAction -> aJ
+    android.widget.CheckBox attachDelayOut -> aK
+    android.widget.RadioButton callCheckLocationOut -> aL
+    android.widget.RadioButton messageCheckLocationOut -> aM
+    android.widget.RadioButton currentCheck -> aN
+    android.widget.RadioButton mapCheck -> aO
+    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocationOut -> aP
+    com.cray.software.justreminder.fragments.MapFragment mapOut -> aQ
+    android.widget.EditText shopEdit -> aR
+    com.cray.software.justreminder.adapters.TaskListRecyclerAdapter shoppingAdapter -> aS
+    com.cray.software.justreminder.datas.ShoppingListDataProvider shoppingLists -> aT
+    android.support.v7.widget.Toolbar toolbar -> aU
+    com.cray.software.justreminder.views.FloatingEditText taskField -> aV
+    android.widget.TextView category -> aW
+    int myHour -> aX
+    int myMinute -> aY
+    int myYear -> aZ
+    int myMonth -> ba
+    int myDay -> bb
+    java.lang.String uuID -> bc
+    int vibration -> bd
+    int voice -> be
+    int notificationRepeat -> bf
+    int wake -> bg
+    int unlock -> bh
+    int auto -> bi
+    long limits -> bj
+    long id -> bk
+    java.lang.String type -> bl
+    java.lang.String selectedPackage -> bm
+    java.lang.String categoryId -> bn
+    java.util.List foundPlaces -> bo
+    android.widget.ArrayAdapter adapter -> bp
+    java.util.ArrayList namesList -> bq
+    com.google.android.gms.maps.model.LatLng curPlace -> br
+    com.cray.software.justreminder.databases.DataBase DB -> bs
+    com.cray.software.justreminder.databases.FilesDataBase fdb -> bt
+    com.cray.software.justreminder.services.AlarmReceiver alarm -> bu
+    com.cray.software.justreminder.helpers.ColorSetter cSetter -> bv
+    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> bw
+    com.cray.software.justreminder.cloud.GTasksHelper gtx -> bx
+    android.location.LocationManager mLocationManager -> by
+    android.location.LocationListener mLocList -> bz
+    com.cray.software.justreminder.async.GeocoderTask task -> bA
+    boolean isAnimation -> bB
+    boolean isCalendar -> bC
+    boolean isStock -> bD
+    boolean isDark -> bE
+    android.view.View$OnClickListener contactClick -> bF
+    android.view.View$OnClickListener dateClick -> bG
+    android.view.View$OnClickListener timeClick -> bH
     android.app.TimePickerDialog$OnTimeSetListener myCallBack -> a
-    90:3140:void <init>() -> <init>
+    90:2880:void <init>() -> <init>
     248:383:void onCreate(android.os.Bundle) -> onCreate
-    405:505:void attachShoppingList() -> i
-    511:606:void attachDateReminder() -> j
-    612:774:void attachMonthDay() -> k
-    778:816:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-    822:938:void attachWeekDayReminder() -> l
-    945:972:void setCheckForDays(java.lang.String) -> b
-    978:1072:void attachTimeReminder() -> m
-    1078:1088:void updateTimeView() -> n
-    1094:1221:void attachSkype() -> o
-    1227:1369:void attachApplication() -> p
-    1375:1478:void attachCall() -> q
-    1484:1587:void attachMessage() -> r
-    1591:1593:void place(com.google.android.gms.maps.model.LatLng) -> a
-    1597:1605:void onZoomOutClick() -> f
-    1610:1610:void placeName(java.lang.String) -> a
-    1616:1840:void attachLocation() -> s
-    1846:2068:void attachLocationOut() -> t
-    2075:2075:boolean isShoppingAttached() -> u
-    2083:2083:boolean isDateReminderAttached() -> v
-    2091:2091:boolean isWeekDayReminderAttached() -> w
-    2099:2099:boolean isApplicationAttached() -> x
-    2107:2107:boolean isTimeReminderAttached() -> y
-    2115:2115:boolean isSkypeAttached() -> z
-    2123:2123:boolean isCallAttached() -> A
-    2131:2131:boolean isMessageAttached() -> B
-    2139:2139:boolean isLocationAttached() -> C
-    2147:2147:boolean isMonthDayAttached() -> D
-    2155:2155:boolean isLocationOutAttached() -> E
-    2162:2173:void clearForm() -> F
-    2180:2200:java.lang.String getTaskType() -> G
-    2205:2237:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    2241:2243:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    2248:2256:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    2264:2333:void saveTask() -> H
-    2339:2364:void saveShoppingTask() -> I
-    2372:2379:java.lang.String getWeekTaskType() -> J
-    2388:2400:java.lang.String getMonthTaskType() -> K
-    2409:2414:java.lang.String getAppTaskType() -> L
-    2423:2430:java.lang.String getSkypeTaskType() -> M
-    2437:2482:void saveWeekTask() -> N
-    2488:2530:void saveAppTask() -> O
-    2536:2570:void saveSkypeTask() -> P
-    2577:2591:boolean checkNumber() -> Q
-    2599:2601:boolean checkApplication() -> R
-    2609:2614:boolean checkMessage() -> S
-    2622:2663:void saveMonthTask() -> T
-    2669:2701:void saveDateTask() -> U
-    2707:2750:void saveTimeTask() -> V
-    2756:2792:void saveCallTask() -> W
-    2798:2834:void saveMessageTask() -> X
-    2840:2898:void saveLocation() -> Y
-    2904:2963:void saveLocationOut() -> Z
-    2971:2988:boolean isUID(java.lang.String) -> c
-    2993:3022:void onClick(android.view.View) -> onClick
-    3026:3046:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    3051:3051:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    3056:3056:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-    3062:3066:void dateDialog() -> g
-    3070:3126:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
-    3133:3134:android.app.Dialog timeDialog() -> h
-    3189:3192:void onDestroy() -> onDestroy
-    3196:3199:void onBackPressed() -> onBackPressed
-    3203:3218:void onAddressReceived(java.util.List) -> a
-    3222:3224:void OnCategory(java.lang.String,java.lang.String) -> a
+    425:525:void attachShoppingList() -> i
+    531:591:void attachDateReminder() -> j
+    597:744:void attachMonthDay() -> k
+    748:786:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    792:903:void attachWeekDayReminder() -> l
+    910:937:void setCheckForDays(java.lang.String) -> b
+    943:1037:void attachTimeReminder() -> m
+    1043:1053:void updateTimeView() -> n
+    1059:1152:void attachSkype() -> o
+    1158:1260:void attachApplication() -> p
+    1266:1335:void attachCall() -> q
+    1341:1410:void attachMessage() -> r
+    1414:1416:void place(com.google.android.gms.maps.model.LatLng) -> a
+    1420:1428:void onZoomOutClick() -> f
+    1433:1433:void placeName(java.lang.String) -> a
+    1439:1632:void attachLocation() -> s
+    1638:1829:void attachLocationOut() -> t
+    1836:1836:boolean isShoppingAttached() -> u
+    1844:1844:boolean isDateReminderAttached() -> v
+    1852:1852:boolean isWeekDayReminderAttached() -> w
+    1860:1860:boolean isApplicationAttached() -> x
+    1868:1868:boolean isTimeReminderAttached() -> y
+    1876:1876:boolean isSkypeAttached() -> z
+    1884:1884:boolean isCallAttached() -> A
+    1892:1892:boolean isMessageAttached() -> B
+    1900:1900:boolean isLocationAttached() -> C
+    1908:1908:boolean isMonthDayAttached() -> D
+    1916:1916:boolean isLocationOutAttached() -> E
+    1923:1934:void clearForm() -> F
+    1941:1961:java.lang.String getTaskType() -> G
+    1966:1998:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    2002:2004:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    2009:2017:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    2025:2094:void saveTask() -> H
+    2100:2125:void saveShoppingTask() -> I
+    2133:2140:java.lang.String getWeekTaskType() -> J
+    2149:2161:java.lang.String getMonthTaskType() -> K
+    2170:2175:java.lang.String getAppTaskType() -> L
+    2184:2191:java.lang.String getSkypeTaskType() -> M
+    2198:2243:void saveWeekTask() -> N
+    2249:2291:void saveAppTask() -> O
+    2297:2331:void saveSkypeTask() -> P
+    2338:2352:boolean checkNumber() -> Q
+    2360:2362:boolean checkApplication() -> R
+    2370:2375:boolean checkMessage() -> S
+    2383:2424:void saveMonthTask() -> T
+    2430:2462:void saveDateTask() -> U
+    2468:2511:void saveTimeTask() -> V
+    2517:2553:void saveCallTask() -> W
+    2559:2595:void saveMessageTask() -> X
+    2601:2659:void saveLocation() -> Y
+    2665:2724:void saveLocationOut() -> Z
+    2732:2749:boolean isUID(java.lang.String) -> c
+    2754:2774:void onClick(android.view.View) -> onClick
+    2778:2798:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    2803:2803:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    2808:2808:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+    2814:2818:void dateDialog() -> g
+    2822:2866:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
+    2873:2874:android.app.Dialog timeDialog() -> h
+    2929:2932:void onDestroy() -> onDestroy
+    2936:2939:void onBackPressed() -> onBackPressed
+    2943:2958:void onAddressReceived(java.util.List) -> a
+    2962:2964:void OnCategory(java.lang.String,java.lang.String) -> a
     90:90:android.support.v7.widget.Toolbar access$000(com.cray.software.justreminder.BackupFileEdit) -> a
     90:90:java.lang.String access$100(com.cray.software.justreminder.BackupFileEdit) -> b
     90:90:android.widget.EditText access$200(com.cray.software.justreminder.BackupFileEdit) -> c
@@ -17366,203 +17361,139 @@ com.cray.software.justreminder.BackupFileEdit$1 -> com.cray.software.justreminde
     277:280:void run() -> run
 com.cray.software.justreminder.BackupFileEdit$10 -> com.cray.software.justreminder.b:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    554:554:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    557:558:void onClick(android.view.View) -> onClick
+    502:502:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    505:509:void onItemCheck(int,boolean) -> a
+    513:515:void onItemDelete(int) -> a
+    520:520:void onItemChange(int) -> b
 com.cray.software.justreminder.BackupFileEdit$11 -> com.cray.software.justreminder.c:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    634:634:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    637:638:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$12 -> com.cray.software.justreminder.d:
+    651:651:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    654:680:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$11$1 -> com.cray.software.justreminder.d:
+    com.cray.software.justreminder.BackupFileEdit$11 this$1 -> a
+    667:667:void <init>(com.cray.software.justreminder.BackupFileEdit$11) -> <init>
+    670:672:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$12 -> com.cray.software.justreminder.e:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    660:660:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    663:664:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$13 -> com.cray.software.justreminder.e:
+    833:833:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    836:858:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$12$1 -> com.cray.software.justreminder.f:
+    com.cray.software.justreminder.BackupFileEdit$12 this$1 -> a
+    847:847:void <init>(com.cray.software.justreminder.BackupFileEdit$12) -> <init>
+    850:852:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$13 -> com.cray.software.justreminder.g:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    680:680:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    683:709:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$13$1 -> com.cray.software.justreminder.f:
-    com.cray.software.justreminder.BackupFileEdit$13 this$1 -> a
-    696:696:void <init>(com.cray.software.justreminder.BackupFileEdit$13) -> <init>
-    699:701:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$14 -> com.cray.software.justreminder.g:
+    962:962:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    965:968:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.BackupFileEdit$14 -> com.cray.software.justreminder.h:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    839:839:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    842:843:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$15 -> com.cray.software.justreminder.h:
+    970:970:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    973:975:boolean onLongClick(android.view.View) -> onLongClick
+com.cray.software.justreminder.BackupFileEdit$15 -> com.cray.software.justreminder.i:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    868:868:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    871:893:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$15$1 -> com.cray.software.justreminder.i:
-    com.cray.software.justreminder.BackupFileEdit$15 this$1 -> a
-    882:882:void <init>(com.cray.software.justreminder.BackupFileEdit$15) -> <init>
-    885:887:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    1070:1070:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1073:1075:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
 com.cray.software.justreminder.BackupFileEdit$16 -> com.cray.software.justreminder.j:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    997:997:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1000:1003:void onClick(android.view.View) -> onClick
+    1098:1098:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1101:1102:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.BackupFileEdit$17 -> com.cray.software.justreminder.k:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1005:1005:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1008:1010:boolean onLongClick(android.view.View) -> onLongClick
+    1454:1454:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1457:1467:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
 com.cray.software.justreminder.BackupFileEdit$18 -> com.cray.software.justreminder.l:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1105:1105:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1108:1110:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    1479:1479:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1482:1483:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.BackupFileEdit$19 -> com.cray.software.justreminder.m:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1121:1121:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1124:1125:void onClick(android.view.View) -> onClick
+    1485:1485:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1488:1490:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.BackupFileEdit$2 -> com.cray.software.justreminder.n:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
     285:285:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
     288:289:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.BackupFileEdit$20 -> com.cray.software.justreminder.o:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1144:1144:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1147:1148:void onClick(android.view.View) -> onClick
+    1498:1498:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1502:1502:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    1506:1509:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    1514:1514:void afterTextChanged(android.text.Editable) -> afterTextChanged
 com.cray.software.justreminder.BackupFileEdit$21 -> com.cray.software.justreminder.p:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1159:1159:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1162:1163:void onClick(android.view.View) -> onClick
+    1516:1516:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1519:1530:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
 com.cray.software.justreminder.BackupFileEdit$22 -> com.cray.software.justreminder.q:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1258:1258:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1261:1262:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$23 -> com.cray.software.justreminder.r:
+    1537:1537:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1540:1562:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$22$1 -> com.cray.software.justreminder.r:
+    com.cray.software.justreminder.BackupFileEdit$22 this$1 -> a
+    1551:1551:void <init>(com.cray.software.justreminder.BackupFileEdit$22) -> <init>
+    1554:1556:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$23 -> com.cray.software.justreminder.s:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1281:1281:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1284:1285:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$24 -> com.cray.software.justreminder.s:
+    1655:1655:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1658:1668:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$24 -> com.cray.software.justreminder.t:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1296:1296:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1299:1300:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$25 -> com.cray.software.justreminder.t:
+    1684:1684:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1687:1690:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.BackupFileEdit$25 -> com.cray.software.justreminder.u:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1411:1411:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1414:1415:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$26 -> com.cray.software.justreminder.u:
+    1700:1700:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1703:1704:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    1709:1709:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    1714:1714:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+com.cray.software.justreminder.BackupFileEdit$26 -> com.cray.software.justreminder.v:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1426:1426:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1429:1430:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$27 -> com.cray.software.justreminder.v:
+    1723:1723:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    1726:1748:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$26$1 -> com.cray.software.justreminder.w:
+    com.cray.software.justreminder.BackupFileEdit$26 this$1 -> a
+    1737:1737:void <init>(com.cray.software.justreminder.BackupFileEdit$26) -> <init>
+    1740:1742:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.BackupFileEdit$27 -> com.cray.software.justreminder.x:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1520:1520:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1523:1524:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$28 -> com.cray.software.justreminder.w:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1535:1535:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1538:1539:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$29 -> com.cray.software.justreminder.x:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1631:1631:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1634:1644:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    2880:2880:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    2882:2924:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
 com.cray.software.justreminder.BackupFileEdit$3 -> com.cray.software.justreminder.y:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
     304:304:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
     307:308:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$30 -> com.cray.software.justreminder.z:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1656:1656:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1659:1660:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$31 -> com.cray.software.justreminder.aa:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1662:1662:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1665:1667:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$32 -> com.cray.software.justreminder.ab:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1675:1675:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1679:1679:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    1683:1686:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
-    1691:1691:void afterTextChanged(android.text.Editable) -> afterTextChanged
-com.cray.software.justreminder.BackupFileEdit$33 -> com.cray.software.justreminder.ac:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1693:1693:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1696:1707:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.cray.software.justreminder.BackupFileEdit$34 -> com.cray.software.justreminder.ad:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1714:1714:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1717:1739:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$34$1 -> com.cray.software.justreminder.ae:
-    com.cray.software.justreminder.BackupFileEdit$34 this$1 -> a
-    1728:1728:void <init>(com.cray.software.justreminder.BackupFileEdit$34) -> <init>
-    1731:1733:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$35 -> com.cray.software.justreminder.af:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1759:1759:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1762:1763:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$36 -> com.cray.software.justreminder.ag:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1774:1774:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1777:1778:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$37 -> com.cray.software.justreminder.ah:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1863:1863:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1866:1876:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$38 -> com.cray.software.justreminder.ai:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1892:1892:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1895:1898:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$39 -> com.cray.software.justreminder.aj:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1908:1908:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1911:1912:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    1917:1917:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    1922:1922:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-com.cray.software.justreminder.BackupFileEdit$4 -> com.cray.software.justreminder.ak:
+com.cray.software.justreminder.BackupFileEdit$4 -> com.cray.software.justreminder.z:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
     388:388:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
     391:398:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$40 -> com.cray.software.justreminder.al:
+com.cray.software.justreminder.BackupFileEdit$5 -> com.cray.software.justreminder.aa:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1931:1931:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1934:1956:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$40$1 -> com.cray.software.justreminder.am:
-    com.cray.software.justreminder.BackupFileEdit$40 this$1 -> a
-    1945:1945:void <init>(com.cray.software.justreminder.BackupFileEdit$40) -> <init>
-    1948:1950:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.BackupFileEdit$41 -> com.cray.software.justreminder.an:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1976:1976:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1979:1980:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$42 -> com.cray.software.justreminder.ao:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    1991:1991:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    1994:1995:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$43 -> com.cray.software.justreminder.ap:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    3140:3140:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    3142:3184:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
-com.cray.software.justreminder.BackupFileEdit$5 -> com.cray.software.justreminder.aq:
+    404:404:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    407:408:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.BackupFileEdit$6 -> com.cray.software.justreminder.ab:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
     414:414:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    417:428:boolean onKey(android.view.View,int,android.view.KeyEvent) -> onKey
-com.cray.software.justreminder.BackupFileEdit$6 -> com.cray.software.justreminder.ar:
+    417:418:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.BackupFileEdit$7 -> com.cray.software.justreminder.ac:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
     434:434:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    437:446:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$7 -> com.cray.software.justreminder.as:
+    437:448:boolean onKey(android.view.View,int,android.view.KeyEvent) -> onKey
+com.cray.software.justreminder.BackupFileEdit$8 -> com.cray.software.justreminder.ad:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    450:450:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    453:457:void onItemCheck(int,boolean) -> a
-    461:463:void onItemDelete(int) -> a
-    468:468:void onItemChange(int) -> b
-com.cray.software.justreminder.BackupFileEdit$8 -> com.cray.software.justreminder.at:
+    454:454:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    457:466:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.BackupFileEdit$9 -> com.cray.software.justreminder.ae:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    482:482:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    485:489:void onItemCheck(int,boolean) -> a
-    493:495:void onItemDelete(int) -> a
-    500:500:void onItemChange(int) -> b
-com.cray.software.justreminder.BackupFileEdit$9 -> com.cray.software.justreminder.au:
+    470:470:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    473:477:void onItemCheck(int,boolean) -> a
+    481:483:void onItemDelete(int) -> a
+    488:488:void onItemChange(int) -> b
+com.cray.software.justreminder.BackupFileEdit$CurrentLocation -> com.cray.software.justreminder.af:
     com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    525:525:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    528:529:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.BackupFileEdit$CurrentLocation -> com.cray.software.justreminder.av:
-    com.cray.software.justreminder.BackupFileEdit this$0 -> a
-    3226:3226:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
-    3230:3244:void onLocationChanged(android.location.Location) -> onLocationChanged
-    3248:3257:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
-    3261:3270:void onProviderEnabled(java.lang.String) -> onProviderEnabled
-    3274:3283:void onProviderDisabled(java.lang.String) -> onProviderDisabled
+    2966:2966:void <init>(com.cray.software.justreminder.BackupFileEdit) -> <init>
+    2970:2984:void onLocationChanged(android.location.Location) -> onLocationChanged
+    2988:2997:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
+    3001:3010:void onProviderEnabled(java.lang.String) -> onProviderEnabled
+    3014:3023:void onProviderDisabled(java.lang.String) -> onProviderDisabled
 com.cray.software.justreminder.CalendarActivity -> com.cray.software.justreminder.CalendarActivity:
     com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> a
     com.getbase.floatingactionbutton.FloatingActionsMenu mainMenu -> b
@@ -17591,27 +17522,27 @@ com.cray.software.justreminder.CalendarActivity -> com.cray.software.justreminde
     41:41:android.widget.Button access$600(com.cray.software.justreminder.CalendarActivity) -> f
     41:41:long access$402(com.cray.software.justreminder.CalendarActivity,long) -> a
     41:41:int access$702(com.cray.software.justreminder.CalendarActivity,int) -> a
-com.cray.software.justreminder.CalendarActivity$1 -> com.cray.software.justreminder.aw:
+com.cray.software.justreminder.CalendarActivity$1 -> com.cray.software.justreminder.ag:
     com.cray.software.justreminder.CalendarActivity this$0 -> a
     78:78:void <init>(com.cray.software.justreminder.CalendarActivity) -> <init>
     81:82:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.CalendarActivity$2 -> com.cray.software.justreminder.ax:
+com.cray.software.justreminder.CalendarActivity$2 -> com.cray.software.justreminder.ah:
     com.cray.software.justreminder.CalendarActivity this$0 -> a
     90:90:void <init>(com.cray.software.justreminder.CalendarActivity) -> <init>
     93:97:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.CalendarActivity$3 -> com.cray.software.justreminder.ay:
+com.cray.software.justreminder.CalendarActivity$3 -> com.cray.software.justreminder.ai:
     com.cray.software.justreminder.CalendarActivity this$0 -> a
     121:121:void <init>(com.cray.software.justreminder.CalendarActivity) -> <init>
     124:131:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.CalendarActivity$4 -> com.cray.software.justreminder.az:
+com.cray.software.justreminder.CalendarActivity$4 -> com.cray.software.justreminder.aj:
     com.cray.software.justreminder.CalendarActivity this$0 -> a
     140:140:void <init>(com.cray.software.justreminder.CalendarActivity) -> <init>
     143:151:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.CalendarActivity$4$1 -> com.cray.software.justreminder.ba:
+com.cray.software.justreminder.CalendarActivity$4$1 -> com.cray.software.justreminder.ak:
     com.cray.software.justreminder.CalendarActivity$4 this$1 -> a
     144:144:void <init>(com.cray.software.justreminder.CalendarActivity$4) -> <init>
     147:149:void run() -> run
-com.cray.software.justreminder.CalendarActivity$5 -> com.cray.software.justreminder.bb:
+com.cray.software.justreminder.CalendarActivity$5 -> com.cray.software.justreminder.al:
     com.cray.software.justreminder.CalendarActivity this$0 -> a
     245:245:void <init>(com.cray.software.justreminder.CalendarActivity) -> <init>
     249:249:void onPageScrolled(int,float,int) -> onPageScrolled
@@ -17623,7 +17554,7 @@ com.cray.software.justreminder.Help -> com.cray.software.justreminder.Help:
     25:81:void onCreate(android.os.Bundle) -> onCreate
     85:90:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     19:19:android.webkit.WebView access$000(com.cray.software.justreminder.Help) -> a
-com.cray.software.justreminder.Help$1 -> com.cray.software.justreminder.bc:
+com.cray.software.justreminder.Help$1 -> com.cray.software.justreminder.am:
     com.cray.software.justreminder.Help this$0 -> a
     65:65:void <init>(com.cray.software.justreminder.Help) -> <init>
     69:69:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
@@ -17642,7 +17573,7 @@ com.cray.software.justreminder.HelpOverflow -> com.cray.software.justreminder.He
     15:15:android.widget.LinearLayout access$100(com.cray.software.justreminder.HelpOverflow) -> b
     15:15:android.widget.LinearLayout access$200(com.cray.software.justreminder.HelpOverflow) -> c
     15:15:android.widget.LinearLayout access$300(com.cray.software.justreminder.HelpOverflow) -> d
-com.cray.software.justreminder.HelpOverflow$1 -> com.cray.software.justreminder.bd:
+com.cray.software.justreminder.HelpOverflow$1 -> com.cray.software.justreminder.an:
     int val$code -> a
     com.cray.software.justreminder.HelpOverflow this$0 -> b
     33:33:void <init>(com.cray.software.justreminder.HelpOverflow,int) -> <init>
@@ -17720,60 +17651,60 @@ com.cray.software.justreminder.NotesManager -> com.cray.software.justreminder.No
     72:72:int access$1802(com.cray.software.justreminder.NotesManager,int) -> d
     72:72:int access$1902(com.cray.software.justreminder.NotesManager,int) -> e
     72:72:android.widget.TextView access$2000(com.cray.software.justreminder.NotesManager) -> r
-com.cray.software.justreminder.NotesManager$1 -> com.cray.software.justreminder.be:
+com.cray.software.justreminder.NotesManager$1 -> com.cray.software.justreminder.ao:
     com.cray.software.justreminder.NotesManager this$0 -> a
     119:119:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     122:153:boolean onMenuItemClick(android.view.MenuItem) -> a
-com.cray.software.justreminder.NotesManager$10 -> com.cray.software.justreminder.bf:
+com.cray.software.justreminder.NotesManager$10 -> com.cray.software.justreminder.ap:
     com.cray.software.justreminder.NotesManager this$0 -> a
     545:545:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     548:552:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.NotesManager$11 -> com.cray.software.justreminder.bg:
+com.cray.software.justreminder.NotesManager$11 -> com.cray.software.justreminder.aq:
     com.cray.software.justreminder.NotesManager this$0 -> a
     583:583:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     586:600:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.NotesManager$12 -> com.cray.software.justreminder.bh:
+com.cray.software.justreminder.NotesManager$12 -> com.cray.software.justreminder.ar:
     com.cray.software.justreminder.NotesManager this$0 -> a
     692:692:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     696:709:void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
-com.cray.software.justreminder.NotesManager$13 -> com.cray.software.justreminder.bi:
+com.cray.software.justreminder.NotesManager$13 -> com.cray.software.justreminder.as:
     com.cray.software.justreminder.NotesManager this$0 -> a
     717:717:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     719:728:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
-com.cray.software.justreminder.NotesManager$2 -> com.cray.software.justreminder.bj:
+com.cray.software.justreminder.NotesManager$2 -> com.cray.software.justreminder.at:
     com.cray.software.justreminder.NotesManager this$0 -> a
     182:182:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     185:186:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$3 -> com.cray.software.justreminder.bk:
+com.cray.software.justreminder.NotesManager$3 -> com.cray.software.justreminder.au:
     com.cray.software.justreminder.NotesManager this$0 -> a
     191:191:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     194:195:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$4 -> com.cray.software.justreminder.bl:
+com.cray.software.justreminder.NotesManager$4 -> com.cray.software.justreminder.av:
     com.cray.software.justreminder.NotesManager this$0 -> a
     204:204:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     208:231:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$5 -> com.cray.software.justreminder.bm:
+com.cray.software.justreminder.NotesManager$5 -> com.cray.software.justreminder.aw:
     com.cray.software.justreminder.NotesManager this$0 -> a
     235:235:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     238:241:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$6 -> com.cray.software.justreminder.bn:
+com.cray.software.justreminder.NotesManager$6 -> com.cray.software.justreminder.ax:
     com.cray.software.justreminder.NotesManager this$0 -> a
     245:245:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     248:255:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$7 -> com.cray.software.justreminder.bo:
+com.cray.software.justreminder.NotesManager$7 -> com.cray.software.justreminder.ay:
     com.cray.software.justreminder.NotesManager this$0 -> a
     269:269:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     272:275:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.NotesManager$8 -> com.cray.software.justreminder.bp:
+com.cray.software.justreminder.NotesManager$8 -> com.cray.software.justreminder.az:
     com.cray.software.justreminder.NotesManager this$0 -> a
     277:277:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     280:281:boolean onLongClick(android.view.View) -> onLongClick
-com.cray.software.justreminder.NotesManager$9 -> com.cray.software.justreminder.bq:
+com.cray.software.justreminder.NotesManager$9 -> com.cray.software.justreminder.ba:
     com.cray.software.justreminder.NotesManager this$0 -> a
     539:539:void <init>(com.cray.software.justreminder.NotesManager) -> <init>
     542:543:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.R -> com.cray.software.justreminder.br:
-com.cray.software.justreminder.R$styleable -> com.cray.software.justreminder.bs:
+com.cray.software.justreminder.R -> com.cray.software.justreminder.bb:
+com.cray.software.justreminder.R$styleable -> com.cray.software.justreminder.bc:
     int[] ActionBar -> ActionBar
     int ActionBar_background -> ActionBar_background
     int ActionBar_backgroundSplit -> ActionBar_backgroundSplit
@@ -18344,190 +18275,185 @@ com.cray.software.justreminder.R$styleable -> com.cray.software.justreminder.bs:
     int WalletFragmentStyle_maskedWalletDetailsLogoImageType -> WalletFragmentStyle_maskedWalletDetailsLogoImageType
     int WalletFragmentStyle_maskedWalletDetailsLogoTextColor -> WalletFragmentStyle_maskedWalletDetailsLogoTextColor
     int WalletFragmentStyle_maskedWalletDetailsTextAppearance -> WalletFragmentStyle_maskedWalletDetailsTextAppearance
-    6673:14464:void <clinit>() -> <clinit>
+    6659:14450:void <clinit>() -> <clinit>
 com.cray.software.justreminder.ReminderManager -> com.cray.software.justreminder.ReminderManager:
     android.widget.CheckBox dateTaskExport -> b
     android.widget.EditText repeatDays -> c
     android.widget.TextView dateField -> d
     android.widget.TextView timeField -> e
-    android.widget.TextView dateYearField -> f
-    android.widget.CheckBox dateExport -> g
-    android.widget.LinearLayout action_layout -> h
-    com.cray.software.justreminder.views.FloatingEditText weekPhoneNumber -> i
-    android.widget.TextView weekTimeField -> j
-    android.widget.ImageButton weekAddNumberButton -> k
-    android.widget.CheckBox weekExport -> l
-    android.widget.ToggleButton mondayCheck -> m
-    android.widget.ToggleButton tuesdayCheck -> n
-    android.widget.ToggleButton wednesdayCheck -> o
-    android.widget.ToggleButton thursdayCheck -> p
-    android.widget.ToggleButton fridayCheck -> q
-    android.widget.ToggleButton saturdayCheck -> r
-    android.widget.ToggleButton sundayCheck -> s
-    android.widget.RadioButton callCheck -> t
-    android.widget.RadioButton messageCheck -> u
-    android.widget.CheckBox attachAction -> v
-    android.widget.CheckBox weekTaskExport -> w
-    android.widget.CheckBox monthDayExport -> x
-    android.widget.CheckBox monthDayTaskExport -> y
-    android.widget.CheckBox monthDayAttachAction -> z
-    android.widget.LinearLayout monthDayActionLayout -> A
-    android.widget.TextView monthDayField -> B
-    android.widget.TextView monthDayTimeField -> C
-    android.widget.RadioButton monthDayCallCheck -> D
-    android.widget.RadioButton monthDayMessageCheck -> E
-    android.widget.RadioButton dayCheck -> F
-    android.widget.RadioButton lastCheck -> G
-    android.widget.ImageButton monthDayAddNumberButton -> H
-    com.cray.software.justreminder.views.FloatingEditText monthDayPhoneNumber -> I
-    com.cray.software.justreminder.views.FloatingEditText phoneNumber -> J
-    android.widget.TextView callDate -> K
-    android.widget.TextView callTime -> L
-    android.widget.TextView callYearDate -> M
-    android.widget.CheckBox callExport -> N
-    android.widget.CheckBox callTaskExport -> O
-    android.widget.EditText repeatDaysCall -> P
-    com.cray.software.justreminder.views.FloatingEditText messageNumber -> Q
-    android.widget.TextView messageDate -> R
-    android.widget.TextView messageYearDate -> S
-    android.widget.TextView messageTime -> T
-    android.widget.CheckBox messageExport -> U
-    android.widget.CheckBox messageTaskExport -> V
-    android.widget.EditText repeatDaysMessage -> W
-    android.widget.CheckBox timeExport -> X
-    android.widget.CheckBox timeTaskExport -> Y
-    android.widget.TextView hoursView -> Z
-    android.widget.TextView minutesView -> aa
-    android.widget.TextView secondsView -> ab
-    android.widget.ImageButton deleteButton -> ac
-    android.widget.EditText repeatMinutes -> ad
-    java.lang.String timeString -> ae
-    android.widget.CheckBox appExport -> af
-    android.widget.CheckBox appTaskExport -> ag
-    android.widget.EditText browseLink -> ah
-    android.widget.EditText repeatDaysApp -> ai
-    android.widget.RadioButton application -> aj
-    android.widget.RadioButton browser -> ak
-    android.widget.TextView appDate -> al
-    android.widget.TextView appYearDate -> am
-    android.widget.TextView appTime -> an
-    android.widget.TextView applicationName -> ao
-    android.widget.RelativeLayout applicationLayout -> ap
-    android.widget.CheckBox skypeExport -> aq
-    android.widget.CheckBox skypeTaskExport -> ar
-    android.widget.EditText skypeUser -> as
-    android.widget.EditText repeatDaysSkype -> at
-    android.widget.RadioButton skypeCall -> au
-    android.widget.RadioButton skypeVideo -> av
-    android.widget.TextView skypeDate -> aw
-    android.widget.TextView skypeYearDate -> ax
-    android.widget.TextView skypeTime -> ay
-    android.widget.LinearLayout delayLayout -> az
-    android.widget.CheckBox attackDelay -> aA
-    android.widget.ImageButton addNumberButtonLocation -> aB
-    android.widget.LinearLayout actionLocation -> aC
-    android.widget.RelativeLayout mapContainer -> aD
-    android.widget.ScrollView specsContainer -> aE
-    android.widget.CheckBox attachLocationAction -> aF
-    android.widget.RadioButton callCheckLocation -> aG
-    android.widget.RadioButton messageCheckLocation -> aH
-    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocation -> aI
-    com.cray.software.justreminder.fragments.MapFragment map -> aJ
-    android.widget.TextView locationDateField -> aK
-    android.widget.TextView locationDateYearField -> aL
-    android.widget.TextView locationTimeField -> aM
-    android.widget.AutoCompleteTextView searchField -> aN
-    android.widget.ImageButton addNumberButtonLocationOut -> aO
-    android.widget.LinearLayout actionLocationOut -> aP
-    android.widget.LinearLayout delayLayoutOut -> aQ
-    android.widget.RelativeLayout mapContainerOut -> aR
-    android.widget.ScrollView specsContainerOut -> aS
-    android.widget.TextView locationOutDateField -> aT
-    android.widget.TextView locationOutDateYearField -> aU
-    android.widget.TextView locationOutTimeField -> aV
-    android.widget.TextView currentLocation -> aW
-    android.widget.TextView mapLocation -> aX
-    android.widget.TextView radiusMark -> aY
-    android.widget.CheckBox attachLocationOutAction -> aZ
-    android.widget.CheckBox attachDelayOut -> ba
-    android.widget.RadioButton callCheckLocationOut -> bb
-    android.widget.RadioButton messageCheckLocationOut -> bc
-    android.widget.RadioButton currentCheck -> bd
-    android.widget.RadioButton mapCheck -> be
-    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocationOut -> bf
-    com.cray.software.justreminder.fragments.MapFragment mapOut -> bg
-    android.widget.EditText shopEdit -> bh
-    com.cray.software.justreminder.adapters.TaskListRecyclerAdapter shoppingAdapter -> bi
-    com.cray.software.justreminder.datas.ShoppingListDataProvider shoppingLists -> bj
-    android.widget.ScrollView extraScroll -> bk
-    android.widget.ImageButton extraVibration -> bl
-    android.widget.ImageButton extraUnlock -> bm
-    android.widget.ImageButton extraVoice -> bn
-    android.widget.ImageButton extraWake -> bo
-    android.widget.ImageButton extraRepeat -> bp
-    android.widget.ImageButton extraAuto -> bq
-    android.widget.ImageButton extraLimit -> br
-    android.widget.ImageButton extraSwitch -> bs
-    android.widget.RelativeLayout extraHolder -> bt
-    android.widget.FrameLayout repeatFrame -> bu
-    android.widget.TextView repeatLabel -> bv
-    android.support.v7.widget.Toolbar toolbar -> bw
-    android.widget.Spinner spinner -> bx
-    com.cray.software.justreminder.views.FloatingEditText taskField -> by
-    android.widget.TextView category -> bz
-    com.getbase.floatingactionbutton.FloatingActionButton mFab -> bA
-    android.widget.LinearLayout navContainer -> bB
-    int myHour -> bC
-    int myMinute -> bD
-    int mySeconds -> bE
-    int myYear -> bF
-    int myMonth -> bG
-    int myDay -> bH
-    int vibration -> bI
-    int voice -> bJ
-    int notificationRepeat -> bK
-    int wake -> bL
-    int unlock -> bM
-    int auto -> bN
-    long repeats -> bO
-    long id -> bP
-    java.lang.String categoryId -> bQ
-    java.lang.String type -> bR
-    java.lang.String melody -> bS
-    java.lang.String selectedPackage -> bT
-    int radius -> bU
-    int ledColor -> bV
-    java.util.List foundPlaces -> bW
-    android.widget.ArrayAdapter adapter -> bX
-    java.util.ArrayList namesList -> bY
-    com.google.android.gms.maps.model.LatLng curPlace -> bZ
-    com.cray.software.justreminder.helpers.ColorSetter cSetter -> ca
-    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> cb
-    com.cray.software.justreminder.cloud.GTasksHelper gtx -> cc
-    boolean isAnimation -> cd
-    boolean isCalendar -> ce
-    boolean isStock -> cf
-    boolean isDark -> cg
-    boolean isLocationMessage -> ch
-    boolean isLocationOutMessage -> ci
-    boolean isWeekMessage -> cj
-    boolean isMonthMessage -> ck
-    boolean isDelayed -> cl
-    com.cray.software.justreminder.reminder.Type remControl -> cm
-    com.cray.software.justreminder.reminder.Reminder item -> cn
-    android.os.Handler handler -> co
-    com.cray.software.justreminder.async.GeocoderTask task -> cp
-    android.view.View$OnLongClickListener longClickListener -> cq
-    android.view.View$OnClickListener clickListener -> cr
-    android.view.View$OnClickListener contactClick -> cs
-    java.lang.Runnable seek -> ct
-    java.lang.Runnable runnable -> cu
+    android.widget.CheckBox dateExport -> f
+    android.widget.LinearLayout action_layout -> g
+    com.cray.software.justreminder.views.FloatingEditText weekPhoneNumber -> h
+    android.widget.TextView weekTimeField -> i
+    android.widget.ImageButton weekAddNumberButton -> j
+    android.widget.CheckBox weekExport -> k
+    android.widget.ToggleButton mondayCheck -> l
+    android.widget.ToggleButton tuesdayCheck -> m
+    android.widget.ToggleButton wednesdayCheck -> n
+    android.widget.ToggleButton thursdayCheck -> o
+    android.widget.ToggleButton fridayCheck -> p
+    android.widget.ToggleButton saturdayCheck -> q
+    android.widget.ToggleButton sundayCheck -> r
+    android.widget.RadioButton callCheck -> s
+    android.widget.RadioButton messageCheck -> t
+    android.widget.CheckBox attachAction -> u
+    android.widget.CheckBox weekTaskExport -> v
+    android.widget.CheckBox monthDayExport -> w
+    android.widget.CheckBox monthDayTaskExport -> x
+    android.widget.CheckBox monthDayAttachAction -> y
+    android.widget.LinearLayout monthDayActionLayout -> z
+    android.widget.TextView monthDayField -> A
+    android.widget.TextView monthDayTimeField -> B
+    android.widget.RadioButton monthDayCallCheck -> C
+    android.widget.RadioButton monthDayMessageCheck -> D
+    android.widget.RadioButton dayCheck -> E
+    android.widget.RadioButton lastCheck -> F
+    android.widget.ImageButton monthDayAddNumberButton -> G
+    com.cray.software.justreminder.views.FloatingEditText monthDayPhoneNumber -> H
+    com.cray.software.justreminder.views.FloatingEditText phoneNumber -> I
+    android.widget.TextView callDate -> J
+    android.widget.TextView callTime -> K
+    android.widget.CheckBox callExport -> L
+    android.widget.CheckBox callTaskExport -> M
+    android.widget.EditText repeatDaysCall -> N
+    com.cray.software.justreminder.views.FloatingEditText messageNumber -> O
+    android.widget.TextView messageDate -> P
+    android.widget.TextView messageTime -> Q
+    android.widget.CheckBox messageExport -> R
+    android.widget.CheckBox messageTaskExport -> S
+    android.widget.EditText repeatDaysMessage -> T
+    android.widget.CheckBox timeExport -> U
+    android.widget.CheckBox timeTaskExport -> V
+    android.widget.TextView hoursView -> W
+    android.widget.TextView minutesView -> X
+    android.widget.TextView secondsView -> Y
+    android.widget.ImageButton deleteButton -> Z
+    android.widget.EditText repeatMinutes -> aa
+    java.lang.String timeString -> ab
+    android.widget.CheckBox appExport -> ac
+    android.widget.CheckBox appTaskExport -> ad
+    android.widget.EditText browseLink -> ae
+    android.widget.EditText repeatDaysApp -> af
+    android.widget.RadioButton application -> ag
+    android.widget.RadioButton browser -> ah
+    android.widget.TextView appDate -> ai
+    android.widget.TextView appTime -> aj
+    android.widget.TextView applicationName -> ak
+    android.widget.RelativeLayout applicationLayout -> al
+    android.widget.CheckBox skypeExport -> am
+    android.widget.CheckBox skypeTaskExport -> an
+    android.widget.EditText skypeUser -> ao
+    android.widget.EditText repeatDaysSkype -> ap
+    android.widget.RadioButton skypeCall -> aq
+    android.widget.RadioButton skypeVideo -> ar
+    android.widget.TextView skypeDate -> as
+    android.widget.TextView skypeTime -> at
+    android.widget.LinearLayout delayLayout -> au
+    android.widget.CheckBox attackDelay -> av
+    android.widget.ImageButton addNumberButtonLocation -> aw
+    android.widget.LinearLayout actionLocation -> ax
+    android.widget.RelativeLayout mapContainer -> ay
+    android.widget.ScrollView specsContainer -> az
+    android.widget.CheckBox attachLocationAction -> aA
+    android.widget.RadioButton callCheckLocation -> aB
+    android.widget.RadioButton messageCheckLocation -> aC
+    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocation -> aD
+    com.cray.software.justreminder.fragments.MapFragment map -> aE
+    android.widget.TextView locationDateField -> aF
+    android.widget.TextView locationTimeField -> aG
+    android.widget.AutoCompleteTextView searchField -> aH
+    android.widget.ImageButton addNumberButtonLocationOut -> aI
+    android.widget.LinearLayout actionLocationOut -> aJ
+    android.widget.LinearLayout delayLayoutOut -> aK
+    android.widget.RelativeLayout mapContainerOut -> aL
+    android.widget.ScrollView specsContainerOut -> aM
+    android.widget.TextView locationOutDateField -> aN
+    android.widget.TextView locationOutTimeField -> aO
+    android.widget.TextView currentLocation -> aP
+    android.widget.TextView mapLocation -> aQ
+    android.widget.TextView radiusMark -> aR
+    android.widget.CheckBox attachLocationOutAction -> aS
+    android.widget.CheckBox attachDelayOut -> aT
+    android.widget.RadioButton callCheckLocationOut -> aU
+    android.widget.RadioButton messageCheckLocationOut -> aV
+    android.widget.RadioButton currentCheck -> aW
+    android.widget.RadioButton mapCheck -> aX
+    com.cray.software.justreminder.views.FloatingEditText phoneNumberLocationOut -> aY
+    com.cray.software.justreminder.fragments.MapFragment mapOut -> aZ
+    android.widget.EditText shopEdit -> ba
+    com.cray.software.justreminder.adapters.TaskListRecyclerAdapter shoppingAdapter -> bb
+    com.cray.software.justreminder.datas.ShoppingListDataProvider shoppingLists -> bc
+    android.widget.ScrollView extraScroll -> bd
+    android.widget.ImageButton extraVibration -> be
+    android.widget.ImageButton extraUnlock -> bf
+    android.widget.ImageButton extraVoice -> bg
+    android.widget.ImageButton extraWake -> bh
+    android.widget.ImageButton extraRepeat -> bi
+    android.widget.ImageButton extraAuto -> bj
+    android.widget.ImageButton extraLimit -> bk
+    android.widget.ImageButton extraSwitch -> bl
+    android.widget.RelativeLayout extraHolder -> bm
+    android.widget.FrameLayout repeatFrame -> bn
+    android.widget.TextView repeatLabel -> bo
+    android.support.v7.widget.Toolbar toolbar -> bp
+    android.widget.Spinner spinner -> bq
+    com.cray.software.justreminder.views.FloatingEditText taskField -> br
+    android.widget.TextView category -> bs
+    com.getbase.floatingactionbutton.FloatingActionButton mFab -> bt
+    android.widget.LinearLayout navContainer -> bu
+    int myHour -> bv
+    int myMinute -> bw
+    int mySeconds -> bx
+    int myYear -> by
+    int myMonth -> bz
+    int myDay -> bA
+    int vibration -> bB
+    int voice -> bC
+    int notificationRepeat -> bD
+    int wake -> bE
+    int unlock -> bF
+    int auto -> bG
+    long repeats -> bH
+    long id -> bI
+    java.lang.String categoryId -> bJ
+    java.lang.String type -> bK
+    java.lang.String melody -> bL
+    java.lang.String selectedPackage -> bM
+    int radius -> bN
+    int ledColor -> bO
+    java.util.List foundPlaces -> bP
+    android.widget.ArrayAdapter adapter -> bQ
+    java.util.ArrayList namesList -> bR
+    com.google.android.gms.maps.model.LatLng curPlace -> bS
+    com.cray.software.justreminder.helpers.ColorSetter cSetter -> bT
+    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> bU
+    com.cray.software.justreminder.cloud.GTasksHelper gtx -> bV
+    boolean isAnimation -> bW
+    boolean isCalendar -> bX
+    boolean isStock -> bY
+    boolean isDark -> bZ
+    boolean isLocationMessage -> ca
+    boolean isLocationOutMessage -> cb
+    boolean isWeekMessage -> cc
+    boolean isMonthMessage -> cd
+    boolean isDelayed -> ce
+    com.cray.software.justreminder.reminder.Type remControl -> cf
+    com.cray.software.justreminder.reminder.Reminder item -> cg
+    android.os.Handler handler -> ch
+    com.cray.software.justreminder.async.GeocoderTask task -> ci
+    android.view.View$OnLongClickListener longClickListener -> cj
+    android.view.View$OnClickListener clickListener -> ck
+    android.view.View$OnClickListener contactClick -> cl
+    java.lang.Runnable seek -> cm
+    java.lang.Runnable runnable -> cn
+    android.view.View$OnClickListener dateClick -> co
+    android.view.View$OnClickListener timeClick -> cp
     android.app.TimePickerDialog$OnTimeSetListener myCallBack -> a
-    float downX -> cv
-    float downY -> cw
-    android.location.LocationManager mLocationManager -> cx
-    android.location.LocationListener mLocList -> cy
-    117:3631:void <init>() -> <init>
+    float downX -> cq
+    float downY -> cr
+    android.location.LocationManager mLocationManager -> cs
+    android.location.LocationListener mLocList -> ct
+    117:3333:void <init>() -> <init>
     300:581:void onCreate(android.os.Bundle) -> onCreate
     660:662:void addHandler() -> i
     695:739:void invalidateButtons() -> j
@@ -18542,77 +18468,77 @@ com.cray.software.justreminder.ReminderManager -> com.cray.software.justreminder
     894:897:void chooseLEDColor() -> s
     901:910:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     919:931:boolean isSame() -> t
-    938:1062:void attachDateReminder() -> u
-    1068:1240:void attachMonthDay() -> v
-    1244:1284:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-    1290:1449:void attachWeekDayReminder() -> w
-    1456:1483:void setCheckForDays(java.lang.String) -> b
-    1489:1607:void attachTimeReminder() -> x
-    1613:1623:void updateTimeView() -> y
-    1629:1787:void attachSkype() -> z
-    1793:1989:void attachApplication() -> A
-    1995:2128:void attachCall() -> B
-    2134:2268:void attachMessage() -> C
-    2272:2274:void place(com.google.android.gms.maps.model.LatLng) -> a
-    2278:2286:void onZoomOutClick() -> f
-    2291:2291:void placeName(java.lang.String) -> a
-    2297:2554:void attachLocation() -> D
-    2560:2803:void attachLocationOut() -> E
-    2809:2910:void attachShoppingList() -> F
-    2916:2919:void detachCurrentView() -> G
-    2925:2939:void save() -> H
-    2946:2947:boolean isLocationAttached() -> I
-    2955:2956:boolean isLocationOutAttached() -> J
-    2964:2965:boolean isDateReminderAttached() -> K
-    2973:2973:boolean isTimeReminderAttached() -> L
-    2981:2982:boolean isCallAttached() -> M
-    2990:2991:boolean isSkypeAttached() -> N
-    2999:3000:boolean isApplicationAttached() -> O
-    3008:3008:boolean isWeekDayReminderAttached() -> P
-    3016:3017:boolean isMessageAttached() -> Q
-    3025:3025:boolean isMonthDayAttached() -> R
-    3033:3033:boolean isShoppingAttached() -> S
-    3042:3094:java.lang.String getType() -> T
-    3102:3241:com.cray.software.justreminder.reminder.Reminder getData() -> U
-    3249:3254:long getLimit() -> V
-    3262:3267:int getAuto() -> W
-    3275:3278:int getUnlock() -> X
-    3286:3289:int getWake() -> Y
-    3297:3302:int getNotification() -> Z
-    3310:3313:int getVoice() -> aa
-    3321:3324:int getVibro() -> ab
-    3332:3342:int getExportCode() -> ac
-    3352:3358:long getDue(java.lang.String,long) -> a
-    3366:3382:int getSyncCode() -> ad
-    3390:3407:int getRepeat() -> ae
-    3415:3429:java.lang.String getNumber() -> af
-    3437:3479:boolean checkNumber() -> ag
-    3484:3513:void onClick(android.view.View) -> onClick
-    3517:3537:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    3542:3542:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    3547:3547:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-    3553:3557:void dateDialog() -> g
-    3561:3617:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
-    3624:3625:android.app.Dialog timeDialog() -> h
-    3681:3690:void onBackPressed() -> onBackPressed
-    3696:3756:void restoreTask() -> ah
-    3760:3763:void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
-    3768:3768:void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
-    3776:3808:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
-    3815:3820:void onDownSwipe() -> ai
-    3826:3831:void onUpSwipe() -> aj
-    3837:3846:void onLeftSwipe() -> ak
-    3852:3861:void onRightSwipe() -> al
-    3868:3959:void switchIt(int) -> a
-    3964:4019:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
-    4023:4124:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    4128:4143:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    4148:4158:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
-    4163:4168:void onResume() -> onResume
-    4171:4178:boolean isListFirstTime() -> am
-    4183:4188:void onDestroy() -> onDestroy
-    4195:4212:void onAddressReceived(java.util.List) -> a
-    4216:4218:void OnCategory(java.lang.String,java.lang.String) -> a
+    958:1044:void attachDateReminder() -> u
+    1050:1207:void attachMonthDay() -> v
+    1211:1251:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    1257:1407:void attachWeekDayReminder() -> w
+    1414:1441:void setCheckForDays(java.lang.String) -> b
+    1447:1565:void attachTimeReminder() -> x
+    1571:1581:void updateTimeView() -> y
+    1587:1702:void attachSkype() -> z
+    1708:1861:void attachApplication() -> A
+    1867:1962:void attachCall() -> B
+    1968:2064:void attachMessage() -> C
+    2068:2070:void place(com.google.android.gms.maps.model.LatLng) -> a
+    2074:2082:void onZoomOutClick() -> f
+    2087:2087:void placeName(java.lang.String) -> a
+    2093:2313:void attachLocation() -> D
+    2319:2526:void attachLocationOut() -> E
+    2532:2633:void attachShoppingList() -> F
+    2639:2642:void detachCurrentView() -> G
+    2648:2662:void save() -> H
+    2669:2670:boolean isLocationAttached() -> I
+    2678:2679:boolean isLocationOutAttached() -> J
+    2687:2688:boolean isDateReminderAttached() -> K
+    2696:2696:boolean isTimeReminderAttached() -> L
+    2704:2705:boolean isCallAttached() -> M
+    2713:2714:boolean isSkypeAttached() -> N
+    2722:2723:boolean isApplicationAttached() -> O
+    2731:2731:boolean isWeekDayReminderAttached() -> P
+    2739:2740:boolean isMessageAttached() -> Q
+    2748:2748:boolean isMonthDayAttached() -> R
+    2756:2756:boolean isShoppingAttached() -> S
+    2765:2817:java.lang.String getType() -> T
+    2825:2964:com.cray.software.justreminder.reminder.Reminder getData() -> U
+    2972:2977:long getLimit() -> V
+    2985:2990:int getAuto() -> W
+    2998:3001:int getUnlock() -> X
+    3009:3012:int getWake() -> Y
+    3020:3025:int getNotification() -> Z
+    3033:3036:int getVoice() -> aa
+    3044:3047:int getVibro() -> ab
+    3055:3065:int getExportCode() -> ac
+    3075:3081:long getDue(java.lang.String,long) -> a
+    3089:3105:int getSyncCode() -> ad
+    3113:3130:int getRepeat() -> ae
+    3138:3152:java.lang.String getNumber() -> af
+    3160:3202:boolean checkNumber() -> ag
+    3207:3227:void onClick(android.view.View) -> onClick
+    3231:3251:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    3256:3256:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    3261:3261:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+    3267:3271:void dateDialog() -> g
+    3275:3319:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
+    3326:3327:android.app.Dialog timeDialog() -> h
+    3383:3392:void onBackPressed() -> onBackPressed
+    3398:3458:void restoreTask() -> ah
+    3462:3465:void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
+    3470:3470:void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
+    3478:3510:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
+    3517:3522:void onDownSwipe() -> ai
+    3528:3533:void onUpSwipe() -> aj
+    3539:3548:void onLeftSwipe() -> ak
+    3554:3563:void onRightSwipe() -> al
+    3570:3661:void switchIt(int) -> a
+    3666:3721:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
+    3725:3826:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    3830:3845:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    3850:3860:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
+    3865:3870:void onResume() -> onResume
+    3873:3880:boolean isListFirstTime() -> am
+    3885:3890:void onDestroy() -> onDestroy
+    3897:3914:void onAddressReceived(java.util.List) -> a
+    3918:3920:void OnCategory(java.lang.String,java.lang.String) -> a
     117:117:void access$000(com.cray.software.justreminder.ReminderManager) -> a
     117:117:void access$100(com.cray.software.justreminder.ReminderManager) -> b
     117:117:void access$200(com.cray.software.justreminder.ReminderManager) -> c
@@ -18724,278 +18650,211 @@ com.cray.software.justreminder.ReminderManager -> com.cray.software.justreminder
     117:117:android.location.LocationManager access$9402(com.cray.software.justreminder.ReminderManager,android.location.LocationManager) -> a
     117:117:android.location.LocationManager access$9400(com.cray.software.justreminder.ReminderManager) -> aE
     117:117:android.location.LocationListener access$9500(com.cray.software.justreminder.ReminderManager) -> aF
-com.cray.software.justreminder.ReminderManager$1 -> com.cray.software.justreminder.bt:
+com.cray.software.justreminder.ReminderManager$1 -> com.cray.software.justreminder.bd:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     318:318:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     321:338:boolean onMenuItemClick(android.view.MenuItem) -> a
-com.cray.software.justreminder.ReminderManager$10 -> com.cray.software.justreminder.bu:
+com.cray.software.justreminder.ReminderManager$10 -> com.cray.software.justreminder.be:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     587:587:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     590:617:boolean onLongClick(android.view.View) -> onLongClick
-com.cray.software.justreminder.ReminderManager$11 -> com.cray.software.justreminder.bv:
+com.cray.software.justreminder.ReminderManager$11 -> com.cray.software.justreminder.bf:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     625:625:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     628:637:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$12 -> com.cray.software.justreminder.bw:
+com.cray.software.justreminder.ReminderManager$12 -> com.cray.software.justreminder.bg:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     643:643:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     646:653:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$13 -> com.cray.software.justreminder.bx:
+com.cray.software.justreminder.ReminderManager$13 -> com.cray.software.justreminder.bh:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     667:667:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     670:675:void run() -> run
-com.cray.software.justreminder.ReminderManager$14 -> com.cray.software.justreminder.by:
+com.cray.software.justreminder.ReminderManager$14 -> com.cray.software.justreminder.bi:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     681:681:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     684:688:void run() -> run
-com.cray.software.justreminder.ReminderManager$15 -> com.cray.software.justreminder.bz:
+com.cray.software.justreminder.ReminderManager$15 -> com.cray.software.justreminder.bj:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     699:699:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     702:703:void run() -> run
-com.cray.software.justreminder.ReminderManager$16 -> com.cray.software.justreminder.ca:
+com.cray.software.justreminder.ReminderManager$16 -> com.cray.software.justreminder.bk:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    967:967:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    970:971:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$17 -> com.cray.software.justreminder.cb:
+    937:937:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    940:941:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$17 -> com.cray.software.justreminder.bl:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1001:1001:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1004:1005:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$18 -> com.cray.software.justreminder.cc:
+    947:947:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    950:951:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$18 -> com.cray.software.justreminder.bm:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1094:1094:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1097:1098:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$19 -> com.cray.software.justreminder.cd:
+    1108:1108:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1111:1141:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$18$1 -> com.cray.software.justreminder.bn:
+    com.cray.software.justreminder.ReminderManager$18 this$1 -> a
+    1123:1123:void <init>(com.cray.software.justreminder.ReminderManager$18) -> <init>
+    1126:1130:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$19 -> com.cray.software.justreminder.bo:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1120:1120:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1123:1124:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$2 -> com.cray.software.justreminder.ce:
+    1315:1315:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1318:1348:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$19$1 -> com.cray.software.justreminder.bp:
+    com.cray.software.justreminder.ReminderManager$19 this$1 -> a
+    1330:1330:void <init>(com.cray.software.justreminder.ReminderManager$19) -> <init>
+    1333:1337:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$2 -> com.cray.software.justreminder.bq:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     359:359:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     362:363:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$20 -> com.cray.software.justreminder.cf:
+com.cray.software.justreminder.ReminderManager$20 -> com.cray.software.justreminder.br:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1140:1140:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1143:1173:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$20$1 -> com.cray.software.justreminder.cg:
-    com.cray.software.justreminder.ReminderManager$20 this$1 -> a
-    1155:1155:void <init>(com.cray.software.justreminder.ReminderManager$20) -> <init>
-    1158:1162:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$21 -> com.cray.software.justreminder.ch:
+    1476:1476:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1479:1482:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$21 -> com.cray.software.justreminder.bs:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1328:1328:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1331:1332:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$22 -> com.cray.software.justreminder.ci:
+    1484:1484:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1487:1489:boolean onLongClick(android.view.View) -> onLongClick
+com.cray.software.justreminder.ReminderManager$22 -> com.cray.software.justreminder.bt:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1357:1357:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1360:1390:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$22$1 -> com.cray.software.justreminder.cj:
-    com.cray.software.justreminder.ReminderManager$22 this$1 -> a
-    1372:1372:void <init>(com.cray.software.justreminder.ReminderManager$22) -> <init>
-    1375:1379:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$23 -> com.cray.software.justreminder.ck:
+    1602:1602:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1605:1607:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$23 -> com.cray.software.justreminder.bu:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1518:1518:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1521:1524:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$24 -> com.cray.software.justreminder.cl:
+    1724:1724:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1727:1728:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$24 -> com.cray.software.justreminder.bv:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1526:1526:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1529:1531:boolean onLongClick(android.view.View) -> onLongClick
-com.cray.software.justreminder.ReminderManager$25 -> com.cray.software.justreminder.cm:
+    1738:1738:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    1741:1759:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$25 -> com.cray.software.justreminder.bw:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1644:1644:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1647:1649:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$26 -> com.cray.software.justreminder.cn:
+    2119:2119:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2122:2131:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$26 -> com.cray.software.justreminder.bx:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1669:1669:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1672:1673:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$27 -> com.cray.software.justreminder.co:
+    2151:2151:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2154:2155:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$27 -> com.cray.software.justreminder.by:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1697:1697:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1700:1701:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$28 -> com.cray.software.justreminder.cp:
+    2157:2157:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2160:2162:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$28 -> com.cray.software.justreminder.bz:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1712:1712:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1715:1716:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$29 -> com.cray.software.justreminder.cq:
+    2170:2170:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2174:2174:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    2178:2181:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    2186:2186:void afterTextChanged(android.text.Editable) -> afterTextChanged
+com.cray.software.justreminder.ReminderManager$29 -> com.cray.software.justreminder.ca:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1809:1809:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1812:1813:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$3 -> com.cray.software.justreminder.cr:
+    2188:2188:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2191:2201:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+com.cray.software.justreminder.ReminderManager$3 -> com.cray.software.justreminder.cb:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     372:372:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     375:377:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
     381:383:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
     387:394:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-com.cray.software.justreminder.ReminderManager$3$1 -> com.cray.software.justreminder.cs:
+com.cray.software.justreminder.ReminderManager$3$1 -> com.cray.software.justreminder.cc:
     com.cray.software.justreminder.ReminderManager$3 this$1 -> a
     387:387:void <init>(com.cray.software.justreminder.ReminderManager$3) -> <init>
     390:392:void run() -> run
-com.cray.software.justreminder.ReminderManager$30 -> com.cray.software.justreminder.ct:
+com.cray.software.justreminder.ReminderManager$30 -> com.cray.software.justreminder.cd:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1823:1823:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1826:1844:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$31 -> com.cray.software.justreminder.cu:
+    2208:2208:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2211:2235:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$30$1 -> com.cray.software.justreminder.ce:
+    com.cray.software.justreminder.ReminderManager$30 this$1 -> a
+    2222:2222:void <init>(com.cray.software.justreminder.ReminderManager$30) -> <init>
+    2225:2229:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$31 -> com.cray.software.justreminder.cf:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1864:1864:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1867:1868:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$32 -> com.cray.software.justreminder.cv:
+    2345:2345:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2348:2357:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$32 -> com.cray.software.justreminder.cg:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1892:1892:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1895:1896:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$33 -> com.cray.software.justreminder.cw:
+    2372:2372:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2375:2378:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$33 -> com.cray.software.justreminder.ch:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    1907:1907:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    1910:1911:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$34 -> com.cray.software.justreminder.cx:
+    2391:2391:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2394:2395:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    2400:2400:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    2405:2405:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+com.cray.software.justreminder.ReminderManager$34 -> com.cray.software.justreminder.ci:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2050:2050:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2053:2054:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$35 -> com.cray.software.justreminder.cy:
+    2414:2414:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2417:2441:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$34$1 -> com.cray.software.justreminder.cj:
+    com.cray.software.justreminder.ReminderManager$34 this$1 -> a
+    2428:2428:void <init>(com.cray.software.justreminder.ReminderManager$34) -> <init>
+    2431:2435:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.ReminderManager$35 -> com.cray.software.justreminder.ck:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2065:2065:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2068:2069:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$36 -> com.cray.software.justreminder.cz:
+    2545:2545:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2548:2559:boolean onKey(android.view.View,int,android.view.KeyEvent) -> onKey
+com.cray.software.justreminder.ReminderManager$36 -> com.cray.software.justreminder.cl:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2190:2190:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2193:2194:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$37 -> com.cray.software.justreminder.da:
+    2565:2565:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2568:2577:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.ReminderManager$37 -> com.cray.software.justreminder.cm:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2205:2205:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2208:2209:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$38 -> com.cray.software.justreminder.db:
+    2581:2581:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2584:2588:void onItemCheck(int,boolean) -> a
+    2592:2594:void onItemDelete(int) -> a
+    2599:2599:void onItemChange(int) -> b
+com.cray.software.justreminder.ReminderManager$38 -> com.cray.software.justreminder.cn:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2323:2323:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2326:2335:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$39 -> com.cray.software.justreminder.dc:
+    2608:2608:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    2611:2615:void onItemCheck(int,boolean) -> a
+    2619:2621:void onItemDelete(int) -> a
+    2626:2626:void onItemChange(int) -> b
+com.cray.software.justreminder.ReminderManager$39 -> com.cray.software.justreminder.co:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    2355:2355:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2358:2359:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$4 -> com.cray.software.justreminder.dd:
+    3333:3333:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    3335:3378:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
+com.cray.software.justreminder.ReminderManager$4 -> com.cray.software.justreminder.cp:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     416:416:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     420:420:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
     424:425:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
     430:430:void afterTextChanged(android.text.Editable) -> afterTextChanged
-com.cray.software.justreminder.ReminderManager$40 -> com.cray.software.justreminder.de:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2361:2361:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2364:2366:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$41 -> com.cray.software.justreminder.df:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2374:2374:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2378:2378:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    2382:2385:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
-    2390:2390:void afterTextChanged(android.text.Editable) -> afterTextChanged
-com.cray.software.justreminder.ReminderManager$42 -> com.cray.software.justreminder.dg:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2392:2392:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2395:2405:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.cray.software.justreminder.ReminderManager$43 -> com.cray.software.justreminder.dh:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2412:2412:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2415:2439:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$43$1 -> com.cray.software.justreminder.di:
-    com.cray.software.justreminder.ReminderManager$43 this$1 -> a
-    2426:2426:void <init>(com.cray.software.justreminder.ReminderManager$43) -> <init>
-    2429:2433:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$44 -> com.cray.software.justreminder.dj:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2470:2470:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2473:2474:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$45 -> com.cray.software.justreminder.dk:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2485:2485:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2488:2489:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$46 -> com.cray.software.justreminder.dl:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2586:2586:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2589:2598:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$47 -> com.cray.software.justreminder.dm:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2613:2613:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2616:2619:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$48 -> com.cray.software.justreminder.dn:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2632:2632:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2635:2636:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    2641:2641:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    2646:2646:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-com.cray.software.justreminder.ReminderManager$49 -> com.cray.software.justreminder.do:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2655:2655:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2658:2682:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$49$1 -> com.cray.software.justreminder.dp:
-    com.cray.software.justreminder.ReminderManager$49 this$1 -> a
-    2669:2669:void <init>(com.cray.software.justreminder.ReminderManager$49) -> <init>
-    2672:2676:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.ReminderManager$5 -> com.cray.software.justreminder.dq:
+com.cray.software.justreminder.ReminderManager$5 -> com.cray.software.justreminder.cq:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     433:433:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     436:437:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$50 -> com.cray.software.justreminder.dr:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2713:2713:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2716:2717:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$51 -> com.cray.software.justreminder.ds:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2728:2728:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2731:2732:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$52 -> com.cray.software.justreminder.dt:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2822:2822:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2825:2836:boolean onKey(android.view.View,int,android.view.KeyEvent) -> onKey
-com.cray.software.justreminder.ReminderManager$53 -> com.cray.software.justreminder.du:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2842:2842:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2845:2854:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$54 -> com.cray.software.justreminder.dv:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2858:2858:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2861:2865:void onItemCheck(int,boolean) -> a
-    2869:2871:void onItemDelete(int) -> a
-    2876:2876:void onItemChange(int) -> b
-com.cray.software.justreminder.ReminderManager$55 -> com.cray.software.justreminder.dw:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    2885:2885:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    2888:2892:void onItemCheck(int,boolean) -> a
-    2896:2898:void onItemDelete(int) -> a
-    2903:2903:void onItemChange(int) -> b
-com.cray.software.justreminder.ReminderManager$56 -> com.cray.software.justreminder.dx:
-    com.cray.software.justreminder.ReminderManager this$0 -> a
-    3631:3631:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    3633:3676:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
-com.cray.software.justreminder.ReminderManager$6 -> com.cray.software.justreminder.dy:
+com.cray.software.justreminder.ReminderManager$6 -> com.cray.software.justreminder.cr:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     441:441:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     444:445:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$7 -> com.cray.software.justreminder.dz:
+com.cray.software.justreminder.ReminderManager$7 -> com.cray.software.justreminder.cs:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     472:472:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     475:478:void run() -> run
-com.cray.software.justreminder.ReminderManager$8 -> com.cray.software.justreminder.ea:
+com.cray.software.justreminder.ReminderManager$8 -> com.cray.software.justreminder.ct:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     485:485:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     488:489:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.ReminderManager$9 -> com.cray.software.justreminder.eb:
+com.cray.software.justreminder.ReminderManager$9 -> com.cray.software.justreminder.cu:
     com.cray.software.justreminder.ReminderManager this$0 -> a
     491:491:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
     494:495:boolean onLongClick(android.view.View) -> onLongClick
-com.cray.software.justreminder.ReminderManager$CurrentLocation -> com.cray.software.justreminder.ec:
+com.cray.software.justreminder.ReminderManager$CurrentLocation -> com.cray.software.justreminder.cv:
     com.cray.software.justreminder.ReminderManager this$0 -> a
-    4220:4220:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
-    4224:4236:void onLocationChanged(android.location.Location) -> onLocationChanged
-    4240:4249:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
-    4253:4262:void onProviderEnabled(java.lang.String) -> onProviderEnabled
-    4266:4275:void onProviderDisabled(java.lang.String) -> onProviderDisabled
+    3922:3922:void <init>(com.cray.software.justreminder.ReminderManager) -> <init>
+    3926:3938:void onLocationChanged(android.location.Location) -> onLocationChanged
+    3942:3951:void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
+    3955:3964:void onProviderEnabled(java.lang.String) -> onProviderEnabled
+    3968:3977:void onProviderDisabled(java.lang.String) -> onProviderDisabled
 com.cray.software.justreminder.SettingsActivity -> com.cray.software.justreminder.SettingsActivity:
     com.cray.software.justreminder.helpers.ColorSetter cSetter -> a
-    35:38:void <init>() -> <init>
-    42:66:void onCreate(android.os.Bundle) -> onCreate
-    70:75:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    81:85:void onResume() -> onResume
-    92:173:void onArticleSelected(int) -> a
-    177:186:void onTimePicked(java.util.Calendar) -> a
-    190:213:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
+    boolean isCreate -> b
+    35:39:void <init>() -> <init>
+    43:69:void onCreate(android.os.Bundle) -> onCreate
+    73:78:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    84:89:void onResume() -> onResume
+    96:177:void onArticleSelected(int) -> a
+    181:190:void onTimePicked(java.util.Calendar) -> a
+    194:217:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
 com.cray.software.justreminder.SplashScreen -> com.cray.software.justreminder.SplashScreen:
     com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> a
     com.cray.software.justreminder.helpers.ColorSetter cs -> b
@@ -19031,7 +18890,7 @@ com.cray.software.justreminder.TaskListManager -> com.cray.software.justreminder
     android.widget.CheckBox defaultCheck -> w
     long id -> x
     android.support.v7.widget.Toolbar toolbar -> y
-    com.cray.software.justreminder.views.FloatingEditText editField -> z
+    android.widget.EditText editField -> z
     int color -> A
     int sysDef -> B
     com.cray.software.justreminder.databases.TasksData data -> C
@@ -19039,18 +18898,18 @@ com.cray.software.justreminder.TaskListManager -> com.cray.software.justreminder
     android.widget.RadioGroup$OnCheckedChangeListener listener2 -> E
     android.widget.RadioGroup$OnCheckedChangeListener listener3 -> F
     android.widget.RadioGroup$OnCheckedChangeListener listener4 -> G
-    31:331:void <init>() -> <init>
-    51:118:void onCreate(android.os.Bundle) -> onCreate
-    121:157:void initRadio() -> g
-    160:207:void saveTaskList() -> h
-    211:216:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    221:242:void deleteDialog() -> i
-    245:268:void deleteList() -> j
-    272:277:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    350:406:void colorSwitch(int) -> a
-    409:414:void setColor(int) -> b
-    417:476:void setUpRadio() -> f
-    480:482:void onDestroy() -> onDestroy
+    31:330:void <init>() -> <init>
+    51:117:void onCreate(android.os.Bundle) -> onCreate
+    120:156:void initRadio() -> g
+    159:206:void saveTaskList() -> h
+    210:215:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    220:241:void deleteDialog() -> i
+    244:267:void deleteList() -> j
+    271:276:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    349:405:void colorSwitch(int) -> a
+    408:413:void setColor(int) -> b
+    416:475:void setUpRadio() -> f
+    479:481:void onDestroy() -> onDestroy
     31:31:void access$000(com.cray.software.justreminder.TaskListManager) -> a
     31:31:void access$100(com.cray.software.justreminder.TaskListManager) -> b
     31:31:void access$200(com.cray.software.justreminder.TaskListManager) -> c
@@ -19063,34 +18922,34 @@ com.cray.software.justreminder.TaskListManager -> com.cray.software.justreminder
     31:31:void access$900(com.cray.software.justreminder.TaskListManager,int) -> a
     31:31:android.widget.RadioGroup access$1000(com.cray.software.justreminder.TaskListManager) -> j
     31:31:android.widget.RadioGroup$OnCheckedChangeListener access$1100(com.cray.software.justreminder.TaskListManager) -> k
-com.cray.software.justreminder.TaskListManager$1 -> com.cray.software.justreminder.ed:
+com.cray.software.justreminder.TaskListManager$1 -> com.cray.software.justreminder.cw:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    66:66:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    69:77:boolean onMenuItemClick(android.view.MenuItem) -> a
-com.cray.software.justreminder.TaskListManager$2 -> com.cray.software.justreminder.ee:
+    71:71:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    74:82:boolean onMenuItemClick(android.view.MenuItem) -> a
+com.cray.software.justreminder.TaskListManager$2 -> com.cray.software.justreminder.cx:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    225:225:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    228:229:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.TaskListManager$3 -> com.cray.software.justreminder.ef:
+    224:224:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    227:228:void onClick(android.content.DialogInterface,int) -> onClick
+com.cray.software.justreminder.TaskListManager$3 -> com.cray.software.justreminder.cy:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    231:231:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    234:237:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.TaskListManager$4 -> com.cray.software.justreminder.eg:
+    230:230:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    233:236:void onClick(android.content.DialogInterface,int) -> onClick
+com.cray.software.justreminder.TaskListManager$4 -> com.cray.software.justreminder.cz:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    280:280:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    283:295:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
-com.cray.software.justreminder.TaskListManager$5 -> com.cray.software.justreminder.eh:
+    279:279:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    282:294:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+com.cray.software.justreminder.TaskListManager$5 -> com.cray.software.justreminder.da:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    297:297:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    300:312:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
-com.cray.software.justreminder.TaskListManager$6 -> com.cray.software.justreminder.ei:
+    296:296:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    299:311:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+com.cray.software.justreminder.TaskListManager$6 -> com.cray.software.justreminder.db:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    314:314:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    317:329:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
-com.cray.software.justreminder.TaskListManager$7 -> com.cray.software.justreminder.ej:
+    313:313:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    316:328:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+com.cray.software.justreminder.TaskListManager$7 -> com.cray.software.justreminder.dc:
     com.cray.software.justreminder.TaskListManager this$0 -> a
-    331:331:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
-    334:346:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+    330:330:void <init>(com.cray.software.justreminder.TaskListManager) -> <init>
+    333:345:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.TaskManager -> com.cray.software.justreminder.TaskManager:
     com.cray.software.justreminder.helpers.ColorSetter cSetter -> c
     com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> d
@@ -19099,130 +18958,113 @@ com.cray.software.justreminder.TaskManager -> com.cray.software.justreminder.Tas
     android.widget.EditText editField -> g
     android.widget.EditText noteField -> h
     android.widget.TextView dateField -> i
-    android.widget.TextView dateYearField -> j
-    android.widget.TextView timeField -> k
-    android.widget.TextView listText -> l
-    android.widget.LinearLayout dueContainer -> m
-    android.widget.LinearLayout reminderContainer -> n
-    android.widget.CheckBox reminderCheck -> o
-    android.widget.CheckBox dueCheck -> p
-    int color -> q
-    int myHour -> r
-    int myMinute -> s
-    int myYear -> t
-    int myMonth -> u
-    int myDay -> v
-    java.lang.String listId -> w
-    java.lang.String initListId -> x
-    java.lang.String taskId -> y
-    java.lang.String action -> z
-    com.cray.software.justreminder.databases.TasksData data -> A
-    java.text.SimpleDateFormat full24Format -> B
-    com.getbase.floatingactionbutton.FloatingActionButton mFab -> C
-    java.util.ArrayList categories -> D
+    android.widget.TextView timeField -> j
+    android.widget.TextView listText -> k
+    android.widget.LinearLayout dueContainer -> l
+    android.widget.LinearLayout reminderContainer -> m
+    android.widget.CheckBox reminderCheck -> n
+    android.widget.CheckBox dueCheck -> o
+    int color -> p
+    int myHour -> q
+    int myMinute -> r
+    int myYear -> s
+    int myMonth -> t
+    int myDay -> u
+    java.lang.String listId -> v
+    java.lang.String initListId -> w
+    java.lang.String taskId -> x
+    java.lang.String action -> y
+    com.cray.software.justreminder.databases.TasksData data -> z
+    java.util.ArrayList categories -> A
     android.app.DatePickerDialog$OnDateSetListener myDateCallBack -> a
     android.app.TimePickerDialog$OnTimeSetListener myCallBack -> b
-    56:513:void <init>() -> <init>
-    94:302:void onCreate(android.os.Bundle) -> onCreate
-    305:315:void moveTask(java.lang.String) -> a
-    318:342:void selectList(boolean) -> a
-    345:393:void saveTask() -> h
-    397:402:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    407:425:long saveReminder(java.lang.String) -> b
-    429:450:void deleteDialog() -> i
-    453:463:void deleteTask() -> j
-    467:471:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    475:483:void setColor(int) -> a
-    486:486:android.app.Dialog dateDialog() -> f
-    509:510:android.app.Dialog timeDialog() -> g
-    529:531:void onDestroy() -> onDestroy
-    56:56:void access$000(com.cray.software.justreminder.TaskManager) -> a
-    56:56:void access$100(com.cray.software.justreminder.TaskManager,boolean) -> a
-    56:56:android.widget.LinearLayout access$200(com.cray.software.justreminder.TaskManager) -> b
-    56:56:android.widget.LinearLayout access$300(com.cray.software.justreminder.TaskManager) -> c
-    56:56:void access$400(com.cray.software.justreminder.TaskManager) -> d
-    56:56:java.util.ArrayList access$500(com.cray.software.justreminder.TaskManager) -> e
-    56:56:void access$600(com.cray.software.justreminder.TaskManager,java.lang.String) -> a
-    56:56:android.widget.TextView access$700(com.cray.software.justreminder.TaskManager) -> f
-    56:56:java.lang.String access$802(com.cray.software.justreminder.TaskManager,java.lang.String) -> b
-    56:56:void access$900(com.cray.software.justreminder.TaskManager) -> g
-    56:56:int access$1002(com.cray.software.justreminder.TaskManager,int) -> a
-    56:56:int access$1102(com.cray.software.justreminder.TaskManager,int) -> b
-    56:56:int access$1202(com.cray.software.justreminder.TaskManager,int) -> c
-    56:56:java.text.SimpleDateFormat access$1300(com.cray.software.justreminder.TaskManager) -> h
-    56:56:android.widget.TextView access$1400(com.cray.software.justreminder.TaskManager) -> i
-    56:56:int access$1000(com.cray.software.justreminder.TaskManager) -> j
-    56:56:android.widget.TextView access$1500(com.cray.software.justreminder.TaskManager) -> k
-    56:56:int access$1602(com.cray.software.justreminder.TaskManager,int) -> d
-    56:56:int access$1702(com.cray.software.justreminder.TaskManager,int) -> e
-    56:56:com.cray.software.justreminder.helpers.SharedPrefs access$1800(com.cray.software.justreminder.TaskManager) -> l
-    56:56:android.widget.TextView access$1900(com.cray.software.justreminder.TaskManager) -> m
-com.cray.software.justreminder.TaskManager$1 -> com.cray.software.justreminder.ek:
+    52:467:void <init>() -> <init>
+    86:243:void onCreate(android.os.Bundle) -> onCreate
+    246:256:void moveTask(java.lang.String) -> a
+    259:284:void selectList(boolean) -> a
+    287:296:void reloadColor(java.lang.String) -> b
+    299:342:void saveTask() -> h
+    345:363:long saveReminder(java.lang.String) -> c
+    367:388:void deleteDialog() -> i
+    391:401:void deleteTask() -> j
+    404:409:void setColor(int) -> a
+    413:419:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    424:438:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    443:443:android.app.Dialog dateDialog() -> f
+    463:464:android.app.Dialog timeDialog() -> g
+    483:485:void onDestroy() -> onDestroy
+    52:52:void access$000(com.cray.software.justreminder.TaskManager,boolean) -> a
+    52:52:android.widget.LinearLayout access$100(com.cray.software.justreminder.TaskManager) -> a
+    52:52:android.widget.LinearLayout access$200(com.cray.software.justreminder.TaskManager) -> b
+    52:52:java.util.ArrayList access$300(com.cray.software.justreminder.TaskManager) -> c
+    52:52:void access$400(com.cray.software.justreminder.TaskManager,java.lang.String) -> a
+    52:52:android.widget.TextView access$500(com.cray.software.justreminder.TaskManager) -> d
+    52:52:java.lang.String access$602(com.cray.software.justreminder.TaskManager,java.lang.String) -> b
+    52:52:java.lang.String access$600(com.cray.software.justreminder.TaskManager) -> e
+    52:52:void access$700(com.cray.software.justreminder.TaskManager,java.lang.String) -> c
+    52:52:void access$800(com.cray.software.justreminder.TaskManager) -> f
+    52:52:int access$902(com.cray.software.justreminder.TaskManager,int) -> a
+    52:52:int access$1002(com.cray.software.justreminder.TaskManager,int) -> b
+    52:52:int access$1102(com.cray.software.justreminder.TaskManager,int) -> c
+    52:52:android.widget.TextView access$1200(com.cray.software.justreminder.TaskManager) -> g
+    52:52:int access$1302(com.cray.software.justreminder.TaskManager,int) -> d
+    52:52:int access$1402(com.cray.software.justreminder.TaskManager,int) -> e
+    52:52:com.cray.software.justreminder.helpers.SharedPrefs access$1500(com.cray.software.justreminder.TaskManager) -> h
+    52:52:android.widget.TextView access$1600(com.cray.software.justreminder.TaskManager) -> i
+com.cray.software.justreminder.TaskManager$1 -> com.cray.software.justreminder.dd:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    109:109:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    112:120:boolean onMenuItemClick(android.view.MenuItem) -> a
-com.cray.software.justreminder.TaskManager$10 -> com.cray.software.justreminder.el:
+    108:108:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    111:112:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.TaskManager$10 -> com.cray.software.justreminder.de:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    433:433:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    436:437:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.TaskManager$11 -> com.cray.software.justreminder.em:
+    467:467:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    469:478:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
+com.cray.software.justreminder.TaskManager$2 -> com.cray.software.justreminder.df:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    439:439:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    442:445:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.TaskManager$12 -> com.cray.software.justreminder.en:
+    115:115:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    118:120:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.TaskManager$3 -> com.cray.software.justreminder.dg:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    489:489:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    493:505:void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
-com.cray.software.justreminder.TaskManager$13 -> com.cray.software.justreminder.eo:
+    123:123:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    126:128:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.cray.software.justreminder.TaskManager$4 -> com.cray.software.justreminder.dh:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    513:513:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    515:524:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
-com.cray.software.justreminder.TaskManager$2 -> com.cray.software.justreminder.ep:
+    148:148:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    151:152:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.TaskManager$5 -> com.cray.software.justreminder.di:
     com.cray.software.justreminder.TaskManager this$0 -> a
-    130:130:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    133:134:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.TaskManager$3 -> com.cray.software.justreminder.eq:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    137:137:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    140:142:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.TaskManager$4 -> com.cray.software.justreminder.er:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    145:145:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    148:150:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.cray.software.justreminder.TaskManager$5 -> com.cray.software.justreminder.es:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    172:172:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    175:176:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.TaskManager$6 -> com.cray.software.justreminder.et:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    195:195:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    198:199:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.TaskManager$7 -> com.cray.software.justreminder.eu:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    203:203:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    206:207:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.TaskManager$8 -> com.cray.software.justreminder.ev:
-    com.cray.software.justreminder.TaskManager this$0 -> a
-    214:214:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
-    217:218:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.TaskManager$9 -> com.cray.software.justreminder.ew:
+    159:159:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    162:163:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.TaskManager$6 -> com.cray.software.justreminder.dj:
     boolean val$move -> a
     com.cray.software.justreminder.TaskManager this$0 -> b
-    329:329:void <init>(com.cray.software.justreminder.TaskManager,boolean) -> <init>
-    332:338:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.TaskManager$SimpleAdapter -> com.cray.software.justreminder.ex:
+    270:270:void <init>(com.cray.software.justreminder.TaskManager,boolean) -> <init>
+    273:280:void onClick(android.content.DialogInterface,int) -> onClick
+com.cray.software.justreminder.TaskManager$7 -> com.cray.software.justreminder.dk:
+    com.cray.software.justreminder.TaskManager this$0 -> a
+    371:371:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    374:375:void onClick(android.content.DialogInterface,int) -> onClick
+com.cray.software.justreminder.TaskManager$8 -> com.cray.software.justreminder.dl:
+    com.cray.software.justreminder.TaskManager this$0 -> a
+    377:377:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    380:383:void onClick(android.content.DialogInterface,int) -> onClick
+com.cray.software.justreminder.TaskManager$9 -> com.cray.software.justreminder.dm:
+    com.cray.software.justreminder.TaskManager this$0 -> a
+    446:446:void <init>(com.cray.software.justreminder.TaskManager) -> <init>
+    450:459:void onDateSet(android.widget.DatePicker,int,int,int) -> onDateSet
+com.cray.software.justreminder.TaskManager$SimpleAdapter -> com.cray.software.justreminder.dn:
     android.view.LayoutInflater inflater -> a
     android.database.Cursor c -> e
     android.content.Context cContext -> b
     com.cray.software.justreminder.helpers.ColorSetter cs -> c
     com.cray.software.justreminder.TaskManager this$0 -> d
-    540:548:void <init>(com.cray.software.justreminder.TaskManager,android.content.Context,android.database.Cursor) -> <init>
-    552:552:int getCount() -> getCount
-    557:557:java.lang.Object getItem(int) -> getItem
-    562:564:long getItemId(int) -> getItemId
-    569:569:android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup) -> newView
-    574:589:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    595:595:void bindView(android.view.View,android.content.Context,android.database.Cursor) -> bindView
+    494:502:void <init>(com.cray.software.justreminder.TaskManager,android.content.Context,android.database.Cursor) -> <init>
+    506:506:int getCount() -> getCount
+    511:511:java.lang.Object getItem(int) -> getItem
+    516:518:long getItemId(int) -> getItemId
+    523:523:android.view.View newView(android.content.Context,android.database.Cursor,android.view.ViewGroup) -> newView
+    528:538:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    544:544:void bindView(android.view.View,android.content.Context,android.database.Cursor) -> bindView
 com.cray.software.justreminder.ThanksDialog -> com.cray.software.justreminder.ThanksDialog:
     com.cray.software.justreminder.helpers.ColorSetter cSetter -> a
     14:16:void <init>() -> <init>
@@ -19233,11 +19075,11 @@ com.cray.software.justreminder.VoiceHelp -> com.cray.software.justreminder.Voice
     12:12:void <init>() -> <init>
     18:51:void onCreate(android.os.Bundle) -> onCreate
     55:60:void onBackPressed() -> onBackPressed
-com.cray.software.justreminder.VoiceHelp$1 -> com.cray.software.justreminder.ey:
+com.cray.software.justreminder.VoiceHelp$1 -> com.cray.software.justreminder.do:
     com.cray.software.justreminder.VoiceHelp this$0 -> a
     32:32:void <init>(com.cray.software.justreminder.VoiceHelp) -> <init>
     35:36:boolean shouldOverrideUrlLoading(android.webkit.WebView,java.lang.String) -> shouldOverrideUrlLoading
-com.cray.software.justreminder.VoiceHelp$2 -> com.cray.software.justreminder.ez:
+com.cray.software.justreminder.VoiceHelp$2 -> com.cray.software.justreminder.dp:
     com.cray.software.justreminder.VoiceHelp this$0 -> a
     42:42:void <init>(com.cray.software.justreminder.VoiceHelp) -> <init>
     45:47:void onClick(android.content.DialogInterface,int) -> onClick
@@ -19440,52 +19282,51 @@ com.cray.software.justreminder.adapters.RemindersRecyclerAdapter -> com.cray.sof
     com.cray.software.justreminder.reminder.ReminderDataProvider provider -> d
     com.cray.software.justreminder.interfaces.RecyclerListener mEventListener -> e
     boolean isDark -> f
-    boolean is24 -> g
-    boolean isGrid -> h
-    48:58:void <init>(android.content.Context,com.cray.software.justreminder.reminder.ReminderDataProvider) -> <init>
-    121:135:android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> onCreateViewHolder
-    140:395:void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> onBindViewHolder
-    399:399:int getItemViewType(int) -> getItemViewType
-    404:404:long getItemId(int) -> getItemId
-    409:409:int getItemCount() -> getItemCount
-    417:418:void setEventListener(com.cray.software.justreminder.interfaces.RecyclerListener) -> a
-    37:37:com.cray.software.justreminder.interfaces.RecyclerListener access$1200(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter) -> a
+    boolean isGrid -> g
+    43:52:void <init>(android.content.Context,com.cray.software.justreminder.reminder.ReminderDataProvider) -> <init>
+    115:129:android.support.v7.widget.RecyclerView$ViewHolder onCreateViewHolder(android.view.ViewGroup,int) -> onCreateViewHolder
+    134:381:void onBindViewHolder(android.support.v7.widget.RecyclerView$ViewHolder,int) -> onBindViewHolder
+    385:385:int getItemViewType(int) -> getItemViewType
+    390:390:long getItemId(int) -> getItemId
+    395:395:int getItemCount() -> getItemCount
+    403:404:void setEventListener(com.cray.software.justreminder.interfaces.RecyclerListener) -> a
+    33:33:com.cray.software.justreminder.interfaces.RecyclerListener access$1200(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter) -> a
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$1 -> com.cray.software.justreminder.a.x:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder val$viewHolder -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    307:307:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
-    310:312:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+    292:292:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
+    295:297:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$2 -> com.cray.software.justreminder.a.y:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder val$viewHolder -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    315:315:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
-    318:319:void onClick(android.view.View) -> onClick
+    300:300:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
+    303:304:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$3 -> com.cray.software.justreminder.a.z:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder val$viewHolder -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    322:322:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
-    325:327:boolean onLongClick(android.view.View) -> onLongClick
+    307:307:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> <init>
+    310:312:boolean onLongClick(android.view.View) -> onLongClick
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$4 -> com.cray.software.justreminder.a.aa:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1 val$viewHolder1 -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    351:351:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
-    354:356:void onClick(android.view.View) -> onClick
+    336:336:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
+    339:341:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$5 -> com.cray.software.justreminder.a.ab:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1 val$viewHolder1 -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    379:379:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
-    382:383:void onClick(android.view.View) -> onClick
+    364:364:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
+    367:369:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$6 -> com.cray.software.justreminder.a.ac:
     int val$position -> a
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1 val$viewHolder1 -> b
     com.cray.software.justreminder.adapters.RemindersRecyclerAdapter this$0 -> c
-    386:386:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
-    389:391:boolean onLongClick(android.view.View) -> onLongClick
+    372:372:void <init>(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter,int,com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> <init>
+    375:377:boolean onLongClick(android.view.View) -> onLongClick
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder -> com.cray.software.justreminder.a.ad:
     android.widget.TextView leftTime -> a
     android.widget.TextView taskTitle -> b
@@ -19500,20 +19341,20 @@ com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder -> c
     android.widget.ImageView leftTimeIcon -> k
     android.view.ViewGroup container -> l
     android.widget.RelativeLayout background -> m
-    91:115:void <init>(android.view.View) -> <init>
-    81:81:android.widget.TextView access$000(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> a
-    81:81:android.widget.TextView access$100(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> b
-    81:81:android.widget.TextView access$200(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> c
-    81:81:android.widget.TextView access$300(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> d
-    81:81:android.widget.TextView access$400(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> e
-    81:81:android.widget.TextView access$500(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> f
-    81:81:android.widget.TextView access$600(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> g
-    81:81:android.widget.RelativeLayout access$700(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> h
-    81:81:android.widget.ImageView access$800(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> i
-    81:81:android.widget.ImageView access$900(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> j
-    81:81:android.widget.TextView access$1000(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> k
-    81:81:android.support.v7.widget.SwitchCompat access$1100(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> l
-    81:81:android.view.ViewGroup access$1300(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> m
+    85:109:void <init>(android.view.View) -> <init>
+    75:75:android.widget.TextView access$000(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> a
+    75:75:android.widget.TextView access$100(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> b
+    75:75:android.widget.TextView access$200(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> c
+    75:75:android.widget.TextView access$300(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> d
+    75:75:android.widget.TextView access$400(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> e
+    75:75:android.widget.TextView access$500(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> f
+    75:75:android.widget.TextView access$600(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> g
+    75:75:android.widget.RelativeLayout access$700(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> h
+    75:75:android.widget.ImageView access$800(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> i
+    75:75:android.widget.ImageView access$900(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> j
+    75:75:android.widget.TextView access$1000(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> k
+    75:75:android.support.v7.widget.SwitchCompat access$1100(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> l
+    75:75:android.view.ViewGroup access$1300(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder) -> m
 com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1 -> com.cray.software.justreminder.a.ae:
     android.widget.TextView taskTitle -> a
     android.view.ViewGroup container -> b
@@ -19521,13 +19362,13 @@ com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1 -> 
     android.widget.LinearLayout todoList -> d
     android.widget.LinearLayout subBackground -> e
     android.widget.LinearLayout titleContainer -> f
-    68:78:void <init>(android.view.View) -> <init>
-    60:60:android.widget.RelativeLayout access$1400(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> a
-    60:60:android.widget.LinearLayout access$1500(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> b
-    60:60:android.widget.TextView access$1600(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> c
-    60:60:android.widget.LinearLayout access$1700(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> d
-    60:60:android.widget.LinearLayout access$1800(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> e
-    60:60:android.view.ViewGroup access$1900(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> f
+    62:72:void <init>(android.view.View) -> <init>
+    54:54:android.widget.RelativeLayout access$1400(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> a
+    54:54:android.widget.LinearLayout access$1500(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> b
+    54:54:android.widget.TextView access$1600(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> c
+    54:54:android.widget.LinearLayout access$1700(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> d
+    54:54:android.widget.LinearLayout access$1800(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> e
+    54:54:android.view.ViewGroup access$1900(com.cray.software.justreminder.adapters.RemindersRecyclerAdapter$ViewHolder1) -> f
 com.cray.software.justreminder.adapters.TaskListRecyclerAdapter -> com.cray.software.justreminder.a.af:
     android.content.Context mContext -> a
     com.cray.software.justreminder.datas.ShoppingListDataProvider provider -> b
@@ -20640,7 +20481,7 @@ com.cray.software.justreminder.dialogs.CalendarStyle$1 -> com.cray.software.just
     97:98:void onClick(android.view.View) -> onClick
 com.cray.software.justreminder.dialogs.CategoryManager -> com.cray.software.justreminder.dialogs.CategoryManager:
     com.cray.software.justreminder.helpers.ColorSetter cs -> a
-    com.cray.software.justreminder.views.FloatingEditText editField -> b
+    android.widget.EditText editField -> b
     android.widget.RadioButton red_checkbox -> c
     android.widget.RadioButton violet_checkbox -> d
     android.widget.RadioButton green_checkbox -> e
@@ -20661,62 +20502,57 @@ com.cray.software.justreminder.dialogs.CategoryManager -> com.cray.software.just
     android.widget.RadioGroup themeGroup2 -> t
     android.widget.RadioGroup themeGroup3 -> u
     android.widget.RadioGroup themeGroupPro -> v
-    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> w
-    com.cray.software.justreminder.databases.DataBase db -> x
-    long id -> y
-    int color -> z
-    android.widget.RadioGroup$OnCheckedChangeListener listener1 -> A
-    android.widget.RadioGroup$OnCheckedChangeListener listener2 -> B
-    android.widget.RadioGroup$OnCheckedChangeListener listener3 -> C
-    android.widget.RadioGroup$OnCheckedChangeListener listener4 -> D
-    25:213:void <init>() -> <init>
-    40:93:void onCreate(android.os.Bundle) -> onCreate
-    96:132:void initRadio() -> g
-    135:149:void addTemplate() -> h
-    153:158:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    232:323:void colorSwitch(int) -> a
-    326:327:void setColor(int) -> b
-    330:427:void setUpRadio() -> f
-    25:25:void access$000(com.cray.software.justreminder.dialogs.CategoryManager) -> a
-    25:25:android.widget.RadioGroup access$100(com.cray.software.justreminder.dialogs.CategoryManager) -> b
-    25:25:android.widget.RadioGroup access$200(com.cray.software.justreminder.dialogs.CategoryManager) -> c
-    25:25:android.widget.RadioGroup access$300(com.cray.software.justreminder.dialogs.CategoryManager) -> d
-    25:25:android.widget.RadioGroup$OnCheckedChangeListener access$400(com.cray.software.justreminder.dialogs.CategoryManager) -> e
-    25:25:android.widget.RadioGroup$OnCheckedChangeListener access$500(com.cray.software.justreminder.dialogs.CategoryManager) -> f
-    25:25:android.widget.RadioGroup$OnCheckedChangeListener access$600(com.cray.software.justreminder.dialogs.CategoryManager) -> g
-    25:25:void access$700(com.cray.software.justreminder.dialogs.CategoryManager,int) -> a
-    25:25:android.widget.RadioGroup access$800(com.cray.software.justreminder.dialogs.CategoryManager) -> h
-    25:25:android.widget.RadioGroup$OnCheckedChangeListener access$900(com.cray.software.justreminder.dialogs.CategoryManager) -> i
+    com.cray.software.justreminder.databases.DataBase db -> w
+    long id -> x
+    int color -> y
+    android.widget.RadioGroup$OnCheckedChangeListener listener1 -> z
+    android.widget.RadioGroup$OnCheckedChangeListener listener2 -> A
+    android.widget.RadioGroup$OnCheckedChangeListener listener3 -> B
+    android.widget.RadioGroup$OnCheckedChangeListener listener4 -> C
+    24:202:void <init>() -> <init>
+    38:72:void onCreate(android.os.Bundle) -> onCreate
+    75:111:void initRadio() -> g
+    114:128:void saveCategory() -> h
+    132:134:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    139:147:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    221:312:void colorSwitch(int) -> a
+    315:316:void setColor(int) -> b
+    319:416:void setUpRadio() -> f
+    24:24:android.widget.RadioGroup access$000(com.cray.software.justreminder.dialogs.CategoryManager) -> a
+    24:24:android.widget.RadioGroup access$100(com.cray.software.justreminder.dialogs.CategoryManager) -> b
+    24:24:android.widget.RadioGroup access$200(com.cray.software.justreminder.dialogs.CategoryManager) -> c
+    24:24:android.widget.RadioGroup$OnCheckedChangeListener access$300(com.cray.software.justreminder.dialogs.CategoryManager) -> d
+    24:24:android.widget.RadioGroup$OnCheckedChangeListener access$400(com.cray.software.justreminder.dialogs.CategoryManager) -> e
+    24:24:android.widget.RadioGroup$OnCheckedChangeListener access$500(com.cray.software.justreminder.dialogs.CategoryManager) -> f
+    24:24:void access$600(com.cray.software.justreminder.dialogs.CategoryManager,int) -> a
+    24:24:android.widget.RadioGroup access$700(com.cray.software.justreminder.dialogs.CategoryManager) -> g
+    24:24:android.widget.RadioGroup$OnCheckedChangeListener access$800(com.cray.software.justreminder.dialogs.CategoryManager) -> h
 com.cray.software.justreminder.dialogs.CategoryManager$1 -> com.cray.software.justreminder.dialogs.i:
     com.cray.software.justreminder.dialogs.CategoryManager this$0 -> a
-    85:85:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
-    88:89:void onClick(android.view.View) -> onClick
+    151:151:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
+    154:166:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.dialogs.CategoryManager$2 -> com.cray.software.justreminder.dialogs.j:
     com.cray.software.justreminder.dialogs.CategoryManager this$0 -> a
-    162:162:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
-    165:177:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+    168:168:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
+    171:183:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.dialogs.CategoryManager$3 -> com.cray.software.justreminder.dialogs.k:
     com.cray.software.justreminder.dialogs.CategoryManager this$0 -> a
-    179:179:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
-    182:194:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+    185:185:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
+    188:200:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.dialogs.CategoryManager$4 -> com.cray.software.justreminder.dialogs.l:
     com.cray.software.justreminder.dialogs.CategoryManager this$0 -> a
-    196:196:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
-    199:211:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
-com.cray.software.justreminder.dialogs.CategoryManager$5 -> com.cray.software.justreminder.dialogs.m:
-    com.cray.software.justreminder.dialogs.CategoryManager this$0 -> a
-    213:213:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
-    216:228:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
+    202:202:void <init>(com.cray.software.justreminder.dialogs.CategoryManager) -> <init>
+    205:217:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.dialogs.ChangeDialog -> com.cray.software.justreminder.dialogs.ChangeDialog:
     android.app.AlertDialog alertDialog -> a
     13:13:void <init>() -> <init>
     19:46:void onCreate(android.os.Bundle) -> onCreate
     50:55:void onBackPressed() -> onBackPressed
-com.cray.software.justreminder.dialogs.ChangeDialog$1 -> com.cray.software.justreminder.dialogs.n:
+com.cray.software.justreminder.dialogs.ChangeDialog$1 -> com.cray.software.justreminder.dialogs.m:
     com.cray.software.justreminder.dialogs.ChangeDialog this$0 -> a
     27:27:void <init>(com.cray.software.justreminder.dialogs.ChangeDialog) -> <init>
     30:31:boolean shouldOverrideUrlLoading(android.webkit.WebView,java.lang.String) -> shouldOverrideUrlLoading
-com.cray.software.justreminder.dialogs.ChangeDialog$2 -> com.cray.software.justreminder.dialogs.o:
+com.cray.software.justreminder.dialogs.ChangeDialog$2 -> com.cray.software.justreminder.dialogs.n:
     com.cray.software.justreminder.dialogs.ChangeDialog this$0 -> a
     37:37:void <init>(com.cray.software.justreminder.dialogs.ChangeDialog) -> <init>
     40:42:void onClick(android.content.DialogInterface,int) -> onClick
@@ -20759,35 +20595,35 @@ com.cray.software.justreminder.dialogs.CloudDrives -> com.cray.software.justremi
     52:52:void access$700(com.cray.software.justreminder.dialogs.CloudDrives) -> g
     52:52:java.lang.String access$800(com.cray.software.justreminder.dialogs.CloudDrives,android.accounts.Account) -> a
     52:52:java.lang.String access$902(com.cray.software.justreminder.dialogs.CloudDrives,java.lang.String) -> b
-com.cray.software.justreminder.dialogs.CloudDrives$1 -> com.cray.software.justreminder.dialogs.p:
+com.cray.software.justreminder.dialogs.CloudDrives$1 -> com.cray.software.justreminder.dialogs.o:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     92:92:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     96:110:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$2 -> com.cray.software.justreminder.dialogs.q:
+com.cray.software.justreminder.dialogs.CloudDrives$2 -> com.cray.software.justreminder.dialogs.p:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     114:114:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     117:124:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$3 -> com.cray.software.justreminder.dialogs.r:
+com.cray.software.justreminder.dialogs.CloudDrives$3 -> com.cray.software.justreminder.dialogs.q:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     133:133:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     136:148:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$4 -> com.cray.software.justreminder.dialogs.s:
+com.cray.software.justreminder.dialogs.CloudDrives$4 -> com.cray.software.justreminder.dialogs.r:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     239:239:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     241:242:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$5 -> com.cray.software.justreminder.dialogs.t:
+com.cray.software.justreminder.dialogs.CloudDrives$5 -> com.cray.software.justreminder.dialogs.s:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     231:231:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     233:237:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$6 -> com.cray.software.justreminder.dialogs.u:
+com.cray.software.justreminder.dialogs.CloudDrives$6 -> com.cray.software.justreminder.dialogs.t:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     221:221:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     224:229:void onClick(android.content.DialogInterface,int) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$7 -> com.cray.software.justreminder.dialogs.v:
+com.cray.software.justreminder.dialogs.CloudDrives$7 -> com.cray.software.justreminder.dialogs.u:
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> a
     284:284:void <init>(com.cray.software.justreminder.dialogs.CloudDrives) -> <init>
     287:290:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.CloudDrives$8 -> com.cray.software.justreminder.dialogs.w:
+com.cray.software.justreminder.dialogs.CloudDrives$8 -> com.cray.software.justreminder.dialogs.v:
     android.app.ProgressDialog progressDlg -> a
     android.os.AsyncTask me -> b
     com.cray.software.justreminder.dialogs.CloudDrives this$0 -> c
@@ -20797,7 +20633,7 @@ com.cray.software.justreminder.dialogs.CloudDrives$8 -> com.cray.software.justre
     329:333:void onPostExecute(java.lang.String) -> a
     301:301:void onPostExecute(java.lang.Object) -> onPostExecute
     301:301:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.cray.software.justreminder.dialogs.CloudDrives$8$1 -> com.cray.software.justreminder.dialogs.x:
+com.cray.software.justreminder.dialogs.CloudDrives$8$1 -> com.cray.software.justreminder.dialogs.w:
     com.cray.software.justreminder.dialogs.CloudDrives$8 this$1 -> a
     313:313:void <init>(com.cray.software.justreminder.dialogs.CloudDrives$8) -> <init>
     315:317:void onCancel(android.content.DialogInterface) -> onCancel
@@ -20816,11 +20652,11 @@ com.cray.software.justreminder.dialogs.EventsImport -> com.cray.software.justrem
     182:199:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
     203:219:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
     222:228:void autoCheck(boolean) -> a
-com.cray.software.justreminder.dialogs.EventsImport$1 -> com.cray.software.justreminder.dialogs.y:
+com.cray.software.justreminder.dialogs.EventsImport$1 -> com.cray.software.justreminder.dialogs.x:
     com.cray.software.justreminder.dialogs.EventsImport this$0 -> a
     83:83:void <init>(com.cray.software.justreminder.dialogs.EventsImport) -> <init>
     86:87:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.EventsImport$Import -> com.cray.software.justreminder.dialogs.z:
+com.cray.software.justreminder.dialogs.EventsImport$Import -> com.cray.software.justreminder.dialogs.y:
     android.content.Context context -> b
     com.cray.software.justreminder.dialogs.EventsImport this$0 -> a
     234:236:void <init>(com.cray.software.justreminder.dialogs.EventsImport,android.content.Context) -> <init>
@@ -20828,18 +20664,20 @@ com.cray.software.justreminder.dialogs.EventsImport$Import -> com.cray.software.
     318:329:void onPostExecute(java.lang.Integer) -> a
     230:230:void onPostExecute(java.lang.Object) -> onPostExecute
     230:230:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.cray.software.justreminder.dialogs.EventsListFragment -> com.cray.software.justreminder.dialogs.aa:
+com.cray.software.justreminder.dialogs.EventsListFragment -> com.cray.software.justreminder.dialogs.z:
     java.util.ArrayList datas -> a
     android.support.v7.widget.RecyclerView listView -> b
     android.widget.LinearLayout emptyItem -> c
-    27:27:void <init>() -> <init>
-    35:36:void setData(java.util.ArrayList) -> a
-    48:50:void onCreate(android.os.Bundle) -> onCreate
-    54:69:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
-    73:79:void loaderAdapter() -> a
-    82:90:void reloadView() -> b
-    94:101:void onItemClicked(int,android.view.View) -> a
-    105:113:void onItemLongClicked(int,android.view.View) -> b
+    boolean isCreate -> d
+    27:33:void <init>() -> <init>
+    36:37:void setData(java.util.ArrayList) -> a
+    49:51:void onCreate(android.os.Bundle) -> onCreate
+    55:71:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
+    76:79:void onResume() -> onResume
+    82:88:void loaderAdapter() -> a
+    91:99:void reloadView() -> b
+    103:110:void onItemClicked(int,android.view.View) -> a
+    114:122:void onItemLongClicked(int,android.view.View) -> b
 com.cray.software.justreminder.dialogs.ExchangeLogIn -> com.cray.software.justreminder.dialogs.ExchangeLogIn:
     com.cray.software.justreminder.helpers.ColorSetter cs -> a
     com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> b
@@ -20853,11 +20691,11 @@ com.cray.software.justreminder.dialogs.ExchangeLogIn -> com.cray.software.justre
     132:137:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     21:21:void access$000(com.cray.software.justreminder.dialogs.ExchangeLogIn) -> a
     21:21:android.widget.EditText access$100(com.cray.software.justreminder.dialogs.ExchangeLogIn) -> b
-com.cray.software.justreminder.dialogs.ExchangeLogIn$1 -> com.cray.software.justreminder.dialogs.ab:
+com.cray.software.justreminder.dialogs.ExchangeLogIn$1 -> com.cray.software.justreminder.dialogs.aa:
     com.cray.software.justreminder.dialogs.ExchangeLogIn this$0 -> a
     44:44:void <init>(com.cray.software.justreminder.dialogs.ExchangeLogIn) -> <init>
     47:52:boolean onMenuItemClick(android.view.MenuItem) -> a
-com.cray.software.justreminder.dialogs.ExchangeLogIn$2 -> com.cray.software.justreminder.dialogs.ac:
+com.cray.software.justreminder.dialogs.ExchangeLogIn$2 -> com.cray.software.justreminder.dialogs.ab:
     com.cray.software.justreminder.dialogs.ExchangeLogIn this$0 -> a
     72:72:void <init>(com.cray.software.justreminder.dialogs.ExchangeLogIn) -> <init>
     75:80:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
@@ -20911,27 +20749,27 @@ com.cray.software.justreminder.dialogs.FollowReminder -> com.cray.software.justr
     44:44:int access$202(com.cray.software.justreminder.dialogs.FollowReminder,int) -> b
     44:44:boolean access$300(com.cray.software.justreminder.dialogs.FollowReminder) -> b
     44:44:android.widget.TextView access$400(com.cray.software.justreminder.dialogs.FollowReminder) -> c
-com.cray.software.justreminder.dialogs.FollowReminder$1 -> com.cray.software.justreminder.dialogs.ad:
+com.cray.software.justreminder.dialogs.FollowReminder$1 -> com.cray.software.justreminder.dialogs.ac:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     72:72:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     74:77:void run() -> run
-com.cray.software.justreminder.dialogs.FollowReminder$2 -> com.cray.software.justreminder.dialogs.ae:
+com.cray.software.justreminder.dialogs.FollowReminder$2 -> com.cray.software.justreminder.dialogs.ad:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     116:116:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     119:120:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.FollowReminder$3 -> com.cray.software.justreminder.dialogs.af:
+com.cray.software.justreminder.dialogs.FollowReminder$3 -> com.cray.software.justreminder.dialogs.ae:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     123:123:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     126:128:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.FollowReminder$4 -> com.cray.software.justreminder.dialogs.ag:
+com.cray.software.justreminder.dialogs.FollowReminder$4 -> com.cray.software.justreminder.dialogs.af:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     181:181:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     184:185:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.FollowReminder$5 -> com.cray.software.justreminder.dialogs.ah:
+com.cray.software.justreminder.dialogs.FollowReminder$5 -> com.cray.software.justreminder.dialogs.ag:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     187:187:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     190:191:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.FollowReminder$6 -> com.cray.software.justreminder.dialogs.ai:
+com.cray.software.justreminder.dialogs.FollowReminder$6 -> com.cray.software.justreminder.dialogs.ah:
     com.cray.software.justreminder.dialogs.FollowReminder this$0 -> a
     258:258:void <init>(com.cray.software.justreminder.dialogs.FollowReminder) -> <init>
     260:268:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
@@ -20963,19 +20801,19 @@ com.cray.software.justreminder.dialogs.MissedCallDialog -> com.cray.software.jus
     39:39:com.cray.software.justreminder.helpers.Notifier access$200(com.cray.software.justreminder.dialogs.MissedCallDialog) -> c
     39:39:java.lang.String access$300(com.cray.software.justreminder.dialogs.MissedCallDialog) -> d
     39:39:com.cray.software.justreminder.databases.DataBase access$400(com.cray.software.justreminder.dialogs.MissedCallDialog) -> e
-com.cray.software.justreminder.dialogs.MissedCallDialog$1 -> com.cray.software.justreminder.dialogs.aj:
+com.cray.software.justreminder.dialogs.MissedCallDialog$1 -> com.cray.software.justreminder.dialogs.ai:
     com.cray.software.justreminder.dialogs.MissedCallDialog this$0 -> a
     56:56:void <init>(com.cray.software.justreminder.dialogs.MissedCallDialog) -> <init>
     58:61:void run() -> run
-com.cray.software.justreminder.dialogs.MissedCallDialog$2 -> com.cray.software.justreminder.dialogs.ak:
+com.cray.software.justreminder.dialogs.MissedCallDialog$2 -> com.cray.software.justreminder.dialogs.aj:
     com.cray.software.justreminder.dialogs.MissedCallDialog this$0 -> a
     133:133:void <init>(com.cray.software.justreminder.dialogs.MissedCallDialog) -> <init>
     136:146:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.MissedCallDialog$3 -> com.cray.software.justreminder.dialogs.al:
+com.cray.software.justreminder.dialogs.MissedCallDialog$3 -> com.cray.software.justreminder.dialogs.ak:
     com.cray.software.justreminder.dialogs.MissedCallDialog this$0 -> a
     149:149:void <init>(com.cray.software.justreminder.dialogs.MissedCallDialog) -> <init>
     152:158:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.MissedCallDialog$4 -> com.cray.software.justreminder.dialogs.am:
+com.cray.software.justreminder.dialogs.MissedCallDialog$4 -> com.cray.software.justreminder.dialogs.al:
     com.cray.software.justreminder.dialogs.MissedCallDialog this$0 -> a
     161:161:void <init>(com.cray.software.justreminder.dialogs.MissedCallDialog) -> <init>
     164:176:void onClick(android.view.View) -> onClick
@@ -20997,11 +20835,11 @@ com.cray.software.justreminder.dialogs.PlacesList -> com.cray.software.justremin
     165:180:void onItemLongClicked(int,android.view.View) -> b
     36:36:void access$000(com.cray.software.justreminder.dialogs.PlacesList,int) -> a
     36:36:void access$100(com.cray.software.justreminder.dialogs.PlacesList,int) -> b
-com.cray.software.justreminder.dialogs.PlacesList$1 -> com.cray.software.justreminder.dialogs.an:
+com.cray.software.justreminder.dialogs.PlacesList$1 -> com.cray.software.justreminder.dialogs.am:
     com.cray.software.justreminder.dialogs.PlacesList this$0 -> a
     83:83:void <init>(com.cray.software.justreminder.dialogs.PlacesList) -> <init>
     86:89:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.PlacesList$2 -> com.cray.software.justreminder.dialogs.ao:
+com.cray.software.justreminder.dialogs.PlacesList$2 -> com.cray.software.justreminder.dialogs.an:
     int val$position -> a
     com.cray.software.justreminder.dialogs.PlacesList this$0 -> b
     167:167:void <init>(com.cray.software.justreminder.dialogs.PlacesList,int) -> <init>
@@ -21012,50 +20850,45 @@ com.cray.software.justreminder.dialogs.QuickAddReminder -> com.cray.software.jus
     android.widget.CheckBox taskExport -> d
     android.widget.TextView dateField -> e
     android.widget.TextView timeField -> f
-    android.widget.TextView dateYearField -> g
-    int myHour -> h
-    int myMinute -> i
-    int myYear -> j
-    int myMonth -> k
-    int myDay -> l
-    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> m
-    com.cray.software.justreminder.cloud.GTasksHelper gtx -> n
+    int myHour -> g
+    int myMinute -> h
+    int myYear -> i
+    int myMonth -> j
+    int myDay -> k
+    com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> l
+    com.cray.software.justreminder.cloud.GTasksHelper gtx -> m
     android.app.TimePickerDialog$OnTimeSetListener myCallBack -> a
-    42:198:void <init>() -> <init>
-    61:165:void onCreate(android.os.Bundle) -> onCreate
-    168:172:void dateDialog() -> f
-    176:191:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
-    194:195:android.app.Dialog timeDialog() -> g
-    213:250:void saveDateTask() -> h
-    254:256:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    261:269:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    42:42:android.widget.EditText access$000(com.cray.software.justreminder.dialogs.QuickAddReminder) -> a
-    42:42:int access$102(com.cray.software.justreminder.dialogs.QuickAddReminder,int) -> a
-    42:42:int access$202(com.cray.software.justreminder.dialogs.QuickAddReminder,int) -> b
-    42:42:com.cray.software.justreminder.helpers.SharedPrefs access$300(com.cray.software.justreminder.dialogs.QuickAddReminder) -> b
-    42:42:android.widget.TextView access$400(com.cray.software.justreminder.dialogs.QuickAddReminder) -> c
-com.cray.software.justreminder.dialogs.QuickAddReminder$1 -> com.cray.software.justreminder.dialogs.ap:
+    40:169:void <init>() -> <init>
+    59:142:void onCreate(android.os.Bundle) -> onCreate
+    145:149:void dateDialog() -> f
+    153:162:void onDateSet(com.fourmob.datetimepicker.date.DatePickerDialog,int,int,int) -> a
+    165:166:android.app.Dialog timeDialog() -> g
+    184:221:void saveDateTask() -> h
+    225:227:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    232:240:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    40:40:android.widget.EditText access$000(com.cray.software.justreminder.dialogs.QuickAddReminder) -> a
+    40:40:int access$102(com.cray.software.justreminder.dialogs.QuickAddReminder,int) -> a
+    40:40:int access$202(com.cray.software.justreminder.dialogs.QuickAddReminder,int) -> b
+    40:40:com.cray.software.justreminder.helpers.SharedPrefs access$300(com.cray.software.justreminder.dialogs.QuickAddReminder) -> b
+    40:40:android.widget.TextView access$400(com.cray.software.justreminder.dialogs.QuickAddReminder) -> c
+com.cray.software.justreminder.dialogs.QuickAddReminder$1 -> com.cray.software.justreminder.dialogs.ao:
     com.cray.software.justreminder.dialogs.QuickAddReminder this$0 -> a
-    101:101:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
-    104:105:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.QuickAddReminder$2 -> com.cray.software.justreminder.dialogs.aq:
+    99:99:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
+    102:103:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.dialogs.QuickAddReminder$2 -> com.cray.software.justreminder.dialogs.ap:
     com.cray.software.justreminder.dialogs.QuickAddReminder this$0 -> a
-    109:109:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
-    112:113:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.QuickAddReminder$3 -> com.cray.software.justreminder.dialogs.ar:
+    110:110:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
+    113:114:void onClick(android.view.View) -> onClick
+com.cray.software.justreminder.dialogs.QuickAddReminder$3 -> com.cray.software.justreminder.dialogs.aq:
     com.cray.software.justreminder.dialogs.QuickAddReminder this$0 -> a
-    133:133:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
-    136:137:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.QuickAddReminder$4 -> com.cray.software.justreminder.dialogs.as:
+    125:125:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
+    128:129:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
+    134:134:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
+    139:139:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
+com.cray.software.justreminder.dialogs.QuickAddReminder$4 -> com.cray.software.justreminder.dialogs.ar:
     com.cray.software.justreminder.dialogs.QuickAddReminder this$0 -> a
-    148:148:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
-    151:152:void onProgressChanged(android.widget.SeekBar,int,boolean) -> onProgressChanged
-    157:157:void onStartTrackingTouch(android.widget.SeekBar) -> onStartTrackingTouch
-    162:162:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
-com.cray.software.justreminder.dialogs.QuickAddReminder$5 -> com.cray.software.justreminder.dialogs.at:
-    com.cray.software.justreminder.dialogs.QuickAddReminder this$0 -> a
-    198:198:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
-    200:209:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
+    169:169:void <init>(com.cray.software.justreminder.dialogs.QuickAddReminder) -> <init>
+    171:180:void onTimeSet(android.widget.TimePicker,int,int) -> onTimeSet
 com.cray.software.justreminder.dialogs.QuickSMS -> com.cray.software.justreminder.dialogs.QuickSMS:
     com.cray.software.justreminder.databases.DataBase DB -> a
     android.widget.TextView buttonSend -> b
@@ -21074,19 +20907,19 @@ com.cray.software.justreminder.dialogs.QuickSMS -> com.cray.software.justreminde
     32:32:void access$200(com.cray.software.justreminder.dialogs.QuickSMS,java.lang.String,java.lang.String) -> a
     32:32:com.cray.software.justreminder.helpers.SharedPrefs access$302(com.cray.software.justreminder.dialogs.QuickSMS,com.cray.software.justreminder.helpers.SharedPrefs) -> a
     32:32:android.widget.TextView access$400(com.cray.software.justreminder.dialogs.QuickSMS) -> c
-com.cray.software.justreminder.dialogs.QuickSMS$1 -> com.cray.software.justreminder.dialogs.au:
+com.cray.software.justreminder.dialogs.QuickSMS$1 -> com.cray.software.justreminder.dialogs.as:
     com.cray.software.justreminder.dialogs.QuickSMS this$0 -> a
     46:46:void <init>(com.cray.software.justreminder.dialogs.QuickSMS) -> <init>
     48:51:void run() -> run
-com.cray.software.justreminder.dialogs.QuickSMS$2 -> com.cray.software.justreminder.dialogs.av:
+com.cray.software.justreminder.dialogs.QuickSMS$2 -> com.cray.software.justreminder.dialogs.at:
     com.cray.software.justreminder.dialogs.QuickSMS this$0 -> a
     69:69:void <init>(com.cray.software.justreminder.dialogs.QuickSMS) -> <init>
     72:79:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.QuickSMS$3 -> com.cray.software.justreminder.dialogs.aw:
+com.cray.software.justreminder.dialogs.QuickSMS$3 -> com.cray.software.justreminder.dialogs.au:
     com.cray.software.justreminder.dialogs.QuickSMS this$0 -> a
     128:128:void <init>(com.cray.software.justreminder.dialogs.QuickSMS) -> <init>
     132:152:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.cray.software.justreminder.dialogs.QuickSMS$4 -> com.cray.software.justreminder.dialogs.ax:
+com.cray.software.justreminder.dialogs.QuickSMS$4 -> com.cray.software.justreminder.dialogs.av:
     com.cray.software.justreminder.dialogs.QuickSMS this$0 -> a
     157:157:void <init>(com.cray.software.justreminder.dialogs.QuickSMS) -> <init>
     160:168:void onReceive(android.content.Context,android.content.Intent) -> onReceive
@@ -21098,15 +20931,15 @@ com.cray.software.justreminder.dialogs.RateDialog -> com.cray.software.justremin
     79:79:void onBackPressed() -> onBackPressed
     19:19:com.cray.software.justreminder.helpers.SharedPrefs access$000(com.cray.software.justreminder.dialogs.RateDialog) -> a
     19:19:void access$100(com.cray.software.justreminder.dialogs.RateDialog) -> b
-com.cray.software.justreminder.dialogs.RateDialog$1 -> com.cray.software.justreminder.dialogs.ay:
+com.cray.software.justreminder.dialogs.RateDialog$1 -> com.cray.software.justreminder.dialogs.aw:
     com.cray.software.justreminder.dialogs.RateDialog this$0 -> a
     36:36:void <init>(com.cray.software.justreminder.dialogs.RateDialog) -> <init>
     39:42:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.RateDialog$2 -> com.cray.software.justreminder.dialogs.az:
+com.cray.software.justreminder.dialogs.RateDialog$2 -> com.cray.software.justreminder.dialogs.ax:
     com.cray.software.justreminder.dialogs.RateDialog this$0 -> a
     46:46:void <init>(com.cray.software.justreminder.dialogs.RateDialog) -> <init>
     49:52:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.RateDialog$3 -> com.cray.software.justreminder.dialogs.ba:
+com.cray.software.justreminder.dialogs.RateDialog$3 -> com.cray.software.justreminder.dialogs.ay:
     com.cray.software.justreminder.dialogs.RateDialog this$0 -> a
     56:56:void <init>(com.cray.software.justreminder.dialogs.RateDialog) -> <init>
     59:61:void onClick(android.view.View) -> onClick
@@ -21182,48 +21015,48 @@ com.cray.software.justreminder.dialogs.ReminderDialog -> com.cray.software.justr
     52:52:boolean access$1500(com.cray.software.justreminder.dialogs.ReminderDialog) -> n
     52:52:com.getbase.floatingactionbutton.FloatingActionButton access$1600(com.cray.software.justreminder.dialogs.ReminderDialog) -> o
     52:52:boolean access$1700(com.cray.software.justreminder.dialogs.ReminderDialog) -> p
-com.cray.software.justreminder.dialogs.ReminderDialog$1 -> com.cray.software.justreminder.dialogs.bb:
+com.cray.software.justreminder.dialogs.ReminderDialog$1 -> com.cray.software.justreminder.dialogs.az:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     111:111:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     113:116:void run() -> run
-com.cray.software.justreminder.dialogs.ReminderDialog$10 -> com.cray.software.justreminder.dialogs.bc:
+com.cray.software.justreminder.dialogs.ReminderDialog$10 -> com.cray.software.justreminder.dialogs.ba:
     java.lang.String val$melody -> a
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> b
     580:580:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog,java.lang.String) -> <init>
     583:629:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.cray.software.justreminder.dialogs.ReminderDialog$11 -> com.cray.software.justreminder.dialogs.bd:
+com.cray.software.justreminder.dialogs.ReminderDialog$11 -> com.cray.software.justreminder.dialogs.bb:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     633:633:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     636:644:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.cray.software.justreminder.dialogs.ReminderDialog$2 -> com.cray.software.justreminder.dialogs.be:
+com.cray.software.justreminder.dialogs.ReminderDialog$2 -> com.cray.software.justreminder.dialogs.bc:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     240:240:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     243:249:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$3 -> com.cray.software.justreminder.dialogs.bf:
+com.cray.software.justreminder.dialogs.ReminderDialog$3 -> com.cray.software.justreminder.dialogs.bd:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     252:252:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     255:265:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$4 -> com.cray.software.justreminder.dialogs.bg:
+com.cray.software.justreminder.dialogs.ReminderDialog$4 -> com.cray.software.justreminder.dialogs.be:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     268:268:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     271:275:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$5 -> com.cray.software.justreminder.dialogs.bh:
+com.cray.software.justreminder.dialogs.ReminderDialog$5 -> com.cray.software.justreminder.dialogs.bf:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     278:278:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     281:286:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$6 -> com.cray.software.justreminder.dialogs.bi:
+com.cray.software.justreminder.dialogs.ReminderDialog$6 -> com.cray.software.justreminder.dialogs.bg:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     289:289:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     292:297:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$7 -> com.cray.software.justreminder.dialogs.bj:
+com.cray.software.justreminder.dialogs.ReminderDialog$7 -> com.cray.software.justreminder.dialogs.bh:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     299:299:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     302:305:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$8 -> com.cray.software.justreminder.dialogs.bk:
+com.cray.software.justreminder.dialogs.ReminderDialog$8 -> com.cray.software.justreminder.dialogs.bi:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     307:307:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     310:335:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.ReminderDialog$9 -> com.cray.software.justreminder.dialogs.bl:
+com.cray.software.justreminder.dialogs.ReminderDialog$9 -> com.cray.software.justreminder.dialogs.bj:
     com.cray.software.justreminder.dialogs.ReminderDialog this$0 -> a
     515:515:void <init>(com.cray.software.justreminder.dialogs.ReminderDialog) -> <init>
     517:565:void onClick(android.content.DialogInterface,int) -> onClick
@@ -21248,7 +21081,7 @@ com.cray.software.justreminder.dialogs.ShowBirthday -> com.cray.software.justrem
     263:292:void onRequestPermissionsResult(int,java.lang.String[],int[]) -> onRequestPermissionsResult
     296:306:void onBackPressed() -> onBackPressed
     310:335:void onInit(int) -> onInit
-com.cray.software.justreminder.dialogs.ShowBirthday$1 -> com.cray.software.justreminder.dialogs.bm:
+com.cray.software.justreminder.dialogs.ShowBirthday$1 -> com.cray.software.justreminder.dialogs.bk:
     com.cray.software.justreminder.dialogs.ShowBirthday this$0 -> a
     67:67:void <init>(com.cray.software.justreminder.dialogs.ShowBirthday) -> <init>
     69:72:void run() -> run
@@ -21277,11 +21110,11 @@ com.cray.software.justreminder.dialogs.TemplatesList -> com.cray.software.justre
     158:173:void onItemLongClicked(int,android.view.View) -> b
     35:35:void access$000(com.cray.software.justreminder.dialogs.TemplatesList,int) -> a
     35:35:void access$100(com.cray.software.justreminder.dialogs.TemplatesList,int) -> b
-com.cray.software.justreminder.dialogs.TemplatesList$1 -> com.cray.software.justreminder.dialogs.bn:
+com.cray.software.justreminder.dialogs.TemplatesList$1 -> com.cray.software.justreminder.dialogs.bl:
     com.cray.software.justreminder.dialogs.TemplatesList this$0 -> a
     82:82:void <init>(com.cray.software.justreminder.dialogs.TemplatesList) -> <init>
     85:86:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.TemplatesList$2 -> com.cray.software.justreminder.dialogs.bo:
+com.cray.software.justreminder.dialogs.TemplatesList$2 -> com.cray.software.justreminder.dialogs.bm:
     int val$position -> a
     com.cray.software.justreminder.dialogs.TemplatesList this$0 -> b
     160:160:void <init>(com.cray.software.justreminder.dialogs.TemplatesList,int) -> <init>
@@ -21319,7 +21152,7 @@ com.cray.software.justreminder.dialogs.ThemerDialog -> com.cray.software.justrem
     245:249:void onBackPressed() -> onBackPressed
     253:261:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     19:19:void access$000(com.cray.software.justreminder.dialogs.ThemerDialog,int) -> a
-com.cray.software.justreminder.dialogs.ThemerDialog$1 -> com.cray.software.justreminder.dialogs.bp:
+com.cray.software.justreminder.dialogs.ThemerDialog$1 -> com.cray.software.justreminder.dialogs.bn:
     com.cray.software.justreminder.dialogs.ThemerDialog this$0 -> a
     87:87:void <init>(com.cray.software.justreminder.dialogs.ThemerDialog) -> <init>
     90:91:void onClick(android.view.View) -> onClick
@@ -21329,11 +21162,11 @@ com.cray.software.justreminder.dialogs.VoiceResult -> com.cray.software.justremi
     30:32:void <init>() -> <init>
     37:246:void onCreate(android.os.Bundle) -> onCreate
     30:30:long access$000(com.cray.software.justreminder.dialogs.VoiceResult) -> a
-com.cray.software.justreminder.dialogs.VoiceResult$1 -> com.cray.software.justreminder.dialogs.bq:
+com.cray.software.justreminder.dialogs.VoiceResult$1 -> com.cray.software.justreminder.dialogs.bo:
     com.cray.software.justreminder.dialogs.VoiceResult this$0 -> a
     47:47:void <init>(com.cray.software.justreminder.dialogs.VoiceResult) -> <init>
     50:52:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.VoiceResult$2 -> com.cray.software.justreminder.dialogs.br:
+com.cray.software.justreminder.dialogs.VoiceResult$2 -> com.cray.software.justreminder.dialogs.bp:
     com.cray.software.justreminder.dialogs.VoiceResult this$0 -> a
     55:55:void <init>(com.cray.software.justreminder.dialogs.VoiceResult) -> <init>
     58:60:void onClick(android.view.View) -> onClick
@@ -21411,48 +21244,48 @@ com.cray.software.justreminder.dialogs.WeekDayDialog -> com.cray.software.justre
     50:50:boolean access$1700(com.cray.software.justreminder.dialogs.WeekDayDialog) -> p
     50:50:com.getbase.floatingactionbutton.FloatingActionButton access$1800(com.cray.software.justreminder.dialogs.WeekDayDialog) -> q
     50:50:boolean access$1900(com.cray.software.justreminder.dialogs.WeekDayDialog) -> r
-com.cray.software.justreminder.dialogs.WeekDayDialog$1 -> com.cray.software.justreminder.dialogs.bs:
+com.cray.software.justreminder.dialogs.WeekDayDialog$1 -> com.cray.software.justreminder.dialogs.bq:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     110:110:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     112:115:void run() -> run
-com.cray.software.justreminder.dialogs.WeekDayDialog$10 -> com.cray.software.justreminder.dialogs.bt:
+com.cray.software.justreminder.dialogs.WeekDayDialog$10 -> com.cray.software.justreminder.dialogs.br:
     java.lang.String val$melody -> a
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> b
     525:525:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog,java.lang.String) -> <init>
     529:577:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.cray.software.justreminder.dialogs.WeekDayDialog$11 -> com.cray.software.justreminder.dialogs.bu:
+com.cray.software.justreminder.dialogs.WeekDayDialog$11 -> com.cray.software.justreminder.dialogs.bs:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     581:581:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     584:592:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-com.cray.software.justreminder.dialogs.WeekDayDialog$2 -> com.cray.software.justreminder.dialogs.bv:
+com.cray.software.justreminder.dialogs.WeekDayDialog$2 -> com.cray.software.justreminder.dialogs.bt:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     205:205:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     208:214:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$3 -> com.cray.software.justreminder.dialogs.bw:
+com.cray.software.justreminder.dialogs.WeekDayDialog$3 -> com.cray.software.justreminder.dialogs.bu:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     217:217:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     220:230:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$4 -> com.cray.software.justreminder.dialogs.bx:
+com.cray.software.justreminder.dialogs.WeekDayDialog$4 -> com.cray.software.justreminder.dialogs.bv:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     233:233:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     236:242:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$5 -> com.cray.software.justreminder.dialogs.by:
+com.cray.software.justreminder.dialogs.WeekDayDialog$5 -> com.cray.software.justreminder.dialogs.bw:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     245:245:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     248:257:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$6 -> com.cray.software.justreminder.dialogs.bz:
+com.cray.software.justreminder.dialogs.WeekDayDialog$6 -> com.cray.software.justreminder.dialogs.bx:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     260:260:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     263:270:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$7 -> com.cray.software.justreminder.dialogs.ca:
+com.cray.software.justreminder.dialogs.WeekDayDialog$7 -> com.cray.software.justreminder.dialogs.by:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     272:272:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     275:283:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$8 -> com.cray.software.justreminder.dialogs.cb:
+com.cray.software.justreminder.dialogs.WeekDayDialog$8 -> com.cray.software.justreminder.dialogs.bz:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     285:285:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     288:304:void onClick(android.view.View) -> onClick
-com.cray.software.justreminder.dialogs.WeekDayDialog$9 -> com.cray.software.justreminder.dialogs.cc:
+com.cray.software.justreminder.dialogs.WeekDayDialog$9 -> com.cray.software.justreminder.dialogs.ca:
     com.cray.software.justreminder.dialogs.WeekDayDialog this$0 -> a
     459:459:void <init>(com.cray.software.justreminder.dialogs.WeekDayDialog) -> <init>
     461:509:void onClick(android.content.DialogInterface,int) -> onClick
@@ -21679,7 +21512,7 @@ com.cray.software.justreminder.dialogs.utils.MarkerStyle$4 -> com.cray.software.
     119:131:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
 com.cray.software.justreminder.dialogs.utils.NewPlace -> com.cray.software.justreminder.dialogs.utils.NewPlace:
     com.cray.software.justreminder.helpers.ColorSetter cs -> a
-    com.cray.software.justreminder.views.FloatingEditText placeName -> b
+    android.widget.EditText placeName -> b
     com.cray.software.justreminder.helpers.SharedPrefs sPrefs -> c
     com.cray.software.justreminder.databases.DataBase db -> d
     com.google.android.gms.maps.model.LatLng place -> e
@@ -21695,22 +21528,22 @@ com.cray.software.justreminder.dialogs.utils.NewPlace -> com.cray.software.justr
     135:136:void placeName(java.lang.String) -> a
 com.cray.software.justreminder.dialogs.utils.NewTemplate -> com.cray.software.justreminder.dialogs.utils.NewTemplate:
     com.cray.software.justreminder.helpers.ColorSetter cs -> a
-    com.cray.software.justreminder.views.FloatingEditText placeName -> b
+    android.widget.EditText placeName -> b
     com.cray.software.justreminder.databases.DataBase db -> c
     android.widget.TextView leftCharacters -> d
     long id -> e
     23:27:void <init>() -> <init>
-    33:79:void onCreate(android.os.Bundle) -> onCreate
-    82:95:void addTemplate() -> f
-    99:101:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    106:114:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    33:80:void onCreate(android.os.Bundle) -> onCreate
+    83:96:void addTemplate() -> f
+    100:102:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    107:115:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     23:23:android.widget.TextView access$000(com.cray.software.justreminder.dialogs.utils.NewTemplate) -> a
 com.cray.software.justreminder.dialogs.utils.NewTemplate$1 -> com.cray.software.justreminder.dialogs.utils.t:
     com.cray.software.justreminder.dialogs.utils.NewTemplate this$0 -> a
-    63:63:void <init>(com.cray.software.justreminder.dialogs.utils.NewTemplate) -> <init>
-    66:66:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
-    70:72:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
-    77:77:void afterTextChanged(android.text.Editable) -> afterTextChanged
+    64:64:void <init>(com.cray.software.justreminder.dialogs.utils.NewTemplate) -> <init>
+    67:67:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    71:73:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    78:78:void afterTextChanged(android.text.Editable) -> afterTextChanged
 com.cray.software.justreminder.dialogs.utils.PermissionsList -> com.cray.software.justreminder.dialogs.utils.PermissionsList:
     com.cray.software.justreminder.helpers.Permissions permissions -> a
     java.util.ArrayList list -> b
@@ -23505,16 +23338,18 @@ com.cray.software.justreminder.utils.SuperUtil$3Async -> com.cray.software.justr
 com.cray.software.justreminder.utils.TimeUtil -> com.cray.software.justreminder.j.m:
     java.text.SimpleDateFormat format24 -> a
     java.text.SimpleDateFormat format12 -> b
-    java.text.SimpleDateFormat dateFormat -> c
-    java.text.SimpleDateFormat time24 -> d
-    java.text.SimpleDateFormat time12 -> e
-    28:45:int getYears(java.lang.String) -> a
-    55:56:java.lang.String getDateTime(java.util.Date,boolean) -> a
-    66:67:java.lang.String getTime(java.util.Date,boolean) -> b
-    76:79:int getAge(int) -> a
-    90:98:java.util.Date getDate(int,int,int) -> a
-    107:122:java.lang.String generateAfterString(long) -> a
-    14:18:void <clinit>() -> <clinit>
+    java.text.SimpleDateFormat fullDateFormat -> c
+    java.text.SimpleDateFormat dateFormat -> d
+    java.text.SimpleDateFormat time24 -> e
+    java.text.SimpleDateFormat time12 -> f
+    29:29:java.lang.String getDate(java.util.Date) -> a
+    38:55:int getYears(java.lang.String) -> a
+    65:66:java.lang.String getDateTime(java.util.Date,boolean) -> a
+    76:77:java.lang.String getTime(java.util.Date,boolean) -> b
+    86:89:int getAge(int) -> a
+    100:108:java.util.Date getDate(int,int,int) -> a
+    117:132:java.lang.String generateAfterString(long) -> a
+    14:19:void <clinit>() -> <clinit>
 com.cray.software.justreminder.utils.ViewUtils -> com.cray.software.justreminder.j.n:
     36:39:android.graphics.drawable.Drawable getDrawable(android.content.Context,int) -> a
     50:51:int getColor(android.content.Context,int) -> b
