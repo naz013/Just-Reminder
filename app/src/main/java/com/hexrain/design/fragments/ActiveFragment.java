@@ -429,6 +429,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
 
     @Override
     public void endExecution(boolean result) {
-        loaderAdapter(null);
+        if (getActivity() != null) loaderAdapter(null);
     }
 }

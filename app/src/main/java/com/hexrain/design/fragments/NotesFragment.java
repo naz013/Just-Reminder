@@ -337,7 +337,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void endExecution(boolean result) {
-        if (result) {
+        if (result && getActivity() != null) {
             loaderAdapter();
             getActivity().invalidateOptionsMenu();
         }
