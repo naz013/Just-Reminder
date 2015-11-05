@@ -1,7 +1,14 @@
 package com.cray.software.justreminder.helpers;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -20,6 +27,12 @@ import org.json.JSONObject;
  */
 public class Recurrance {
 
+    public static final String FROM_HOUR = "from_hour";
+    public static final String FROM_MINUTE = "from_minute";
+    public static final String TO_HOUR = "to_minute";
+    public static final String TO_MINUTE = "to_minute";
+    public static final String HOURS = "hours";
+
     private JSONObject jsonObject;
 
     public Recurrance(JSONObject jsonObject){
@@ -34,11 +47,99 @@ public class Recurrance {
         }
     }
 
+    public Recurrance (){
+        jsonObject = new JSONObject();
+    }
+
     public JSONObject getJsonObject() {
         return jsonObject;
     }
 
     public void setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
+    }
+
+    public void addExclusionFrom(int fromHour, int fromMinute){
+        try {
+            jsonObject.put(FROM_HOUR, fromHour);
+            jsonObject.put(FROM_MINUTE, fromMinute);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addExclusionTo(int toHour, int toMinute){
+        try {
+            jsonObject.put(TO_HOUR, toHour);
+            jsonObject.put(TO_MINUTE, toMinute);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addExclusion(int[] hours){
+        JSONArray jsonArray = new JSONArray();
+        for (int hour : hours) jsonArray.put(hour);
+        try {
+            jsonObject.put(HOURS, jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getFromHour(){
+        if (jsonObject.has(FROM_HOUR)){
+            try {
+                return jsonObject.getInt(FROM_HOUR);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } else return -1;
+    }
+
+    public int getFromMinute(){
+        if (jsonObject.has(FROM_MINUTE)){
+            try {
+                return jsonObject.getInt(FROM_MINUTE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } else return -1;
+    }
+
+    public int getToHour(){
+        if (jsonObject.has(TO_HOUR)){
+            try {
+                return jsonObject.getInt(TO_HOUR);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } else return -1;
+    }
+
+    public int getToMinute(){
+        if (jsonObject.has(TO_MINUTE)){
+            try {
+                return jsonObject.getInt(TO_MINUTE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return -1;
+            }
+        } else return -1;
+    }
+
+    public List<Integer> getHours(){
+        if (jsonObject.has(HOURS)){
+            Type collectionType = new TypeToken<List<Integer>>() {}.getType();
+            try {
+                return new Gson().fromJson(jsonObject.get(HOURS).toString(), collectionType);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else return null;
     }
 }

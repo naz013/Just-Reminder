@@ -86,4 +86,5 @@
     <dimen name="log_in_explanation_text_size">28sp</dimen>
     <dimen name="log_in_title_text_size">35sp</dimen>
     <dimen name="toolbar_elevation">3dp</dimen>
+    <dimen name="dialog_toggle_size">32dp</dimen>
 </resources>

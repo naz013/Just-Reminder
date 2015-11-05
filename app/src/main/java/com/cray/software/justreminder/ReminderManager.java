@@ -61,6 +61,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.dialogs.utils.LedColor;
 import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.fragments.MapFragment;
@@ -171,7 +172,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private CheckBox timeExport;
     private CheckBox timeTaskExport;
-    private TextView hoursView, minutesView, secondsView;
+    private TextView hoursView, minutesView, secondsView, selectExclusion;
     private ImageButton deleteButton;
     private EditText repeatMinutes;
     private String timeString = "000000";
@@ -270,6 +271,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private long repeats = -1;
     private long id;
     private String categoryId;
+    private String exclusion;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = 0;
     private List<Address> foundPlaces;
@@ -1467,7 +1469,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         hoursView = (TextView) findViewById(R.id.hoursView);
         minutesView = (TextView) findViewById(R.id.minutesView);
         secondsView = (TextView) findViewById(R.id.secondsView);
-        ViewUtils.setTypeFont(this, hoursView, minutesView, secondsView);
+        selectExclusion = (TextView) findViewById(R.id.selectExclusion);
+        ViewUtils.setTypeFont(this, hoursView, minutesView, secondsView, selectExclusion);
+        selectExclusion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(ReminderManager.this, ExclusionPickerDialog.class), 1111);
+            }
+        });
 
         deleteButton = (ImageButton) findViewById(R.id.deleteButton);
         sPrefs = new SharedPrefs(this);
@@ -3771,6 +3780,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (isLocationAttached()) map.recreateMarker(radius);
                     if (isLocationOutAttached()) mapOut.recreateMarker(radius);
                 }
+            }
+        }
+
+        if (requestCode == 1111) {
+            if (resultCode == RESULT_OK){
+                exclusion = data.getStringExtra("excl");
             }
         }
 
