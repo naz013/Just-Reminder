@@ -752,7 +752,8 @@ public class DataBase {
     public long insertReminder(String text, String type, int day, int month, int year, int hour,
                                int minute, int seconds, String number, int repeatCode, long repMinute,
                                long count, double latitude, double longitude, String uID, String weekdays,
-                               int export, String melody, int radius, int color, int code, String categoryId) {
+                               int export, String melody, int radius, int color, int code,
+                               String categoryId, String exclusion) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_TEXT, text);
@@ -786,6 +787,7 @@ public class DataBase {
         cv.put(Constants.COLUMN_UNLOCK_DEVICE, -1);
         cv.put(Constants.COLUMN_AUTO_ACTION, -1);
         cv.put(Constants.COLUMN_REPEAT_LIMIT, -1);
+        cv.put(Constants.COLUMN_EXTRA_3, exclusion);
         //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(CURRENT_TABLE_NAME, null, cv);
     }
@@ -794,7 +796,7 @@ public class DataBase {
                                   int hour, int minute, int seconds, String number, int repeatCode,
                                   long repMinute, long count, double latitude, double longitude,
                                   String weekdays, int export, String melody, int radius, int color,
-                                  int code, String categoryId) {
+                                  int code, String categoryId, String exclusion) {
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_TEXT, text);
@@ -820,6 +822,7 @@ public class DataBase {
         args.put(Constants.COLUMN_LED_COLOR, color);
         args.put(Constants.COLUMN_SYNC_CODE, code);
         args.put(Constants.COLUMN_CATEGORY, categoryId);
+        args.put(Constants.COLUMN_EXTRA_3, exclusion);
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

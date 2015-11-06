@@ -25,21 +25,19 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class Recurrance {
+public class Recurrence {
 
     public static final String FROM_HOUR = "from_hour";
-    public static final String FROM_MINUTE = "from_minute";
-    public static final String TO_HOUR = "to_minute";
-    public static final String TO_MINUTE = "to_minute";
+    public static final String TO_HOUR = "to_hour";
     public static final String HOURS = "hours";
 
     private JSONObject jsonObject;
 
-    public Recurrance(JSONObject jsonObject){
+    public Recurrence(JSONObject jsonObject){
         this.jsonObject = jsonObject;
     }
 
-    public Recurrance(String object){
+    public Recurrence(String object){
         try {
             jsonObject = new JSONObject(object);
         } catch (JSONException e) {
@@ -47,7 +45,7 @@ public class Recurrance {
         }
     }
 
-    public Recurrance (){
+    public Recurrence(){
         jsonObject = new JSONObject();
     }
 
@@ -55,29 +53,24 @@ public class Recurrance {
         return jsonObject;
     }
 
+    public String getJsonString(){
+        return jsonObject.toString();
+    }
+
     public void setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
-    public void addExclusionFrom(int fromHour, int fromMinute){
+    public void addExclusion(String fromHour, String toHour){
         try {
             jsonObject.put(FROM_HOUR, fromHour);
-            jsonObject.put(FROM_MINUTE, fromMinute);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addExclusionTo(int toHour, int toMinute){
-        try {
             jsonObject.put(TO_HOUR, toHour);
-            jsonObject.put(TO_MINUTE, toMinute);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void addExclusion(int[] hours){
+    public void addExclusion(List<Integer> hours){
         JSONArray jsonArray = new JSONArray();
         for (int hour : hours) jsonArray.put(hour);
         try {
@@ -87,48 +80,26 @@ public class Recurrance {
         }
     }
 
-    public int getFromHour(){
+    public String getFromHour(){
         if (jsonObject.has(FROM_HOUR)){
             try {
-                return jsonObject.getInt(FROM_HOUR);
+                return jsonObject.getString(FROM_HOUR);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return -1;
+                return null;
             }
-        } else return -1;
+        } else return null;
     }
 
-    public int getFromMinute(){
-        if (jsonObject.has(FROM_MINUTE)){
-            try {
-                return jsonObject.getInt(FROM_MINUTE);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return -1;
-            }
-        } else return -1;
-    }
-
-    public int getToHour(){
+    public String getToHour(){
         if (jsonObject.has(TO_HOUR)){
             try {
-                return jsonObject.getInt(TO_HOUR);
+                return jsonObject.getString(TO_HOUR);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return -1;
+                return null;
             }
-        } else return -1;
-    }
-
-    public int getToMinute(){
-        if (jsonObject.has(TO_MINUTE)){
-            try {
-                return jsonObject.getInt(TO_MINUTE);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return -1;
-            }
-        } else return -1;
+        } else return null;
     }
 
     public List<Integer> getHours(){

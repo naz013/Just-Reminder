@@ -138,6 +138,23 @@ public class ViewUtils {
         } else view.setVisibility(View.GONE);
     }
 
+    public static void show(View view){
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setStartOffset(400);
+        fadeIn.setDuration(400);
+        view.setAnimation(fadeIn);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    public static void hide(View view){
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setDuration(400);
+        view.setAnimation(fadeOut);
+        view.setVisibility(View.INVISIBLE);
+    }
+
     public static void showOver(View view, boolean animation){
         if (animation) {
             Animation fadeIn = new AlphaAnimation(0, 1);

@@ -17,6 +17,7 @@ import com.cray.software.justreminder.datas.CalendarModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.RecurrHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -98,6 +99,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+                String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
 
                 if (done != 1) {
                     long due = 0;
@@ -136,6 +138,12 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                             String[] dT = mCount.getNextDateTime(due);
                             date = dT[0];
                             time = dT[1];
+                            if (type.matches(Constants.TYPE_TIME) && exclusion != null){
+                                if (new RecurrHelper(exclusion).isRange()){
+                                    date = mContext.getString(R.string.paused);
+                                }
+                                time = "";
+                            }
                         }
                     }
 
@@ -201,7 +209,6 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
 
             String task = item.getName();
-            Contacts contacts = new Contacts(mContext);
             if (task == null || task.matches("")) task = Contacts.getContactNameFromNumber(
                     item.getNumber(), mContext);
             rView.setTextViewText(R.id.taskText, task);

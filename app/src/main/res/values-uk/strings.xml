@@ -744,4 +744,12 @@
     <string name="birthday_permanent_explanation">Відмітьте, щоб увімкнути відображення майбутніх днів народжень в панелі сповіщень</string>
     <string name="no_google_tasks">Цей список завдань є порожнім</string>
     <string name="show_hidden_tasks">Показати приховані завдання</string>
+    <string name="to_">по:</string>
+    <string name="from_">З:</string>
+    <string name="excluded_hours">Виключені години:</string>
+    <string name="exclusion">Вийняток</string>
+    <string name="select_interval">Виключити інтервал</string>
+    <string name="select_exclusion">Обрати вийняток</string>
+    <string name="paused">Призупинено</string>
+    <string name="select_hours">Виключити години</string>
 </resources>

@@ -203,11 +203,11 @@ public class QuickAddReminder extends AppCompatActivity implements
         boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         if (isCalendar || isStock) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                    repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
+                    repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
             ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
         } else {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                    repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
+                    repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, id);

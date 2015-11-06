@@ -1123,7 +1123,7 @@ public class MainActivity extends AppCompatActivity
                 if (cf != null) cf.close();
                 long remId = db.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
                         minute, 0, null, 0, mPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
-                        0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId);
+                        0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId, null);
                 new AlarmReceiver().setAlarm(MainActivity.this, remId);
                 db.updateReminderDateTime(remId);
                 new UpdatesHelper(MainActivity.this).updateWidget();

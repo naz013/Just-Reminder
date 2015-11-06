@@ -744,4 +744,12 @@
     <string name="birthday_permanent_explanation">Prüfen Sie, welche anstehende Geburtstage in der Statusleiste zu aktivieren</string>
     <string name="no_google_tasks">Dieses Google Aufgabenliste ist leer</string>
     <string name="show_hidden_tasks">Versteckte Aufgaben anzeigen</string>
+    <string name="to_">zu:</string>
+    <string name="from_">Von:</string>
+    <string name="excluded_hours">Ausgenommen Stunden:</string>
+    <string name="exclusion">Ausschluss</string>
+    <string name="select_interval">Ausschließen Intervall</string>
+    <string name="select_hours">Stunden ausschließen</string>
+    <string name="select_exclusion">Wählen Ausgrenzung</string>
+    <string name="paused">Angehalten</string>
 </resources>

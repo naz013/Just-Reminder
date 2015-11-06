@@ -8,22 +8,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Recurrence;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ExclusionPickerDialog extends Activity implements CompoundButton.OnCheckedChangeListener {
 
-    private RadioButton selectInterval, selectHours;
+    private CheckBox selectInterval, selectHours;
     private LinearLayout intervalContainer, hoursContainer;
     private TextView from, to;
     private ToggleButton zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven,
@@ -32,6 +37,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
 
     private int fromHour, fromMinute;
     private int toHour, toMinute;
+    private ArrayList<ToggleButton> buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,21 +47,23 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_select_exlusion);
 
+        from = (TextView) findViewById(R.id.from);
+        to = (TextView) findViewById(R.id.to);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         fromHour = calendar.get(Calendar.HOUR_OF_DAY);
         fromMinute = calendar.get(Calendar.MINUTE);
 
+        from.setText(getString(R.string.from_) + " " + TimeUtil.getTime(calendar.getTime(), true));
+
         calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_HOUR * 3);
 
         toHour = calendar.get(Calendar.HOUR_OF_DAY);
         toMinute = calendar.get(Calendar.MINUTE);
 
-        from = (TextView) findViewById(R.id.from);
-        to = (TextView) findViewById(R.id.to);
-        from.setText("From:" + fromHour + ":" + fromMinute);
-        to.setText("to:" + toHour + ":" + toMinute);
+        to.setText(getString(R.string.to_) + " "  + TimeUtil.getTime(calendar.getTime(), true));
         from.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,9 +81,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent();
-                //i.putExtra("excl", selectedPosition);
-                setResult(RESULT_OK, i);
+                saveResult();
             }
         });
 
@@ -84,11 +90,47 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         intervalContainer = (LinearLayout) findViewById(R.id.intervalContainer);
         hoursContainer = (LinearLayout) findViewById(R.id.hoursContainer);
 
-        selectInterval = (RadioButton) findViewById(R.id.selectInterval);
-        selectHours = (RadioButton) findViewById(R.id.selectHours);
+        selectInterval = (CheckBox) findViewById(R.id.selectInterval);
+        selectHours = (CheckBox) findViewById(R.id.selectHours);
         selectInterval.setChecked(true);
-        selectHours.setOnCheckedChangeListener(this);
         selectInterval.setOnCheckedChangeListener(this);
+        selectHours.setOnCheckedChangeListener(this);
+    }
+
+    private void saveResult() {
+        if (selectHours.isChecked()) {
+            Recurrence recurrence = new Recurrence();
+            List<Integer> list = getSelectedList();
+            if(list.size() == 0) {
+                Messages.toast(this, "You don't check any hours!");
+                return;
+            }
+            recurrence.addExclusion(list);
+            Intent i = new Intent();
+            i.putExtra("excl", recurrence.getJsonString());
+            setResult(RESULT_OK, i);
+            finish();
+        }
+        if (selectInterval.isChecked()) {
+            Recurrence recurrence = new Recurrence();
+            recurrence.addExclusion(getHour(fromHour, fromMinute), getHour(toHour, toMinute));
+            Intent i = new Intent();
+            i.putExtra("excl", recurrence.getJsonString());
+            setResult(RESULT_OK, i);
+            finish();
+        }
+    }
+
+    private List<Integer> getSelectedList() {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (ToggleButton button : buttons){
+            if (button.isChecked()) ids.add(button.getId() - 100);
+        }
+        return ids;
+    }
+
+    private String getHour(int hour, int minute){
+        return hour + ":" + minute;
     }
 
     private void initButtons() {
@@ -116,9 +158,24 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         twentyOne = (ToggleButton) findViewById(R.id.twentyOne);
         twentyTwo = (ToggleButton) findViewById(R.id.twentyTwo);
         twentyThree = (ToggleButton) findViewById(R.id.twentyThree);
-        colorify(one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen,
+        if (one != null){
+            setId(zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen,
+                    fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twentyOne,
+                    twentyThree, twentyTwo);
+        }
+        colorify(zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen,
                 fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twentyOne,
                 twentyThree, twentyTwo);
+    }
+
+    private void setId(ToggleButton... buttons){
+        int i = 100;
+        this.buttons = new ArrayList<>();
+        for (ToggleButton button : buttons){
+            button.setId(i);
+            this.buttons.add(button);
+            i++;
+        }
     }
 
     private void colorify(ToggleButton... buttons){
@@ -134,7 +191,11 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 fromHour = hourOfDay;
                 fromMinute = minute;
-                from.setText("From:" + hourOfDay + ":" + minute);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                from.setText(getString(R.string.from_) + " " + TimeUtil.getTime(calendar.getTime(), true));
             }
         }, fromHour, fromMinute, true);
     }
@@ -145,7 +206,11 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 toHour = hourOfDay;
                 toMinute = minute;
-                to.setText("to:" + hourOfDay + ":" + minute);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                to.setText(getString(R.string.to_) + " "  + TimeUtil.getTime(calendar.getTime(), true));
             }
         }, toHour, toMinute, true);
     }
@@ -153,17 +218,35 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()){
-            case R.id.selectHours:
-                selectInterval.setChecked(false);
-                selectHours.setChecked(true);
-                if (intervalContainer.getVisibility() == View.VISIBLE) ViewUtils.collapse(intervalContainer);
-                ViewUtils.expand(hoursContainer);
-                break;
             case R.id.selectInterval:
-                selectHours.setChecked(false);
-                selectInterval.setChecked(true);
-                if (hoursContainer.getVisibility() == View.VISIBLE) ViewUtils.collapse(hoursContainer);
-                ViewUtils.expand(intervalContainer);
+                if (isChecked) {
+                    selectInterval.setChecked(true);
+                    selectHours.setChecked(false);
+                    if (hoursContainer.getVisibility() == View.VISIBLE)
+                        ViewUtils.hide(hoursContainer);
+                    ViewUtils.show(intervalContainer);
+                } else {
+                    selectInterval.setChecked(false);
+                    selectHours.setChecked(true);
+                    if (intervalContainer.getVisibility() == View.VISIBLE)
+                        ViewUtils.hide(intervalContainer);
+                    ViewUtils.show(hoursContainer);
+                }
+                break;
+            case R.id.selectHours:
+                if (isChecked) {
+                    selectInterval.setChecked(false);
+                    selectHours.setChecked(true);
+                    if (intervalContainer.getVisibility() == View.VISIBLE)
+                        ViewUtils.hide(intervalContainer);
+                    ViewUtils.show(hoursContainer);
+                } else {
+                    selectInterval.setChecked(true);
+                    selectHours.setChecked(false);
+                    if (hoursContainer.getVisibility() == View.VISIBLE)
+                        ViewUtils.hide(hoursContainer);
+                    ViewUtils.show(intervalContainer);
+                }
                 break;
         }
     }

@@ -71,6 +71,7 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
+import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -173,7 +174,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private CheckBox timeExport;
     private CheckBox timeTaskExport;
     private TextView hoursView, minutesView, secondsView, selectExclusion;
-    private ImageButton deleteButton;
+    private ImageButton deleteButton, exclusionClear;
     private EditText repeatMinutes;
     private String timeString = "000000";
 
@@ -271,7 +272,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private long repeats = -1;
     private long id;
     private String categoryId;
-    private String exclusion;
+    private String exclusion = null;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = 0;
     private List<Address> foundPlaces;
@@ -1479,9 +1480,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         deleteButton = (ImageButton) findViewById(R.id.deleteButton);
+        exclusionClear = (ImageButton) findViewById(R.id.exclusionClear);
+        exclusionClear.setVisibility(View.INVISIBLE);
         sPrefs = new SharedPrefs(this);
-        if (isDark) deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
-        else deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+        if (isDark) {
+            deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_white_24dp);
+        } else {
+            deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_grey600_24dp);
+        }
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1496,6 +1504,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeString = "000000";
                 updateTimeView();
                 return true;
+            }
+        });
+        exclusionClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (exclusion != null){
+                    exclusion = null;
+                    selectExclusion.setText(getString(R.string.select_exclusion));
+                    exclusionClear.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
@@ -1553,10 +1571,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 exp = item.getExport();
                 expTasks = item.getCode();
                 repeat = item.getRepCode();
+                exclusion = item.getExclusion();
             }
 
             timeString = TimeUtil.generateAfterString(afterTime);
             updateTimeView();
+            setExclusion(exclusion);
 
             if (exp == 1){
                 timeExport.setChecked(true);
@@ -2969,7 +2989,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return new Reminder(0, task, type, weekdays, melody, categoryId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
-                    notification, wake, unlock, auto, limit);
+                    notification, wake, unlock, auto, limit, exclusion);
         } else return null;
     }
 
@@ -3786,6 +3806,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (requestCode == 1111) {
             if (resultCode == RESULT_OK){
                 exclusion = data.getStringExtra("excl");
+                setExclusion(exclusion);
             }
         }
 
@@ -3836,6 +3857,21 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 final String title = (String)((applicationInfo != null) ?
                         packageManager.getApplicationLabel(applicationInfo) : "???");
                 applicationName.setText(title);
+            }
+        }
+    }
+
+    private void setExclusion(String jsonObject){
+        if (jsonObject != null) {
+            Recurrence recurrence = new Recurrence(jsonObject);
+            if (recurrence.getHours() != null) {
+                selectExclusion.setText(getString(R.string.excluded_hours) + " " + recurrence.getHours().toString());
+                exclusionClear.setVisibility(View.VISIBLE);
+            } else {
+                String fromHour = recurrence.getFromHour();
+                String toHour = recurrence.getToHour();
+                selectExclusion.setText(getString(R.string.from_) + " " + fromHour + " " + getString(R.string.to_) + " " + toHour);
+                exclusionClear.setVisibility(View.VISIBLE);
             }
         }
     }

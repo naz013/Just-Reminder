@@ -510,7 +510,7 @@ public class NotesManager extends AppCompatActivity {
             if (cf != null) cf.close();
             long remId = new DataBase(NotesManager.this).insertReminder(note, Constants.TYPE_REMINDER, myDay,
                     myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, SyncHelper.generateID(),
-                    null, 0, null, 0, 0, 0, categoryId);
+                    null, 0, null, 0, 0, 0, categoryId, null);
             new DataBase(NotesManager.this).updateReminderDateTime(remId);
             DB.linkToReminder(id, remId);
             alarm.setAlarm(NotesManager.this, remId);

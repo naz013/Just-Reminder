@@ -744,4 +744,12 @@
     <string name="birthday_permanent_explanation">Отметьте, чтобы позволить показывать предстоящие дни рождения в строке уведомлений</string>
     <string name="no_google_tasks">Этот список Заданий Google пуст</string>
     <string name="show_hidden_tasks">Показать скрытые задачи</string>
+    <string name="to_">до:</string>
+    <string name="from_">С:</string>
+    <string name="excluded_hours">Исключенные часы:</string>
+    <string name="exclusion">Исключение</string>
+    <string name="select_interval">Исключить интервал</string>
+    <string name="select_hours">Исключить часы</string>
+    <string name="select_exclusion">Выбрать исключение</string>
+    <string name="paused">Приостановлено</string>
 </resources>
