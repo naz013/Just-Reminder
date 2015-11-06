@@ -9,7 +9,11 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.ReminderDialog;
+import com.cray.software.justreminder.helpers.RecurrHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.Type;
+import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.util.Calendar;
 
@@ -22,6 +26,27 @@ public class AlarmReceiver extends BroadcastReceiver {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
+        Reminder reminder = new Type(context).getItem(id);
+        if (reminder.getType().matches(Constants.TYPE_TIME)){
+            String exclusion = reminder.getExclusion();
+            if (exclusion != null){
+                RecurrHelper helper = new RecurrHelper(exclusion);
+                if (!helper.isRange()){
+                    start(context, id);
+                } else {
+                    Reminder.updateCount(context, id);
+                    Reminder.backup(context);
+                    new UpdatesHelper(context).updateWidget();
+                }
+            } else {
+                start(context, id);
+            }
+        } else {
+            start(context, id);
+        }
+    }
+
+    private void start(Context context, long id) {
         Intent resultIntent = new Intent(context, ReminderDialog.class);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);

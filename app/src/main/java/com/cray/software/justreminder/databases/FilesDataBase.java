@@ -137,7 +137,7 @@ public class FilesDataBase {
     public long insertFile(String fileName, String fileType, String fileLocation, long edit, String text, String type,
                            int day, int month, int year, int hour, int minute, int seconds,
                            String number, int repeatCode, long repMinute, long count, double latitude, double longitude, String uID,
-                           String weekdays) {
+                           String weekdays, String exclusion) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.FilesConstants.COLUMN_FILE_NAME, fileName);
@@ -160,6 +160,7 @@ public class FilesDataBase {
         cv.put(Constants.COLUMN_LONGITUDE, longitude);
         cv.put(Constants.COLUMN_TECH_VAR, uID);
         cv.put(Constants.COLUMN_WEEKDAYS, weekdays);
+        cv.put(Constants.COLUMN_EXTRA_3, exclusion);
         //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(ARCHIVE_TABLE_NAME, null, cv);
     }

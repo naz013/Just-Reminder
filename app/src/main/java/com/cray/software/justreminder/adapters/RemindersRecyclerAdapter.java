@@ -21,6 +21,7 @@ import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.RecurrHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -144,6 +145,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             double lon = item.getPlace()[1];
             int isDone = item.getCompleted();
             String repeat = item.getRepeat();
+            String exclusion = item.getExclusion();
             int archived = item.getArchived();
             int categoryColor = item.getCatColor();
 
@@ -275,6 +277,21 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder.viewTime.setText(dT[1]);
                 }
             }
+
+            if (type.matches(Constants.TYPE_TIME) && archived == 0){
+                if (exclusion != null){
+                    if (new RecurrHelper(exclusion).isRange()){
+                        viewHolder.leftTimeIcon.setVisibility(View.GONE);
+                        viewHolder.leftTime.setVisibility(View.GONE);
+                        viewHolder.viewTime.setText("");
+                        viewHolder.taskDate.setText(R.string.paused);
+                    } else {
+                        viewHolder.leftTimeIcon.setVisibility(View.VISIBLE);
+                        viewHolder.leftTime.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
             if (isDone == 1) {
                 viewHolder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
                 viewHolder.leftTime.setVisibility(View.GONE);

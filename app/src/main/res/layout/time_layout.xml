@@ -64,7 +64,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/hoursView"
-                                android:textSize="50sp"
+                                android:textSize="40sp"
                                 android:gravity="center|bottom"
                                 android:layout_toLeftOf="@+id/hours"
                                 android:text="42"/>
@@ -84,7 +84,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/minutesView"
-                                android:textSize="50sp"
+                                android:textSize="40sp"
                                 android:gravity="center|bottom"
                                 android:layout_toLeftOf="@+id/minutes"
                                 android:text="42"/>
@@ -104,7 +104,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/secondsView"
-                                android:textSize="50sp"
+                                android:textSize="40sp"
                                 android:gravity="center|bottom"
                                 android:layout_toLeftOf="@+id/seconds"
                                 android:text="55"/>
@@ -339,8 +339,34 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_margin"
                 android:id="@+id/repeatMinutesSeek"
-                android:max="120"
-                android:layout_marginBottom="88dp"/>
+                android:max="120" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="88dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_exclusion"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:layout_toLeftOf="@+id/exclusionClear"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/selectExclusion"/>
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_clear_grey600_24dp"
+                    android:id="@+id/exclusionClear"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
 
         </LinearLayout>
 

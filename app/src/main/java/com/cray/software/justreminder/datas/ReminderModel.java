@@ -16,7 +16,7 @@ package com.cray.software.justreminder.datas;
  * limitations under the License.
  */
 public class ReminderModel {
-    private final String title, type, repeat, uuId, number, groupId;
+    private final String title, type, repeat, uuId, number, groupId, exclusion;
     private final int completed, archived, catColor, viewType;
     private final long due, id;
     private final double[] place;
@@ -24,7 +24,7 @@ public class ReminderModel {
 
     public ReminderModel(String title, String type, String repeat, int catColor, String uuId,
                          int completed, long due, long id, double[] place, String number, int archived,
-                         int viewType, String groupId){
+                         int viewType, String groupId, String exclusion){
         this.catColor = catColor;
         this.viewType = viewType;
         this.title = title;
@@ -38,7 +38,12 @@ public class ReminderModel {
         this.number = number;
         this.archived = archived;
         this.groupId = groupId;
+        this.exclusion = exclusion;
         this.selected = false;
+    }
+
+    public String getExclusion() {
+        return exclusion;
     }
 
     public String getGroupId() {

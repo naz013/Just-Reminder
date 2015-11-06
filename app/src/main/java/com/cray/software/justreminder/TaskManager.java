@@ -353,7 +353,7 @@ public class TaskManager extends AppCompatActivity {
         }
         if (cf != null) cf.close();
         long id = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
+                0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
         DB.updateReminderDateTime(id);
         new AlarmReceiver().setAlarm(TaskManager.this, id);
         DB.close();

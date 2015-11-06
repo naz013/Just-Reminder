@@ -290,13 +290,13 @@ public class FollowReminder extends AppCompatActivity implements
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         if (prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || prefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
-                    0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId);
+                    0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
             ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, startTime, id,
                     sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR),
                     sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
         } else {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
-                    0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId);
+                    0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, startTime, id);

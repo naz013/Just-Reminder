@@ -67,6 +67,7 @@ public class Type {
             String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
             String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
             String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
             double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
             double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
 
@@ -76,7 +77,7 @@ public class Type {
             return new Reminder(id, text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
-                    voice, notificationRepeat, wake, unlock, auto, limit);
+                    voice, notificationRepeat, wake, unlock, auto, limit, exclusion);
         } else return null;
     }
 
@@ -118,6 +119,7 @@ public class Type {
             long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
             String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
             String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
             double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
             double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
 
@@ -127,13 +129,13 @@ public class Type {
             return new Reminder(id, text, type, weekdays, melody, catId, uuId,
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
-                    voice, notificationRepeat, wake, unlock, auto, limit);
+                    voice, notificationRepeat, wake, unlock, auto, limit, exclusion);
         } else return null;
     }
 
     /**
      * Get reminder layout resource identifier.
-     * @return
+     * @return reminder layout id
      */
     public int getView(){
         return view;
@@ -141,7 +143,7 @@ public class Type {
 
     /**
      * Set reminder type.
-     * @param type
+     * @param type reminder type.
      */
     public void setType(String type){
         this.type = type;
@@ -149,7 +151,7 @@ public class Type {
 
     /**
      * Get reminder type.
-     * @return
+     * @return reminder type
      */
     public String getType(){
         return type;
@@ -158,7 +160,7 @@ public class Type {
     /**
      * Save new reminder to database.
      * @param item reminder object.
-     * @return
+     * @return reminder identifier
      */
     public long save(Reminder item){
         DataBase db = new DataBase(mContext);
@@ -168,7 +170,7 @@ public class Type {
                 item.getNumber(), item.getRepCode(), item.getRepMinute(), 0, item.getPlace()[0],
                 item.getPlace()[1], item.getUuId(), item.getWeekdays(), item.getExport(),
                 item.getMelody(), item.getRadius(), item.getColor(), item.getCode(),
-                item.getCategoryId());
+                item.getCategoryId(), item.getExclusion());
         db.updateReminderDateTime(id);
         db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
                 item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());
@@ -189,7 +191,7 @@ public class Type {
                 item.getYear(), item.getHour(), item.getMinute(), item.getSeconds(),
                 item.getNumber(), item.getRepCode(), item.getRepMinute(), 0, item.getPlace()[0],
                 item.getPlace()[1], item.getWeekdays(), item.getExport(), item.getMelody(),
-                item.getRadius(), item.getColor(), item.getCode(), item.getCategoryId());
+                item.getRadius(), item.getColor(), item.getCode(), item.getCategoryId(), item.getExclusion());
         db.updateReminderDateTime(id);
         db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
                 item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());

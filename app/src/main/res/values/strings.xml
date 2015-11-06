@@ -750,5 +750,13 @@
     <string name="birthday_permanent_explanation">Check to enable showing upcoming birthdays in status bar</string>
     <string name="no_google_tasks">This Google Task list is empty</string>
     <string name="show_hidden_tasks">Show hidden tasks</string>
+    <string name="to_">to:</string>
+    <string name="from_">From:</string>
+    <string name="excluded_hours">Excluded hours:</string>
+    <string name="exclusion">Exclusion</string>
+    <string name="select_interval">Exclude interval</string>
+    <string name="select_hours">Exclude hours</string>
+    <string name="select_exclusion">Select exclusion</string>
+    <string name="paused">Paused</string>
 
 </resources>

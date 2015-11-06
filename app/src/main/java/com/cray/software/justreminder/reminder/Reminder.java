@@ -39,7 +39,7 @@ import java.util.Calendar;
  */
 public class Reminder {
 
-    private String title, type, uuId, number, weekdays, melody, categoryId;
+    private String title, type, uuId, number, weekdays, melody, categoryId, exclusion;
     private int day, month, year, hour, minute, seconds, repCode, export,
             radius, color, code, vibration, voice, notificationRepeat, wake, unlock, auto;
     private long id, repMinute, due, count, limit;
@@ -49,7 +49,7 @@ public class Reminder {
                     String uuId, double[] place, String number, int day, int month, int year,
                     int hour, int minute, int seconds, int repCode, int export, int radius,
                     int color, int code, long repMinute, long due, long count, int vibration, int voice,
-                    int notificationRepeat, int wake, int unlock, int auto, long limit){
+                    int notificationRepeat, int wake, int unlock, int auto, long limit, String exclusion){
         this.id = id;
         this.title = title;
         this.type = type;
@@ -80,6 +80,7 @@ public class Reminder {
         this.unlock = unlock;
         this.auto = auto;
         this.limit = limit;
+        this.exclusion = exclusion;
     }
 
     /**
@@ -267,7 +268,7 @@ public class Reminder {
                 myMinute = calendar.get(Calendar.MINUTE);
                 long idN = db.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                         number, repCode, 0, 0, latitude, longitude, uuID, weekdays, exp, melody, radius, ledColor,
-                        code, categoryId);
+                        code, categoryId, null);
                 db.updateReminderDateTime(idN);
                 if (type.startsWith(Constants.TYPE_LOCATION) ||
                         type.startsWith(Constants.TYPE_LOCATION_OUT)){
@@ -465,6 +466,14 @@ public class Reminder {
         db.open();
         db.updateReminderGroup(id, uuId);
         db.close();
+    }
+
+    public String getExclusion() {
+        return exclusion;
+    }
+
+    public void setExclusion(String exclusion) {
+        this.exclusion = exclusion;
     }
 
     public long getLimit() {

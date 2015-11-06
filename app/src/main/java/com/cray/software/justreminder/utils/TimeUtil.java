@@ -30,9 +30,23 @@ public class TimeUtil {
     }
 
     /**
+     * Get time from string.
+     * @param date date string.
+     * @return Date
+     */
+    public static Date getDate(String date){
+        try {
+            return time24.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Get user age from birth date string.
      * @param dateOfBirth date of birth.
-     * @return Intefer
+     * @return Integer
      */
     public static int getYears(String dateOfBirth){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

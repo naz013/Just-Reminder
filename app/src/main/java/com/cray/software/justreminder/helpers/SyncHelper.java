@@ -207,6 +207,7 @@ public class SyncHelper {
                 String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
                 String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+                String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
 
                 if (uuID == null) {
                     String uID = generateID();
@@ -242,6 +243,7 @@ public class SyncHelper {
                     jObjectData.put(Constants.COLUMN_UNLOCK_DEVICE, unlock);
                     jObjectData.put(Constants.COLUMN_REPEAT_LIMIT, limit);
                     jObjectData.put(Constants.COLUMN_NOTIFICATION_REPEAT, notificationRepeat);
+                    jObjectData.put(Constants.COLUMN_EXTRA_3, exclusion);
 
                     if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                         JSONObject shopObject = new JSONObject();
@@ -998,19 +1000,29 @@ public class SyncHelper {
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
 
         int vibration = -1;
-        if (jsonObj.has(Constants.COLUMN_VIBRATION)) jsonObj.getInt(Constants.COLUMN_VIBRATION);
+        if (jsonObj.has(Constants.COLUMN_VIBRATION))
+            vibration = jsonObj.getInt(Constants.COLUMN_VIBRATION);
         int voice = -1;
-        if (jsonObj.has(Constants.COLUMN_VOICE)) jsonObj.getInt(Constants.COLUMN_VOICE);
+        if (jsonObj.has(Constants.COLUMN_VOICE))
+            voice = jsonObj.getInt(Constants.COLUMN_VOICE);
         int wake = -1;
-        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN)) jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
+        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN))
+            wake = jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
         int unlock = -1;
-        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE)) jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE))
+            unlock = jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
         int notificationRepeat = -1;
-        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT)) jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT))
+            notificationRepeat = jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
         int auto = -1;
-        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION)) jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
+        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION))
+            auto = jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
         long limit = -1;
-        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT)) jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT))
+            limit = jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        String exclusion = null;
+        if (jsonObj.has(Constants.COLUMN_EXTRA_3))
+            exclusion = jsonObj.getString(Constants.COLUMN_EXTRA_3);
 
         DB = new DataBase(mContext);
         DB.open();
@@ -1048,14 +1060,14 @@ public class SyncHelper {
                         new WeekdayType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                                 uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                 minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
-                                notificationRepeat, wake, unlock, auto, limit));
+                                notificationRepeat, wake, unlock, auto, limit, exclusion));
                     }
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                     long due = TimeCount.getNextMonthDayTime(hour, minute, day, 0);
                     new MonthdayType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                             uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                             minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
-                            notificationRepeat, wake, unlock, auto, limit));
+                            notificationRepeat, wake, unlock, auto, limit, exclusion));
                 } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
                     if (jsonObj.has(SHOPPING_REMINDER_LIST)) {
                         JSONObject listObject = jsonObj.getJSONObject(SHOPPING_REMINDER_LIST);
@@ -1063,7 +1075,7 @@ public class SyncHelper {
                         long id = shoppingType.save(new Reminder(0, text, type, weekdays, melody, categoryId,
                                 uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                 minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, 0, count, vibration, voice,
-                                notificationRepeat, wake, unlock, auto, limit));
+                                notificationRepeat, wake, unlock, auto, limit, exclusion));
                         ArrayList<ShoppingList> arrayList = new ArrayList<>();
                         Iterator<?> keys = listObject.keys();
                         while (keys.hasNext()) {
@@ -1088,19 +1100,19 @@ public class SyncHelper {
                             new TimerType(mContext).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                                     uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                     minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
-                                    notificationRepeat, wake, unlock, auto, limit));
+                                    notificationRepeat, wake, unlock, auto, limit, exclusion));
                         } else if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                             long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
                             new LocationType(mContext, type).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                                     uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                     minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
-                                    notificationRepeat, wake, unlock, auto, limit));
+                                    notificationRepeat, wake, unlock, auto, limit, exclusion));
                         } else {
                             long due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repMinute, repeatCode, count, 0);
                             new DateType(mContext, type).save(new Reminder(0, text, type, weekdays, melody, categoryId,
                                     uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                     minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, due, count, vibration, voice,
-                                    notificationRepeat, wake, unlock, auto, limit));
+                                    notificationRepeat, wake, unlock, auto, limit, exclusion));
                         }
                     }
                 }
@@ -1115,7 +1127,7 @@ public class SyncHelper {
                             shoppingType.save(remId, new Reminder(0, text, type, weekdays, melody, categoryId,
                                     uuID, new double[]{latitude, longitude}, number, day, month, year, hour,
                                     minute, seconds, repeatCode, 0, radius, 0, 0, repMinute, 0, count, vibration, voice,
-                                    notificationRepeat, wake, unlock, auto, limit));
+                                    notificationRepeat, wake, unlock, auto, limit, exclusion));
                             ArrayList<ShoppingList> arrayList = new ArrayList<>();
                             Map<String, Long> uuIds = ShoppingList.getUuIds(mContext, remId);
                             Iterator<?> keys = listObject.keys();
@@ -1593,19 +1605,29 @@ public class SyncHelper {
         double longitude = jsonObj.getDouble(Constants.COLUMN_LONGITUDE);
 
         int vibration = -1;
-        if (jsonObj.has(Constants.COLUMN_VIBRATION)) jsonObj.getInt(Constants.COLUMN_VIBRATION);
+        if (jsonObj.has(Constants.COLUMN_VIBRATION))
+            vibration = jsonObj.getInt(Constants.COLUMN_VIBRATION);
         int voice = -1;
-        if (jsonObj.has(Constants.COLUMN_VOICE)) jsonObj.getInt(Constants.COLUMN_VOICE);
+        if (jsonObj.has(Constants.COLUMN_VOICE))
+            voice = jsonObj.getInt(Constants.COLUMN_VOICE);
         int wake = -1;
-        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN)) jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
+        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN))
+            wake = jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
         int unlock = -1;
-        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE)) jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE))
+            unlock = jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
         int notificationRepeat = -1;
-        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT)) jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT))
+            notificationRepeat = jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
         int auto = -1;
-        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION)) jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
+        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION))
+            auto = jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
         long limit = -1;
-        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT)) jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT))
+            limit = jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        String exclusion = null;
+        if (jsonObj.has(Constants.COLUMN_EXTRA_3))
+            exclusion = jsonObj.getString(Constants.COLUMN_EXTRA_3);
 
         String uuID = null;
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
@@ -1615,7 +1637,7 @@ public class SyncHelper {
         fdb.open();
         if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
         long id = fdb.insertFile(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
-                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays);
+                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, exclusion);
         fdb.updateFileExtra(id, vibration, voice, notificationRepeat, wake, unlock, auto, limit);
         fdb.close();
     }

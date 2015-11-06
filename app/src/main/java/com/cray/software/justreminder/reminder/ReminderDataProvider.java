@@ -175,6 +175,7 @@ public class ReminderDataProvider {
                 String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
                 String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
                 int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
                 int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
@@ -229,7 +230,7 @@ public class ReminderDataProvider {
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
                 data.add(new ReminderModel(title, type, repeat, catColor, uuID, isDone, due, id,
-                        new double[]{lat, lon}, number, archived, viewType, categoryId));
+                        new double[]{lat, lon}, number, archived, viewType, categoryId, exclusion));
             } while (c.moveToNext());
         }
     }
@@ -260,6 +261,7 @@ public class ReminderDataProvider {
         if (s != null && s.moveToNext()){
             String title = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
             String categoryId = s.getString(s.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String exclusion = s.getString(s.getColumnIndex(Constants.COLUMN_EXTRA_3));
             String uuID = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
             int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
             int archived = s.getInt(s.getColumnIndex(Constants.COLUMN_ARCHIVED));
@@ -270,7 +272,7 @@ public class ReminderDataProvider {
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
             item = new ReminderModel(title, null, null, catColor, uuID, isDone, 0, id, null, null,
-                    archived, viewType, categoryId);
+                    archived, viewType, categoryId, exclusion);
         }
         return item;
     }

@@ -122,7 +122,7 @@ public class EventsCheckAlarm extends BroadcastReceiver {
 
                         long id = DB.insertReminder(text, type, day, month, year, hour,
                                 minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
-                                0, categoryId);
+                                0, categoryId, null);
                         DB.updateReminderDateTime(id);
                         DB.addCalendarEvent(null, id, item.getId());
                         new AlarmReceiver().setAlarm(context, id);
