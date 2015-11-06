@@ -1,8 +1,5 @@
 package com.cray.software.justreminder.helpers;
 
-import android.util.Log;
-
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;
@@ -32,6 +29,10 @@ public class RecurrHelper {
         recurrence = new Recurrence(jsonObject);
     }
 
+    /**
+     * Check if current event time is out of disabled range.
+     * @return boolean
+     */
     public boolean isRange(){
         boolean res = false;
         Calendar calendar = Calendar.getInstance();
@@ -69,7 +70,6 @@ public class RecurrHelper {
                 }
             }
         }
-        Log.d(Constants.LOG_TAG, "Res " + res + ", calculation time " + (System.currentTimeMillis() - eventTime));
         return res;
     }
 }

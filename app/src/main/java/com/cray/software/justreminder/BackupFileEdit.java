@@ -1064,6 +1064,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Set up exclusion for reminder.
+     * @param jsonObject json object string.
+     */
     private void setExclusion(String jsonObject){
         if (jsonObject != null) {
             Recurrence recurrence = new Recurrence(jsonObject);

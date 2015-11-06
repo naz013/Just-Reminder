@@ -27,10 +27,16 @@ import java.util.List;
  */
 public class Recurrence {
 
+    /**
+     * JSON keys.
+     */
     public static final String FROM_HOUR = "from_hour";
     public static final String TO_HOUR = "to_hour";
     public static final String HOURS = "hours";
 
+    /**
+     * JSON object.
+     */
     private JSONObject jsonObject;
 
     public Recurrence(JSONObject jsonObject){
@@ -49,18 +55,35 @@ public class Recurrence {
         jsonObject = new JSONObject();
     }
 
+    /**
+     * Get current JSON object.
+     * @return JSON object
+     */
     public JSONObject getJsonObject() {
         return jsonObject;
     }
 
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
     public String getJsonString(){
         return jsonObject.toString();
     }
 
+    /**
+     * Set current JSON object
+     * @param jsonObject JSON object
+     */
     public void setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
+    /**
+     * Add range exclusion to Timer.
+     * @param fromHour start time.
+     * @param toHour end time.
+     */
     public void addExclusion(String fromHour, String toHour){
         try {
             jsonObject.put(FROM_HOUR, fromHour);
@@ -70,6 +93,10 @@ public class Recurrence {
         }
     }
 
+    /**
+     * Add excluded hours to Timer.
+     * @param hours list of excluded hours.
+     */
     public void addExclusion(List<Integer> hours){
         JSONArray jsonArray = new JSONArray();
         for (int hour : hours) jsonArray.put(hour);
@@ -80,6 +107,10 @@ public class Recurrence {
         }
     }
 
+    /**
+     * Get excluded range start time.
+     * @return time string
+     */
     public String getFromHour(){
         if (jsonObject.has(FROM_HOUR)){
             try {
@@ -91,6 +122,10 @@ public class Recurrence {
         } else return null;
     }
 
+    /**
+     * Get excluded range end time.
+     * @return time string
+     */
     public String getToHour(){
         if (jsonObject.has(TO_HOUR)){
             try {
@@ -102,6 +137,10 @@ public class Recurrence {
         } else return null;
     }
 
+    /**
+     * Get list of excluded hours from Timer.
+     * @return list of hours.
+     */
     public List<Integer> getHours(){
         if (jsonObject.has(HOURS)){
             Type collectionType = new TypeToken<List<Integer>>() {}.getType();

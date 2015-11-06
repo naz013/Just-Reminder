@@ -3861,6 +3861,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    /**
+     * Set up exclusion for reminder.
+     * @param jsonObject json object string.
+     */
     private void setExclusion(String jsonObject){
         if (jsonObject != null) {
             Recurrence recurrence = new Recurrence(jsonObject);

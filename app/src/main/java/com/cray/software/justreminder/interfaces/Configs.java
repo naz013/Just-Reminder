@@ -10,7 +10,7 @@ public class Configs {
     /**
      * Application code name.
      */
-    public static final String CODENAME = "Emblic";
+    public static final String CODENAME = "Fig";
 
     /**
      * Max day for event calculating.
