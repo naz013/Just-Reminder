@@ -7,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 111
-        versionName '4.1.6'
+        versionCode 112
+        versionName '4.1.7'
         multiDexEnabled true
     }
 
@@ -58,14 +58,14 @@ android {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
             buildConfigField "boolean", "IS_BETA", "false"
-            versionCode 83
+            versionCode 84
         }
         beta {
             applicationId 'com.hexrain.reminder.beta'
             buildConfigField "boolean", "IS_PRO", "false"
             buildConfigField "boolean", "IS_BETA", "true"
-            versionCode 22
-            versionName '4.2 beta 6'
+            versionCode 23
+            versionName '4.2 beta 7'
         }
     }
 
@@ -125,16 +125,16 @@ dependencies {
     compile('com.github.ozodrukh:CircularReveal:1.1.1@aar') {
         transitive = true;
     }
-    compile 'com.google.android.gms:play-services:8.1.0'
+    compile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.android.support:support-v4:23.1.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.github.flavienlaurent.datetimepicker:library:0.0.2'
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.google.android.gms:play-services-ads:8.1.0'
-    compile 'com.google.android.gms:play-services-identity:8.1.0'
-    compile 'com.google.android.gms:play-services-gcm:8.1.0'
+    compile 'com.google.android.gms:play-services-ads:8.3.0'
+    compile 'com.google.android.gms:play-services-identity:8.3.0'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.github.paolorotolo:appintro:3.2.0'
     compile 'com.android.support:design:23.1.0'
 }

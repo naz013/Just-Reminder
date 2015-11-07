@@ -2,7 +2,6 @@ package com.cray.software.justreminder;
 
 import android.app.AlarmManager;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.AddBirthday;
@@ -198,17 +196,11 @@ public class CalendarActivity extends AppCompatActivity {
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        DataBase db = new DataBase(CalendarActivity.this);
-        if (!db.isOpen()) db.open();
-
-        EventsDataProvider provider = new EventsDataProvider();
-        Cursor c = db.getBirthdays();
-        provider.setBirthdays(c);
+        EventsDataProvider provider = new EventsDataProvider(this);
+        provider.setBirthdays(true);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
-            Cursor s = db.getActiveReminders();
-            Cursor cat = db.queryCategories();
-            provider.setReminders(s, cat);
+            provider.setReminders(true);
             provider.setFeature(isFeature);
         }
         provider.fillArray();

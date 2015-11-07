@@ -347,13 +347,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
         android:text="@string/button_ok"
         android:clickable="false"
         android:textSize="18sp"
-        style="?android:buttonStyle"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:gravity="center"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="14dp"
         android:layout_gravity="bottom|right"
         android:id="@+id/buttonOk" />
 </LinearLayout>

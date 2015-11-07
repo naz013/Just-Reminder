@@ -165,9 +165,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|right"
-        android:background="?android:attr/selectableItemBackground"
         android:textSize="18sp"
-        style="?android:buttonStyle"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:gravity="center"
         android:layout_marginTop="24dp"
         android:text="@string/button_close"/>

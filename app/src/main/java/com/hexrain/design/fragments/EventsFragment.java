@@ -2,7 +2,6 @@ package com.hexrain.design.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -165,19 +163,11 @@ public class EventsFragment extends Fragment {
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        DataBase db = new DataBase(getActivity());
-        if (!db.isOpen()) db.open();
-
-        EventsDataProvider provider = new EventsDataProvider();
-        Cursor c = db.getBirthdays();
-        provider.setBirthdays(c);
+        EventsDataProvider provider = new EventsDataProvider(getActivity());
+        provider.setBirthdays(true);
         provider.setTime(hour, minute);
-        if (isRemindersEnabled) {
-            Cursor s = db.getActiveReminders();
-            Cursor cat = db.queryCategories();
-            provider.setReminders(s, cat);
-            provider.setFeature(isFeature);
-        }
+        provider.setReminders(isRemindersEnabled);
+        provider.setFeature(isFeature);
         provider.fillArray();
 
         int position = 0;

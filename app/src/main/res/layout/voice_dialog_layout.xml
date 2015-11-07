@@ -172,7 +172,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|right"
         android:gravity="right"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="14dp"
         android:orientation="horizontal">
 
         <TextView
@@ -183,7 +183,7 @@
             android:text="@string/edit_dialog_button"
             android:gravity="center"
             android:id="@+id/buttonEdit"
-            style="?android:buttonStyle"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:clickable="true"/>
 
         <TextView
@@ -195,7 +195,7 @@
             android:layout_marginLeft="15dp"
             android:gravity="center"
             android:id="@+id/buttonClose"
-            style="?android:buttonStyle"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:clickable="true"/>
 
         </LinearLayout>

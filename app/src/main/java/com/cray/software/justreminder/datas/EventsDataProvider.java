@@ -1,11 +1,13 @@
 package com.cray.software.justreminder.datas;
 
 import android.app.AlarmManager;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -27,23 +29,24 @@ public class EventsDataProvider {
     }
 
     private ArrayList<EventsItem> data = new ArrayList<>();
-    private Cursor s, c, cat;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private int hour, minute;
     private boolean isFeature;
+    private boolean isBirthdays;
+    private boolean isReminders;
+    private Context mContext;
 
-    public EventsDataProvider(){
+    public EventsDataProvider(Context mContext){
+        this.mContext = mContext;
         data = new ArrayList<>();
     }
 
-    public void setBirthdays(Cursor c){
-        this.c = c;
+    public void setBirthdays(boolean isBirthdays){
+        this.isBirthdays = isBirthdays;
     }
 
-    public void setReminders(Cursor s, Cursor cat){
-        this.s = s;
-        if (cat == null) throw new NullPointerException("Nullable category cursor");
-        this.cat = cat;
+    public void setReminders(boolean isReminders){
+        this.isReminders = isReminders;
     }
 
     public void setTime(int hour, int minute){
@@ -95,11 +98,14 @@ public class EventsDataProvider {
     }
 
     public void fillArray(){
-        loadBirthdays();
-        loadReminders();
+        if (isBirthdays) loadBirthdays();
+        if (isReminders) loadReminders();
     }
 
     public void loadBirthdays(){
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor c = db.getBirthdays();
         if (c != null && c.moveToFirst()){
             do {
                 String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
@@ -129,10 +135,14 @@ public class EventsDataProvider {
             } while (c.moveToNext());
         }
         if (c != null) c.close();
+        db.close();
     }
 
     public void loadReminders(){
         long start = System.currentTimeMillis();
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor cat = db.queryCategories();
         Map<String, Integer> map = new HashMap<>();
         if (cat != null && cat.moveToFirst()){
             do {
@@ -141,6 +151,8 @@ public class EventsDataProvider {
                 map.put(uuid, color);
             } while (cat.moveToNext());
         }
+        if (cat != null) cat.close();
+        Cursor s = db.getActiveReminders();
         if (s != null && s.moveToFirst()) {
             do {
                 int myHour = s.getInt(s.getColumnIndex(Constants.COLUMN_HOUR));
@@ -158,6 +170,10 @@ public class EventsDataProvider {
                 String number = s.getString(s.getColumnIndex(Constants.COLUMN_NUMBER));
                 String weekdays = s.getString(s.getColumnIndex(Constants.COLUMN_WEEKDAYS));
                 long id = s.getLong(s.getColumnIndex(Constants.COLUMN_ID));
+
+                int color = 0;
+                if (map != null && map.containsKey(category)) color = map.get(category);
+
                 if ((mType.startsWith(Constants.TYPE_SKYPE) ||
                         mType.matches(Constants.TYPE_CALL) ||
                         mType.startsWith(Constants.TYPE_APPLICATION) ||
@@ -174,7 +190,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder, map.get(category)));
+                                mMonth, mYear, Type.reminder, color));
                     }
                     if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
                         int days = 0;
@@ -189,7 +205,7 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder, map.get(category)));
+                                        mMonth, mYear, Type.reminder, color));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -203,7 +219,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder, map.get(category)));
+                                mMonth, mYear, Type.reminder, color));
                     }
                     int days = 0;
                     if (isFeature) {
@@ -220,7 +236,7 @@ public class EventsDataProvider {
                                 if (time > 0) {
                                     if (number == null) number = "0";
                                     data.add(new EventsItem("reminder", name, number, id, time, sDay,
-                                            sMonth, sYear, Type.reminder, map.get(category)));
+                                            sMonth, sYear, Type.reminder, color));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
@@ -236,7 +252,7 @@ public class EventsDataProvider {
                         if (time > 0) {
                             if (number == null) number = "0";
                             data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                    mMonth, mYear, Type.reminder, map.get(category)));
+                                    mMonth, mYear, Type.reminder, color));
                         }
                     }
                     int days = 1;
@@ -251,13 +267,15 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder, map.get(category)));
+                                        mMonth, mYear, Type.reminder, color));
                             }
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
                 }
             } while (s.moveToNext());
         }
+        if (s != null) s.close();
+        db.close();
         long diff = System.currentTimeMillis() - start;
         Log.d(Constants.LOG_TAG, "Calculate time " + diff);
     }
