@@ -309,23 +309,36 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (mEventListener != null) mEventListener.onItemSwitched(position, viewHolder.check);
-                    else compoundButton.setChecked(!b);
+                    try {
+                        if (mEventListener != null)
+                            mEventListener.onItemSwitched(position, viewHolder.check);
+                        else compoundButton.setChecked(!b);
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
                 }
             });
 
             viewHolder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
+                    try {
+                        if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
                 }
             });
 
             viewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mEventListener != null)
-                        mEventListener.onItemLongClicked(position, viewHolder.check);
+                    try {
+                        if (mEventListener != null)
+                            mEventListener.onItemLongClicked(position, viewHolder.check);
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
                     return true;
                 }
             });
@@ -337,12 +350,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             String title = item.getTitle();
             viewHolder1.taskTitle.setText(title);
 
-            viewHolder1.taskTitle.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
+            viewHolder1.taskTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
             if (title.matches("")) viewHolder1.titleContainer.setVisibility(View.GONE);
             else viewHolder1.titleContainer.setVisibility(View.VISIBLE);
 
             viewHolder1.todoList.setFocusableInTouchMode(false);
             viewHolder1.todoList.setFocusable(false);
+            viewHolder1.todoList.removeAllViewsInLayout();
 
             ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId(), ShoppingList.ACTIVE);
             int count = 0;
@@ -357,7 +371,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                             mEventListener.onItemClicked(position, viewHolder1.subBackground);
                     }
                 });
-                textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
+                textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
                 if (list.isChecked() == 1) {
                     checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -381,16 +395,24 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder1.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mEventListener != null)
-                        mEventListener.onItemClicked(position, viewHolder1.subBackground);
+                    try {
+                        if (mEventListener != null)
+                            mEventListener.onItemClicked(position, viewHolder1.subBackground);
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
                 }
             });
 
             viewHolder1.container.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mEventListener != null)
-                        mEventListener.onItemLongClicked(position, viewHolder1.subBackground);
+                    try {
+                        if (mEventListener != null)
+                            mEventListener.onItemLongClicked(position, viewHolder1.subBackground);
+                    } catch (IllegalStateException e){
+                        e.printStackTrace();
+                    }
                     return true;
                 }
             });

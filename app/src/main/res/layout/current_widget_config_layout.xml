@@ -281,7 +281,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/headerBg"
-        android:background="@color/colorBlue"
+        android:background="@color/blackPrimary"
         android:layout_gravity="center_horizontal">
 
         <TextView
@@ -308,7 +308,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:id="@+id/widgetBg"
-        android:background="@color/colorSemiTrGrayDark"
+        android:background="@color/material_divider"
         android:layout_height="70dp">
 
         <LinearLayout
@@ -336,7 +336,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="Some task"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/blackPrimary"
                     android:id="@+id/taskText" />
 
                 <TextView
@@ -344,7 +344,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="123456789"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/blackPrimary"
                     android:id="@+id/taskNumber" />
             </LinearLayout>
 
@@ -363,13 +363,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:text="22.10.2015"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/blackPrimary"
                     android:id="@+id/taskDate" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorBlack"
+                    android:textColor="@color/blackPrimary"
                     android:gravity="right"
                     android:text="20:30"
                     android:id="@+id/taskTime" />

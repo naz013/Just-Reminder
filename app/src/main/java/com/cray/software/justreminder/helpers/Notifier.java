@@ -87,7 +87,7 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         int maxVolume = 26;
@@ -156,7 +156,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -221,7 +221,7 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(type));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         int maxVolume = 26;
@@ -280,7 +280,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -355,7 +355,7 @@ public class Notifier {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -378,7 +378,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(name);
                 wearableNotificationBuilder.setContentText(mContext.getString(R.string.missed_call_event_title));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -440,7 +440,7 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         int maxVolume = 26;
@@ -499,7 +499,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -546,7 +546,7 @@ public class Notifier {
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         int maxVolume = 26;
@@ -636,7 +636,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(name);
                 wearableNotificationBuilder.setContentText(years + " " + mContext.getString(R.string.years_string));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -665,7 +665,7 @@ public class Notifier {
         builder.setSmallIcon(R.drawable.ic_notifications_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -688,7 +688,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(content);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -711,7 +711,7 @@ public class Notifier {
 
         builder.setContentText(mContext.getString(R.string.notification_note_string));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
         }
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
@@ -737,7 +737,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentText(mContext.getString(R.string.notification_note_string));
                 wearableNotificationBuilder.setOngoing(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.colorBlue));
+                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
                 wearableNotificationBuilder.setGroup("GROUP");
@@ -884,7 +884,7 @@ public class Notifier {
             remoteViews.setViewVisibility(R.id.featured, View.GONE);
         }
         ColorSetter cs = new ColorSetter(mContext);
-        remoteViews.setInt(R.id.notificationBg, "setBackgroundColor", cs.colorSetter());
+        remoteViews.setInt(R.id.notificationBg, "setBackgroundColor", cs.colorPrimary());
         NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
         notifier.notify(1, notification.build());
     }
@@ -936,7 +936,7 @@ public class Notifier {
 
             NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
             notifier.notify(1115, builder.build());
-        }
+        } else hideBirthdayPermanent();
     }
 
     /**

@@ -82,7 +82,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
         setTheme(cSetter.getStyle());
         setContentView(R.layout.note_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -197,7 +197,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioTitleBlack:
-                        title = getResources().getColor(R.color.colorBlack);
+                        title = getResources().getColor(R.color.blackPrimary);
                         widgetTitle.setTextColor(title);
                         break;
                     case R.id.radioTitleWhite:

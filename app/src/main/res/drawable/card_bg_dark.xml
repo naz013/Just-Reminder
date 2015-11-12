@@ -6,7 +6,7 @@
 
             <corners android:radius="0dp"/>
 
-            <solid android:color="@color/grey_dark_x" />
+            <solid android:color="@color/material_grey_dialog" />
 
         </shape>
     </item>

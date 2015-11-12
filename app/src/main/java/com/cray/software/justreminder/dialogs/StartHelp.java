@@ -13,12 +13,12 @@ public class StartHelp extends AppIntro {
 
     @Override
     public void init(Bundle savedInstanceState) {
-        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_title_flexible), getString(R.string.flexible_explanation), R.drawable.flexible_tr, getColorRes(R.color.colorBlueDark)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_smart_title), getString(R.string.smart_explanation), R.drawable.smart_tr, getColorRes(R.color.colorIndigo)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.widgets_support_guide_title), getString(R.string.widget_explanation), R.drawable.widgets_tr, getColorRes(R.color.colorDeepPurple)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.dark_theme_guide_title), getString(R.string.dark_mode_explanation), R.drawable.dark_tr, getColorRes(R.color.colorViolet)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_sync_title), getString(R.string.cloud_sync_explanation), R.drawable.cloud_tr, getColorRes(R.color.colorPink)));
-        addSlide(AppIntroFragment.newInstance(getString(R.string.simple_note), getString(R.string.note_explnation), R.drawable.note_tr, getColorRes(R.color.colorRed)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_title_flexible), getString(R.string.flexible_explanation), R.drawable.flexible_tr, getColorRes(R.color.bluePrimaryDark)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_smart_title), getString(R.string.smart_explanation), R.drawable.smart_tr, getColorRes(R.color.indigoPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.widgets_support_guide_title), getString(R.string.widget_explanation), R.drawable.widgets_tr, getColorRes(R.color.purpleDeepPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.dark_theme_guide_title), getString(R.string.dark_mode_explanation), R.drawable.dark_tr, getColorRes(R.color.purplePrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.guide_sync_title), getString(R.string.cloud_sync_explanation), R.drawable.cloud_tr, getColorRes(R.color.pinkPrimary)));
+        addSlide(AppIntroFragment.newInstance(getString(R.string.simple_note), getString(R.string.note_explnation), R.drawable.note_tr, getColorRes(R.color.redPrimary)));
         showDoneButton(true);
         setVibrate(false);
         setFadeAnimation();

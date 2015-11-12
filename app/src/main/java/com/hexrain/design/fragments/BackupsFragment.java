@@ -599,12 +599,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         usedSizeGraph.removeSlices();
                         PieSlice slice = new PieSlice();
                         slice.setTitle(getString(R.string.used_text) + " " + used);
-                        slice.setColor(getResources().getColor(R.color.colorRed));
+                        slice.setColor(getResources().getColor(R.color.redPrimary));
                         slice.setValue(used);
                         usedSizeGraph.addSlice(slice);
                         slice = new PieSlice();
                         slice.setTitle(getString(R.string.available_text) + " " + free);
-                        slice.setColor(getResources().getColor(R.color.colorGreen));
+                        slice.setColor(getResources().getColor(R.color.greenPrimary));
                         slice.setValue(free);
                         usedSizeGraph.addSlice(slice);
 

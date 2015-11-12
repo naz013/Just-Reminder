@@ -60,7 +60,7 @@ public class QuickAddReminder extends AppCompatActivity implements
         ColorSetter cs = new ColorSetter(QuickAddReminder.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.quick_add_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());

@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/blackPrimary"
             android:layout_weight="0.8"
             android:id="@+id/taskText" />
 
@@ -29,7 +29,7 @@
             android:gravity="right"
             android:singleLine="true"
             android:layout_weight="1"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/blackPrimary"
             android:id="@+id/taskDate" />
 
     </LinearLayout>
@@ -47,14 +47,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/blackPrimary"
             android:layout_weight="0.8"
             android:id="@+id/taskNumber" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/blackPrimary"
             android:gravity="right"
             android:singleLine="true"
             android:layout_weight="1"
@@ -66,6 +66,6 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:gravity="center"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/blackPrimary"
         android:id="@+id/leftTime"/>
 </LinearLayout>

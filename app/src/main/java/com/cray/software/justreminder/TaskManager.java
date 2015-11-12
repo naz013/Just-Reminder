@@ -87,7 +87,7 @@ public class TaskManager extends AppCompatActivity {
         cSetter = new ColorSetter(TaskManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.task_manager_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

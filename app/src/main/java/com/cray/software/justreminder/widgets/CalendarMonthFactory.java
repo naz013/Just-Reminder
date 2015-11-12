@@ -209,7 +209,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
         rView.setTextViewText(R.id.textView, String.valueOf(selDay));
         if (selMonth == prefsMonth + 1) rView.setTextColor(R.id.textView, itemTextColor);
-        else rView.setTextColor(R.id.textView, context.getResources().getColor(R.color.colorGrey));
+        else rView.setTextColor(R.id.textView, context.getResources().getColor(R.color.material_grey));
         rView.setInt(R.id.background, "setBackgroundResource", rowColor);
 
         rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);

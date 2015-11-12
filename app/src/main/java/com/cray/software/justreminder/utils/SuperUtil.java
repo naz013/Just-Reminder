@@ -194,8 +194,7 @@ public class SuperUtil {
                 fileList.clear();
                 File dir;
                 if (SyncHelper.isSdPresent()) {
-                    dir = new File(Environment.getExternalStorageDirectory()
-                            .toString());
+                    dir = new File(SyncHelper.getSdCardPath());
                     listf(dir.toString(), fileList);
                 } else {
                     dir = new File(Environment.getDataDirectory().toString());

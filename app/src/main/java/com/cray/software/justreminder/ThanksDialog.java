@@ -20,7 +20,7 @@ public class ThanksDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

@@ -46,7 +46,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
@@ -85,8 +85,8 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
                 startActivity(new Intent(TemplatesList.this, NewTemplate.class));
             }
         });
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
+        mFab.setColorNormal(cs.colorAccent());
+        mFab.setColorPressed(cs.colorAccent());
     }
 
     private void loadTemplates(){

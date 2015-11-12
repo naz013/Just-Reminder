@@ -37,7 +37,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.new_place_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());

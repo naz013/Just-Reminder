@@ -33,7 +33,7 @@ public class ThemerDialog extends AppCompatActivity {
         cs = new ColorSetter(ThemerDialog.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.theme_color_layout);
 
@@ -205,9 +205,9 @@ public class ThemerDialog extends AppCompatActivity {
                 break;
         }
         cs = new ColorSetter(ThemerDialog.this);
-        toolbar.setBackgroundColor(cs.colorSetter());
+        toolbar.setBackgroundColor(cs.colorPrimary());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
     }
 

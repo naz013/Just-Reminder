@@ -45,7 +45,6 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
-import com.hexrain.design.ScreenManager;
 
 import java.io.IOException;
 
@@ -73,7 +72,7 @@ public class CloudDrives extends AppCompatActivity {
         ColorSetter cs = new ColorSetter(CloudDrives.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.clouds_dialog_layout);
         setRequestedOrientation(cs.getRequestOrientation());

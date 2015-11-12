@@ -752,4 +752,6 @@
     <string name="select_hours">Stunden ausschließen</string>
     <string name="select_exclusion">Wählen Ausgrenzung</string>
     <string name="paused">Angehalten</string>
+    <string name="color_amber">Bernstein</string>
+    <string name="color_cyan">Cyan</string>
 </resources>

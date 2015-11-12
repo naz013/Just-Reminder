@@ -24,43 +24,43 @@ public class WidgetUtils {
         int color = 0;
         switch (code) {
             case 0:
-                color = R.color.colorWhite;
+                color = R.color.whitePrimary;
                 break;
             case 1:
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case 2:
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case 3:
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case 4:
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case 5:
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case 6:
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case 7:
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case 8:
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case 9:
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case 10:
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case 11:
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case 12:
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             case 13:
                 color = android.R.color.transparent;
@@ -69,19 +69,19 @@ public class WidgetUtils {
                 if (Module.isPro()){
                     switch (code){
                         case 14:
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case 15:
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case 16:
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case 17:
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                     }
-                } else color = R.color.colorBlue;
+                } else color = R.color.bluePrimary;
                 break;
         }
         return color;
@@ -94,7 +94,7 @@ public class WidgetUtils {
                 color = R.drawable.rectangle_stroke_red;
                 break;
             case 1:
-                color = R.drawable.rectangle_stroke_violet;
+                color = R.drawable.rectangle_stroke_purple;
                 break;
             case 2:
                 color = R.drawable.rectangle_stroke_light_green;
@@ -115,16 +115,16 @@ public class WidgetUtils {
                 color = R.drawable.rectangle_stroke_orange;
                 break;
             case 8:
-                color = R.drawable.rectangle_stroke_grey;
+                color = R.drawable.rectangle_stroke_cyan;
                 break;
             case 9:
                 color = R.drawable.rectangle_stroke;
                 break;
             case 10:
-                color = R.drawable.rectangle_stroke_sand;
+                color = R.drawable.rectangle_stroke_teal;
                 break;
             case 11:
-                color = R.drawable.rectangle_stroke_brown;
+                color = R.drawable.rectangle_stroke_amber;
                 break;
             case 12:
                 color = R.drawable.rectangle_stroke_transparent;

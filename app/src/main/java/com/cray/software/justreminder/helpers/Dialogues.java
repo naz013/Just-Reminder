@@ -230,7 +230,6 @@ public class Dialogues {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SharedPrefs prefs = new SharedPrefs(context);
-                int position;
                 if (!prefs.loadBoolean(prefsToSave)) {
                     dialog.dismiss();
                 } else {

@@ -22,7 +22,7 @@ public class BirthdayImport extends AppCompatActivity implements View.OnClickLis
         ColorSetter cs = new ColorSetter(BirthdayImport.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.activity_birthday_import);
 

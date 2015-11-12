@@ -35,7 +35,6 @@ import java.util.Collections;
 public class LoadSounds extends AsyncTask<Void, Void, ArrayList<File>> {
     private ProgressDialog pd;
     private Context mContext;
-    private int id;
     private String prefs;
     private ArrayList<String> names, foldersFile;
     private DialogInterface.OnDismissListener listener;
@@ -60,8 +59,7 @@ public class LoadSounds extends AsyncTask<Void, Void, ArrayList<File>> {
         ArrayList<File> fileList = new ArrayList<>();
         File dir;
         if (SyncHelper.isSdPresent()) {
-            dir = new File(Environment.getExternalStorageDirectory()
-                    .toString());
+            dir = new File(SyncHelper.getSdCardPath());
             listf(dir.toString(), fileList);
         } else {
             dir = new File(Environment.getDataDirectory().toString());

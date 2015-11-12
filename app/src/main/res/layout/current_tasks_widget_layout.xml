@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -15,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/headerBg"
-        android:background="@color/colorBlue"
+        android:background="@color/blackPrimary"
         android:layout_gravity="center_horizontal">
 
         <ImageButton
@@ -56,7 +55,7 @@
             android:layout_height="45dp"
             android:id="@+id/widgetDate"
             android:gravity="center"
-            android:textColor="@color/colorBlack"
+            android:textColor="@color/blackPrimary"
             android:textSize="18sp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -67,7 +66,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:id="@+id/widgetBg"
-        android:background="@color/colorSemiTrGrayDark"
+        android:background="@color/material_grey_dialog"
         android:layout_height="match_parent">
 
         <ListView

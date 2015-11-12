@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -60,6 +61,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     private long mParam1;
     private Bitmap img;
     private byte[] imageByte;
+    private float prevPercent;
 
     private ScrollView scrollContent;
     private LinearLayout reminderContainer, buttonContainer;
@@ -77,7 +79,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         cSetter = new ColorSetter(NotePreviewFragment.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.fragment_note_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -125,6 +127,19 @@ public class NotePreviewFragment extends AppCompatActivity {
                 } else {
                     toolbar.getBackground().setAlpha(255);
                 }
+                float percent = getCurrentPercent(scrollY);
+                if (percent >= 60.0 && prevPercent < 60.0){
+                    ViewUtils.hide(NotePreviewFragment.this, mFab, true);
+                }
+                if (percent <= 55.0 && prevPercent > 55.0){
+                    ViewUtils.show(NotePreviewFragment.this, mFab, true);
+                }
+                prevPercent = percent;
+            }
+
+            private float getCurrentPercent(int scrollY){
+                int maxDist = QuickReturnUtils.dp2px(NotePreviewFragment.this, 200);
+                return (((float)scrollY / (float)maxDist) * 100.0f);
             }
 
             private int getAlphaforActionBar(int scrollY) {
@@ -228,9 +243,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom);
-                mFab.startAnimation(slide);
-                mFab.setVisibility(View.VISIBLE);
+                ViewUtils.show(NotePreviewFragment.this, mFab, true);
             }
         }, 500);
     }
@@ -243,7 +256,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         if (c != null && c.moveToFirst()){
             new Notifier(this)
                     .showNoteNotification((sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT) ?
-                            new SyncHelper(this).decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
+                            SyncHelper.decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
                             c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))), mParam1);
         }
         if (c != null) c.close();
@@ -285,7 +298,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
             SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                note = new SyncHelper(NotePreviewFragment.this).decrypt(note);
+                note = SyncHelper.decrypt(note);
             }
             noteText.setText(note);
             int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
@@ -296,8 +309,8 @@ public class NotePreviewFragment extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
             }
-            mFab.setColorNormal(cSetter.getNoteDarkColor(color));
-            mFab.setColorPressed(cSetter.getNoteColor(color));
+            mFab.setColorNormal(cSetter.colorAccent(color));
+            mFab.setColorPressed(cSetter.colorAccent(color));
             RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
             paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreviewFragment.this, 36)), 0, 0);

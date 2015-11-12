@@ -219,8 +219,6 @@ public class CalendarManager {
     public ArrayList<EventItem> getEvents(String id){
         ArrayList<EventItem> list = new ArrayList<>();
 
-        long currTime = System.currentTimeMillis();
-
         ContentResolver contentResolver = ctx.getContentResolver();
         Cursor c = contentResolver.query(CalendarContract.Events.CONTENT_URI,
                 new String[]{CalendarContract.Events.TITLE,
@@ -245,7 +243,6 @@ public class CalendarManager {
                 long dtStart = c.getLong(c.getColumnIndex(CalendarContract.Events.DTSTART));
                 long dtEnd = c.getLong(c.getColumnIndex(CalendarContract.Events.DTEND));
                 long eventID = c.getLong(c.getColumnIndex(CalendarContract.Events._ID));
-                if (dtStart >= currTime)
                 list.add(new EventItem(title, description, rrule, rDate,
                         calendarId, allDay, dtStart, dtEnd, eventID));
             } while (c.moveToNext());

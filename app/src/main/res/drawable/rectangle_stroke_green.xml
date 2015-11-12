@@ -9,10 +9,10 @@
         android:right="15dp"/>
 
     <stroke android:width="2dp"
-        android:color="@color/colorGreen"/>
+        android:color="@color/greenPrimary"/>
 
     <corners android:radius="3dp"/>
 
-    <solid android:color="@color/colorGreen"/>
+    <solid android:color="@color/greenPrimary"/>
 
 </shape>

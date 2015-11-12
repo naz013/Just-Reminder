@@ -17,15 +17,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -74,6 +73,8 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         emptyItem.setVisibility(View.GONE);
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        listView.setLayoutManager(mLayoutManager);
 
         loadCategories();
         onCreate = true;
@@ -156,10 +157,8 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     private void loadCategories(){
         provider = new CategoryDataProvider(getActivity());
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) mCallbacks.onListChanged(listView);
@@ -219,15 +218,15 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                 getString(R.string.led_color_green), getString(R.string.led_color_green_light),
                 getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
                 getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                getString(R.string.color_grey), getString(R.string.led_color_pink),
-                getString(R.string.color_dark_green), getString(R.string.color_brown)};
+                getString(R.string.color_cyan), getString(R.string.led_color_pink),
+                getString(R.string.color_dark_green), getString(R.string.color_amber)};
         if (Module.isPro()){
             items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
                     getString(R.string.led_color_green), getString(R.string.led_color_green_light),
                     getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
                     getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                    getString(R.string.color_grey), getString(R.string.led_color_pink),
-                    getString(R.string.color_dark_green), getString(R.string.color_brown),
+                    getString(R.string.color_cyan), getString(R.string.led_color_pink),
+                    getString(R.string.color_dark_green), getString(R.string.color_amber),
                     getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
                     getString(R.string.color_lime), getString(R.string.color_indigo)};
         }

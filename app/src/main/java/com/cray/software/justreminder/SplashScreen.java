@@ -43,7 +43,7 @@ public class SplashScreen extends Activity{
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.splash_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setRequestedOrientation(cs.getRequestOrientation());
 
@@ -56,7 +56,7 @@ public class SplashScreen extends Activity{
         textView.setTextColor(getResources().getColor(R.color.colorWhite));
 
         LinearLayout splashBg = (LinearLayout) findViewById(R.id.splashBg);
-        splashBg.setBackgroundColor(cs.colorSetter());
+        splashBg.setBackgroundColor(cs.colorPrimary());
 
         sPrefs = new SharedPrefs(SplashScreen.this);
         if (SyncHelper.isSdPresent() && sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS)){

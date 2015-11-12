@@ -38,21 +38,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.DelayedAsync;
-import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.dialogs.AddBirthday;
-import com.cray.software.justreminder.dialogs.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;
-import com.cray.software.justreminder.dialogs.utils.NewPlace;
-import com.cray.software.justreminder.dialogs.utils.NewTemplate;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -63,11 +56,9 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -138,7 +129,7 @@ public class MainActivity extends AppCompatActivity
         setRequestedOrientation(cSetter.getRequestOrientation());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
 
         isAnimation = mPrefs.loadBoolean(Prefs.ANIMATIONS);
@@ -201,7 +192,7 @@ public class MainActivity extends AppCompatActivity
         fab.setSize(size);
         fab.setIcon(icon);
         fab.setColorNormal(getResources().getColor(R.color.colorWhite));
-        fab.setColorPressed(getResources().getColor(R.color.grey_light));
+        fab.setColorPressed(getResources().getColor(R.color.material_divider));
         fab.setOnClickListener(listener);
     }
 
@@ -247,8 +238,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
-        mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorChooser());
+        mFab.setColorNormal(cSetter.colorPrimary());
+        mFab.setColorPressed(cSetter.colorAccent());
         mFab.setSize(com.getbase.floatingactionbutton.FloatingActionButton.SIZE_NORMAL);
 
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
@@ -624,17 +615,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void restoreUi(){
-        toolbar.setBackgroundColor(cSetter.colorSetter());
+        toolbar.setBackgroundColor(cSetter.colorPrimary());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (!isExtended) {
-            mFab.setColorNormal(cSetter.colorSetter());
-            mFab.setColorPressed(cSetter.colorStatus());
+            mFab.setColorNormal(cSetter.colorPrimary());
+            mFab.setColorPressed(cSetter.colorPrimaryDark());
         } else {
-            mainMenu.setButtonColorNormal(cSetter.colorSetter());
-            mainMenu.setButtonColorPressed(cSetter.colorStatus());
+            mainMenu.setButtonColorNormal(cSetter.colorPrimary());
+            mainMenu.setButtonColorPressed(cSetter.colorPrimaryDark());
         }
     }
 
@@ -1243,7 +1234,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
 
         if (sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)){

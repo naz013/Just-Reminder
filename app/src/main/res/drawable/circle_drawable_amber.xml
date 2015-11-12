@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     android:exitFadeDuration="@android:integer/config_mediumAnimTime"
     android:enterFadeDuration="@android:integer/config_mediumAnimTime">
-    <item android:drawable="@drawable/drawable_brown" android:state_selected="true" />
-    <item android:drawable="@drawable/drawable_brown" android:state_pressed="true" />
-    <item android:drawable="@drawable/circle_brown" />
+    <item android:drawable="@drawable/drawable_amber" android:state_selected="true" />
+    <item android:drawable="@drawable/drawable_amber" android:state_pressed="true" />
+    <item android:drawable="@drawable/circle_amber" />
 </selector>

@@ -193,7 +193,7 @@
                     android:layout_height="50dp"
                     android:id="@+id/headerBg"
                     android:gravity="right"
-                    android:background="@color/colorBlue"
+                    android:background="@color/bluePrimary"
                     android:layout_gravity="center_horizontal">
 
                     <TextView
@@ -224,7 +224,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:id="@+id/widgetBg"
-                    android:background="@color/colorSemiTrGrayDark"
+                    android:background="@color/material_divider"
                     android:layout_height="wrap_content">
 
                     <LinearLayout
@@ -247,7 +247,7 @@
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:text="Widget preview"
-                            android:textColor="@color/grey_dark"
+                            android:textColor="@color/material_grey"
                             android:id="@+id/note"/>
 
                     </LinearLayout>

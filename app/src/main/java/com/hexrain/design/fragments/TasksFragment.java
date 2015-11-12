@@ -30,7 +30,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
-import com.cray.software.justreminder.views.CircularProgress;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -273,14 +272,14 @@ public class TasksFragment extends Fragment {
                     ColorSetter mColor = new ColorSetter(activity);
                     if (i == 0) {
                         mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
-                        mCallbacks.onUiChanged(mColor.colorSetter(), mColor.colorStatus(), mColor.colorChooser());
+                        mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
                         mCallbacks.onListIdChanged(0);
                     } else {
                         TaskList taskList = taskListDatum.get(i).getTaskList();
                         mCallbacks.onTitleChanged(taskList.getTitle());
                         int tmp = taskList.getColor();
                         mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
-                                mColor.getNoteLightColor(tmp));
+                                mColor.colorAccent(tmp));
                         long idS = taskList.getId();
                         mCallbacks.onListIdChanged(idS);
                     }
@@ -303,14 +302,14 @@ public class TasksFragment extends Fragment {
             ColorSetter mColor = new ColorSetter(activity);
             if (pos == 0) {
                 mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
-                mCallbacks.onUiChanged(mColor.colorSetter(), mColor.colorStatus(), mColor.colorChooser());
+                mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
                 mCallbacks.onListIdChanged(0);
             } else {
                 TaskList taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
                 mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
-                        mColor.getNoteLightColor(tmp));
+                        mColor.colorAccent(tmp));
                 long idS = taskList.getId();
                 mCallbacks.onListIdChanged(idS);
             }

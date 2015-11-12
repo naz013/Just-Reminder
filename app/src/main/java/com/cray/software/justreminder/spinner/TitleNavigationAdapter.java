@@ -86,7 +86,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
         if (prefs.loadBoolean(Prefs.USE_DARK_THEME)){
             txtTitle.setTextColor(context.getResources().getColor(R.color.colorWhite));
-        } else txtTitle.setTextColor(context.getResources().getColor(R.color.colorBlack));
+        } else txtTitle.setTextColor(context.getResources().getColor(R.color.blackPrimary));
         txtTitle.setText(spinnerNavItem.get(position).getTitle());
         return convertView;
     }

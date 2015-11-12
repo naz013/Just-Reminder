@@ -57,7 +57,7 @@ protected void onCreate(Bundle savedInstanceState) {
     setTheme(cSetter.getStyle());
     setContentView(R.layout.voice_widget_config_layout);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        getWindow().setStatusBarColor(cSetter.colorStatus());
+        getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
     }
     findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

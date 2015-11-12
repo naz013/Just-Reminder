@@ -57,246 +57,163 @@
                 android:gravity="center_vertical"
                 android:textSize="@dimen/create_text_size_normal" />
 
-            <RadioGroup
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/themeGroup"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/red_checkbox"
-                    android:textColor="@color/colorRed"
-                    android:text="@string/led_color_red"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:contentDescription="@string/led_color_red"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_red"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
+                    android:background="@android:color/transparent"
                     android:id="@+id/violet_checkbox"
-                    android:text="@string/color_purple"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorViolet"
-                    android:contentDescription="@string/color_purple"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:src="@drawable/circle_drawable_purple"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:text="@string/led_color_green"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
+                    android:background="@android:color/transparent"
                     android:id="@+id/green_checkbox"
-                    android:textColor="@color/colorGreen"
-                    android:contentDescription="@string/led_color_green"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:src="@drawable/circle_drawable_green"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:textColor="@color/colorLightCreen"
-                    android:text="@string/led_color_green_light"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_green_light"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
+                    android:background="@android:color/transparent"
                     android:id="@+id/light_green_checkbox"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
-            </RadioGroup>
-            <RadioGroup
+                    android:src="@drawable/circle_drawable_green_light"
+                    android:layout_margin="5dp"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/themeGroup2"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/blue_checkbox"
-                    android:textColor="@color/colorBlue"
-                    android:text="@string/led_color_blue"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_blue"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_blue"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/light_blue_checkbox"
-                    android:textColor="@color/colorLightBlue"
-                    android:text="@string/led_color_blue_light"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_blue_light"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_blue_light"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/yellow_checkbox"
-                    android:textColor="@color/colorYellow"
-                    android:text="@string/led_color_yellow"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_yellow"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_yellow"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/orange_checkbox"
-                    android:textColor="@color/colorOrange"
-                    android:text="@string/led_color_orange"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_orange"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_orange"
+                    android:layout_margin="5dp"/>
 
-            </RadioGroup>
-            <RadioGroup
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/themeGroup3"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/grey_checkbox"
-                    android:text="@string/color_grey"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorGrey"
-                    android:contentDescription="@string/color_grey"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_cyan"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/pink_checkbox"
-                    android:textColor="@color/colorPink"
-                    android:text="@string/led_color_pink"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/led_color_pink"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_pink"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/sand_checkbox"
-                    android:textColor="@color/colorSand"
-                    android:text="@string/color_dark_green"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/color_dark_green"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_teal"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/brown_checkbox"
-                    android:text="@string/color_brown"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorBrown"
-                    android:contentDescription="@string/color_brown"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_amber"
+                    android:layout_margin="5dp"/>
 
-            </RadioGroup>
+            </LinearLayout>
 
-            <RadioGroup
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_gravity="center"
                 android:id="@+id/themeGroupPro"
                 android:orientation="horizontal">
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/deepPurple"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorDeepPurple"
-                    android:text="@string/color_deep_purple"
-                    android:contentDescription="@string/color_deep_purple"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_deep_purple"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/indigoCheckbox"
-                    android:text="@string/color_indigo"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorIndigo"
-                    android:contentDescription="@string/color_indigo"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_indigo"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/limeCheckbox"
-                    android:text="@string/color_lime"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:textColor="@color/colorLime"
-                    android:contentDescription="@string/color_lime"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_lime"
+                    android:layout_margin="5dp"/>
 
-                <RadioButton
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
+                <ImageButton
+                    android:layout_height="50dp"
+                    android:layout_width="50dp"
                     android:id="@+id/deepOrange"
-                    android:textColor="@color/colorDeepOrange"
-                    android:text="@string/color_deep_orange"
-                    android:textStyle="bold"
-                    android:maxLength="5"
-                    android:singleLine="true"
-                    android:contentDescription="@string/color_deep_orange"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_margin="@dimen/category_radio_margin"/>
-            </RadioGroup>
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_deep_orange"
+                    android:layout_margin="5dp"/>
+            </LinearLayout>
 
         </LinearLayout>
 

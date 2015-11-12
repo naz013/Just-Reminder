@@ -28,7 +28,7 @@
             app:civ_borderColor="#EEEEEE"
             app:civ_borderWidth="4dp"
             app:civ_shadow="true"
-            android:background="@drawable/drawable_grey"
+            android:background="@drawable/drawable_cyan"
             android:id="@+id/contactPhoto"/>
 
         <TextView

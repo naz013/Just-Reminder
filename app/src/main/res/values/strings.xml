@@ -259,10 +259,10 @@
         <item>@string/led_color_blue</item>
         <item>@string/led_color_yellow</item>
         <item>@string/led_color_orange</item>
-        <item>@string/color_grey</item>
+        <item>@string/color_cyan</item>
         <item>@string/led_color_pink</item>
         <item>@string/color_dark_green</item>
-        <item>@string/color_brown</item>
+        <item>@string/color_amber</item>
         <item>@string/black_radio_text</item>
     </array>
 
@@ -275,13 +275,15 @@
         <item>@string/led_color_blue</item>
         <item>@string/led_color_yellow</item>
         <item>@string/led_color_orange</item>
-        <item>@string/color_grey</item>
+        <item>@string/color_cyan</item>
         <item>@string/led_color_pink</item>
         <item>@string/color_dark_green</item>
-        <item>@string/color_brown</item>
+        <item>@string/color_amber</item>
         <item>@string/color_transparent</item>
     </array>
 
+    <string name="color_cyan">Cyan</string>
+    <string name="color_amber">Amber</string>
     <string name="body_settings_tr">"Body"</string>
     <string name="color_transparent">"Transparent"</string>
     <string name="header_title_tr">"Header"</string>

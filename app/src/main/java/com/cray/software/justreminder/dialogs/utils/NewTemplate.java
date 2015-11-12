@@ -33,7 +33,7 @@ public class NewTemplate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.new_template_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());

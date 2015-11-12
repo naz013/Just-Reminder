@@ -202,7 +202,7 @@
                 <TextView
                     android:layout_width="5dp"
                     android:layout_height="match_parent"
-                    android:background="@color/colorBlue"
+                    android:background="@color/bluePrimary"
                     android:id="@+id/listColor"/>
 
                 <CheckBox

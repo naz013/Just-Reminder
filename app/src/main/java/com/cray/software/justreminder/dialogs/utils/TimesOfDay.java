@@ -39,7 +39,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         ColorSetter cs = new ColorSetter(TimesOfDay.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.times_of_day_layout);
 

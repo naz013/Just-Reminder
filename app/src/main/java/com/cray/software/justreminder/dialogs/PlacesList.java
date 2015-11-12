@@ -47,7 +47,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
@@ -88,8 +88,8 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
                 }
             }
         });
-        mFab.setColorNormal(cs.colorSetter());
-        mFab.setColorPressed(cs.colorChooser());
+        mFab.setColorNormal(cs.colorAccent());
+        mFab.setColorPressed(cs.colorAccent());
     }
 
     private void loadPlaces(){

@@ -48,7 +48,7 @@ public class ShoppingListPreview extends AppCompatActivity {
         cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.activity_shopping_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -78,8 +78,8 @@ public class ShoppingListPreview extends AppCompatActivity {
         mFab = new FloatingActionButton(this);
         mFab.setSize(FloatingActionButton.SIZE_MINI);
         mFab.setIcon(R.drawable.ic_create_white_24dp);
-        mFab.setColorNormal(cSetter.colorStatus());
-        mFab.setColorPressed(cSetter.colorSetter());
+        mFab.setColorNormal(cSetter.colorAccent());
+        mFab.setColorPressed(cSetter.colorAccent());
         mFab.setVisibility(View.GONE);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,8 +125,8 @@ public class ShoppingListPreview extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(catColor));
             }
-            mFab.setColorNormal(cSetter.getNoteDarkColor(catColor));
-            mFab.setColorPressed(cSetter.getNoteLightColor(catColor));
+            mFab.setColorNormal(cSetter.colorAccent(catColor));
+            mFab.setColorPressed(cSetter.colorAccent(catColor));
         }
     }
 

@@ -29,7 +29,7 @@
                 android:layout_marginRight="1dp"
                 android:id="@+id/subBackground"
                 android:focusable="false"
-                android:background="@color/colorYellow">
+                android:background="@color/yellowPrimary">
 
                 <LinearLayout
                     android:layout_width="match_parent"

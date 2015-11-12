@@ -304,7 +304,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         cSetter = new ColorSetter(ReminderManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -483,8 +483,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else toolbar.setVisibility(View.VISIBLE);
 
         mFab = new FloatingActionButton(ReminderManager.this);
-        mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorStatus());
+        mFab.setColorNormal(cSetter.colorAccent());
+        mFab.setColorPressed(cSetter.colorAccent());
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

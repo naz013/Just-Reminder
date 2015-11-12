@@ -94,7 +94,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.activity_reminder_preview_fragment);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -114,8 +114,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         FloatingActionButton mFab = new FloatingActionButton(this);
         mFab.setSize(FloatingActionButton.SIZE_MINI);
         mFab.setIcon(R.drawable.ic_create_white_24dp);
-        mFab.setColorNormal(cSetter.colorStatus());
-        mFab.setColorPressed(cSetter.colorSetter());
+        mFab.setColorNormal(cSetter.colorAccent());
+        mFab.setColorPressed(cSetter.colorAccent());
 
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
         wrapper.addView(mFab);
@@ -665,7 +665,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     notesContainer.setVisibility(View.VISIBLE);
                     String note = reminderNote.getNoteText();
                     if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
-                        note = new SyncHelper().decrypt(note);
+                        note = SyncHelper.decrypt(note);
                     }
                     noteText.setText(note);
                     noteText.setOnClickListener(new View.OnClickListener() {

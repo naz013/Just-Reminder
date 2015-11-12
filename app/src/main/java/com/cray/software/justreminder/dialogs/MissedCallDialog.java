@@ -199,9 +199,9 @@ public class MissedCallDialog extends Activity {
         for (FloatingActionButton button:fab){
             if (isDark){
                 button.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
-                button.setColorPressed(ViewUtils.getColor(this, R.color.colorGrayDark));
+                button.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
             } else {
-                button.setColorNormal(ViewUtils.getColor(this, R.color.colorGrayDark));
+                button.setColorNormal(ViewUtils.getColor(this, R.color.material_divider));
                 button.setColorPressed(ViewUtils.getColor(this, R.color.colorWhite));
             }
         }

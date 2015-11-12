@@ -80,7 +80,7 @@
                             android:id="@+id/googleSpace"
                             android:layout_marginLeft="5dp"
                             android:textSize="@dimen/create_text_size_normal"
-                            android:textColor="@color/colorRed"/>
+                            android:textColor="@color/redPrimary"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -89,7 +89,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="@dimen/create_text_size_normal"
                             android:layout_marginTop="15dp"
-                            android:textColor="@color/colorGreen"/>
+                            android:textColor="@color/greenPrimary"/>
 
                         </LinearLayout>
 
@@ -147,7 +147,7 @@
                     widget:paper_color="?attr/colorAccent"
                     widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
                     android:layout_gravity="center"
-                    widget:paper_text_color="@color/colorBlack"
+                    widget:paper_text_color="@color/blackPrimary"
                     widget:paper_text_size="@dimen/create_text_size_normal"
                     android:id="@+id/googleFiles"
                     android:layout_height="@dimen/log_in_button_height" />
@@ -159,7 +159,7 @@
                     widget:paper_color="?attr/colorAccent"
                     widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
                     android:layout_gravity="center"
-                    widget:paper_text_color="@color/colorBlack"
+                    widget:paper_text_color="@color/blackPrimary"
                     widget:paper_text_size="@dimen/create_text_size_normal"
                     android:id="@+id/googleDeleteAllCloudButton"
                     android:layout_height="@dimen/log_in_button_height" />

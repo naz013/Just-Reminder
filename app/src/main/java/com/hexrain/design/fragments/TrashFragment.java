@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -117,7 +116,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyImage.setImageResource(R.drawable.delete);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-        loaderAdapter();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        currentList.setLayoutManager(mLayoutManager);
         onCreate = true;
 
         if (!Module.isPro()) {
@@ -143,8 +144,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                     adView.setVisibility(View.VISIBLE);
                 }
             });
-
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
         return rootView;
     }
@@ -169,7 +168,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loaderAdapter();
+        loaderAdapter();
         onCreate = false;
         if (!Module.isPro()){
             if (adView != null) {
@@ -206,10 +205,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
+        currentList.setLayoutManager(mLayoutManager);
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        currentList.setLayoutManager(mLayoutManager);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);

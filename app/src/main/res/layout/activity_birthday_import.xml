@@ -12,7 +12,7 @@
     <com.cray.software.justreminder.views.PaperButton
         widget:paper_text="VKontakte"
         android:layout_width="wrap_content"
-        widget:paper_color="@color/colorBlue"
+        widget:paper_color="@color/bluePrimary"
         widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         android:layout_gravity="center"
         android:layout_marginRight="50dp"
@@ -26,7 +26,7 @@
     <com.cray.software.justreminder.views.PaperButton
         widget:paper_text="Facebook"
         android:layout_width="wrap_content"
-        widget:paper_color="@color/colorBlueDark"
+        widget:paper_color="@color/bluePrimaryDark"
         widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         android:layout_gravity="center"
         android:layout_marginRight="50dp"

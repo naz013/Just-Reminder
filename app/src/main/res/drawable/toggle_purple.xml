@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     android:exitFadeDuration="@android:integer/config_shortAnimTime"
     android:enterFadeDuration="@android:integer/config_shortAnimTime">
-    <item android:drawable="@drawable/drawable_grey" android:state_checked="true"/>
+    <item android:drawable="@drawable/drawable_purple" android:state_checked="true"/>
     <item android:drawable="@android:color/transparent" android:state_checked="false"/>
 </selector>

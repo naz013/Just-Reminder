@@ -17,21 +17,21 @@
             android:layout_height="12dp"
             android:id="@+id/currentMark"
             android:layout_weight="1"
-            android:background="@color/colorBlue"/>
+            android:background="@color/bluePrimary"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="12dp"
             android:id="@+id/reminderMark"
             android:layout_weight="1"
-            android:background="@color/colorRed"/>
+            android:background="@color/redPrimary"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="11dp"
             android:layout_weight="1"
             android:id="@+id/birthdayMark"
-            android:background="@color/colorGreen"/>
+            android:background="@color/greenPrimary"/>
 
     </LinearLayout>
 
@@ -42,7 +42,7 @@
         android:minHeight="35dp"
         android:layout_gravity="center"
         android:gravity="center|center_vertical"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/blackPrimary"
         android:id="@+id/textView"/>
 
 </FrameLayout>

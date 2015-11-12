@@ -57,7 +57,7 @@ public class CalendarActivity extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(CalendarActivity.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.calender_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -115,7 +115,7 @@ public class CalendarActivity extends AppCompatActivity {
         addBirthday.setSize(FloatingActionButton.SIZE_MINI);
         addBirthday.setIcon(R.drawable.ic_cake_grey600_24dp);
         addBirthday.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addBirthday.setColorPressed(getResources().getColor(R.color.grey_light));
+        addBirthday.setColorPressed(getResources().getColor(R.color.material_divider));
         addBirthday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +134,7 @@ public class CalendarActivity extends AppCompatActivity {
         addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
         addReminder.setIcon(R.drawable.ic_alarm_add_grey600_24dp);
         addReminder.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addReminder.setColorPressed(getResources().getColor(R.color.grey_light));
+        addReminder.setColorPressed(getResources().getColor(R.color.material_divider));
         addReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

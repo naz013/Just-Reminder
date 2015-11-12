@@ -7,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 112
-        versionName '4.1.7'
+        versionCode 114
+        versionName '4.1.9'
         multiDexEnabled true
     }
 
@@ -58,14 +58,14 @@ android {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
             buildConfigField "boolean", "IS_BETA", "false"
-            versionCode 84
+            versionCode 86
         }
         beta {
             applicationId 'com.hexrain.reminder.beta'
             buildConfigField "boolean", "IS_PRO", "false"
             buildConfigField "boolean", "IS_BETA", "true"
-            versionCode 23
-            versionName '4.2 beta 7'
+            versionCode 25
+            versionName '4.2 beta 9'
         }
     }
 
@@ -114,11 +114,11 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.apis:google-api-services-calendar:v3-rev137-1.20.0' exclude module: 'httpclient'
-    compile 'com.google.api-client:google-api-client-android:+' exclude module: 'httpclient'
-    compile 'com.google.http-client:google-http-client-gson:+' exclude module: 'httpclient'
-    compile 'com.google.apis:google-api-services-drive:v2-rev183-1.20.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-calendar:v3-rev151-1.20.0' exclude module: 'httpclient'
+    compile 'com.google.api-client:google-api-client-android:1.20.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-drive:v2-rev192-1.20.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-tasks:v1-rev41-1.20.0' exclude module: 'httpclient'
+    compile 'com.google.http-client:google-http-client-gson:1.20.0' exclude module: 'httpclient'
     compile project(':photoPreview')
     compile project(':fab')
     compile project(':flextcal')

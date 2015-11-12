@@ -105,7 +105,7 @@ public class NotesManager extends AppCompatActivity {
         cSetter = new ColorSetter(NotesManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.create_note_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -281,8 +281,8 @@ public class NotesManager extends AppCompatActivity {
                 return false;
             }
         });
-        mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorChooser());
+        mFab.setColorNormal(cSetter.colorPrimary());
+        mFab.setColorPressed(cSetter.colorAccent());
 
         Intent intent = getIntent();
         Uri name = null;

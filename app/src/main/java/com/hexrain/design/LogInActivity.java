@@ -91,7 +91,7 @@ public class LogInActivity extends Activity {
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.activity_log_in);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setRequestedOrientation(cs.getRequestOrientation());
 

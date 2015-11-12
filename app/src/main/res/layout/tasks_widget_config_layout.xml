@@ -230,7 +230,7 @@
                     android:layout_height="50dp"
                     android:id="@+id/headerBg"
                     android:gravity="right"
-                    android:background="@color/colorBlue"
+                    android:background="@color/bluePrimary"
                     android:layout_gravity="center_horizontal">
 
                     <TextView
@@ -261,7 +261,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:id="@+id/widgetBg"
-                    android:background="@color/colorSemiTrGrayDark"
+                    android:background="@color/material_divider"
                     android:layout_height="wrap_content">
 
                     <LinearLayout
@@ -279,7 +279,7 @@
                             <TextView
                                 android:layout_width="5dp"
                                 android:layout_height="match_parent"
-                                android:background="@color/colorBlue"
+                                android:background="@color/bluePrimary"
                                 android:id="@+id/listColor"/>
 
                             <CheckBox

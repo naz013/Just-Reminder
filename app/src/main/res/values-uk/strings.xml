@@ -752,4 +752,6 @@
     <string name="select_exclusion">Обрати вийняток</string>
     <string name="paused">Призупинено</string>
     <string name="select_hours">Виключити години</string>
+    <string name="color_amber">Янтар</string>
+    <string name="color_cyan">Блакитний</string>
 </resources>

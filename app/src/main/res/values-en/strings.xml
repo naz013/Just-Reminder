@@ -752,4 +752,6 @@
     <string name="select_hours">Exclude hours</string>
     <string name="select_exclusion">Select exclusion</string>
     <string name="paused">Paused</string>
+    <string name="color_amber">Amber</string>
+    <string name="color_cyan">Cyan</string>
 </resources>

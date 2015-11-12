@@ -29,7 +29,7 @@ public class ExchangeLogIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.exchange_login_layout);
         setRequestedOrientation(cs.getRequestOrientation());

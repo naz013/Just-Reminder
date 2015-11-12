@@ -23,7 +23,7 @@ public class ColorSetter {
     /**
      * Method to get typeface by style code;
      * @param style code of style
-     * @return
+     * @return typeface
      */
     public Typeface getTypeface(int style){
         Typeface typeface;
@@ -70,70 +70,350 @@ public class ColorSetter {
      * Get current theme primary color.
      * @return Color
      */
-    public int colorSetter(){
+    public int colorPrimary(){
         sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
         switch (loadedColor) {
             case "1":
-                color = getColor(R.color.colorRed);
+                color = getColor(R.color.redPrimary);
                 break;
             case "2":
-                color = getColor(R.color.colorViolet);
+                color = getColor(R.color.purplePrimary);
                 break;
             case "3":
-                color = getColor(R.color.colorLightCreen);
+                color = getColor(R.color.greenLightPrimary);
                 break;
             case "4":
-                color = getColor(R.color.colorGreen);
+                color = getColor(R.color.greenPrimary);
                 break;
             case "5":
-                color = getColor(R.color.colorLightBlue);
+                color = getColor(R.color.blueLightPrimary);
                 break;
             case "6":
-                color = getColor(R.color.colorBlue);
+                color = getColor(R.color.bluePrimary);
                 break;
             case "7":
-                color = getColor(R.color.colorYellow);
+                color = getColor(R.color.yellowPrimary);
                 break;
             case "8":
-                color = getColor(R.color.colorOrange);
+                color = getColor(R.color.orangePrimary);
                 break;
             case "9":
-                color = getColor(R.color.colorGrey);
+                color = getColor(R.color.cyanPrimary);
                 break;
             case "10":
-                color = getColor(R.color.colorPink);
+                color = getColor(R.color.pinkPrimary);
                 break;
             case "11":
-                color = getColor(R.color.colorSand);
+                color = getColor(R.color.tealPrimary);
                 break;
             case "12":
-                color = getColor(R.color.colorBrown);
+                color = getColor(R.color.amberPrimary);
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case "13":
-                            color = getColor(R.color.colorDeepPurple);
+                            color = getColor(R.color.purpleDeepPrimary);
                             break;
                         case "14":
-                            color = getColor(R.color.colorDeepOrange);
+                            color = getColor(R.color.orangeDeepPrimary);
                             break;
                         case "15":
-                            color = getColor(R.color.colorLime);
+                            color = getColor(R.color.limePrimary);
                             break;
                         case "16":
-                            color = getColor(R.color.colorIndigo);
+                            color = getColor(R.color.indigoPrimary);
                             break;
                         default:
-                            color = getColor(R.color.colorBlue);
+                            color = getColor(R.color.bluePrimary);
                             break;
                     }
-                } else color = getColor(R.color.colorBlue);
+                } else color = getColor(R.color.bluePrimary);
                 break;
         }
         return color;
+    }
+
+    /**
+     * Get current theme accent color.
+     * @return Color
+     */
+    public int colorAccent(){
+        String string = new SharedPrefs(mContext).loadPrefs(Prefs.THEME);
+        int code;
+        try {
+            code = Integer.parseInt(string) - 1;
+        } catch (Exception e){
+            code = 5;
+            e.printStackTrace();
+        }
+        return colorAccent(code);
+    }
+
+    /**
+     * Get accent color by .
+     * @return Color
+     */
+    public int colorAccent(int code){
+        int color;
+        boolean isDark = new SharedPrefs(mContext).loadBoolean(Prefs.USE_DARK_THEME);
+        if (isDark) {
+            switch (code) {
+                case 0:
+                    color = R.color.indigoAccent;
+                    break;
+                case 1:
+                    color = R.color.amberAccent;
+                    break;
+                case 2:
+                    color = R.color.pinkAccent;
+                    break;
+                case 3:
+                    color = R.color.purpleAccent;
+                    break;
+                case 4:
+                    color = R.color.redAccent;
+                    break;
+                case 5:
+                    color = R.color.yellowAccent;
+                    break;
+                case 6:
+                    color = R.color.redAccent;
+                    break;
+                case 7:
+                    color = R.color.greenAccent;
+                    break;
+                case 8:
+                    color = R.color.purpleDeepAccent;
+                    break;
+                case 9:
+                    color = R.color.blueLightAccent;
+                    break;
+                case 10:
+                    color = R.color.pinkAccent;
+                    break;
+                case 11:
+                    color = R.color.blueAccent;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (code) {
+                            case 12:
+                                color = R.color.greenAccent;
+                                break;
+                            case 13:
+                                color = R.color.purpleAccent;
+                                break;
+                            case 14:
+                                color = R.color.redAccent;
+                                break;
+                            case 15:
+                                color = R.color.pinkAccent;
+                                break;
+                            default:
+                                color = R.color.redAccent;
+                                break;
+                        }
+                    } else color = R.color.redAccent;
+                    break;
+            }
+        } else {
+            switch (code) {
+                case 0:
+                    color = R.color.indigoAccent;
+                    break;
+                case 1:
+                    color = R.color.amberAccent;
+                    break;
+                case 2:
+                    color = R.color.cyanAccent;
+                    break;
+                case 3:
+                    color = R.color.purpleDeepAccent;
+                    break;
+                case 4:
+                    color = R.color.yellowAccent;
+                    break;
+                case 5:
+                    color = R.color.pinkAccent;
+                    break;
+                case 6:
+                    color = R.color.cyanAccent;
+                    break;
+                case 7:
+                    color = R.color.pinkAccent;
+                    break;
+                case 8:
+                    color = R.color.redAccent;
+                    break;
+                case 9:
+                    color = R.color.cyanAccent;
+                    break;
+                case 10:
+                    color = R.color.redAccent;
+                    break;
+                case 11:
+                    color = R.color.indigoAccent;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (code) {
+                            case 12:
+                                color = R.color.greenLightAccent;
+                                break;
+                            case 13:
+                                color = R.color.purpleDeepAccent;
+                                break;
+                            case 14:
+                                color = R.color.purpleAccent;
+                                break;
+                            case 15:
+                                color = R.color.pinkAccent;
+                                break;
+                            default:
+                                color = R.color.yellowAccent;
+                                break;
+                        }
+                    } else color = R.color.yellowAccent;
+                    break;
+            }
+        }
+        return getColor(color);
+    }
+
+    /**
+     * Get theme for application based on user choice.
+     * @return Theme resource
+     */
+    public int getStyle(){
+        int id;
+        sPrefs = new SharedPrefs(mContext);
+        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        if (isDark) {
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeDark_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeDark_Purple;
+                    break;
+                case "3":
+                    id = R.style.HomeDark_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeDark_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeDark_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeDark_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeDark_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeDark_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeDark_Cyan;
+                    break;
+                case "10":
+                    id = R.style.HomeDark_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeDark_Teal;
+                    break;
+                case "12":
+                    id = R.style.HomeDark_Amber;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeDark_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeDark_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeDark_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeDark_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeDark_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeDark_Blue;
+                    break;
+            }
+        } else {
+            switch (loadedColor) {
+                case "1":
+                    id = R.style.HomeWhite_Red;
+                    break;
+                case "2":
+                    id = R.style.HomeWhite_Purple;
+                    break;
+                case "3":
+                    id = R.style.HomeWhite_LightGreen;
+                    break;
+                case "4":
+                    id = R.style.HomeWhite_Green;
+                    break;
+                case "5":
+                    id = R.style.HomeWhite_LightBlue;
+                    break;
+                case "6":
+                    id = R.style.HomeWhite_Blue;
+                    break;
+                case "7":
+                    id = R.style.HomeWhite_Yellow;
+                    break;
+                case "8":
+                    id = R.style.HomeWhite_Orange;
+                    break;
+                case "9":
+                    id = R.style.HomeWhite_Cyan;
+                    break;
+                case "10":
+                    id = R.style.HomeWhite_Pink;
+                    break;
+                case "11":
+                    id = R.style.HomeWhite_Teal;
+                    break;
+                case "12":
+                    id = R.style.HomeWhite_Amber;
+                    break;
+                default:
+                    if (Module.isPro()) {
+                        switch (loadedColor) {
+                            case "13":
+                                id = R.style.HomeWhite_DeepPurple;
+                                break;
+                            case "14":
+                                id = R.style.HomeWhite_DeepOrange;
+                                break;
+                            case "15":
+                                id = R.style.HomeWhite_Lime;
+                                break;
+                            case "16":
+                                id = R.style.HomeWhite_Indigo;
+                                break;
+                            default:
+                                id = R.style.HomeWhite_Blue;
+                                break;
+                        }
+                    } else id = R.style.HomeWhite_Blue;
+                    break;
+            }
+        }
+        return id;
     }
 
     /**
@@ -146,62 +426,62 @@ public class ColorSetter {
         int color;
         switch (loadedColor) {
             case "1":
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case "2":
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case "3":
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case "4":
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case "5":
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case "6":
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case "7":
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case "8":
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case "9":
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case "10":
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case "11":
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case "12":
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case "13":
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case "14":
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case "15":
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case "16":
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                         default:
-                            color = R.color.colorGreen;
+                            color = R.color.greenPrimary;
                             break;
                     }
                 } else {
-                    color = R.color.colorGreen;
+                    color = R.color.greenPrimary;
                 }
                 break;
         }
@@ -218,62 +498,62 @@ public class ColorSetter {
         int color;
         switch (loadedColor) {
             case "1":
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case "2":
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case "3":
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case "4":
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case "5":
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case "6":
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case "7":
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case "8":
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case "9":
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case "10":
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case "11":
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case "12":
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case "13":
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case "14":
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case "15":
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case "16":
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                         default:
-                            color = R.color.colorGreen;
+                            color = R.color.greenPrimary;
                             break;
                     }
                 } else {
-                    color = R.color.colorGreen;
+                    color = R.color.greenPrimary;
                 }
                 break;
         }
@@ -290,62 +570,62 @@ public class ColorSetter {
         int color;
         switch (loadedColor) {
             case "1":
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case "2":
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case "3":
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case "4":
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case "5":
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case "6":
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case "7":
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case "8":
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case "9":
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case "10":
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case "11":
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case "12":
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case "13":
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case "14":
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case "15":
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case "16":
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                         default:
-                            color = R.color.colorGreen;
+                            color = R.color.greenPrimary;
                             break;
                     }
                 } else {
-                    color = R.color.colorGreen;
+                    color = R.color.greenPrimary;
                 }
                 break;
         }
@@ -364,7 +644,7 @@ public class ColorSetter {
                 drawable = R.drawable.drawable_red;
                 break;
             case "2":
-                drawable = R.drawable.drawable_violet;
+                drawable = R.drawable.drawable_purple;
                 break;
             case "3":
                 drawable = R.drawable.drawable_green_light;
@@ -385,7 +665,7 @@ public class ColorSetter {
                 drawable = R.drawable.drawable_orange;
                 break;
             case "9":
-                drawable = R.drawable.drawable_grey;
+                drawable = R.drawable.drawable_cyan;
                 break;
             case "10":
                 drawable = R.drawable.drawable_pink;
@@ -394,7 +674,7 @@ public class ColorSetter {
                 drawable = R.drawable.drawable_teal;
                 break;
             case "12":
-                drawable = R.drawable.drawable_brown;
+                drawable = R.drawable.drawable_amber;
                 break;
             case "13":
                 drawable = R.drawable.drawable_deep_purple;
@@ -437,7 +717,7 @@ public class ColorSetter {
                 color = getDrawable(R.drawable.toggle_red);
                 break;
             case "2":
-                color = getDrawable(R.drawable.toggle_violet);
+                color = getDrawable(R.drawable.toggle_purple);
                 break;
             case "3":
                 color = getDrawable(R.drawable.toggle_green_light);
@@ -458,16 +738,16 @@ public class ColorSetter {
                 color = getDrawable(R.drawable.toggle_orange);
                 break;
             case "9":
-                color = getDrawable(R.drawable.toggle_grey);
+                color = getDrawable(R.drawable.toggle_cyan);
                 break;
             case "10":
                 color = getDrawable(R.drawable.toggle_pink);
                 break;
             case "11":
-                color = getDrawable(R.drawable.toggle_sand);
+                color = getDrawable(R.drawable.toggle_teal);
                 break;
             case "12":
-                color = getDrawable(R.drawable.toggle_brown);
+                color = getDrawable(R.drawable.toggle_amber);
                 break;
             default:
                 if (Module.isPro()){
@@ -498,273 +778,70 @@ public class ColorSetter {
      * Get status bar color based on current application theme.
      * @return Color
      */
-    public int colorStatus(){
+    public int colorPrimaryDark(){
         sPrefs = new SharedPrefs(mContext);
         String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
         int color;
         switch (loadedColor) {
             case "1":
-                color = getColor(R.color.colorRedDark);
+                color = getColor(R.color.redPrimaryDark);
                 break;
             case "2":
-                color = getColor(R.color.colorVioletDark);
+                color = getColor(R.color.purplePrimaryDark);
                 break;
             case "3":
-                color = getColor(R.color.colorLightCreenDark);
+                color = getColor(R.color.greenLightPrimaryDark);
                 break;
             case "4":
-                color = getColor(R.color.colorGreenDark);
+                color = getColor(R.color.greenPrimaryDark);
                 break;
             case "5":
-                color = getColor(R.color.colorLightBlueDark);
+                color = getColor(R.color.blueLightPrimaryDark);
                 break;
             case "6":
-                color = getColor(R.color.colorBlueDark);
+                color = getColor(R.color.bluePrimaryDark);
                 break;
             case "7":
-                color = getColor(R.color.colorYellowDark);
+                color = getColor(R.color.yellowPrimaryDark);
                 break;
             case "8":
-                color = getColor(R.color.colorOrangeDark);
+                color = getColor(R.color.orangePrimaryDark);
                 break;
             case "9":
-                color = getColor(R.color.colorGreyDark);
+                color = getColor(R.color.cyanPrimaryDark);
                 break;
             case "10":
-                color = getColor(R.color.colorPinkDark);
+                color = getColor(R.color.pinkPrimaryDark);
                 break;
             case "11":
-                color = getColor(R.color.colorSandDark);
+                color = getColor(R.color.tealPrimaryDark);
                 break;
             case "12":
-                color = getColor(R.color.colorBrownDark);
+                color = getColor(R.color.amberPrimaryDark);
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case "13":
-                            color = getColor(R.color.colorDeepPurpleDark);
+                            color = getColor(R.color.purpleDeepPrimaryDark);
                             break;
                         case "14":
-                            color = getColor(R.color.colorDeepOrangeDark);
+                            color = getColor(R.color.orangeDeepPrimaryDark);
                             break;
                         case "15":
-                            color = getColor(R.color.colorLimeDark);
+                            color = getColor(R.color.limePrimaryDark);
                             break;
                         case "16":
-                            color = getColor(R.color.colorIndigoDark);
+                            color = getColor(R.color.indigoPrimaryDark);
                             break;
                         default:
-                            color = getColor(R.color.colorBlueDark);
+                            color = getColor(R.color.bluePrimaryDark);
                             break;
                     }
-                } else color = getColor(R.color.colorBlueDark);
+                } else color = getColor(R.color.bluePrimaryDark);
                 break;
         }
         return color;
-    }
-
-    /**
-     * Get current theme light color.
-     * @return Color
-     */
-    public int colorChooser(){
-        sPrefs = new SharedPrefs(mContext);
-        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
-        int color;
-        switch (loadedColor) {
-            case "1":
-                color = getColor(R.color.colorRedLight);
-                break;
-            case "2":
-                color = getColor(R.color.colorVioletLight);
-                break;
-            case "3":
-                color = getColor(R.color.colorLightCreenLight);
-                break;
-            case "4":
-                color = getColor(R.color.colorGreenLight);
-                break;
-            case "5":
-                color = getColor(R.color.colorLightBlueLight);
-                break;
-            case "6":
-                color = getColor(R.color.colorBlueLight);
-                break;
-            case "7":
-                color = getColor(R.color.colorYellowLight);
-                break;
-            case "8":
-                color = getColor(R.color.colorOrangeLight);
-                break;
-            case "9":
-                color = getColor(R.color.colorGreyLight);
-                break;
-            case "10":
-                color = getColor(R.color.colorPinkLight);
-                break;
-            case "11":
-                color = getColor(R.color.colorSandLight);
-                break;
-            case "12":
-                color = getColor(R.color.colorBrownLight);
-                break;
-            default:
-                if (Module.isPro()){
-                    switch (loadedColor) {
-                        case "13":
-                            color = getColor(R.color.colorDeepPurpleLight);
-                            break;
-                        case "14":
-                            color = getColor(R.color.colorDeepOrangeLight);
-                            break;
-                        case "15":
-                            color = getColor(R.color.colorLimeLight);
-                            break;
-                        case "16":
-                            color = getColor(R.color.colorIndigoLight);
-                            break;
-                        default:
-                            color = getColor(R.color.colorBlueLight);
-                            break;
-                    }
-                } else color = getColor(R.color.colorBlueLight);
-                break;
-        }
-        return color;
-    }
-
-    /**
-     * Get theme for application based on user choice.
-     * @return Theme resource
-     */
-    public int getStyle(){
-        int id;
-        sPrefs = new SharedPrefs(mContext);
-        String loadedColor = sPrefs.loadPrefs(Prefs.THEME);
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        if (isDark) {
-            switch (loadedColor) {
-                case "1":
-                    id = R.style.HomeDark_Red;
-                    break;
-                case "2":
-                    id = R.style.HomeDark_Violet;
-                    break;
-                case "3":
-                    id = R.style.HomeDark_LightGreen;
-                    break;
-                case "4":
-                    id = R.style.HomeDark_Green;
-                    break;
-                case "5":
-                    id = R.style.HomeDark_LightBlue;
-                    break;
-                case "6":
-                    id = R.style.HomeDark_Blue;
-                    break;
-                case "7":
-                    id = R.style.HomeDark_Yellow;
-                    break;
-                case "8":
-                    id = R.style.HomeDark_Orange;
-                    break;
-                case "9":
-                    id = R.style.HomeDark_Grey;
-                    break;
-                case "10":
-                    id = R.style.HomeDark_Pink;
-                    break;
-                case "11":
-                    id = R.style.HomeDark_Sand;
-                    break;
-                case "12":
-                    id = R.style.HomeDark_Brown;
-                    break;
-                default:
-                    if (Module.isPro()) {
-                        switch (loadedColor) {
-                            case "13":
-                                id = R.style.HomeDark_DeepPurple;
-                                break;
-                            case "14":
-                                id = R.style.HomeDark_DeepOrange;
-                                break;
-                            case "15":
-                                id = R.style.HomeDark_Lime;
-                                break;
-                            case "16":
-                                id = R.style.HomeDark_Indigo;
-                                break;
-                            default:
-                                id = R.style.HomeDark_Blue;
-                                break;
-                        }
-                    } else id = R.style.HomeDark_Blue;
-                    break;
-            }
-        } else {
-            switch (loadedColor) {
-                case "1":
-                    id = R.style.HomeWhite_Red;
-                    break;
-                case "2":
-                    id = R.style.HomeWhite_Violet;
-                    break;
-                case "3":
-                    id = R.style.HomeWhite_LightGreen;
-                    break;
-                case "4":
-                    id = R.style.HomeWhite_Green;
-                    break;
-                case "5":
-                    id = R.style.HomeWhite_LightBlue;
-                    break;
-                case "6":
-                    id = R.style.HomeWhite_Blue;
-                    break;
-                case "7":
-                    id = R.style.HomeWhite_Yellow;
-                    break;
-                case "8":
-                    id = R.style.HomeWhite_Orange;
-                    break;
-                case "9":
-                    id = R.style.HomeWhite_Grey;
-                    break;
-                case "10":
-                    id = R.style.HomeWhite_Pink;
-                    break;
-                case "11":
-                    id = R.style.HomeWhite_Sand;
-                    break;
-                case "12":
-                    id = R.style.HomeWhite_Brown;
-                    break;
-                default:
-                    if (Module.isPro()) {
-                        switch (loadedColor) {
-                            case "13":
-                                id = R.style.HomeWhite_DeepPurple;
-                                break;
-                            case "14":
-                                id = R.style.HomeWhite_DeepOrange;
-                                break;
-                            case "15":
-                                id = R.style.HomeWhite_Lime;
-                                break;
-                            case "16":
-                                id = R.style.HomeWhite_Indigo;
-                                break;
-                            default:
-                                id = R.style.HomeWhite_Blue;
-                                break;
-                        }
-                    } else id = R.style.HomeWhite_Blue;
-                    break;
-            }
-        }
-        return id;
     }
 
     /**
@@ -775,7 +852,7 @@ public class ColorSetter {
         int color;
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            color = getColor(R.color.grey_dark_x);
+            color = getColor(R.color.material_grey);
         } else color = getColor(R.color.colorWhite);
         return color;
     }
@@ -795,7 +872,7 @@ public class ColorSetter {
                     id = R.style.HomeDarkDialog_Red;
                     break;
                 case "2":
-                    id = R.style.HomeDarkDialog_Violet;
+                    id = R.style.HomeDarkDialog_Purple;
                     break;
                 case "3":
                     id = R.style.HomeDarkDialog_LightGreen;
@@ -816,16 +893,16 @@ public class ColorSetter {
                     id = R.style.HomeDarkDialog_Orange;
                     break;
                 case "9":
-                    id = R.style.HomeDarkDialog_Grey;
+                    id = R.style.HomeDarkDialog_Cyan;
                     break;
                 case "10":
                     id = R.style.HomeDarkDialog_Pink;
                     break;
                 case "11":
-                    id = R.style.HomeDarkDialog_Sand;
+                    id = R.style.HomeDarkDialog_Teal;
                     break;
                 case "12":
-                    id = R.style.HomeDarkDialog_Brown;
+                    id = R.style.HomeDarkDialog_Amber;
                     break;
                 default:
                     if (Module.isPro()) {
@@ -855,7 +932,7 @@ public class ColorSetter {
                     id = R.style.HomeWhiteDialog_Red;
                     break;
                 case "2":
-                    id = R.style.HomeWhiteDialog_Violet;
+                    id = R.style.HomeWhiteDialog_Purple;
                     break;
                 case "3":
                     id = R.style.HomeWhiteDialog_LightGreen;
@@ -876,16 +953,16 @@ public class ColorSetter {
                     id = R.style.HomeWhiteDialog_Orange;
                     break;
                 case "9":
-                    id = R.style.HomeWhiteDialog_Grey;
+                    id = R.style.HomeWhiteDialog_Cyan;
                     break;
                 case "10":
                     id = R.style.HomeWhiteDialog_Pink;
                     break;
                 case "11":
-                    id = R.style.HomeWhiteDialog_Sand;
+                    id = R.style.HomeWhiteDialog_Teal;
                     break;
                 case "12":
-                    id = R.style.HomeWhiteDialog_Brown;
+                    id = R.style.HomeWhiteDialog_Amber;
                     break;
                 default:
                     if (Module.isPro()) {
@@ -947,8 +1024,8 @@ public class ColorSetter {
         int id;
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            id = getColor(R.color.grey_dark_x);
-        } else id = getColor(R.color.colorGreyDark);
+            id = getColor(R.color.material_white);
+        } else id = getColor(R.color.material_grey);
         return id;
     }
 
@@ -1007,60 +1084,60 @@ public class ColorSetter {
             sPrefs = new SharedPrefs(mContext);
             int color = sPrefs.loadInt(Prefs.MARKER_STYLE);
             if (color == 1) {
-                fillColor = R.color.colorRedTr;
-                strokeColor = R.color.colorRedDark;
+                fillColor = R.color.redA100;
+                strokeColor = R.color.redPrimaryDark;
             } else if (color == 2) {
-                fillColor = R.color.colorGreenTr;
-                strokeColor = R.color.colorGreenDark;
+                fillColor = R.color.greenA100;
+                strokeColor = R.color.greenPrimaryDark;
             } else if (color == 3) {
-                fillColor = R.color.colorBlueTr;
-                strokeColor = R.color.colorBlueDark;
+                fillColor = R.color.blueA100;
+                strokeColor = R.color.bluePrimaryDark;
             } else if (color == 4) {
-                fillColor = R.color.colorYellowTr;
-                strokeColor = R.color.colorYellowDark;
+                fillColor = R.color.yellowA100;
+                strokeColor = R.color.yellowPrimaryDark;
             } else if (color == 5) {
-                fillColor = R.color.colorLightCreenTr;
-                strokeColor = R.color.colorLightCreenDark;
+                fillColor = R.color.greenLightA100;
+                strokeColor = R.color.greenLightPrimaryDark;
             } else if (color == 6) {
-                fillColor = R.color.colorLightBlueTr;
-                strokeColor = R.color.colorLightBlueDark;
+                fillColor = R.color.blueLightA100;
+                strokeColor = R.color.blueLightPrimaryDark;
             } else if (color == 7) {
-                fillColor = R.color.colorGreyTr;
-                strokeColor = R.color.colorGreyDark;
+                fillColor = R.color.cyanA100;
+                strokeColor = R.color.cyanPrimaryDark;
             } else if (color == 8) {
-                fillColor = R.color.colorVioletTr;
-                strokeColor = R.color.colorVioletDark;
+                fillColor = R.color.purpleA100;
+                strokeColor = R.color.purplePrimaryDark;
             } else if (color == 9) {
-                fillColor = R.color.colorBrownTr;
-                strokeColor = R.color.colorBrownDark;
+                fillColor = R.color.amberA100;
+                strokeColor = R.color.amberPrimaryDark;
             } else if (color == 10) {
-                fillColor = R.color.colorOrangeTr;
-                strokeColor = R.color.colorOrangeDark;
+                fillColor = R.color.orangeA100;
+                strokeColor = R.color.orangePrimaryDark;
             } else if (color == 11) {
-                fillColor = R.color.colorPinkTr;
-                strokeColor = R.color.colorPinkDark;
+                fillColor = R.color.pinkA100;
+                strokeColor = R.color.pinkPrimaryDark;
             } else if (color == 12) {
-                fillColor = R.color.colorSandTr;
-                strokeColor = R.color.colorSandDark;
+                fillColor = R.color.tealA100;
+                strokeColor = R.color.tealPrimaryDark;
             } else if (color == 13) {
-                fillColor = R.color.colorDeepPurpleTr;
-                strokeColor = R.color.colorDeepPurpleDark;
+                fillColor = R.color.purpleDeepA100;
+                strokeColor = R.color.purpleDeepPrimaryDark;
             } else if (color == 14) {
-                fillColor = R.color.colorDeepOrangeTr;
-                strokeColor = R.color.colorDeepOrangeDark;
+                fillColor = R.color.orangeDeepA100;
+                strokeColor = R.color.orangeDeepPrimaryDark;
             } else if (color == 15) {
-                fillColor = R.color.colorIndigoTr;
-                strokeColor = R.color.colorIndigoDark;
+                fillColor = R.color.indigoA100;
+                strokeColor = R.color.indigoPrimaryDark;
             } else if (color == 16) {
-                fillColor = R.color.colorLimeTr;
-                strokeColor = R.color.colorLimeDark;
+                fillColor = R.color.limeA100;
+                strokeColor = R.color.limePrimaryDark;
             } else {
-                fillColor = R.color.colorBlueTr;
-                strokeColor = R.color.colorBlueDark;
+                fillColor = R.color.blueA100;
+                strokeColor = R.color.bluePrimaryDark;
             }
         } else {
-            fillColor = R.color.colorBlueTr;
-            strokeColor = R.color.colorBlueDark;
+            fillColor = R.color.blueA100;
+            strokeColor = R.color.bluePrimaryDark;
         }
         return new int[]{fillColor, strokeColor};
     }
@@ -1074,56 +1151,56 @@ public class ColorSetter {
         int fillColor;
         int strokeColor;
         if (color == 1) {
-            fillColor = R.color.colorRedTr;
-            strokeColor = R.color.colorRedDark;
+            fillColor = R.color.redA100;
+            strokeColor = R.color.redPrimaryDark;
         } else if (color == 2) {
-            fillColor = R.color.colorGreenTr;
-            strokeColor = R.color.colorGreenDark;
+            fillColor = R.color.greenA100;
+            strokeColor = R.color.greenPrimaryDark;
         } else if (color == 3) {
-            fillColor = R.color.colorBlueTr;
-            strokeColor = R.color.colorBlueDark;
+            fillColor = R.color.blueA100;
+            strokeColor = R.color.bluePrimaryDark;
         } else if (color == 4) {
-            fillColor = R.color.colorYellowTr;
-            strokeColor = R.color.colorYellowDark;
+            fillColor = R.color.yellowA100;
+            strokeColor = R.color.yellowPrimaryDark;
         } else if (color == 5) {
-            fillColor = R.color.colorLightCreenTr;
-            strokeColor = R.color.colorLightCreenDark;
+            fillColor = R.color.greenLightA100;
+            strokeColor = R.color.greenLightPrimaryDark;
         } else if (color == 6) {
-            fillColor = R.color.colorLightBlueTr;
-            strokeColor = R.color.colorLightBlueDark;
+            fillColor = R.color.blueLightA100;
+            strokeColor = R.color.blueLightPrimaryDark;
         } else if (color == 7) {
-            fillColor = R.color.colorGreyTr;
-            strokeColor = R.color.colorGreyDark;
+            fillColor = R.color.cyanA100;
+            strokeColor = R.color.cyanPrimaryDark;
         } else if (color == 8) {
-            fillColor = R.color.colorVioletTr;
-            strokeColor = R.color.colorVioletDark;
+            fillColor = R.color.purpleA100;
+            strokeColor = R.color.purplePrimaryDark;
         } else if (color == 9) {
-            fillColor = R.color.colorBrownTr;
-            strokeColor = R.color.colorBrownDark;
+            fillColor = R.color.amberA100;
+            strokeColor = R.color.amberPrimaryDark;
         } else if (color == 10) {
-            fillColor = R.color.colorOrangeTr;
-            strokeColor = R.color.colorOrangeDark;
+            fillColor = R.color.orangeA100;
+            strokeColor = R.color.orangePrimaryDark;
         } else if (color == 11) {
-            fillColor = R.color.colorPinkTr;
-            strokeColor = R.color.colorPinkDark;
+            fillColor = R.color.pinkA100;
+            strokeColor = R.color.pinkPrimaryDark;
         } else if (color == 12) {
-            fillColor = R.color.colorSandTr;
-            strokeColor = R.color.colorSandDark;
+            fillColor = R.color.tealA100;
+            strokeColor = R.color.tealPrimaryDark;
         } else if (color == 13) {
-            fillColor = R.color.colorDeepPurpleTr;
-            strokeColor = R.color.colorDeepPurpleDark;
+            fillColor = R.color.purpleDeepA100;
+            strokeColor = R.color.purpleDeepPrimaryDark;
         } else if (color == 14) {
-            fillColor = R.color.colorDeepOrangeTr;
-            strokeColor = R.color.colorDeepOrangeDark;
+            fillColor = R.color.orangeDeepA100;
+            strokeColor = R.color.orangeDeepPrimaryDark;
         } else if (color == 15) {
-            fillColor = R.color.colorIndigoTr;
-            strokeColor = R.color.colorIndigoDark;
+            fillColor = R.color.indigoA100;
+            strokeColor = R.color.indigoPrimaryDark;
         } else if (color == 16) {
-            fillColor = R.color.colorLimeTr;
-            strokeColor = R.color.colorLimeDark;
+            fillColor = R.color.limeA100;
+            strokeColor = R.color.limePrimaryDark;
         } else {
-            fillColor = R.color.colorBlueTr;
-            strokeColor = R.color.colorBlueDark;
+            fillColor = R.color.blueA100;
+            strokeColor = R.color.bluePrimaryDark;
         }
         return new int[]{fillColor, strokeColor};
     }
@@ -1235,7 +1312,7 @@ public class ColorSetter {
                 color = R.drawable.circle_red;
                 break;
             case 1:
-                color = R.drawable.circle_violet;
+                color = R.drawable.circle_purple;
                 break;
             case 2:
                 color = R.drawable.circle_green;
@@ -1256,7 +1333,7 @@ public class ColorSetter {
                 color = R.drawable.circle_orange;
                 break;
             case 8:
-                color = R.drawable.circle_grey;
+                color = R.drawable.circle_cyan;
                 break;
             case 9:
                 color = R.drawable.circle_pink;
@@ -1265,7 +1342,7 @@ public class ColorSetter {
                 color = R.drawable.circle_teal;
                 break;
             case 11:
-                color = R.drawable.circle_brown;
+                color = R.drawable.circle_amber;
                 break;
             default:
                 if (Module.isPro()){
@@ -1301,61 +1378,61 @@ public class ColorSetter {
         int color;
         switch (code){
             case 0:
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case 1:
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case 2:
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case 3:
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case 4:
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case 5:
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case 6:
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case 7:
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case 8:
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case 9:
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case 10:
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case 11:
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             default:
                 if (Module.isPro()){
                     switch (code){
                         case 12:
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case 13:
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case 14:
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case 15:
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                         default:
-                            color = R.color.colorBlue;
+                            color = R.color.bluePrimary;
                             break;
                     }
-                } else color = R.color.colorBlue;
+                } else color = R.color.bluePrimary;
                 break;
         }
         return color;
@@ -1370,61 +1447,61 @@ public class ColorSetter {
         int color;
         switch (code){
             case 0:
-                color = R.color.colorRed;
+                color = R.color.redPrimary;
                 break;
             case 1:
-                color = R.color.colorViolet;
+                color = R.color.purplePrimary;
                 break;
             case 2:
-                color = R.color.colorGreen;
+                color = R.color.greenPrimary;
                 break;
             case 3:
-                color = R.color.colorLightCreen;
+                color = R.color.greenLightPrimary;
                 break;
             case 4:
-                color = R.color.colorBlue;
+                color = R.color.bluePrimary;
                 break;
             case 5:
-                color = R.color.colorLightBlue;
+                color = R.color.blueLightPrimary;
                 break;
             case 6:
-                color = R.color.colorYellow;
+                color = R.color.yellowPrimary;
                 break;
             case 7:
-                color = R.color.colorOrange;
+                color = R.color.orangePrimary;
                 break;
             case 8:
-                color = R.color.colorGrey;
+                color = R.color.cyanPrimary;
                 break;
             case 9:
-                color = R.color.colorPink;
+                color = R.color.pinkPrimary;
                 break;
             case 10:
-                color = R.color.colorSand;
+                color = R.color.tealPrimary;
                 break;
             case 11:
-                color = R.color.colorBrown;
+                color = R.color.amberPrimary;
                 break;
             default:
                 if (Module.isPro()){
                     switch (code){
                         case 12:
-                            color = R.color.colorDeepPurple;
+                            color = R.color.purpleDeepPrimary;
                             break;
                         case 13:
-                            color = R.color.colorDeepOrange;
+                            color = R.color.orangeDeepPrimary;
                             break;
                         case 14:
-                            color = R.color.colorLime;
+                            color = R.color.limePrimary;
                             break;
                         case 15:
-                            color = R.color.colorIndigo;
+                            color = R.color.indigoPrimary;
                             break;
                         default:
-                            color = R.color.colorBlue;
+                            color = R.color.bluePrimary;
                             break;
                     }
-                } else color = R.color.colorBlue;
+                } else color = R.color.bluePrimary;
                 break;
         }
         return getColor(color);
@@ -1439,61 +1516,61 @@ public class ColorSetter {
         int color;
         switch (code){
             case 0:
-                color = R.color.colorRedDark;
+                color = R.color.redPrimaryDark;
                 break;
             case 1:
-                color = R.color.colorVioletDark;
+                color = R.color.purplePrimaryDark;
                 break;
             case 2:
-                color = R.color.colorGreenDark;
+                color = R.color.greenPrimaryDark;
                 break;
             case 3:
-                color = R.color.colorLightCreenDark;
+                color = R.color.greenLightPrimaryDark;
                 break;
             case 4:
-                color = R.color.colorBlueDark;
+                color = R.color.bluePrimaryDark;
                 break;
             case 5:
-                color = R.color.colorLightBlueDark;
+                color = R.color.blueLightPrimaryDark;
                 break;
             case 6:
-                color = R.color.colorYellowDark;
+                color = R.color.yellowPrimaryDark;
                 break;
             case 7:
-                color = R.color.colorOrangeDark;
+                color = R.color.orangePrimaryDark;
                 break;
             case 8:
-                color = R.color.colorGreyDark;
+                color = R.color.cyanPrimaryDark;
                 break;
             case 9:
-                color = R.color.colorPinkDark;
+                color = R.color.pinkPrimaryDark;
                 break;
             case 10:
-                color = R.color.colorSandDark;
+                color = R.color.tealPrimaryDark;
                 break;
             case 11:
-                color = R.color.colorBrownDark;
+                color = R.color.amberPrimaryDark;
                 break;
             default:
                 if (Module.isPro()){
                     switch (code){
                         case 12:
-                            color = R.color.colorDeepPurpleDark;
+                            color = R.color.purpleDeepPrimaryDark;
                             break;
                         case 13:
-                            color = R.color.colorDeepOrangeDark;
+                            color = R.color.orangeDeepPrimaryDark;
                             break;
                         case 14:
-                            color = R.color.colorLimeDark;
+                            color = R.color.limePrimaryDark;
                             break;
                         case 15:
-                            color = R.color.colorIndigoDark;
+                            color = R.color.indigoPrimaryDark;
                             break;
                         default:
-                            color = R.color.colorBlueDark;
+                            color = R.color.bluePrimaryDark;
                             break;
                     }
-                } else color = R.color.colorBlueDark;
+                } else color = R.color.bluePrimaryDark;
                 break;
         }
         return getColor(color);
@@ -1508,61 +1585,61 @@ public class ColorSetter {
         int color;
         switch (code){
             case 0:
-                color = R.color.colorRedLight;
+                color = R.color.redA100;
                 break;
             case 1:
-                color = R.color.colorVioletLight;
+                color = R.color.purpleA100;
                 break;
             case 2:
-                color = R.color.colorGreenLight;
+                color = R.color.greenA100;
                 break;
             case 3:
-                color = R.color.colorLightCreenLight;
+                color = R.color.greenLightA100;
                 break;
             case 4:
-                color = R.color.colorBlueLight;
+                color = R.color.blueA100;
                 break;
             case 5:
-                color = R.color.colorLightBlueLight;
+                color = R.color.blueLightA100;
                 break;
             case 6:
-                color = R.color.colorYellowLight;
+                color = R.color.yellowA100;
                 break;
             case 7:
-                color = R.color.colorOrangeLight;
+                color = R.color.orangeA100;
                 break;
             case 8:
-                color = R.color.colorGreyLight;
+                color = R.color.cyanA100;
                 break;
             case 9:
-                color = R.color.colorPinkLight;
+                color = R.color.pinkA100;
                 break;
             case 10:
-                color = R.color.colorSandLight;
+                color = R.color.tealA100;
                 break;
             case 11:
-                color = R.color.colorBrownLight;
+                color = R.color.amberA100;
                 break;
             default:
                 if (Module.isPro()){
                     switch (code){
                         case 12:
-                            color = R.color.colorDeepPurpleLight;
+                            color = R.color.purpleDeepA100;
                             break;
                         case 13:
-                            color = R.color.colorDeepOrangeLight;
+                            color = R.color.orangeDeepA100;
                             break;
                         case 14:
-                            color = R.color.colorLimeLight;
+                            color = R.color.limeA100;
                             break;
                         case 15:
-                            color = R.color.colorIndigoLight;
+                            color = R.color.indigoA100;
                             break;
                         default:
-                            color = R.color.colorBlueLight;
+                            color = R.color.blueA100;
                             break;
                     }
-                } else color = R.color.colorBlueLight;
+                } else color = R.color.blueA100;
                 break;
         }
         return getColor(color);

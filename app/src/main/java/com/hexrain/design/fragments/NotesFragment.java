@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.NotesManager;
@@ -29,8 +28,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.NoteRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncNotes;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.datas.NoteDataProvider;
+import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
@@ -139,6 +138,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyImage.setImageResource(R.drawable.note);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.NOTES_LIST_STYLE)){
+            layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        }
+        currentList.setLayoutManager(layoutManager);
 
         loaderAdapter();
         onCreate = true;
@@ -166,8 +170,6 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     adView.setVisibility(View.VISIBLE);
                 }
             });
-
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
         }
 
         loaderAdapter();
@@ -256,13 +258,13 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void loaderAdapter(){
         provider = new NoteDataProvider(getActivity());
         reloadView();
-        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
-        adapter.setEventListener(this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.NOTES_LIST_STYLE)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
+        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
+        adapter.setEventListener(this);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);
@@ -399,15 +401,15 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 getString(R.string.led_color_green), getString(R.string.led_color_green_light),
                 getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
                 getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                getString(R.string.color_grey), getString(R.string.led_color_pink),
-                getString(R.string.color_dark_green), getString(R.string.color_brown)};
+                getString(R.string.color_cyan), getString(R.string.led_color_pink),
+                getString(R.string.color_dark_green), getString(R.string.color_amber)};
         if (Module.isPro()){
             items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
                     getString(R.string.led_color_green), getString(R.string.led_color_green_light),
                     getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
                     getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                    getString(R.string.color_grey), getString(R.string.led_color_pink),
-                    getString(R.string.color_dark_green), getString(R.string.color_brown),
+                    getString(R.string.color_cyan), getString(R.string.led_color_pink),
+                    getString(R.string.color_dark_green), getString(R.string.color_amber),
                     getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
                     getString(R.string.color_lime), getString(R.string.color_indigo)};
         }

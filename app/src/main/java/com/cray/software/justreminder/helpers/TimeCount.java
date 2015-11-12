@@ -50,7 +50,7 @@ public class TimeCount {
     public Drawable getDifference(long time){
         Drawable color;
         if (time == 0) {
-            color = getDrawable(R.color.colorSemiTrGrayDark);
+            color = getDrawable(R.color.material_divider);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(System.currentTimeMillis());
@@ -94,7 +94,7 @@ public class TimeCount {
                                   long remCount, int delay){
         Drawable color;
         if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            color = getDrawable(R.color.colorSemiTrGrayDark);
+            color = getDrawable(R.color.material_divider);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(System.currentTimeMillis());

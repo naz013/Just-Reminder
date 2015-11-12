@@ -77,7 +77,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         if (listener == null){
             holder.clearButton.setVisibility(View.GONE);
             holder.itemCheck.setEnabled(false);
-            holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorBlack));
+            holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
         } else {
             if (isDark) {
                 holder.clearButton.setImageResource(R.drawable.ic_clear_white_24dp);
@@ -111,7 +111,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         }
 
         if (item.getStatus() == ShoppingList.DELETED){
-            holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.colorRedDark));
+            holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.redPrimaryDark));
         }
     }
 

@@ -752,4 +752,6 @@
     <string name="select_hours">Исключить часы</string>
     <string name="select_exclusion">Выбрать исключение</string>
     <string name="paused">Приостановлено</string>
+    <string name="color_amber">Янтарь</string>
+    <string name="color_cyan">Голубой</string>
 </resources>

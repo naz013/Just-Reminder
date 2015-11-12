@@ -69,7 +69,7 @@
                     widget:paper_color="?attr/colorAccent"
                     widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
                     android:layout_gravity="center"
-                    widget:paper_text_color="@color/colorBlack"
+                    widget:paper_text_color="@color/blackPrimary"
                     widget:paper_text_size="@dimen/create_text_size_normal"
                     android:id="@+id/backupFilesText"
                     android:layout_height="@dimen/log_in_button_height" />
@@ -81,7 +81,7 @@
                     widget:paper_color="?attr/colorAccent"
                     widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
                     android:layout_gravity="center"
-                    widget:paper_text_color="@color/colorBlack"
+                    widget:paper_text_color="@color/blackPrimary"
                     widget:paper_text_size="@dimen/create_text_size_normal"
                     android:id="@+id/deleteAllButton"
                     android:layout_height="@dimen/log_in_button_height" />

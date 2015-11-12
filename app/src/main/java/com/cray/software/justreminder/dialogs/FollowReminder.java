@@ -78,7 +78,7 @@ public class FollowReminder extends AppCompatActivity implements
         });
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.follow_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());

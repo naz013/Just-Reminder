@@ -65,14 +65,11 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Intervals;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
-import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -178,7 +175,7 @@ public class ScreenManager extends AppCompatActivity
         setRequestedOrientation(cSetter.getRequestOrientation());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
 
         isAnimation = mPrefs.loadBoolean(Prefs.ANIMATIONS);
@@ -234,7 +231,7 @@ public class ScreenManager extends AppCompatActivity
         fab.setSize(size);
         fab.setIcon(icon);
         fab.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
-        fab.setColorPressed(ViewUtils.getColor(this, R.color.grey_light));
+        fab.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         fab.setOnClickListener(listener);
     }
 
@@ -280,8 +277,8 @@ public class ScreenManager extends AppCompatActivity
                 return true;
             }
         });
-        mFab.setColorNormal(cSetter.colorSetter());
-        mFab.setColorPressed(cSetter.colorChooser());
+        mFab.setColorNormal(cSetter.colorAccent());
+        mFab.setColorPressed(cSetter.colorAccent());
         mFab.setSize(FloatingActionButton.SIZE_NORMAL);
 
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
@@ -621,34 +618,6 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public void onListChanged(RecyclerView list) {
-        setListener(list);
-    }
-
-    private QuickReturnRecyclerViewOnScrollListener scrollListener;
-
-    private void setListener(RecyclerView list) {
-        if (list != null){
-            if (scrollListener != null) list.removeOnScrollListener(scrollListener);
-            boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-            boolean isGrid = mPrefs.loadBoolean(Prefs.LIST_GRID);
-            boolean isMain = false;
-            if (mTag != null && (mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_ARCHIVE) ||
-                    mTag.matches(FRAGMENT_NOTE))) {
-                isMain = true;
-                if (mTag.matches(FRAGMENT_NOTE)) isGrid = mPrefs.loadBoolean(Prefs.NOTES_LIST_STYLE);
-            }
-            scrollListener = new QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                            .footer(isExtended ? mainMenu : mFab)
-                            .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                            .isSnappable(true)
-                            .isGrid(isMain && isGrid)
-                            .build();
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                list.addOnScrollListener(scrollListener);
-            } else {
-                list.setOnScrollListener(scrollListener);
-            }
-        }
     }
 
     @Override
@@ -674,8 +643,6 @@ public class ScreenManager extends AppCompatActivity
     public void onUiChanged(int colorSetter, int colorStatus, int colorChooser) {
         if (colorSetter != 0){
             toolbar.setBackgroundColor(colorSetter);
-            mFab.setColorNormal(colorSetter);
-            mainMenu.setButtonColorNormal(colorSetter);
         }
         if (colorStatus != 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -685,6 +652,8 @@ public class ScreenManager extends AppCompatActivity
         if (colorChooser != 0){
             mFab.setColorPressed(colorChooser);
             mainMenu.setButtonColorPressed(colorChooser);
+            mFab.setColorNormal(colorChooser);
+            mainMenu.setButtonColorNormal(colorChooser);
         }
     }
 
@@ -801,17 +770,17 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void restoreUi(){
-        toolbar.setBackgroundColor(cSetter.colorSetter());
+        toolbar.setBackgroundColor(cSetter.colorPrimary());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (!isExtended) {
-            mFab.setColorNormal(cSetter.colorSetter());
-            mFab.setColorPressed(cSetter.colorStatus());
+            mFab.setColorNormal(cSetter.colorAccent());
+            mFab.setColorPressed(cSetter.colorAccent());
         } else {
-            mainMenu.setButtonColorNormal(cSetter.colorSetter());
-            mainMenu.setButtonColorPressed(cSetter.colorStatus());
+            mainMenu.setButtonColorNormal(cSetter.colorAccent());
+            mainMenu.setButtonColorPressed(cSetter.colorAccent());
         }
     }
 
@@ -995,7 +964,7 @@ public class ScreenManager extends AppCompatActivity
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
 
         if (mTag != null) {

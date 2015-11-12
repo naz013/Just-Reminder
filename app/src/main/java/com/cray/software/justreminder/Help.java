@@ -26,7 +26,7 @@ public class Help extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(Help.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

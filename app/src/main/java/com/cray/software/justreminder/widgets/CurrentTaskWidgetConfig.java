@@ -95,7 +95,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         setTheme(cSetter.getStyle());
         setContentView(R.layout.current_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorStatus());
+            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -272,7 +272,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioBlack:
-                        textColor = getResources().getColor(R.color.colorBlack);
+                        textColor = getResources().getColor(R.color.blackPrimary);
                         widgetDate.setTextColor(textColor);
                         break;
                     case R.id.radioWhite:
@@ -309,7 +309,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioItemBlack:
-                        itemTextColor = getResources().getColor(R.color.colorBlack);
+                        itemTextColor = getResources().getColor(R.color.blackPrimary);
                         taskText.setTextColor(itemTextColor);
                         taskNumber.setTextColor(itemTextColor);
                         taskDate.setTextColor(itemTextColor);

@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.dialogs;
 
+import android.app.AlarmManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -62,7 +64,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         ColorSetter cs = new ColorSetter(EventsImport.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorStatus());
+            getWindow().setStatusBarColor(cs.colorPrimaryDark());
         }
         setContentView(R.layout.activity_events_import);
 
@@ -230,9 +232,16 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     public class Import extends AsyncTask<HashMap<String, String>, Void, Integer>{
 
         private Context context;
+        private ProgressDialog dialog;
 
         public Import(Context context){
             this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = ProgressDialog.show(context, null, context.getString(R.string.loading_wait), true, false);
         }
 
         @SafeVarargs
@@ -242,6 +251,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                 return 0;
             }
             CalendarManager cm = new CalendarManager(context);
+            long currTime = System.currentTimeMillis();
 
             int eventsCount = 0;
             HashMap <String, String> map = params[0];
@@ -261,7 +271,6 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                     for (CalendarManager.EventItem item : eventItems){
                         long itemId = item.getId();
                         if (!ids.contains(itemId)) {
-                            eventsCount += 1;
                             String rrule = item.getRrule();
                             int repeat = 0;
                             if (rrule != null && !rrule.matches("")) {
@@ -292,19 +301,41 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             if (cf != null) cf.close();
 
                             Calendar calendar = Calendar.getInstance();
-                            calendar.setTimeInMillis(item.getDtStart());
+                            long dtStart = item.getDtStart();
+                            calendar.setTimeInMillis(dtStart);
                             int day = calendar.get(Calendar.DAY_OF_MONTH);
                             int month = calendar.get(Calendar.MONTH);
                             int year = calendar.get(Calendar.YEAR);
                             int hour = calendar.get(Calendar.HOUR_OF_DAY);
                             int minute = calendar.get(Calendar.MINUTE);
-
-                            long id = DB.insertReminder(text, type, day, month, year, hour,
-                                    minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
-                                    0, categoryId, null);
-                            DB.updateReminderDateTime(id);
-                            DB.addCalendarEvent(null, id, item.getId());
-                            new AlarmReceiver().setAlarm(context, id);
+                            if (dtStart >= currTime){
+                                eventsCount += 1;
+                                long id = DB.insertReminder(text, type, day, month, year, hour,
+                                        minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
+                                        0, categoryId, null);
+                                DB.updateReminderDateTime(id);
+                                DB.addCalendarEvent(null, id, item.getId());
+                                new AlarmReceiver().setAlarm(context, id);
+                            } else {
+                                if (repeat > 0) {
+                                    do {
+                                        calendar.setTimeInMillis(dtStart + (repeat * AlarmManager.INTERVAL_DAY));
+                                        dtStart = calendar.getTimeInMillis();
+                                    } while (dtStart < currTime);
+                                    eventsCount += 1;
+                                    day = calendar.get(Calendar.DAY_OF_MONTH);
+                                    month = calendar.get(Calendar.MONTH);
+                                    year = calendar.get(Calendar.YEAR);
+                                    hour = calendar.get(Calendar.HOUR_OF_DAY);
+                                    minute = calendar.get(Calendar.MINUTE);
+                                    long id = DB.insertReminder(text, type, day, month, year, hour,
+                                            minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
+                                            0, categoryId, null);
+                                    DB.updateReminderDateTime(id);
+                                    DB.addCalendarEvent(null, id, item.getId());
+                                    new AlarmReceiver().setAlarm(context, id);
+                                }
+                            }
                         }
                     }
                     DB.close();
@@ -316,6 +347,8 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+            if (dialog != null && dialog.isShowing()) dialog.dismiss();
+
             if (result == 0) Messages.toast(EventsImport.this, getString(R.string.string_no_events_found));
 
             if (result > 0) {

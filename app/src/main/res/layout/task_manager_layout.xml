@@ -57,7 +57,7 @@
                 android:layout_height="1dp"
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/grey_dark"/>
+                android:background="@color/material_divider"/>
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -93,7 +93,7 @@
                 android:layout_height="1dp"
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/grey_dark"/>
+                android:background="@color/material_divider"/>
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -129,7 +129,7 @@
                 android:layout_height="1dp"
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/grey_dark"/>
+                android:background="@color/material_divider"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -165,7 +165,7 @@
                 android:layout_height="1dp"
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/grey_dark"/>
+                android:background="@color/material_divider"/>
 
         </LinearLayout>
 

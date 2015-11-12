@@ -28,7 +28,7 @@
                 android:layout_width="50dp"
                 android:background="@android:color/transparent"
                 android:id="@+id/violet_checkbox"
-                android:src="@drawable/circle_drawable_violet"
+                android:src="@drawable/circle_drawable_purple"
                 android:layout_margin="5dp"/>
 
             <ImageButton
@@ -95,7 +95,7 @@
                 android:layout_width="50dp"
                 android:id="@+id/grey_checkbox"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_grey"
+                android:src="@drawable/circle_drawable_cyan"
                 android:layout_margin="5dp"/>
 
             <ImageButton
@@ -119,7 +119,7 @@
                 android:layout_width="50dp"
                 android:id="@+id/brown_checkbox"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_brown"
+                android:src="@drawable/circle_drawable_amber"
                 android:layout_margin="5dp"/>
 
     </LinearLayout>

@@ -138,6 +138,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         emptyImage.setImageResource(R.drawable.alarm);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        currentList.setLayoutManager(mLayoutManager);
 
         loaderAdapter(null);
         onCreate = true;
@@ -230,11 +233,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
+        currentList.setLayoutManager(mLayoutManager);
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setHasFixedSize(true);
-        currentList.setLayoutManager(mLayoutManager);
         currentList.setItemAnimator(new DefaultItemAnimator());
         currentList.setAdapter(adapter);
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);
