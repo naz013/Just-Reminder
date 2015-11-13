@@ -760,5 +760,6 @@
     <string name="select_hours">Exclude hours</string>
     <string name="select_exclusion">Select exclusion</string>
     <string name="paused">Paused</string>
+    <string name="select_file">Select file</string>
 
 </resources>

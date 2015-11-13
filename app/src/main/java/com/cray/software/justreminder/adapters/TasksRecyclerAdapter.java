@@ -45,7 +45,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         this.listener = listener;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtTitle;
         TextView txtDate;
         CheckBox checkBox;
@@ -63,6 +63,12 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
             card = (CardView) v.findViewById(R.id.card);
             checkBox.setFocusableInTouchMode(false);
             checkBox.setFocusable(false);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onItemClick(getAdapterPosition());
         }
     }
 
@@ -109,27 +115,6 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         if (mDataset.get(position).getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             holder.checkBox.setChecked(true);
         } else holder.checkBox.setChecked(false);
-
-        holder.txtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClick(position);
-            }
-        });
-
-        holder.note.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClick(position);
-            }
-        });
-
-        holder.card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClick(position);
-            }
-        });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

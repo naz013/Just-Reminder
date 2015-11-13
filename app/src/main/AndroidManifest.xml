@@ -190,7 +190,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.CategoryManager"
+            android:name=".CategoryManager"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

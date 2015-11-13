@@ -10,13 +10,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ViewHolder> {
 
@@ -35,7 +34,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
         setHasStableIds(true);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
 
         TextView textView;
         ViewGroup container;
@@ -48,6 +47,20 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
             container = (ViewGroup) v.findViewById(R.id.container);
             indicator = v.findViewById(R.id.indicator);
             background = (RelativeLayout) v.findViewById(R.id.background);
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), indicator);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), indicator);
+            return true;
         }
     }
 
@@ -72,23 +85,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
         holder.textView.setTypeface(typeface);
         holder.textView.setText(title);
-        holder.indicator.setBackgroundDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(indicator)));
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.indicator);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null)
-                    mEventListener.onItemLongClicked(position, holder.indicator);
-                return true;
-            }
-        });
+        holder.indicator.setBackgroundResource(cs.getCategoryIndicator(indicator));
     }
 
     @Override

@@ -43,7 +43,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
         this.mEventListener = mEventListener;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView eventText, eventColor, eventType, eventDate, eventNumber;
         ViewGroup container;
         RelativeLayout background;
@@ -57,6 +57,20 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             eventNumber = (TextView) v.findViewById(R.id.eventNumber);
             container = (ViewGroup) v.findViewById(R.id.container);
             background = (RelativeLayout) v.findViewById(R.id.background);
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), background);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), background);
+            return true;
         }
     }
 
@@ -116,22 +130,6 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             Date time = cl.getTime();
             holder.eventDate.setText(TimeUtil.getDateTime(time, is24));
         }
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.background);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null)
-                    mEventListener.onItemLongClicked(position, holder.background);
-                return true;
-            }
-        });
     }
 
     @Override

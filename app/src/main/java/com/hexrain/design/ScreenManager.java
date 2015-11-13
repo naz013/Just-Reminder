@@ -47,7 +47,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.AddBirthday;
-import com.cray.software.justreminder.dialogs.CategoryManager;
+import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;

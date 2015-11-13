@@ -25,7 +25,7 @@ import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.CategoryModel;
-import com.cray.software.justreminder.dialogs.CategoryManager;
+import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.SimpleListener;

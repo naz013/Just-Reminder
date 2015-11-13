@@ -1,6 +1,8 @@
 package com.cray.software.justreminder;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.fragments.BirthdaysSettingsFragment;
@@ -25,8 +28,11 @@ import com.cray.software.justreminder.fragments.VoiceSettingsFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.utils.SuperUtil;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -187,6 +193,39 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.addToBackStack("birth");
         transaction.commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 200:
+                new SharedPrefs(this).saveBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND, true);
+                String pathC = SuperUtil.getPath(this, data.getData());
+                if (pathC != null) {
+                    File fileC = new File(pathC);
+                    if (fileC.exists()) {
+                        String fileName = fileC.getName();
+                        if (fileName.endsWith(".mp3") || fileName.endsWith(".ogg")) {
+                            new SharedPrefs(this).savePrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE, fileC.toString());
+                        }
+                    }
+                }
+                break;
+            case 201:
+                new SharedPrefs(this).saveBoolean(Prefs.CUSTOM_SOUND, true);
+                Uri uri = data.getData();
+                String path = SuperUtil.getPath(this, uri);
+                if (path != null) {
+                    File fileC = new File(path);
+                    if (fileC.exists()) {
+                        String fileName = fileC.getName();
+                        if (fileName.endsWith(".mp3") || fileName.endsWith(".ogg")) {
+                            new SharedPrefs(this).savePrefs(Prefs.CUSTOM_SOUND_FILE, fileC.toString());
+                        }
+                    }
+                }
+                break;
+        }
     }
 
     @Override

@@ -754,4 +754,5 @@
     <string name="select_hours">Виключити години</string>
     <string name="color_amber">Янтар</string>
     <string name="color_cyan">Блакитний</string>
+    <string name="select_file">Обрати файл</string>
 </resources>

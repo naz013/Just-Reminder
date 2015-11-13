@@ -267,7 +267,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     }
 
     @Override
-    public void onItemSwitched(int position, SwitchCompat switchCompat) {
+    public void onItemSwitched(int position, View switchCompat) {
 
     }
 }

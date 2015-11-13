@@ -10,10 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.TemplateModel;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
+import com.cray.software.justreminder.datas.TemplateModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
@@ -28,13 +27,12 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
     public TemplateRecyclerAdapter(Context context, TemplateDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
-        SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         typeface = AssetsUtil.getLightTypeface(context);
         setHasStableIds(true);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
 
         TextView textView;
         ViewGroup container;
@@ -45,6 +43,22 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
             textView = (TextView) v.findViewById(R.id.textView);
             container = (ViewGroup) v.findViewById(R.id.container);
             background = (RelativeLayout) v.findViewById(R.id.background);
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+            textView.setTypeface(typeface);
+            background.setBackgroundResource(cs.getCardDrawableStyle());
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), textView);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), textView);
+            return true;
         }
     }
 
@@ -61,28 +75,9 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
-
         final TemplateModel item = provider.getData().get(position);
         String title = item.getTitle();
-
-        holder.textView.setTypeface(typeface);
         holder.textView.setText(title);
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.textView);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null) mEventListener.onItemLongClicked(position, holder.textView);
-                return true;
-            }
-        });
     }
 
     @Override

@@ -52,7 +52,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         setHasStableIds(true);
     }
 
-    public static class ViewHolder1 extends RecyclerView.ViewHolder {
+    public class ViewHolder1 extends RecyclerView.ViewHolder implements
+            View.OnLongClickListener, View.OnClickListener {
         private final TextView taskTitle;
         private final ViewGroup container;
         private final RelativeLayout background;
@@ -70,10 +71,27 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             taskTitle.setText("");
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+            background.setBackgroundResource(cs.getCardDrawableStyle());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), subBackground);
+            return true;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemClicked(getAdapterPosition(), subBackground);
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnLongClickListener {
 
         private final TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name;
@@ -107,6 +125,32 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             taskTitle.setText("");
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+            check.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mEventListener != null)
+                        mEventListener.onItemSwitched(getAdapterPosition(), check);
+                }
+            });
+
+            background.setBackgroundResource(cs.getCardDrawableStyle());
+
+            repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
+                    R.drawable.round_view_black);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), check);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), check);
+            return true;
         }
     }
 
@@ -156,11 +200,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             viewHolder.reminder_type.setText("");
             viewHolder.reminder_phone.setText("");
             viewHolder.repeatInterval.setText("");
-
-            viewHolder.background.setBackgroundResource(cs.getCardDrawableStyle());
-
-            viewHolder.repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
-                    R.drawable.round_view_black);
 
             viewHolder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
             viewHolder.taskTitle.setText(title);
@@ -305,46 +344,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.leftTime.setVisibility(View.GONE);
                 viewHolder.leftTimeIcon.setVisibility(View.GONE);
             }
-
-            viewHolder.check.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    try {
-                        if (mEventListener != null)
-                            mEventListener.onItemSwitched(position, viewHolder.check);
-                        else compoundButton.setChecked(!b);
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            viewHolder.container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (mEventListener != null) mEventListener.onItemClicked(position, viewHolder.check);
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            viewHolder.container.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    try {
-                        if (mEventListener != null)
-                            mEventListener.onItemLongClicked(position, viewHolder.check);
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                    return true;
-                }
-            });
         } else {
             final ViewHolder1 viewHolder1 = (ViewHolder1) holder;
-            viewHolder1.background.setBackgroundResource(cs.getCardDrawableStyle());
+
             viewHolder1.subBackground.setBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(item.getCatColor())));
 
             String title = item.getTitle();
@@ -391,31 +393,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                     viewHolder1.todoList.addView(view);
                 }
             }
-
-            viewHolder1.container.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        if (mEventListener != null)
-                            mEventListener.onItemClicked(position, viewHolder1.subBackground);
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            viewHolder1.container.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    try {
-                        if (mEventListener != null)
-                            mEventListener.onItemLongClicked(position, viewHolder1.subBackground);
-                    } catch (IllegalStateException e){
-                        e.printStackTrace();
-                    }
-                    return true;
-                }
-            });
         }
     }
 

@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.datas.NoteDataProvider;
+import com.cray.software.justreminder.datas.NoteModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -26,19 +26,17 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     private ColorSetter cs;
     private NoteDataProvider provider;
     private SharedPrefs prefs;
-    private SyncHelper syncHelper;
     private SimpleListener mEventListener;
 
     public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
         prefs = new SharedPrefs(context);
-        syncHelper = new SyncHelper(context);
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         TextView textView;
         ViewGroup container;
         LinearLayout noteBackground;
@@ -50,6 +48,20 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             container = (ViewGroup) v.findViewById(R.id.container);
             noteBackground = (LinearLayout) v.findViewById(R.id.noteBackground);
             noteImage = (ImageView) v.findViewById(R.id.noteImage);
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), noteImage);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), noteImage);
+            return true;
         }
     }
 
@@ -82,25 +94,10 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         } else holder.noteImage.setImageDrawable(null);
 
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            title = syncHelper.decrypt(title);
+            title = SyncHelper.decrypt(title);
         }
         holder.textView.setText(title);
         holder.textView.setTextSize(prefs.loadInt(Prefs.TEXT_SIZE) + 12);
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.noteImage);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null) mEventListener.onItemLongClicked(position, holder.noteImage);
-                return true;
-            }
-        });
     }
 
     @Override

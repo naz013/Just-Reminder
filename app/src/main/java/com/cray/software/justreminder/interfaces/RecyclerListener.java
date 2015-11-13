@@ -1,6 +1,6 @@
 package com.cray.software.justreminder.interfaces;
 
-import android.support.v7.widget.SwitchCompat;
+import android.view.View;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -18,5 +18,5 @@ import android.support.v7.widget.SwitchCompat;
  * limitations under the License.
  */
 public interface RecyclerListener extends SimpleListener{
-    void onItemSwitched(int position, SwitchCompat switchCompat);
+    void onItemSwitched(int position, View view);
 }

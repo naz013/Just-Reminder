@@ -153,7 +153,7 @@ public class ColorSetter {
     }
 
     /**
-     * Get accent color by .
+     * Get accent color by code.
      * @return Color
      */
     public int colorAccent(int code){
@@ -174,10 +174,10 @@ public class ColorSetter {
                     color = R.color.purpleAccent;
                     break;
                 case 4:
-                    color = R.color.redAccent;
+                    color = R.color.yellowAccent;
                     break;
                 case 5:
-                    color = R.color.yellowAccent;
+                    color = R.color.redAccent;
                     break;
                 case 6:
                     color = R.color.redAccent;
@@ -228,16 +228,16 @@ public class ColorSetter {
                     color = R.color.amberAccent;
                     break;
                 case 2:
-                    color = R.color.cyanAccent;
-                    break;
-                case 3:
                     color = R.color.purpleDeepAccent;
                     break;
+                case 3:
+                    color = R.color.cyanAccent;
+                    break;
                 case 4:
-                    color = R.color.yellowAccent;
+                    color = R.color.pinkAccent;
                     break;
                 case 5:
-                    color = R.color.pinkAccent;
+                    color = R.color.yellowAccent;
                     break;
                 case 6:
                     color = R.color.cyanAccent;
@@ -1075,7 +1075,7 @@ public class ColorSetter {
 
     /**
      * Get fill amd stroke color for drawing circle around marker on Google Map.
-     * @return
+     * @return color resources array
      */
     public int[] getMarkerRadiusStyle(){
         int fillColor;
@@ -1145,7 +1145,7 @@ public class ColorSetter {
     /**
      * Get fill amd stroke color by marker color, for drawing circle around marker on Google Map.
      * @param color marker color.
-     * @return
+     * @return  color resources array
      */
     public int[] getMarkerRadiusStyle(int color){
         int fillColor;

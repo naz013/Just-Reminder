@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.dialogs;
+package com.cray.software.justreminder;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,12 +14,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class CategoryManager extends AppCompatActivity {
 
@@ -29,6 +29,8 @@ public class CategoryManager extends AppCompatActivity {
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
             pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
             deepOrange;
+    private Toolbar toolbar;
+
     private DataBase db;
     private long id;
     private int color = 0;
@@ -47,11 +49,10 @@ public class CategoryManager extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        //toolbar.setTitle(getString(R.string.string_new_category));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -64,9 +65,9 @@ public class CategoryManager extends AppCompatActivity {
                 editField.setText(c.getString(c.getColumnIndex(Constants.COLUMN_TEXT)));
                 color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
             }
+            setColor(color);
             if (c != null) c.close();
             db.close();
-            toolbar.setTitle(getString(R.string.string_edit_category));
         }
 
         initRadio();
@@ -243,6 +244,10 @@ public class CategoryManager extends AppCompatActivity {
 
     private void setColor(int i){
         color = i;
+        toolbar.setBackgroundColor(ViewUtils.getColor(this, cs.getCategoryColor(i)));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(cs.getNoteDarkColor(i));
+        }
     }
 
     public void setUpRadio(){

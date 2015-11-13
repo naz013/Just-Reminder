@@ -30,7 +30,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         setHasStableIds(true);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         ViewGroup container;
         RelativeLayout background;
@@ -48,6 +48,20 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
             date = (TextView) v.findViewById(R.id.date);
             time = (TextView) v.findViewById(R.id.time);
             repeat = (TextView) v.findViewById(R.id.repeat);
+            container.setOnClickListener(this);
+            container.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), background);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mEventListener != null)
+                mEventListener.onItemLongClicked(getAdapterPosition(), background);
+            return true;
         }
     }
 
@@ -76,21 +90,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         holder.type.setText(item.getType());
         holder.number.setText(item.getNumber());
         holder.fileName.setText(item.getFileName());
-
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mEventListener != null) mEventListener.onItemClicked(position, holder.background);
-            }
-        });
-
-        holder.container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mEventListener != null) mEventListener.onItemLongClicked(position, holder.background);
-                return true;
-            }
-        });
     }
 
     @Override

@@ -441,7 +441,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
                 infiniteSoundChange();
                 break;
             case R.id.chooseSound:
-                Dialogues.melodyType(getActivity(), Prefs.BIRTHDAY_CUSTOM_SOUND, this);
+                Dialogues.melodyType(getActivity(), Prefs.BIRTHDAY_CUSTOM_SOUND, this, 200);
                 break;
         }
     }

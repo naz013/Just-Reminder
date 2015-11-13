@@ -108,10 +108,7 @@ public class TaskListManager extends AppCompatActivity {
                 }
                 setColor(color);
             }
-            toolbar.setTitle(getString(R.string.string_editing_task_list));
             if (c != null) c.close();
-        } else {
-            toolbar.setTitle(getString(R.string.string_new_task_list));
         }
 
         initRadio();

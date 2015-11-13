@@ -1,8 +1,10 @@
 package com.cray.software.justreminder.helpers;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 
@@ -192,13 +195,14 @@ public class Dialogues {
      * @param prefsToSave Preference key to save result.
      * @param listener action listener for dialog.
      */
-    public static void melodyType(final Context context, final String prefsToSave,
-                                  final DialogInterface.OnDismissListener listener) {
+    public static void melodyType(final Activity context, final String prefsToSave,
+                                  final DialogInterface.OnDismissListener listener, final int requestCode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(context.getString(R.string.sound_type_dialog_title));
         String[] types = new String[]{context.getString(R.string.sound_default),
-                context.getString(R.string.sound_custom)};
+                context.getString(R.string.sound_custom),
+                context.getString(R.string.select_file)};
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
@@ -218,10 +222,17 @@ public class Dialogues {
                     SharedPrefs prefs = new SharedPrefs(context);
                     if (which == 0) {
                         prefs.saveBoolean(prefsToSave, false);
-                    } else {
+                    } else if (which == 1) {
                         prefs.saveBoolean(prefsToSave, true);
                         dialog.dismiss();
                         new LoadSounds(context, prefsToSave, listener).execute();
+                    } else {
+                        prefs.saveBoolean(prefsToSave, true);
+                        dialog.dismiss();
+                        Intent intent = new Intent();
+                        intent.setType("*/*");
+                        if (Module.isKitkat()) intent.setAction(Intent.ACTION_GET_CONTENT);
+                        context.startActivityForResult(intent, requestCode);
                     }
                 }
             }

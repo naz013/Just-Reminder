@@ -139,7 +139,7 @@ public class Reminder {
      * Toggle reminder status.
      * @param id reminder identifier.
      * @param context application context.
-     * @return
+     * @return boolean
      */
     public static boolean toggle(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
         DataBase db = new DataBase(context);
@@ -166,7 +166,7 @@ public class Reminder {
         boolean res;
         if (isDone == 0){
             disableReminder(id, context);
-            res = false;
+            res = true;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 db.setUnDone(id);

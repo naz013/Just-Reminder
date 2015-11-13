@@ -13,7 +13,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -381,7 +380,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     }
 
     @Override
-    public void onItemSwitched(int position, SwitchCompat switchCompat) {
+    public void onItemSwitched(int position, View switchCompat) {
         Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
         loaderAdapter(null);
     }
@@ -393,7 +392,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             previewReminder(view, item.getId(), item.getType());
         } else {
-            if (Reminder.toggle(item.getId(), getActivity(), mCallbacks)){
+            if (item.getType().matches(Constants.TYPE_SHOPPING_LIST)){
+                previewReminder(view, item.getId(), item.getType());
+            } else {
+                Reminder.toggle(item.getId(), getActivity(), mCallbacks);
                 loaderAdapter(null);
             }
         }
