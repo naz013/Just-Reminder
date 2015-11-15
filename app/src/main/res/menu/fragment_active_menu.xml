@@ -9,11 +9,6 @@
         android:icon="@drawable/ic_mic_white_24dp"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_list"
-        android:title="@string/show_grid"
-        android:icon="@drawable/ic_view_quilt_white_24dp"
-        app:showAsAction="ifRoom" />
-
     <item android:id="@+id/action_refresh"
         android:title="@string/sync_title"
         android:icon="@drawable/ic_cached_white_24dp"

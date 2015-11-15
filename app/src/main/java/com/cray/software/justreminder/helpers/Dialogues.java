@@ -25,6 +25,7 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
+import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -672,6 +673,7 @@ public class Dialogues {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
                     prefs.saveInt(Prefs.START_DAY, which);
+                    new UpdatesHelper(context).updateCalendarWidget();
                 }
             }
         });

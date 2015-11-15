@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,8 +55,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     private SharedPrefs sPrefs;
     private ReminderDataProvider provider;
 
-    private boolean onCreate = false;
-    private boolean enableGrid = false;
     private ArrayList<String> ids;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
@@ -80,11 +77,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_active_menu, menu);
-        MenuItem item = menu.findItem(R.id.action_list);
-        if (item != null){
-            item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
-            item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
-        }
         //menu.add(Menu.NONE, 55, 100, "Test List");
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -109,12 +101,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             case R.id.action_exit:
                 getActivity().finish();
                 break;
-            case R.id.action_list:
-                enableGrid = !enableGrid;
-                new SharedPrefs(getActivity()).saveBoolean(Prefs.LIST_GRID, enableGrid);
-                loaderAdapter(null);
-                getActivity().invalidateOptionsMenu();
-                break;
             case 55:
                 startActivity(new Intent(getActivity(), TestActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
@@ -128,7 +114,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         sPrefs = new SharedPrefs(getActivity());
-        enableGrid = sPrefs.loadBoolean(Prefs.LIST_GRID);
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
@@ -138,11 +123,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         currentList.setLayoutManager(mLayoutManager);
-
-        loaderAdapter(null);
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -196,8 +177,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 adView.resume();
             }
         }
-        if (!onCreate) loaderAdapter(null);
-        onCreate = false;
+        loaderAdapter(null);
     }
 
     @Override
@@ -230,9 +210,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             provider.setCursor(DB.queryGroup());
         }
         reloadView();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        currentList.setLayoutManager(mLayoutManager);
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setHasFixedSize(true);

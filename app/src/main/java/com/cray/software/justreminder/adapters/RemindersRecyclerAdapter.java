@@ -1,15 +1,16 @@
 package com.cray.software.justreminder.adapters;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Paint;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,11 +28,13 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
-public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder> {
 
     private Context mContext;
     private TimeCount mCount;
@@ -39,7 +42,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private ReminderDataProvider provider;
     private RecyclerListener mEventListener;
     private boolean isDark;
-    private boolean isGrid;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
@@ -48,61 +50,28 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
-        isGrid = prefs.loadBoolean(Prefs.LIST_GRID);
         setHasStableIds(true);
-    }
-
-    public class ViewHolder1 extends RecyclerView.ViewHolder implements
-            View.OnLongClickListener, View.OnClickListener {
-        private final TextView taskTitle;
-        private final ViewGroup container;
-        private final RelativeLayout background;
-        private final LinearLayout todoList;
-        private final LinearLayout subBackground, titleContainer;
-
-        public ViewHolder1(View v) {
-            super(v);
-            todoList = (LinearLayout) v.findViewById(R.id.todoList);
-            todoList.setVisibility(View.VISIBLE);
-            background = (RelativeLayout) v.findViewById(R.id.background);
-            subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
-            titleContainer = (LinearLayout) v.findViewById(R.id.titleContainer);
-            container = (ViewGroup) v.findViewById(R.id.container);
-
-            taskTitle = (TextView) v.findViewById(R.id.taskText);
-            taskTitle.setText("");
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
-            background.setBackgroundResource(cs.getCardDrawableStyle());
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null)
-                mEventListener.onItemLongClicked(getAdapterPosition(), subBackground);
-            return true;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mEventListener != null)
-                mEventListener.onItemClicked(getAdapterPosition(), subBackground);
-        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
-        private final TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
-                repeatInterval, reminder_contact_name;
-        private final SwitchCompat check;
-        private final ImageView taskIcon, leftTimeIcon;
-        private final ViewGroup container;
-        private final RelativeLayout background;
+        public TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
+                repeatInterval, reminder_contact_name, listHeader;
+        public SwitchCompat check;
+        public ImageView taskIcon, leftTimeIcon;
+        public CardView itemCard;
+
+        public TextView shoppingTitle;
+        public LinearLayout todoList;
+        public LinearLayout subBackground, titleContainer;
+        public RelativeLayout reminderContainer;
 
         public ViewHolder(View v) {
             super(v);
+            reminderContainer = (RelativeLayout) v.findViewById(R.id.reminderContainer);
             leftTime = (TextView) v.findViewById(R.id.remainingTime);
+            listHeader = (TextView) v.findViewById(R.id.listHeader);
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
             taskIcon = (ImageView) v.findViewById(R.id.taskIcon);
@@ -120,13 +89,22 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             reminder_contact_name.setText("");
             leftTimeIcon = (ImageView) v.findViewById(R.id.leftTime);
             leftTimeIcon.setVisibility(View.VISIBLE);
-            background = (RelativeLayout) v.findViewById(R.id.background);
-            container = (ViewGroup) v.findViewById(R.id.container);
 
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             taskTitle.setText("");
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
+            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+
+            todoList = (LinearLayout) v.findViewById(R.id.todoList);
+            todoList.setVisibility(View.VISIBLE);
+            subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
+            titleContainer = (LinearLayout) v.findViewById(R.id.titleContainer);
+            shoppingTitle = (TextView) v.findViewById(R.id.shoppingTitle);
+            shoppingTitle.setText("");
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -134,8 +112,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                         mEventListener.onItemSwitched(getAdapterPosition(), check);
                 }
             });
-
-            background.setBackgroundResource(cs.getCardDrawableStyle());
 
             repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
                     R.drawable.round_view_black);
@@ -155,43 +131,49 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
-                .inflate(!isGrid ? R.layout.list_item_card : R.layout.grid_item_card, parent, false);
-        if (viewType == ReminderDataProvider.VIEW_SHOPPING_LIST) {
-            itemLayoutView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_card_with_list, parent, false);
-        }
+                .inflate(R.layout.list_item_card, parent, false);
 
         // create ViewHolder
-        RecyclerView.ViewHolder vh;
-        if (viewType == ReminderDataProvider.VIEW_SHOPPING_LIST){
-            vh = new ViewHolder1(itemLayoutView);
-        } else {
-            vh = new ViewHolder(itemLayoutView);
-        }
+        ViewHolder vh = new ViewHolder(itemLayoutView);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ReminderModel item = provider.getItem(position);
+        String title = item.getTitle();
+        String type = item.getType();
+        String number = item.getNumber();
+        long due = item.getDue();
+        double lat = item.getPlace()[0];
+        double lon = item.getPlace()[1];
+        int isDone = item.getCompleted();
+        String repeat = item.getRepeat();
+        String exclusion = item.getExclusion();
+        int archived = item.getArchived();
+        int categoryColor = item.getCatColor();
+
+        String simpleDate = TimeUtil.getSimpleDate(due > 0 ? due : System.currentTimeMillis());
+
+        if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))) {
+            holder.listHeader.setVisibility(View.GONE);
+        } else {
+            if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis())))
+                simpleDate = mContext.getString(R.string._today);
+            else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY)))
+                simpleDate = mContext.getString(R.string._tomorrow);
+            holder.listHeader.setText(simpleDate);
+            holder.listHeader.setVisibility(View.VISIBLE);
+        }
 
         if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
             final ViewHolder viewHolder = (ViewHolder) holder;
 
-            String title = item.getTitle();
-            String type = item.getType();
-            String number = item.getNumber();
-            long due = item.getDue();
-            double lat = item.getPlace()[0];
-            double lon = item.getPlace()[1];
-            int isDone = item.getCompleted();
-            String repeat = item.getRepeat();
-            String exclusion = item.getExclusion();
-            int archived = item.getArchived();
-            int categoryColor = item.getCatColor();
+            viewHolder.reminderContainer.setVisibility(View.VISIBLE);
+            viewHolder.subBackground.setVisibility(View.GONE);
 
             viewHolder.taskTitle.setText("");
             viewHolder.reminder_contact_name.setText("");
@@ -345,14 +327,16 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
                 viewHolder.leftTimeIcon.setVisibility(View.GONE);
             }
         } else {
-            final ViewHolder1 viewHolder1 = (ViewHolder1) holder;
+            final ViewHolder viewHolder1 = (ViewHolder) holder;
 
-            viewHolder1.subBackground.setBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(item.getCatColor())));
+            viewHolder1.reminderContainer.setVisibility(View.GONE);
+            viewHolder1.subBackground.setVisibility(View.VISIBLE);
 
-            String title = item.getTitle();
-            viewHolder1.taskTitle.setText(title);
+            viewHolder1.itemCard.setCardBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(item.getCatColor())));
 
-            viewHolder1.taskTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
+            viewHolder1.shoppingTitle.setText(title);
+
+            viewHolder1.shoppingTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
             if (title.matches("")) viewHolder1.titleContainer.setVisibility(View.GONE);
             else viewHolder1.titleContainer.setVisibility(View.VISIBLE);
 

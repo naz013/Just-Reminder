@@ -18,14 +18,6 @@ public class Module {
     }
 
     /**
-     * Check if application is BETA.
-     * @return boolean
-     */
-    public static boolean isBeta(){
-        return BuildConfig.IS_BETA;
-    }
-
-    /**
      * Check if device runs on Lollipop and above.
      * @return boolean
      */

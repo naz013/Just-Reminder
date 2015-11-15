@@ -11,14 +11,26 @@ import java.util.Locale;
  */
 public class TimeUtil {
 
-    public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm");
-    public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a");
+    public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
+    public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a", Locale.getDefault());
     public static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault());
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
-    public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm");
-    public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a");
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+    public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a", Locale.getDefault());
+    public static final SimpleDateFormat simpleDate = new SimpleDateFormat("d MMMM", Locale.getDefault());
 
     public TimeUtil(){}
+
+    /**
+     * Get date and time string from date.
+     * @param date date to convert.
+     * @return Date string
+     */
+    public static String getSimpleDate(long date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        return simpleDate.format(calendar.getTime());
+    }
 
     /**
      * Get date and time string from date.

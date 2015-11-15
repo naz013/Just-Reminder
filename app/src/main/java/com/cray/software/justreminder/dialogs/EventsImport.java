@@ -221,8 +221,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     }
 
     private void autoCheck(boolean isChecked) {
-        if (isChecked) prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, true);
-        else prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, false);
+        prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, isChecked);
         syncInterval.setEnabled(isChecked);
         EventsCheckAlarm alarm = new EventsCheckAlarm();
         if (isChecked) alarm.setAlarm(this);

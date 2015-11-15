@@ -27,7 +27,6 @@ public class AboutDialog extends Activity {
         appName.setTypeface(AssetsUtil.getMediumTypeface(this));
         String name;
         if (Module.isPro()) name = getString(R.string.app_name_pro);
-        else if (Module.isBeta()) name = getString(R.string.app_title);
         else name = getString(R.string.app_name);
         appName.setText(name.toUpperCase());
 
@@ -37,7 +36,7 @@ public class AboutDialog extends Activity {
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
-            appVersion.setText(getString(R.string.app_version_strings) + " " + version + (!Module.isBeta() ? " (" + Configs.CODENAME + ")" : ""));
+            appVersion.setText(getString(R.string.app_version_strings) + " " + version + " (" + Configs.CODENAME + ")");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

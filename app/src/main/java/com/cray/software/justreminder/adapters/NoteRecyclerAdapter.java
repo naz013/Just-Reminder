@@ -84,6 +84,11 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         int style = item.getStyle();
         byte[] byteImage = item.getImage();
 
+        if (title.length() > 200) {
+            String substring = title.substring(0, 200);
+            title = substring + "...";
+        }
+
         holder.textView.setTypeface(cs.getTypeface(style));
         holder.noteBackground.setBackgroundColor(cs.getNoteLightColor(color));
         if (byteImage != null){

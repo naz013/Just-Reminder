@@ -959,10 +959,6 @@ public class ScreenManager extends AppCompatActivity
             thanksDialog(false).show();
         }
 
-        if (Module.isBeta() && !sPrefs.loadBoolean(Prefs.BETA_SHOWN) && hasChanges()) {
-            thanksDialog(true).show();
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }

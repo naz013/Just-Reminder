@@ -99,7 +99,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             limit = item.getLimit();
             count = item.getCount();
         } else {
-            Log.d(Constants.LOG_TAG, "--------------- nullable cursor ");
+            Log.d(Constants.LOG_TAG, "--------------- null item ");
             finish();
         }
 

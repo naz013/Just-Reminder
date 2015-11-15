@@ -439,6 +439,7 @@ public class Reminder {
         DataBase db = new DataBase(context);
         db.open();
         db.setDelay(id, delay);
+        db.updateReminderDateTime(id);
         if (addAlarm) new DelayReceiver().setAlarm(context, 1, id, delay);
         db.close();
     }

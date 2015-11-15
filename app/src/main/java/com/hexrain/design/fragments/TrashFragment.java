@@ -9,8 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,9 +23,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ReminderModel;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -46,9 +42,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     private DataBase DB;
     private ReminderDataProvider provider;
-
-    private boolean onCreate = false;
-    private boolean enableGrid = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -73,11 +66,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         DB.open();
         Cursor c = DB.getArchivedReminders();
         if (c.getCount() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
-        MenuItem item = menu.findItem(R.id.action_list);
-        if (item != null){
-            item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
-            item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
-        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -88,12 +76,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                 deleteAll();
                 loaderAdapter();
                 return true;
-            case R.id.action_list:
-                enableGrid = !enableGrid;
-                new SharedPrefs(getActivity()).saveBoolean(Prefs.LIST_GRID, enableGrid);
-                loaderAdapter();
-                getActivity().invalidateOptionsMenu();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -102,9 +84,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        enableGrid = sPrefs.loadBoolean(Prefs.LIST_GRID);
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
@@ -117,9 +96,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         currentList.setLayoutManager(mLayoutManager);
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -169,7 +146,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     public void onResume() {
         super.onResume();
         loaderAdapter();
-        onCreate = false;
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -203,9 +179,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         provider = new ReminderDataProvider(getActivity());
         provider.setCursor(DB.getArchivedReminders());
         reloadView();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        if (enableGrid) mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        currentList.setLayoutManager(mLayoutManager);
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setAdapter(adapter);

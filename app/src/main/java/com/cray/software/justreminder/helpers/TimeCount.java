@@ -196,6 +196,7 @@ public class TimeCount {
         int monthOfYear = 0;
         int year = 0;
         int repCode = 0;
+        int delay = 0;
         long repTime = 0;
         long repCount = 0;
         String type = null;
@@ -211,27 +212,26 @@ public class TimeCount {
             hourOfDay = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
             minuteOfHour = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
             seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
+            delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
             type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
             weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
         }
         long dateTime;
         if (year == 0 && monthOfYear == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            dateTime = 0;
+            dateTime = System.currentTimeMillis();
         } else {
-            long newDbTime;
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                newDbTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, 0);
+                dateTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                 if (type.endsWith("_last")){
-                    newDbTime = getLastMonthDayTime(hourOfDay, minuteOfHour, 0);
+                    dateTime = getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
                 } else {
-                    newDbTime = getNextMonthDayTime(hourOfDay, minuteOfHour, dayOfMonth, 0);
+                    dateTime = getNextMonthDayTime(hourOfDay, minuteOfHour, dayOfMonth, delay);
                 }
             } else {
-                newDbTime = getEventTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
-                        seconds, repTime, repCode, repCount, 0);
+                dateTime = getEventTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
+                        seconds, repTime, repCode, repCount, delay);
             }
-            dateTime = newDbTime;
         }
         return dateTime;
     }
