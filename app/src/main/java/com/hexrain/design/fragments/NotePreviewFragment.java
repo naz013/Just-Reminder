@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -131,7 +130,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 if (percent >= 60.0 && prevPercent < 60.0){
                     ViewUtils.hide(NotePreviewFragment.this, mFab, true);
                 }
-                if (percent <= 55.0 && prevPercent > 55.0){
+                if (percent <= 75.0 && prevPercent > 75.0){
                     ViewUtils.show(NotePreviewFragment.this, mFab, true);
                 }
                 prevPercent = percent;
@@ -165,29 +164,31 @@ public class NotePreviewFragment extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    Bitmap _bitmapScaled = img;
-                    _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                if (imageByte != null) {
+                    try {
+                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                        Bitmap _bitmapScaled = img;
+                        _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-                    if (!sdPathDr.exists()) {
-                        sdPathDr.mkdirs();
+                        File sdPath = Environment.getExternalStorageDirectory();
+                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
+                        if (!sdPathDr.exists()) {
+                            sdPathDr.mkdirs();
+                        }
+                        String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
+                        File f = new File(sdPathDr
+                                + File.separator + fileName);
+                        f.createNewFile();
+
+                        FileOutputStream fo = new FileOutputStream(f);
+                        fo.write(bytes.toByteArray());
+                        fo.close();
+
+                        startActivity(new Intent(NotePreviewFragment.this, ImagePreview.class)
+                                .putExtra("image", f.toString()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
-                    File f = new File(sdPathDr
-                            + File.separator + fileName);
-                    f.createNewFile();
-
-                    FileOutputStream fo = new FileOutputStream(f);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-
-                    startActivity(new Intent(NotePreviewFragment.this, ImagePreview.class)
-                            .putExtra("image", f.toString()));
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -326,12 +327,12 @@ public class NotePreviewFragment extends AppCompatActivity {
                 toolbar.setBackgroundColor(cSetter.getNoteColor(color));
                 toolbar.getBackground().setAlpha(0);
             } else {
-                imageView.setBackgroundColor(cSetter.getNoteLightColor(color));
+                imageView.setBackgroundColor(cSetter.getNoteColor(color));
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = QuickReturnUtils.dp2px(this, 56);
+                params.height = QuickReturnUtils.dp2px(this, 256);
                 imageView.setLayoutParams(params);
                 imageView.setVisibility(View.INVISIBLE);
-                paramsR.addRule(RelativeLayout.BELOW, R.id.noteText);
+                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
                 toolbar.setBackgroundColor(cSetter.getNoteColor(color));
                 toolbar.getBackground().setAlpha(255);
             }

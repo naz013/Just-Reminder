@@ -176,6 +176,7 @@ public class ReminderDataProvider {
                 String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
                 String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
+                String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
                 int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
                 int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
@@ -191,6 +192,7 @@ public class ReminderDataProvider {
                 double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
                 long repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
                 int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
+                int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
 
                 String repeat = null;
                 long due = 0;
@@ -230,7 +232,8 @@ public class ReminderDataProvider {
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
                 data.add(new ReminderModel(title, type, repeat, catColor, uuID, isDone, due, id,
-                        new double[]{lat, lon}, number, archived, viewType, categoryId, exclusion));
+                        new double[]{lat, lon}, number, archived, viewType, categoryId, exclusion,
+                        radius, melody));
             } while (c.moveToNext());
         }
     }
@@ -257,22 +260,72 @@ public class ReminderDataProvider {
         DataBase db = new DataBase(mContext);
         db.open();
         Map<String, Integer> map = getCategories(mContext);
-        Cursor s = db.getReminder(id);
-        if (s != null && s.moveToNext()){
-            String title = s.getString(s.getColumnIndex(Constants.COLUMN_TEXT));
-            String categoryId = s.getString(s.getColumnIndex(Constants.COLUMN_CATEGORY));
-            String exclusion = s.getString(s.getColumnIndex(Constants.COLUMN_EXTRA_3));
-            String uuID = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            int isDone = s.getInt(s.getColumnIndex(Constants.COLUMN_IS_DONE));
-            int archived = s.getInt(s.getColumnIndex(Constants.COLUMN_ARCHIVED));
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToNext()){
+            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+            String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
+            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+            int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+            int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+            int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
+            int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+            int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+            int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
+            int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
+            int archived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
+            double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+            double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+            long repCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+            int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
+            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
 
-            int viewType = VIEW_SHOPPING_LIST;
+            String repeat = null;
+            long due = 0;
+
+            if (type.startsWith(Constants.TYPE_MONTHDAY)){
+                due = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
+            } else if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
+                due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
+                        repCode, repCount, delay);
+
+                if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
+                        type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
+                        type.startsWith(Constants.TYPE_APPLICATION)) {
+                    repeat = new Interval(mContext).getInterval(repCode);
+                } else if (type.matches(Constants.TYPE_TIME)) {
+                    repeat = new Interval(mContext).getTimeInterval(repCode);
+                } else {
+                    if (!type.startsWith(Constants.TYPE_LOCATION) &&
+                            !type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                        repeat = mContext.getString(R.string.interval_zero);
+                    }
+                }
+            } else if (!type.matches(Constants.TYPE_SHOPPING_LIST)){
+                due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
+
+                if (weekdays.length() == 7) {
+                    repeat = ReminderUtils.getRepeatString(mContext, weekdays);
+                } else {
+                    repeat = mContext.getString(R.string.interval_zero);
+                }
+            }
+
+            int viewType = VIEW_REMINDER;
+            if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
 
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-            item = new ReminderModel(title, null, null, catColor, uuID, isDone, 0, id, null, null,
-                    archived, viewType, categoryId, exclusion);
+            item = new ReminderModel(title, type, repeat, catColor, uuID, isDone, due, id,
+                    new double[]{lat, lon}, number, archived, viewType, categoryId, exclusion,
+                    radius, melody);
         }
         return item;
     }

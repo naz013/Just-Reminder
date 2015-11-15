@@ -6,8 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,17 +37,17 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.datas.CategoryModel;
+import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.datas.ReminderNote;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -78,15 +76,19 @@ import java.util.Locale;
 public class ReminderPreviewFragment extends AppCompatActivity {
 
     private SharedPrefs sPrefs;
+
     private TextView task, statusText, time, location, group, type, number, repeat, melody;
     private SwitchCompat statusSwitch;
     private LinearLayout tasksContainer, notesContainer, mapContainer, background;
     private TextView listColor, taskText, taskNote, taskDate, noteText;
     private CheckBox checkDone;
     private ImageView imageView;
+    private CircularProgress progress;
+    private Toolbar toolbar;
+    private FloatingActionButton mFab;
 
     private long id;
-    private CircularProgress progress;
+    private ArrayList<Long> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +101,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         setContentView(R.layout.activity_reminder_preview_fragment);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
@@ -111,7 +113,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        FloatingActionButton mFab = new FloatingActionButton(this);
+        mFab = new FloatingActionButton(this);
         mFab.setSize(FloatingActionButton.SIZE_MINI);
         mFab.setIcon(R.drawable.ic_create_white_24dp);
         mFab.setColorNormal(cSetter.colorAccent());
@@ -152,7 +154,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Reminder.toggle(id, ReminderPreviewFragment.this, null);
-                loadData();
+                loadInfo();
             }
         });
 
@@ -192,11 +194,111 @@ public class ReminderPreviewFragment extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
+        loadInfo();
     }
 
-    private void loadData() {
-        new loadAsync(this, progress, id).execute();
+    private void loadInfo() {
+        ReminderModel item = ReminderDataProvider.getItem(this, id);
+        if (item != null){
+            if (item.getCompleted() == 1) {
+                statusSwitch.setChecked(false);
+                statusText.setText(getString(R.string.simple_disabled));
+            } else {
+                statusSwitch.setChecked(true);
+                statusText.setText(getString(R.string.simple_enabled));
+            }
+            task.setText(item.getTitle());
+            type.setText(ReminderUtils.getTypeString(this, item.getType()));
+            group.setText(CategoryModel.getCategoryTitle(this, item.getGroupId()));
+
+            long due = item.getDue();
+            if (due > 0) {
+                time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                String repeatStr = item.getRepeat();
+                if (repeatStr != null) repeat.setText(repeatStr);
+                else repeat.setVisibility(View.GONE);
+            } else {
+                time.setVisibility(View.GONE);
+                repeat.setVisibility(View.GONE);
+            }
+
+            double[] place = item.getPlace();
+            double lat = place[0];
+            double lon = place[1];
+            if (lat != 0.0 && lon != 0.0){
+                location.setText(lat + "\n" + lon);
+                mapContainer.setVisibility(View.VISIBLE);
+                location.setVisibility(View.VISIBLE);
+                GoogleMap map = ((SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map)).getMap();
+                map.getUiSettings().setMyLocationButtonEnabled(false);
+
+                LatLng pos = new LatLng(lat, lon);
+                ColorSetter cs = new ColorSetter(this);
+                map.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(item.getTitle())
+                        .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle()))
+                        .draggable(false));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                int radius = item.getRadius();
+                if (radius == -1) radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                if (radius != -1) {
+                    int[] circleColors = cs.getMarkerRadiusStyle();
+                    map.addCircle(new CircleOptions()
+                            .center(pos)
+                            .radius(radius)
+                            .strokeWidth(3f)
+                            .fillColor(ViewUtils.getColor(this, circleColors[0]))
+                            .strokeColor(ViewUtils.getColor(this, circleColors[1])));
+                }
+                String mLocation = LocationUtil.getAddress(this, lat, lon);
+                if (mLocation != null && !mLocation.matches("")) {
+                    location.setText(mLocation + "\n" + "("
+                            + String.format("%.5f", lat) + ", " +
+                            String.format("%.5f", lon) + ")");
+                }
+            } else {
+                location.setVisibility(View.GONE);
+                mapContainer.setVisibility(View.GONE);
+            }
+            String numberStr = item.getNumber();
+            if (numberStr != null && !numberStr.matches("")) number.setText(numberStr);
+            else number.setVisibility(View.GONE);
+
+            String melodyStr = item.getMelody();
+            Uri soundUri;
+            if (melodyStr != null && !melodyStr.matches("")) {
+                File sound = new File(melodyStr);
+                soundUri = Uri.fromFile(sound);
+            } else {
+                if (new SharedPrefs(this).loadBoolean(Prefs.CUSTOM_SOUND)) {
+                    String path = new SharedPrefs(this).loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+                    if (path != null) {
+                        File sound = new File(path);
+                        soundUri = Uri.fromFile(sound);
+                    } else {
+                        soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    }
+                } else {
+                    soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                }
+            }
+            File file = new File(soundUri.getPath());
+            melodyStr = file.getName();
+            melody.setText(melodyStr);
+
+            int catColor = item.getCatColor();
+            ColorSetter setter = new ColorSetter(this);
+            toolbar.setBackgroundColor(ViewUtils.getColor(this, setter.getCategoryColor(catColor)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
+            }
+            mFab.setColorNormal(setter.colorAccent(catColor));
+            mFab.setColorPressed(setter.colorAccent(catColor));
+
+            new loadOtherData(this, progress, id).execute();
+        }
     }
 
     private void setDrawables() {
@@ -256,8 +358,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    ArrayList<Long> list;
-
     public void showDialog(){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -297,255 +397,6 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    public class loadAsync extends AsyncTask<Void, Void, String[]>{
-
-        private Context mContext;
-        private CircularProgress mProgress;
-        private long mId;
-        private double lat = 0.0, lon = 0.0;
-        private int radius = -1;
-
-        public loadAsync(Context context, CircularProgress circularProgress, long id){
-            this.mContext = context;
-            this.mProgress = circularProgress;
-            this.mId = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgress.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String[] doInBackground(Void... params) {
-            DataBase dataBase = new DataBase(mContext);
-            dataBase.open();
-            Interval mInterval = new Interval(mContext);
-            TimeCount mCount = new TimeCount(mContext);
-            Cursor c = dataBase.getReminder(mId);
-            String doneStr = null, title = null, typeStr = null, timeStr = null, groupStr = null,
-                    locationLat = null, locationLon = null, numberStr = null, repeatStr = null,
-                    melodyStr = null;
-            if (c != null && c.moveToFirst()){
-                title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                String categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-                String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-                int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                long repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-                lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                long repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                int delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-
-                Uri soundUri;
-                if (melody != null && !melody.matches("")){
-                    File sound = new File(melody);
-                    soundUri = Uri.fromFile(sound);
-                } else {
-                    if (new SharedPrefs(mContext).loadBoolean(Prefs.CUSTOM_SOUND)) {
-                        String path = new SharedPrefs(mContext).loadPrefs(Prefs.CUSTOM_SOUND_FILE);
-                        if (path != null) {
-                            File sound = new File(path);
-                            soundUri = Uri.fromFile(sound);
-                        } else {
-                            soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                        }
-                    } else {
-                        soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                    }
-                }
-                File file = new File(soundUri.getPath());
-                melodyStr = file.getName();
-
-                Cursor cf = dataBase.getCategory(categoryId);
-                if (cf != null && cf.moveToFirst()) {
-                    groupStr = cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT));
-                }
-                if (cf != null) cf.close();
-
-                if (isDone == 1) doneStr = "done";
-                else doneStr = null;
-
-                typeStr = ReminderUtils.getTypeString(mContext, type);
-                boolean is24 = new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT);
-
-                if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    if (type.matches(Constants.TYPE_CALL) ||
-                            type.matches(Constants.TYPE_LOCATION_CALL) ||
-                            type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_MESSAGE) ||
-                            type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                            type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.startsWith(Constants.TYPE_SKYPE)){
-                        numberStr = number;
-                    } else if (type.matches(Constants.TYPE_APPLICATION)){
-                        PackageManager packageManager = mContext.getPackageManager();
-                        ApplicationInfo applicationInfo = null;
-                        try {
-                            applicationInfo = packageManager.getApplicationInfo(number, 0);
-                        } catch (final PackageManager.NameNotFoundException ignored) {}
-                        final String name = (String)((applicationInfo != null) ?
-                                packageManager.getApplicationLabel(applicationInfo) : "???");
-                        numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-                        numberStr = number;
-                    }
-
-                    long time = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
-                            repCode, repCount, delay);
-
-                    if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
-                            type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
-                            type.startsWith(Constants.TYPE_APPLICATION)) {
-                        repeatStr = mInterval.getInterval(repCode);
-                    } else if (type.matches(Constants.TYPE_TIME)) {
-                        repeatStr = mInterval.getTimeInterval(repCode);
-                    } else {
-                        repeatStr = mContext.getString(R.string.interval_zero);
-                    }
-
-                    String[] dT = mCount.
-                            getNextDateTime(time);
-                    if (lat != 0.0 || lon != 0.0) {
-                        locationLat = String.format("%.5f", lat);
-                        locationLon = String.format("%.5f", lon);
-                    } else {
-                        timeStr = dT[0] + "\n" + dT[1];
-                    }
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                    if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    }
-
-                    long time = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar.set(Calendar.MINUTE, minute);
-                    calendar.setTimeInMillis(time);
-                    String date = TimeUtil.dateFormat.format(calendar.getTime());
-
-                    repeatStr = getString(R.string.string_by_day_of_month);
-                    timeStr = date + "\n" + TimeUtil.getTime(calendar.getTime(), is24);
-                } else {
-                    if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
-                        numberStr = number;
-                        String name = Contacts.getContactNameFromNumber(number, mContext);
-                        if (name != null) numberStr = name + "\n" + number;
-                    }
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar.set(Calendar.MINUTE, minute);
-
-                    if (weekdays.length() == 7) {
-                        repeatStr = ReminderUtils.getRepeatString(mContext, weekdays);
-                    }
-                    timeStr = TimeUtil.getTime(calendar.getTime(), is24);
-                }
-            }
-            return new String[]{doneStr, title, typeStr, groupStr, timeStr,
-                    numberStr, repeatStr, locationLat + "\n" + locationLon, melodyStr};
-        }
-
-        @Override
-        protected void onPostExecute(String[] aVoid) {
-            super.onPostExecute(aVoid);
-            mProgress.setVisibility(View.GONE);
-            if (aVoid != null && aVoid.length > 0){
-                String done = aVoid[0];
-                if (done != null && done.matches("done")) {
-                    statusSwitch.setChecked(false);
-                    statusText.setText(getString(R.string.simple_disabled));
-                } else {
-                    statusSwitch.setChecked(true);
-                    statusText.setText(getString(R.string.simple_enabled));
-                }
-                task.setText(aVoid[1]);
-                type.setText(aVoid[2]);
-                group.setText(aVoid[3]);
-                String timeStr = aVoid[4];
-                if (timeStr != null) {
-                    time.setText(timeStr);
-                    location.setVisibility(View.GONE);
-                    repeat.setText(aVoid[6]);
-                } else {
-                    location.setText(aVoid[7]);
-                    time.setVisibility(View.GONE);
-                    repeat.setVisibility(View.GONE);
-                    mapContainer.setVisibility(View.VISIBLE);
-                    GoogleMap map = ((SupportMapFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.map)).getMap();
-                    map.getUiSettings().setMyLocationButtonEnabled(false);
-
-                    if (lon != 0 && lat != 0) {
-                        LatLng pos = new LatLng(lat, lon);
-                        ColorSetter cs = new ColorSetter(mContext);
-                        map.addMarker(new MarkerOptions()
-                                .position(pos)
-                                .title(aVoid[1])
-                                .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle()))
-                                .draggable(false));
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
-                        if (radius == -1) radius = new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS);
-                        if (radius != -1) {
-                            int[] circleColors = cs.getMarkerRadiusStyle();
-                            map.addCircle(new CircleOptions()
-                                    .center(pos)
-                                    .radius(radius)
-                                    .strokeWidth(3f)
-                                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
-                                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
-                        }
-                    }
-                    String _Location = LocationUtil.getAddress(mContext, lat, lon);
-                    if (_Location != null && !_Location.matches("")) {
-                        location.setText(_Location + "\n" + "("
-                                + String.format("%.5f", lat) + ", " +
-                                String.format("%.5f", lon) + ")");
-                    }
-                }
-                String numberStr = aVoid[5];
-                if (numberStr != null && !numberStr.matches("")) number.setText(numberStr);
-                else number.setVisibility(View.GONE);
-
-                String melodyStr = aVoid[8];
-                if (melodyStr != null && !melodyStr.matches("")) melody.setText(melodyStr);
-                else melody.setVisibility(View.GONE);
-            }
-
-            new loadOtherData(mContext, mProgress, mId).execute();
-        }
     }
 
     public class loadOtherData extends AsyncTask<Void, Void, ReminderNote>{
@@ -648,7 +499,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
                             new SwitchTaskAsync(mContext, reminderNote.getTaskListId(),
                                     reminderNote.getTaskIdentifier(), isChecked, null).execute();
-                            loadData();
+                            loadInfo();
                         }
                     });
                     background.setOnClickListener(new View.OnClickListener() {

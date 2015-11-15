@@ -35,6 +35,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.Help;
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
@@ -47,7 +48,6 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.AddBirthday;
-import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;
@@ -956,7 +956,7 @@ public class ScreenManager extends AppCompatActivity
         showRate();
 
         if (Module.isPro() && !sPrefs.loadBoolean(Prefs.THANKS_SHOWN) && hasChanges()) {
-            thanksDialog(false).show();
+            thanksDialog().show();
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -1204,21 +1204,16 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
-    protected Dialog thanksDialog(final boolean isBeta) {
+    protected Dialog thanksDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle(isBeta ? getString(R.string.beta_version) : getString(R.string.thank_dialog_title))
-                .setMessage(isBeta ? getString(R.string.beta_version_message) : (getString(R.string.thank_dialog_message) + " " +
+                .setTitle(getString(R.string.thank_dialog_title))
+                .setMessage((getString(R.string.thank_dialog_message) + " " +
                         getString(R.string.thank_dialog_greeting)))
                 .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        if (isBeta) {
-                            new SharedPrefs(ScreenManager.this)
-                                    .saveBoolean(Prefs.BETA_SHOWN, true);
-                        } else {
-                            new SharedPrefs(ScreenManager.this)
-                                    .saveBoolean(Prefs.THANKS_SHOWN, true);
-                        }
+                        new SharedPrefs(ScreenManager.this)
+                                .saveBoolean(Prefs.THANKS_SHOWN, true);
                     }
                 })
                 .setCancelable(false)

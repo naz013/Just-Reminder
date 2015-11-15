@@ -16,15 +16,15 @@ package com.cray.software.justreminder.datas;
  * limitations under the License.
  */
 public class ReminderModel {
-    private final String title, type, repeat, uuId, number, groupId, exclusion;
-    private final int completed, archived, catColor, viewType;
+    private final String title, type, repeat, uuId, number, groupId, exclusion, melody;
+    private final int completed, archived, catColor, viewType, radius;
     private final long due, id;
     private final double[] place;
     private boolean selected;
 
     public ReminderModel(String title, String type, String repeat, int catColor, String uuId,
                          int completed, long due, long id, double[] place, String number, int archived,
-                         int viewType, String groupId, String exclusion){
+                         int viewType, String groupId, String exclusion, int radius, String melody){
         this.catColor = catColor;
         this.viewType = viewType;
         this.title = title;
@@ -40,6 +40,16 @@ public class ReminderModel {
         this.groupId = groupId;
         this.exclusion = exclusion;
         this.selected = false;
+        this.radius = radius;
+        this.melody = melody;
+    }
+
+    public String getMelody() {
+        return melody;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 
     public String getExclusion() {

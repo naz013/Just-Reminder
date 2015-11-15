@@ -1,8 +1,10 @@
 package com.cray.software.justreminder.datas;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.interfaces.Constants;
 
 /**
  * Reminder category item constructor.
@@ -36,6 +38,19 @@ public class CategoryModel {
         db.open();
         db.updateCategoryColor(id, code);
         db.close();
+    }
+
+    public static String getCategoryTitle(Context context, String id){
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.getCategory(id);
+        String title = null;
+        if (c != null && c.moveToFirst()){
+            title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+        }
+        if (c != null) c.close();
+        db.close();
+        return title;
     }
 
     public long getId() {

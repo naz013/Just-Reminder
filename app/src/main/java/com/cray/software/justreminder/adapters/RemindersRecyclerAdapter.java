@@ -188,7 +188,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))){
                 holder.listHeader.setVisibility(View.GONE);
             } else {
-                if (due == 0){
+                if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
                     simpleDate = mContext.getString(R.string.permanent_reminders);
                 } else {
                     if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis())))
