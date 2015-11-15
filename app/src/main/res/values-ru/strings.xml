@@ -755,7 +755,7 @@
     <string name="color_amber">Янтарь</string>
     <string name="color_cyan">Голубой</string>
     <string name="select_file">Выбрать файл</string>
-    <string name="_today">Today</string>
-    <string name="_tomorrow">Tomorrow</string>
-    <string name="permanent_reminders">Permanent reminders</string>
+    <string name="_today">Сегодня</string>
+    <string name="_tomorrow">Завтра</string>
+    <string name="permanent_reminders">Постоянные напоминания</string>
 </resources>

@@ -755,7 +755,7 @@
     <string name="color_amber">Bernstein</string>
     <string name="color_cyan">Cyan</string>
     <string name="select_file">Datei aussuchen</string>
-    <string name="_today">Today</string>
-    <string name="_tomorrow">Tomorrow</string>
-    <string name="permanent_reminders">Permanent reminders</string>
+    <string name="_today">Heute</string>
+    <string name="_tomorrow">Morgen</string>
+    <string name="permanent_reminders">Permanent Mahnungen</string>
 </resources>

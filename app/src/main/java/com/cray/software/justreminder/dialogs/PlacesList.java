@@ -3,8 +3,10 @@ package com.cray.software.justreminder.dialogs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
@@ -84,7 +87,13 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             @Override
             public void onClick(View v) {
                 if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
-                    startActivity(new Intent(PlacesList.this, NewPlace.class));
+                    Permissions permissions = new Permissions(PlacesList.this);
+                    if (permissions.checkPermission(Permissions.ACCESS_COURSE_LOCATION)) {
+                        startActivity(new Intent(PlacesList.this, NewPlace.class));
+                    } else {
+                        permissions.requestPermission(PlacesList.this, new String[]{Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_FINE_LOCATION}, 101);
+                    }
                 }
             }
         });
@@ -177,5 +186,18 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    startActivity(new Intent(PlacesList.this, NewPlace.class));
+                } else {
+                    new Permissions(PlacesList.this).showInfo(PlacesList.this, Permissions.READ_CALENDAR);
+                }
+                break;
+        }
     }
 }
