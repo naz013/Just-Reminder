@@ -14,11 +14,6 @@
         android:icon="@drawable/ic_cached_white_24dp"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_order"
-        android:title="@string/menu_order_by"
-        android:icon="@drawable/ic_sort_white_24dp"
-        app:showAsAction="never" />
-
     <item android:id="@+id/action_filter"
         android:title="@string/simple_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"

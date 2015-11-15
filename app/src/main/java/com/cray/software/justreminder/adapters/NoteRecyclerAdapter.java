@@ -3,12 +3,12 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -19,6 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
@@ -37,19 +38,20 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-        TextView textView;
-        ViewGroup container;
-        LinearLayout noteBackground;
-        ImageView noteImage;
+        public TextView textView;
+        public ImageView noteImage;
+        public CardView itemCard;
 
         public ViewHolder(View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.note);
-            container = (ViewGroup) v.findViewById(R.id.container);
-            noteBackground = (LinearLayout) v.findViewById(R.id.noteBackground);
             noteImage = (ImageView) v.findViewById(R.id.noteImage);
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
+            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
         @Override
@@ -84,13 +86,13 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         int style = item.getStyle();
         byte[] byteImage = item.getImage();
 
-        if (title.length() > 200) {
+        if (title.length() > 500) {
             String substring = title.substring(0, 200);
-            title = substring + "...";
+            title = substring + " ...";
         }
 
         holder.textView.setTypeface(cs.getTypeface(style));
-        holder.noteBackground.setBackgroundColor(cs.getNoteLightColor(color));
+        holder.itemCard.setCardBackgroundColor(cs.getNoteLightColor(color));
         if (byteImage != null){
             Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
             if (photo != null){

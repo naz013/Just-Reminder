@@ -950,52 +950,26 @@ public class DataBase {
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public Cursor queryGroup(String categoty) throws SQLException {
+    public Cursor queryGroup(String category) throws SQLException {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
-        String order = null;
-        if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
-            order = Constants.COLUMN_FEATURE_TIME + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_Z_A)){
-            order = Constants.COLUMN_FEATURE_TIME + " DESC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z)){
-            order = Constants.COLUMN_IS_DONE + " ASC, " +
-                    Constants.COLUMN_FEATURE_TIME + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A)){
-            order = Constants.COLUMN_IS_DONE + " ASC, " +
-                    Constants.COLUMN_FEATURE_TIME + " DESC";
-        }
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_CATEGORY  + "='" + categoty + "'"
+        String order = Constants.COLUMN_IS_DONE + " ASC, " +
+                Constants.COLUMN_FEATURE_TIME + " ASC";
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_CATEGORY  + "='" + category + "'"
                 + " AND "+ Constants.COLUMN_ARCHIVED + "='"
                 + 0 + "'", null, null, null, order);
     }
 
     public Cursor queryGroup() throws SQLException {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.LIST_ORDER);
-        String order;
-        if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
-            order = Constants.COLUMN_FEATURE_TIME + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_Z_A)){
-            order = Constants.COLUMN_FEATURE_TIME + " DESC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z)){
-            order = Constants.COLUMN_IS_DONE + " ASC, " +
-                    Constants.COLUMN_FEATURE_TIME + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A)){
-            order = Constants.COLUMN_IS_DONE + " ASC, " +
-                    Constants.COLUMN_FEATURE_TIME + " DESC";
-        } else {
-            order = Constants.COLUMN_IS_DONE + " ASC, " +
-                    Constants.COLUMN_FEATURE_TIME + " ASC";
-        }
+        String order = Constants.COLUMN_IS_DONE + " ASC, " +
+                Constants.COLUMN_FEATURE_TIME + " ASC";
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getArchivedReminders() throws SQLException {
         openGuard();
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 1 + "'", null, null, null, null);
+        String order = Constants.COLUMN_FEATURE_TIME + " ASC";
+        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 1 + "'", null, null, null, order);
     }
 
     public Cursor getActiveReminders() throws SQLException {

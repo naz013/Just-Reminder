@@ -11,12 +11,12 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 
 import java.util.ArrayList;
 
@@ -93,7 +93,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
-                R.layout.list_item_note);
+                R.layout.list_item_note_widget);
         cs = new ColorSetter(mContext);
         rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(color.get(i)));
         byte[] byteImage = images.get(i);
@@ -105,10 +105,9 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         } else rView.setViewVisibility(R.id.imageView, View.GONE);
 
         SharedPrefs prefs = new SharedPrefs(mContext);
-        SyncHelper helper = new SyncHelper(mContext);
         String title = note.get(i);
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            title = helper.decrypt(title);
+            title = SyncHelper.decrypt(title);
         }
 
         rView.setTextViewText(R.id.note, title);

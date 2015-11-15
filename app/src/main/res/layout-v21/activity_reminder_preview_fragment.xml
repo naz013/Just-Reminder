@@ -73,7 +73,7 @@
             android:layout_height="50dp"
             android:layout_marginRight="5dp"
             android:clickable="false"
-            android:transitionName="switch"
+            android:transitionName="toolbar"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"/>
 

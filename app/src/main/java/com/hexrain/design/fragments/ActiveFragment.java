@@ -92,9 +92,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                     mCallbacks.onNavigationDrawerItemSelected(ScreenManager.VOICE_RECOGNIZER);
                 }
                 break;
-            case R.id.action_order:
-                showDialog();
-                break;
             case R.id.action_filter:
                 filterDialog();
                 break;
@@ -262,33 +259,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         alert.show();
     }
 
-    private void showDialog(){
-        final CharSequence[] items = {getString(R.string.sort_item_by_date_a_z),
-                getString(R.string.sort_item_by_date_z_a),
-                getString(R.string.sort_item_by_date_without_a_z),
-                getString(R.string.sort_item_by_date_without_z_a)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.menu_order_by));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(getActivity());
-                if (item == 0) {
-                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_A_Z);
-                } else if (item == 1) {
-                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_Z_A);
-                } else if (item == 2) {
-                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
-                } else if (item == 3) {
-                    prefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_Z_A);
-                }
-                dialog.dismiss();
-                loaderAdapter(null);
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     private void startSync(){
         new SyncTask(getActivity(), this).execute();
     }
@@ -333,7 +303,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
             intent.putExtra(Constants.EDIT_ID, id);
-            String transitionName = "switch";
+            String transitionName = "toolbar";
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                 intent = new Intent(getActivity(), ShoppingListPreview.class);
                 intent.putExtra(Constants.EDIT_ID, id);

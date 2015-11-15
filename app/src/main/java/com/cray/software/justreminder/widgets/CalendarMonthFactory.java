@@ -30,8 +30,6 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
     private ArrayList<WidgetItem> pagerData = new ArrayList<>();
     private Context context;
     private int widgetID;
-    private int SUNDAY = 1;
-    private int startDayOfWeek = SUNDAY;
     private int mDay;
     private int mMonth;
     private int mYear;
@@ -71,6 +69,9 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         // Add dates of first week from previous month
         int weekdayOfFirstDate = firstDateOfMonth.getWeekDay();
 
+        SharedPrefs prefs = new SharedPrefs(context);
+        int startDayOfWeek = prefs.loadInt(Prefs.START_DAY) + 1;
+
         // If weekdayOfFirstDate smaller than startDayOfWeek
         // For e.g: weekdayFirstDate is Monday, startDayOfWeek is Tuesday
         // increase the weekday of FirstDate because it's in the future
@@ -79,14 +80,8 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         }
 
         while (weekdayOfFirstDate > 0) {
-            SharedPrefs prefs = new SharedPrefs(context);
-            int temp = startDayOfWeek;
-            if (prefs.loadInt(Prefs.START_DAY) == 1){
-                temp = startDayOfWeek + 1;
-            }
-
             DateTime dateTime = firstDateOfMonth.minusDays(weekdayOfFirstDate
-                    - temp);
+                    - startDayOfWeek);
             if (!dateTime.lt(firstDateOfMonth)) {
                 break;
             }

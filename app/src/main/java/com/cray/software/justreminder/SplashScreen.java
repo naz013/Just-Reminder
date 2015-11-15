@@ -80,7 +80,6 @@ public class SplashScreen extends Activity{
             uiEd.putString(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
             uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
             uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
-            uiEd.putString(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
             uiEd.putInt(Prefs.LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.LOCATION_RADIUS, 25);
@@ -148,7 +147,6 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Prefs.EXTENDED_BUTTON, true);
             uiEd.putBoolean(Prefs.ITEM_PREVIEW, true);
             uiEd.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
-            uiEd.putBoolean(Prefs.LIST_GRID, false);
             uiEd.putBoolean(Prefs.EXTRA_OPTIONS, false);
             uiEd.putBoolean(Prefs.BIRTHDAY_PERMANENT, false);
             uiEd.putBoolean(Prefs.NOTES_LIST_STYLE, false);
@@ -230,9 +228,6 @@ public class SplashScreen extends Activity{
         sPrefs = new SharedPrefs(SplashScreen.this);
         if (!sPrefs.isString(Prefs.CURRENT_COLOR)){
             sPrefs.savePrefs(Prefs.CURRENT_COLOR, "5");
-        }
-        if (!sPrefs.isString(Prefs.LIST_ORDER)){
-            sPrefs.savePrefs(Prefs.LIST_ORDER, Constants.ORDER_DATE_WITHOUT_DISABLED_A_Z);
         }
         if (!sPrefs.isString(Prefs.BIRTHDAY_COLOR)){
             sPrefs.savePrefs(Prefs.BIRTHDAY_COLOR, "2");
@@ -329,9 +324,6 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.RATE_SHOW)){
             sPrefs.saveBoolean(Prefs.RATE_SHOW, false);
-        }
-        if (!sPrefs.isString(Prefs.LIST_GRID)){
-            sPrefs.saveBoolean(Prefs.LIST_GRID, false);
         }
         if (!sPrefs.isString(Prefs.AUTO_LANGUAGE)){
             sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, true);

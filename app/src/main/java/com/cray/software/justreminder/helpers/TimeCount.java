@@ -218,7 +218,7 @@ public class TimeCount {
         }
         long dateTime;
         if (year == 0 && monthOfYear == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            dateTime = System.currentTimeMillis();
+            dateTime = 0;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
                 dateTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);

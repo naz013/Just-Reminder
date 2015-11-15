@@ -27,7 +27,6 @@ public class Prefs {
     public static final String DRIVE_USER = "ggl_user";
     public static final String SCREEN = "screen";
     public static final String USE_DARK_THEME = "dark_theme";
-    public static final String LIST_GRID = "list_grid";
     public static final String MAP_TYPE = "map_type";
     public static final String LOCATION_RADIUS = "radius";
     public static final String TRACKING_NOTIFICATION = "tracking_notification";
@@ -82,7 +81,6 @@ public class Prefs {
     public static final String EXPORT_TO_STOCK = "export_to_stock";
     public static final String APPLICATION_AUTO_LAUNCH = "application_auto_launch";
     public static final String HIDE_TRANSLATION_MENU = "translation_menu";
-    public static final String LIST_ORDER = "list_ordering";
     public static final String NOTES_ORDER = "notes_ordering";
     public static final String TASKS_ORDER = "tasks_ordering";
     public static final String REMINDERS_IN_CALENDAR = "reminders_in_calendar";
@@ -104,7 +102,6 @@ public class Prefs {
     public static final String EXTENDED_BUTTON = "extended_button";
     public static final String ITEM_PREVIEW = "item_preview";
     public static final String THANKS_SHOWN = "thanks_shown";
-    public static final String BETA_SHOWN = "beta_shown";
     public static final String LAST_CALENDAR_VIEW = "last_calendar_view";
     public static final String UI_CHANGED = "ui_changed";
     public static final String TASK_CHANGED = "task_changed";

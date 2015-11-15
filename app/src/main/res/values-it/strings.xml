@@ -757,4 +757,5 @@
     <string name="select_file">Select file</string>
     <string name="_today">Today</string>
     <string name="_tomorrow">Tomorrow</string>
+    <string name="permanent_reminders">Permanent reminders</string>
 </resources>

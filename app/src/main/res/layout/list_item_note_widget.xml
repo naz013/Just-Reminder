@@ -24,7 +24,6 @@
                 android:scaleType="centerCrop"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:transitionName="image"
                 android:id="@+id/noteImage"/>
 
             <TextView
