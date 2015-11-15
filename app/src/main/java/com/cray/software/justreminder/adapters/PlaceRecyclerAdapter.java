@@ -2,11 +2,11 @@ package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -14,6 +14,7 @@ import com.cray.software.justreminder.datas.MarkerModel;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
 public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder> {
@@ -34,19 +35,19 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        TextView textView;
-        ViewGroup container;
-        RelativeLayout background;
+        public TextView textView;
+        public CardView itemCard;
 
         public ViewHolder(View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.textView);
-            container = (ViewGroup) v.findViewById(R.id.container);
-            background = (RelativeLayout) v.findViewById(R.id.background);
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
             textView.setTypeface(typeface);
-            background.setBackgroundResource(cs.getCardDrawableStyle());
+            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
         @Override

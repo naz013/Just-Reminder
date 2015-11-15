@@ -1,19 +1,19 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.datas.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 
 public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapter.ViewHolder> {
 
@@ -25,21 +25,17 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     public FileRecyclerAdapter(Context context, FileDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
-        SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        ViewGroup container;
-        RelativeLayout background;
-        TextView fileName, lastModified, task, type, number, date, time, repeat;
+        public CardView itemCard;
+        public TextView fileName, lastModified, task, type, number, date, time, repeat;
 
         public ViewHolder(View v) {
             super(v);
-            container = (ViewGroup) v.findViewById(R.id.container);
-            background = (RelativeLayout) v.findViewById(R.id.background);
             fileName = (TextView) v.findViewById(R.id.fileName);
             lastModified = (TextView) v.findViewById(R.id.lastModified);
             task = (TextView) v.findViewById(R.id.task);
@@ -48,19 +44,23 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
             date = (TextView) v.findViewById(R.id.date);
             time = (TextView) v.findViewById(R.id.time);
             repeat = (TextView) v.findViewById(R.id.repeat);
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
+            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), background);
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), itemCard);
         }
 
         @Override
         public boolean onLongClick(View v) {
             if (mEventListener != null)
-                mEventListener.onItemLongClicked(getAdapterPosition(), background);
+                mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
             return true;
         }
     }
@@ -78,8 +78,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
-
         final FileModel item = provider.getData().get(position);
 
         holder.task.setText(item.getTitle());

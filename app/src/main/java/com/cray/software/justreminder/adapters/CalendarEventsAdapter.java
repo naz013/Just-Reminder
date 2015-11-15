@@ -1,11 +1,11 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -15,6 +15,7 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -44,9 +45,8 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView eventText, eventColor, eventType, eventDate, eventNumber;
-        ViewGroup container;
-        RelativeLayout background;
+        public TextView eventText, eventColor, eventType, eventDate, eventNumber;
+        public CardView itemCard;
 
         public ViewHolder(View v) {
             super(v);
@@ -55,21 +55,23 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             eventType = (TextView) v.findViewById(R.id.eventType);
             eventDate = (TextView) v.findViewById(R.id.eventDate);
             eventNumber = (TextView) v.findViewById(R.id.eventNumber);
-            container = (ViewGroup) v.findViewById(R.id.container);
-            background = (RelativeLayout) v.findViewById(R.id.background);
-            container.setOnClickListener(this);
-            container.setOnLongClickListener(this);
+            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+
+            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), background);
+            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), itemCard);
         }
 
         @Override
         public boolean onLongClick(View v) {
             if (mEventListener != null)
-                mEventListener.onItemLongClicked(getAdapterPosition(), background);
+                mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
             return true;
         }
     }
@@ -84,8 +86,6 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.background.setBackgroundResource(cs.getCardDrawableStyle());
-
         final EventsDataProvider.EventsItem item = mDatas.get(position);
         EventsDataProvider.Type type = item.getInn();
         boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
