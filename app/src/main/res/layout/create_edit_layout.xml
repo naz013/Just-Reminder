@@ -22,17 +22,17 @@
         android:gravity="center|top"
         android:id="@+id/layoutContainer">
 
-        <include layout="@layout/call_layout"/>
-        <include layout="@layout/weekdays_reminder_layout"/>
-        <include layout="@layout/message_layout"/>
-        <include layout="@layout/date_layout"/>
-        <include layout="@layout/time_layout"/>
-        <include layout="@layout/location_reminder_layout"/>
-        <include layout="@layout/skype_layout"/>
-        <include layout="@layout/application_layout"/>
+        <include layout="@layout/reminder_call_layout"/>
+        <include layout="@layout/reminder_weekdays_layout"/>
+        <include layout="@layout/reminder_message_layout"/>
+        <include layout="@layout/reminder_date_layout"/>
+        <include layout="@layout/reminder_time_layout"/>
+        <include layout="@layout/reminder_location_layout"/>
+        <include layout="@layout/reminder_skype_layout"/>
+        <include layout="@layout/reminder_application_layout"/>
         <include layout="@layout/reminder_day_of_month_layout"/>
-        <include layout="@layout/location_out_reminder_layout"/>
-        <include layout="@layout/shopping_layout"/>
+        <include layout="@layout/reminder_location_out_layout"/>
+        <include layout="@layout/reminder_shopping_list_layout"/>
 
         </LinearLayout>
 

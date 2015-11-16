@@ -58,11 +58,6 @@
                     fab:fab_labelStyle="@style/menu_labels_style"
                     fab:fab_labelsPosition="left"/>
 
-                <io.codetail.widget.RevealLinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
                 <android.support.v7.widget.CardView
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -105,13 +100,6 @@
                     </LinearLayout>
 
                 </android.support.v7.widget.CardView>
-
-                </io.codetail.widget.RevealLinearLayout>
-
-                <io.codetail.widget.RevealLinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
 
                 <android.support.v7.widget.CardView
                     android:orientation="vertical"
@@ -168,13 +156,6 @@
 
                 </android.support.v7.widget.CardView>
 
-                </io.codetail.widget.RevealLinearLayout>
-
-                <io.codetail.widget.RevealLinearLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
                 <android.support.v7.widget.CardView
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -229,8 +210,6 @@
                     </RelativeLayout>
 
                 </android.support.v7.widget.CardView>
-
-                </io.codetail.widget.RevealLinearLayout>
 
             </RelativeLayout>
 

@@ -25,6 +25,7 @@
             android:textSize="@dimen/create_text_size_secondary"
             android:hint="@string/message_field_hint"
             android:textColorHint="@color/colorWhite"
+            android:maxLength="120"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"
