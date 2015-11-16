@@ -1,6 +1,5 @@
 package com.hexrain.design.fragments;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,22 +15,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.datas.ReminderModel;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class ShoppingListPreview extends AppCompatActivity {
 
-    private TextView shopTitle;
+    private TextView shopTitle, time;
     private RecyclerView todoList;
     private Toolbar toolbar;
     private FloatingActionButton mFab;
@@ -40,7 +41,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     private ColorSetter cSetter;
 
     private long id;
-    private boolean isHIdden = false;
+    private boolean isHidden = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +63,18 @@ public class ShoppingListPreview extends AppCompatActivity {
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
         shopTitle = (TextView) findViewById(R.id.shopTitle);
+        time = (TextView) findViewById(R.id.time);
+        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
+        else
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_grey600_24dp, 0, 0, 0);
+        time.setVisibility(View.GONE);
 
         CheckBox showHidden = (CheckBox) findViewById(R.id.showHidden);
         showHidden.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isHIdden = isChecked;
+                isHidden = isChecked;
                 loadData();
             }
         });
@@ -85,9 +92,7 @@ public class ShoppingListPreview extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (id != 0) {
-                    Intent intentId = new Intent(ShoppingListPreview.this, ReminderManager.class);
-                    intentId.putExtra(Constants.EDIT_ID, id);
-                    startActivity(intentId);
+                    Reminder.edit(id, ShoppingListPreview.this);
                 }
             }
         });
@@ -120,6 +125,13 @@ public class ShoppingListPreview extends AppCompatActivity {
         ReminderModel item = ReminderDataProvider.getItem(this, id);
         if (item != null) {
             shopTitle.setText(item.getTitle());
+            long due = item.getDue();
+            if (due > 0) {
+                time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                time.setVisibility(View.VISIBLE);
+            } else {
+                time.setVisibility(View.GONE);
+            }
             int catColor = item.getCatColor();
             toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.getCategoryColor(catColor)));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -131,7 +143,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     }
 
     private void loadData() {
-        provider = new ShoppingListDataProvider(this, id, isHIdden ? ShoppingList.DELETED : ShoppingList.ACTIVE);
+        provider = new ShoppingListDataProvider(this, id, isHidden ? ShoppingList.DELETED : ShoppingList.ACTIVE);
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {

@@ -315,6 +315,9 @@ public class ReminderDataProvider {
                 } else {
                     repeat = mContext.getString(R.string.interval_zero);
                 }
+            } else {
+                due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime,
+                        repCode, repCount, delay);
             }
 
             int viewType = VIEW_REMINDER;

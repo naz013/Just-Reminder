@@ -20,31 +20,116 @@
         android:choiceMode="singleChoice"
         android:fastScrollEnabled="true"/>
 
-    <RelativeLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/patch_card_bg"
         android:layout_alignParentTop="true"
         android:id="@+id/cardContainer">
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/shopEdit"
-            android:layout_centerVertical="true"
-            android:hint="@string/add_item"
-            android:lines="2"
-            android:background="@android:color/transparent"
-            android:layout_toLeftOf="@+id/addButton" />
+            android:padding="8dp"
+            android:orientation="vertical">
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/addButton"
-            android:background="@android:color/transparent"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_add_grey600_24dp"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/shopTimeIcon"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_access_time_grey600_24dp"
+                    android:layout_alignParentLeft="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_reminder"
+                    android:ems="10"
+                    android:gravity="center|left"
+                    android:textSize="@dimen/create_text_size_normal"
+                    android:layout_toRightOf="@+id/shopTimeIcon"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:id="@+id/shoppingNoTime"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_toRightOf="@+id/shopTimeIcon"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+                    android:id="@+id/shoppingTimeContainer"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tue, 5 Nov 2015"
+                        android:ems="10"
+                        android:gravity="center|left"
+                        android:layout_toLeftOf="@+id/timeField"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:id="@+id/shoppingDate" />
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|right"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:text="14:05"
+                        android:layout_alignParentRight="true"
+                        android:ems="10"
+                        android:id="@+id/shoppingTime" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="40dp"
+                android:background="@color/material_divider"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/shopEdit"
+                    android:layout_centerVertical="true"
+                    android:hint="@string/add_item"
+                    android:lines="2"
+                    android:background="@android:color/transparent"
+                    android:layout_toLeftOf="@+id/addButton" />
+
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/addButton"
+                    android:background="@android:color/transparent"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_add_grey600_24dp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
 
 </RelativeLayout>

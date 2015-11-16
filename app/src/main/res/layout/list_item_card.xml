@@ -14,6 +14,7 @@
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="38dp"
+        android:textColor="?attr/colorAccent"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:gravity="center_vertical"
@@ -250,6 +251,16 @@
                 android:scrollbars="none"
                 android:focusable="false"
                 android:fastScrollEnabled="false"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/shoppingTime"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/blackPrimary"
+                android:drawableLeft="@drawable/ic_alarm_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
         </LinearLayout>
 

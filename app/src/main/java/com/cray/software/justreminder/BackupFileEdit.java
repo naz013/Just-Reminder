@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -37,6 +38,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -200,6 +202,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private EditText shopEdit;
     private TaskListRecyclerAdapter shoppingAdapter;
     private ShoppingListDataProvider shoppingLists;
+    private TextView shoppingNoTime, shoppingDate, shoppingTime;
+    private RelativeLayout shoppingTimeContainer;
 
     /**
      * General views.
@@ -431,8 +435,53 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         ViewUtils.fadeInAnimation(shoppingLayout, isAnimation);
 
         RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
-        RelativeLayout cardContainer = (RelativeLayout) findViewById(R.id.cardContainer);
-        cardContainer.setBackgroundResource(cSetter.getCardDrawableStyle());
+        CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
+        cardContainer.setCardBackgroundColor(cSetter.getCardStyle());
+
+        shoppingTimeContainer = (RelativeLayout) findViewById(R.id.shoppingTimeContainer);
+
+        shoppingDate = (TextView) findViewById(R.id.shoppingDate);
+        shoppingTime = (TextView) findViewById(R.id.shoppingTime);
+        shoppingTime.setOnClickListener(timeClick);
+        shoppingDate.setOnClickListener(dateClick);
+
+        ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
+        shopTimeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingTimeContainer);
+                ViewUtils.show(shoppingNoTime);
+                myYear = 0;
+                myMonth = 0;
+                myDay = 0;
+                myHour = 0;
+                myMinute = 0;
+            }
+        });
+        if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_grey600_24dp);
+
+        shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
+        shoppingNoTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingNoTime);
+                ViewUtils.show(shoppingTimeContainer);
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                if (myYear > 0) {
+                    cal.set(myYear, myMonth, myDay, myHour, myMinute);
+                } else {
+                    myYear = cal.get(Calendar.YEAR);
+                    myMonth = cal.get(Calendar.MONTH);
+                    myDay = cal.get(Calendar.DAY_OF_MONTH);
+                    myHour = cal.get(Calendar.HOUR_OF_DAY);
+                    myMinute = cal.get(Calendar.MINUTE);
+                }
+            }
+        });
         shopEdit = (EditText) findViewById(R.id.shopEdit);
         shopEdit.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -500,6 +549,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 fileLoc = c.getString(c.getColumnIndex(Constants.FilesConstants.COLUMN_FILE_LOCATION));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
+                myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
+                myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
+                myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
             }
             shoppingLists = new ShoppingListDataProvider(SyncHelper.getList(fileLoc));
             shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
@@ -523,6 +577,24 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             });
             todoList.setAdapter(shoppingAdapter);
+
+            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal.set(myYear, myMonth, myDay, myHour, myMinute);
+
+                shoppingTime.setText(TimeUtil.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                shoppingDate.setText(TimeUtil.getDate(cal.getTime()));
+                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingNoTime);
+                ViewUtils.show(shoppingTimeContainer);
+            } else {
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingTimeContainer);
+                ViewUtils.show(shoppingNoTime);
+            }
+
             taskField.setText(text);
         }
     }
@@ -2170,8 +2242,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (cf != null) cf.close();
         }
-        long ids = DB.insertReminder(task, type, 0, 0, 0, 0, 0, 0, null,
+        long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 0, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+        new AlarmReceiver().setAlarm(this, ids);
         DB.close();
         new ShoppingType(this).saveShopList(ids, shoppingLists.getData(), null);
         new UpdatesHelper(BackupFileEdit.this).updateWidget();
@@ -2916,6 +2989,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
+        if (isShoppingAttached()){
+            shoppingDate.setText(TimeUtil.getDate(calendar.getTime()));
+        }
     }
 
     /**
@@ -2973,6 +3049,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (delayLayoutOut.getVisibility() == View.VISIBLE)
                         locationOutTimeField.setText(formattedTime);
                 }
+            }
+            if (isShoppingAttached()){
+                shoppingTime.setText(formattedTime);
             }
         }
     };

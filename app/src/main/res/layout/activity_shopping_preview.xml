@@ -48,7 +48,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:padding="15dp"
+        android:padding="8dp"
         android:layout_below="@+id/toolbar"
         android:layout_height="match_parent">
 
@@ -62,8 +62,19 @@
             android:layout_height="match_parent"
             android:scrollbars="none"
             android:focusable="false"
+            android:layout_below="@+id/time"
             android:choiceMode="singleChoice"
             android:fastScrollEnabled="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/time"
+            android:textSize="18sp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/reminder_preview_margin_top"
+            android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
+            android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
     </RelativeLayout>
     </RelativeLayout>

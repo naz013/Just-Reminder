@@ -764,5 +764,6 @@
     <string name="_today">Today</string>
     <string name="_tomorrow">Tomorrow</string>
     <string name="permanent_reminders">Permanent reminders</string>
+    <string name="no_reminder">No reminder</string>
 
 </resources>

@@ -64,6 +64,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0, repeatTime = 0;
         long inTime = 0;
         long remCount = 0;
+        String type = null;
         if (c != null && c.moveToNext()) {
             day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
             month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
@@ -74,9 +75,14 @@ public class AlarmReceiver extends BroadcastReceiver {
             inTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
             repeatTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             remCount = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+            type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
         }
         if (c != null) c.close();
-        //Log.d(Constants.LOG_TAG, "----------alarm send values " + id + " : " + task + " : " + phoneNumber);
+
+        if (type != null && type.matches(Constants.TYPE_SHOPPING_LIST)){
+            if (day == 0 && month == 0 && year == 0 && hour == 0 && minute == 0) return;
+        }
+
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();

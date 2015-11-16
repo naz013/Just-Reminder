@@ -6,6 +6,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.services.AlarmReceiver;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,9 @@ public class ShoppingType extends Type {
 
     @Override
     public long save(Reminder item) {
-        return super.save(item);
+        long id = super.save(item);
+        startAlarm(id);
+        return id;
     }
 
     /**
@@ -63,5 +66,10 @@ public class ShoppingType extends Type {
     @Override
     public void save(long id, Reminder item) {
         super.save(id, item);
+        startAlarm(id);
+    }
+
+    private void startAlarm(long id) {
+        new AlarmReceiver().setAlarm(mContext, id);
     }
 }

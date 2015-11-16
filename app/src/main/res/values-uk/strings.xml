@@ -758,4 +758,5 @@
     <string name="_today">Сьогодні</string>
     <string name="_tomorrow">Завтра</string>
     <string name="permanent_reminders">Постійне нагадування</string>
+    <string name="no_reminder">No reminder</string>
 </resources>

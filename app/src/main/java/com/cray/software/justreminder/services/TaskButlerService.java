@@ -38,6 +38,8 @@ public class TaskButlerService extends IntentService {
                         }
                     } else if (!type.matches(Constants.TYPE_SHOPPING_LIST)) {
                         alarm.setAlarm(getApplicationContext(), rowId);
+                    } else {
+                        alarm.setAlarm(getApplicationContext(), rowId);
                     }
                 }
             } while (c.moveToNext());

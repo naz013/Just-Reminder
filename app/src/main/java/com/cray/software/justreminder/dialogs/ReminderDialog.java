@@ -20,6 +20,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -29,6 +31,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
+import com.cray.software.justreminder.datas.ShoppingList;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
@@ -41,7 +46,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
@@ -51,26 +55,32 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class ReminderDialog extends Activity implements TextToSpeech.OnInitListener {
     private static final int MY_DATA_CHECK_CODE = 111;
+
     private FloatingActionButton buttonCall;
     private TextView remText;
+    private RecyclerView todoList;
+
     private AlarmReceiver alarm = new AlarmReceiver();
-    private DelayReceiver delay = new DelayReceiver();
     private RepeatNotificationReceiver repeater = new RepeatNotificationReceiver();
+    private BroadcastReceiver deliveredReceiver, sentReceiver;
+
     private long id;
-    private SharedPrefs sPrefs;
     private int repCode, color = -1, vibration, voice, notificationRepeat, wake, unlock, auto;
     private long count, limit;
-    private BroadcastReceiver deliveredReceiver, sentReceiver;
-    private ColorSetter cs = new ColorSetter(ReminderDialog.this);
-    private String melody, number, name, task, typeField;
-    private Notifier notifier = new Notifier(ReminderDialog.this);
-    private TextToSpeech tts;
+    private String melody, number, name, task, reminderType;
     private boolean isDark = false;
     private boolean isExtra = false;
     private int currVolume, isReminder;
 
     private Type reminder;
     private Reminder item;
+
+    private ShoppingListDataProvider provider;
+
+    private SharedPrefs sPrefs;
+    private ColorSetter cs = new ColorSetter(ReminderDialog.this);
+    private Notifier notifier = new Notifier(ReminderDialog.this);
+    private TextToSpeech tts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +96,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         item = reminder.getItem(id);
         if (item != null) {
             task = item.getTitle();
-            typeField = item.getType();
+            reminderType = item.getType();
             number = item.getNumber();
             melody = item.getMelody();
             repCode = item.getRepCode();
@@ -158,6 +168,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
+        todoList = (RecyclerView) findViewById(R.id.todoList);
+        todoList.setLayoutManager(new LinearLayoutManager(this));
+        todoList.setVisibility(View.GONE);
+
         remText = (TextView) findViewById(R.id.remText);
         remText.setText("");
         String type = getType();
@@ -215,6 +229,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_grey600_24dp));
                 else
                     buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_white_24dp));
+            } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+                remText.setText(task);
+                buttonCall.setVisibility(View.GONE);
+                loadData();
             } else {
                 remText.setText(task);
                 buttonCall.setVisibility(View.GONE);
@@ -383,9 +401,34 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
     }
 
+    private void loadData() {
+        provider = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
+        TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
+            @Override
+            public void onItemCheck(int position, boolean isChecked) {
+                ShoppingList.switchItem(ReminderDialog.this, provider.getItem(position).getId(), isChecked);
+                loadData();
+            }
+
+            @Override
+            public void onItemDelete(int position) {
+                ShoppingList.hideItem(ReminderDialog.this, provider.getItem(position).getId());
+                loadData();
+            }
+
+            @Override
+            public void onItemChange(int position) {
+                ShoppingList.showItem(ReminderDialog.this, provider.getItem(position).getId());
+                loadData();
+            }
+        });
+        todoList.setAdapter(shoppingAdapter);
+        todoList.setVisibility(View.VISIBLE);
+    }
+
     private String getType(){
-        if (typeField != null) {
-            return typeField;
+        if (reminderType != null) {
+            return reminderType;
         } else {
             if (item != null){
                 return item.getType();

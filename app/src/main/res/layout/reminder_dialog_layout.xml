@@ -10,7 +10,7 @@
     tools:context=".dialogs.ReminderDialog">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
@@ -28,6 +28,7 @@
             app:civ_borderColor="#EEEEEE"
             app:civ_borderWidth="4dp"
             app:civ_shadow="true"
+            android:visibility="visible"
             android:background="@drawable/drawable_cyan"
             android:id="@+id/contactPhoto"/>
 
@@ -37,9 +38,27 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/remText"
             android:gravity="center"
+            android:text="Reminder"
             android:textSize="@dimen/reminder_text_size_normal"
             android:layout_marginTop="@dimen/reminder_margin_top"
             android:layout_gravity="center_horizontal" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/todoList"
+            android:layout_width="match_parent"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            android:layout_marginTop="15dp"
+            android:divider="@android:color/transparent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:focusable="false"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="150dp"
+            android:layout_below="@+id/time"
+            android:choiceMode="singleChoice"
+            android:fastScrollEnabled="true"/>
 
         </LinearLayout>
 
@@ -76,10 +95,9 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/reminder_margin_top"
         android:id="@+id/delayContainer"
         android:gravity="center"
-        android:layout_above="@+id/notificationContainer"
+        android:layout_alignParentBottom="true"
         android:layout_height="wrap_content">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -105,17 +123,6 @@
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/reminder_margin_top"
-        android:id="@+id/notificationContainer"
-        android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content">
 
     </LinearLayout>
 </RelativeLayout>

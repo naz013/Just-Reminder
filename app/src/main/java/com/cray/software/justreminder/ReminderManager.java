@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +45,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -233,6 +235,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private EditText shopEdit;
     private TaskListRecyclerAdapter shoppingAdapter;
     private ShoppingListDataProvider shoppingLists;
+    private TextView shoppingNoTime, shoppingDate, shoppingTime;
+    private RelativeLayout shoppingTimeContainer;
 
     /**
      * Extra options views.
@@ -2567,9 +2571,66 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.shoppingLayout);
         remControl = dateType;
 
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        if (myYear > 0){
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+
         RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
-        RelativeLayout cardContainer = (RelativeLayout) findViewById(R.id.cardContainer);
-        cardContainer.setBackgroundResource(cSetter.getCardDrawableStyle());
+        CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
+        cardContainer.setCardBackgroundColor(cSetter.getCardStyle());
+
+        shoppingTimeContainer = (RelativeLayout) findViewById(R.id.shoppingTimeContainer);
+
+        shoppingDate = (TextView) findViewById(R.id.shoppingDate);
+        shoppingTime = (TextView) findViewById(R.id.shoppingTime);
+        shoppingTime.setOnClickListener(timeClick);
+        shoppingDate.setOnClickListener(dateClick);
+
+        ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
+        shopTimeIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingTimeContainer);
+                ViewUtils.show(shoppingNoTime);
+                myYear = 0;
+                myMonth = 0;
+                myDay = 0;
+                myHour = 0;
+                myMinute = 0;
+            }
+        });
+        if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_grey600_24dp);
+
+        shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
+        shoppingNoTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingNoTime);
+                ViewUtils.show(shoppingTimeContainer);
+                cal.setTimeInMillis(System.currentTimeMillis());
+                if (myYear > 0){
+                    cal.set(myYear, myMonth, myDay, myHour, myMinute);
+                } else {
+                    myYear = cal.get(Calendar.YEAR);
+                    myMonth = cal.get(Calendar.MONTH);
+                    myDay = cal.get(Calendar.DAY_OF_MONTH);
+                    myHour = cal.get(Calendar.HOUR_OF_DAY);
+                    myMinute = cal.get(Calendar.MINUTE);
+                }
+            }
+        });
+
         shopEdit = (EditText) findViewById(R.id.shopEdit);
         shopEdit.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -2657,6 +2718,28 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 todoList.setAdapter(shoppingAdapter);
             }
             invalidateButtons();
+
+            myHour = item.getHour();
+            myMinute = item.getMinute();
+            myDay = item.getDay();
+            myMonth = item.getMonth();
+            myYear = item.getYear();
+
+            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+                cal.set(myYear, myMonth, myDay, myHour, myMinute);
+
+                shoppingTime.setText(TimeUtil.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                shoppingDate.setText(TimeUtil.getDate(cal.getTime()));
+                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingNoTime);
+                ViewUtils.show(shoppingTimeContainer);
+            } else {
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                    ViewUtils.hide(shoppingTimeContainer);
+                ViewUtils.show(shoppingNoTime);
+            }
+
             taskField.setText(item.getTitle());
         }
     }
@@ -3345,6 +3428,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }
+        if (isShoppingAttached()){
+            shoppingDate.setText(TimeUtil.getDate(calendar.getTime()));
+        }
     }
 
     /**
@@ -3403,6 +3489,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     if (delayLayoutOut.getVisibility() == View.VISIBLE)
                         locationOutTimeField.setText(formattedTime);
                 }
+            }
+            if (isShoppingAttached()){
+                shoppingTime.setText(formattedTime);
             }
         }
     };
@@ -3467,23 +3556,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     } else if (type.matches(Constants.TYPE_REMINDER) ||
                             type.matches(Constants.TYPE_TIME) ||
                             type.matches(Constants.TYPE_CALL) ||
-                            type.matches(Constants.TYPE_MESSAGE)) {
+                            type.matches(Constants.TYPE_MESSAGE) ||
+                            type.matches(Constants.TYPE_SHOPPING_LIST)) {
                         new AlarmReceiver().setAlarm(ReminderManager.this, id);
                     } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                         new MonthDayReceiver().setAlarm(ReminderManager.this, id);
                     } else if (type.startsWith(Constants.TYPE_LOCATION) && isDelayed) {
+                        new PositionDelayReceiver().setDelay(ReminderManager.this, id);
+                    } else if (type.startsWith(Constants.TYPE_LOCATION_OUT) && isDelayed) {
                         new PositionDelayReceiver().setDelay(ReminderManager.this, id);
                     }
                 }
             }
             if (c != null) c.close();
             db.close();
-            new Notifier(ReminderManager.this).recreatePermanent();
-            finish();
-        } else {
-            new Notifier(ReminderManager.this).recreatePermanent();
-            finish();
         }
+        new Notifier(ReminderManager.this).recreatePermanent();
+        finish();
     }
 
     @Override

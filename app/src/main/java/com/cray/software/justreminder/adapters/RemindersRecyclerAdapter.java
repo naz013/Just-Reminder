@@ -42,6 +42,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     private ReminderDataProvider provider;
     private RecyclerListener mEventListener;
     private boolean isDark;
+    private boolean is24;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
@@ -50,6 +51,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         setHasStableIds(true);
     }
 
@@ -62,7 +64,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         public ImageView taskIcon, leftTimeIcon;
         public CardView itemCard;
 
-        public TextView shoppingTitle;
+        public TextView shoppingTitle, shoppingTime;
         public LinearLayout todoList;
         public LinearLayout subBackground, titleContainer;
         public RelativeLayout reminderContainer;
@@ -91,6 +93,8 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             leftTimeIcon.setVisibility(View.VISIBLE);
 
             taskTitle = (TextView) v.findViewById(R.id.taskText);
+            shoppingTime = (TextView) v.findViewById(R.id.shoppingTime);
+            shoppingTime.setVisibility(View.GONE);
             taskTitle.setText("");
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
@@ -358,6 +362,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.leftTimeIcon.setVisibility(View.GONE);
             }
         } else {
+            if (due > 0){
+                holder.shoppingTime.setText(TimeUtil.getFullDateTime(due, is24));
+                holder.shoppingTime.setVisibility(View.VISIBLE);
+            } else {
+                holder.shoppingTime.setVisibility(View.GONE);
+            }
 
             holder.reminderContainer.setVisibility(View.GONE);
             holder.subBackground.setVisibility(View.VISIBLE);
