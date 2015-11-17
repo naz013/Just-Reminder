@@ -1,5 +1,6 @@
 package com.cray.software.justreminder;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -84,7 +86,6 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, DatePickerDialog.OnDateSetListener, CompoundButton.OnCheckedChangeListener,
+        SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
         MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener {
 
     /**
@@ -2937,62 +2938,65 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Show date picker dialog.
      */
     protected void dateDialog() {
-        final DatePickerDialog datePickerDialog =
-                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
-        datePickerDialog.setCloseOnSingleTapDay(false);
-        datePickerDialog.show(getSupportFragmentManager(), "taa");
+        new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay).show();
     }
 
-    @Override
-    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
-        myYear = year;
-        myMonth = monthOfYear;
-        myDay = dayOfMonth;
+    /**
+     * Date selection callback.
+     */
+    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(year, monthOfYear, dayOfMonth);
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            myYear = year;
+            myMonth = monthOfYear;
+            myDay = dayOfMonth;
 
-        if (isCallAttached()){
-            callDate.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-        if (isMonthDayAttached()){
-            if (myDay < 29) monthDayField.setText(dayOfMonth);
-            else {
-                myDay = 28;
-                Messages.toast(BackupFileEdit.this, getString(R.string.string_max_day_message));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(year, monthOfYear, dayOfMonth);
+
+            if (isCallAttached()){
+                callDate.setText(TimeUtil.getDate(calendar.getTime()));
             }
-        }
-        if (isSkypeAttached()){
-            skypeDate.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-        if (isApplicationAttached()){
-            appDate.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-        if (isDateReminderAttached()){
-            dateField.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-        if (isMessageAttached()){
-            messageDate.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-        if (isLocationAttached()){
-            if (attackDelay.isChecked()){
-                if (delayLayout.getVisibility() == View.VISIBLE) {
-                    locationDateField.setText(TimeUtil.getDate(calendar.getTime()));
+            if (isMonthDayAttached()){
+                if (myDay < 29) monthDayField.setText(dayOfMonth);
+                else {
+                    myDay = 28;
+                    Messages.toast(BackupFileEdit.this, getString(R.string.string_max_day_message));
                 }
             }
-        }
-        if (isLocationOutAttached()){
-            if (attachDelayOut.isChecked()){
-                if (delayLayoutOut.getVisibility() == View.VISIBLE) {
-                    locationOutDateField.setText(TimeUtil.getDate(calendar.getTime()));
+            if (isSkypeAttached()){
+                skypeDate.setText(TimeUtil.getDate(calendar.getTime()));
+            }
+            if (isApplicationAttached()){
+                appDate.setText(TimeUtil.getDate(calendar.getTime()));
+            }
+            if (isDateReminderAttached()){
+                dateField.setText(TimeUtil.getDate(calendar.getTime()));
+            }
+            if (isMessageAttached()){
+                messageDate.setText(TimeUtil.getDate(calendar.getTime()));
+            }
+            if (isLocationAttached()){
+                if (attackDelay.isChecked()){
+                    if (delayLayout.getVisibility() == View.VISIBLE) {
+                        locationDateField.setText(TimeUtil.getDate(calendar.getTime()));
+                    }
                 }
             }
+            if (isLocationOutAttached()){
+                if (attachDelayOut.isChecked()){
+                    if (delayLayoutOut.getVisibility() == View.VISIBLE) {
+                        locationOutDateField.setText(TimeUtil.getDate(calendar.getTime()));
+                    }
+                }
+            }
+            if (isShoppingAttached()){
+                shoppingDate.setText(TimeUtil.getDate(calendar.getTime()));
+            }
         }
-        if (isShoppingAttached()){
-            shoppingDate.setText(TimeUtil.getDate(calendar.getTime()));
-        }
-    }
+    };
 
     /**
      * Create time picker dialog.

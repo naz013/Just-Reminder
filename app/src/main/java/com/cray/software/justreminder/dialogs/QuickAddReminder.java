@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.dialogs;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,12 +35,10 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
 
-public class QuickAddReminder extends AppCompatActivity implements
-        DatePickerDialog.OnDateSetListener{
+public class QuickAddReminder extends AppCompatActivity {
 
     private EditText task_text;
     private EditText repeatDays;
@@ -141,25 +141,31 @@ public class QuickAddReminder extends AppCompatActivity implements
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
     }
 
+    /**
+     * Show date picker dialog.
+     */
     protected void dateDialog() {
-        final DatePickerDialog datePickerDialog =
-                DatePickerDialog.newInstance(this, myYear, myMonth, myDay, false);
-        datePickerDialog.setCloseOnSingleTapDay(false);
-        datePickerDialog.show(getSupportFragmentManager(), "taa");
+        new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay).show();
     }
 
-    @Override
-    public void onDateSet(DatePickerDialog datePickerDialog, int year, int monthOfYear, int dayOfMonth) {
-        myYear = year;
-        myMonth = monthOfYear;
-        myDay = dayOfMonth;
+    /**
+     * Date selection callback.
+     */
+    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(myYear, myMonth, myDay);
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            myYear = year;
+            myMonth = monthOfYear;
+            myDay = dayOfMonth;
 
-        dateField.setText(TimeUtil.getDate(calendar.getTime()));
-    }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(myYear, myMonth, myDay);
+
+            dateField.setText(TimeUtil.getDate(calendar.getTime()));
+        }
+    };
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
