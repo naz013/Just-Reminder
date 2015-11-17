@@ -22,10 +22,7 @@ import java.util.ArrayList;
 
 public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private ArrayList<String> note;
-    private ArrayList<byte[]> images;
-    private ArrayList<Integer> color;
-    private ArrayList<Long> ids;
+    private ArrayList<Note> notes;
     private Context mContext;
     private NotesBase db;
     private ColorSetter cs;
@@ -39,20 +36,14 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
 
     @Override
     public void onCreate() {
-        note = new ArrayList<>();
-        images = new ArrayList<>();
-        color = new ArrayList<>();
-        ids = new ArrayList<>();
+        notes = new ArrayList<>();
         db = new NotesBase(mContext);
         cs = new ColorSetter(mContext);
     }
 
     @Override
     public void onDataSetChanged() {
-        note.clear();
-        images.clear();
-        color.clear();
-        ids.clear();
+        notes.clear();
         db = new NotesBase(mContext);
         String title;
         int col;
@@ -66,14 +57,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
                 title = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                 img = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
 
-                ids.add(id);
-                note.add(title);
-                if (img != null) {
-                    images.add(img);
-                } else images.add(null);
-
-                color.add(col);
-
+                notes.add(new Note(title, col, id, img));
             } while (c.moveToNext());
         }
 
@@ -87,7 +71,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
 
     @Override
     public int getCount() {
-        return note.size();
+        return notes.size();
     }
 
     @Override
@@ -95,8 +79,9 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_note_widget);
         cs = new ColorSetter(mContext);
-        rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(color.get(i)));
-        byte[] byteImage = images.get(i);
+        Note note = notes.get(i);
+        rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(note.getColor()));
+        byte[] byteImage = note.getImage();
         if (byteImage != null){
             Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
             if (photo != null){
@@ -105,7 +90,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         } else rView.setViewVisibility(R.id.imageView, View.GONE);
 
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String title = note.get(i);
+        String title = note.getText();
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = SyncHelper.decrypt(title);
         }
@@ -113,7 +98,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         rView.setTextViewText(R.id.note, title);
 
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(Constants.EDIT_ID, ids.get(i));
+        fillInIntent.putExtra(Constants.EDIT_ID, note.getId());
         rView.setOnClickFillInIntent(R.id.note, fillInIntent);
         rView.setOnClickFillInIntent(R.id.imageView, fillInIntent);
         rView.setOnClickFillInIntent(R.id.noteBackground, fillInIntent);
@@ -138,5 +123,51 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    public class Note{
+        private String text;
+        private int color;
+        private long id;
+        private byte[] image;
+
+        public Note(String text, int color, long id, byte[] image){
+            this.text = text;
+            this.color = color;
+            this.id = id;
+            this.image = image;
+        }
+
+        public byte[] getImage() {
+            return image;
+        }
+
+        public void setImage(byte[] image) {
+            this.image = image;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
     }
 }
