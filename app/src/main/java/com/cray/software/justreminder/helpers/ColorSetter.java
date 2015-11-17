@@ -1024,8 +1024,8 @@ public class ColorSetter {
         int id;
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            id = getColor(R.color.material_white);
-        } else id = getColor(R.color.material_grey);
+            id = getColor(R.color.material_grey);
+        } else id = getColor(R.color.material_divider);
         return id;
     }
 

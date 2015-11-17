@@ -31,7 +31,10 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/blackPrimary"
-            android:id="@+id/note"/>
+            android:id="@+id/note"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:text="Note"
+            android:inputType="textMultiLine" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

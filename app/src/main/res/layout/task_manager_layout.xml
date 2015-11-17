@@ -40,135 +40,115 @@
             android:layout_marginBottom="70dp"
             android:orientation="vertical">
 
-            <EditText
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:id="@+id/noteField"
-                android:layout_marginTop="@dimen/create_margin"
-                android:textSize="@dimen/create_text_size_secondary"
-                android:hint="@string/quick_note_hint"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"/>
+                android:padding="8dp">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/material_divider"/>
+                <TableRow>
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/dueCheck"
-                android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_gravity="center"
-                android:text="@string/string_add_due"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/noteIcon"
+                        android:src="@drawable/ic_event_note_black_24dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/dueContainer">
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:id="@+id/noteField"
+                        android:textSize="@dimen/create_text_size_secondary"
+                        android:hint="@string/quick_note_hint"
+                        android:gravity="center_vertical"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/create_margin"/>
 
-                <TextView
+                </TableRow>
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tue, 5 Nov 2015"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:id="@+id/dateField" />
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider"/>
+                <TableRow>
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="fitCenter"
+                        android:layout_marginRight="15dp"
+                        android:id="@+id/dateIcon"
+                        android:src="@drawable/ic_event_black_24dp"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/material_divider"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tue, 5 Nov 2015"
+                        android:ems="10"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:id="@+id/dateField" />
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/reminderCheck"
-                android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_gravity="center"
-                android:text="@string/string_add_reminder"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/reminderContainer">
-
-                <TextView
+                </TableRow>
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:text="14:05"
-                    android:layout_alignParentRight="true"
-                    android:ems="10"
-                    android:id="@+id/timeField" />
-            </LinearLayout>
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider"/>
+                <TableRow>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/material_divider"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/timeIcon"
+                        android:src="@drawable/ic_alarm_black_24dp"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:clickable="false"
-                android:textAllCaps="true"
-                android:layout_marginTop="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/create_text_size_normal"
-                android:text="@string/string_list"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:text="14:05"
+                        android:layout_gravity="center_vertical"
+                        android:ems="10"
+                        android:id="@+id/timeField" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:clickable="true"
-                android:textAllCaps="true"
-                android:id="@+id/listText"
-                android:text="Reminder"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:gravity="center"
-                android:textSize="@dimen/create_text_size_normal"
-                android:layout_marginTop="@dimen/create_margin" />
+                </TableRow>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider"/>
+                <TableRow>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
-                android:background="@color/material_divider"/>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/listIcon"
+                        android:src="@drawable/ic_view_list_black_24dp"/>
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:textAllCaps="true"
+                        android:id="@+id/listText"
+                        android:text="Reminder"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/create_margin"
+                        android:textSize="@dimen/create_text_size_normal" />
+
+                </TableRow>
+            </TableLayout>
         </LinearLayout>
-
     </ScrollView>
-
 </LinearLayout>

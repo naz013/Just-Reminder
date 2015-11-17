@@ -18,12 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -43,7 +42,6 @@ import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
 import java.util.ArrayList;
@@ -59,9 +57,6 @@ public class TaskManager extends AppCompatActivity {
     private TextView dateField;
     private TextView timeField;
     private TextView listText;
-    private LinearLayout dueContainer;
-    private LinearLayout reminderContainer;
-    private CheckBox reminderCheck, dueCheck;
 
     private int color;
     private int myHour = 0;
@@ -73,6 +68,8 @@ public class TaskManager extends AppCompatActivity {
     private String initListId = null;
     private String taskId;
     private String action;
+    private boolean isReminder = false;
+    private boolean isDate = false;
 
     private TasksData data = new TasksData(TaskManager.this);
 
@@ -111,22 +108,6 @@ public class TaskManager extends AppCompatActivity {
                 selectList(false);
             }
         });
-        reminderCheck = (CheckBox) findViewById(R.id.reminderCheck);
-        reminderCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ViewUtils.expand(reminderContainer);
-                else ViewUtils.collapse(reminderContainer);
-            }
-        });
-        dueCheck = (CheckBox) findViewById(R.id.dueCheck);
-        dueCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ViewUtils.expand(dueContainer);
-                else ViewUtils.collapse(dueContainer);
-            }
-        });
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
@@ -138,34 +119,40 @@ public class TaskManager extends AppCompatActivity {
         myMonth = calendar.get(Calendar.MONTH);
         myDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
-        reminderContainer.setVisibility(View.GONE);
-
-        dueContainer = (LinearLayout) findViewById(R.id.dueContainer);
-        dueContainer.setVisibility(View.GONE);
-
         dateField = (TextView) findViewById(R.id.dateField);
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dateDialog().show();
+                selectDateAction(1);
             }
         });
 
-        dateField.setText(TimeUtil.getDate(calendar.getTime()));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                timeDialog().show();
+                selectDateAction(2);
             }
         });
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        timeField.setText(TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+        ImageView noteIcon = (ImageView) findViewById(R.id.noteIcon);
+        ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
+        ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
+        ImageView listIcon = (ImageView) findViewById(R.id.listIcon);
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+            noteIcon.setImageResource(R.drawable.ic_event_note_white_24dp);
+            dateIcon.setImageResource(R.drawable.ic_event_white_24dp);
+            timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+            listIcon.setImageResource(R.drawable.ic_view_list_white_24dp);
+        } else {
+            noteIcon.setImageResource(R.drawable.ic_event_note_black_24dp);
+            dateIcon.setImageResource(R.drawable.ic_event_black_24dp);
+            timeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+            listIcon.setImageResource(R.drawable.ic_view_list_black_24dp);
+        }
 
         Intent intent = getIntent();
         long tmp = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
@@ -208,6 +195,7 @@ public class TaskManager extends AppCompatActivity {
                     editField.setText(c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE)));
                     taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
                     String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
+                    long remId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_REMINDER_ID));
                     if (note != null) {
                         noteField.setText(note);
                         noteField.setSelection(noteField.getText().length());
@@ -221,10 +209,8 @@ public class TaskManager extends AppCompatActivity {
                         myYear = calendar.get(Calendar.YEAR);
                         myMonth = calendar.get(Calendar.MONTH);
                         myDay = calendar.get(Calendar.DAY_OF_MONTH);
-
+                        isDate = true;
                         dateField.setText(TimeUtil.getDate(calendar.getTime()));
-
-                        dueCheck.setChecked(true);
                     }
 
                     initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
@@ -235,11 +221,91 @@ public class TaskManager extends AppCompatActivity {
                         listText.setText(listTitle);
                         setColor(color);
                     }
+
+                    if (remId > 0) {
+                        DataBase db = new DataBase(this);
+                        db.open();
+                        Cursor r = db.getReminder(remId);
+                        if (r != null && r.moveToFirst()){
+                            int hour = r.getInt(r.getColumnIndex(Constants.COLUMN_HOUR));
+                            int minute = r.getInt(r.getColumnIndex(Constants.COLUMN_MINUTE));
+                            calendar.set(Calendar.HOUR_OF_DAY, hour);
+                            calendar.set(Calendar.MINUTE, minute);
+                            timeField.setText(TimeUtil.getTime(calendar.getTime(),
+                                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                            isReminder = true;
+                        }
+                        if (r != null) r.close();
+                        db.close();
+                    }
                     if (x != null) x.close();
                 }
                 if (c != null) c.close();
             }
         }
+        switchDate();
+    }
+
+    private void selectDateAction(final int type) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] types = new String[]{getString(R.string.no_date), getString(R.string.select_date)};
+        if (type == 2){
+            types = new String[]{getString(R.string.no_reminder), getString(R.string.select_time)};
+        }
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_single_choice, types);
+
+        int selection = 0;
+        if (type == 1){
+            if (isDate) selection = 1;
+            else selection = 0;
+        }
+        if (type == 2){
+            if (isReminder) selection = 1;
+            else selection = 0;
+        }
+
+        builder.setSingleChoiceItems(adapter, selection, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    dialog.dismiss();
+                    if (type == 1){
+                        switch (which){
+                            case 0:
+                                isDate = false;
+                                switchDate();
+                                break;
+                            case 1:
+                                isDate = true;
+                                dateDialog().show();
+                                break;
+                        }
+                    }
+
+                    if (type == 2){
+                        switch (which){
+                            case 0:
+                                isReminder = false;
+                                switchDate();
+                                break;
+                            case 1:
+                                isReminder = true;
+                                timeDialog().show();
+                                break;
+                        }
+                    }
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void switchDate() {
+        if (!isDate) dateField.setText(getString(R.string.no_date));
+        if (!isReminder) timeField.setText(getString(R.string.no_reminder));
     }
 
     private void moveTask(String listId) {
@@ -312,9 +378,9 @@ public class TaskManager extends AppCompatActivity {
         calendar.set(Calendar.MILLISECOND, 0);
 
         long due = 0;
-        if (dueCheck.isChecked()) due = calendar.getTimeInMillis();
+        if (isDate) due = calendar.getTimeInMillis();
         long remId = 0;
-        if (reminderCheck.isChecked()) remId = saveReminder(taskName);
+        if (isReminder) remId = saveReminder(taskName);
         data.open();
         if (action.matches(TasksConstants.CREATE)){
             long localId = data.addTask(taskName, null, 0, false, due, null, null, note,

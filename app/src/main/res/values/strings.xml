@@ -765,5 +765,8 @@
     <string name="_tomorrow">Tomorrow</string>
     <string name="permanent_reminders">Permanent reminders</string>
     <string name="no_reminder">No reminder</string>
+    <string name="no_date">No date</string>
+    <string name="select_date">Select date</string>
+    <string name="select_time">Select time</string>
 
 </resources>
