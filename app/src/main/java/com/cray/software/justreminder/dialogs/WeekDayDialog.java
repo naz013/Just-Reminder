@@ -61,7 +61,6 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     private long count, limit;
     private BroadcastReceiver deliveredReceiver, sentReceiver;
     private ColorSetter cs = new ColorSetter(WeekDayDialog.this);
-    private UpdatesHelper updatesHelper;
 
     private Notifier notifier = new Notifier(WeekDayDialog.this);
     private String melody, number, typeField;
@@ -531,13 +530,13 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         remText.setText(getString(R.string.dialog_message_sent));
-                        notifier.showNotification(task, type, 1, id, melody, color, vibration == 1, isExtra);
+                        showNotification(1);
                         if (buttonCall.getVisibility() == View.VISIBLE) {
                             buttonCall.setVisibility(View.GONE);
                         }
                         break;
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        notifier.showNotification(task, type, 0, id, melody, color, vibration == 1, isExtra);
+                        showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -546,7 +545,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        notifier.showNotification(task, type, 0, id, melody, color, vibration == 1, isExtra);
+                        showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -555,7 +554,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_NULL_PDU:
-                        notifier.showNotification(task, type, 0, id, melody, color, vibration == 1, isExtra);
+                        showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
@@ -564,7 +563,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                         }
                         break;
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        notifier.showNotification(task, type, 0, id, melody, color, vibration == 1, isExtra);
+                        showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
                         if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));

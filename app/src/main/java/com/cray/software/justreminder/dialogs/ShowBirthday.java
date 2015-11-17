@@ -52,8 +52,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
     private String name, number, birthDate;
     private ColorSetter cs = new ColorSetter(ShowBirthday.this);
     private Notifier notifier = new Notifier(ShowBirthday.this);
-    private TextToSpeech tts;
     private boolean isDark = false;
+    private TextToSpeech tts;
 
     private static final int MY_DATA_CHECK_CODE = 111;
 
@@ -111,7 +111,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         DB = new DataBase(ShowBirthday.this);
         sPrefs = new SharedPrefs(ShowBirthday.this);
-        Contacts contacts = new Contacts(ShowBirthday.this);
 
         DB.open();
         Cursor c = DB.getBirthday(id);
@@ -156,9 +155,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         wakeScreen();
 
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
-
-        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        int currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         boolean isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
         if (!isGlobal && sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
@@ -211,6 +207,11 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
     }
 
     @Override

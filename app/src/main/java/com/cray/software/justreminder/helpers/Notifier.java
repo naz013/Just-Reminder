@@ -87,12 +87,8 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
@@ -156,7 +152,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -221,12 +217,8 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(type));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
@@ -280,7 +272,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -326,10 +318,6 @@ public class Notifier {
         int icon = R.drawable.ic_call_white_24dp;
         builder.setSmallIcon(icon);
 
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
@@ -355,7 +343,7 @@ public class Notifier {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -378,7 +366,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(name);
                 wearableNotificationBuilder.setContentText(mContext.getString(R.string.missed_call_event_title));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -440,12 +428,8 @@ public class Notifier {
         builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
@@ -499,7 +483,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(task);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -546,12 +530,8 @@ public class Notifier {
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
@@ -636,7 +616,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(name);
                 wearableNotificationBuilder.setContentText(years + " " + mContext.getString(R.string.years_string));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -665,7 +645,7 @@ public class Notifier {
         builder.setSmallIcon(R.drawable.ic_notifications_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
 
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
@@ -688,7 +668,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentTitle(content);
                 wearableNotificationBuilder.setContentText(app);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOngoing(false);
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
@@ -711,7 +691,7 @@ public class Notifier {
 
         builder.setContentText(mContext.getString(R.string.notification_note_string));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+            builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
@@ -737,7 +717,7 @@ public class Notifier {
                 wearableNotificationBuilder.setContentText(mContext.getString(R.string.notification_note_string));
                 wearableNotificationBuilder.setOngoing(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    wearableNotificationBuilder.setColor(mContext.getResources().getColor(R.color.bluePrimary));
+                    wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
                 wearableNotificationBuilder.setOnlyAlertOnce(true);
                 wearableNotificationBuilder.setGroup("GROUP");
