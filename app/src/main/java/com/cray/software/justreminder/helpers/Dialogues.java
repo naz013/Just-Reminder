@@ -22,7 +22,6 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
@@ -230,10 +229,7 @@ public class Dialogues {
                     } else {
                         prefs.saveBoolean(prefsToSave, true);
                         dialog.dismiss();
-                        Intent intent = new Intent();
-                        intent.setType("*/*");
-                        if (Module.isKitkat()) intent.setAction(Intent.ACTION_GET_CONTENT);
-                        context.startActivityForResult(intent, requestCode);
+                        context.startActivityForResult(new Intent(context, FileExplore.class), requestCode);
                     }
                 }
             }

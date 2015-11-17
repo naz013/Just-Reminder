@@ -760,6 +760,14 @@
             android:name="com.hexrain.design.fragments.ShoppingListPreview"
             android:theme="@style/HomeWhite.Blue" />
 
+        <activity android:name=".helpers.FileExplore"
+            android:configChanges="keyboardHidden|orientation|keyboard"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".services.BirthdayPermanentService"
             android:enabled="true"/>

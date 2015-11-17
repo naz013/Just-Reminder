@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.fragments.BirthdaysSettingsFragment;
@@ -24,6 +25,7 @@ import com.cray.software.justreminder.fragments.TimePickerFragment;
 import com.cray.software.justreminder.fragments.VoiceSettingsFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 
@@ -209,6 +211,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             case 201:
                 new SharedPrefs(this).saveBoolean(Prefs.CUSTOM_SOUND, true);
                 Uri uri = data.getData();
+                String pathStr = data.getStringExtra(Constants.FILE_PICKED);
+                Log.d(Constants.LOG_TAG, "Returned path " + pathStr);
                 String path = SuperUtil.getPath(this, uri);
                 if (path != null) {
                     File fileC = new File(path);
