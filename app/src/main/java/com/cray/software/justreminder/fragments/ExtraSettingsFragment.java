@@ -3,7 +3,9 @@ package com.cray.software.justreminder.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -198,6 +200,33 @@ public class ExtraSettingsFragment extends Fragment implements View.OnClickListe
                 getActivity().getApplicationContext()
                         .startActivity(new Intent(getActivity().getApplicationContext(), ContactGroups.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 107:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    missedChange();
+                } else {
+                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
+                }
+                break;
+            case 108:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    quickChange();
+                } else {
+                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
+                }
+                break;
+            case 109:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    followChange();
+                } else {
+                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
+                }
                 break;
         }
     }

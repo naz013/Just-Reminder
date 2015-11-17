@@ -223,6 +223,7 @@ public class QuickAddReminder extends AppCompatActivity {
         new AlarmReceiver().setAlarm(QuickAddReminder.this, id);
         new UpdatesHelper(QuickAddReminder.this).updateWidget();
         new Notifier(QuickAddReminder.this).recreatePermanent();
+        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
     }
 

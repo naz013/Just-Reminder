@@ -257,7 +257,6 @@
 
         <service android:name=".services.GeolocationService" />
         <service android:name=".services.TaskButlerService" />
-        <service android:name=".services.SetBirthdays" />
         <service android:name=".services.CheckBirthdays" />
         <service android:name=".widgets.CalendarUpdateService" />
         <service android:name=".widgets.CalendarUpdateMinusService" />

@@ -487,7 +487,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         shopEdit.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     String task = shopEdit.getText().toString().trim();
                     if (task.matches("")) {
                         shopEdit.setError(getString(R.string.empty_task));
@@ -2149,6 +2149,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Save reminder to database.
      */
     private void saveTask(){
+        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
         if (isLocationAttached() || isLocationOutAttached()){
             if (LocationUtil.checkLocationEnable(this)) {
                 if (isLocationOutAttached()){

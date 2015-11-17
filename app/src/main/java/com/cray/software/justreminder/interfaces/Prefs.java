@@ -20,7 +20,6 @@ public class Prefs {
     public static final String TECH_ONE = "RanGuide";
 
     public static final String EVENTS_CALENDAR = "events_calendar";
-    public static final String BIRTH_CALENDAR = "birth_calendar";
     public static final String AUTO_CHECK_FOR_EVENTS = "auto_events";
     public static final String AUTO_CHECK_FOR_EVENTS_INTERVAL = "auto_events_interval";
     public static final String THEME = "theme_color";
@@ -34,7 +33,6 @@ public class Prefs {
     public static final String SOUND_STATUS = "sound_status";
     public static final String WAKE_STATUS = "wake_status";
     public static final String INFINITE_SOUND = "infinite_sound";
-    public static final String CHECKED_LAYOUT = "checked_layout";
     public static final String SILENT_SMS = "silent_sms";
     public static final String CONTACT_BIRTHDAYS = "use_contacts";
     public static final String BIRTHDAY_REMINDER = "birthdays_reminder";
@@ -108,12 +106,16 @@ public class Prefs {
     public static final String LAST_FRAGMENT = "last_fragment";
     public static final String CALENDAR_IMAGE = "calendar_image";
     public static final String EXPORT_SETTINGS = "export_settings";
-    public static final String FLOATING_NOTE = "floating_note";
     public final static String CUSTOM_SOUND = "custom_sound";
     public final static String CUSTOM_SOUND_FILE = "sound_file";
     public final static String EXTRA_OPTIONS = "extra_options";
     public final static String BIRTHDAY_PERMANENT = "birthday_permanent";
-    public final static String NOTES_LIST_STYLE = "notes_list_style";
+
+    public final static String REMINDER_CHANGED = "reminder_changed";
+    public final static String NOTE_CHANGED = "note_changed";
+    public final static String GROUP_CHANGED = "group_changed";
+    public final static String PLACE_CHANGED = "place_changed";
+    public final static String TEMPLATE_CHANGED = "template_changed";
 
     // birthdays reminder notification constants
     public static final String BIRTHDAY_USE_GLOBAL = "use_global";

@@ -52,7 +52,6 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private AdView adView;
     private NoteDataProvider provider;
 
-    private boolean onCreate = false;
     private boolean enableGrid = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
@@ -108,7 +107,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 break;
             case R.id.action_list:
                 enableGrid = !enableGrid;
-                new SharedPrefs(getActivity()).saveBoolean(Prefs.NOTES_LIST_STYLE, enableGrid);
+                new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, enableGrid);
                 loaderAdapter();
                 getActivity().invalidateOptionsMenu();
                 break;
@@ -122,7 +121,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         sPrefs = new SharedPrefs(getActivity());
-        enableGrid = sPrefs.loadBoolean(Prefs.NOTES_LIST_STYLE);
+        enableGrid = sPrefs.loadBoolean(Prefs.REMINDER_CHANGED);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -139,13 +138,12 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.NOTES_LIST_STYLE)){
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
 
         loaderAdapter();
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -202,9 +200,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             }
         }
         sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean("isNew") || !onCreate) loaderAdapter();
-        onCreate = false;
-        sPrefs.saveBoolean("isNew", false);
+        if (sPrefs.loadBoolean(Prefs.NOTE_CHANGED)) loaderAdapter();
         getActivity().invalidateOptionsMenu();
     }
 
@@ -256,10 +252,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     public void loaderAdapter(){
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.NOTE_CHANGED, false);
         provider = new NoteDataProvider(getActivity());
         reloadView();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.NOTES_LIST_STYLE)){
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
@@ -297,9 +294,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 deleteAll();
-                sPrefs = new SharedPrefs(getActivity());
-                sPrefs.saveBoolean("isNew", true);
-                if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_NOTE);
+                loaderAdapter();
             }
         });
 

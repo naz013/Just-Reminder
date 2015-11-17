@@ -109,6 +109,7 @@ public class EventsFragment extends Fragment {
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
         sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+        loadData();
         return rootView;
     }
 
@@ -137,6 +138,12 @@ public class EventsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+            loadData();
+    }
+
+    private void loadData() {
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
         Calendar calendar = Calendar.getInstance();
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);

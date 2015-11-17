@@ -16,8 +16,10 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -132,6 +134,7 @@ public class CategoryManager extends AppCompatActivity {
             db.addCategory(text, System.currentTimeMillis(), SyncHelper.generateID(), color);
         }
         db.close();
+        new SharedPrefs(this).saveBoolean(Prefs.GROUP_CHANGED, true);
         finish();
     }
 

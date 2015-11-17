@@ -21,7 +21,9 @@ import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewPlace;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
@@ -37,8 +39,6 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     private AdView adView;
 
     private PlaceDataProvider provider;
-
-    private boolean onCreate = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -73,7 +73,6 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
 
         loadPlaces();
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -123,8 +122,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loadPlaces();
-        onCreate = false;
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.PLACE_CHANGED)) loadPlaces();
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -153,6 +151,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     }
 
     private void loadPlaces(){
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.PLACE_CHANGED, false);
         provider = new PlaceDataProvider(getActivity());
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

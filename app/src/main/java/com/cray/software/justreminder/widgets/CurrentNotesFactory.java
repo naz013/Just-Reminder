@@ -24,8 +24,6 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
 
     private ArrayList<Note> notes;
     private Context mContext;
-    private NotesBase db;
-    private ColorSetter cs;
 
     CurrentNotesFactory(Context ctx, Intent intent) {
         mContext = ctx;
@@ -37,14 +35,12 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
     @Override
     public void onCreate() {
         notes = new ArrayList<>();
-        db = new NotesBase(mContext);
-        cs = new ColorSetter(mContext);
     }
 
     @Override
     public void onDataSetChanged() {
         notes.clear();
-        db = new NotesBase(mContext);
+        NotesBase db = new NotesBase(mContext);
         String title;
         int col;
         long id;
@@ -60,8 +56,8 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
                 notes.add(new Note(title, col, id, img));
             } while (c.moveToNext());
         }
-
         if(c != null) c.close();
+        db.close();
     }
 
     @Override
@@ -78,16 +74,17 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
     public RemoteViews getViewAt(int i) {
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_note_widget);
-        cs = new ColorSetter(mContext);
+        ColorSetter cs = new ColorSetter(mContext);
         Note note = notes.get(i);
         rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(note.getColor()));
         byte[] byteImage = note.getImage();
         if (byteImage != null){
             Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
             if (photo != null){
-                rView.setImageViewBitmap(R.id.imageView, photo);
-            } else rView.setViewVisibility(R.id.imageView, View.GONE);
-        } else rView.setViewVisibility(R.id.imageView, View.GONE);
+                rView.setImageViewBitmap(R.id.noteImage, photo);
+                rView.setViewVisibility(R.id.noteImage, View.VISIBLE);
+            } else rView.setViewVisibility(R.id.noteImage, View.GONE);
+        } else rView.setViewVisibility(R.id.noteImage, View.GONE);
 
         SharedPrefs prefs = new SharedPrefs(mContext);
         String title = note.getText();
@@ -100,7 +97,7 @@ public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactor
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra(Constants.EDIT_ID, note.getId());
         rView.setOnClickFillInIntent(R.id.note, fillInIntent);
-        rView.setOnClickFillInIntent(R.id.imageView, fillInIntent);
+        rView.setOnClickFillInIntent(R.id.noteImage, fillInIntent);
         rView.setOnClickFillInIntent(R.id.noteBackground, fillInIntent);
         return rView;
     }

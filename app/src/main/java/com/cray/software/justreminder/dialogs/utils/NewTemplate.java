@@ -17,14 +17,15 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 
 public class NewTemplate extends AppCompatActivity {
 
     private ColorSetter cs = new ColorSetter(NewTemplate.this);
     private EditText placeName;
-    private DataBase db = new DataBase(NewTemplate.this);
     private TextView leftCharacters;
     private long id;
 
@@ -45,7 +46,6 @@ public class NewTemplate extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        //toolbar.setTitle(getString(R.string.new_template_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -54,12 +54,14 @@ public class NewTemplate extends AppCompatActivity {
 
         placeName = (EditText) findViewById(R.id.placeName);
         if (id != 0) {
+            DataBase db = new DataBase(NewTemplate.this);
             db.open();
             Cursor c = db.getTemplate(id);
             if (c != null && c.moveToFirst()){
                 placeName.setText(c.getString(c.getColumnIndex(Constants.COLUMN_TEXT)));
             }
             if (c != null) c.close();
+            db.close();
         }
         placeName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -85,6 +87,7 @@ public class NewTemplate extends AppCompatActivity {
             placeName.setError(getString(R.string.empty_field_error));
             return;
         }
+        DataBase db = new DataBase(NewTemplate.this);
         db.open();
         if (id != 0){
             db.updateTemplate(id, text, System.currentTimeMillis());
@@ -92,6 +95,7 @@ public class NewTemplate extends AppCompatActivity {
             db.addTemplate(text, System.currentTimeMillis());
         }
         db.close();
+        new SharedPrefs(this).saveBoolean(Prefs.TEMPLATE_CHANGED, true);
         finish();
     }
 

@@ -26,8 +26,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.CategoryModel;
 import com.cray.software.justreminder.CategoryManager;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
@@ -45,8 +47,6 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     private AdView adView;
 
     private CategoryDataProvider provider;
-
-    private boolean onCreate = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -77,7 +77,6 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         listView.setLayoutManager(mLayoutManager);
 
         loadCategories();
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -126,8 +125,8 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loadCategories();
-        onCreate = false;
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.GROUP_CHANGED))
+            loadCategories();
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -156,6 +155,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     }
 
     private void loadCategories(){
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.GROUP_CHANGED, false);
         provider = new CategoryDataProvider(getActivity());
         CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);

@@ -56,6 +56,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     private ReminderDataProvider provider;
 
     private ArrayList<String> ids;
+    private String lastId;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -122,6 +123,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
 
+        loaderAdapter(lastId);
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
@@ -174,7 +176,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 adView.resume();
             }
         }
-        loaderAdapter(null);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+            loaderAdapter(lastId);
     }
 
     @Override
@@ -198,6 +201,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     }
 
     public void loaderAdapter(String categoryId){
+        lastId = categoryId;
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         provider = new ReminderDataProvider(getActivity());

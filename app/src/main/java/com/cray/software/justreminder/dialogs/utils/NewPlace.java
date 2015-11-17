@@ -26,7 +26,6 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     private ColorSetter cs = new ColorSetter(NewPlace.this);
     private EditText placeName;
     private SharedPrefs sPrefs = new SharedPrefs(NewPlace.this);
-    private DataBase db = new DataBase(NewPlace.this);
 
     private LatLng place;
     private String placeTitle;
@@ -46,7 +45,6 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        //toolbar.setTitle(getString(R.string.new_place_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -62,6 +60,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
 
         if (id != 0){
             int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+            DataBase db = new DataBase(NewPlace.this);
             db.open();
             Cursor c = db.getPlace(id);
             if (c != null && c.moveToFirst()){
@@ -71,6 +70,8 @@ public class NewPlace extends AppCompatActivity implements MapListener {
                 googleMap.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
                 placeName.setText(text);
             }
+            if (c != null) c.close();
+            db.close();
         }
     }
 
@@ -86,6 +87,8 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             }
             Double latitude = place.latitude;
             Double longitude = place.longitude;
+
+            DataBase db = new DataBase(NewPlace.this);
             db.open();
             if (id != 0){
                 db.updatePlace(id, task, latitude, longitude);
@@ -93,6 +96,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
                 db.insertPlace(task, latitude, longitude);
             }
             db.close();
+            new SharedPrefs(this).saveBoolean(Prefs.PLACE_CHANGED, true);
             finish();
         } else {
             Toast.makeText(NewPlace.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();

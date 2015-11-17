@@ -3,7 +3,6 @@ package com.cray.software.justreminder.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -11,7 +10,7 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.services.SetBirthdays;
+import com.cray.software.justreminder.services.BirthdayAlarm;
 
 import java.util.Calendar;
 
@@ -54,7 +53,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         SharedPrefs sPrefs = new SharedPrefs(mActivity.getApplicationContext());
         sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_HOUR, hourOfDay);
         sPrefs.saveInt(Prefs.BIRTHDAY_REMINDER_MINUTE, minute);
-        mActivity.startService(new Intent(mActivity.getApplicationContext(), SetBirthdays.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        new BirthdayAlarm().setAlarm(getActivity());
         mListener.onTimePicked(c);
     }
 

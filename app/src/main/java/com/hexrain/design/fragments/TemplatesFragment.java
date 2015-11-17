@@ -21,7 +21,9 @@ import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.dialogs.utils.NewTemplate;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.google.android.gms.ads.AdListener;
@@ -37,8 +39,6 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     private AdView adView;
 
     private TemplateDataProvider provider;
-
-    private boolean onCreate = false;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
@@ -72,7 +72,6 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
         loadTemplates();
-        onCreate = true;
 
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
@@ -122,8 +121,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loadTemplates();
-        onCreate = false;
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.TEMPLATE_CHANGED))
+            loadTemplates();
+
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -152,6 +152,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     private void loadTemplates(){
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.TEMPLATE_CHANGED, false);
         provider = new TemplateDataProvider(getActivity());
         reloadView();
         TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(getActivity(), provider);

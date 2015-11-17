@@ -516,6 +516,7 @@ public class NotesManager extends AppCompatActivity {
             alarm.setAlarm(NotesManager.this, remId);
         }
 
+        new SharedPrefs(this).saveBoolean(Prefs.NOTE_CHANGED, true);
         new UpdatesHelper(NotesManager.this).updateNotesWidget();
         finish();
     }

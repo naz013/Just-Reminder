@@ -23,7 +23,6 @@ public class SharedPrefs {
     private Context mContext;
     public static final String APP_UI_PREFERENCES = "ui_settings";
     public static final String APP_CHANGES_PREFERENCES = "changes_settings";
-    public static final String APP_PREFERENCES = "system_messages";
     private static int MODE = Context.MODE_PRIVATE;
     public SharedPrefs(Context context){
         this.mContext = context;

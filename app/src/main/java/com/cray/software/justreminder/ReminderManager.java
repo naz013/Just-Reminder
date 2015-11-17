@@ -2772,6 +2772,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 ((ShoppingType) remControl).saveShopList(remId, shoppingLists.getData(), null);
             }
         }
+        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
     }
 

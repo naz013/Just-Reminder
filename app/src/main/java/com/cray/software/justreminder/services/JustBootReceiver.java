@@ -14,20 +14,23 @@ public class JustBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         context.startService(new Intent(context, TaskButlerService.class));
-        context.startService(new Intent(context, SetBirthdays.class));
-        if (new SharedPrefs(context).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)){
+        SharedPrefs prefs = new SharedPrefs(context);
+        if (prefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)){
+            new BirthdayAlarm().setAlarm(context);
+        }
+        if (prefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)){
             new Notifier(context).showPermanent();
         }
-        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS)){
+        if (prefs.loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS)){
             new BirthdayCheckAlarm().setAlarm(context);
         }
-        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS)){
+        if (prefs.loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS)){
             new EventsCheckAlarm().setAlarm(context);
         }
-        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
+        if (prefs.loadBoolean(Prefs.AUTO_BACKUP)){
             new AutoSyncAlarm().setAlarm(context);
         }
-        if (new SharedPrefs(context).loadBoolean(Prefs.BIRTHDAY_PERMANENT)){
+        if (prefs.loadBoolean(Prefs.BIRTHDAY_PERMANENT)){
             new BirthdayPermanentAlarm().setAlarm(context);
             new Notifier(context).showBirthdayPermanent();
         }

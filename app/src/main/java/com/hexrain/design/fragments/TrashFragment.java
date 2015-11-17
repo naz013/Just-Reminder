@@ -23,7 +23,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.ReminderModel;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -98,6 +100,8 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
 
+        loaderAdapter();
+
         if (!Module.isPro()) {
             emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
             emptyLayout.setVisibility(View.GONE);
@@ -145,7 +149,8 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onResume() {
         super.onResume();
-        loaderAdapter();
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+            loaderAdapter();
         if (!Module.isPro()){
             if (adView != null) {
                 adView.resume();
@@ -174,6 +179,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     }
 
     public void loaderAdapter(){
+        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
         DB = new DataBase(getActivity());
         if (!DB.isOpen()) DB.open();
         provider = new ReminderDataProvider(getActivity());

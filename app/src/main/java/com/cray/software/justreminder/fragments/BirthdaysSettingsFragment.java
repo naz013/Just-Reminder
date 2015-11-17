@@ -32,7 +32,6 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.BirthdayAlarm;
 import com.cray.software.justreminder.services.BirthdayCheckAlarm;
 import com.cray.software.justreminder.services.BirthdayPermanentAlarm;
-import com.cray.software.justreminder.services.SetBirthdays;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
 
@@ -285,7 +284,6 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         switch (v.getId()){
             case R.id.reminderTime:
                 new BirthdayAlarm().cancelAlarm(getActivity());
-                getActivity().stopService(new Intent(getActivity(), SetBirthdays.class));
                 DialogFragment timePickerFragment = new TimePickerFragment();
                 timePickerFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
                 break;
@@ -345,7 +343,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
             birthReminderCheck.setChecked(true);
-            getActivity().startService(new Intent(getActivity(), SetBirthdays.class));
+            new BirthdayAlarm().setAlarm(getActivity());
         }
     }
 
