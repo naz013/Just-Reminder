@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,6 +37,8 @@ public class ShoppingListPreview extends AppCompatActivity {
     private RecyclerView todoList;
     private Toolbar toolbar;
     private FloatingActionButton mFab;
+    private RelativeLayout reminderContainer;
+    private SwitchCompat reminderSwitch;
 
     private ShoppingListDataProvider provider;
     private ColorSetter cSetter;
@@ -62,13 +65,24 @@ public class ShoppingListPreview extends AppCompatActivity {
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
+        reminderSwitch = (SwitchCompat) findViewById(R.id.reminderSwitch);
+        reminderSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Reminder.toggle(id, ShoppingListPreview.this, null);
+                loadData();
+            }
+        });
+        reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
+
         shopTitle = (TextView) findViewById(R.id.shopTitle);
         time = (TextView) findViewById(R.id.time);
         if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
         else
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_grey600_24dp, 0, 0, 0);
-        time.setVisibility(View.GONE);
+
+        reminderContainer.setVisibility(View.GONE);
 
         CheckBox showHidden = (CheckBox) findViewById(R.id.showHidden);
         showHidden.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -118,7 +132,6 @@ public class ShoppingListPreview extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadData();
-        loadUi();
     }
 
     private void loadUi() {
@@ -128,10 +141,17 @@ public class ShoppingListPreview extends AppCompatActivity {
             long due = item.getDue();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                time.setVisibility(View.VISIBLE);
+                reminderContainer.setVisibility(View.VISIBLE);
             } else {
-                time.setVisibility(View.GONE);
+                reminderContainer.setVisibility(View.GONE);
             }
+
+            if (item.getCompleted() == 1){
+                reminderSwitch.setChecked(true);
+            } else {
+                reminderSwitch.setChecked(false);
+            }
+
             int catColor = item.getCatColor();
             toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.getCategoryColor(catColor)));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -164,6 +184,7 @@ public class ShoppingListPreview extends AppCompatActivity {
             }
         });
         todoList.setAdapter(shoppingAdapter);
+        loadUi();
     }
 
     @Override
