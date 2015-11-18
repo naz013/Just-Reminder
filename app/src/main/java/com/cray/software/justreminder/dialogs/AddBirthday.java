@@ -11,13 +11,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -65,7 +65,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        //toolbar.setTitle(getString(R.string.add_birthday_button));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -74,9 +73,15 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         phone = (EditText) findViewById(R.id.phone);
         birthDate.setOnClickListener(this);
 
-        container = (LinearLayout) findViewById(R.id.container);
+        ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+            dateIcon.setImageResource(R.drawable.ic_event_white_24dp);
+        } else {
+            dateIcon.setImageResource(R.drawable.ic_event_black_24dp);
+        }
 
-        RelativeLayout contactLayout = (RelativeLayout) findViewById(R.id.contactLayout);
+        container = (LinearLayout) findViewById(R.id.container);
+        container.setVisibility(View.GONE);
 
         contactCheck = (CheckBox) findViewById(R.id.contactCheck);
         contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -125,7 +130,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
             toolbar.setTitle(getString(R.string.edit_birthday_title));
             if (number != null) contactCheck.setChecked(true);
-        } else if (receivedDate != 0){
+        } else if (receivedDate != 0) {
             calendar.setTimeInMillis(receivedDate);
         }
 
@@ -135,29 +140,29 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
         birthDate.setText(format.format(calendar.getTime()));
 
-        Button pickContact = (Button) findViewById(R.id.pickContact);
+        ImageButton pickContact = (ImageButton) findViewById(R.id.pickContact);
         ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
-        contactLayout.setOnClickListener(this);
+        pickContact.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.birthDate:
                 dateDialog();
                 break;
-            case R.id.contactLayout:
+            case R.id.pickContact:
                 SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
                 break;
         }
     }
 
-    private void saveBirthday(){
+    private void saveBirthday() {
         db = new DataBase(AddBirthday.this);
         db.open();
-        if (id != 0){
+        if (id != 0) {
             String contact = birthName.getText().toString();
-            if (contact.matches("")){
+            if (contact.matches("")) {
                 birthName.setError(getString(R.string.empty_field_error));
             } else {
                 int contactId = Contacts.getContactIDFromNumber(number, AddBirthday.this);
@@ -230,11 +235,11 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             myMonth = monthOfYear;
             myDay = dayOfMonth;
             String monthStr;
-            if (myMonth < 9){
+            if (myMonth < 9) {
                 monthStr = "0" + (myMonth + 1);
             } else monthStr = String.valueOf((myMonth + 1));
             String dayStr;
-            if (myDay < 10){
+            if (myDay < 10) {
                 dayStr = "0" + myDay;
             } else dayStr = String.valueOf(myDay);
             birthDate.setText(SuperUtil.appendString(String.valueOf(myYear), "-", monthStr, "-", dayStr));

@@ -42,115 +42,118 @@
             android:layout_marginTop="@dimen/create_margin"
             android:layout_marginBottom="@dimen/create_margin">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/create_margin"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_height="wrap_content">
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp">
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:layout_marginRight="@dimen/create_margin"
-                    android:layout_height="wrap_content">
+                <TableRow>
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="center"
+                        android:id="@+id/timeIcon"
+                        android:src="@drawable/ic_alarm_black_24dp"/>
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tue, 5 Nov 2015"
-                        android:ems="10"
-                        android:gravity="center|left"
-                        android:layout_toLeftOf="@+id/timeField"
+                        android:layout_gravity="center_vertical"
                         android:textSize="@dimen/create_text_size_normal"
+                        android:layout_marginRight="15dp"
                         android:id="@+id/dateField" />
 
                     <TextView
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center|right"
+                        android:layout_gravity="center_vertical"
                         android:textSize="@dimen/create_text_size_normal"
                         android:text="14:05"
-                        android:layout_alignParentRight="true"
-                        android:ems="10"
                         android:id="@+id/timeField" />
-                </RelativeLayout>
-            </LinearLayout>
+                </TableRow>
+            </TableLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="15dp"
                 android:background="?attr/colorAccent"/>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:orientation="vertical">
+                android:layout_margin="8dp">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:gravity="left|center"
-                    android:layout_marginLeft="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:layout_marginRight="@dimen/create_margin"
-                    android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="15dp"
+                    android:scaleType="center"
+                    android:id="@+id/repeatIcon"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ic_refresh_black_24dp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center|left"
-                        android:id="@+id/text1"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentLeft="true"
-                        android:text="@string/string_repeat_every"
-                        android:textSize="@dimen/create_text_size_normal"/>
-
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="10dp"
-                        android:minWidth="50dp"
-                        android:layout_toRightOf="@+id/text1"
-                        android:maxLength="3"
-                        android:inputType="number"
-                        android:gravity="center"
-                        android:background="@android:color/transparent"
-                        android:layout_marginLeft="@dimen/create_margin"
-                        android:textSize="@dimen/create_text_size_primary"
-                        android:id="@+id/repeatDays"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center|left"
-                        android:layout_centerVertical="true"
-                        android:text="@string/remaining_days"
-                        android:layout_toRightOf="@+id/repeatDays"
-                        android:textSize="@dimen/create_text_size_normal"/>
-
-                </RelativeLayout>
-
-                <SeekBar
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:id="@+id/repeatDateInt"
-                    android:max="4"
-                    android:layout_marginRight="@dimen/create_margin"/>
+                    android:layout_toRightOf="@+id/repeatIcon"
+                    android:orientation="vertical">
 
-            </LinearLayout>
+                    <TableLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <TableRow>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/text1"
+                                android:text="@string/string_repeat_every"
+                                android:textSize="@dimen/create_text_size_normal"/>
+
+                            <EditText
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="45dp"
+                                android:maxLength="3"
+                                android:inputType="number"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="5dp"
+                                android:background="@android:color/transparent"
+                                android:textSize="@dimen/create_text_size_primary"
+                                android:id="@+id/repeatDays"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/remaining_days"
+                                android:textSize="@dimen/create_text_size_normal"/>
+
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <SeekBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/repeatDateInt"
+                        android:layout_marginTop="15dp"
+                        android:max="4"
+                        android:layout_marginRight="@dimen/create_margin"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginTop="15dp"
                 android:background="?attr/colorAccent"/>
 
             <CheckBox

@@ -50,7 +50,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:scaleType="fitCenter"
+                        android:scaleType="center"
                         android:layout_marginRight="15dp"
                         android:id="@+id/noteIcon"
                         android:src="@drawable/ic_event_note_black_24dp"/>
@@ -78,7 +78,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:scaleType="fitCenter"
+                        android:scaleType="center"
                         android:layout_marginRight="15dp"
                         android:id="@+id/dateIcon"
                         android:src="@drawable/ic_event_black_24dp"/>
@@ -105,7 +105,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginRight="15dp"
-                        android:scaleType="fitCenter"
+                        android:scaleType="center"
                         android:id="@+id/timeIcon"
                         android:src="@drawable/ic_alarm_black_24dp"/>
 
@@ -131,7 +131,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginRight="15dp"
-                        android:scaleType="fitCenter"
+                        android:scaleType="center"
                         android:id="@+id/listIcon"
                         android:src="@drawable/ic_view_list_black_24dp"/>
 

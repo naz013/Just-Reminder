@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -69,9 +70,19 @@ public class QuickAddReminder extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        //toolbar.setTitle(getString(R.string.add_reminder_dialog_title));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+
+        ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
+        ImageView repeatIcon = (ImageView) findViewById(R.id.repeatIcon);
+
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+            timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+            repeatIcon.setImageResource(R.drawable.ic_refresh_white_24dp);
+        } else {
+            timeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+            repeatIcon.setImageResource(R.drawable.ic_refresh_black_24dp);
+        }
 
         task_text = (EditText) findViewById(R.id.task_text);
 
@@ -79,7 +90,7 @@ public class QuickAddReminder extends AppCompatActivity {
         long receivedDate = i.getLongExtra("date", 0);
 
         taskExport = (CheckBox) findViewById(R.id.taskExport);
-        if (gtx.isLinked()){
+        if (gtx.isLinked()) {
             taskExport.setVisibility(View.VISIBLE);
         }
 
@@ -186,9 +197,9 @@ public class QuickAddReminder extends AppCompatActivity {
         }
     };
 
-    private void saveDateTask(){
+    private void saveDateTask() {
         String text = task_text.getText().toString().trim();
-        if (text.matches("")){
+        if (text.matches("")) {
             task_text.setError(getString(R.string.empty_field_error));
             return;
         }
@@ -215,7 +226,7 @@ public class QuickAddReminder extends AppCompatActivity {
             id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                     repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
         }
-        if (gtx.isLinked() && taskExport.isChecked()){
+        if (gtx.isLinked() && taskExport.isChecked()) {
             ReminderUtils.exportToTasks(this, text, startTime, id);
         }
         DB.updateReminderDateTime(id);

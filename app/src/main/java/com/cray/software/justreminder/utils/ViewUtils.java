@@ -91,7 +91,7 @@ public class ViewUtils {
     public static void setImage(ImageButton ib, boolean isDark){
         if (isDark){
             ib.setImageResource(R.drawable.ic_person_add_white_24dp);
-        } else ib.setImageResource(R.drawable.ic_person_add_grey600_24dp);
+        } else ib.setImageResource(R.drawable.ic_person_add_black_24dp);
     }
 
     /**
@@ -102,7 +102,7 @@ public class ViewUtils {
     public static void setImage(Button ib, boolean isDark){
         if (isDark){
             ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_white_24dp, 0, 0, 0);
-        } else ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_grey600_24dp, 0, 0, 0);
+        } else ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_black_24dp, 0, 0, 0);
     }
 
     /**
