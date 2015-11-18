@@ -68,7 +68,10 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getString(R.string.message_list_empty_text));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.textsms);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.textsms_white);
+        else
+            emptyImage.setImageResource(R.drawable.textsms);
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
         loadTemplates();

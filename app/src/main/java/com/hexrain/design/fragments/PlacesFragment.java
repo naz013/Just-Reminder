@@ -68,7 +68,10 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getActivity().getString(R.string.empty_places_list_text));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.place);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.place_white);
+        else
+            emptyImage.setImageResource(R.drawable.place);
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
 

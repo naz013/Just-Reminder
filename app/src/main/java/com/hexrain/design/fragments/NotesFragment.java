@@ -134,7 +134,10 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.note);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.note_white);
+        else
+            emptyImage.setImageResource(R.drawable.note);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());

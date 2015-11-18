@@ -94,7 +94,10 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyText.setText(getActivity().getString(R.string.string_no_archived));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.delete);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.delete_white);
+        else
+            emptyImage.setImageResource(R.drawable.delete);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

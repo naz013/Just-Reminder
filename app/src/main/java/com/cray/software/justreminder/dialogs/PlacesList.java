@@ -27,7 +27,9 @@ import com.cray.software.justreminder.dialogs.utils.NewPlace;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.interfaces.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.SimpleListener;
@@ -70,7 +72,10 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         emptyText.setText(getString(R.string.empty_places_list_text));
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.place);
+        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.place_white);
+        else
+            emptyImage.setImageResource(R.drawable.place);
 
         listView = (RecyclerView) findViewById(R.id.currentList);
 

@@ -117,7 +117,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.alarm);
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
+        else
+            emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());

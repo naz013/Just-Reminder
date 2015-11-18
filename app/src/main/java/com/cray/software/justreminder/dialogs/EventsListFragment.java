@@ -19,6 +19,8 @@ import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -61,7 +63,10 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         emptyText.setText(getString(R.string.events_empty_text));
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.today);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.today_white);
+        else
+            emptyImage.setImageResource(R.drawable.today);
 
         listView = (RecyclerView) view.findViewById(R.id.currentList);
 

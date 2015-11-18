@@ -62,7 +62,10 @@ public class TaskListFragment extends Fragment implements SyncListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        emptyImage.setImageResource(R.drawable.clear);
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+            emptyImage.setImageResource(R.drawable.clear_white);
+        else
+            emptyImage.setImageResource(R.drawable.clear);
 
         currentList = (RecyclerView) view.findViewById(R.id.currentList);
         loaderAdapter();
