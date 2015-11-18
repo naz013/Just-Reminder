@@ -286,6 +286,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private ArrayAdapter<String> adapter;
     private ArrayList<String> namesList;
     private LatLng curPlace;
+    private boolean isShoppingReminder;
 
     private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
     private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
@@ -2610,6 +2611,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 myDay = 0;
                 myHour = 0;
                 myMinute = 0;
+                isShoppingReminder = false;
             }
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
@@ -2632,6 +2634,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myHour = cal.get(Calendar.HOUR_OF_DAY);
                     myMinute = cal.get(Calendar.MINUTE);
                 }
+                isShoppingReminder = true;
             }
         });
 
@@ -2738,10 +2741,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (shoppingNoTime.getVisibility() == View.VISIBLE)
                     ViewUtils.hide(shoppingNoTime);
                 ViewUtils.show(shoppingTimeContainer);
+                isShoppingReminder = true;
             } else {
                 if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
                     ViewUtils.hide(shoppingTimeContainer);
                 ViewUtils.show(shoppingNoTime);
+                isShoppingReminder = false;
             }
 
             taskField.setText(item.getTitle());
@@ -2858,7 +2863,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
-     * Check if monthday reminder type layout visible.
+     * Check if monthDay reminder type layout visible.
      * @return Boolean
      */
     private boolean isMonthDayAttached() {
@@ -3045,13 +3050,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             long due = getDue(weekdays, repMinute);
             Log.d(Constants.LOG_TAG, "Task due " + due);
 
-            if (isLocationAttached() || isLocationOutAttached()) {
+            if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()) {
                 if (isLocationAttached() && !attackDelay.isChecked()) {
                     myDay = 0;
                     myMonth = 0;
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
+                    mySeconds = 0;
                 }
                 if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
                     myDay = 0;
@@ -3059,6 +3065,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
+                    mySeconds = 0;
+                }
+                if (!isShoppingReminder){
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                    mySeconds = 0;
                 }
             }
 

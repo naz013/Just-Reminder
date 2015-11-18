@@ -497,7 +497,7 @@
     <string name="notification_note_string">Note</string>
     <string name="text_color_string">Text color</string>
     <string name="color_black">Black</string>
-    <string name="calendar_widget_name">Calendar</string>
+    <string name="calendar_widget_name">Calendario</string>
     <string name="settings_volume_title">Volume</string>
     <string name="featured_reminders_string">Upcoming reminder</string>
     <string name="config_text_size">Text size</string>

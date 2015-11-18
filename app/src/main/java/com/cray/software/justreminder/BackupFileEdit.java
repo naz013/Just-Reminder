@@ -237,6 +237,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private ArrayAdapter<String> adapter;
     private ArrayList<String> namesList;
     private LatLng curPlace;
+    private boolean isShoppingReminder;
 
     private DataBase DB = new DataBase(BackupFileEdit.this);
     private FilesDataBase fdb = new FilesDataBase(BackupFileEdit.this);
@@ -458,6 +459,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 myDay = 0;
                 myHour = 0;
                 myMinute = 0;
+                isShoppingReminder = false;
             }
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
@@ -481,6 +483,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     myHour = cal.get(Calendar.HOUR_OF_DAY);
                     myMinute = cal.get(Calendar.MINUTE);
                 }
+                isShoppingReminder = true;
             }
         });
         shopEdit = (EditText) findViewById(R.id.shopEdit);
@@ -590,10 +593,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (shoppingNoTime.getVisibility() == View.VISIBLE)
                     ViewUtils.hide(shoppingNoTime);
                 ViewUtils.show(shoppingTimeContainer);
+                isShoppingReminder = true;
             } else {
                 if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
                     ViewUtils.hide(shoppingTimeContainer);
                 ViewUtils.show(shoppingNoTime);
+                isShoppingReminder = false;
             }
 
             taskField.setText(text);
@@ -2243,6 +2248,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
+        }
+        if (!isShoppingReminder){
+            myDay = 0;
+            myMonth = 0;
+            myYear = 0;
+            myHour = 0;
+            myMinute = 0;
         }
         long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 0, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);

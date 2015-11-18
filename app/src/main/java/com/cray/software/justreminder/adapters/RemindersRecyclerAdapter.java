@@ -185,10 +185,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 simpleDate = mContext.getString(R.string.simple_disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
+            } else if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == 1){
+                holder.listHeader.setVisibility(View.GONE);
             } else if (isDone == 1 && position == 0){
-                holder.listHeader.setVisibility(View.GONE);
-            } else if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == isDone){
-                holder.listHeader.setVisibility(View.GONE);
+                simpleDate = mContext.getString(R.string.simple_disabled);
+                holder.listHeader.setText(simpleDate);
+                holder.listHeader.setVisibility(View.VISIBLE);
             } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))){
                 holder.listHeader.setVisibility(View.GONE);
             } else {

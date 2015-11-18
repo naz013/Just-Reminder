@@ -758,10 +758,10 @@
     <string name="_today">Сегодня</string>
     <string name="_tomorrow">Завтра</string>
     <string name="permanent_reminders">Постоянные напоминания</string>
-    <string name="no_reminder">No reminder</string>
-    <string name="no_date">No date</string>
-    <string name="select_date">Select date</string>
-    <string name="select_time">Select time</string>
-    <string name="no_files">No files found!</string>
-    <string name="file_format_warming">Only .mp3 and .ogg music files allowed!</string>
+    <string name="no_reminder">Нет напоминания</string>
+    <string name="select_date">Выбрать дату</string>
+    <string name="select_time">Выбрать время</string>
+    <string name="no_files">Не найдено ни одного файла!</string>
+    <string name="file_format_warming">Только файлы формата .mp3 и .ogg поддержываются!</string>
+    <string name="no_date">Нет даты</string>
 </resources>

@@ -87,8 +87,8 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         byte[] byteImage = item.getImage();
 
         if (title.length() > 500) {
-            String substring = title.substring(0, 200);
-            title = substring + " ...";
+            String substring = title.substring(0, 500);
+            title = substring + "...";
         }
 
         holder.textView.setTypeface(cs.getTypeface(style));
