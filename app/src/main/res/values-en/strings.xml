@@ -762,4 +762,6 @@
     <string name="no_date">No date</string>
     <string name="select_date">Select date</string>
     <string name="select_time">Select time</string>
+    <string name="no_files">No files found!</string>
+    <string name="file_format_warming">Only .mp3 and .ogg music files allowed!</string>
 </resources>

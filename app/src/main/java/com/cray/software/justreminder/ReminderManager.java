@@ -71,6 +71,7 @@ import com.cray.software.justreminder.dialogs.utils.TargetRadius;
 import com.cray.software.justreminder.fragments.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
+import com.cray.software.justreminder.helpers.FileExplore;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -332,7 +333,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                                 save();
                                 return true;
                             case R.id.action_custom_melody:
-                                SuperUtil.selectMelody(ReminderManager.this, Constants.REQUEST_CODE_SELECTED_MELODY);
+                                startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
+                                        Constants.REQUEST_CODE_SELECTED_MELODY);
                                 return true;
                             case R.id.action_custom_radius:
                                 selectRadius();
@@ -3879,7 +3881,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
         if (requestCode == Constants.REQUEST_CODE_SELECTED_MELODY) {
             if (resultCode == RESULT_OK){
-                melody = data.getStringExtra(Constants.SELECTED_MELODY);
+                melody = data.getStringExtra(Constants.FILE_PICKED);
                 if (melody != null) {
                     File musicFile = new File(melody);
                     Messages.toast(ReminderManager.this, getString(R.string.selected_melody_string) + musicFile.getName());

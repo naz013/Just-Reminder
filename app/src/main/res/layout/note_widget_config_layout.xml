@@ -20,14 +20,13 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/widget_config_margin_top"
-                android:gravity="center_vertical">
+                android:layout_marginTop="@dimen/widget_config_margin_top">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/header_bg_text"
@@ -41,16 +40,20 @@
                     android:id="@+id/headerBgColor" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorAccent"/>
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/widget_config_margin_top"
                 android:layout_gravity="center_horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/widget_bg_color_title"
@@ -63,22 +66,27 @@
                     android:id="@+id/widgetBgSpinner" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorAccent"/>
+
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/widget_config_margin_top"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/widget_title_color"/>
 
                 <RadioGroup
                     android:layout_width="match_parent"
-                    android:gravity="center"
+                    android:gravity="center|left"
                     android:layout_height="wrap_content"
                     android:id="@+id/colorsTitleGroup"
                     android:orientation="horizontal">
@@ -100,22 +108,25 @@
                 </RadioGroup>
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorAccent"/>
+
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/widget_config_margin_top"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/plus_button_color_title"/>
 
                 <RadioGroup
                     android:layout_width="match_parent"
-                    android:gravity="center"
                     android:layout_height="wrap_content"
                     android:id="@+id/colorsButtonGroup"
                     android:orientation="horizontal">
@@ -137,20 +148,25 @@
                 </RadioGroup>
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorAccent"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/widget_config_margin_top"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/transparency_settings"/>
 
                 <RadioGroup
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/switcherGroup"
                     android:orientation="horizontal">
@@ -180,6 +196,11 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="@dimen/widget_config_margin_top"
                 android:id="@+id/alphaSeek"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/colorAccent"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
