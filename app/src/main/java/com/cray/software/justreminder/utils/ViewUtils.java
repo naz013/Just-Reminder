@@ -65,7 +65,7 @@ public class ViewUtils {
         } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-            icon = R.drawable.ic_message_white_24dp;
+            icon = R.drawable.ic_textsms_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
@@ -77,6 +77,8 @@ public class ViewUtils {
             icon = R.drawable.ic_launch_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_APPLICATION_BROWSER)) {
             icon = R.drawable.ic_public_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_SHOPPING_LIST)) {
+            icon = R.drawable.ic_shopping_cart_white_24dp;
         } else {
             icon = R.drawable.ic_event_white_24dp;
         }

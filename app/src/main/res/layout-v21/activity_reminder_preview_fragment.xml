@@ -36,6 +36,7 @@
                 android:textSize="25sp"
                 android:scrollbars="vertical"
                 android:maxHeight="150dp"
+                android:minHeight="72dp"
                 android:gravity="center|left"
                 android:transitionName="task"
                 android:textColor="@color/colorWhite"

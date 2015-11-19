@@ -22,6 +22,9 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class FileExplore extends AppCompatActivity {
 
@@ -150,10 +153,11 @@ public class FileExplore extends AppCompatActivity {
 				}
 			};
 
-			String[] fList = path.list(filter);
-			fileList = new Item[fList.length];
-			for (int i = 0; i < fList.length; i++) {
-                String fileName = fList[i];
+            List<String> list = Arrays.asList(path.list(filter));
+            Collections.sort(list);
+			fileList = new Item[list.size()];
+			for (int i = 0; i < list.size(); i++) {
+                String fileName = list.get(i);
                 // Convert into file path
                 File sel = new File(path, fileName);
 				fileList[i] = new Item(fileName, getFileIcon(fileName), sel.toString());
@@ -201,12 +205,38 @@ public class FileExplore extends AppCompatActivity {
             return isDark ? R.drawable.ic_music_note_white_24dp : R.drawable.ic_music_note_black_24dp;
         else if (isPicture(file))
             return isDark ? R.drawable.ic_image_white_24dp : R.drawable.ic_image_black_24dp;
+        else if (isMovie(file))
+            return isDark ? R.drawable.ic_movie_white_24dp : R.drawable.ic_movie_black_24dp;
+        else if (isGif(file))
+            return isDark ? R.drawable.ic_gif_white_24dp : R.drawable.ic_gif_black_24dp;
+        else if (isArchive(file))
+            return isDark ? R.drawable.ic_storage_white_24dp : R.drawable.ic_storage_black_24dp;
+        else if (isAndroid(file))
+            return isDark ? R.drawable.ic_android_white_24dp : R.drawable.ic_android_black_24dp;
         else
             return isDark ? R.drawable.ic_insert_drive_file_white_24dp : R.drawable.ic_insert_drive_file_black_24dp;
     }
 
     private boolean isPicture(String file){
-        return file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png") || file.endsWith(".gif");
+        return file.endsWith(".jpg") || file.endsWith(".jpeg") || file.endsWith(".png");
+    }
+
+    private boolean isArchive(String file){
+        return file.endsWith(".zip") || file.endsWith(".rar") || file.endsWith(".tar.gz");
+    }
+
+    private boolean isMovie(String file){
+        return file.endsWith(".mov") || file.endsWith(".3gp") || file.endsWith(".avi") ||
+                file.endsWith(".mkv") || file.endsWith(".vob") || file.endsWith(".divx") ||
+                file.endsWith(".mp4") || file.endsWith(".flv");
+    }
+
+    private boolean isGif(String file){
+        return file.endsWith(".gif");
+    }
+
+    private boolean isAndroid(String file){
+        return file.endsWith(".apk");
     }
 
     private boolean isMelody(String file){

@@ -35,6 +35,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="25sp"
                 android:maxHeight="150dp"
+                android:minHeight="72dp"
                 android:scrollbars="vertical"
                 android:gravity="center|left"
                 android:textColor="@color/colorWhite"

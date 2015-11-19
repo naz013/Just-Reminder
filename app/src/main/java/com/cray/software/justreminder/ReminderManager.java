@@ -845,25 +845,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.by_weekdays_title), R.drawable.ic_alarm_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.make_call_title), R.drawable.ic_call_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_message_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_textsms_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.by_location_title), R.drawable.ic_place_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.skype_reminder_type), R.drawable.skype_icon_white));
             navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_white_24dp));
         } else {
-            navSpinner.add(new SpinnerItem(getString(R.string.by_date_title), R.drawable.ic_event_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_weekdays_title), R.drawable.ic_alarm_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.make_call_title), R.drawable.ic_call_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_message_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_location_title), R.drawable.ic_place_grey600_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.by_date_title), R.drawable.ic_event_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.by_weekdays_title), R.drawable.ic_alarm_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.make_call_title), R.drawable.ic_call_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_textsms_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.by_location_title), R.drawable.ic_place_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.skype_reminder_type), R.drawable.skype_icon));
-            navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_grey600_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_reorder_grey600_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_black_24dp));
         }
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
@@ -3999,9 +3999,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
         }
-        if (isShoppingAttached()){
-            menu.getItem(0).setVisible(false);
-        }
+        menu.getItem(0).setVisible(false);
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
             menu.getItem(2).setVisible(true);

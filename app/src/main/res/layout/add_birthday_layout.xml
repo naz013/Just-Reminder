@@ -74,6 +74,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:layout_marginBottom="@dimen/view_margin_top"
                 android:background="?attr/colorAccent"/>
 
             <CheckBox
@@ -83,7 +85,6 @@
                 android:textSize="@dimen/add_birthday_text_size_primary"
                 android:gravity="center"
                 android:clickable="true"
-                android:layout_marginTop="@dimen/view_margin_top"
                 android:text="@string/attach_contact_check"/>
 
             <LinearLayout
