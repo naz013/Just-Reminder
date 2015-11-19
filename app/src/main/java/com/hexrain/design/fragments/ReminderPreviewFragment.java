@@ -303,21 +303,21 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
     private void setDrawables() {
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_white_24dp, 0, 0, 0);
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
             type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
             group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
             location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
             number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_white_24dp, 0, 0, 0);
-            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_white_24dp, 0, 0, 0);
-            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audiotrack_white_24dp, 0, 0, 0);
+            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_white_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_white_24dp, 0, 0, 0);
         } else {
-            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_grey600_24dp, 0, 0, 0);
-            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_grey600_24dp, 0, 0, 0);
-            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_grey600_24dp, 0, 0, 0);
-            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_grey600_24dp, 0, 0, 0);
-            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_grey600_24dp, 0, 0, 0);
-            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_repeat_grey600_24dp, 0, 0, 0);
-            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_audiotrack_grey600_24dp, 0, 0, 0);
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);
+            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_black_24dp, 0, 0, 0);
+            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_black_24dp, 0, 0, 0);
+            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_black_24dp, 0, 0, 0);
+            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_black_24dp, 0, 0, 0);
+            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_black_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_black_24dp, 0, 0, 0);
         }
     }
 

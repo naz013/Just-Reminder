@@ -277,17 +277,17 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     private void loadMenu() {
         SharedPrefs prefs = new SharedPrefs(getActivity());
         if (!prefs.loadBoolean(Prefs.USE_DARK_THEME)){
-            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_grey600_24dp, 0, 0, 0);
-            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_grey600_24dp, 0, 0, 0);
-            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_grey600_24dp, 0, 0, 0);
-            geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_grey600_24dp, 0, 0, 0);
-            manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_grey600_24dp, 0, 0, 0);
-            notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_grey600_24dp, 0, 0, 0);
-            googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_tasks_grey, 0, 0, 0);
-            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_grey600_24dp, 0, 0, 0);
-            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_grey600_24dp, 0, 0, 0);
-            categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_grey600_24dp, 0, 0, 0);
-            prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_grey600_24dp, 0, 0, 0);
+            activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_black_24dp, 0, 0, 0);
+            archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_black_24dp, 0, 0, 0);
+            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_24dp, 0, 0, 0);
+            geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_black_24dp, 0, 0, 0);
+            manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_black_24dp, 0, 0, 0);
+            notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_black_24dp, 0, 0, 0);
+            googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_black_24dp, 0, 0, 0);
+            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_black_24dp, 0, 0, 0);
+            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, 0, 0);
+            categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_black_24dp, 0, 0, 0);
+            prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_black_24dp, 0, 0, 0);
         } else {
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_white_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white_24dp, 0, 0, 0);
@@ -295,9 +295,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
             manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_white_24dp, 0, 0, 0);
             notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_white_24dp, 0, 0, 0);
-            googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_tasks_white, 0, 0, 0);
+            googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_white_24dp, 0, 0, 0);
             templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_white_24dp, 0, 0, 0);
-            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_on_white_24dp, 0, 0, 0);
+            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_white_24dp, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
             prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_white_24dp, 0, 0, 0);
         }

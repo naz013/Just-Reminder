@@ -7,11 +7,8 @@
     <dimen name="main_drawer_fragment_main_p_top">8dp</dimen>
     <dimen name="main_drawer_fragment_main_p_bottom">8dp</dimen>
     <dimen name="main_drawer_fragment_main_drawable_p">10dp</dimen>
-    <dimen name="main_drawer_fragment_main_t_size">29sp</dimen>
     <dimen name="main_drawer_fragment_settings_t_size">19sp</dimen>
-    <dimen name="main_drawer_fragment_feedback_t_size">15sp</dimen>
 
-    <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="drawable_circle_width">4dp</dimen>
 
     <dimen name="about_app_title_size">20sp</dimen>
@@ -20,9 +17,6 @@
     <dimen name="wrapper_padding_right">15dp</dimen>
     <dimen name="wrapper_padding_left">15dp</dimen>
     <dimen name="view_margin_top">15dp</dimen>
-
-    <dimen name="add_birthday_parent_margin_top">5dp</dimen>
-    <dimen name="add_birthday_text_size_primary">20sp</dimen>
 
     <dimen name="widget_config_text_size">16sp</dimen>
     <dimen name="widget_config_widget_size">60dp</dimen>
@@ -38,7 +32,6 @@
 
     <dimen name="backup_manager_padding">10dp</dimen>
     <dimen name="backup_card_height_normal">75dp</dimen>
-    <dimen name="backup_text_size_small">15sp</dimen>
 
     <dimen name="settings_margin">15dp</dimen>
     <dimen name="settings_text_size_primary">18sp</dimen>
@@ -46,7 +39,6 @@
     <dimen name="settings_view_size">25dp</dimen>
 
     <dimen name="category_margin">15dp</dimen>
-    <dimen name="category_radio_margin">5dp</dimen>
 
     <dimen name="clouds_padding">10dp</dimen>
     <dimen name="clouds_text_size">20sp</dimen>
@@ -64,13 +56,9 @@
     <dimen name="follow_button_text_size">15sp</dimen>
     <dimen name="follow_text_size_normal">18sp</dimen>
     <dimen name="follow_margin_top">5dp</dimen>
-    <dimen name="guide_text_size">25sp</dimen>
-    <dimen name="guide_button_text_size">18sp</dimen>
     <dimen name="reminder_margin_top">5dp</dimen>
     <dimen name="reminder_text_size_normal">20sp</dimen>
-    <dimen name="reminder_button_text_size">16sp</dimen>
     <dimen name="reminder_photo_size">220dp</dimen>
-    <dimen name="theme_margin">5dp</dimen>
     <dimen name="times_margin">10dp</dimen>
     <dimen name="create_text_size_small">15sp</dimen>
     <dimen name="create_toggle_margin_left">5dp</dimen>

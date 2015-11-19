@@ -48,7 +48,7 @@
                     android:layout_width="@dimen/create_imagebutton_size"
                     android:layout_height="@dimen/create_imagebutton_size"
                     android:id="@+id/pickApplication"
-                    android:src="@drawable/ic_launch_grey600_24dp"
+                    android:src="@drawable/ic_launch_black_24dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"/>
 

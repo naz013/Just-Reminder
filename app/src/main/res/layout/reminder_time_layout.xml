@@ -131,7 +131,7 @@
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:src="@drawable/ic_backspace_grey600_24dp"/>
+                            android:src="@drawable/ic_backspace_black_24dp"/>
 
                     </RelativeLayout>
 
@@ -356,7 +356,7 @@
                 <ImageButton
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_clear_grey600_24dp"
+                    android:src="@drawable/ic_clear_black_24dp"
                     android:id="@+id/exclusionClear"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"/>

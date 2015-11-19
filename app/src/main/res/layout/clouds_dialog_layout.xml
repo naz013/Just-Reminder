@@ -73,60 +73,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/clouds_margin_top"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.65"
-                    android:gravity="center|left"
-                    android:id="@+id/boxTitle"
-                    android:drawablePadding="10dp"
-                    android:drawableLeft="@drawable/gdrive_icon_white"
-                    android:text="Box"
-                    android:textSize="@dimen/clouds_text_size"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:id="@+id/linkBox"
-                    android:text="@string/login_button"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/clouds_margin_top"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.65"
-                    android:gravity="center|left"
-                    android:id="@+id/exchangeTitle"
-                    android:drawablePadding="10dp"
-                    android:drawableLeft="@drawable/exchange_white"
-                    android:text="MS Exchange"
-                    android:textSize="@dimen/clouds_text_size"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:id="@+id/linkExchange"
-                    android:text="@string/login_button"/>
-
-            </LinearLayout>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

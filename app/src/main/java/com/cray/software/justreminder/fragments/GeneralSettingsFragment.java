@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +20,13 @@ import com.cray.software.justreminder.dialogs.ThemerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.widgets.UpdatesHelper;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Wearable;
 
 public class GeneralSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
-    private CheckBox useDarkStyleCheck, smartFoldCheck, wearEnableCheck, animationsCheck, use24TimeCheck,
-            wearableCheck, extendedButtonCheck, itemPreviewCheck;
+    private CheckBox useDarkStyleCheck, smartFoldCheck, wearEnableCheck, animationsCheck,
+            use24TimeCheck, extendedButtonCheck, itemPreviewCheck;
     private View themeColorSwitcher;
     private SharedPrefs sPrefs;
     private ActionBar ab;
@@ -87,17 +82,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
         animationsCheck = (CheckBox) rootView.findViewById(R.id.animationsCheck);
         animationsCheck.setChecked(sPrefs.loadBoolean(Prefs.ANIMATIONS));
-
-        RelativeLayout wearable = (RelativeLayout) rootView.findViewById(R.id.wearable);
-        wearable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wearableChange();
-            }
-        });
-
-        wearableCheck = (CheckBox) rootView.findViewById(R.id.wearableCheck);
-        wearableCheck.setChecked(sPrefs.loadBoolean(Prefs.WEARABLE));
 
         RelativeLayout extendedButton = (RelativeLayout) rootView.findViewById(R.id.extendedButton);
         extendedButton.setOnClickListener(new View.OnClickListener() {
@@ -181,38 +165,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         } else {
             sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, true);
             wearEnableCheck.setChecked(true);
-        }
-    }
-
-    private void wearableChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (wearableCheck.isChecked()){
-            sPrefs.saveBoolean(Prefs.WEARABLE, false);
-            wearableCheck.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.WEARABLE, true);
-            wearableCheck.setChecked(true);
-            GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addApi(Wearable.API)
-                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                        @Override
-                        public void onConnected(Bundle bundle) {
-                            Log.d(Constants.LOG_TAG, "---------------------connected");
-                        }
-
-                        @Override
-                        public void onConnectionSuspended(int i) {
-                            Log.d(Constants.LOG_TAG, "---------------------suspended");
-                        }
-                    })
-                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                        @Override
-                        public void onConnectionFailed(ConnectionResult connectionResult) {
-                            Log.d(Constants.LOG_TAG, "---------------------failed");
-                        }
-                    })
-                    .build();
-            mGoogleApiClient.connect();
         }
     }
 

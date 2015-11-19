@@ -60,49 +60,49 @@
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraVibration"
-                        android:src="@drawable/ic_vibration_grey600_24dp"/>
+                        android:src="@drawable/ic_vibration_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraUnlock"
-                        android:src="@drawable/ic_screen_lock_portrait_grey600_24dp"/>
+                        android:src="@drawable/ic_screen_lock_portrait_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraVoice"
-                        android:src="@drawable/ic_multitrack_audio_grey600_24dp"/>
+                        android:src="@drawable/ic_multitrack_audio_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraWake"
-                        android:src="@drawable/ic_brightness_high_grey600_24dp"/>
+                        android:src="@drawable/ic_brightness_high_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraRepeat"
-                        android:src="@drawable/ic_refresh_grey600_24dp"/>
+                        android:src="@drawable/ic_refresh_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraAuto"
-                        android:src="@drawable/ic_textsms_grey600_24dp"/>
+                        android:src="@drawable/ic_textsms_black_24dp"/>
 
                     <ImageButton
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_below="@+id/extraScroll"
                         android:id="@+id/extraLimit"
-                        android:src="@drawable/ic_block_grey600_24dp"/>
+                        android:src="@drawable/ic_block_black_24dp"/>
 
                 </LinearLayout>
 
@@ -113,7 +113,7 @@
                 android:layout_height="40dp"
                 android:layout_below="@+id/extraScroll"
                 android:id="@+id/extraSwitch"
-                android:src="@drawable/ic_expand_more_grey600_24dp"/>
+                android:src="@drawable/ic_expand_more_black_24dp"/>
 
         </RelativeLayout>
 

@@ -216,9 +216,9 @@ public class TasksWidgetConfig extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
-                        button = R.drawable.ic_add_grey600_24dp;
+                        button = R.drawable.ic_add_black_24dp;
                         tasksCount.setImageResource(button);
-                        buttonSettings = R.drawable.ic_settings_grey600_24dp;
+                        buttonSettings = R.drawable.ic_settings_black_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         button = R.drawable.ic_add_white_24dp;

@@ -70,6 +70,7 @@
             android:layout_width="match_parent"
             android:id="@+id/reminderContainer"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="@dimen/reminder_preview_margin_top"
             android:layout_marginRight="15dp"
             android:layout_height="wrap_content">
 
@@ -88,8 +89,8 @@
                 android:textSize="18sp"
                 android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@+id/reminderSwitch"
-                android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
+                android:layout_centerVertical="true"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
         </RelativeLayout>

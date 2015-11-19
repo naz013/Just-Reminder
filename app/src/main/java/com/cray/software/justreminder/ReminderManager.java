@@ -764,7 +764,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             extraUnlock.setImageResource(R.drawable.button_unlock_light);
             extraWake.setImageResource(R.drawable.button_wake_light);
         } else {
-            extraSwitch.setImageResource(R.drawable.ic_expand_more_grey600_24dp);
+            extraSwitch.setImageResource(R.drawable.ic_expand_more_black_24dp);
             extraLimit.setImageResource(R.drawable.button_limit_dark);
             extraVoice.setImageResource(R.drawable.button_voice_dark);
             extraVibration.setImageResource(R.drawable.button_vibration_dark);
@@ -806,13 +806,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isDark){
                 extraSwitch.setImageResource(R.drawable.ic_expand_less_white_24dp);
             } else {
-                extraSwitch.setImageResource(R.drawable.ic_expand_less_grey600_24dp);
+                extraSwitch.setImageResource(R.drawable.ic_expand_less_black_24dp);
             }
         } else {
             if (isDark){
                 extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
             } else {
-                extraSwitch.setImageResource(R.drawable.ic_expand_more_grey600_24dp);
+                extraSwitch.setImageResource(R.drawable.ic_expand_more_black_24dp);
             }
         }
     }
@@ -1496,8 +1496,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
             exclusionClear.setImageResource(R.drawable.ic_clear_white_24dp);
         } else {
-            deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_grey600_24dp);
+            deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1768,7 +1768,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (isDark){
             pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
-        } else pickApplication.setImageResource(R.drawable.ic_launch_grey600_24dp);
+        } else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
 
         application = (RadioButton) findViewById(R.id.application);
         application.setChecked(true);
@@ -2182,8 +2182,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButton.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
-            clearField.setImageResource(R.drawable.ic_backspace_grey600_24dp);
-            mapButton.setImageResource(R.drawable.ic_map_grey600_24dp);
+            clearField.setImageResource(R.drawable.ic_backspace_black_24dp);
+            mapButton.setImageResource(R.drawable.ic_map_black_24dp);
         }
 
         clearField.setOnClickListener(new View.OnClickListener() {
@@ -2317,7 +2317,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 radius = item.getRadius();
             }
 
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+            if (item != null && item.getDue() > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
@@ -2404,7 +2404,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isDark){
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
-            mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
         }
 
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
@@ -2527,7 +2527,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 radius = item.getRadius();
             }
 
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+            if (item != null && item.getDue() > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),
@@ -2615,7 +2615,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_grey600_24dp);
+        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
 
         shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
         shoppingNoTime.setOnClickListener(new View.OnClickListener() {
@@ -2634,6 +2634,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myHour = cal.get(Calendar.HOUR_OF_DAY);
                     myMinute = cal.get(Calendar.MINUTE);
                 }
+                shoppingTime.setText(TimeUtil.getTime(cal.getTime(),
+                        sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                shoppingDate.setText(TimeUtil.getDate(cal.getTime()));
                 isShoppingReminder = true;
             }
         });
@@ -2658,7 +2661,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
         if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else addButton.setImageResource(R.drawable.ic_add_grey600_24dp);
+        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2732,7 +2735,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             myMonth = item.getMonth();
             myYear = item.getYear();
 
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+            if (item.getDue() > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 shoppingTime.setText(TimeUtil.getTime(cal.getTime(),
@@ -4014,9 +4017,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
-        }
-        if (isShoppingAttached()){
-            menu.getItem(0).setVisible(false);
         }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){

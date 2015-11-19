@@ -99,7 +99,7 @@
                 android:id="@+id/time"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -108,7 +108,7 @@
                 android:id="@+id/location"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_navigation_grey600_24dp"
+                android:drawableLeft="@drawable/ic_navigation_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -117,7 +117,7 @@
                 android:id="@+id/group"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_local_offer_grey600_24dp"
+                android:drawableLeft="@drawable/ic_local_offer_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -126,7 +126,7 @@
                 android:id="@+id/type"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_assignment_grey600_24dp"
+                android:drawableLeft="@drawable/ic_assignment_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -135,7 +135,7 @@
                 android:id="@+id/number"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_account_circle_grey600_24dp"
+                android:drawableLeft="@drawable/ic_account_circle_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -144,7 +144,7 @@
                 android:id="@+id/melody"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_audiotrack_grey600_24dp"
+                android:drawableLeft="@drawable/ic_music_note_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
             <TextView
@@ -153,7 +153,7 @@
                 android:id="@+id/repeat"
                 android:textSize="18sp"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:drawableLeft="@drawable/ic_repeat_grey600_24dp"
+                android:drawableLeft="@drawable/ic_refresh_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
         <LinearLayout

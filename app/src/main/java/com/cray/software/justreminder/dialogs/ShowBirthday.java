@@ -100,9 +100,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonSend);
         if (isDark){
-            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
-            buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
+            buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
         } else {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
             buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_white_24dp));

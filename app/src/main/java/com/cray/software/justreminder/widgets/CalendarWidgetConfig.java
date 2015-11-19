@@ -165,11 +165,11 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             public void onCheckedChanged(RadioGroup radioGroup, int id) {
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.radioButtonBlack:
-                        buttonColor = R.drawable.ic_add_grey600_24dp;
-                        buttonVoice = R.drawable.ic_mic_grey600_24dp;
-                        buttonSettings = R.drawable.ic_settings_grey600_24dp;
-                        leftArrow = R.drawable.ic_keyboard_arrow_left_grey600_24dp;
-                        rightArrow = R.drawable.ic_keyboard_arrow_right_grey600_24dp;
+                        buttonColor = R.drawable.ic_add_black_24dp;
+                        buttonVoice = R.drawable.ic_mic_black_24dp;
+                        buttonSettings = R.drawable.ic_settings_black_24dp;
+                        leftArrow = R.drawable.ic_keyboard_arrow_left_black_24dp;
+                        rightArrow = R.drawable.ic_keyboard_arrow_right_black_24dp;
                         break;
                     case R.id.radioButtonWhite:
                         buttonColor = R.drawable.ic_add_white_24dp;
@@ -189,7 +189,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         RadioButton radioButtonWhite = (RadioButton) findViewById(R.id.radioButtonWhite);
         radioButtonBlack.setChecked(true);
 
-        if (buttonColor == R.drawable.ic_add_grey600_24dp) radioButtonBlack.setChecked(true);
+        if (buttonColor == R.drawable.ic_add_black_24dp) radioButtonBlack.setChecked(true);
         else radioButtonWhite.setChecked(true);
 
         if (title == getResources().getColor(R.color.blackPrimary)) radioTitleBlack.setChecked(true);

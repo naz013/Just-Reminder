@@ -405,10 +405,10 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             myLocation.setImageResource(R.drawable.ic_my_location_white_24dp);
             layersContainer.setBackgroundResource(R.drawable.popup_dark);
         } else {
-            cardClear.setImageResource(R.drawable.ic_clear_grey600_24dp);
-            zoomOut.setImageResource(R.drawable.ic_fullscreen_exit_grey600_24dp);
-            layers.setImageResource(R.drawable.ic_layers_grey600_24dp);
-            myLocation.setImageResource(R.drawable.ic_my_location_grey600_24dp);
+            cardClear.setImageResource(R.drawable.ic_clear_black_24dp);
+            zoomOut.setImageResource(R.drawable.ic_fullscreen_exit_black_24dp);
+            layers.setImageResource(R.drawable.ic_layers_black_24dp);
+            myLocation.setImageResource(R.drawable.ic_my_location_black_24dp);
             layersContainer.setBackgroundResource(R.drawable.popup);
         }
 
@@ -484,7 +484,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
         cardSearch = (AutoCompleteTextView) rootView.findViewById(R.id.cardSearch);
         if (isDark) cardSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search_white_24dp, 0, 0, 0);
-        else cardSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search_grey600_24dp, 0, 0, 0);
+        else cardSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search_black_24dp, 0, 0, 0);
         cardSearch.setThreshold(3);
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, namesList);
         adapter.setNotifyOnChange(true);

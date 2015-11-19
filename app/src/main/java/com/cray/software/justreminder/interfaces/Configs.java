@@ -13,6 +13,11 @@ public class Configs {
     public static final String CODENAME = "Grapefruit";
 
     /**
+     * Application default theme.
+     */
+    public static final String DEFAULT_THEME = "9";
+
+    /**
      * Max day for event calculating.
      */
     public static final int MAX_DAYS_COUNT = 61;

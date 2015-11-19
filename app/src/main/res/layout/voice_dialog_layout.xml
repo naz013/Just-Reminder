@@ -114,7 +114,7 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_access_time_grey600_24dp"
+                        android:src="@drawable/ic_access_time_black_24dp"
                         android:id="@+id/taskIcon" />
 
                     <TextView

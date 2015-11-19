@@ -72,16 +72,16 @@ public class SelectVolume extends Activity {
     private void setValue(int i) {
         if (i < 7 && i > 0){
             if (isDark) volumeImage.setImageResource(R.drawable.ic_volume_mute_white_24dp);
-            else volumeImage.setImageResource(R.drawable.ic_volume_mute_grey600_24dp);
+            else volumeImage.setImageResource(R.drawable.ic_volume_mute_black_24dp);
         } else if (i > 18){
             if (isDark) volumeImage.setImageResource(R.drawable.ic_volume_up_white_24dp);
-            else volumeImage.setImageResource(R.drawable.ic_volume_up_grey600_24dp);
+            else volumeImage.setImageResource(R.drawable.ic_volume_up_black_24dp);
         } else if (i == 0){
             if (isDark) volumeImage.setImageResource(R.drawable.ic_volume_off_white_24dp);
-            else volumeImage.setImageResource(R.drawable.ic_volume_off_grey600_24dp);
+            else volumeImage.setImageResource(R.drawable.ic_volume_off_black_24dp);
         } else {
             if (isDark) volumeImage.setImageResource(R.drawable.ic_volume_down_white_24dp);
-            else volumeImage.setImageResource(R.drawable.ic_volume_down_grey600_24dp);
+            else volumeImage.setImageResource(R.drawable.ic_volume_down_black_24dp);
         }
     }
 }

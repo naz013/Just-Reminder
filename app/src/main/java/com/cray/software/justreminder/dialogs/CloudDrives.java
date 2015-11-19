@@ -33,7 +33,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.ExchangeConstants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
@@ -54,8 +53,8 @@ public class CloudDrives extends AppCompatActivity {
     private GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
     private SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
-    private Button linkDropbox, linkGDrive, linkExchange;
-    private TextView gDriveTitle, dropboxTitle, exchangeTitle;
+    private Button linkDropbox, linkGDrive;
+    private TextView gDriveTitle, dropboxTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -124,28 +123,8 @@ public class CloudDrives extends AppCompatActivity {
         });
 
         dropboxTitle = (TextView) findViewById(R.id.dropboxTitle);
-        exchangeTitle = (TextView) findViewById(R.id.exchangeTitle);
         gDriveTitle = (TextView) findViewById(R.id.gDriveTitle);
         gDriveTitle.setText(SuperUtil.appendString(gDriveTitle.getText().toString(), " ", getString(R.string.string_and), " ", getString(R.string.google_tasks_title)));
-
-        linkExchange = (Button) findViewById(R.id.linkExchange);
-        linkExchange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TasksData data = new TasksData(CloudDrives.this);
-                data.open();
-                Cursor c = data.getAccount();
-                if (c != null && c.moveToFirst()){
-                    do {
-                        data.deleteAccount(c.getLong(c.getColumnIndex(ExchangeConstants.COLUMN_ID)));
-                    } while (c.moveToNext());
-                    setUpButton();
-                } else {
-                    startActivity(new Intent(CloudDrives.this, ExchangeLogIn.class));
-                }
-                prefs.saveBoolean(Prefs.UI_CHANGED, true);
-            }
-        });
 
         setUpButton();
 
@@ -250,15 +229,6 @@ public class CloudDrives extends AppCompatActivity {
         } else {
             linkGDrive.setText(getString(R.string.login_button));
         }
-
-        TasksData data = new TasksData(CloudDrives.this);
-        data.open();
-        Cursor c = data.getAccount();
-        if (c != null && c.moveToFirst()){
-            linkExchange.setText(getString(R.string.logout_button));
-        } else {
-            linkExchange.setText(getString(R.string.login_button));
-        }
     }
 
     private void setImage(){
@@ -266,11 +236,9 @@ public class CloudDrives extends AppCompatActivity {
         if (!sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
             dropboxTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.dropbox_icon, 0, 0, 0);
             gDriveTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_grey, 0, 0, 0);
-            exchangeTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_grey, 0, 0, 0);
         } else {
             dropboxTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.dropbox_icon_white, 0, 0, 0);
             gDriveTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_white, 0, 0, 0);
-            exchangeTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.exchange_white, 0, 0, 0);
         }
     }
 

@@ -147,11 +147,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
         if (isDark){
-            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
-            buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_grey600_24dp));
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
-            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_grey600_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
+            buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_black_24dp));
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
+            buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_black_24dp));
         } else {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
             buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_white_24dp));
@@ -177,7 +177,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
-                if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+                if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
                 else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
             } else {
                 remText.setText(task + "\n" + number);
@@ -538,7 +538,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
                         showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
@@ -547,7 +547,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     case SmsManager.RESULT_ERROR_NO_SERVICE:
                         showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
@@ -556,7 +556,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     case SmsManager.RESULT_ERROR_NULL_PDU:
                         showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);
@@ -565,7 +565,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     case SmsManager.RESULT_ERROR_RADIO_OFF:
                         showNotification(0);
                         remText.setText(getString(R.string.message_send_error));
-                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_grey600_24dp));
+                        if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
                         else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
                         if (buttonCall.getVisibility() == View.GONE) {
                             buttonCall.setVisibility(View.VISIBLE);

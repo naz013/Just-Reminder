@@ -4,11 +4,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_reminder"
-            android:icon="@drawable/ic_access_time_grey600_24dp"
+            android:icon="@drawable/ic_access_time_black_24dp"
             android:title="@string/drawer_active_reminder" />
         <item
             android:id="@+id/nav_note"
-            android:icon="@drawable/ic_event_note_grey600_24dp"
+            android:icon="@drawable/ic_event_note_black_24dp"
             android:title="@string/fragment_notes" />
         <item
             android:id="@+id/nav_slideshow"

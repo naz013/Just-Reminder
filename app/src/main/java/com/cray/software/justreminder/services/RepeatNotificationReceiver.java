@@ -109,21 +109,17 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
                 builder.setSmallIcon(R.drawable.ic_call_white_24dp);
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
-                builder.setSmallIcon(R.drawable.ic_message_white_24dp);
+                builder.setSmallIcon(R.drawable.ic_textsms_white_24dp);
             } else if (type.matches(Constants.TYPE_LOCATION)) {
                 builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
             } else if (type.matches(Constants.TYPE_TIME)) {
-                builder.setSmallIcon(R.drawable.ic_access_time_white_24dp);
+                builder.setSmallIcon(R.drawable.ic_alarm_white_24dp);
             } else {
                 builder.setSmallIcon(R.drawable.ic_event_white_24dp);
             }
         } else {
             builder.setSmallIcon(R.drawable.ic_event_white_24dp);
         }
-
-        int maxVolume = 26;
-        int currVolume = sPrefs.loadInt(Prefs.VOLUME);
-        float log1=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
 
         builder.setSound(soundUri);
 

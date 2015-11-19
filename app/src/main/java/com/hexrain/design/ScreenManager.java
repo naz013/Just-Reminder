@@ -319,7 +319,7 @@ public class ScreenManager extends AppCompatActivity
                         }
                     }, 150);
                 }
-            }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
+            }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
 
             setUpButton(addBirthday, new View.OnClickListener() {
                 @Override
@@ -338,7 +338,7 @@ public class ScreenManager extends AppCompatActivity
                         }, 150);
                     }
                 }
-            }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_grey600_24dp);
+            }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_black_24dp);
             attachButtons(addBirthday, addReminder);
             mainMenu.setVisibility(View.VISIBLE);
         } else if (mTag.matches(FRAGMENT_BACKUPS)){
@@ -362,7 +362,7 @@ public class ScreenManager extends AppCompatActivity
                                 }
                             }, 150);
                         }
-                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
+                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
                     setUpButton(addBirthday, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -379,7 +379,7 @@ public class ScreenManager extends AppCompatActivity
                                 }, 150);
                             }
                         }
-                    }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_grey600_24dp);
+                    }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_black_24dp);
                     setUpButton(addTask, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -399,7 +399,7 @@ public class ScreenManager extends AppCompatActivity
                             } else
                                 Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
                         }
-                    }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.google_tasks_grey);
+                    }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_available_black_24dp);
                     setUpButton(addNote, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -412,7 +412,7 @@ public class ScreenManager extends AppCompatActivity
                                 }
                             }, 150);
                         }
-                    }, getString(R.string.new_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_note_grey600_24dp);
+                    }, getString(R.string.new_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_note_black_24dp);
                     setUpButton(addQuick, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -426,7 +426,7 @@ public class ScreenManager extends AppCompatActivity
                                 ViewUtils.hideReveal(noteCard, isAnimation);
                             }
                         }
-                    }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_grey600_24dp);
+                    }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_black_24dp);
                     attachButtons(addBirthday, addTask, addNote, addQuick, addReminder);
                     mainMenu.setVisibility(View.VISIBLE);
                 } else {
@@ -442,7 +442,7 @@ public class ScreenManager extends AppCompatActivity
                                 }
                             }, 150);
                         }
-                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_add_grey600_24dp);
+                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
                     if (mTag.matches(FRAGMENT_LOCATIONS) || mTag.matches(FRAGMENT_PLACES)){
                         setUpButton(addPlace, new View.OnClickListener() {
                             @Override
@@ -458,7 +458,7 @@ public class ScreenManager extends AppCompatActivity
                                     }
                                 }, 150);
                             }
-                        }, getString(R.string.string_new_place), FloatingActionButton.SIZE_MINI, R.drawable.ic_location_on_grey600_24dp);
+                        }, getString(R.string.string_new_place), FloatingActionButton.SIZE_MINI, R.drawable.ic_place_black_24dp);
                         attachButtons(addPlace, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     } else if (mTag.matches(FRAGMENT_GROUPS)){
@@ -475,7 +475,7 @@ public class ScreenManager extends AppCompatActivity
                                         }, 150);
                                     }
                                 }, getString(R.string.string_new_category), FloatingActionButton.SIZE_MINI,
-                                R.drawable.ic_local_offer_grey600_24dp);
+                                R.drawable.ic_local_offer_black_24dp);
                         attachButtons(addGroup, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     } else if (mTag.matches(FRAGMENT_TEMPLATES)){
@@ -492,7 +492,7 @@ public class ScreenManager extends AppCompatActivity
                                         }, 150);
                                     }
                                 }, getString(R.string.string_new_template), FloatingActionButton.SIZE_MINI,
-                                R.drawable.ic_message_grey600_24dp);
+                                R.drawable.ic_textsms_black_24dp);
                         attachButtons(addTemplate, addReminder);
                         mainMenu.setVisibility(View.VISIBLE);
                     }

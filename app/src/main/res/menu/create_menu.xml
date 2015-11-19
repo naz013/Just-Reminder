@@ -7,7 +7,7 @@
 
     <item android:id="@+id/action_custom_melody"
         android:title="@string/custom_melody_title"
-        android:icon="@drawable/ic_audiotrack_white_24dp"
+        android:icon="@drawable/ic_music_note_white_24dp"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_custom_radius"

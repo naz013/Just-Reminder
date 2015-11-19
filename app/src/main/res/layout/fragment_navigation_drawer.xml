@@ -52,7 +52,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="16dp"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_access_time_grey600_24dp"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -68,7 +68,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_event_note_grey600_24dp"
+                android:drawableLeft="@drawable/ic_event_note_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -84,7 +84,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/google_tasks_grey"
+                android:drawableLeft="@drawable/ic_event_available_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="gone"/>
 
@@ -100,7 +100,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_today_grey600_24dp"
+                android:drawableLeft="@drawable/ic_today_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -116,7 +116,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_navigation_grey600_24dp"
+                android:drawableLeft="@drawable/ic_navigation_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -132,7 +132,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_local_offer_grey600_24dp"
+                android:drawableLeft="@drawable/ic_local_offer_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -148,7 +148,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_location_on_grey600_24dp"
+                android:drawableLeft="@drawable/ic_place_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="gone"/>
 
@@ -164,7 +164,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_textsms_grey600_24dp"
+                android:drawableLeft="@drawable/ic_textsms_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="gone"/>
 
@@ -180,7 +180,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_history_grey600_24dp"
+                android:drawableLeft="@drawable/ic_history_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -196,7 +196,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_delete_grey600_24dp"
+                android:drawableLeft="@drawable/ic_delete_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 
@@ -212,7 +212,7 @@
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:drawableLeft="@drawable/ic_settings_grey600_24dp"
+                android:drawableLeft="@drawable/ic_settings_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
                 android:visibility="visible"/>
 

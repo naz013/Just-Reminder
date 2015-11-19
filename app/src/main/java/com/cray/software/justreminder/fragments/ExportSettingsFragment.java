@@ -26,8 +26,7 @@ import java.util.ArrayList;
 
 public class ExportSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
-    private RelativeLayout exportTasks;
-    private CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck, exportTasksCheck,
+    private CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck,
             syncSettingsCheck;
     private TextView eventDuration;
     private TextView selectCalendar;

@@ -82,7 +82,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
             if (isDark) {
                 holder.clearButton.setImageResource(R.drawable.ic_clear_white_24dp);
             } else {
-                holder.clearButton.setImageResource(R.drawable.ic_clear_grey600_24dp);
+                holder.clearButton.setImageResource(R.drawable.ic_clear_black_24dp);
             }
 
             holder.itemCheck.setVisibility(View.VISIBLE);

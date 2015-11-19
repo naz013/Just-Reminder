@@ -10,7 +10,7 @@
         android:layout_height="25dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/ic_event_grey600_24dp"
+        android:src="@drawable/ic_event_black_24dp"
         android:layout_marginRight="5dp"
         />
 

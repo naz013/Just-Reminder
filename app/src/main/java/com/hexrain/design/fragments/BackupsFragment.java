@@ -192,9 +192,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         sPrefs = new SharedPrefs(getActivity());
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_white_24dp), LOCAL_INT, R.drawable.ic_devices_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_sd_storage_white_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
         } else {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_devices_grey600_24dp), LOCAL_INT, R.drawable.ic_devices_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_sd_storage_black_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
         }
         dbx = new DropboxHelper(getActivity());
         dbx.startSession();

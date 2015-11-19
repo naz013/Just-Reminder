@@ -42,7 +42,7 @@
                     android:scaleType="fitCenter"
                     android:id="@+id/shopTimeIcon"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_access_time_grey600_24dp"
+                    android:src="@drawable/ic_access_time_black_24dp"
                     android:layout_alignParentLeft="true"/>
 
                 <TextView
@@ -123,7 +123,7 @@
                     android:id="@+id/addButton"
                     android:background="@android:color/transparent"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_add_grey600_24dp"/>
+                    android:src="@drawable/ic_add_black_24dp"/>
 
             </RelativeLayout>
 

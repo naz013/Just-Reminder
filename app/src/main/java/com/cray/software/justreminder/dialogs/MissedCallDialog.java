@@ -97,9 +97,9 @@ public class MissedCallDialog extends Activity {
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
         if (isDark){
-            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_grey600_24dp));
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_grey600_24dp));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_grey600_24dp));
+            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
+            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
         } else {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
             buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_white_24dp));
@@ -117,7 +117,7 @@ public class MissedCallDialog extends Activity {
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        if (isDark) buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_grey600_24dp));
+        if (isDark) buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
         else buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
 
         contactPhoto.setVisibility(View.VISIBLE);

@@ -17,6 +17,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.LED;
 import com.cray.software.justreminder.interfaces.Language;
@@ -73,7 +74,7 @@ public class SplashScreen extends Activity{
         if(!settingsUI.exists()){
             SharedPreferences appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor uiEd = appUISettings.edit();
-            uiEd.putString(Prefs.THEME, "6");
+            uiEd.putString(Prefs.THEME, Configs.DEFAULT_THEME);
             uiEd.putString(Prefs.CURRENT_COLOR, "1");
             uiEd.putString(Prefs.BIRTHDAY_COLOR, "3");
             uiEd.putString(Prefs.REMINDERS_COLOR, "5");

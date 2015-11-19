@@ -86,8 +86,8 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         int style = item.getStyle();
         byte[] byteImage = item.getImage();
 
-        if (title.length() > 500) {
-            String substring = title.substring(0, 500);
+        if (title.length() > 250) {
+            String substring = title.substring(0, 250);
             title = substring + "...";
         }
 

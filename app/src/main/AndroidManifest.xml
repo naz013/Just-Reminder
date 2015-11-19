@@ -134,13 +134,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.ExchangeLogIn"
-            android:configChanges="keyboardHidden|orientation|keyboard">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dialogs.AddBirthday"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>

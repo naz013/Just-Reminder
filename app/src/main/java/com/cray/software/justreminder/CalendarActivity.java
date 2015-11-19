@@ -28,6 +28,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -113,9 +114,9 @@ public class CalendarActivity extends AppCompatActivity {
         FloatingActionButton addBirthday = new FloatingActionButton(getBaseContext());
         addBirthday.setTitle(getString(R.string.new_birthday));
         addBirthday.setSize(FloatingActionButton.SIZE_MINI);
-        addBirthday.setIcon(R.drawable.ic_cake_grey600_24dp);
-        addBirthday.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addBirthday.setColorPressed(getResources().getColor(R.color.material_divider));
+        addBirthday.setIcon(R.drawable.ic_cake_black_24dp);
+        addBirthday.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        addBirthday.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         addBirthday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,9 +133,9 @@ public class CalendarActivity extends AppCompatActivity {
         FloatingActionButton addReminder = new FloatingActionButton(getBaseContext());
         addReminder.setTitle(getString(R.string.new_reminder));
         addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
-        addReminder.setIcon(R.drawable.ic_alarm_add_grey600_24dp);
-        addReminder.setColorNormal(getResources().getColor(R.color.colorWhite));
-        addReminder.setColorPressed(getResources().getColor(R.color.material_divider));
+        addReminder.setIcon(R.drawable.ic_alarm_black_24dp);
+        addReminder.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        addReminder.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         addReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

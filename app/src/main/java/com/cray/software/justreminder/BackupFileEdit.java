@@ -463,7 +463,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_grey600_24dp);
+        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
 
         shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
         shoppingNoTime.setOnClickListener(new View.OnClickListener() {
@@ -506,7 +506,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
         if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else addButton.setImageResource(R.drawable.ic_add_grey600_24dp);
+        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1050,8 +1050,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
             exclusionClear.setImageResource(R.drawable.ic_clear_white_24dp);
         } else {
-            deleteButton.setImageResource(R.drawable.ic_backspace_grey600_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_grey600_24dp);
+            deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1296,7 +1296,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         sPrefs = new SharedPrefs(BackupFileEdit.this);
         if (isDark){
             pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
-        } else pickApplication.setImageResource(R.drawable.ic_launch_grey600_24dp);
+        } else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
 
         application = (RadioButton) findViewById(R.id.application);
         application.setChecked(true);
@@ -1598,8 +1598,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
             mapButton.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
-            clearField.setImageResource(R.drawable.ic_backspace_grey600_24dp);
-            mapButton.setImageResource(R.drawable.ic_map_grey600_24dp);
+            clearField.setImageResource(R.drawable.ic_backspace_black_24dp);
+            mapButton.setImageResource(R.drawable.ic_map_black_24dp);
         }
         clearField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1724,7 +1724,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (c != null) c.close();
 
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+            if (myDay > 0 && myMonth > 0 && myYear > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationTimeField.setText(TimeUtil.getTime(cal.getTime(),
@@ -1803,7 +1803,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (isDark){
             mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
         } else {
-            mapButtonOut.setImageResource(R.drawable.ic_map_grey600_24dp);
+            mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
         }
 
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
@@ -1916,7 +1916,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (c != null) c.close();
 
-            if (myDay > 0 && myHour > 0 && myMinute > 0 && myMonth > 0 && myYear > 0) {
+            if (myDay > 0 && myMonth > 0 && myYear > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 locationOutTimeField.setText(TimeUtil.getTime(cal.getTime(),

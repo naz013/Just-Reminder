@@ -80,7 +80,7 @@ public class ShoppingListPreview extends AppCompatActivity {
         if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
         else
-            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_grey600_24dp, 0, 0, 0);
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);
 
         reminderContainer.setVisibility(View.GONE);
 
@@ -147,9 +147,9 @@ public class ShoppingListPreview extends AppCompatActivity {
             }
 
             if (item.getCompleted() == 1){
-                reminderSwitch.setChecked(true);
-            } else {
                 reminderSwitch.setChecked(false);
+            } else {
+                reminderSwitch.setChecked(true);
             }
 
             int catColor = item.getCatColor();

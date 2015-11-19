@@ -65,19 +65,10 @@
     <string name="reminder_send_message">SMS</string>
     <string name="interval_zero">0</string>
     <string name="string_year">1Г</string>
-    <string name="string_day">1Д</string>
     <string name="string_week">1Н</string>
     <string name="string__month">1М</string>
-    <string name="string_min">1мин</string>
-    <string name="string_five_min">5мин</string>
-    <string name="string_tem_min">10мин</string>
-    <string name="string_half_hour">30мин</string>
-    <string name="string_hour">1Ч</string>
-    <string name="string_two_hours">2Ч</string>
-    <string name="string_five_hours">5Ч</string>
     <string name="swipe_delete">Удалено</string>
     <string name="calendar_fragment">Календарь</string>
-    <string name="add_birthday_button">Добавить день рождения</string>
     <string name="select_item_warming">Пожалуйста, выберите один из пунктов</string>
     <string name="birthday_settings">Дни рождения</string>
     <string name="notification_settings">Уведомления</string>
@@ -102,7 +93,6 @@
     <string name="empty_field_error">Не должно быть пустым</string>
     <string name="birthday_reminder_time">Напоминать о ДР в:</string>
     <string name="years_string"> лет</string>
-    <string name="choose_date_title">Выберить дату рождения:</string>
     <string name="select_contact_button">Выбрать контакт</string>
     <string name="import_dialog_button_yes">Да</string>
     <string name="import_dialog_button_no">Нет</string>
@@ -111,7 +101,6 @@
     <string name="nothing_found">Ничего не найдено</string>
     <string name="settings_places">Места</string>
     <string name="skip_button">Пропустить</string>
-    <string name="next_button">Далее</string>
     <string name="settings_delay_title">Время задержки</string>
     <string name="settings_delay_explanation">Выберите количество времени, на которое будет отложено напоминание</string>
     <string name="delay_dialog_title">Выберите количество минут</string>
@@ -132,7 +121,6 @@
     <string name="splash_info">Пожалуйста, подождите. Приложение запускается.</string>
     <string name="add_reminder_dialog_title">Добавить напоминание</string>
     <string name="quick_reminder_label">Быстрое Напоминание</string>
-    <string name="new_place_title">Новое место</string>
     <string name="enter_name_hint">Введите название</string>
     <string name="empty_places_list_text">Сейчас у Вас нет часто используемых мест в списке. Нажмите кнопку \'Плюс\' чтобы добавить места.</string>
     <string name="delete_place_toast">Место удалено</string>
@@ -142,7 +130,6 @@
     <string name="event_export_title">Экспотировать напоминания в Календарь Google</string>
     <string name="event_export_explanation">Отметьте чтобы экспортировать напоминания</string>
     <string name="select_calendar_settings_title">Выбрать Календарь</string>
-    <string name="select_calendar_warming">Для того чтобы экспортировать напоминания в Календарь Вы должны выбрать один из пунктов.</string>
     <string name="no_google_calendars_found">Извините, не найдено ни одного календаря!</string>
     <string name="auto_scan_settings_title">Автоматическое сканирование</string>
     <string name="auto_scan_settings_explanation">Автоматически сканировать на наличие новых ДН при запуске приложения</string>
@@ -161,7 +148,6 @@
     <string name="thank_dialog_title">Лицензировано</string>
     <string name="thank_dialog_message">Спасибо за установку ПРО лицензиии. </string>
     <string name="thank_dialog_greeting">Хорошего Вам дня!</string>
-    <string name="check_license_dialog">Проверка лицензии</string>
     <string name="settings_help_point">Помощь</string>
     <string name="select_led_color_title">Выберите цвет</string>
     <string name="led_color_white">Белый</string>
@@ -184,8 +170,6 @@
     <string name="make_call_title">Позвонить</string>
     <string name="send_message_title">Отправить сообщение</string>
     <string name="by_location_title">Локационное</string>
-    <string name="by_location_call_title">Звонок по локации</string>
-    <string name="by_location_message">Сообщение по локации</string>
     <string name="marker_style_title">Стиль маркера</string>
     <string name="birthday_settings_notification">Настройки напоминания</string>
     <string name="settings_global_explanation">Отметьте, чтобы использовать глобальные настройки напоминания о днях рождения</string>
@@ -293,8 +277,6 @@
     <string name="guide_smart_title">Умный</string>
     <string name="guide_sync_title">Синхронизирован</string>
     <string name="voice_help_title">Голосовые команды</string>
-    <string name="voice_contacts_title">Контакты</string>
-    <string name="previous_button">Предыдущая</string>
     <string name="app_version_strings">Версия</string>
     <string name="location_delay_checkbox">Отложить начало</string>
     <string name="wear_explanation">Отметьте, чтобы включить уведомления в Android Wear (только для Android 4.3.1 и выше)</string>
@@ -438,7 +420,6 @@
     <string name="string_selected_led_color">Вибран цвет</string>
     <string name="settings_status_bar">Статус бар</string>
     <string name="settings_sound_and_vibratioon">Звук и вибрация</string>
-    <string name="gesture_list_swipe">Потяните влево или вправо, чтобы удалить напоминание</string>
     <string name="gesture_single_tap">Нажмите, чтобы включить/выключить напоминание</string>
     <string name="gesture_tap_a_hold">Нажмите и подержите, чтобы открыть дополнительное меню</string>
     <string name="tap_to_continue">Нажмите, чтобы продолжить</string>
@@ -447,8 +428,6 @@
     <string name="menu_order_by">Сортировать</string>
     <string name="sort_item_by_date_a_z">По дате (A-Z)</string>
     <string name="sort_item_by_date_z_a">По дате (Z-A)</string>
-    <string name="sort_item_by_date_without_a_z">По дате, выключенные в конце (A-Z)</string>
-    <string name="sort_item_by_date_without_z_a">По дате, выключенные в конце (Z-A)</string>
     <string name="settings_reminder_in_calendar_title">Напоминания в календаре</string>
     <string name="settings_reminder_in_calendar_explanation">Отметьте, чтобы включить отображение напоминаний в календаре</string>
     <string name="reminders_color_title">Цвет напоминания</string>
@@ -474,7 +453,7 @@
     <string name="pro_explanation_3">- Отсутствует реклама;</string>
     <string name="pro_explanation_4">- Возможность выбрать цвет LED индикатора для каждого напоминания;</string>
     <string name="pro_explanation_5">- Возможность настроить напоминание о днях рождения;</string>
-    <string name="pro_explanation_6">- Возможность выбора стиля маркера для карт (12 штук).</string>
+    <string name="pro_explanation_6">- Возможность выбора стиля маркера для карт (16 штук).</string>
     <string name="settings_widget_distance_title">Дистанция у виджете</string>
     <string name="settings_widget_distance_explanation">Отметьте, чтобы включить отображение дистанции к пункту назначения в виджете</string>
     <string name="settings_feature_reminder_explanation">Отметьте, чтобы показывать в календаре приложения прогноз будущих повторяющихся напоминаний</string>
@@ -507,7 +486,6 @@
     <string name="settings_quick_sms_title">Быстрое SMS</string>
     <string name="settings_quick_sms_explanation">Отметьте, чтобы включить быстрые SMS для отклоненных звонков</string>
     <string name="settings_sms_templates_title">Шаблоны сообщений</string>
-    <string name="new_template_title">Новый шаблон сообщения</string>
     <string name="string_left_characters">Осталось символов</string>
     <string name="message_list_empty_text">Сейчас у Вас нет сохраненных шаблонов сообщений. Нажмите кнопку \'Плюс\', чтобы добавить новый.</string>
     <string name="string_deleted">Удалено</string>
@@ -526,8 +504,6 @@
     <string name="repeat_5_hours">5 часов</string>
     <string name="settings_follow_reminder_explanation">Отметьте, чтобы включить возможность создать напоминание после звонка</string>
     <string name="settings_follow_reminder_title">Следующее напоминание</string>
-    <string name="settings_export_to_google_tasks_title">Export to Google Tasks</string>
-    <string name="settings_export_to_google_tasks_explanation">Check to enable exporting event to Google Tasks</string>
     <string name="add_to_google_tasks">Добавить в Задания Google</string>
     <string name="google_tasks_title">Задания Google</string>
     <string name="string_and">и</string>
@@ -542,9 +518,6 @@
     <string name="string_delete_task">Удалить задание</string>
     <string name="delete_task_question">Вы действительно хотите удалить это задание?</string>
     <string name="string_task_from_just_reminder">Задание с Reminder</string>
-    <string name="string_list">Список</string>
-    <string name="string_add_reminder">Добавить напоминание</string>
-    <string name="string_add_due">Установить дату</string>
     <string name="string_active_first">Активные сначала</string>
     <string name="string_completed_first">Завершенные сначала</string>
     <string name="string_delete_completed_tasks">Удалить завершенные задания</string>
@@ -556,17 +529,10 @@
     <string name="string_days">дней</string>
     <string name="simple_week">неделю</string>
     <string name="events_empty_text">В этот день у Вас нет запланнированых событий</string>
-    <string name="hint_domain">Domain (optional) (ex. outlook.office365.com)</string>
-    <string name="hint_password">Password</string>
-    <string name="hint_e_mail">E-mail / Login</string>
     <string name="string_add_task">Добавить задание</string>
     <string name="string_edit_task">Изменить задание</string>
     <string name="tasks_widget_title">Задания</string>
     <string name="string_no_tasks">Нет заданий</string>
-    <string name="simple_date">Дата</string>
-    <string name="simple_time">Время</string>
-    <string name="string_new_task_list">Новый список заданий</string>
-    <string name="string_editing_task_list">Редактировать список заданий</string>
     <string name="string_more_apps">Больше приложений</string>
     <string name="settings_tts_explanation">Отметьте, чтобы включить оповещение голосом</string>
     <string name="settings_tts_title">Оповещение голосом</string>
@@ -589,7 +555,6 @@
     <string name="string_manage_categories">Управлять группамы</string>
     <string name="string_category_color">Цвет группы</string>
     <string name="string_new_category">Новая группа</string>
-    <string name="string_edit_category">Редактировать группу</string>
     <string name="string_select_category">Выберите группу</string>
     <string name="simple_filter">Фильтр</string>
     <string name="simple_title">Название</string>
@@ -641,7 +606,6 @@
     <string name="char_s">с</string>
     <string name="char_m">м</string>
     <string name="char_h">ч</string>
-    <string name="string_generating_events">Генерирую события…</string>
     <string name="interval_day">Eжедневно</string>
     <string name="string_swipe_left_or_right">Потяните влево или вправо чтобы выбрать тему.</string>
     <string name="string_address">Адрес…</string>
@@ -652,20 +616,16 @@
     <string name="string_timer_warming">Вы не выбрали время!</string>
     <string name="string_contact_group">Фильтр контактов</string>
     <string name="contact_group_explanation">Выберите контакты для того, чтобы включить последующие напоминания для них.</string>
-    <string name="string_delete_selected">Delete selected</string>
-    <string name="string_selected">selected</string>
     <string name="message_sync_birthdays">Синхронизация дней рождения…</string>
     <string name="message_sync_notes">Синхронизация заметок…</string>
     <string name="message_sync_reminders">Синхронизация напоминаний…</string>
     <string name="string_getting_birthdays">Восстановление дней рождений…</string>
     <string name="string_backup_birthdays">Синхронизация дней рождений</string>
     <string name="string_backup_birthdays_explanation">Отметьте, чтобы включить синхронизацию дней рождений при синхронизации напоминаний</string>
-    <string name="simple_m_letter">м</string>
     <string name="settings_events_import">Импортировать события</string>
     <string name="string_auto_check">Автоматически проверять на наличие новых событий</string>
     <string name="string_no_action_selected">Вы не выбрали никаких действий!</string>
     <string name="string_no_calendar_selected">Вы не выбрали календарь для событий!</string>
-    <string name="string_no_birthday_calendar_selected">Вы не выбрали календарь для дней рождений!</string>
     <string name="string_no_events_found">Не найдено никаких событий</string>
     <string name="simple_imported">"Импортировано "</string>
     <string name="simple_event">" событий"</string>
@@ -703,8 +663,6 @@
     <string name="one_day">1 день</string>
     <string name="dropbox">Dropbox</string>
     <string name="deleting">Удаление…</string>
-    <string name="beta_version">BETA версия!</string>
-    <string name="beta_version_message">Помни эта BETA версия, по этому приложение может иметь ошибки!</string>
     <string name="select_list">Выберите список</string>
     <string name="move_to_list">Переместить в другой список</string>
     <string name="same_list_warming">Вы выбрали тот самый список!</string>

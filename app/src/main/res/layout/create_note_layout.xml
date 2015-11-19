@@ -103,7 +103,7 @@
                         android:layout_width="@dimen/create_note_image_button_size"
                         android:layout_height="@dimen/create_note_image_button_size"
                         android:id="@+id/discardReminder"
-                        android:src="@drawable/ic_clear_grey600_24dp"/>
+                        android:src="@drawable/ic_clear_black_24dp"/>
 
                 </LinearLayout>
 
