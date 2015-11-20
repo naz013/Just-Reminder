@@ -145,12 +145,13 @@ public class NotesManager extends AppCompatActivity {
                                 return true;
                             case R.id.action_share:
                                 shareNote();
-                                break;
+                                return true;
                             case MENU_ITEM_DELETE:
                                 deleteDialog();
-                                break;
+                                return true;
+                            default:
+                                return false;
                         }
-                        return true;
                     }
                 });
 
@@ -211,20 +212,24 @@ public class NotesManager extends AppCompatActivity {
 
                     File sdPath = Environment.getExternalStorageDirectory();
                     File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
+                    boolean isDirectory = false;
                     if (!sdPathDr.exists()) {
-                        sdPathDr.mkdirs();
+                        isDirectory = sdPathDr.mkdirs();
                     }
-                    String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
-                    File f = new File(sdPathDr
-                            + File.separator + fileName);
-                    f.createNewFile();
+                    if (isDirectory) {
+                        String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
+                        File f = new File(sdPathDr
+                                + File.separator + fileName);
+                        boolean isCreated = f.createNewFile();
+                        if (isCreated) {
+                            FileOutputStream fo = new FileOutputStream(f);
+                            fo.write(bytes.toByteArray());
+                            fo.close();
 
-                    FileOutputStream fo = new FileOutputStream(f);
-                    fo.write(bytes.toByteArray());
-                    fo.close();
-
-                    startActivity(new Intent(NotesManager.this, ImagePreview.class)
-                            .putExtra("image", f.toString()));
+                            startActivity(new Intent(NotesManager.this, ImagePreview.class)
+                                    .putExtra("image", f.toString()));
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

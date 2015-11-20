@@ -2151,7 +2151,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.add(R.id.map, map);
-        fragTransaction.commit();
+        fragTransaction.commitAllowingStateLoss();
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -2377,7 +2377,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.add(R.id.mapOut, mapOut);
-        fragTransaction.commit();
+        fragTransaction.commitAllowingStateLoss();
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -4002,7 +4002,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
         }
-        menu.getItem(0).setVisible(false);
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
             menu.getItem(2).setVisible(true);
@@ -4079,7 +4078,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void OnCategory(String catId, String title) {
+    public void onCategory(String catId, String title) {
         category.setText(title);
         categoryId = catId;
     }

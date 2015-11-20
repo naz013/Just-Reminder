@@ -297,7 +297,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             mFab.setColorNormal(setter.colorAccent(catColor));
             mFab.setColorPressed(setter.colorAccent(catColor));
 
-            new loadOtherData(this, progress, id).execute();
+            new LoadOtherData(this, progress, id).execute();
         }
     }
 
@@ -399,14 +399,14 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         alert.show();
     }
 
-    public class loadOtherData extends AsyncTask<Void, Void, ReminderNote>{
+    public class LoadOtherData extends AsyncTask<Void, Void, ReminderNote>{
 
         Context mContext;
         CircularProgress mProgress;
         long mId;
         SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
-        public loadOtherData(Context context, CircularProgress circularProgress, long id){
+        public LoadOtherData(Context context, CircularProgress circularProgress, long id){
             this.mContext = context;
             this.mProgress = circularProgress;
             this.mId = id;

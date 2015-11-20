@@ -2955,11 +2955,11 @@ public class Recognizer {
         if (matcher.find()) {
             String time = matcher.group().trim();
 
-            new loadAsync(mContext).execute(time);
+            new LoadAsync(mContext).execute(time);
         }
     }
 
-    public class loadAsync extends AsyncTask<String, Void, Void>{
+    public class LoadAsync extends AsyncTask<String, Void, Void>{
 
         Context mContext;
         ArrayList<String> names = new ArrayList<>();
@@ -2967,7 +2967,7 @@ public class Recognizer {
         ArrayList<Integer> years = new ArrayList<>();
         String days;
 
-        public loadAsync(Context context){
+        public LoadAsync(Context context){
             this.mContext = context;
         }
 

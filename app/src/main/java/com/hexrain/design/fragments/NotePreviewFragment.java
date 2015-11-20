@@ -48,7 +48,9 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 
 public class NotePreviewFragment extends AppCompatActivity {
@@ -85,7 +87,9 @@ public class NotePreviewFragment extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setTitle("");
         toolbar.setOnMenuItemClickListener(
@@ -95,15 +99,16 @@ public class NotePreviewFragment extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.action_share:
                                 shareNote();
-                                break;
+                                return true;
                             case R.id.action_delete:
                                 deleteDialog();
-                                break;
+                                return true;
                             case R.id.action_status:
                                 moveToStatus();
-                                break;
+                                return true;
+                            default:
+                                return false;
                         }
-                        return true;
                     }
                 });
 
@@ -165,29 +170,55 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (imageByte != null) {
-                    try {
-                        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                        Bitmap _bitmapScaled = img;
-                        _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    Bitmap _bitmapScaled = img;
+                    _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-                        if (!sdPathDr.exists()) {
-                            sdPathDr.mkdirs();
-                        }
+                    byte[] image = bytes.toByteArray();
+                    if (image == null) {
+                        return;
+                    }
+
+                    File sdPath = Environment.getExternalStorageDirectory();
+                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
+                    boolean isDirectory = false;
+                    if (!sdPathDr.exists()) {
+                        isDirectory = sdPathDr.mkdirs();
+                    }
+                    if (isDirectory) {
                         String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
                         File f = new File(sdPathDr
                                 + File.separator + fileName);
-                        f.createNewFile();
+                        boolean isFile = false;
+                        try {
+                            isFile = f.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-                        FileOutputStream fo = new FileOutputStream(f);
-                        fo.write(bytes.toByteArray());
-                        fo.close();
+                        if (isFile) {
+                            FileOutputStream fo = null;
+                            try {
+                                fo = new FileOutputStream(f);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                            if (fo != null) {
+                                try {
+                                    fo.write(image);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    fo.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                        startActivity(new Intent(NotePreviewFragment.this, ImagePreview.class)
-                                .putExtra("image", f.toString()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                                startActivity(new Intent(NotePreviewFragment.this, ImagePreview.class)
+                                        .putExtra("image", f.toString()));
+                            }
+                        }
                     }
                 }
             }

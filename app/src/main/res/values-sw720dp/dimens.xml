@@ -76,4 +76,5 @@
     <dimen name="log_in_title_text_size">40sp</dimen>
     <dimen name="toolbar_elevation">3dp</dimen>
     <dimen name="dialog_toggle_size">32dp</dimen>
+    <dimen name="add_birthday_text_size_primary">30sp</dimen>
 </resources>

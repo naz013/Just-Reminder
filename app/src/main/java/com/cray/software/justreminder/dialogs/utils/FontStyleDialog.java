@@ -49,7 +49,7 @@ public class FontStyleDialog extends Activity{
 
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        fontAdapter adapter = new fontAdapter(FontStyleDialog.this, contacts);
+        FontAdapter adapter = new FontAdapter(FontStyleDialog.this, contacts);
         musicList.setAdapter(adapter);
 
         TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
@@ -72,7 +72,7 @@ public class FontStyleDialog extends Activity{
         });
     }
 
-    public class fontAdapter extends BaseAdapter{
+    public class FontAdapter extends BaseAdapter{
 
         Context cContext;
         LayoutInflater inflater;
@@ -80,7 +80,7 @@ public class FontStyleDialog extends Activity{
         Typeface typeface, typeface1, typeface2, typeface3, typeface4,
             typeface5, typeface6, typeface7, typeface8, typeface9, typeface10, typeface11;
 
-        public fontAdapter(Context context, ArrayList<String> fonts){
+        public FontAdapter(Context context, ArrayList<String> fonts){
             this.cContext = context;
             this.list = fonts;
             loadTypeFace();

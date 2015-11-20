@@ -863,6 +863,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     if (mLocList != null) mLocationManager.removeUpdates(mLocList);
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -2910,6 +2912,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             case R.id.timeField:
                 timeDialog().show();
                 break;
+            default:
+                break;
         }
     }
 
@@ -3107,7 +3111,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void OnCategory(String catId, String title) {
+    public void onCategory(String catId, String title) {
         category.setText(title);
         categoryId = catId;
     }

@@ -48,7 +48,7 @@ import java.util.Locale;
 public class Dialogues {
 
     public interface OnCategorySelectListener{
-        void OnCategory(String catId, String title);
+        void onCategory(String catId, String title);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Dialogues {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if (listener != null) listener.OnCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
+                if (listener != null) listener.onCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
             }
         });
         AlertDialog alert = builder.create();

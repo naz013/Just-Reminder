@@ -47,29 +47,29 @@ public class BirthdaysVoiceList extends Activity{
     }
 
     public void loaderAdapter(ArrayList<String> names, ArrayList<String> dates, ArrayList<Integer> years){
-        customArray customAdapter = new customArray(BirthdaysVoiceList.this, names, dates, years);
+        CustomArray customAdapter = new CustomArray(BirthdaysVoiceList.this, names, dates, years);
         contactsList.setAdapter(customAdapter);
     }
 
-    public class customArray extends BaseAdapter{
+    public class CustomArray extends BaseAdapter{
 
-        ArrayList<String> mNames = new ArrayList<>();
-        ArrayList<String> mDates = new ArrayList<>();
-        ArrayList<Integer> mYears = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> dates = new ArrayList<>();
+        ArrayList<Integer> years = new ArrayList<>();
         LayoutInflater inflater;
         Context mContext;
 
-        public customArray(Context context, ArrayList<String> names, ArrayList<String> dates, ArrayList<Integer> years){
+        public CustomArray(Context context, ArrayList<String> names, ArrayList<String> dates, ArrayList<Integer> years){
             this.mContext = context;
-            this.mNames = names;
-            this.mDates = dates;
-            this.mYears = years;
+            this.names = names;
+            this.dates = dates;
+            this.years = years;
             inflater = LayoutInflater.from(context);
         }
 
         @Override
         public int getCount() {
-            return mNames.size();
+            return names.size();
         }
 
         @Override
@@ -93,9 +93,9 @@ public class BirthdaysVoiceList extends Activity{
             TextView dateText = (TextView) convertView.findViewById(R.id.dateText);
             TextView yearsText = (TextView) convertView.findViewById(R.id.yearsText);
 
-            userText.setText(mNames.get(position));
-            dateText.setText(mDates.get(position));
-            yearsText.setText(mYears.get(position) + " " + getString(R.string.years_string));
+            userText.setText(names.get(position));
+            dateText.setText(dates.get(position));
+            yearsText.setText(years.get(position) + " " + getString(R.string.years_string));
 
             return convertView;
         }

@@ -3,8 +3,6 @@ package com.cray.software.justreminder.datas;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.cray.software.justreminder.databases.DataBase;
@@ -23,10 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class EventsDataProvider {
-    public enum Type {
-        birthday,
-        reminder
-    }
 
     private ArrayList<EventsItem> data = new ArrayList<>();
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -66,35 +60,20 @@ public class EventsDataProvider {
         return data.get(position);
     }
 
-    public void deleteItem(int position){
-        data.remove(position);
-    }
-
     public ArrayList<EventsItem> getMatches(int day, int month, int year){
         ArrayList<EventsItem> res = new ArrayList<>();
-        long start = System.currentTimeMillis();
         for (EventsItem item : data){
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
-            Type type = item.getInn();
-            if (type == Type.birthday && mDay == day && mMonth == month){
+            EventType type = item.getInn();
+            if (type == EventType.birthday && mDay == day && mMonth == month){
                 res.add(item);
             } else {
                 if (mDay == day && mMonth == month && mYear == year) res.add(item);
             }
         }
-        long diff = System.currentTimeMillis() - start;
         return res;
-    }
-
-    public long getStartTime(){
-        long time = System.currentTimeMillis();
-        for (EventsItem item : data) {
-            long value = item.getDate();
-            if (value < time) time = value;
-        }
-        return time;
     }
 
     public void fillArray(){
@@ -130,7 +109,7 @@ public class EventsDataProvider {
                     calendar1.set(Calendar.HOUR_OF_DAY, hour);
                     calendar1.set(Calendar.MINUTE, minute);
                     data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
-                            bDay, bMonth, bYear, Type.birthday, 0));
+                            bDay, bMonth, bYear, EventType.birthday, 0));
                 }
             } while (c.moveToNext());
         }
@@ -172,7 +151,7 @@ public class EventsDataProvider {
                 long id = s.getLong(s.getColumnIndex(Constants.COLUMN_ID));
 
                 int color = 0;
-                if (map != null && map.containsKey(category)) color = map.get(category);
+                if (map.containsKey(category)) color = map.get(category);
 
                 if ((mType.startsWith(Constants.TYPE_SKYPE) ||
                         mType.matches(Constants.TYPE_CALL) ||
@@ -190,7 +169,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder, color));
+                                mMonth, mYear, EventType.reminder, color));
                     }
                     if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
                         int days = 0;
@@ -205,7 +184,7 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder, color));
+                                        mMonth, mYear, EventType.reminder, color));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -219,7 +198,7 @@ public class EventsDataProvider {
                     if (time > 0) {
                         if (number == null) number = "0";
                         data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                mMonth, mYear, Type.reminder, color));
+                                mMonth, mYear, EventType.reminder, color));
                     }
                     int days = 0;
                     if (isFeature) {
@@ -236,7 +215,7 @@ public class EventsDataProvider {
                                 if (time > 0) {
                                     if (number == null) number = "0";
                                     data.add(new EventsItem("reminder", name, number, id, time, sDay,
-                                            sMonth, sYear, Type.reminder, color));
+                                            sMonth, sYear, EventType.reminder, color));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
@@ -252,7 +231,7 @@ public class EventsDataProvider {
                         if (time > 0) {
                             if (number == null) number = "0";
                             data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                    mMonth, mYear, Type.reminder, color));
+                                    mMonth, mYear, EventType.reminder, color));
                         }
                     }
                     int days = 1;
@@ -267,7 +246,7 @@ public class EventsDataProvider {
                             if (time > 0) {
                                 if (number == null) number = "0";
                                 data.add(new EventsItem("reminder", name, number, id, time, mDay,
-                                        mMonth, mYear, Type.reminder, color));
+                                        mMonth, mYear, EventType.reminder, color));
                             }
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
@@ -278,165 +257,5 @@ public class EventsDataProvider {
         db.close();
         long diff = System.currentTimeMillis() - start;
         Log.d(Constants.LOG_TAG, "Calculate time " + diff);
-    }
-
-    public class EventsItem implements Parcelable{
-        private String type, name, number, time;
-        private long id, date;
-        private int day, month, year, color;
-        private Type inn;
-
-        public EventsItem(String type, String name, String number, long id, long date, int day,
-                          int month, int year, Type inn, int color){
-            this.type = type;
-            this.name = name;
-            this.id = id;
-            this.date = date;
-            this.number = number;
-            this.day = day;
-            this.month = month;
-            this.year = year;
-            this.inn = inn;
-            this.color = color;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public void setColor(int color) {
-            this.color = color;
-        }
-
-        public Type getInn(){
-            return inn;
-        }
-
-        public void setInn(Type inn){
-            this.inn = inn;
-        }
-
-        public int getYear(){
-            return year;
-        }
-
-        public void setYear(int year){
-            this.year = year;
-        }
-
-        public int getMonth(){
-            return month;
-        }
-
-        public void setMonth(int month){
-            this.month = month;
-        }
-
-        public int getDay(){
-            return day;
-        }
-
-        public void setDay(int day){
-            this.day = day;
-        }
-
-        public String getTime(){
-            return time;
-        }
-
-        public void setTime(String time){
-            this.time = time;
-        }
-
-        public long getId(){
-            return id;
-        }
-
-        public void setId(long id){
-            this.id = id;
-        }
-
-        public long getDate(){
-            return date;
-        }
-
-        public void setDate(long date){
-            this.date = date;
-        }
-
-        public String getType(){
-            return type;
-        }
-
-        public void setType(String type){
-            this.type = type;
-        }
-
-        public String getName(){
-            return name;
-        }
-
-        public void setName(String name){
-            this.name = name;
-        }
-
-        public String getNumber(){
-            return number;
-        }
-
-        public void setNumber(String number){
-            this.number = number;
-        }
-
-        public EventsItem(Parcel in) {
-            super();
-            readFromParcel(in);
-        }
-
-        public final Creator<EventsItem> CREATOR = new Creator<EventsItem>() {
-            public EventsItem createFromParcel(Parcel in) {
-                return new EventsItem(in);
-            }
-
-            public EventsItem[] newArray(int size) {
-
-                return new EventsItem[size];
-            }
-
-        };
-
-        public void readFromParcel(Parcel in) {
-            type = in.readString();
-            name = in.readString();
-            number = in.readString();
-            time = in.readString();
-            id = in.readLong();
-            date = in.readLong();
-            day = in.readInt();
-            month = in.readInt();
-            year = in.readInt();
-            color = in.readInt();
-            inn = (Type) in.readValue(Type.class.getClassLoader());
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(type);
-            dest.writeString(name);
-            dest.writeString(number);
-            dest.writeString(time);
-            dest.writeLong(id);
-            dest.writeLong(date);
-            dest.writeInt(day);
-            dest.writeInt(month);
-            dest.writeInt(year);
-            dest.writeInt(color);
-            dest.writeValue(inn);
-        }
     }
 }

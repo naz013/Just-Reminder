@@ -216,6 +216,9 @@ public class CategoryManager extends AppCompatActivity {
                         case R.id.indigoCheckbox:
                             setColor(15);
                             break;
+                        default:
+                            setColor(5);
+                            break;
                     }
                 }
                 break;

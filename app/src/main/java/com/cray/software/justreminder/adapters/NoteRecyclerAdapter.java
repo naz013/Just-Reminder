@@ -86,11 +86,6 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         int style = item.getStyle();
         byte[] byteImage = item.getImage();
 
-        if (title.length() > 250) {
-            String substring = title.substring(0, 250);
-            title = substring + "...";
-        }
-
         holder.textView.setTypeface(cs.getTypeface(style));
         holder.itemCard.setCardBackgroundColor(cs.getNoteLightColor(color));
         if (byteImage != null){
@@ -102,6 +97,11 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = SyncHelper.decrypt(title);
+        }
+
+        if (title.length() > 500) {
+            String substring = title.substring(0, 500);
+            title = substring + "...";
         }
         holder.textView.setText(title);
         holder.textView.setTextSize(prefs.loadInt(Prefs.TEXT_SIZE) + 12);
