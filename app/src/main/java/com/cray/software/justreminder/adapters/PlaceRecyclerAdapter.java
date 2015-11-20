@@ -17,15 +17,42 @@ import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
+/**
+ * Recycler view adapter for frequently used places.
+ */
 public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder> {
 
+    /**
+     * Application context field.
+     */
     private Context mContext;
+
+    /**
+     * ColorSetter helper class field.
+     */
     private ColorSetter cs;
+
+    /**
+     * Data provider for markers.
+     */
     private PlaceDataProvider provider;
+
+    /**
+     * Font typeface for text view's.
+     */
     private Typeface typeface;
+
+    /**
+     * Action listener for adapter.
+     */
     private SimpleListener mEventListener;
 
-    public PlaceRecyclerAdapter(Context context, PlaceDataProvider provider) {
+    /**
+     * Adapter constructor.
+     * @param context application context.
+     * @param provider places data provider.
+     */
+    public PlaceRecyclerAdapter(final Context context, final PlaceDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
         cs = new ColorSetter(context);
@@ -33,38 +60,58 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
         setHasStableIds(true);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    /**
+     * View holder for adapter.
+     */
+    public class ViewHolder extends RecyclerView.ViewHolder implements
+            View.OnClickListener, View.OnLongClickListener {
 
+        /**
+         * Place title.
+         */
         public TextView textView;
+
+        /**
+         * Item card.
+         */
         public CardView itemCard;
 
-        public ViewHolder(View v) {
+        /**
+         * View holder constructor.
+         * @param v view.
+         */
+        public ViewHolder(final View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.textView);
             textView.setTypeface(typeface);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(5f);
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), textView);
+        public void onClick(final View v) {
+            if (mEventListener != null) {
+                mEventListener.onItemClicked(getAdapterPosition(), textView);
+            }
         }
 
         @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null)
+        public boolean onLongClick(final View v) {
+            if (mEventListener != null) {
                 mEventListener.onItemLongClicked(getAdapterPosition(), textView);
+            }
             return true;
         }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_simple_card, parent, false);
@@ -78,12 +125,12 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         return 0;
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return provider.getData().get(position).getId();
     }
 
@@ -92,11 +139,19 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
         return provider.getData().size();
     }
 
+    /**
+     * Get current action listener.
+     * @return Action listener.
+     */
     public SimpleListener getEventListener() {
         return mEventListener;
     }
 
-    public void setEventListener(SimpleListener eventListener) {
+    /**
+     * Set action listener for adapter.
+     * @param eventListener action listener.
+     */
+    public void setEventListener(final SimpleListener eventListener) {
         mEventListener = eventListener;
     }
 }

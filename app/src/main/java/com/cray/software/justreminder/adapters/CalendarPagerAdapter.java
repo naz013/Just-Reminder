@@ -25,17 +25,29 @@ import java.util.ArrayList;
  * limitations under the License.
  *
  */
+
+/**
+ * Pager adapter for day view fragment.
+ */
 public class CalendarPagerAdapter extends FragmentStatePagerAdapter {
 
+    /**
+     * List of pager item models.
+     */
     private ArrayList<EventsPagerItem> datas;
 
-    public CalendarPagerAdapter(FragmentManager fm, ArrayList<EventsPagerItem> datas) {
+    /**
+     * Pager adapter constructor.
+     * @param fm fragment manager.
+     * @param datas list of models.
+     */
+    public CalendarPagerAdapter(final FragmentManager fm, final ArrayList<EventsPagerItem> datas) {
         super(fm);
         this.datas = datas;
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
         EventsListFragment fragment = new EventsListFragment();
         fragment.setData(datas.get(position).getDatas());
         return fragment;

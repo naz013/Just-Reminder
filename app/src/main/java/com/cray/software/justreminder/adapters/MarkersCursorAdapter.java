@@ -16,14 +16,33 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 
 import java.util.ArrayList;
 
+/**
+ * Simple adapter for markers list.
+ */
 public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
 
+    /**
+     * Layout inflater field.
+     */
     private LayoutInflater inflater;
+
+    /**
+     * List of marker models.
+     */
     private ArrayList<MarkerModel> data;
+
+    /**
+     * ColorSetter helper class field.
+     */
     private ColorSetter colorSetter;
 
+    /**
+     * Adapter constructor.
+     * @param context application context.
+     * @param data list of markers models.
+     */
     @SuppressWarnings("deprecation")
-    public MarkersCursorAdapter(Context context, ArrayList<MarkerModel> data) {
+    public MarkersCursorAdapter(final Context context, final ArrayList<MarkerModel> data) {
         this.data = data;
         inflater = LayoutInflater.from(context);
         colorSetter = new ColorSetter(context);
@@ -31,7 +50,7 @@ public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return data.get(position).getId();
     }
 
@@ -41,12 +60,12 @@ public class MarkersCursorAdapter extends BaseAdapter implements Filterable {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Object getItem(final int position) {
         return data.get(position);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_item_geo, null);
         }

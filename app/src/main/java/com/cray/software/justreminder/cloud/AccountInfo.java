@@ -10,10 +10,21 @@ import com.cray.software.justreminder.helpers.SyncHelper;
  */
 public class AccountInfo extends AsyncTask<Void, Void, String> {
 
+    /**
+     * Dropbox helper field.
+     */
     private DropboxHelper dbx;
+
+    /**
+     * Context field.
+     */
     private Context mContext;
 
-    public AccountInfo(Context context){
+    /**
+     * Constructor.
+     * @param context application context.
+     */
+    public AccountInfo(final Context context){
         this.mContext = context;
         this.dbx = new DropboxHelper(mContext);
     }

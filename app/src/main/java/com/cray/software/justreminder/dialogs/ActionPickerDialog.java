@@ -12,12 +12,18 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 
+/**
+ * Select action for calendar view.
+ */
 public class ActionPickerDialog extends Activity {
 
+    /**
+     * Date in milliseconds.
+     */
     private long receivedDate;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ColorSetter cs = new ColorSetter(ActionPickerDialog.this);

@@ -26,22 +26,42 @@ import java.util.ArrayList;
  * limitations under the License.
  *
  */
+
+/**
+ * Pager adapter for Google Tasks pager.
+ */
 public class TasksPagerAdapter extends FragmentStatePagerAdapter {
 
+    /**
+     * List of Google Tasks models.
+     */
     private ArrayList<TaskListData> datas;
+
+    /**
+     * Navigation drawer callback.
+     */
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
-    public TasksPagerAdapter(FragmentManager fm, ArrayList<TaskListData> datas) {
+    /**
+     * Adapter constructor.
+     * @param fm fragment manager.
+     * @param datas list of models.
+     */
+    public TasksPagerAdapter(final FragmentManager fm, final ArrayList<TaskListData> datas) {
         super(fm);
         this.datas = datas;
     }
 
-    public void setCallbacks(NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
+    /**
+     * Set navigation drawer callback for adapter.
+     * @param callbacks navigation drawer callback.
+     */
+    public void setCallbacks(final NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
         this.mCallbacks = callbacks;
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem(final int position) {
         TaskListFragment fragment = new TaskListFragment();
         fragment.setData(datas.get(position).getmData());
         fragment.setmCallbacks(mCallbacks);

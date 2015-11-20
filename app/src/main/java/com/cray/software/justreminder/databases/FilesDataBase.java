@@ -134,9 +134,10 @@ public class FilesDataBase {
             dbHelper.close();
     }
 
-    public long insertFile(String fileName, String fileType, String fileLocation, long edit, String text, String type,
-                           int day, int month, int year, int hour, int minute, int seconds,
-                           String number, int repeatCode, long repMinute, long count, double latitude, double longitude, String uID,
+    public long insertFile(String fileName, String fileType, String fileLocation, long edit,
+                           String text, String type, int day, int month, int year, int hour,
+                           int minute, int seconds, String number, int repeatCode, long repMinute,
+                           long count, double latitude, double longitude, String uID,
                            String weekdays, String exclusion) {
         openGuard();
         ContentValues cv = new ContentValues();

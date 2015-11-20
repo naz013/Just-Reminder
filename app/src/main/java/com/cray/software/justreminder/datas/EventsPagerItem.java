@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public class EventsPagerItem {
     private int position, current;
-    private ArrayList<EventsDataProvider.EventsItem> datas;
+    private ArrayList<EventsItem> datas;
     private int day, month, year;
 
-    public EventsPagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day){
+    public EventsPagerItem(ArrayList<EventsItem> datas, int position, int current, int day){
         this.datas = datas;
         this.current = current;
         this.position = position;
         this.day = day;
     }
 
-    public EventsPagerItem(ArrayList<EventsDataProvider.EventsItem> datas, int position, int current, int day, int month, int year){
+    public EventsPagerItem(ArrayList<EventsItem> datas, int position, int current, int day, int month, int year){
         this.datas = datas;
         this.current = current;
         this.position = position;
@@ -63,11 +63,11 @@ public class EventsPagerItem {
         this.current = current;
     }
 
-    public ArrayList<EventsDataProvider.EventsItem> getDatas(){
+    public ArrayList<EventsItem> getDatas(){
         return datas;
     }
 
-    public void setDatas(ArrayList<EventsDataProvider.EventsItem> datas){
+    public void setDatas(ArrayList<EventsItem> datas){
         this.datas = datas;
     }
 }

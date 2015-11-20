@@ -37,20 +37,53 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Add new or edit birthday activity.
+ */
 public class AddBirthday extends AppCompatActivity implements View.OnClickListener {
 
+    /**
+     * Edit text fields.
+     */
     private EditText birthName, phone;
+
+    /**
+     * Container.
+     */
     private LinearLayout container;
+
+    /**
+     * Date of birth text view.
+     */
     private TextView birthDate;
+
+    /**
+     * Attack contact check.
+     */
     private CheckBox contactCheck;
+
+    /**
+     * Contact phone number.
+     */
     private String number = "";
+
+    /**
+     * Selected year, month and day of birth.
+     */
     private int myYear = 0, myMonth = 0, myDay = 0;
+
+    /**
+     * Edited birthday identifier.
+     */
     private long id = 0;
-    private DataBase db;
+
+    /**
+     * Simple date format field.
+     */
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(AddBirthday.this);
         SharedPrefs sPrefs = new SharedPrefs(this);
@@ -99,7 +132,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         id = i.getLongExtra("BDid", 0);
         long receivedDate = i.getLongExtra("date", 0);
         if (id != 0) {
-            db = new DataBase(AddBirthday.this);
+            DataBase db = new DataBase(AddBirthday.this);
             db.open();
             Cursor c = db.getBirthday(id);
             String dateStr = null;
@@ -110,6 +143,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
             }
             if (c != null) c.close();
+            db.close();
 
             Date date = null;
             try {
@@ -146,7 +180,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
             case R.id.birthDate:
                 dateDialog();
@@ -154,11 +188,16 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             case R.id.pickContact:
                 SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
                 break;
+            default:
+                break;
         }
     }
 
+    /**
+     * Save birthday to database.
+     */
     private void saveBirthday() {
-        db = new DataBase(AddBirthday.this);
+        DataBase db = new DataBase(AddBirthday.this);
         db.open();
         if (id != 0) {
             String contact = birthName.getText().toString();
@@ -203,7 +242,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == Constants.REQUEST_CODE_CONTACTS) {
             if (resultCode == RESULT_OK) {
                 //Use Data to get string
@@ -247,14 +286,14 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     };
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
                 saveBirthday();

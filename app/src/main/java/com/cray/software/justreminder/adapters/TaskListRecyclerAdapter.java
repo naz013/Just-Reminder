@@ -19,13 +19,39 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.utils.ViewUtils;
 
+/**
+ * Recycler view adapter for Shopping list.
+ */
 public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecyclerAdapter.ViewHolder> {
+
+    /**
+     * Application context field.
+     */
     private Context mContext;
+
+    /**
+     * Provider for Shopping list.
+     */
     private ShoppingListDataProvider provider;
+
+    /**
+     * Application theme flag.
+     */
     private boolean isDark;
+
+    /**
+     * Action listener for adapter.
+     */
     private ActionListener listener;
 
-    public TaskListRecyclerAdapter(Context context, ShoppingListDataProvider provider, ActionListener listener) {
+    /**
+     * Adapter constructor.
+     * @param context application context.
+     * @param provider data provider.
+     * @param listener action listener.
+     */
+    public TaskListRecyclerAdapter(final Context context, final ShoppingListDataProvider provider,
+                                   final ActionListener listener) {
         this.mContext = context;
         this.provider = provider;
         this.listener = listener;
@@ -33,13 +59,36 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         setHasStableIds(true);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * View holder for adapter.
+     */
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        /**
+         * Title text view.
+         */
         TextView textView;
+
+        /**
+         * Background container.
+         */
         RelativeLayout background;
+
+        /**
+         * Item status checkbox.
+         */
         CheckBox itemCheck;
+
+        /**
+         * Remove item button.
+         */
         ImageButton clearButton;
 
-        public ViewHolder(View v) {
+        /**
+         * Holder constructor.
+         * @param v view.
+         */
+        public ViewHolder(final View v) {
             super(v);
             textView = (TextView) v.findViewById(R.id.shopText);
             clearButton = (ImageButton) v.findViewById(R.id.clearButton);
@@ -49,7 +98,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_task_item_card, parent, false);
@@ -116,12 +165,12 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         return 0;
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return provider.getItem(position).getId();
     }
 
@@ -130,13 +179,36 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         return provider.getCount();
     }
 
+    /**
+     * Get data provider.
+     * @return data provider.
+     */
     public ShoppingListDataProvider getProvider(){
         return provider;
     }
 
+    /**
+     * Action listener interface.
+     */
     public interface ActionListener{
+
+        /**
+         * On list item click action.
+         * @param position item position.
+         * @param isChecked item status.
+         */
         void onItemCheck(int position, boolean isChecked);
+
+        /**
+         * On item delete button click.
+         * @param position item position.
+         */
         void onItemDelete(int position);
+
+        /**
+         * On item changed action.
+         * @param position item position.
+         */
         void onItemChange(int position);
     }
 }

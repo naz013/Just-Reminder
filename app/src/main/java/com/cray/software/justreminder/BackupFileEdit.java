@@ -92,6 +92,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Backup file edit activity.
+ */
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
         MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener {
@@ -99,19 +102,58 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     /**
      * Date reminder type variables.
      */
+    /**
+     * Export to Google task check.
+     */
     private CheckBox dateTaskExport;
+
+    /**
+     * Repeat interval field.
+     */
     private EditText repeatDays;
+
+    /**
+     * Date and time text views.
+     */
     private TextView dateField, timeField;
 
     /**
      * Weekday reminder type variables.
      */
+    /**
+     * Container.
+     */
     private LinearLayout action_layout;
+
+    /**
+     * Action phone number field.
+     */
     private FloatingEditText weekPhoneNumber;
+
+    /**
+     * Time text view.
+     */
     private TextView weekTimeField;
+
+    /**
+     * Load list of contact button.
+     */
     private ImageButton weekAddNumberButton;
-    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+
+    /**
+     * Days of week toggle buttons.
+     */
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
+            fridayCheck, saturdayCheck, sundayCheck;
+
+    /**
+     * Select call or message check button.
+     */
     private RadioButton callCheck, messageCheck;
+
+    /**
+     * Enable/disable reminder action and/or exporting to Google Tasks.
+     */
     private CheckBox attachAction, weekTaskExport;
 
     /**
@@ -253,7 +295,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(BackupFileEdit.this);
         setTheme(cSetter.getStyle());
@@ -766,8 +808,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             Cursor c = fdb.getFile(id);
             String text = "";
             String number = "";
-            int exp = 0;
-            int expTasks = 0;
             if (c != null && c.moveToFirst()){
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -775,18 +815,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
                 myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-                expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
             }
             if (c != null) c.close();
-
-            if (exp == 1){
-                monthDayExport.setChecked(true);
-            }
-
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
-                monthDayTaskExport.setChecked(true);
-            }
 
             if (myDay == 0) myDay = 1;
             if (myDay < 10) dayStr = "0" + myDay;
@@ -825,7 +855,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
         switch (buttonView.getId()){
             case R.id.dayCheck:
                 if (dayCheck.isChecked()) {
@@ -989,7 +1019,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Check days toggle buttons depends on weekday string.
      * @param weekdays weekday string.
      */
-    private void setCheckForDays(String weekdays){
+    private void setCheckForDays(final String weekdays){
         if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))
             mondayCheck.setChecked(true);
         else mondayCheck.setChecked(false);
@@ -1148,7 +1178,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Set up exclusion for reminder.
      * @param jsonObject json object string.
      */
-    private void setExclusion(String jsonObject){
+    private void setExclusion(final String jsonObject){
         if (jsonObject != null) {
             Recurrence recurrence = new Recurrence(jsonObject);
             if (recurrence.getHours() != null) {
@@ -1537,7 +1567,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void place(LatLng place) {
+    public void place(final LatLng place) {
         curPlace = place;
         if (isLocationOutAttached()) mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
     }
@@ -1555,7 +1585,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void placeName(String name) {
+    public void placeName(final String name) {
 
     }
 
@@ -2089,7 +2119,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (requestCode == Constants.REQUEST_CODE_CONTACTS) {
             if (resultCode == RESULT_OK) {
                 //Use Data to get string
@@ -2132,14 +2162,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.widget_menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
                 saveTask();
@@ -2870,7 +2900,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * @param uuId reminder unique identifier.
      * @return Boolean
      */
-    private boolean isUID(String uuId){
+    private boolean isUID(final String uuId){
         ArrayList<String> ids = new ArrayList<>();
         DB = new DataBase(BackupFileEdit.this);
         Cursor c = DB.queryGroup();
@@ -2892,7 +2922,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(final View v) {
         int ids = v.getId();
         if (ids >= 100 && ids < 110){
             String charS = String.valueOf(timeString.charAt(0));
@@ -2918,7 +2948,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
         switch (seekBar.getId()){
             case R.id.repeatSkype:
                 repeatDaysSkype.setText(String.valueOf(progress));
@@ -2938,16 +2968,18 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             case R.id.repeatMinutesSeek:
                 repeatMinutes.setText(String.valueOf(progress));
                 break;
+            default:
+                break;
         }
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
+    public void onStartTrackingTouch(final SeekBar seekBar) {
 
     }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+    public void onStopTrackingTouch(final SeekBar seekBar) {
 
     }
 
@@ -3092,7 +3124,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onAddressReceived(List<Address> addresses) {
+    public void onAddressReceived(final List<Address> addresses) {
         foundPlaces = addresses;
 
         namesList = new ArrayList<>();
@@ -3111,7 +3143,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    public void onCategory(String catId, String title) {
+    public void onCategory(final String catId, final String title) {
         category.setText(title);
         categoryId = catId;
     }
@@ -3119,7 +3151,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     public class CurrentLocation implements LocationListener {
 
         @Override
-        public void onLocationChanged(Location location) {
+        public void onLocationChanged(final Location location) {
             double currentLat = location.getLatitude();
             double currentLong = location.getLongitude();
             curPlace = new LatLng(currentLat, currentLong);
@@ -3137,7 +3169,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
+        public void onStatusChanged(final String provider, final int status, final Bundle extras) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
             long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
@@ -3150,7 +3182,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void onProviderEnabled(String provider) {
+        public void onProviderEnabled(final String provider) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
             long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
@@ -3163,7 +3195,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void onProviderDisabled(String provider) {
+        public void onProviderDisabled(final String provider) {
             mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             SharedPrefs prefs = new SharedPrefs(getApplicationContext());
             long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;

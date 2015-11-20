@@ -12,10 +12,13 @@ import com.cray.software.justreminder.interfaces.Configs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
+/**
+ * About application dialog.
+ */
 public class AboutDialog extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ColorSetter cs = new ColorSetter(AboutDialog.this);

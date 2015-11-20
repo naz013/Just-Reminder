@@ -15,26 +15,67 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 
+/**
+ * Recycler view adapter for backup files list.
+ */
 public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapter.ViewHolder> {
 
+    public static final float CARD_ELEVATION = 5f;
+
+    /**
+     * Application context.
+     */
     private Context mContext;
+
+    /**
+     * ColorSetter class field.
+     */
     private ColorSetter cs;
+
+    /**
+     * List provider.
+     */
     private FileDataProvider provider;
+
+    /**
+     * Recycler view action listerner.
+     */
     private SimpleListener mEventListener;
 
-    public FileRecyclerAdapter(Context context, FileDataProvider provider) {
+    /**
+     * Adapter constructor.
+     * @param context application context.
+     * @param provider data provider.
+     */
+    public FileRecyclerAdapter(final Context context, final FileDataProvider provider) {
         this.mContext = context;
         this.provider = provider;
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    /**
+     * View holder class for Recycler adapter.
+     */
+    public class ViewHolder extends RecyclerView.ViewHolder implements
+            View.OnClickListener, View.OnLongClickListener {
 
+        /**
+         * CardView field.
+         */
         public CardView itemCard;
-        public TextView fileName, lastModified, task, type, number, date, time, repeat;
 
-        public ViewHolder(View v) {
+        /**
+         * TextView fields
+         */
+        public TextView fileName, lastModified, task, type, number,
+                date, time, repeat;
+
+        /**
+         * Ho;der constructor.
+         * @param v view
+         */
+        public ViewHolder(final View v) {
             super(v);
             fileName = (TextView) v.findViewById(R.id.fileName);
             lastModified = (TextView) v.findViewById(R.id.lastModified);
@@ -46,27 +87,32 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
             repeat = (TextView) v.findViewById(R.id.repeat);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(CARD_ELEVATION);
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), itemCard);
+        public void onClick(final View v) {
+            if (mEventListener != null) {
+                mEventListener.onItemClicked(getAdapterPosition(), itemCard);
+            }
         }
 
         @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null)
+        public boolean onLongClick(final View v) {
+            if (mEventListener != null) {
                 mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+            }
             return true;
         }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_file, parent, false);
@@ -91,12 +137,12 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         return 0;
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(final int position) {
         return provider.getData().get(position).getId();
     }
 
@@ -105,11 +151,19 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         return provider.getData().size();
     }
 
+    /**
+     * Get current action listener.
+     * @return Action listener.
+     */
     public SimpleListener getEventListener() {
         return mEventListener;
     }
 
-    public void setEventListener(SimpleListener eventListener) {
+    /**
+     * Set action listener for adapter.
+     * @param eventListener action listener.
+     */
+    public void setEventListener(final SimpleListener eventListener) {
         mEventListener = eventListener;
     }
 }

@@ -45,48 +45,79 @@ import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
 
+/**
+ * Show all active reminders.
+ */
 public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener {
 
+    /**
+     * Recycler view field.
+     */
     private RecyclerView currentList;
+
+    /**
+     * Containers.
+     */
     private LinearLayout emptyLayout, emptyItem;
+
+    /**
+     * AdMob block.
+     */
     private AdView adView;
 
-    private DataBase DB;
-    private SharedPrefs sPrefs;
+    /**
+     * Reminder data provider for recycler view.
+     */
     private ReminderDataProvider provider;
 
+    /**
+     * List of group identifiers.
+     */
     private ArrayList<String> ids;
+
+    /**
+     * Last selected group identifier.
+     */
     private String lastId;
 
+    /**
+     * Navigation drawer callbacks.
+     */
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
 
+    /**
+     * Fragment default instance.
+     * @return Fragment.
+     */
     public static ActiveFragment newInstance() {
         return new ActiveFragment();
     }
 
+    /**
+     * Empty public constructor.
+     */
     public ActiveFragment() {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
-        DB = new DataBase(getActivity());
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_active_menu, menu);
         //menu.add(Menu.NONE, 55, 100, "Test List");
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                startSync();
+                new SyncTask(getActivity(), this).execute();
                 break;
             case R.id.action_voice:
                 if (mCallbacks != null){
@@ -100,24 +131,27 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 getActivity().finish();
                 break;
             case 55:
-                startActivity(new Intent(getActivity(), TestActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                startActivity(new Intent(getActivity(), TestActivity.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                break;
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        sPrefs = new SharedPrefs(getActivity());
+        SharedPrefs prefs = new SharedPrefs(getActivity());
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME))
+        if (prefs.loadBoolean(Prefs.USE_DARK_THEME))
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
         else
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
@@ -155,7 +189,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
@@ -203,17 +237,22 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         super.onPause();
     }
 
-    public void loaderAdapter(String categoryId){
-        lastId = categoryId;
+    /**
+     * Load data to recycler view.
+     * @param groupId group identifier.
+     */
+    public void loaderAdapter(final String groupId){
+        lastId = groupId;
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
+        DataBase db = new DataBase(getActivity());
+        if (!db.isOpen()) db.open();
         provider = new ReminderDataProvider(getActivity());
-        if (categoryId != null) {
-            provider.setCursor(DB.queryGroup(categoryId));
+        if (groupId != null) {
+            provider.setCursor(db.queryGroup(groupId));
         } else {
-            provider.setCursor(DB.queryGroup());
+            provider.setCursor(db.queryGroup());
         }
+        db.close();
         reloadView();
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
@@ -223,6 +262,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (mCallbacks != null) mCallbacks.onListChanged(currentList);
     }
 
+    /**
+     * Hide/show recycler view depends on data.
+     */
     private void reloadView() {
         int size = provider.getCount();
         if (size > 0){
@@ -234,15 +276,18 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         }
     }
 
+    /**
+     * Show reminder only for selected group.
+     */
     private void filterDialog(){
         ids = new ArrayList<>();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.select_dialog_item);
-        DB = new DataBase(getActivity());
-        DB.open();
+        DataBase db = new DataBase(getActivity());
+        db.open();
         arrayAdapter.add(getString(R.string.simple_all));
-        Cursor c = DB.queryCategories();
+        Cursor c = db.queryCategories();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
@@ -251,6 +296,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
+        if (c != null) c.close();
+        db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
@@ -267,19 +314,20 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         alert.show();
     }
 
-    private void startSync(){
-        new SyncTask(getActivity(), this).execute();
-    }
-
+    /**
+     * Change reminder group.
+     * @param oldUuId old group unique identifier.
+     * @param id reminder identifier.
+     */
     private void changeGroup(final String oldUuId, final long id){
         ids = new ArrayList<>();
         ids.clear();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.select_dialog_item);
-        DB = new DataBase(getActivity());
-        DB.open();
-        Cursor c = DB.queryCategories();
+        DataBase db = new DataBase(getActivity());
+        db.open();
+        Cursor c = db.queryCategories();
         if (c != null && c.moveToFirst()){
             do {
                 String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
@@ -288,6 +336,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
+        if (c != null) c.close();
+        db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
@@ -307,7 +357,13 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         alert.show();
     }
 
-    private void previewReminder(View view, long id, String type){
+    /**
+     * Open preview screen depending on reminder type.
+     * @param view view.
+     * @param id reminder identifier.
+     * @param type reminder type.
+     */
+    private void previewReminder(final View view, final long id, final String type){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
             intent.putExtra(Constants.EDIT_ID, id);
@@ -335,16 +391,16 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     }
 
     @Override
-    public void onItemSwitched(int position, View switchCompat) {
+    public void onItemSwitched(final int position, final View switchCompat) {
         Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
         loaderAdapter(null);
     }
 
     @Override
-    public void onItemClicked(int position, View view) {
-        sPrefs = new SharedPrefs(getActivity());
+    public void onItemClicked(final int position, final View view) {
+        SharedPrefs prefs = new SharedPrefs(getActivity());
         ReminderModel item = provider.getItem(position);
-        if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
+        if (prefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
             previewReminder(view, item.getId(), item.getType());
         } else {
             if (item.getType().matches(Constants.TYPE_SHOPPING_LIST)){
@@ -387,7 +443,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     }
 
     @Override
-    public void endExecution(boolean result) {
+    public void endExecution(final boolean result) {
         if (getActivity() != null) loaderAdapter(null);
     }
 }

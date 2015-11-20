@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.EventsDataProvider;
+import com.cray.software.justreminder.datas.EventsItem;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Prefs;
@@ -28,13 +28,13 @@ import java.util.ArrayList;
 
 public class EventsListFragment extends Fragment implements SimpleListener {
 
-    private ArrayList<EventsDataProvider.EventsItem> datas;
+    private ArrayList<EventsItem> datas;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     private RecyclerView listView;
     private LinearLayout emptyItem;
     private boolean isCreate = false;
 
-    public void setData(ArrayList<EventsDataProvider.EventsItem> datas){
+    public void setData(ArrayList<EventsItem> datas){
         this.datas = datas;
     }
 

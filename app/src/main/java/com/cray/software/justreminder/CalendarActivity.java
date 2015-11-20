@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.datas.EventsDataProvider;
+import com.cray.software.justreminder.datas.EventsItem;
 import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.AddBirthday;
 import com.cray.software.justreminder.dialogs.QuickAddReminder;
@@ -215,7 +216,7 @@ public class CalendarActivity extends AppCompatActivity {
             int mMonth = calendar.get(Calendar.MONTH);
             int mYear = calendar.get(Calendar.YEAR);
 
-            ArrayList<EventsDataProvider.EventsItem> datas =
+            ArrayList<EventsItem> datas =
                     provider.getMatches(mDay, mMonth, mYear);
 
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
@@ -247,7 +248,7 @@ public class CalendarActivity extends AppCompatActivity {
                 int month = pagerData.get(i).getMonth();
                 int year = pagerData.get(i).getYear();
                 currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
-                ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
+                ArrayList<EventsItem> data = pagerData.get(i).getDatas();
                 if (data.size() > 0) dateMills = data.get(0).getDate();
                 lastPosition = i;
             }
@@ -265,7 +266,7 @@ public class CalendarActivity extends AppCompatActivity {
         int month = pagerData.get(i).getMonth();
         int year = pagerData.get(i).getYear();
         currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
-        ArrayList<EventsDataProvider.EventsItem> data = pagerData.get(i).getDatas();
+        ArrayList<EventsItem> data = pagerData.get(i).getDatas();
         if (data.size() > 0) dateMills = data.get(0).getDate();
 
         currentEvent.setClickable(false);

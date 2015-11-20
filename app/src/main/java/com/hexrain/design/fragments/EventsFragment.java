@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.datas.EventsDataProvider;
+import com.cray.software.justreminder.datas.EventsItem;
 import com.cray.software.justreminder.datas.EventsPagerItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Configs;
@@ -184,7 +185,7 @@ public class EventsFragment extends Fragment {
             int mMonth = calendar.get(Calendar.MONTH);
             int mYear = calendar.get(Calendar.YEAR);
 
-            ArrayList<EventsDataProvider.EventsItem> datas =
+            ArrayList<EventsItem> datas =
                     provider.getMatches(mDay, mMonth, mYear);
 
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
