@@ -13,11 +13,11 @@ import android.support.v4.app.NotificationCompat;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.ReminderDialog;
+import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.LocationUtil;
 
 import java.util.ArrayList;

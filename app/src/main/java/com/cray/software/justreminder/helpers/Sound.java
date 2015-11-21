@@ -6,7 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.io.File;
 import java.io.IOException;

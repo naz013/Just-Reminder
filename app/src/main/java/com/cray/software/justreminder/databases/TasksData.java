@@ -10,10 +10,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.ExchangeConstants;
-import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.ExchangeConstants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 
 public class TasksData {
     private static final String DB_NAME = "tasks_base";

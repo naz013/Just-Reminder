@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.cray.software.justreminder.datas.EventsPagerItem;
-import com.cray.software.justreminder.dialogs.EventsListFragment;
+import com.cray.software.justreminder.datas.models.EventsPagerItem;
+import com.cray.software.justreminder.fragments.EventsListFragment;
 
 import java.util.ArrayList;
 

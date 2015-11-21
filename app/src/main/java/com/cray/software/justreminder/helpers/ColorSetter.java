@@ -6,8 +6,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 

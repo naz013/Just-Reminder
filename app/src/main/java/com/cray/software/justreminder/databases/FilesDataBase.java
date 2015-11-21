@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 public class FilesDataBase {
     private static final String DB_NAME = "files_database";

@@ -3,9 +3,10 @@ package com.cray.software.justreminder.datas;
 import android.app.AlarmManager;
 import android.database.Cursor;
 
+import com.cray.software.justreminder.enums.WidgetType;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Configs;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 
 import java.text.ParseException;
@@ -16,10 +17,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class WidgetDataProvider {
-    public enum Type {
-        BIRTHDAY,
-        REMINDER
-    }
 
     private ArrayList<Item> data;
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -63,8 +60,8 @@ public class WidgetDataProvider {
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
-            Type type = item.getType();
-            res = mDay == day && mMonth == month && mYear == year && type == Type.REMINDER;
+            WidgetType type = item.getType();
+            res = mDay == day && mMonth == month && mYear == year && type == WidgetType.REMINDER;
         }
         return res;
     }
@@ -74,8 +71,8 @@ public class WidgetDataProvider {
         for (Item item : data){
             int mDay = item.getDay();
             int mMonth = item.getMonth();
-            Type type = item.getType();
-            if (mDay == day && mMonth == month && type == Type.BIRTHDAY) {
+            WidgetType type = item.getType();
+            if (mDay == day && mMonth == month && type == WidgetType.BIRTHDAY) {
                 res = true;
                 break;
             }
@@ -116,7 +113,7 @@ public class WidgetDataProvider {
                     int mMonth = calendar1.get(Calendar.MONTH);
                     int mYear = calendar1.get(Calendar.YEAR);
                     if (time > 0) {
-                        data.add(new Item(mDay, mMonth, mYear, Type.REMINDER));
+                        data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
                     }
                     if (!mType.matches(Constants.TYPE_TIME) && isFeature && repCode > 0) {
                         int days = 0;
@@ -129,7 +126,7 @@ public class WidgetDataProvider {
                             mYear = calendar1.get(Calendar.YEAR);
                             days += repCode;
                             if (time > 0) {
-                                data.add(new Item(mDay, mMonth, mYear, Type.REMINDER));
+                                data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
                     }
@@ -141,7 +138,7 @@ public class WidgetDataProvider {
                     int mMonth = calendar1.get(Calendar.MONTH);
                     int mYear = calendar1.get(Calendar.YEAR);
                     if (time > 0) {
-                        data.add(new Item(mDay, mMonth, mYear, Type.REMINDER));
+                        data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
                     }
                     int days = 0;
                     if (isFeature) {
@@ -157,7 +154,7 @@ public class WidgetDataProvider {
                                 int sMonth = calendar1.get(Calendar.MONTH);
                                 int sYear = calendar1.get(Calendar.YEAR);
                                 if (time > 0) {
-                                    data.add(new Item(sDay, sMonth, sYear, Type.REMINDER));
+                                    data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
                                 }
                             }
                         } while (days < Configs.MAX_DAYS_COUNT);
@@ -171,7 +168,7 @@ public class WidgetDataProvider {
                         int mMonth = calendar1.get(Calendar.MONTH);
                         int mYear = calendar1.get(Calendar.YEAR);
                         if (time > 0) {
-                            data.add(new Item(mDay, mMonth, mYear, Type.REMINDER));
+                            data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
                         }
                     }
                     int days = 1;
@@ -184,7 +181,7 @@ public class WidgetDataProvider {
                             int sMonth = calendar1.get(Calendar.MONTH);
                             int sYear = calendar1.get(Calendar.YEAR);
                             if (time > 0) {
-                                data.add(new Item(sDay, sMonth, sYear, Type.REMINDER));
+                                data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
                             }
                         } while (days < Configs.MAX_MONTH_COUNT);
                     }
@@ -214,7 +211,7 @@ public class WidgetDataProvider {
                     calendar1.set(Calendar.DAY_OF_MONTH, bDay);
                     calendar1.set(Calendar.HOUR_OF_DAY, hour);
                     calendar1.set(Calendar.MINUTE, minute);
-                    data.add(new Item(bDay, bMonth, 0, Type.BIRTHDAY));
+                    data.add(new Item(bDay, bMonth, 0, WidgetType.BIRTHDAY));
                 }
             } while (c.moveToNext());
         }
@@ -223,9 +220,9 @@ public class WidgetDataProvider {
 
     public class Item {
         int day, month, year;
-        Type type;
+        WidgetType type;
 
-        public Item(int day, int month, int year, Type type){
+        public Item(int day, int month, int year, WidgetType type){
             this.day = day;
             this.month = month;
             this.year = year;
@@ -256,7 +253,7 @@ public class WidgetDataProvider {
             this.day = day;
         }
 
-        public Type getType(){
+        public WidgetType getType(){
             return type;
         }
     }

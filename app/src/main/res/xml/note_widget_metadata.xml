@@ -8,6 +8,6 @@
     android:resizeMode="horizontal|vertical"
     android:previewImage="@drawable/note_widget_preview"
     android:widgetCategory="home_screen|keyguard"
-    android:configure="com.cray.software.justreminder.widgets.CurrentNotesWidgetConfig"
+    android:configure="com.cray.software.justreminder.widgets.configs.CurrentNotesWidgetConfig"
     android:updatePeriodMillis="1800000">
 </appwidget-provider>

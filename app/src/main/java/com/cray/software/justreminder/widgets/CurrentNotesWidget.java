@@ -11,6 +11,8 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.widgets.configs.CurrentNotesWidgetConfig;
+import com.cray.software.justreminder.widgets.services.CurrentNotesService;
 
 public class CurrentNotesWidget extends AppWidgetProvider {
 

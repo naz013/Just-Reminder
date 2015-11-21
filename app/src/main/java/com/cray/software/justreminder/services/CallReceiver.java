@@ -8,12 +8,12 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.FollowReminder;
-import com.cray.software.justreminder.dialogs.QuickSMS;
+import com.cray.software.justreminder.activities.FollowReminder;
+import com.cray.software.justreminder.activities.QuickSMS;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 public class CallReceiver extends BroadcastReceiver {
 

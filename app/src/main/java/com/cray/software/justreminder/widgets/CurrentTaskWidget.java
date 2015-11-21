@@ -11,8 +11,10 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.dialogs.QuickAddReminder;
+import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
+import com.cray.software.justreminder.widgets.configs.CurrentTaskWidgetConfig;
+import com.cray.software.justreminder.widgets.services.CurrentTaskService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

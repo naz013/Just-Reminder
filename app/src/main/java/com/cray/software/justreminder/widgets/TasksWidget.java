@@ -11,7 +11,9 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.TasksConstants;
+import com.cray.software.justreminder.widgets.configs.TasksWidgetConfig;
+import com.cray.software.justreminder.widgets.services.TasksService;
 
 public class TasksWidget extends AppWidgetProvider {
 

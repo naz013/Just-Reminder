@@ -3,9 +3,9 @@ package com.cray.software.justreminder.reminder;
 import android.content.Context;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ShoppingList;
+import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.services.AlarmReceiver;
 
 import java.util.ArrayList;

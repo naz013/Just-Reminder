@@ -18,8 +18,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 

@@ -11,7 +11,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.io.File;
 import java.util.ArrayList;

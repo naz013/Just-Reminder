@@ -21,11 +21,11 @@ import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 
 public class TaskListManager extends AppCompatActivity {

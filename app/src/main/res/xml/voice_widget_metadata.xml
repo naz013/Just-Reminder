@@ -7,6 +7,6 @@
     android:minWidth="40dp"
     android:resizeMode="none"
     android:previewImage="@drawable/voice_widget_preview"
-    android:configure="com.cray.software.justreminder.widgets.VoiceWidgetConfig"
+    android:configure="com.cray.software.justreminder.widgets.configs.VoiceWidgetConfig"
     android:updatePeriodMillis="1800000">
 </appwidget-provider>

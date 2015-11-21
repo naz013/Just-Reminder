@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.util.ArrayList;
 import java.util.TimeZone;

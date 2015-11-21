@@ -12,7 +12,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

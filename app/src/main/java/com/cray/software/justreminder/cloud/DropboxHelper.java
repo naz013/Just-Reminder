@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.android.AuthActivity;

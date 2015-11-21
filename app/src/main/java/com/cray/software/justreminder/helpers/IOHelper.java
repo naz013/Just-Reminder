@@ -5,8 +5,8 @@ import android.os.Environment;
 
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 import org.json.JSONException;
 

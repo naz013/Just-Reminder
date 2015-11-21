@@ -7,7 +7,7 @@ import android.content.Intent;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 
 public class JustBootReceiver extends BroadcastReceiver {
 
@@ -36,8 +36,5 @@ public class JustBootReceiver extends BroadcastReceiver {
         }
 
         new DisableAsync(context).execute();
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            context.startService(new Intent(context, WearService.class));
-        }*/
     }
 }

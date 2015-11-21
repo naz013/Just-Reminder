@@ -5,10 +5,10 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.ReminderModel;
+import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

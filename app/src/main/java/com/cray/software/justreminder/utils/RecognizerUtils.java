@@ -1,6 +1,6 @@
 package com.cray.software.justreminder.utils;
 
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

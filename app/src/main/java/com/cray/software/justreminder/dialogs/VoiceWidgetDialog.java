@@ -11,7 +11,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.util.ArrayList;
 

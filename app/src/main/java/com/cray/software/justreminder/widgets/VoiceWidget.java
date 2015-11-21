@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
+import com.cray.software.justreminder.widgets.configs.VoiceWidgetConfig;
 
 public class VoiceWidget extends AppWidgetProvider{
 

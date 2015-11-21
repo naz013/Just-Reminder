@@ -5,12 +5,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

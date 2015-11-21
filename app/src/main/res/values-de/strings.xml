@@ -722,4 +722,6 @@
     <string name="select_time">Wählen Sie die Zeit</string>
     <string name="no_files">Kein Ergebnis!</string>
     <string name="file_format_warming">Nur .mp3 und .ogg Musikdateien erlaubt!</string>
+    <string name="message_delivered">SMS delivered</string>
+    <string name="message_not_delivered">SMS not delivered</string>
 </resources>

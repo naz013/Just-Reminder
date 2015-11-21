@@ -56,7 +56,7 @@
     <string name="silent_sms_title">"\"Silent\" SMS"</string>
     <string name="message_empty_error">"Message cannot be empty"</string>
     <string name="dialog_button_send">"Send"</string>
-    <string name="dialog_message_sent">"Message sended"</string>
+    <string name="dialog_message_sent">"Message sent"</string>
     <string name="message_send_error">"Error sending message"</string>
     <string name="dialog_button_retry">"Retry"</string>
     <string name="reminder_make_call">"Call"</string>
@@ -724,5 +724,7 @@
     <string name="select_time">Select time</string>
     <string name="no_files">No files found!</string>
     <string name="file_format_warming">Only .mp3 and .ogg music files allowed!</string>
+    <string name="message_delivered">SMS delivered</string>
+    <string name="message_not_delivered">SMS not delivered</string>
 
 </resources>

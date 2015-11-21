@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.WeekDayDialog;
+import com.cray.software.justreminder.activities.WeekDayDialog;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 
 import java.util.Calendar;
 

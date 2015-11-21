@@ -8,6 +8,6 @@
     android:resizeMode="horizontal"
     android:previewImage="@drawable/calendar_widget_preview"
     android:widgetCategory="home_screen|keyguard"
-    android:configure="com.cray.software.justreminder.widgets.CalendarWidgetConfig"
+    android:configure="com.cray.software.justreminder.widgets.configs.CalendarWidgetConfig"
     android:updatePeriodMillis="1800000">
 </appwidget-provider>

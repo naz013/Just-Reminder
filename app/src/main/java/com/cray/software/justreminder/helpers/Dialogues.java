@@ -13,18 +13,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.activities.FileExplore;
 import com.cray.software.justreminder.async.LoadSounds;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.CategoryModel;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.LED;
-import com.cray.software.justreminder.interfaces.Language;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.LED;
+import com.cray.software.justreminder.constants.Language;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.io.File;
 import java.util.ArrayList;

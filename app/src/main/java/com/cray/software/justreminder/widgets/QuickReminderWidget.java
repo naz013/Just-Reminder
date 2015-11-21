@@ -9,7 +9,8 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.QuickAddReminder;
+import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.widgets.configs.QuickReminderWidgetConfig;
 
 public class QuickReminderWidget extends AppWidgetProvider{
 

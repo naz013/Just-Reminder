@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.io.File;
 import java.io.FileInputStream;

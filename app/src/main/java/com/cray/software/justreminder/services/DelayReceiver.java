@@ -6,11 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.cray.software.justreminder.dialogs.ReminderDialog;
-import com.cray.software.justreminder.dialogs.WeekDayDialog;
+import com.cray.software.justreminder.activities.ReminderDialog;
+import com.cray.software.justreminder.activities.WeekDayDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.util.Calendar;
 

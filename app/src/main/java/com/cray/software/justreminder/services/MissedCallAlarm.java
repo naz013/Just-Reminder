@@ -5,12 +5,11 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.cray.software.justreminder.dialogs.MissedCallDialog;
+import com.cray.software.justreminder.activities.MissedCallDialog;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 public class MissedCallAlarm extends BroadcastReceiver {
 

@@ -2,7 +2,7 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.services.MonthDayReceiver;
 
 public class MonthdayType extends Type {

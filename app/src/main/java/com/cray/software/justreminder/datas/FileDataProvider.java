@@ -4,10 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.FilesDataBase;
+import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 

@@ -8,6 +8,6 @@
     android:resizeMode="horizontal|vertical"
     android:previewImage="@drawable/current_widget_preview"
     android:widgetCategory="home_screen|keyguard"
-    android:configure="com.cray.software.justreminder.widgets.CurrentTaskWidgetConfig"
+    android:configure="com.cray.software.justreminder.widgets.configs.CurrentTaskWidgetConfig"
     android:updatePeriodMillis="1800000">
 </appwidget-provider>

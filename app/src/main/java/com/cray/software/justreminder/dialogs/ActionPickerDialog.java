@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 
 /**
  * Select action for calendar view.

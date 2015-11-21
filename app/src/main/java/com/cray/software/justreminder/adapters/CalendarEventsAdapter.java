@@ -9,12 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.EventType;
-import com.cray.software.justreminder.datas.EventsItem;
+import com.cray.software.justreminder.enums.EventType;
+import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;

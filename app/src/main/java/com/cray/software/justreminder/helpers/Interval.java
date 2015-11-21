@@ -3,8 +3,8 @@ package com.cray.software.justreminder.helpers;
 import android.content.Context;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Intervals;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Intervals;
 
 /**
  * Helper class.

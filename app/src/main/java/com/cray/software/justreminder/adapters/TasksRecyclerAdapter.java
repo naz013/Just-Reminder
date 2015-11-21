@@ -16,11 +16,11 @@ import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.Task;
+import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

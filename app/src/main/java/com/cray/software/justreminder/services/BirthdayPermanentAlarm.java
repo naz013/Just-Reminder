@@ -8,7 +8,7 @@ import android.content.Intent;
 
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.util.Calendar;
 

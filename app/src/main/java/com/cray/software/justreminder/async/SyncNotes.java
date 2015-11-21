@@ -11,7 +11,7 @@ import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import org.json.JSONException;
 

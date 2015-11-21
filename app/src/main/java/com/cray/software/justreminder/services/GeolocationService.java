@@ -11,8 +11,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 public class GeolocationService extends Service {
 

@@ -21,7 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.modules.Module;
 
 public class ViewUtils {

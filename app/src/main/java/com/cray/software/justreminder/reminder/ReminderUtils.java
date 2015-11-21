@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.widget.CheckBox;
 
 import com.cray.software.justreminder.R;
@@ -10,8 +9,8 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +56,7 @@ public class ReminderUtils {
     /**
      * Generate sync code for reminder.
      * @param tasks Checkbox.
-     * @return
+     * @return Sync code.
      */
     public static int getSyncCode(CheckBox tasks){
         if (tasks.isChecked()) return Constants.SYNC_GTASKS_ONLY;
@@ -67,7 +66,7 @@ public class ReminderUtils {
     /**
      * Get days array for weekday reminder type.
      * @param weekdays weekdays.
-     * @return
+     * @return selected weekdays array.
      */
     public static ArrayList<Integer> getRepeatArray(String weekdays){
         ArrayList<Integer> res = new ArrayList<>();
@@ -93,7 +92,7 @@ public class ReminderUtils {
      * @param hour hour.
      * @param minute minute.
      * @param weekdays weekdays string.
-     * @return
+     * @return time in mills.
      */
     public static long getWeekTime(int hour, int minute, String weekdays){
         return TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
@@ -104,7 +103,7 @@ public class ReminderUtils {
      * @param hour hour.
      * @param minute minute.
      * @param day day (if 0 get time for last day in month).
-     * @return
+     * @return time in mills.
      */
     public static long getMonthTime(int hour, int minute, int day){
         return TimeCount.getNextMonthDayTime(hour, minute, day, 0);
@@ -118,7 +117,7 @@ public class ReminderUtils {
      * @param hour hour.
      * @param minute minute.
      * @param after time for timer.
-     * @return
+     * @return time in mills.
      */
     public static long getTime(int day, int month, int year, int hour, int minute, long after){
         Calendar calendar = Calendar.getInstance();
@@ -130,7 +129,7 @@ public class ReminderUtils {
      * Generate human readable weekdays string for weekday reminder type.
      * @param context application context.
      * @param repCode system weekdays string.
-     * @return
+     * @return get selected weekdays string.
      */
     public static String getRepeatString(Context context, String repCode){
         String res;
@@ -172,7 +171,7 @@ public class ReminderUtils {
      * Generate human readable string for reminder type.
      * @param context application context.
      * @param type reminder type.
-     * @return
+     * @return reminder type.
      */
     public static String getTypeString(Context context, String type){
         String res;
@@ -214,7 +213,7 @@ public class ReminderUtils {
      * Get human readable string for reminder type.
      * @param context application context.
      * @param type reminder type.
-     * @return
+     * @return reminder type.
      */
     public static String getType(Context context, String type){
         String res;

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.interfaces.Configs;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 

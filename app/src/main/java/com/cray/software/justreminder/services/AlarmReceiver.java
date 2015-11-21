@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.dialogs.ReminderDialog;
+import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.helpers.RecurrHelper;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
+import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.Calendar;
 

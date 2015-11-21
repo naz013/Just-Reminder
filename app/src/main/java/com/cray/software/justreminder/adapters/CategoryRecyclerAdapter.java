@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.CategoryModel;
+import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;

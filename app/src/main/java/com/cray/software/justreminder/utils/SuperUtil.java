@@ -16,14 +16,14 @@ import android.speech.RecognizerIntent;
 import android.util.Log;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.utils.ContactsList;
-import com.cray.software.justreminder.dialogs.utils.SelectApplication;
-import com.cray.software.justreminder.dialogs.utils.SelectMelody;
+import com.cray.software.justreminder.activities.ContactsList;
+import com.cray.software.justreminder.activities.SelectApplication;
+import com.cray.software.justreminder.dialogs.SelectMelody;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 
 import java.io.File;
 import java.util.ArrayList;

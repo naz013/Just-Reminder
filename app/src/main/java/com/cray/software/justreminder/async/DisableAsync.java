@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.utils.LocationUtil;

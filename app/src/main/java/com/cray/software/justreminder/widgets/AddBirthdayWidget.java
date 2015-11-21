@@ -9,7 +9,8 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.AddBirthday;
+import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.widgets.configs.AddBirthdayWidgetConfig;
 
 public class AddBirthdayWidget extends AppWidgetProvider{
 

@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.interfaces.Constants;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.datas.models.NoteModel;
 
 import java.util.ArrayList;
 import java.util.List;

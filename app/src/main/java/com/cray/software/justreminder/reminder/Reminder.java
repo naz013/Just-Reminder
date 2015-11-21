@@ -18,8 +18,8 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.Constants;
-import com.cray.software.justreminder.interfaces.Prefs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -29,8 +29,8 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.widgets.UpdatesHelper;
-import com.hexrain.design.NavigationDrawerFragment;
+import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 
 import java.util.Calendar;
 

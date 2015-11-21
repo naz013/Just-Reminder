@@ -8,7 +8,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.interfaces.TasksConstants;
+import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.io.IOException;
 
