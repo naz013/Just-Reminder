@@ -25,18 +25,13 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 public class TemplatesFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
-    private LinearLayout emptyLayout, emptyItem;
-    private AdView adView;
+    private LinearLayout emptyItem;
 
     private TemplateDataProvider provider;
 
@@ -68,39 +63,14 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getString(R.string.message_list_empty_text));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.textsms_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.textsms);
+        }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
         loadTemplates();
-
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
-
         return rootView;
     }
 
@@ -124,34 +94,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.TEMPLATE_CHANGED))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.TEMPLATE_CHANGED)) {
             loadTemplates();
-
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     private void loadTemplates(){
@@ -163,7 +108,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
-        if (mCallbacks != null) mCallbacks.onListChanged(listView);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(listView);
+        }
     }
 
     private void reloadView() {
@@ -187,7 +134,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
-        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_template_deleted);
+        if (mCallbacks != null) {
+            mCallbacks.showSnackbar(R.string.string_template_deleted);
+        }
         loadTemplates();
     }
 

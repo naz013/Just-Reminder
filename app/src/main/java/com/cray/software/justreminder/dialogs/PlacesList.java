@@ -72,10 +72,11 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         emptyText.setText(getString(R.string.empty_places_list_text));
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
-        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.place_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.place);
+        }
 
         listView = (RecyclerView) findViewById(R.id.currentList);
 
@@ -175,7 +176,6 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-
         final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setItems(items, new DialogInterface.OnClickListener() {

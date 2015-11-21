@@ -27,20 +27,15 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
-    private LinearLayout emptyLayout, emptyItem;
-    private AdView adView;
+    private LinearLayout emptyItem;
 
     private DataBase DB;
     private ReminderDataProvider provider;
@@ -67,7 +62,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         DB = new DataBase(getActivity());
         DB.open();
         Cursor c = DB.getArchivedReminders();
-        if (c.getCount() == 0) menu.findItem(R.id.action_delete_all).setVisible(false);
+        if (c.getCount() == 0){
+            menu.findItem(R.id.action_delete_all).setVisible(false);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -94,41 +91,17 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyText.setText(getActivity().getString(R.string.string_no_archived));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.delete_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.delete);
+        }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
 
         loaderAdapter();
-
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
         return rootView;
     }
 
@@ -152,39 +125,17 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
             loaderAdapter();
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     public void loaderAdapter(){
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
         DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         provider = new ReminderDataProvider(getActivity());
         provider.setCursor(DB.getArchivedReminders());
         reloadView();
@@ -192,7 +143,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         adapter.setEventListener(this);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
-        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(currentList);
+        }
     }
 
     private void reloadView() {
@@ -208,7 +161,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     private void deleteAll(){
         DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         Cursor c = DB.getArchivedReminders();
         if (c != null && c.moveToFirst()){
             do{
@@ -216,8 +171,12 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                 Reminder.delete(rowId, getActivity());
             }while (c.moveToNext());
         }
-        if (c != null) c.close();
-        if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_trash_cleared);
+        if (c != null) {
+            c.close();
+        }
+        if (mCallbacks != null) {
+            mCallbacks.showSnackbar(R.string.string_trash_cleared);
+        }
         loaderAdapter();
     }
 
@@ -239,7 +198,9 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                 }
                 if (item == 1) {
                     Reminder.delete(item1.getId(), getActivity());
-                    if (mCallbacks != null) mCallbacks.showSnackbar(R.string.string_deleted);
+                    if (mCallbacks != null) {
+                        mCallbacks.showSnackbar(R.string.string_deleted);
+                    }
                     loaderAdapter();
                 }
             }

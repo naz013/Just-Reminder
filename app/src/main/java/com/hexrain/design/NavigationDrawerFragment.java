@@ -105,6 +105,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
         appNameBanner.setTypeface(typeface);
+
         String appName;
         if (Module.isPro()) {
             appName = getString(R.string.app_name_pro);
@@ -218,7 +219,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             SharedPrefs sPrefs = new SharedPrefs(getActivity());
             if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
                 basket.setImageResource(R.drawable.market_icon_white);
-            } else basket.setImageResource(R.drawable.market_icon);
+            } else {
+                basket.setImageResource(R.drawable.market_icon);
+            }
 
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
@@ -245,21 +248,29 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             new LoadAsync(getActivity(), 13).execute();
         }
 
-        if (new GTasksHelper(getActivity()).isLinked()) googleTasks.setVisibility(View.VISIBLE);
+        if (new GTasksHelper(getActivity()).isLinked()) {
+            googleTasks.setVisibility(View.VISIBLE);
+        }
 
         DataBase DB = new DataBase(getActivity());
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         Cursor c = DB.queryTemplates();
         if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         c = DB.queryPlaces();
         if (c != null && c.moveToFirst()){
             places.setVisibility(View.VISIBLE);
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -327,7 +338,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 
-                if (mCallbacks != null) mCallbacks.isDrawerOpen(false);
+                if (mCallbacks != null) {
+                    mCallbacks.isDrawerOpen(false);
+                }
             }
 
             @Override
@@ -346,7 +359,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
 
-                if (mCallbacks != null) mCallbacks.isDrawerOpen(true);
+                if (mCallbacks != null) {
+                    mCallbacks.isDrawerOpen(true);
+                }
             }
         };
 
@@ -365,7 +380,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     }
 
     private void selectItem(final String tag, boolean select) {
-        if (select) mCurrentSelectedPosition = tag;
+        if (select) {
+            mCurrentSelectedPosition = tag;
+        }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
@@ -380,8 +397,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                             e.printStackTrace();
                             mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                         }
+                    } else {
+                        mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                     }
-                    else mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                 }
             }, 250);
         }
@@ -517,7 +535,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         }
 
         DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         if (DB.getCountActive() > 0){
             if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
                 startActivity(new Intent(getActivity(), HelpOverflow.class)
@@ -525,8 +545,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
         }
 
-        if (mCallbacks != null)
+        if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+        }
     }
 
     private boolean isListFirstTime() {

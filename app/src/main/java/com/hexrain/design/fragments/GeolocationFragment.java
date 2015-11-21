@@ -69,7 +69,6 @@ public class GeolocationFragment extends Fragment {
         geoTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                long i = markersCursorAdapter.getItemId(position);
                 MarkerModel item = (MarkerModel) markersCursorAdapter.getItem(position);
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(item.getPosition(), 13));
             }
@@ -100,14 +99,18 @@ public class GeolocationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loadMarkers();
+        if (!onCreate) {
+            loadMarkers();
+        }
         onCreate = false;
     }
 
     private void loadMarkers(){
         googleMap.clear();
         DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen()) DB.open();
+        if (!DB.isOpen()) {
+            DB.open();
+        }
         Cursor c = DB.queryGroup();
         Random random = new Random();
         ArrayList<MarkerModel> list = new ArrayList<>();
@@ -118,9 +121,10 @@ public class GeolocationFragment extends Fragment {
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
                 int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-                if (radius == -1) radius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                if (radius == -1) {
+                    radius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                }
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                     int rand = random.nextInt(16-2)+1;
@@ -144,7 +148,9 @@ public class GeolocationFragment extends Fragment {
             } while (c.moveToNext());
         }
         loaderAdapter(list);
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         DB.close();
     }
 

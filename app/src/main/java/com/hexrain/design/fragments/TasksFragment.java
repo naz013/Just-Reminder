@@ -78,10 +78,13 @@ public class TasksFragment extends Fragment {
             Cursor c = db.getTasksList(taskListDatum.get(currentPos).getTaskList().getListId());
             if (c != null && c.moveToFirst()) {
                 int def = c.getInt(c.getColumnIndex(TasksConstants.SYSTEM_DEFAULT));
-                if (def != 1)
+                if (def != 1) {
                     menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task_list));
+                }
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
             menu.add(Menu.NONE, MENU_ITEM_CLEAR, 100, getString(R.string.string_delete_completed_tasks));
         }
         db.close();
@@ -123,7 +126,6 @@ public class TasksFragment extends Fragment {
         pager = (ViewPager) rootView.findViewById(R.id.pager);
         loadData();
         onCreate = true;
-
         return rootView;
     }
 
@@ -148,13 +150,17 @@ public class TasksFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) loadData();
+        if (!onCreate) {
+            loadData();
+        }
         onCreate = false;
 
         SharedPrefs sPrefs = new SharedPrefs(activity);
         if (sPrefs.loadBoolean(Prefs.TASK_CHANGED)) {
             sPrefs.saveBoolean(Prefs.TASK_CHANGED, false);
-            if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+            if (mCallbacks != null) {
+                mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+            }
         }
     }
 
@@ -205,8 +211,9 @@ public class TasksFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 deleteList();
                 dialog.dismiss();
-                if (mCallbacks != null)
+                if (mCallbacks != null) {
                     mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+                }
             }
         });
 
@@ -230,16 +237,22 @@ public class TasksFragment extends Fragment {
                     db.deleteTask(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
                 } while (x.moveToNext());
             }
-            if (x != null) x.close();
+            if (x != null) {
+                x.close();
+            }
             if (def == 1){
                 Cursor cc = db.getTasksLists();
                 if (cc != null && cc.moveToFirst()){
                     db.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
                 }
-                if (cc != null) cc.close();
+                if (cc != null) {
+                    cc.close();
+                }
             }
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         db.close();
     }
 
@@ -334,7 +347,9 @@ public class TasksFragment extends Fragment {
                 map.put(listId, color);
             } while (c.moveToNext());
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         db.close();
         return lists;
     }
@@ -360,7 +375,9 @@ public class TasksFragment extends Fragment {
                     }
                 } while (c.moveToNext());
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
         } else {
             Cursor c = db.getTasks(taskList.getListId());
             if (c != null && c.moveToFirst()){
@@ -398,7 +415,9 @@ public class TasksFragment extends Fragment {
             } while (c.moveToNext());
         }
 
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 
         if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);

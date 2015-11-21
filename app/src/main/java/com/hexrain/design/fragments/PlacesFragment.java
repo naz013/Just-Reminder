@@ -25,18 +25,13 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
 public class PlacesFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
-    private LinearLayout emptyLayout, emptyItem;
-    private AdView adView;
+    private LinearLayout emptyItem;
 
     private PlaceDataProvider provider;
 
@@ -68,40 +63,15 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getActivity().getString(R.string.empty_places_list_text));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.place_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.place);
+        }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
 
         loadPlaces();
-
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
-
         return rootView;
     }
 
@@ -125,32 +95,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.PLACE_CHANGED)) loadPlaces();
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.PLACE_CHANGED)) {
+            loadPlaces();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     private void loadPlaces(){
@@ -163,7 +110,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
-        if (mCallbacks != null) mCallbacks.onListChanged(listView);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(listView);
+        }
     }
 
     private void reloadView() {
@@ -184,7 +133,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
             db.open();
             db.deletePlace(id);
             db.close();
-            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.delete_place_toast);
+            if (mCallbacks != null) {
+                mCallbacks.showSnackbar(R.string.delete_place_toast);
+            }
             loadPlaces();
         }
     }

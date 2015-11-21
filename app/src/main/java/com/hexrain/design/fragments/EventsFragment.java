@@ -106,7 +106,9 @@ public class EventsFragment extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
 
-        if (dateMills != 0) cal.setTimeInMillis(dateMills);
+        if (dateMills != 0) {
+            cal.setTimeInMillis(dateMills);
+        }
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
         sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
@@ -139,8 +141,9 @@ public class EventsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
             loadData();
+        }
     }
 
     private void loadData() {
@@ -219,7 +222,9 @@ public class EventsFragment extends Fragment {
                 calendar1.set(Calendar.YEAR, year);
                 dateMills = calendar1.getTimeInMillis();
                 lastPosition = i;
-                if (mCallbacks != null) mCallbacks.onDateChanged(dateMills, i);
+                if (mCallbacks != null) {
+                    mCallbacks.onDateChanged(dateMills, i);
+                }
             }
 
             @Override

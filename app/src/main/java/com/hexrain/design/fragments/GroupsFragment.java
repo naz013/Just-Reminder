@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
@@ -25,16 +26,12 @@ import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.CategoryModel;
-import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -43,8 +40,6 @@ import java.io.File;
 public class GroupsFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
-    private LinearLayout emptyLayout;
-    private AdView adView;
 
     private CategoryDataProvider provider;
 
@@ -77,31 +72,6 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         listView.setLayoutManager(mLayoutManager);
 
         loadCategories();
-
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
         return rootView;
     }
 
@@ -125,33 +95,9 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.GROUP_CHANGED))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.GROUP_CHANGED)) {
             loadCategories();
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     private void loadCategories(){
@@ -161,7 +107,9 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         adapter.setEventListener(this);
         listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        if (mCallbacks != null) mCallbacks.onListChanged(listView);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(listView);
+        }
     }
 
     private void removeGroup(int position){
@@ -175,9 +123,13 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                 db.deleteCategory(itemId);
                 new DeleteAsync(getActivity(), uuId).execute();
             }
-            if (s != null) s.close();
+            if (s != null) {
+                s.close();
+            }
             db.close();
-            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.group_deleted);
+            if (mCallbacks != null) {
+                mCallbacks.showSnackbar(R.string.group_deleted);
+            }
             loadCategories();
         }
     }
@@ -276,8 +228,12 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             boolean isInternet = SyncHelper.isConnected(getActivity());
             DropboxHelper dbx = new DropboxHelper(getActivity());
             GDriveHelper gdx = new GDriveHelper(getActivity());
-            if (dbx.isLinked() && isInternet) dbx.deleteGroup(uuId);
-            if (gdx.isLinked() && isInternet) gdx.deleteGroup(uuId);
+            if (dbx.isLinked() && isInternet) {
+                dbx.deleteGroup(uuId);
+            }
+            if (gdx.isLinked() && isInternet) {
+                gdx.deleteGroup(uuId);
+            }
             DataBase dataBase = new DataBase(mContext);
             dataBase.open();
             Cursor c = dataBase.queryGroup(uuId);
@@ -304,8 +260,12 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                             file.delete();
                         }
                     }
-                    if (dbx.isLinked() && isInternet) dbx.deleteReminder(remUUId);
-                    if (gdx.isLinked() && isInternet) gdx.deleteReminder(uuId);
+                    if (dbx.isLinked() && isInternet) {
+                        dbx.deleteReminder(remUUId);
+                    }
+                    if (gdx.isLinked() && isInternet) {
+                        gdx.deleteReminder(uuId);
+                    }
                 } while (c.moveToNext());
             }
             return null;

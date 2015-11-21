@@ -33,15 +33,10 @@ import com.cray.software.justreminder.interfaces.Constants;
 import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
-import com.hexrain.design.TestActivity;
 
 import java.util.ArrayList;
 
@@ -58,12 +53,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     /**
      * Containers.
      */
-    private LinearLayout emptyLayout, emptyItem;
-
-    /**
-     * AdMob block.
-     */
-    private AdView adView;
+    private LinearLayout emptyItem;
 
     /**
      * Reminder data provider for recycler view.
@@ -102,14 +92,12 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_active_menu, menu);
-        //menu.add(Menu.NONE, 55, 100, "Test List");
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -120,7 +108,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 new SyncTask(getActivity(), this).execute();
                 break;
             case R.id.action_voice:
-                if (mCallbacks != null){
+                if (mCallbacks != null) {
                     mCallbacks.onNavigationDrawerItemSelected(ScreenManager.VOICE_RECOGNIZER);
                 }
                 break;
@@ -129,10 +117,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 break;
             case R.id.action_exit:
                 getActivity().finish();
-                break;
-            case 55:
-                startActivity(new Intent(getActivity(), TestActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             default:
                 break;
@@ -151,40 +135,17 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (prefs.loadBoolean(Prefs.USE_DARK_THEME))
+        if (prefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
+        }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
 
         loaderAdapter(lastId);
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
         return rootView;
     }
 
@@ -208,33 +169,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onResume() {
         super.onResume();
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
-        }
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
             loaderAdapter(lastId);
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
         }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     /**
@@ -245,7 +182,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         lastId = groupId;
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
         DataBase db = new DataBase(getActivity());
-        if (!db.isOpen()) db.open();
+        if (!db.isOpen()) {
+            db.open();
+        }
         provider = new ReminderDataProvider(getActivity());
         if (groupId != null) {
             provider.setCursor(db.queryGroup(groupId));
@@ -259,7 +198,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         currentList.setHasFixedSize(true);
         currentList.setItemAnimator(new DefaultItemAnimator());
         currentList.setAdapter(adapter);
-        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(currentList);
+        }
     }
 
     /**
@@ -296,15 +237,18 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) loaderAdapter(null);
-                else {
+                if (which == 0) {
+                    loaderAdapter(null);
+                } else {
                     String catId = ids.get(which - 1);
                     loaderAdapter(catId);
                 }
@@ -336,7 +280,9 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));
@@ -350,7 +296,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                     return;
                 }
                 Reminder.setNewGroup(getActivity(), id, catId);
-                loaderAdapter(null);
+                loaderAdapter(lastId);
             }
         });
         AlertDialog alert = builder.create();
@@ -393,7 +339,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onItemSwitched(final int position, final View switchCompat) {
         Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
-        loaderAdapter(null);
+        loaderAdapter(lastId);
     }
 
     @Override
@@ -407,7 +353,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 previewReminder(view, item.getId(), item.getType());
             } else {
                 Reminder.toggle(item.getId(), getActivity(), mCallbacks);
-                loaderAdapter(null);
+                loaderAdapter(lastId);
             }
         }
     }
@@ -444,6 +390,8 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
 
     @Override
     public void endExecution(final boolean result) {
-        if (getActivity() != null) loaderAdapter(null);
+        if (getActivity() != null) {
+            loaderAdapter(lastId);
+        }
     }
 }

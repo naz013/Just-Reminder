@@ -215,8 +215,11 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                 String repeatStr = item.getRepeat();
-                if (repeatStr != null) repeat.setText(repeatStr);
-                else repeat.setVisibility(View.GONE);
+                if (repeatStr != null) {
+                    repeat.setText(repeatStr);
+                } else {
+                    repeat.setVisibility(View.GONE);
+                }
             } else {
                 time.setVisibility(View.GONE);
                 repeat.setVisibility(View.GONE);
@@ -242,7 +245,9 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         .draggable(false));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
                 int radius = item.getRadius();
-                if (radius == -1) radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                if (radius == -1) {
+                    radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                }
                 if (radius != -1) {
                     int[] circleColors = cs.getMarkerRadiusStyle();
                     map.addCircle(new CircleOptions()
@@ -263,8 +268,11 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 mapContainer.setVisibility(View.GONE);
             }
             String numberStr = item.getNumber();
-            if (numberStr != null && !numberStr.matches("")) number.setText(numberStr);
-            else number.setVisibility(View.GONE);
+            if (numberStr != null && !numberStr.matches("")) {
+                number.setText(numberStr);
+            } else {
+                number.setVisibility(View.GONE);
+            }
 
             String melodyStr = item.getMelody();
             Uri soundUri;
@@ -335,17 +343,23 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             Reminder.moveToTrash(id, ReminderPreviewFragment.this, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            } else finish();
+            } else {
+                finish();
+            }
             return true;
         }
         if (ids == android.R.id.home){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            } else finish();
+            } else {
+                finish();
+            }
         }
         if (ids == R.id.action_make_copy){
             DataBase db = new DataBase(this);
-            if (!db.isOpen()) db.open();
+            if (!db.isOpen()) {
+                db.open();
+            }
             Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()){
                 String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
@@ -377,11 +391,17 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 minute = calendar.get(Calendar.MINUTE);
                 list.add(tmp);
                 String hourStr;
-                if (hour < 10) hourStr = "0" + hour;
-                else hourStr = String.valueOf(hour);
+                if (hour < 10) {
+                    hourStr = "0" + hour;
+                } else {
+                    hourStr = String.valueOf(hour);
+                }
                 String minuteStr;
-                if (minute < 10) minuteStr = "0" + minute;
-                else minuteStr = String.valueOf(minute);
+                if (minute < 10) {
+                    minuteStr = "0" + minute;
+                } else {
+                    minuteStr = String.valueOf(minute);
+                }
                 time.add(hourStr + ":" + minuteStr);
                 calendar.setTimeInMillis(tmp + AlarmManager.INTERVAL_HALF_HOUR);
             }
@@ -432,7 +452,9 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 reminderNote.setImage(image);
                 reminderNote.setNoteId(noteId);
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
             notesBase.close();
 
             TasksData data = new TasksData(mContext);
@@ -474,18 +496,26 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     } else {
                         listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(8));
                     }
-                    if (mNote != null && !mNote.matches("")) taskNote.setText(mNote);
-                    else taskNote.setVisibility(View.GONE);
+
+                    if (mNote != null && !mNote.matches("")) {
+                        taskNote.setText(mNote);
+                    } else {
+                        taskNote.setVisibility(View.GONE);
+                    }
                     long date = reminderNote.getTaskDate();
                     Calendar calendar = Calendar.getInstance();
                     if (date != 0) {
                         calendar.setTimeInMillis(date);
                         String update = full24Format.format(calendar.getTime());
                         taskDate.setText(update);
-                    } else taskDate.setVisibility(View.INVISIBLE);
+                    } else {
+                        taskDate.setVisibility(View.INVISIBLE);
+                    }
                     if (reminderNote.getTaskStatus().matches(GTasksHelper.TASKS_COMPLETE)){
                         checkDone.setChecked(true);
-                    } else checkDone.setChecked(false);
+                    } else {
+                        checkDone.setChecked(false);
+                    }
                     checkDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

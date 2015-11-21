@@ -744,12 +744,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hexrain.design.TestActivity"
-            android:theme="@style/HomeWhite.Blue" />
-        <activity
-            android:name="com.hexrain.design.MainActivity"
-            android:theme="@style/HomeWhite.Blue" />
-        <activity
             android:name="com.hexrain.design.fragments.ShoppingListPreview"
             android:theme="@style/HomeWhite.Blue" />
 

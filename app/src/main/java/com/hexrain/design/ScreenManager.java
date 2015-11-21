@@ -326,9 +326,9 @@ public class ScreenManager extends AppCompatActivity
                 public void onClick(View v) {
                     collapseViews();
 
-                    if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
+                    if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
                         Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
-                    else {
+                    } else {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -368,9 +368,9 @@ public class ScreenManager extends AppCompatActivity
                         public void onClick(View v) {
                             collapseViews();
 
-                            if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
+                            if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
                                 Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
-                            else {
+                            } else {
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -383,7 +383,9 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addTask, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (mainMenu.isExpanded()) {
+                                mainMenu.collapse();
+                            }
                             if (new GTasksHelper(ScreenManager.this).isLinked()) {
                                 collapseViews();
 
@@ -396,8 +398,9 @@ public class ScreenManager extends AppCompatActivity
                                     }
                                 }, 150);
 
-                            } else
+                            } else {
                                 Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
+                            }
                         }
                     }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_available_black_24dp);
                     setUpButton(addNote, new View.OnClickListener() {
@@ -416,7 +419,9 @@ public class ScreenManager extends AppCompatActivity
                     setUpButton(addQuick, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mainMenu.isExpanded()) mainMenu.collapse();
+                            if (mainMenu.isExpanded()) {
+                                mainMenu.collapse();
+                            }
                             if (!isNoteVisible()) {
                                 ViewUtils.showReveal(noteCard, isAnimation);
                             } else {
@@ -532,8 +537,9 @@ public class ScreenManager extends AppCompatActivity
                                     }
                                 }, 150);
 
-                            } else
+                            } else {
                                 Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
+                            }
                         }
                     });
                     mFab.setVisibility(View.VISIBLE);
@@ -605,7 +611,9 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void collapseViews() {
-        if (mainMenu.isExpanded()) mainMenu.collapse();
+        if (mainMenu.isExpanded()) {
+            mainMenu.collapse();
+        }
         if (isNoteVisible()) {
             ViewUtils.hideReveal(noteCard, isAnimation);
         }
@@ -622,13 +630,17 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public void onDateChanged(long dateMills, int position) {
-        if (dateMills != 0) this.dateMills = dateMills;
+        if (dateMills != 0) {
+            this.dateMills = dateMills;
+        }
         lastEventPosition = position;
     }
 
     @Override
     public void isDrawerOpen(boolean isOpen) {
-        if (isOpen && mainMenu.isExpanded()) mainMenu.collapse();
+        if (isOpen && mainMenu.isExpanded()) {
+            mainMenu.collapse();
+        }
     }
 
     @Override
@@ -916,7 +928,9 @@ public class ScreenManager extends AppCompatActivity
             menu.findItem(R.id.action_month).setVisible(false);
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            if (eventsDate != null) calendar.setTime(eventsDate);
+            if (eventsDate != null) {
+                calendar.setTime(eventsDate);
+            }
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
             int year = calendar.get(Calendar.YEAR);
@@ -984,7 +998,9 @@ public class ScreenManager extends AppCompatActivity
 
     private void loadReminders() {
         DataBase db = new DataBase(this);
-        if (!db.isOpen()) db.open();
+        if (!db.isOpen()) {
+            db.open();
+        }
         mPrefs = new SharedPrefs(this);
         boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         HashMap<DateTime, String> dates = new HashMap<>();
@@ -1101,7 +1117,9 @@ public class ScreenManager extends AppCompatActivity
 
     private void loadEvents(){
         DataBase db = new DataBase(this);
-        if (!db.isOpen()) db.open();
+        if (!db.isOpen()) {
+            db.open();
+        }
         HashMap<DateTime, String> dates = new HashMap<>();
         calendarView.setBackgroundForTwo(ViewUtils.getColor(this, cSetter.colorBirthdayCalendar()));
         Cursor c = db.getBirthdays();
@@ -1148,7 +1166,8 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void showChanges() {
-        startActivity(new Intent(this, ChangeDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(this, ChangeDialog.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void isChangesShown() {
@@ -1263,8 +1282,9 @@ public class ScreenManager extends AppCompatActivity
             }
         }, 300);
 
-        if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE))
+        if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
             onNavigationDrawerItemSelected(mTag);
+        }
     }
 
     private void askNotification(final String note, final long id){
@@ -1314,7 +1334,9 @@ public class ScreenManager extends AppCompatActivity
             public void onClick(View v) {
                 ViewUtils.hideReveal(noteReminderCard, isAnimation);
                 DataBase db = new DataBase(ScreenManager.this);
-                if (!db.isOpen()) db.open();
+                if (!db.isOpen()) {
+                    db.open();
+                }
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTimeInMillis(System.currentTimeMillis());
                 int day = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -1327,7 +1349,9 @@ public class ScreenManager extends AppCompatActivity
                 if (cf != null && cf.moveToFirst()) {
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 }
-                if (cf != null) cf.close();
+                if (cf != null) {
+                    cf.close();
+                }
                 long remId = db.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
                         minute, 0, null, 0, mPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
                         0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId, null);
@@ -1338,8 +1362,9 @@ public class ScreenManager extends AppCompatActivity
                 base.open();
                 base.linkToReminder(noteId, remId);
                 base.close();
-                if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE))
+                if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
                     onNavigationDrawerItemSelected(mTag);
+                }
             }
         });
 

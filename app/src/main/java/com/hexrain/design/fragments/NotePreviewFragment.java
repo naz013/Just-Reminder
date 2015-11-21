@@ -148,13 +148,11 @@ public class NotePreviewFragment extends AppCompatActivity {
 
             private int getAlphaforActionBar(int scrollY) {
                 int minDist = 0, maxDist = QuickReturnUtils.dp2px(NotePreviewFragment.this, 200);
-                if(scrollY > maxDist){
+                if (scrollY > maxDist) {
                     return 255;
-                }
-                else if(scrollY<minDist){
+                } else if (scrollY<minDist) {
                     return 0;
-                }
-                else {
+                } else {
                     return (int)  ((255.0 / maxDist) * scrollY);
                 }
             }
@@ -282,7 +280,9 @@ public class NotePreviewFragment extends AppCompatActivity {
 
     private void moveToStatus() {
         base = new NotesBase(this);
-        if (!base.isOpen()) base.open();
+        if (!base.isOpen()) {
+            base.open();
+        }
         Cursor c = base.getNote(mParam1);
         sPrefs = new SharedPrefs(NotePreviewFragment.this);
         if (c != null && c.moveToFirst()){
@@ -291,7 +291,9 @@ public class NotePreviewFragment extends AppCompatActivity {
                             SyncHelper.decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
                             c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))), mParam1);
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
     }
 
     @Override
@@ -376,7 +378,9 @@ public class NotePreviewFragment extends AppCompatActivity {
                     long feature = r.getLong(r.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
-                    if (feature != 0) calendar.setTimeInMillis(feature);
+                    if (feature != 0) {
+                        calendar.setTimeInMillis(feature);
+                    }
 
                     reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
                             sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -391,7 +395,9 @@ public class NotePreviewFragment extends AppCompatActivity {
             Messages.toast(this, getString(R.string.attach_error_message));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
-            } else finish();
+            } else {
+                finish();
+            }
         }
     }
 
@@ -419,7 +425,9 @@ public class NotePreviewFragment extends AppCompatActivity {
                     public void run() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             finishAfterTransition();
-                        } else finish();
+                        } else {
+                            finish();
+                        }
                     }
                 }, 300);
                 return true;
@@ -446,7 +454,9 @@ public class NotePreviewFragment extends AppCompatActivity {
                 dialog.dismiss();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     finishAfterTransition();
-                } else finish();
+                } else {
+                    finish();
+                }
             }
         });
 

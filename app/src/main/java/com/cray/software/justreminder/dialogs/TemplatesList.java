@@ -68,10 +68,11 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         emptyText.setText(getString(R.string.message_list_empty_text));
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
-        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.textsms_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.textsms);
+        }
 
         listView = (RecyclerView) findViewById(R.id.currentList);
 

@@ -116,8 +116,11 @@ public class LogInActivity extends Activity {
             public void onClick(View v) {
                 if (enabled) {
                     boolean isIn;
-                    if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
-                    else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
+                    if (Module.isPro()) {
+                        isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
+                    } else {
+                        isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
+                    }
                     if (isIn) {
                         checkDialog().show();
                     } else {
@@ -268,8 +271,11 @@ public class LogInActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i;
                         PackageManager manager = getPackageManager();
-                        if (Module.isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
-                        else i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
+                        if (Module.isPro()) {
+                            i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
+                        } else {
+                            i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
+                        }
                         i.addCategory(Intent.CATEGORY_LAUNCHER);
                         startActivity(i);
                     }
@@ -277,8 +283,11 @@ public class LogInActivity extends Activity {
                 .setNegativeButton(getString(R.string.dialog_button_delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
-                        else intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
+                        if (Module.isPro()) {
+                            intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
+                        } else {
+                            intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
+                        }
                         startActivity(intent);
                     }
                 })
@@ -426,7 +435,9 @@ public class LogInActivity extends Activity {
                         DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
                     } while (c.moveToNext());
                 }
-                if (c != null) c.close();
+                if (c != null) {
+                    c.close();
+                }
             }
 
             //import reminders
@@ -529,7 +540,9 @@ public class LogInActivity extends Activity {
                 if (c != null && c.moveToFirst()){
                     DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
                 }
-                if (c != null) c.close();
+                if (c != null) {
+                    c.close();
+                }
             }
 
             //import reminders
@@ -586,14 +599,18 @@ public class LogInActivity extends Activity {
                         data.addTasksList(item.getTitle(), listId, 0, item.getEtag(), item.getKind(),
                                 item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0, color);
                     }
-                    if (c != null) c.close();
+                    if (c != null) {
+                        c.close();
+                    }
 
                     Cursor cc = data.getTasksLists();
                     if (cc != null && cc.moveToFirst()) {
                         data.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
                         data.setSystemDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
                     }
-                    if (cc != null) cc.close();
+                    if (cc != null) {
+                        cc.close();
+                    }
 
                     List<Task> tasks = helper.getTasks(listId);
                     if (tasks != null && tasks.size() > 0) {
@@ -645,7 +662,9 @@ public class LogInActivity extends Activity {
                                         task.getParent(), task.getPosition(), task.getSelfLink(), update, 0,
                                         listId, task.getStatus(), isHidden);
                             }
-                            if (cursor != null) cursor.close();
+                            if (cursor != null) {
+                                cursor.close();
+                            }
                         }
                     }
                 }

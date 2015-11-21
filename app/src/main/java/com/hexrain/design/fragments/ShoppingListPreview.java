@@ -77,10 +77,11 @@ public class ShoppingListPreview extends AppCompatActivity {
 
         shopTitle = (TextView) findViewById(R.id.shopTitle);
         time = (TextView) findViewById(R.id.time);
-        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
-        else
+        } else {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);
+        }
 
         reminderContainer.setVisibility(View.GONE);
 
@@ -204,7 +205,9 @@ public class ShoppingListPreview extends AppCompatActivity {
                 public void run() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         finishAfterTransition();
-                    } else finish();
+                    } else {
+                        finish();
+                    }
                 }
             }, 350);
             return true;
@@ -216,7 +219,9 @@ public class ShoppingListPreview extends AppCompatActivity {
                 public void run() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         finishAfterTransition();
-                    } else finish();
+                    } else {
+                        finish();
+                    }
                 }
             }, 350);
         }
@@ -231,7 +236,9 @@ public class ShoppingListPreview extends AppCompatActivity {
             public void run() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     finishAfterTransition();
-                } else finish();
+                } else {
+                    finish();
+                }
             }
         }, 350);
     }

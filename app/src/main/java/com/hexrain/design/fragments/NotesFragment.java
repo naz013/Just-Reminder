@@ -37,9 +37,6 @@ import com.cray.software.justreminder.interfaces.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.hexrain.design.NavigationDrawerFragment;
 import com.hexrain.design.ScreenManager;
 
@@ -48,8 +45,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private NotesBase db;
     private SharedPrefs sPrefs;
     private RecyclerView currentList;
-    private LinearLayout emptyLayout, emptyItem;
-    private AdView adView;
+    private LinearLayout emptyItem;
     private NoteDataProvider provider;
 
     private boolean enableGrid = false;
@@ -86,7 +82,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
         }
         db = new NotesBase(getActivity());
-        if (!db.isOpen()) db.open();
+        if (!db.isOpen()) {
+            db.open();
+        }
         if (db.getCount() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
         }
@@ -134,10 +132,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
             emptyImage.setImageResource(R.drawable.note_white);
-        else
+        } else {
             emptyImage.setImageResource(R.drawable.note);
+        }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -145,33 +144,6 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
-
-        loaderAdapter();
-
-        if (!Module.isPro()) {
-            emptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyLayout);
-            emptyLayout.setVisibility(View.GONE);
-
-            adView = (AdView) rootView.findViewById(R.id.adView);
-            adView.setVisibility(View.GONE);
-
-            AdRequest adRequest = new AdRequest.Builder()
-                    .build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int errorCode) {
-                    adView.setVisibility(View.GONE);
-                    emptyLayout.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAdLoaded() {
-                    emptyLayout.setVisibility(View.VISIBLE);
-                    adView.setVisibility(View.VISIBLE);
-                }
-            });
-        }
 
         loaderAdapter();
         return rootView;
@@ -197,34 +169,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onResume() {
         super.onResume();
-        if (!Module.isPro()){
-            if (adView != null) {
-                adView.resume();
-            }
-        }
         sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean(Prefs.NOTE_CHANGED)) loaderAdapter();
+        if (sPrefs.loadBoolean(Prefs.NOTE_CHANGED)) {
+            loaderAdapter();
+        }
         getActivity().invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.destroy();
-            }
-        }
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPause() {
-        if (!Module.isPro()) {
-            if (adView != null) {
-                adView.pause();
-            }
-        }
-        super.onPause();
     }
 
     private void showDialog(){
@@ -267,7 +216,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         adapter.setEventListener(this);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
-        if (mCallbacks != null) mCallbacks.onListChanged(currentList);
+        if (mCallbacks != null) {
+            mCallbacks.onListChanged(currentList);
+        }
     }
 
     private void reloadView() {
@@ -307,7 +258,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private void deleteAll(){
         db = new NotesBase(getActivity());
-        if (!db.isOpen()) db.open();
+        if (!db.isOpen()) {
+            db.open();
+        }
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()){
             do{
@@ -316,7 +269,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
             }while (c.moveToNext());
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
     }
 
     private void previewNote(long id, View view){
@@ -372,8 +327,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                         if (NoteModel.shareNote(id, getActivity())){
                             Messages.toast(getActivity(), R.string.message_note_shared);
                         } else {
-                            if (mCallbacks != null) mCallbacks.showSnackbar(R.string.error_sharing_note);
-                            else Messages.toast(getActivity(), R.string.error_sharing_note);
+                            if (mCallbacks != null) {
+                                mCallbacks.showSnackbar(R.string.error_sharing_note);
+                            } else {
+                                Messages.toast(getActivity(), R.string.error_sharing_note);
+                            }
                         }
                         break;
                     case 2:

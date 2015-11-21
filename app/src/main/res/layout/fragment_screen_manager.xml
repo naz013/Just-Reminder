@@ -4,59 +4,35 @@
     android:layout_height="match_parent"
     tools:context="com.hexrain.design.ScreenManager$PlaceholderFragment">
 
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/currentList"
         android:layout_width="match_parent"
-        android:layout_above="@+id/emptyLayout"
-        android:id="@+id/wrapper"
-        android:layout_height="match_parent">
+        android:visibility="visible"
+        android:layout_height="match_parent"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/currentList"
-            android:layout_width="match_parent"
-            android:visibility="visible"
-            android:layout_height="match_parent"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/emptyItem"
-            android:visibility="visible"
-            android:gravity="center"
-            android:layout_centerVertical="true"
-            android:orientation="vertical" >
-
-            <ImageView
-                android:layout_width="150dp"
-                android:id="@+id/emptyImage"
-                android:layout_height="150dp"
-                android:layout_marginBottom="35dp"
-                android:src="@drawable/alarm"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/emptyText"
-                android:textSize="30sp"
-                android:text="@string/no_active_text"
-                android:gravity="center|top"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-    </RelativeLayout >
     <LinearLayout
-        android:id="@+id/emptyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true">
+        android:id="@+id/emptyItem"
+        android:visibility="visible"
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:layout_height="50dp"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-5133908997831400/2152274255"
-            android:layout_width="match_parent"/>
+        <ImageView
+            android:layout_width="150dp"
+            android:id="@+id/emptyImage"
+            android:layout_height="150dp"
+            android:layout_marginBottom="35dp"
+            android:src="@drawable/alarm"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/emptyText"
+            android:textSize="30sp"
+            android:text="@string/no_active_text"
+            android:gravity="center|top"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </RelativeLayout>
