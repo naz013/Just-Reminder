@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.widgets.factories;
+package com.cray.software.justreminder.widgets.services;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;

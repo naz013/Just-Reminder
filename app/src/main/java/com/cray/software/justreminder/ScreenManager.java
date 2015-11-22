@@ -7,7 +7,6 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,20 +34,35 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.Help;
+import com.cray.software.justreminder.activities.NewPlace;
+import com.cray.software.justreminder.activities.NewTemplate;
+import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Intervals;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
-import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
-import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.RateDialog;
-import com.cray.software.justreminder.activities.NewPlace;
-import com.cray.software.justreminder.activities.NewTemplate;
+import com.cray.software.justreminder.fragments.ActiveFragment;
+import com.cray.software.justreminder.fragments.BackupsFragment;
+import com.cray.software.justreminder.fragments.EventsFragment;
+import com.cray.software.justreminder.fragments.GeolocationFragment;
+import com.cray.software.justreminder.fragments.GroupsFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
+import com.cray.software.justreminder.fragments.NotesFragment;
+import com.cray.software.justreminder.fragments.PlacesFragment;
+import com.cray.software.justreminder.fragments.TasksFragment;
+import com.cray.software.justreminder.fragments.TemplatesFragment;
+import com.cray.software.justreminder.fragments.TrashFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -57,11 +71,6 @@ import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Intervals;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -82,16 +91,6 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
-import com.cray.software.justreminder.fragments.ActiveFragment;
-import com.cray.software.justreminder.fragments.BackupsFragment;
-import com.cray.software.justreminder.fragments.EventsFragment;
-import com.cray.software.justreminder.fragments.GeolocationFragment;
-import com.cray.software.justreminder.fragments.GroupsFragment;
-import com.cray.software.justreminder.fragments.NotesFragment;
-import com.cray.software.justreminder.fragments.PlacesFragment;
-import com.cray.software.justreminder.fragments.TasksFragment;
-import com.cray.software.justreminder.fragments.TemplatesFragment;
-import com.cray.software.justreminder.fragments.TrashFragment;
 import com.hexrain.flextcal.FlextCal;
 import com.hexrain.flextcal.FlextHelper;
 import com.hexrain.flextcal.FlextListener;
@@ -119,8 +118,8 @@ public class ScreenManager extends AppCompatActivity
     private TextView buttonReminderYes;
     private TextView buttonReminderNo;
     private FloatingActionsMenu mainMenu;
-    private FloatingActionButton addNote, addBirthday, addTask, addReminder, addQuick, mFab, addTemplate,
-            addPlace, addGroup;
+    private FloatingActionButton addNote, addBirthday, addTask, addReminder, 
+            addQuick, mFab, addTemplate, addPlace, addGroup;
     private FloatingActionButton[] prevButtons;
 
     private ColorSetter cSetter = new ColorSetter(this);
@@ -139,8 +138,6 @@ public class ScreenManager extends AppCompatActivity
     public static final String ACTION_CALENDAR = "action_calendar";
     public static final String FRAGMENT_EVENTS = "fragment_events";
     public static final String HELP = "help";
-    public static final String TRANSLATION = "translation";
-    public static final String MORE_APPS = "more_apps";
     public static final String MARKET = "market";
     public static final String VOICE_RECOGNIZER = "sync_reminder";
     public static final String TASKS_AUTHORIZATION = "authorize";
@@ -715,18 +712,8 @@ public class ScreenManager extends AppCompatActivity
                 mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
-            } else if (tag.matches(TRANSLATION)) {
-                translationDialog().show();
             } else if (tag.matches(MARKET)) {
                 marketDialog().show();
-            } else if (tag.matches(MORE_APPS)) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://search?q=pub:Nazar Suhovich"));
-                try {
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Messages.toast(ScreenManager.this, "Couldn't launch market");
-                }
             } else if (tag.matches(FRAGMENT_SETTINGS)) {
                 Intent intentS = new Intent(this, SettingsActivity.class);
                 startActivity(intentS);
@@ -864,39 +851,11 @@ public class ScreenManager extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
-    protected Dialog translationDialog() {
-        return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.translation_dialog_title))
-                .setMessage(getString(R.string.translation_dialog_message))
-                .setPositiveButton(getString(R.string.settings_help_point), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://docs.google.com/spreadsheets/d/1MeSehWucAsNEA67pIUzf3arL4-EtYh7SjwF-I-417UU/edit#gid=0"));
-                        try {
-                            startActivity(browserIntent);
-                        } catch (ActivityNotFoundException e){
-                            e.printStackTrace();
-                        }
-                    }
-                })
-                .setNegativeButton(getString(R.string.hide_dialog_button), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        SharedPrefs sPrefs = new SharedPrefs(ScreenManager.this);
-                        sPrefs.saveBoolean(Prefs.HIDE_TRANSLATION_MENU, true);
-                        dialog.dismiss();
-                    }
-                })
-                .setCancelable(true)
-                .create();
-    }
-
     protected Dialog marketDialog() {
         return new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.buy_pro_string))
                 .setMessage(getString(R.string.pro_explanation_1) + "\n" +
                         getString(R.string.pro_explanation_2) + "\n" +
-                        getString(R.string.pro_explanation_3) + "\n" +
                         getString(R.string.pro_explanation_4) + "\n" +
                         getString(R.string.pro_explanation_5) + "\n" +
                         getString(R.string.pro_explanation_7) + "\n" +

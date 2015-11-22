@@ -78,7 +78,6 @@ public class Prefs {
     public static final String TIME_NIGHT = "time_night";
     public static final String EXPORT_TO_STOCK = "export_to_stock";
     public static final String APPLICATION_AUTO_LAUNCH = "application_auto_launch";
-    public static final String HIDE_TRANSLATION_MENU = "translation_menu";
     public static final String NOTES_ORDER = "notes_ordering";
     public static final String TASKS_ORDER = "tasks_ordering";
     public static final String REMINDERS_IN_CALENDAR = "reminders_in_calendar";
@@ -93,7 +92,6 @@ public class Prefs {
     public static final String QUICK_SMS = "quick_sms";
     public static final String FOLLOW_REMINDER = "follow_reminder";
     public static final String LAST_LIST = "last_list";
-    public static final String WEARABLE = "wearable";
     public static final String TTS = "tts_enabled";
     public static final String TTS_LOCALE = "tts_locale";
     public static final String LAST_USED_REMINDER = "last_reminder";

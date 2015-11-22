@@ -24,16 +24,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.HelpOverflow;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.activities.HelpOverflow;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.ScreenManager;
 import com.hexrain.flextcal.ImageCheck;
 import com.hexrain.flextcal.LoadAsync;
 import com.squareup.picasso.Picasso;
@@ -56,7 +56,6 @@ public class NavigationDrawerFragment extends Fragment implements
     private TextView calendar;
     private TextView manageBackup;
     private TextView notes;
-    private TextView helpTranslate;
     private TextView googleTasks;
     private TextView templates;
     private TextView places;
@@ -152,24 +151,6 @@ public class NavigationDrawerFragment extends Fragment implements
         archiveScreen = (TextView) rootView.findViewById(R.id.archiveScreen);
         archiveScreen.setVisibility(View.VISIBLE);
         archiveScreen.setOnClickListener(this);
-
-        helpTranslate = (TextView) rootView.findViewById(R.id.helpTranslate);
-        helpTranslate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.TRANSLATION, false);
-            }
-        });
-        helpTranslate.setTypeface(typeface);
-
-        TextView moreApps = (TextView) rootView.findViewById(R.id.moreApps);
-        moreApps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.MORE_APPS, false);
-            }
-        });
-        moreApps.setTypeface(typeface);
 
         categories = (TextView) rootView.findViewById(R.id.categories);
         categories.setOnClickListener(new View.OnClickListener() {
@@ -530,12 +511,7 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         reloadItems();
-
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean(Prefs.HIDE_TRANSLATION_MENU)) {
-            helpTranslate.setVisibility(View.GONE);
-        }
-
         DataBase DB = new DataBase(getActivity());
         if (!DB.isOpen()) {
             DB.open();

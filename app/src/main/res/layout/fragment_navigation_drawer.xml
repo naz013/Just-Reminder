@@ -247,19 +247,6 @@
                 android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"/>
 
-            <TextView
-                android:id="@+id/helpTranslate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:text="@string/translation_title"
-                android:textSize="14sp"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"/>
-
         </LinearLayout>
 
     </ScrollView>
@@ -270,19 +257,6 @@
         android:id="@+id/pinnedLayout"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/moreApps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-            android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-            android:text="@string/string_more_apps"
-            android:textSize="14sp"
-            android:clickable="true"
-            android:gravity="center_vertical"
-            android:background="?android:attr/selectableItemBackground"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
