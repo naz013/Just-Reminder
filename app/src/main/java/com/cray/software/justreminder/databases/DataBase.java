@@ -229,16 +229,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 2:
                     db.execSQL(LOCATION_TABLE_CREATE);
@@ -292,16 +282,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 3:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -354,16 +334,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 4:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -417,16 +387,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 5:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -479,16 +439,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 6:
                     db.execSQL(EVENTS_TABLE_CREATE);
@@ -536,16 +486,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 7:
                     db.execSQL(CALLS_TABLE_CREATE);
@@ -577,16 +517,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 8:
                     db.execSQL(CATEGORIES_TABLE_CREATE);
@@ -616,16 +546,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 10:
                     db.execSQL(SHOPPING_TABLE_CREATE);
@@ -655,16 +575,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 11:
                     db.execSQL(SHOPPING_TABLE_CREATE);
@@ -693,16 +603,6 @@ public class DataBase {
                             + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     db.execSQL("ALTER TABLE " + CURRENT_TABLE_NAME + " ADD COLUMN "
                             + Constants.COLUMN_EXTRA_5 + " VARCHAR(255)");
-
-                    //Add new fields to shopping table
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_1 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_2 + " INTEGER");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_3 + " VARCHAR(255)");
-                    db.execSQL("ALTER TABLE " + SHOPPING_TABLE_NAME + " ADD COLUMN "
-                            + Constants.COLUMN_EXTRA_4 + " VARCHAR(255)");
                     break;
                 case 12:
                     //Add new fields to shopping table

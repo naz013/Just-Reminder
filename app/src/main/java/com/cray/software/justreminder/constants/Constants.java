@@ -159,14 +159,6 @@ public class Constants {
     public static final String TYPE_SKYPE_CHAT = "skype_chat";
     public static final String TYPE_SKYPE_VIDEO = "skype_video";
 
-    //tech constants
-    public static final String DEVICE_ID_KEY = "device_key";
-    public static final String LICENSE_DIALOG_KEY = "dialog_key";
-    public static final String LICENSE_KEY = "license_key";
-
-    public static final int DIR_ID_EXTERNAL = 2;
-    public static final int DIR_ID_DATA = 3;
-
     public static final String LANGUAGE_EN = "en-US";
     public static final String LANGUAGE_RU = "ru-RU";
     public static final String LANGUAGE_UK = "uk-UA";
@@ -178,13 +170,7 @@ public class Constants {
     public static final String ORDER_DEFAULT = "default";
     public static final String ORDER_NAME_A_Z = "name_az";
     public static final String ORDER_NAME_Z_A = "name_za";
-    public static final String ORDER_DATE_WITHOUT_DISABLED_A_Z = "date_az_without";
-    public static final String ORDER_DATE_WITHOUT_DISABLED_Z_A = "date_za_without";
 
-    public static final String EXTRA_TITLE = "title";
-    public static final String EXTRA_IMAGE = "image";
-    public static final String PATH_NOTIFICATION = "/ongoingnotification";
-    public static final String PATH_DISMISS = "/dismissnotification";
     public static final int ACTION_REQUEST_GALLERY = 111;
     public static final int ACTION_REQUEST_CAMERA = 112;
     public static final String SELECTED_COLOR = "selected_color";
