@@ -30,7 +30,7 @@ public class Prefs {
     public static final String LOCATION_RADIUS = "radius";
     public static final String TRACKING_NOTIFICATION = "tracking_notification";
     public static final String VIBRATION_STATUS = "vibration_status";
-    public static final String SOUND_STATUS = "sound_status";
+    public static final String SILENT_SOUND = "sound_status";
     public static final String WAKE_STATUS = "wake_status";
     public static final String INFINITE_SOUND = "infinite_sound";
     public static final String SILENT_SMS = "silent_sms";

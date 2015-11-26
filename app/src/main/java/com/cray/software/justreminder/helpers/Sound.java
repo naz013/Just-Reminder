@@ -96,7 +96,7 @@ public class Sound {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setVolume(1 - log1, 1 - log1);
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -130,7 +130,7 @@ public class Sound {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setVolume(1 - log1, 1 - log1);
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

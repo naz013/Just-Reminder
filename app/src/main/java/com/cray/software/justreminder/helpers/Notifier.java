@@ -100,7 +100,7 @@ public class Notifier {
                 sound.playAlarm(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), false);
             }
         } else {
-            if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+            if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
                 try {
                     AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
                     sound.playAlarm(afd, false);
@@ -225,7 +225,7 @@ public class Notifier {
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
                 sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             } else {
-                if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+                if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
                     sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
                 }
             }
@@ -322,7 +322,7 @@ public class Notifier {
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
         } else {
-            if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+            if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
                 sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             }
         }
@@ -436,7 +436,7 @@ public class Notifier {
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
                 sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             } else {
-                if (sPrefs.loadBoolean(Prefs.SOUND_STATUS)) {
+                if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
                     sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
                 }
             }
@@ -548,8 +548,8 @@ public class Notifier {
             if (Module.isPro()){
                 if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
                     soundS = sPrefs.loadBoolean(Prefs.BIRTHDAY_SOUND_STATUS);
-                } else soundS = sPrefs.loadBoolean(Prefs.SOUND_STATUS);
-            } else soundS = sPrefs.loadBoolean(Prefs.SOUND_STATUS);
+                } else soundS = sPrefs.loadBoolean(Prefs.SILENT_SOUND);
+            } else soundS = sPrefs.loadBoolean(Prefs.SILENT_SOUND);
 
             if (soundS) {
                 boolean isLooping;

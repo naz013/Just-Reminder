@@ -12,7 +12,6 @@ import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -22,6 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Language;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -30,9 +32,6 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Language;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -53,6 +52,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
     private ColorSetter cs = new ColorSetter(ShowBirthday.this);
     private Notifier notifier = new Notifier(ShowBirthday.this);
     private boolean isDark = false;
+    private int currVolume;
     private TextToSpeech tts;
 
     private static final int MY_DATA_CHECK_CODE = 111;
@@ -62,6 +62,10 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
         sPrefs = new SharedPrefs(ShowBirthday.this);
+
+        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        
         boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
@@ -69,6 +73,20 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     getWindow().addFlags( WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                             | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                             | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+                }
+            });
+        }
+
+        boolean isWake;
+        if (Module.isPro()){
+            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                isWake = sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
+            } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+        } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+        if (isWake) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 }
             });
         }
@@ -152,8 +170,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             userNumber.setText(number);
         }
 
-        wakeScreen();
-
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
 
         boolean isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
@@ -176,28 +192,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             } else {
                 button.setColorNormal(getResources().getColor(R.color.material_divider));
                 button.setColorPressed(getResources().getColor(R.color.colorWhite));
-            }
-        }
-    }
-
-    private void wakeScreen() {
-        boolean wake;
-        sPrefs = new SharedPrefs(ShowBirthday.this);
-        if (Module.isPro()){
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                wake = sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
-            } else wake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
-        } else wake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
-
-        if (wake) {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            boolean isScreenOn = pm.isScreenOn();
-            if (!isScreenOn) {
-                PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
-                        PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                                PowerManager.FULL_WAKE_LOCK, "Just");
-                screenLock.acquire(2000);
-                screenLock.release();
             }
         }
     }
@@ -303,6 +297,30 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             removeFlags();
         } else {
             Messages.toast(getApplicationContext(), getString(R.string.must_click_message));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeFlags();
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
+        super.onDestroy();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                tts = new TextToSpeech(this, this);
+            } else {
+                Intent installTTSIntent = new Intent();
+                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                try {
+                    startActivity(installTTSIntent);
+                } catch (ActivityNotFoundException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -137,7 +137,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         soundOption.setOnClickListener(this);
 
         soundCheck = (CheckBox) rootView.findViewById(R.id.soundCheck);
-        soundCheck.setChecked(sPrefs.loadBoolean(Prefs.SOUND_STATUS));
+        soundCheck.setChecked(sPrefs.loadBoolean(Prefs.SILENT_SOUND));
 
         LinearLayout chooseSound = (LinearLayout) rootView.findViewById(R.id.chooseSound);
         chooseSound.setOnClickListener(this);
@@ -353,10 +353,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private void soundChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (soundCheck.isChecked()){
-            sPrefs.saveBoolean(Prefs.SOUND_STATUS, false);
+            sPrefs.saveBoolean(Prefs.SILENT_SOUND, false);
             soundCheck.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SOUND_STATUS, true);
+            sPrefs.saveBoolean(Prefs.SILENT_SOUND, true);
             soundCheck.setChecked(true);
         }
     }
