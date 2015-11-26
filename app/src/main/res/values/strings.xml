@@ -726,5 +726,10 @@
     <string name="file_format_warming">Only .mp3 and .ogg music files allowed!</string>
     <string name="message_delivered">SMS delivered</string>
     <string name="message_not_delivered">SMS not delivered</string>
+    <string name="look_amp_feel"><![CDATA[Look & feel]]></string>
+    <string name="background_image">Background image</string>
+    <string name="none">None</string>
+    <string name="default_string">Default</string>
+    <string name="custom_image">Select image</string>
 
 </resources>

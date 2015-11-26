@@ -1,15 +1,24 @@
 package com.cray.software.justreminder.settings;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.settings.fragments.BirthdaysSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.CalendarSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.ExportSettingsFragment;
@@ -20,14 +29,10 @@ import com.cray.software.justreminder.settings.fragments.NotesSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.NotificationSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.OtherSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.SettingsFragment;
-import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
 import com.cray.software.justreminder.settings.fragments.VoiceSettingsFragment;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 
 /**
@@ -221,6 +226,12 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                             }
                         }
                     }
+                }
+                break;
+            case Constants.ACTION_REQUEST_GALLERY:
+                if (resultCode == RESULT_OK) {
+                    Uri selectedImage = data.getData();
+                    new SharedPrefs(this).savePrefs(Prefs.REMINDER_IMAGE, selectedImage.toString());
                 }
                 break;
         }

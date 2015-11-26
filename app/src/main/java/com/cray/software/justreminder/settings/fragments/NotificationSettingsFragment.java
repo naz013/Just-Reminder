@@ -2,7 +2,10 @@ package com.cray.software.justreminder.settings.fragments;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +18,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
@@ -53,6 +58,14 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+
+        TextView selectImage = (TextView) rootView.findViewById(R.id.selectImage);
+        selectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogues.imageDialog(getActivity(), null);
+            }
+        });
 
         RelativeLayout wakeScreenOption = (RelativeLayout) rootView.findViewById(R.id.wakeScreenOption);
         wakeScreenOption.setOnClickListener(this);
@@ -603,5 +616,25 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         showDays();
         showRepeat();
         showMelody();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    if (Module.isKitkat()) {
+                        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    }
+                    intent.setType("image/*");
+                    Intent chooser = Intent.createChooser(intent, getActivity().getString(R.string.choose_picture_title));
+                    getActivity().startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
+                } else {
+                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_CALENDAR);
+                }
+                break;
+        }
     }
 }

@@ -722,6 +722,11 @@
     <string name="no_files">Не найдено ни одного файла!</string>
     <string name="file_format_warming">Только файлы формата .mp3 и .ogg поддержываются!</string>
     <string name="no_date">Нет даты</string>
-    <string name="message_delivered">SMS delivered</string>
-    <string name="message_not_delivered">SMS not delivered</string>
+    <string name="message_delivered">SMS доставлено</string>
+    <string name="message_not_delivered">SMS не доставлено</string>
+    <string name="look_amp_feel">Внешний вид</string>
+    <string name="background_image">Фоновое изображение</string>
+    <string name="none">Нет</string>
+    <string name="default_string">Стандартное</string>
+    <string name="custom_image">Выбрать изображение</string>
 </resources>

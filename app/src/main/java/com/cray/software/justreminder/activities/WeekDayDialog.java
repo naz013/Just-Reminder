@@ -11,17 +11,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.telephony.SmsManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,6 +52,9 @@ import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
+
+import java.io.FileNotFoundException;
 
 public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListener, SendListener {
     private static final int MY_DATA_CHECK_CODE = 111;
@@ -131,7 +138,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setTheme(cs.getFullscreenStyle());
+        setTheme(cs.getTransparentStyle());
         setContentView(R.layout.reminder_dialog_layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -142,6 +149,32 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
+
+        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
+        bgImage.setVisibility(View.GONE);
+        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        if (imagePrefs.matches(Constants.DEFAULT)){
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            Picasso.with(WeekDayDialog.this)
+                    .load(R.drawable.photo)
+                    .resize(metrics.heightPixels, metrics.widthPixels)
+                    .into(bgImage);
+            bgImage.setVisibility(View.VISIBLE);
+        } else if (imagePrefs.matches(Constants.NONE)){
+            bgImage.setVisibility(View.GONE);
+        } else {
+            try {
+                Bitmap bitmap =
+                        BitmapFactory.decodeStream(getContentResolver()
+                                .openInputStream(Uri.parse(imagePrefs)), null, null);
+                bgImage.setImageBitmap(bitmap);
+                bgImage.setVisibility(View.VISIBLE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);

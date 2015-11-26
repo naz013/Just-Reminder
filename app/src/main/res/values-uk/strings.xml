@@ -722,6 +722,11 @@
     <string name="select_time">Обрати час</string>
     <string name="no_files">Не знайдено жодного файлу!</string>
     <string name="file_format_warming">Тільки файли в форматі .mp3 і .ogg підтримуються!</string>
-    <string name="message_delivered">SMS delivered</string>
-    <string name="message_not_delivered">SMS not delivered</string>
+    <string name="message_delivered">SMS доставлено</string>
+    <string name="message_not_delivered">SMS не доставлено</string>
+    <string name="look_amp_feel">Зовнішній вигляд</string>
+    <string name="background_image">Фонове зображення</string>
+    <string name="none">Немає</string>
+    <string name="default_string">Стандартне</string>
+    <string name="custom_image">Обрати зображення</string>
 </resources>

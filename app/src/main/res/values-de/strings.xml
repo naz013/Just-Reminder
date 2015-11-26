@@ -722,6 +722,11 @@
     <string name="select_time">Wählen Sie die Zeit</string>
     <string name="no_files">Kein Ergebnis!</string>
     <string name="file_format_warming">Nur .mp3 und .ogg Musikdateien erlaubt!</string>
-    <string name="message_delivered">SMS delivered</string>
-    <string name="message_not_delivered">SMS not delivered</string>
+    <string name="message_delivered">SMS ausgeliefert</string>
+    <string name="message_not_delivered">SMS nicht zugestellt</string>
+    <string name="look_amp_feel"><![CDATA[Sehen & Fühlen]]></string>
+    <string name="background_image">Hintergrundbild</string>
+    <string name="none">Keine</string>
+    <string name="default_string">Standard</string>
+    <string name="custom_image">Motiv auswählen</string>
 </resources>

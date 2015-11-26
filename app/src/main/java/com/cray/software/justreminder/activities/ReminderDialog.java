@@ -13,19 +13,23 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +47,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -54,6 +59,9 @@ import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
+
+import java.io.FileNotFoundException;
 
 public class ReminderDialog extends Activity implements TextToSpeech.OnInitListener, SendListener {
     private static final int MY_DATA_CHECK_CODE = 111;
@@ -69,6 +77,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private long id;
     private int repCode, color = -1, vibration, voice, notificationRepeat, wake, unlock, auto;
     private long count, limit;
+    private int isMelody;
     private String melody, number, name, task, reminderType;
     private boolean isDark = false;
     private boolean isExtra = false;
@@ -94,6 +103,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        isMelody = res.getIntExtra("int", 0);
 
         reminder = new Type(this);
 
@@ -115,6 +125,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             count = item.getCount();
         } else {
             Log.d(Constants.LOG_TAG, "--------------- nullable cursor ");
+            notifier.discardNotification(id);
             finish();
         }
 
@@ -142,15 +153,41 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setTheme(cs.getFullscreenStyle());
+        setTheme(cs.getTransparentStyle());
         setContentView(R.layout.reminder_dialog_layout);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cs.getStatusBarStyle());
         }
 
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
+
+        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
+        bgImage.setVisibility(View.GONE);
+        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        if (imagePrefs.matches(Constants.DEFAULT)){
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            
+            Picasso.with(ReminderDialog.this)
+                    .load(R.drawable.photo)
+                    .resize(metrics.heightPixels, metrics.widthPixels)
+                    .into(bgImage);
+            bgImage.setVisibility(View.VISIBLE);
+        } else if (imagePrefs.matches(Constants.NONE)){
+            bgImage.setVisibility(View.GONE);
+        } else {
+            try {
+                Bitmap bitmap =
+                        BitmapFactory.decodeStream(getContentResolver()
+                                .openInputStream(Uri.parse(imagePrefs)), null, null);
+                bgImage.setImageBitmap(bitmap);
+                bgImage.setVisibility(View.VISIBLE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
@@ -487,6 +524,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         sPrefs = new SharedPrefs(ReminderDialog.this);
         String type = getType();
         boolean isTTS = sPrefs.loadBoolean(Prefs.TTS);
+        if (isMelody == 1) i = 0;
         if (isExtra) isTTS = voice == 1;
         if (!isTTS) {
             notifier.showReminder(task, type, i, id, melody, color, vibration == 1, isExtra);

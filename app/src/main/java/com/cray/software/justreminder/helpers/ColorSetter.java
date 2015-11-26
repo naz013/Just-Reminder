@@ -1004,6 +1004,19 @@ public class ColorSetter {
     }
 
     /**
+     * Get theme for translucent activities.
+     * @return Theme resource
+     */
+    public int getTransparentStyle(){
+        int id;
+        sPrefs = new SharedPrefs(mContext);
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+            id = R.style.HomeDarkTranslucent;
+        } else id = R.style.HomeWhiteTranslucent;
+        return id;
+    }
+
+    /**
      * Get window background color based on current theme.
      * @return Color
      */

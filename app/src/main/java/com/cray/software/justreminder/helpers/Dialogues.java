@@ -17,12 +17,13 @@ import com.cray.software.justreminder.activities.FileExplore;
 import com.cray.software.justreminder.async.LoadSounds;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.datas.CategoryDataProvider;
+import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
@@ -50,6 +51,85 @@ public class Dialogues {
 
     public interface OnCategorySelectListener{
         void onCategory(String catId, String title);
+    }
+
+    /**
+     * AlertDialog for selecting application screen orientation.
+     * @param context application context.
+     * @param listener listener for Dialog.
+     */
+    public static void imageDialog(final Activity context, DialogInterface.OnDismissListener listener){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setTitle(context.getString(R.string.background_image));
+        String[] types = new String[]{context.getString(R.string.none),
+                context.getString(R.string.default_string),
+                context.getString(R.string.custom_image)};
+
+        SharedPrefs prefs = new SharedPrefs(context);
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, types);
+
+        String image = prefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        int selection;
+        if (image.matches(Constants.NONE)) {
+            selection = 0;
+        } else if (image.matches(Constants.DEFAULT)){
+            selection = 1;
+        } else {
+            selection = 2;
+        }
+        
+        builder.setSingleChoiceItems(adapter, selection, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    dialog.dismiss();
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    if (which == 0) {
+                        prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.NONE);
+                    } else if (which == 1) {
+                        prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
+                    } else if (which == 2) {
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                        intent.setType("image/*");
+                        if (Module.isKitkat()) {
+                            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            intent.addCategory(Intent.CATEGORY_OPENABLE);
+                            intent.setType("image/*");
+                        }
+                        Intent chooser = Intent.createChooser(intent, context.getString(R.string.choose_picture_title));
+                        context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
+                    }
+                }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                SharedPrefs prefs = new SharedPrefs(context);
+                if (which == 0) {
+                    prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.NONE);
+                } else if (which == 1) {
+                    prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
+                } else if (which == 2) {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    if (Module.isKitkat()) {
+                        intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("image/*");
+                    }
+                    Intent chooser = Intent.createChooser(intent, context.getString(R.string.choose_picture_title));
+                    context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
+                }
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(listener);
+        dialog.show();
     }
 
     /**

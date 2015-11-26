@@ -16,6 +16,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/look_amp_feel"
+            android:textStyle="bold"
+            android:clickable="false"
+            android:textAllCaps="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/background_image"
+            android:id="@+id/selectImage"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/settings_status_bar"
             android:textStyle="bold"
             android:clickable="false"

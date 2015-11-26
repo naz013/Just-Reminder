@@ -385,6 +385,18 @@
         <item name="colorAccent">@color/indigoPrimary</item>
     </style>
 
+    <style name="HomeWhiteTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="HomeDarkTranslucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    
     <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox"></style>
 
     <style name="Transparent" parent="@android:style/Theme.NoTitleBar">

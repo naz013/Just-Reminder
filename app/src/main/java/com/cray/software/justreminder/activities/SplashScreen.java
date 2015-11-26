@@ -11,19 +11,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.async.GetExchangeTasksAsync;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.ScreenManager;
 
 import java.io.File;
 import java.util.Locale;
@@ -81,6 +81,7 @@ public class SplashScreen extends Activity{
             uiEd.putString(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
             uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
             uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
+            uiEd.putString(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
             uiEd.putInt(Prefs.LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.LOCATION_RADIUS, 25);
@@ -243,6 +244,9 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.TTS_LOCALE)){
             sPrefs.savePrefs(Prefs.TTS_LOCALE, Language.ENGLISH);
+        }
+        if (!sPrefs.isString(Prefs.REMINDER_IMAGE)){
+            sPrefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
         }
         String localeCheck = Locale.getDefault().toString().toLowerCase();
         String url;

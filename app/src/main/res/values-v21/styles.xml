@@ -364,4 +364,20 @@
     <style name="HomeWhiteDialog.Indigo" parent="HomeWhiteDialog">
         <item name="colorAccent">@color/indigoPrimary</item>
     </style>
+
+    <style name="HomeWhiteTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="HomeDarkTranslucent" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
 </resources>

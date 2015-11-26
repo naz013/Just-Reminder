@@ -50,6 +50,8 @@ public class Permissions {
     public static final String CALL_PHONE = Manifest.permission.CALL_PHONE;
 
     public static final String SEND_SMS = Manifest.permission.SEND_SMS;
+    
+    public static final String MANAGE_DOCUMENTS = Manifest.permission.MANAGE_DOCUMENTS;
 
     public Permissions(Context context){
         this.mContext = context;
@@ -58,7 +60,7 @@ public class Permissions {
     /**
      * Check if permission is allowed on Android 6.0 and above.
      * @param permission permission constant.
-     * @return
+     * @return boolean
      */
     public boolean checkPermission(String permission) {
         if (!Module.isMarshmallow()) return true;

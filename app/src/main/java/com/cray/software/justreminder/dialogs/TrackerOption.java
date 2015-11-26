@@ -8,6 +8,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
@@ -81,6 +82,7 @@ public class TrackerOption extends Activity {
                 sPrefs = new SharedPrefs(TrackerOption.this);
                 sPrefs.saveInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
                 sPrefs.saveInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
+                new DisableAsync(TrackerOption.this).execute();
                 finish();
             }
         });
