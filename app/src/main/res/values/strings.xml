@@ -731,5 +731,7 @@
     <string name="none">None</string>
     <string name="default_string">Default</string>
     <string name="custom_image">Select image</string>
+    <string name="blur">Blur</string>
+    <string name="check_to_enable_background_image_blurring">Check to enable background image blurring</string>
 
 </resources>

@@ -36,8 +36,8 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private RelativeLayout repeatInterval;
     private TextView delayForText, repeatIntervalText;
     private TextView textLed2, textLed3, repeatText, repeatText1;
-    private CheckBox wakeScreenCheck, silentSMSCheck, ledCheck, repeatNotificationCheck, autoLaunchCheck,
-            unlockScreenCheck, ttsCheck, extraNotificationCheck;
+    private CheckBox wakeScreenCheck, silentSMSCheck, ledCheck, repeatNotificationCheck, 
+            autoLaunchCheck, unlockScreenCheck, ttsCheck, extraNotificationCheck;
     private RelativeLayout statusIcon;
     private CheckBox notificationDismissCheck, permanentNotificationCheck, statusIconCheck;
     private TextView locale;
@@ -45,7 +45,8 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private RelativeLayout infiniteVibrateOption;
     private TextView showMelody;
     private TextView vText, vText1, sText, sText1, i1, i2;
-    private CheckBox vibrationCheck, soundCheck, infiniteSoundCheck, infiniteVibrateCheck;
+    private CheckBox vibrationCheck, soundCheck, infiniteSoundCheck, infiniteVibrateCheck, 
+            blurImageCheck;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,6 +67,12 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 Dialogues.imageDialog(getActivity(), null);
             }
         });
+
+        RelativeLayout blurImage = (RelativeLayout) rootView.findViewById(R.id.blurImage);
+        blurImage.setOnClickListener(this);
+
+        blurImageCheck = (CheckBox) rootView.findViewById(R.id.blurImageCheck);
+        blurImageCheck.setChecked(sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR));
 
         RelativeLayout wakeScreenOption = (RelativeLayout) rootView.findViewById(R.id.wakeScreenOption);
         wakeScreenOption.setOnClickListener(this);
@@ -363,6 +370,17 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         checkTTS();
     }
 
+    private void blurChange (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (blurImageCheck.isChecked()){
+            sPrefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
+            blurImageCheck.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, true);
+            blurImageCheck.setChecked(true);
+        }
+    }
+
     private void soundChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (soundCheck.isChecked()){
@@ -560,6 +578,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.blurImage:
+                blurChange();
+                break;
             case R.id.vibrationOption:
                 vibrationChange();
                 break;

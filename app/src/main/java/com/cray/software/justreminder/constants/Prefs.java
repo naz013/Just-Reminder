@@ -109,6 +109,7 @@ public class Prefs {
     public final static String EXTRA_OPTIONS = "extra_options";
     public final static String BIRTHDAY_PERMANENT = "birthday_permanent";
     public final static String REMINDER_IMAGE = "reminder_image";
+    public final static String REMINDER_IMAGE_BLUR = "reminder_image_blur";
 
     public final static String REMINDER_CHANGED = "reminder_changed";
     public final static String NOTE_CHANGED = "note_changed";

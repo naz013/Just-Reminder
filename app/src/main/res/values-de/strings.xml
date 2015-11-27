@@ -729,4 +729,6 @@
     <string name="none">Keine</string>
     <string name="default_string">Standard</string>
     <string name="custom_image">Motiv auswählen</string>
+    <string name="blur">Blur</string>
+    <string name="check_to_enable_background_image_blurring">Check to enable background image blurring</string>
 </resources>

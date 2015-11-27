@@ -8,12 +8,12 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
@@ -45,8 +45,9 @@ import com.cray.software.justreminder.views.RoundImageView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import java.io.FileNotFoundException;
 import java.util.Calendar;
+
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ShowBirthday extends Activity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
@@ -90,11 +91,10 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
         } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
         if (isWake) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                }
-            });
+            PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
+                    PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+            screenLock.acquire();
+            screenLock.release();
         }
 
         setContentView(R.layout.show_birthday_layout);
@@ -110,31 +110,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
-        bgImage.setVisibility(View.GONE);
-        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
-        if (imagePrefs.matches(Constants.DEFAULT)){
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-            Picasso.with(ShowBirthday.this)
-                    .load(R.drawable.photo)
-                    .resize(metrics.heightPixels, metrics.widthPixels)
-                    .into(bgImage);
-            bgImage.setVisibility(View.VISIBLE);
-        } else if (imagePrefs.matches(Constants.NONE)){
-            bgImage.setVisibility(View.GONE);
-        } else {
-            try {
-                Bitmap bitmap =
-                        BitmapFactory.decodeStream(getContentResolver()
-                                .openInputStream(Uri.parse(imagePrefs)), null, null);
-                bgImage.setImageBitmap(bitmap);
-                bgImage.setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+        loadImage();
 
         Typeface typeface = AssetsUtil.getLightTypeface(this);
 
@@ -213,6 +189,47 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             } catch (ActivityNotFoundException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void loadImage() {
+        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
+        bgImage.setVisibility(View.GONE);
+        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        boolean blur = sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if (imagePrefs.matches(Constants.DEFAULT)){
+            if (blur) {
+                Picasso.with(this)
+                        .load(R.drawable.photo)
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .transform(new BlurTransformation(this, 15, 2))
+                        .into(bgImage);
+            } else {
+                Picasso.with(this)
+                        .load(R.drawable.photo)
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .into(bgImage);
+            }
+            bgImage.setVisibility(View.VISIBLE);
+        } else if (imagePrefs.matches(Constants.NONE)){
+            bgImage.setVisibility(View.GONE);
+        } else {
+            if (blur) {
+                Picasso.with(this)
+                        .load(Uri.parse(imagePrefs))
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .transform(new BlurTransformation(this, 15, 2))
+                        .into(bgImage);
+            } else {
+                Picasso.with(this)
+                        .load(Uri.parse(imagePrefs))
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .into(bgImage);
+            }
+            bgImage.setVisibility(View.VISIBLE);
         }
     }
 

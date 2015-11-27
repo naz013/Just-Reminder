@@ -729,4 +729,6 @@
     <string name="none">Нет</string>
     <string name="default_string">Стандартное</string>
     <string name="custom_image">Выбрать изображение</string>
+    <string name="blur">Blur</string>
+    <string name="check_to_enable_background_image_blurring">Check to enable background image blurring</string>
 </resources>

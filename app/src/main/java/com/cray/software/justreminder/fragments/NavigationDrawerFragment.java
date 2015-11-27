@@ -34,11 +34,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
-import com.hexrain.flextcal.ImageCheck;
-import com.hexrain.flextcal.LoadAsync;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class NavigationDrawerFragment extends Fragment implements 
         View.OnClickListener {
@@ -222,14 +221,13 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private void reloadItems(){
-        ImageCheck imageCheck = new ImageCheck(getActivity());
-        if (imageCheck.isImage(13)){
-            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
-            Picasso.with(getActivity()).load(new File(imageCheck.getImage(13))).into(image);
-        } else {
-            appNameBanner.setTextColor(getActivity().getResources().getColor(R.color.blackPrimary));
-            new LoadAsync(getActivity(), 13).execute();
-        }
+        appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.colorWhite));
+        Picasso.with(getActivity())
+                .load(R.drawable.photo_main)
+                .resize(1020, 500)
+                .transform(new BlurTransformation(getActivity(), 20, 2))
+                .into(image);
+        image.setVisibility(View.VISIBLE);
 
         if (new GTasksHelper(getActivity()).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);

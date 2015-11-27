@@ -13,13 +13,13 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +61,7 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import java.io.FileNotFoundException;
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ReminderDialog extends Activity implements TextToSpeech.OnInitListener, SendListener {
     private static final int MY_DATA_CHECK_CODE = 111;
@@ -145,11 +145,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         boolean isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
         if (isExtra) isWake = wake == 1;
         if (isWake) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                }
-            });
+            PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
+                    PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
+            screenLock.acquire();
+            screenLock.release();
         }
 
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -163,31 +162,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         single_container.setVisibility(View.VISIBLE);
 
-        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
-        bgImage.setVisibility(View.GONE);
-        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
-        if (imagePrefs.matches(Constants.DEFAULT)){
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            
-            Picasso.with(ReminderDialog.this)
-                    .load(R.drawable.photo)
-                    .resize(metrics.heightPixels, metrics.widthPixels)
-                    .into(bgImage);
-            bgImage.setVisibility(View.VISIBLE);
-        } else if (imagePrefs.matches(Constants.NONE)){
-            bgImage.setVisibility(View.GONE);
-        } else {
-            try {
-                Bitmap bitmap =
-                        BitmapFactory.decodeStream(getContentResolver()
-                                .openInputStream(Uri.parse(imagePrefs)), null, null);
-                bgImage.setImageBitmap(bitmap);
-                bgImage.setVisibility(View.VISIBLE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+        loadImage();
 
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
@@ -440,6 +415,47 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             } catch (ActivityNotFoundException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void loadImage() {
+        ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
+        bgImage.setVisibility(View.GONE);
+        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        boolean blur = sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if (imagePrefs.matches(Constants.DEFAULT)){
+            if (blur) {
+                Picasso.with(ReminderDialog.this)
+                        .load(R.drawable.photo)
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .transform(new BlurTransformation(this, 15, 2))
+                        .into(bgImage);
+            } else {
+                Picasso.with(ReminderDialog.this)
+                        .load(R.drawable.photo)
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .into(bgImage);
+            }
+            bgImage.setVisibility(View.VISIBLE);
+        } else if (imagePrefs.matches(Constants.NONE)){
+            bgImage.setVisibility(View.GONE);
+        } else {
+            if (blur) {
+                Picasso.with(ReminderDialog.this)
+                        .load(Uri.parse(imagePrefs))
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .transform(new BlurTransformation(this, 15, 2))
+                        .into(bgImage);
+            } else {
+                Picasso.with(ReminderDialog.this)
+                        .load(Uri.parse(imagePrefs))
+                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .into(bgImage);
+            }
+            bgImage.setVisibility(View.VISIBLE);
         }
     }
 
