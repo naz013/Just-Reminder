@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none">
 
     <LinearLayout
@@ -12,361 +13,84 @@
         android:layout_marginRight="@dimen/settings_margin"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/globalOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/globalOptionPrefs"
+            app:prefs_primary_text="@string/settings_global_title"
+            app:prefs_secondary_text="@string/settings_global_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/globalCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_global_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_global_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/globalCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/vibrationOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/vibrationOptionPrefs"
+            app:prefs_primary_text="@string/vibration_title"
+            app:prefs_secondary_text="@string/vibration_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/vibrationCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/vibration_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/textB"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textB1"
-                    android:text="@string/vibration_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/vibrationCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/infiniteVibrateOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/infiniteVibrateOptionPrefs"
+            app:prefs_primary_text="@string/infinite_vibrate_title"
+            app:prefs_secondary_text="@string/infinite_vibrate_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/infiniteVibrateCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/infinite_vibrate_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/vText"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/vText1"
-                    android:text="@string/infinite_vibrate_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/infiniteVibrateCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/soundOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/soundOptionPrefs"
+            app:prefs_primary_text="@string/sound_title"
+            app:prefs_secondary_text="@string/sound_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/soundCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/sound_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/textB2"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textB3"
-                    android:text="@string/sound_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/soundCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/wakeScreenOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/infiniteSoundOptionPrefs"
+            app:prefs_primary_text="@string/infinite_title"
+            app:prefs_secondary_text="@string/infinite_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/wakeScreenCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/wake_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/textB4"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textB5"
-                    android:text="@string/wake_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/wakeScreenCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/infiniteSoundOption"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/wakeScreenOptionPrefs"
+            app:prefs_primary_text="@string/wake_title"
+            app:prefs_secondary_text="@string/wake_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/infiniteSoundCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/infinite_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/textB6"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textB7"
-                    android:text="@string/infinite_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/infiniteSoundCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <LinearLayout
-            android:id="@+id/chooseSound"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:id="@+id/chooseSoundPrefs"
+            app:prefs_primary_text="@string/rem_sound"
+            app:prefs_divider_top="false"
+            app:prefs_type="none"
+            app:prefs_divider_bottom="true"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/rem_sound"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_vertical"
-                android:id="@+id/textB10"
-                android:textSize="@dimen/settings_text_size_primary" />
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/showMelody"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:layout_marginBottom="5dp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/tts"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/ttsCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_tts_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/textC"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textC1"
-                    android:text="@string/settings_tts_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/ttsCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/ttsPrefs"
+            app:prefs_primary_text="@string/settings_tts_title"
+            app:prefs_secondary_text="@string/settings_tts_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -383,102 +107,25 @@
             android:gravity="center_vertical"
             android:textSize="@dimen/settings_text_size_primary" />
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:visibility="visible"
-            android:id="@+id/lewWrapper"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/led"
-                android:layout_width="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_toLeftOf="@+id/ledCheck">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:text="@string/led_title"
-                        android:textSize="@dimen/settings_text_size_primary"
-                        android:id="@+id/textB11"
-                        android:layout_marginBottom="5dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/settings_text_size_secondary"
-                        android:id="@+id/textB12"
-                        android:text="@string/led_explanation"
-                        android:paddingBottom="10dp" />
-
-                </LinearLayout>
-
-                <CheckBox
-                    android:id="@+id/ledCheck"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="5dp"
-                    android:clickable="false"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
-
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <LinearLayout
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:id="@+id/lewColorWrapper"
-            android:orientation="vertical">
-            <LinearLayout
-                android:id="@+id/chooseLedColor"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_height="match_parent">
+            android:id="@+id/ledPrefs"
+            app:prefs_primary_text="@string/led_title"
+            app:prefs_secondary_text="@string/led_explanation"
+            app:prefs_divider_top="true"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/led_color_title"
-                    android:layout_marginBottom="5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_vertical"
-                    android:id="@+id/textLed2"
-                    android:textSize="@dimen/settings_text_size_primary" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:id="@+id/textLed3"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/led_color_explanation"
-                    android:layout_marginBottom="5dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        <com.cray.software.justreminder.views.PrefsView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chooseLedColorPrefs"
+            app:prefs_primary_text="@string/led_color_title"
+            app:prefs_secondary_text="@string/led_color_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="none"
+            app:prefs_divider_bottom="false"/>
 
     </LinearLayout>
 

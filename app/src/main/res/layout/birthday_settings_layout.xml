@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none">
 
 <LinearLayout
@@ -12,50 +13,15 @@
     android:layout_marginRight="@dimen/settings_margin"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/birthReminder"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/birthReminderCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/settings_birthday_reminder_title"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/settings_birthday_reminder_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/birthReminderCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/birthReminderPrefs"
+        app:prefs_primary_text="@string/settings_birthday_reminder_title"
+        app:prefs_secondary_text="@string/settings_birthday_reminder_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="check"
+        app:prefs_divider_bottom="true"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -66,152 +32,41 @@
         android:paddingRight="15dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:layout_gravity="center_horizontal"
         android:gravity="center_vertical"
         android:textSize="@dimen/settings_text_size_primary" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:visibility="gone"
-        android:background="@android:color/darker_gray"/>
-
-    <RelativeLayout
-        android:id="@+id/widgetShow"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/widgetShowPrefs"
+        app:prefs_primary_text="@string/widget_birthdays_title"
+        app:prefs_secondary_text="@string/widget_birthdays_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="check"
+        app:prefs_divider_bottom="true"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/widgetShowCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/widget_birthdays_title"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/widget_birthdays_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/widgetShowCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-    <RelativeLayout
-        android:id="@+id/birthdayPermanent"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/birthdayPermanentPrefs"
+        app:prefs_primary_text="@string/permanent_notification_title"
+        app:prefs_secondary_text="@string/birthday_permanent_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="check"
+        app:prefs_divider_bottom="true"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/birthdayPermanentCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/permanent_notification_title"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/birthday_permanent_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/birthdayPermanentCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-    <RelativeLayout
-        android:id="@+id/daysTo"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/daysToText">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/days_to_title"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/days_to_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/daysToText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:textSize="18sp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/daysToPrefs"
+        app:prefs_primary_text="@string/days_to_title"
+        app:prefs_secondary_text="@string/days_to_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="text"
+        app:prefs_divider_bottom="true"/>
 
     <RelativeLayout
         android:id="@+id/reminderTime"
@@ -255,52 +110,15 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
 
-    <RelativeLayout
-        android:id="@+id/backupBirth"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:visibility="visible"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/backupBirthCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/string_backup_birthdays"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/string_backup_birthdays_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/backupBirthCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:visibility="visible"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/backupBirthPrefs"
+        app:prefs_primary_text="@string/string_backup_birthdays"
+        app:prefs_secondary_text="@string/string_backup_birthdays_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="check"
+        app:prefs_divider_bottom="true"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -374,52 +192,15 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>
 
-    <RelativeLayout
-        android:id="@+id/autoScan"
+    <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/autoScanCheck">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/auto_scan_settings_title"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:id="@+id/text3"
-                android:layout_marginBottom="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:id="@+id/text4"
-                android:text="@string/auto_scan_settings_explanation"
-                android:paddingBottom="10dp" />
-
-        </LinearLayout>
-
-        <CheckBox
-            android:id="@+id/autoScanCheck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="5dp"
-            android:clickable="false"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-    </RelativeLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="wrap_content"
+        android:id="@+id/autoScanPrefs"
+        app:prefs_primary_text="@string/auto_scan_settings_title"
+        app:prefs_secondary_text="@string/auto_scan_settings_explanation"
+        app:prefs_divider_top="false"
+        app:prefs_type="check"
+        app:prefs_divider_bottom="true"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -430,7 +211,7 @@
         android:paddingRight="15dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:layout_gravity="center_horizontal"
         android:gravity="center_vertical"

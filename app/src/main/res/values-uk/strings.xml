@@ -729,6 +729,6 @@
     <string name="none">Немає</string>
     <string name="default_string">Стандартне</string>
     <string name="custom_image">Обрати зображення</string>
-    <string name="blur">Blur</string>
-    <string name="check_to_enable_background_image_blurring">Check to enable background image blurring</string>
+    <string name="blur">Розмитість</string>
+    <string name="check_to_enable_background_image_blurring">Відмітьте, щоб увімкнути розмивання фонового зображення</string>
 </resources>

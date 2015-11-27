@@ -11,29 +11,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.CalendarStyle;
 import com.cray.software.justreminder.activities.EventsImport;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.views.PrefsView;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 public class CalendarSettingsFragment extends Fragment implements View.OnClickListener {
 
     private SharedPrefs sPrefs;
-    private TextView text1;
-    private TextView text2;
-    private RelativeLayout reminderColor;
-    private View themeColorSwitcher, selectedColorSwitcher, reminderColorSwitcher;
-    private CheckBox reminderInCalendarCheck, featureRemindersCheck, bgImageCheck;
     private ActionBar ab;
+    
+    private PrefsView themeColorPrefs, selectedColorPrefs, reminderInCalendarPrefs, 
+            reminderColorPrefs, featureRemindersPrefs, bgImagePrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,49 +42,36 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             ab.setTitle(R.string.calendar_fragment);
         }
 
+        sPrefs = new SharedPrefs(getActivity());
+
         TextView startDay = (TextView) rootView.findViewById(R.id.startDay);
         TextView eventsImport = (TextView) rootView.findViewById(R.id.eventsImport);
         startDay.setOnClickListener(this);
         eventsImport.setOnClickListener(this);
 
-        RelativeLayout themeColor = (RelativeLayout) rootView.findViewById(R.id.themeColor);
-        themeColorSwitcher = rootView.findViewById(R.id.themeColorSwitcher);
+        themeColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
+        themeColorPrefs.setOnClickListener(this);
+
+        selectedColorPrefs = (PrefsView) rootView.findViewById(R.id.selectedColorPrefs);
+        selectedColorPrefs.setOnClickListener(this);
+
+        reminderInCalendarPrefs = (PrefsView) rootView.findViewById(R.id.reminderInCalendarPrefs);
+        reminderInCalendarPrefs.setOnClickListener(this);
+        reminderInCalendarPrefs.setChecked(sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR));
+
+        reminderColorPrefs = (PrefsView) rootView.findViewById(R.id.reminderColorPrefs);
+        reminderColorPrefs.setOnClickListener(this);
+
+        featureRemindersPrefs = (PrefsView) rootView.findViewById(R.id.featureRemindersPrefs);
+        featureRemindersPrefs.setOnClickListener(this);
+        featureRemindersPrefs.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS));
+
+        bgImagePrefs = (PrefsView) rootView.findViewById(R.id.bgImagePrefs);
+        bgImagePrefs.setOnClickListener(this);
+        bgImagePrefs.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
 
         currentColor();
-        themeColor.setOnClickListener(this);
-
-        RelativeLayout selectedColor = (RelativeLayout) rootView.findViewById(R.id.selectedColor);
-        selectedColorSwitcher = rootView.findViewById(R.id.selectedColorSwitcher);
-
         birthdayColor();
-        selectedColor.setOnClickListener(this);
-
-        sPrefs = new SharedPrefs(getActivity());
-
-        RelativeLayout reminderInCalendar = (RelativeLayout) rootView.findViewById(R.id.reminderInCalendar);
-        reminderInCalendar.setOnClickListener(this);
-
-        reminderInCalendarCheck = (CheckBox) rootView.findViewById(R.id.reminderInCalendarCheck);
-        reminderInCalendarCheck.setChecked(sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR));
-
-        reminderColor = (RelativeLayout) rootView.findViewById(R.id.reminderColor);
-        reminderColor.setOnClickListener(this);
-        reminderColorSwitcher = rootView.findViewById(R.id.reminderColorSwitcher);
-        text1 = (TextView) rootView.findViewById(R.id.text1);
-        text2 = (TextView) rootView.findViewById(R.id.textView2);
-
-        RelativeLayout featureReminders = (RelativeLayout) rootView.findViewById(R.id.featureReminders);
-        featureReminders.setOnClickListener(this);
-
-        featureRemindersCheck = (CheckBox) rootView.findViewById(R.id.featureRemindersCheck);
-        featureRemindersCheck.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS));
-
-        RelativeLayout bgImage = (RelativeLayout) rootView.findViewById(R.id.bgImage);
-        bgImage.setOnClickListener(this);
-
-        bgImageCheck = (CheckBox) rootView.findViewById(R.id.bgImageCheck);
-        bgImageCheck.setChecked(sPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
-
         reminderColor();
         checkEnabling();
 
@@ -96,12 +80,12 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void featureChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (featureRemindersCheck.isChecked()){
+        if (featureRemindersPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, false);
-            featureRemindersCheck.setChecked(false);
+            featureRemindersPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, true);
-            featureRemindersCheck.setChecked(true);
+            featureRemindersPrefs.setChecked(true);
         }
 
         new UpdatesHelper(getActivity()).updateCalendarWidget();
@@ -109,12 +93,12 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void imageCheck (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (bgImageCheck.isChecked()){
+        if (bgImagePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.CALENDAR_IMAGE, false);
-            bgImageCheck.setChecked(false);
+            bgImagePrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.CALENDAR_IMAGE, true);
-            bgImageCheck.setChecked(true);
+            bgImagePrefs.setChecked(true);
         }
 
         new UpdatesHelper(getActivity()).updateCalendarWidget();
@@ -122,28 +106,22 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
     private void remindersChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (reminderInCalendarCheck.isChecked()){
+        if (reminderInCalendarPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
-            reminderInCalendarCheck.setChecked(false);
+            reminderInCalendarPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, true);
-            reminderInCalendarCheck.setChecked(true);
+            reminderInCalendarPrefs.setChecked(true);
         }
         checkEnabling();
         new UpdatesHelper(getActivity()).updateCalendarWidget();
     }
 
     private void checkEnabling(){
-        if (reminderInCalendarCheck.isChecked()){
-            reminderColor.setEnabled(true);
-            reminderColorSwitcher.setEnabled(true);
-            text1.setEnabled(true);
-            text2.setEnabled(true);
+        if (reminderInCalendarPrefs.isChecked()){
+            reminderColorPrefs.setEnabled(true);
         } else {
-            reminderColor.setEnabled(false);
-            reminderColorSwitcher.setEnabled(false);
-            text1.setEnabled(false);
-            text2.setEnabled(false);
+            reminderColorPrefs.setEnabled(false);
         }
     }
 
@@ -167,37 +145,37 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     private void reminderColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
-        reminderColorSwitcher.setBackgroundResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        reminderColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
     }
 
     private void currentColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
-        themeColorSwitcher.setBackgroundResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        themeColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
     }
 
     private void birthdayColor(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
-        selectedColorSwitcher.setBackgroundResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        selectedColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.themeColor:
+            case R.id.themeColorPrefs:
                 Intent i = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
                 i.putExtra("type", 1);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(i);
                 break;
-            case R.id.selectedColor:
+            case R.id.selectedColorPrefs:
                 Intent ii = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
                 ii.putExtra("type", 2);
                 ii.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(ii);
                 break;
-            case R.id.reminderColor:
+            case R.id.reminderColorPrefs:
                 Intent iz = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
                 iz.putExtra("type", 3);
                 iz.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -206,13 +184,13 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             case R.id.startDay:
                 Dialogues.firstDay(getActivity());
                 break;
-            case R.id.reminderInCalendar:
+            case R.id.reminderInCalendarPrefs:
                 remindersChange();
                 break;
-            case R.id.featureReminders:
+            case R.id.featureRemindersPrefs:
                 featureChange();
                 break;
-            case R.id.bgImage:
+            case R.id.bgImagePrefs:
                 imageCheck();
                 break;
             case R.id.eventsImport:

@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 
+    <declare-styleable name="PrefsView">
+        <attr name="prefs_primary_text" format="string"/>
+        <attr name="prefs_secondary_text" format="string"/>
+        <attr name="prefs_value_text" format="string"/>
+        <attr name="prefs_divider_top" format="boolean"/>
+        <attr name="prefs_divider_bottom" format="boolean"/>
+        <attr name="prefs_checked" format="boolean"/>
+        <attr name="prefs_view_resource" format="reference"/>
+        <attr name="prefs_type" format="enum">
+            <enum name="check" value="0"/>
+            <enum name="view" value="1"/>
+            <enum name="text" value="2"/>
+            <enum name="none" value="3"/>
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="RoundImageView">
 
         <!-- Whether or not to draw a circular border around the image. -->

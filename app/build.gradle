@@ -10,7 +10,7 @@ android {
         versionCode 117
         versionName '4.2.2'
         multiDexEnabled true
-        renderscriptTargetApi 23
+        renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
     }
 

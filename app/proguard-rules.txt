@@ -2,6 +2,16 @@
 
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
+-keep class com.dropbox.** {*;}
+-keep class org.apache.http.** { *; }
+-keep class ch.boye.** { *; }
+-keep class jp.wasabeef.** { *; }
+-keep class io.codetail.animation.arcanimator.** { *; }
+-keep class android.support.v8.renderscript.** { *; }
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
+
 -dontwarn org.apache.**
 -dontwarn ch.boye.**
 -dontwarn com.google.android.gms.**
@@ -9,16 +19,10 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.json.**
 -dontwarn com.dropbox.**
+-dontwarn jp.wasabeef.**
 -dontwarn com.squareup.okhttp.**
--keep class com.dropbox.** {*;}
--keep class org.apache.http.** { *; }
--keep class ch.boye.** { *; }
--keep class io.codetail.animation.arcanimator.** { *; }
-
+-dontwarn android.support.v8.**
 -dontwarn android.support.design.**
--keep class android.support.design.** { *; }
--keep interface android.support.design.** { *; }
--keep public class android.support.design.R$* { *; }
 
 -printmapping out.map
 

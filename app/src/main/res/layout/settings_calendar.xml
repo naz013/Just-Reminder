@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none">
 
     <LinearLayout
@@ -51,271 +52,68 @@
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"/>
 
-        <RelativeLayout
-            android:id="@+id/themeColor"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/themeColorSwitcher"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/current_color_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/current_colot_explanation"
-                    android:paddingBottom="10dp" />
-            </LinearLayout>
-            <View
-                android:id="@+id/themeColorSwitcher"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="@dimen/settings_view_size"
-                android:layout_height="@dimen/settings_view_size"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/drawable_blue"/>
-        </RelativeLayout>
+            android:id="@+id/themeColorPrefs"
+            app:prefs_primary_text="@string/current_color_title"
+            app:prefs_secondary_text="@string/current_colot_explanation"
+            app:prefs_view_resource="@drawable/drawable_blue"
+            app:prefs_divider_top="false"
+            app:prefs_type="view"
+            app:prefs_divider_bottom="true"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:visibility="visible"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/selectedColor"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/selectedColorSwitcher"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/birthdays_color_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/birthdays_color_explanation"
-                    android:paddingBottom="10dp" />
-            </LinearLayout>
-            <View
-                android:id="@+id/selectedColorSwitcher"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="@dimen/settings_view_size"
-                android:layout_height="@dimen/settings_view_size"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/drawable_blue"/>
-        </RelativeLayout>
+            android:id="@+id/selectedColorPrefs"
+            app:prefs_primary_text="@string/birthdays_color_title"
+            app:prefs_secondary_text="@string/birthdays_color_explanation"
+            app:prefs_view_resource="@drawable/drawable_blue"
+            app:prefs_divider_top="false"
+            app:prefs_type="view"
+            app:prefs_divider_bottom="true"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:visibility="visible"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/reminderInCalendar"
-            android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/reminderInCalendarCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_reminder_in_calendar_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_reminder_in_calendar_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/reminderInCalendarCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/reminderColor"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/reminderColorSwitcher"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/reminders_color_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:id="@+id/text1"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:id="@+id/textView2"
-                    android:text="@string/reminders_color_explanation"
-                    android:paddingBottom="10dp" />
-            </LinearLayout>
-            <View
-                android:id="@+id/reminderColorSwitcher"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="@dimen/settings_view_size"
-                android:layout_height="@dimen/settings_view_size"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/drawable_blue"/>
-        </RelativeLayout>
+            android:id="@+id/reminderInCalendarPrefs"
+            app:prefs_primary_text="@string/settings_reminder_in_calendar_title"
+            app:prefs_secondary_text="@string/settings_reminder_in_calendar_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:visibility="visible"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/featureReminders"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/reminderColorPrefs"
+            app:prefs_primary_text="@string/reminders_color_title"
+            app:prefs_secondary_text="@string/reminders_color_explanation"
+            app:prefs_view_resource="@drawable/drawable_blue"
+            app:prefs_divider_top="false"
+            app:prefs_type="view"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/featureRemindersCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_feature_reminder_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_feature_reminder_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/featureRemindersCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/bgImage"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/featureRemindersPrefs"
+            app:prefs_primary_text="@string/settings_feature_reminder_title"
+            app:prefs_secondary_text="@string/settings_feature_reminder_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/bgImageCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_bg_image_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_bg_image_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/bgImageCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        <com.cray.software.justreminder.views.PrefsView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bgImagePrefs"
+            app:prefs_primary_text="@string/settings_bg_image_title"
+            app:prefs_secondary_text="@string/settings_bg_image_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="false"/>
 
     </LinearLayout>
 </ScrollView>

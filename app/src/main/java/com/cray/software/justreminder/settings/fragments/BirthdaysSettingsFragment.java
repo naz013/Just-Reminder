@@ -14,26 +14,26 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.activities.BirthdayImport;
+import com.cray.software.justreminder.async.CheckBirthdaysAsync;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.BirthdayAlarm;
 import com.cray.software.justreminder.services.BirthdayCheckAlarm;
 import com.cray.software.justreminder.services.BirthdayPermanentAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.views.PrefsView;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.Calendar;
@@ -42,16 +42,12 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
     private ActionBar ab;
     private SharedPrefs sPrefs;
-    private TextView daysToText;
-    private TextView contactsScan;
-    private TextView reminderTimeText;
-    private TextView text3;
-    private TextView text4;
-    private RelativeLayout autoScan;
+    private TextView contactsScan, reminderTimeText;
     private SwitchCompat contactsSwitch;
-    private CheckBox autoScanCheck, widgetShowCheck, backupBirthCheck, birthReminderCheck,
-            birthdayPermanentCheck;
     private DataBase db;
+    
+    private PrefsView birthReminderPrefs, widgetShowPrefs, birthdayPermanentPrefs, 
+            daysToPrefs, backupBirthPrefs, autoScanPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,48 +62,43 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
         RelativeLayout useContacts = (RelativeLayout) rootView.findViewById(R.id.useContacts);
+        RelativeLayout reminderTime = (RelativeLayout) rootView.findViewById(R.id.reminderTime);
+        reminderTimeText = (TextView) rootView.findViewById(R.id.reminderTimeText);
         useContacts.setOnClickListener(this);
+        reminderTime.setOnClickListener(this);
 
         contactsSwitch = (SwitchCompat) rootView.findViewById(R.id.contactsSwitch);
         contactsSwitch.setChecked(sPrefs.loadBoolean(Prefs.CONTACT_BIRTHDAYS));
 
-        RelativeLayout daysTo = (RelativeLayout) rootView.findViewById(R.id.daysTo);
-        daysTo.setOnClickListener(this);
+        birthReminderPrefs = (PrefsView) rootView.findViewById(R.id.birthReminderPrefs);
+        birthReminderPrefs.setOnClickListener(this);
+        birthReminderPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER));
 
-        daysToText = (TextView) rootView.findViewById(R.id.daysToText);
+        widgetShowPrefs = (PrefsView) rootView.findViewById(R.id.widgetShowPrefs);
+        widgetShowPrefs.setOnClickListener(this);
+        widgetShowPrefs.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS));
 
-        RelativeLayout reminderTime = (RelativeLayout) rootView.findViewById(R.id.reminderTime);
-        reminderTime.setOnClickListener(this);
+        birthdayPermanentPrefs = (PrefsView) rootView.findViewById(R.id.birthdayPermanentPrefs);
+        birthdayPermanentPrefs.setOnClickListener(this);
+        birthdayPermanentPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_PERMANENT));
 
-        reminderTimeText = (TextView) rootView.findViewById(R.id.reminderTimeText);
+        daysToPrefs = (PrefsView) rootView.findViewById(R.id.daysToPrefs);
+        daysToPrefs.setOnClickListener(this);
 
         contactsScan = (TextView) rootView.findViewById(R.id.contactsScan);
         contactsScan.setOnClickListener(this);
 
+        backupBirthPrefs = (PrefsView) rootView.findViewById(R.id.backupBirthPrefs);
+        backupBirthPrefs.setOnClickListener(this);
+        backupBirthPrefs.setChecked(sPrefs.loadBoolean(Prefs.SYNC_BIRTHDAYS));
+
+        autoScanPrefs = (PrefsView) rootView.findViewById(R.id.autoScanPrefs);
+        autoScanPrefs.setOnClickListener(this);
+        autoScanPrefs.setChecked(sPrefs.loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS));
+
         TextView birthImport = (TextView) rootView.findViewById(R.id.birthImport);
         birthImport.setOnClickListener(this);
         birthImport.setVisibility(View.GONE);
-
-        RelativeLayout birthReminder = (RelativeLayout) rootView.findViewById(R.id.birthReminder);
-        birthReminder.setOnClickListener(this);
-
-        birthReminderCheck = (CheckBox) rootView.findViewById(R.id.birthReminderCheck);
-        birthReminderCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER));
-
-        autoScan = (RelativeLayout) rootView.findViewById(R.id.autoScan);
-        autoScan.setOnClickListener(this);
-
-        autoScanCheck = (CheckBox) rootView.findViewById(R.id.autoScanCheck);
-        autoScanCheck.setChecked(sPrefs.loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS));
-
-        RelativeLayout backupBirth = (RelativeLayout) rootView.findViewById(R.id.backupBirth);
-        backupBirth.setOnClickListener(this);
-
-        backupBirthCheck = (CheckBox) rootView.findViewById(R.id.backupBirthCheck);
-        backupBirthCheck.setChecked(sPrefs.loadBoolean(Prefs.SYNC_BIRTHDAYS));
-
-        text3 = (TextView) rootView.findViewById(R.id.text3);
-        text4 = (TextView) rootView.findViewById(R.id.text4);
 
         if (Module.isPro()){
             RelativeLayout birthdayNotifContainer = (RelativeLayout) rootView.findViewById(R.id.birthdayNotifContainer);
@@ -116,19 +107,6 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             TextView birthdayNotification = (TextView) rootView.findViewById(R.id.birthdayNotification);
             birthdayNotification.setOnClickListener(this);
         }
-
-        RelativeLayout widgetShow = (RelativeLayout) rootView.findViewById(R.id.widgetShow);
-        widgetShow.setOnClickListener(this);
-
-        widgetShowCheck = (CheckBox) rootView.findViewById(R.id.widgetShowCheck);
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        widgetShowCheck.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS));
-
-        RelativeLayout birthdayPermanent = (RelativeLayout) rootView.findViewById(R.id.birthdayPermanent);
-        birthdayPermanent.setOnClickListener(this);
-
-        birthdayPermanentCheck = (CheckBox) rootView.findViewById(R.id.birthdayPermanentCheck);
-        birthdayPermanentCheck.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_PERMANENT));
 
         checkEnabling();
         return rootView;
@@ -140,7 +118,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         if (sPrefs.isString(Prefs.DAYS_TO_BIRTHDAY)) {
             days = sPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY);
         } else days = 0;
-        daysToText.setText(String.valueOf(days));
+        daysToPrefs.setValueText(String.valueOf(days));
     }
 
     private void showTime(){
@@ -161,43 +139,37 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     private void checkEnabling(){
         if (contactsSwitch.isChecked()){
             contactsScan.setEnabled(true);
-            autoScan.setEnabled(true);
-            autoScanCheck.setEnabled(true);
-            text3.setEnabled(true);
-            text4.setEnabled(true);
+            autoScanPrefs.setEnabled(true);
         } else {
             contactsScan.setEnabled(false);
-            autoScan.setEnabled(false);
-            autoScanCheck.setEnabled(false);
-            text3.setEnabled(false);
-            text4.setEnabled(false);
+            autoScanPrefs.setEnabled(false);
         }
     }
 
     private void autoScanCheck (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         BirthdayCheckAlarm alarm = new BirthdayCheckAlarm();
-        if (autoScanCheck.isChecked()){
+        if (autoScanPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
-            autoScanCheck.setChecked(false);
+            autoScanPrefs.setChecked(false);
             alarm.cancelAlarm(getActivity());
         } else {
             sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
-            autoScanCheck.setChecked(true);
+            autoScanPrefs.setChecked(true);
             alarm.setAlarm(getActivity());
         }
     }
 
     private void widgetCheck (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (widgetShowCheck.isChecked()){
+        if (widgetShowPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
-            widgetShowCheck.setChecked(false);
+            widgetShowPrefs.setChecked(false);
             UpdatesHelper helper = new UpdatesHelper(getActivity());
             helper.updateWidget();
         } else {
             sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
-            widgetShowCheck.setChecked(true);
+            widgetShowPrefs.setChecked(true);
             UpdatesHelper helper = new UpdatesHelper(getActivity());
             helper.updateWidget();
         }
@@ -205,25 +177,25 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
     private void setBackupBirthCheck (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (backupBirthCheck.isChecked()){
+        if (backupBirthPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
-            backupBirthCheck.setChecked(false);
+            backupBirthPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
-            backupBirthCheck.setChecked(true);
+            backupBirthPrefs.setChecked(true);
         }
     }
 
     private void setBirthdayPermanentCheck(){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (birthdayPermanentCheck.isChecked()){
+        if (birthdayPermanentPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, false);
-            birthdayPermanentCheck.setChecked(false);
+            birthdayPermanentPrefs.setChecked(false);
             new Notifier(getActivity()).hideBirthdayPermanent();
             new BirthdayPermanentAlarm().cancelAlarm(getActivity());
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, true);
-            birthdayPermanentCheck.setChecked(true);
+            birthdayPermanentPrefs.setChecked(true);
             new Notifier(getActivity()).showBirthdayPermanent();
             new BirthdayPermanentAlarm().setAlarm(getActivity());
         }
@@ -291,19 +263,19 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             case R.id.useContacts:
                 setContactsSwitch();
                 break;
-            case R.id.autoScan:
+            case R.id.autoScanPrefs:
                 autoScanCheck();
                 break;
-            case R.id.backupBirth:
+            case R.id.backupBirthPrefs:
                 setBackupBirthCheck();
                 break;
-            case R.id.widgetShow:
+            case R.id.widgetShowPrefs:
                 widgetCheck();
                 break;
-            case R.id.birthReminder:
+            case R.id.birthReminderPrefs:
                 birthCheck();
                 break;
-            case R.id.birthdayPermanent:
+            case R.id.birthdayPermanentPrefs:
                 setBirthdayPermanentCheck();
                 break;
             case R.id.birthImport:
@@ -320,7 +292,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                     new String[]{Permissions.READ_CONTACTS}, 106);
                 }
                 break;
-            case R.id.daysTo:
+            case R.id.daysToPrefs:
                 Dialogues.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
                 break;
             case R.id.birthdayNotification:
@@ -337,13 +309,13 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
     private void birthCheck() {
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (birthReminderCheck.isChecked()){
+        if (birthReminderPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, false);
-            birthReminderCheck.setChecked(false);
+            birthReminderPrefs.setChecked(false);
             cleanBirthdays();
         } else {
             sPrefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
-            birthReminderCheck.setChecked(true);
+            birthReminderPrefs.setChecked(true);
             new BirthdayAlarm().setAlarm(getActivity());
         }
     }

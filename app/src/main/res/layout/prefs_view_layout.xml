@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <RelativeLayout
+        android:id="@+id/containerView"
+        android:layout_width="match_parent"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_height="wrap_content">
+        
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:id="@+id/dividerTop"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/darker_gray"/>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:id="@+id/dividerBottom"
+            android:layout_below="@+id/itemsContainer"
+            android:background="@android:color/darker_gray"/>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@+id/dividerTop"
+            android:id="@+id/itemsContainer"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:gravity="center_vertical"
+            android:layout_toLeftOf="@+id/viewContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/prefsPrimaryText"
+                android:textSize="@dimen/settings_text_size_primary"
+                android:layout_marginBottom="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prefsSecondaryText"
+                android:textSize="@dimen/settings_text_size_secondary" />
+
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_vertical"
+            android:id="@+id/viewContainer">
+
+            <CheckBox
+                android:id="@+id/prefsCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:clickable="false" />
+
+            <TextView
+                android:id="@+id/prefsValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="02"
+                android:visibility="gone"
+                android:textSize="@dimen/settings_text_size_primary"/>
+
+            <View
+                android:id="@+id/prefsView"
+                android:layout_width="@dimen/settings_view_size"
+                android:layout_height="@dimen/settings_view_size"
+                android:background="@drawable/drawable_blue"/>
+            
+        </LinearLayout>
+
+        
+
+    </RelativeLayout>
+</merge>

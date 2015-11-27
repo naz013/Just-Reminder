@@ -224,7 +224,7 @@ public class NavigationDrawerFragment extends Fragment implements
         appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.colorWhite));
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
-                .resize(1020, 500)
+                .resize(1600, 900)
                 .transform(new BlurTransformation(getActivity(), 20, 2))
                 .into(image);
         image.setVisibility(View.VISIBLE);
