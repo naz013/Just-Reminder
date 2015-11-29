@@ -40,6 +40,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -364,7 +365,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if (imagePrefs.matches(Constants.DEFAULT)){
-            if (blur) {
+            if (blur && Module.isPro()) {
                 Picasso.with(this)
                         .load(R.drawable.photo)
                         .resize(metrics.heightPixels, metrics.widthPixels)
@@ -380,7 +381,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         } else if (imagePrefs.matches(Constants.NONE)){
             bgImage.setVisibility(View.GONE);
         } else {
-            if (blur) {
+            if (blur&& Module.isPro()) {
                 Picasso.with(this)
                         .load(Uri.parse(imagePrefs))
                         .resize(metrics.heightPixels, metrics.widthPixels)

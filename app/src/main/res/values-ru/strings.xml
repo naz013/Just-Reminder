@@ -731,4 +731,5 @@
     <string name="custom_image">Выбрать изображение</string>
     <string name="blur">Размытие</string>
     <string name="check_to_enable_background_image_blurring">Отметьте, чтобы включить размытие фонового изображения</string>
+    <string name="pro_version_only">Только для ПРО версии</string>
 </resources>

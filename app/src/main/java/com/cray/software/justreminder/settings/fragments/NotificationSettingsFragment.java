@@ -61,8 +61,15 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         });
 
         blurPrefs = (PrefsView) rootView.findViewById(R.id.blurPrefs);
-        blurPrefs.setOnClickListener(this);
-        blurPrefs.setChecked(sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR));
+        if (Module.isPro()) {
+            blurPrefs.setOnClickListener(this);
+            blurPrefs.setChecked(sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR));
+            blurPrefs.setEnabled(true);
+            blurPrefs.setProMask(false);
+        } else {
+            blurPrefs.setEnabled(false);
+            blurPrefs.setProMask(true);
+        }
 
         notificationDismissPrefs = (PrefsView) rootView.findViewById(R.id.notificationDismissPrefs);
         notificationDismissPrefs.setOnClickListener(this);
@@ -142,6 +149,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             }
         });
 
+        ledPrefs = (PrefsView) rootView.findViewById(R.id.ledPrefs);
+        chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
+
         checkVibrate();
 
         checkRepeat();
@@ -153,12 +163,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         checkIcon();
 
         if (Module.isPro()){
-            ledPrefs = (PrefsView) rootView.findViewById(R.id.ledPrefs);
             ledPrefs.setOnClickListener(this);
             ledPrefs.setVisibility(View.VISIBLE);
             ledPrefs.setChecked(sPrefs.loadBoolean(Prefs.LED_STATUS));
-
-            chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
+            
             chooseLedColorPrefs.setVisibility(View.VISIBLE);
             chooseLedColorPrefs.setOnClickListener(new View.OnClickListener() {
                 @Override

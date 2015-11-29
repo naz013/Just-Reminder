@@ -29,7 +29,6 @@
             android:orientation="vertical"
             android:layout_below="@+id/dividerTop"
             android:id="@+id/itemsContainer"
-            android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:gravity="center_vertical"
             android:layout_toLeftOf="@+id/viewContainer">
@@ -86,7 +85,17 @@
             
         </LinearLayout>
 
-        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/settings_text_size_primary"
+            android:id="@+id/proMask"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/pro_version_only"
+            android:textColor="@color/redPrimary"
+            android:visibility="visible"/>
 
     </RelativeLayout>
 </merge>

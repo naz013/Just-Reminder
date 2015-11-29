@@ -38,10 +38,10 @@ public class PrefsView extends RelativeLayout {
     TextView title;
     TextView detail;
     TextView prefsValue;
+    TextView proMask;
     View dividerTop, dividerBottom, prefsView;
     
     boolean isChecked;
-    boolean enabled;
     int viewType = check;
     
     public PrefsView(Context context) {
@@ -65,6 +65,7 @@ public class PrefsView extends RelativeLayout {
         title = (TextView) findViewById(R.id.prefsPrimaryText);
         detail = (TextView) findViewById(R.id.prefsSecondaryText);
         prefsValue = (TextView) findViewById(R.id.prefsValue);
+        proMask = (TextView) findViewById(R.id.proMask);
         checkBox = (CheckBox) findViewById(R.id.prefsCheck);
 
         dividerTop = findViewById(R.id.dividerTop);
@@ -144,12 +145,30 @@ public class PrefsView extends RelativeLayout {
             prefsView.setBackgroundResource(resource);
         }
     }
+    
+    public void setProMask(boolean mask){
+        if (mask){
+            proMask.setVisibility(VISIBLE);
+        } else {
+            proMask.setVisibility(GONE);
+        }
+    }
 
     public void setChecked(boolean checked) {
         this.isChecked = checked;
         checkBox.setChecked(checked);
     }
-    
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        checkBox.setEnabled(enabled);
+        prefsView.setEnabled(enabled);
+        prefsValue.setEnabled(enabled);
+        detail.setEnabled(enabled);
+        title.setEnabled(enabled);
+    }
+
     public boolean isChecked(){
         return isChecked;
     }
@@ -168,13 +187,5 @@ public class PrefsView extends RelativeLayout {
         } else {
             dividerBottom.setVisibility(GONE);
         }
-    }
-    
-    public void setEnabled(boolean enabled){
-        this.enabled = enabled;
-        title.setEnabled(enabled);
-        detail.setEnabled(enabled);
-        checkBox.setEnabled(enabled);
-        prefsValue.setEnabled(enabled);
     }
 }

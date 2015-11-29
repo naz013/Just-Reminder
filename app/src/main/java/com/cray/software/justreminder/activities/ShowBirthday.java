@@ -201,7 +201,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if (imagePrefs.matches(Constants.DEFAULT)){
-            if (blur) {
+            if (blur && Module.isPro()) {
                 Picasso.with(this)
                         .load(R.drawable.photo)
                         .resize(metrics.heightPixels, metrics.widthPixels)
@@ -217,7 +217,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         } else if (imagePrefs.matches(Constants.NONE)){
             bgImage.setVisibility(View.GONE);
         } else {
-            if (blur) {
+            if (blur && Module.isPro()) {
                 Picasso.with(this)
                         .load(Uri.parse(imagePrefs))
                         .resize(metrics.heightPixels, metrics.widthPixels)

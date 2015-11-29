@@ -427,7 +427,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         if (imagePrefs.matches(Constants.DEFAULT)){
-            if (blur) {
+            if (blur && Module.isPro()) {
                 Picasso.with(ReminderDialog.this)
                         .load(R.drawable.photo)
                         .resize(metrics.heightPixels, metrics.widthPixels)
@@ -443,7 +443,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         } else if (imagePrefs.matches(Constants.NONE)){
             bgImage.setVisibility(View.GONE);
         } else {
-            if (blur) {
+            if (blur && Module.isPro()) {
                 Picasso.with(ReminderDialog.this)
                         .load(Uri.parse(imagePrefs))
                         .resize(metrics.heightPixels, metrics.widthPixels)
