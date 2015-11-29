@@ -105,6 +105,7 @@ public class PrefsView extends RelativeLayout {
             setValueText(valueText);
             setViewResource(res);
         }
+        setProMask(false);
         setChecked(isChecked());
     }
 

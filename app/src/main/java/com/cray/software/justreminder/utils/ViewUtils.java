@@ -157,6 +157,14 @@ public class ViewUtils {
         view.setVisibility(View.INVISIBLE);
     }
 
+    public static void hideFull(View view){
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setDuration(400);
+        view.setAnimation(fadeOut);
+        view.setVisibility(View.GONE);
+    }
+
     public static void showOver(View view, boolean animation){
         if (animation) {
             Animation fadeIn = new AlphaAnimation(0, 1);

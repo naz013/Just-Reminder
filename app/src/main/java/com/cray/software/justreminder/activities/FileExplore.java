@@ -11,16 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.Sound;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,10 +33,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class FileExplore extends AppCompatActivity {
+public class FileExplore extends AppCompatActivity implements View.OnClickListener {
 
 	// Stores names of traversed directories
-	ArrayList<String> str = new ArrayList<>();
+    private ArrayList<String> str = new ArrayList<>();
 
 	// Check if the first level of the directory structure is the one showing
 	private Boolean firstLvl = true;
@@ -41,12 +45,17 @@ public class FileExplore extends AppCompatActivity {
 	private Item[] fileList;
 	private File path = new File(Environment.getExternalStorageDirectory() + "");
 	private String chosenFile;
+	private String chosenPath;
 
-	ListAdapter adapter;
+	private ListAdapter adapter;
+    private Sound sound;
 
     private ListView list;
+    private LinearLayout buttonContainer;
+    private TextView title, currentMelody;
+    private ImageButton playButton;
 
-	@Override
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(this);
@@ -68,6 +77,21 @@ public class FileExplore extends AppCompatActivity {
 
         isDark = new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME);
 
+        buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
+        buttonContainer.setVisibility(View.GONE);
+
+        title = (TextView) findViewById(R.id.title);
+        currentMelody = (TextView) findViewById(R.id.currentMelody);
+
+        playButton = (ImageButton) findViewById(R.id.playButton);
+        ImageButton stopButton = (ImageButton) findViewById(R.id.stopButton);
+        ImageButton selectButton = (ImageButton) findViewById(R.id.selectButton);
+        selectButton.setOnClickListener(this);
+        stopButton.setOnClickListener(this);
+        playButton.setOnClickListener(this);
+        
+        sound = new Sound(this);
+
 		loadFileList();
 
 		loadList();
@@ -85,6 +109,7 @@ public class FileExplore extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 chosenFile = fileList[position].fileName;
+                chosenPath = fileList[position].filePath;
                 File sel = new File(path + "/" + chosenFile);
                 if (sel.isDirectory()) {
                     firstLvl = false;
@@ -122,18 +147,43 @@ public class FileExplore extends AppCompatActivity {
                 }
                 // File picked
                 else {
-                    String fileName = fileList[position].fileName;
-                    if (fileName.endsWith(".mp3") || fileName.endsWith(".ogg")) {
-                        Intent intent = new Intent();
-                        intent.putExtra(Constants.FILE_PICKED, fileList[position].filePath);
-                        setResult(RESULT_OK, intent);
-                        finish();
+                    if (chosenFile.endsWith(".mp3") || chosenFile.endsWith(".ogg") 
+                            || chosenFile.endsWith("m4a")) {
+                        if (title.getVisibility() == View.VISIBLE){
+                            ViewUtils.hideFull(title);
+                            ViewUtils.show(buttonContainer);
+                        }
+                        play();
                     } else {
                         Messages.toast(FileExplore.this, getString(R.string.file_format_warming));
                     }
                 }
             }
         });
+    }
+    
+    private void play(){
+        if (sound.isPlaying()){
+            pause();
+        } else {
+            if (sound.isPaused()) {
+                sound.resume();
+            } else {
+                sound.play(chosenPath);
+                currentMelody.setText(chosenFile);
+            }
+            playButton.setImageResource(R.drawable.ic_pause_black_24dp);
+        }
+    }
+
+    private void pause(){
+        sound.pause();
+        playButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+    }
+
+    private void stop(){
+        sound.stop();
+        playButton.setImageResource(R.drawable.ic_play_arrow_black_24dp);
     }
 
     private void loadFileList() {
@@ -272,7 +322,31 @@ public class FileExplore extends AppCompatActivity {
         finish();
     }
 
-	private class Item {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.selectButton:
+                if (chosenFile.endsWith(".mp3") || chosenFile.endsWith(".ogg")) {
+                    stop();
+                    Intent intent = new Intent();
+                    intent.putExtra(Constants.FILE_PICKED, chosenPath);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                } else {
+                    Messages.toast(FileExplore.this, getString(R.string.file_format_warming));
+                }
+                break;
+            case R.id.playButton:
+                play();
+                break;
+            case R.id.stopButton:
+                stop();
+                break;
+        }
+    }
+
+    private class Item {
+        
 		public String fileName;
 		public String filePath;
 		public int icon;

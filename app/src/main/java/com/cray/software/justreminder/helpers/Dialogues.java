@@ -60,7 +60,7 @@ public class Dialogues {
      */
     public static void imageDialog(final Activity context, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(false);
+        builder.setCancelable(true);
         builder.setTitle(context.getString(R.string.background_image));
         String[] types = new String[]{context.getString(R.string.none),
                 context.getString(R.string.default_string),
@@ -224,7 +224,7 @@ public class Dialogues {
      */
     public static void orientationDialog(final Context context, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(false);
+        builder.setCancelable(true);
         builder.setTitle(context.getString(R.string.screen_orientation_title));
         String[] types = new String[]{context.getString(R.string.screen_auto),
                 context.getString(R.string.screen_portrait),

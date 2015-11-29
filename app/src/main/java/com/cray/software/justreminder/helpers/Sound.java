@@ -27,8 +27,10 @@ import java.io.IOException;
  * limitations under the License.
  */
 public class Sound {
+    
     private Context mContext;
     private MediaPlayer mMediaPlayer;
+    private boolean isPaused;
 
     public Sound(Context context){
         this.mContext = context;
@@ -40,7 +42,44 @@ public class Sound {
     public void stop(){
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
+            isPaused = false;
         }
+    }
+
+    /**
+     * Pause playing melody.
+     */
+    public void pause(){
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+            isPaused = true;
+        }
+    }
+
+    /**
+     * Resume playing melody.
+     */
+    public void resume(){
+        if (mMediaPlayer != null) {
+            mMediaPlayer.start();
+            isPaused = false;
+        }
+    }
+
+    /**
+     * Check if media player is paused.
+     * @return boolean
+     */
+    public boolean isPaused(){
+        return isPaused;
+    }
+
+    /**
+     * Check if media player is playing.
+     * @return boolean
+     */
+    public boolean isPlaying() {
+        return mMediaPlayer != null && mMediaPlayer.isPlaying();
     }
 
     /**

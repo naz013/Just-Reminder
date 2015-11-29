@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.settings;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
@@ -32,7 +29,6 @@ import com.cray.software.justreminder.settings.fragments.SettingsFragment;
 import com.cray.software.justreminder.settings.fragments.VoiceSettingsFragment;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Calendar;
 
 /**
