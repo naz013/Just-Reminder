@@ -13,24 +13,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.views.PrefsView;
 
 public class NotesSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
-    private CheckBox encryptNoteCheck, noteReminderCheck, backupNoteCheck, deleteFileCheck;
     private TextView noteReminderTime;
     private SharedPrefs sPrefs;
     private ActionBar ab;
+    
+    private PrefsView encryptNotePrefs, backupNotePrefs, noteReminderPrefs, deleteFilePrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,30 +42,23 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
             ab.setTitle(R.string.fragment_notes);
         }
 
-        RelativeLayout encryptNote = (RelativeLayout) rootView.findViewById(R.id.encryptNote);
-        encryptNote.setOnClickListener(this);
-
-        encryptNoteCheck = (CheckBox) rootView.findViewById(R.id.encryptNoteCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        encryptNoteCheck.setChecked(sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT));
 
-        RelativeLayout noteReminder = (RelativeLayout) rootView.findViewById(R.id.noteReminder);
-        noteReminder.setOnClickListener(this);
+        encryptNotePrefs = (PrefsView) rootView.findViewById(R.id.encryptNotePrefs);
+        encryptNotePrefs.setChecked(sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT));
+        encryptNotePrefs.setOnClickListener(this);
 
-        noteReminderCheck = (CheckBox) rootView.findViewById(R.id.noteReminderCheck);
-        noteReminderCheck.setChecked(sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER));
+        backupNotePrefs = (PrefsView) rootView.findViewById(R.id.backupNotePrefs);
+        backupNotePrefs.setChecked(sPrefs.loadBoolean(Prefs.SYNC_NOTES));
+        backupNotePrefs.setOnClickListener(this);
 
-        RelativeLayout backupNote = (RelativeLayout) rootView.findViewById(R.id.backupNote);
-        backupNote.setOnClickListener(this);
+        noteReminderPrefs = (PrefsView) rootView.findViewById(R.id.noteReminderPrefs);
+        noteReminderPrefs.setChecked(sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER));
+        noteReminderPrefs.setOnClickListener(this);
 
-        backupNoteCheck = (CheckBox) rootView.findViewById(R.id.backupNoteCheck);
-        backupNoteCheck.setChecked(sPrefs.loadBoolean(Prefs.SYNC_NOTES));
-
-        RelativeLayout deleteFile = (RelativeLayout) rootView.findViewById(R.id.deleteFile);
-        deleteFile.setOnClickListener(this);
-
-        deleteFileCheck = (CheckBox) rootView.findViewById(R.id.deleteFileCheck);
-        deleteFileCheck.setChecked(sPrefs.loadBoolean(Prefs.DELETE_NOTE_FILE));
+        deleteFilePrefs = (PrefsView) rootView.findViewById(R.id.deleteFilePrefs);
+        deleteFilePrefs.setChecked(sPrefs.loadBoolean(Prefs.DELETE_NOTE_FILE));
+        deleteFilePrefs.setOnClickListener(this);
 
         noteReminderTime = (TextView) rootView.findViewById(R.id.noteReminderTime);
         noteReminderTime.setOnClickListener(this);
@@ -78,7 +71,7 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     }
 
     private void checkEnables(){
-        if (noteReminderCheck.isChecked()){
+        if (noteReminderPrefs.isChecked()){
             noteReminderTime.setEnabled(true);
         } else {
             noteReminderTime.setEnabled(false);
@@ -87,47 +80,47 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
 
     private void encryptNoteChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (encryptNoteCheck.isChecked()){
+        if (encryptNotePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, false);
-            encryptNoteCheck.setChecked(false);
+            encryptNotePrefs.setChecked(false);
             new decryptNotes(getActivity()).execute();
         } else {
             sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, true);
-            encryptNoteCheck.setChecked(true);
+            encryptNotePrefs.setChecked(true);
             new encryptNotes(getActivity()).execute();
         }
     }
 
     private void backupChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (backupNoteCheck.isChecked()){
+        if (backupNotePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.SYNC_NOTES, false);
-            backupNoteCheck.setChecked(false);
+            backupNotePrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.SYNC_NOTES, true);
-            backupNoteCheck.setChecked(true);
+            backupNotePrefs.setChecked(true);
         }
     }
 
     private void deleteChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (deleteFileCheck.isChecked()){
+        if (deleteFilePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.DELETE_NOTE_FILE, false);
-            deleteFileCheck.setChecked(false);
+            deleteFilePrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.DELETE_NOTE_FILE, true);
-            deleteFileCheck.setChecked(true);
+            deleteFilePrefs.setChecked(true);
         }
     }
 
     private void noteReminderChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (noteReminderCheck.isChecked()){
+        if (noteReminderPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, false);
-            noteReminderCheck.setChecked(false);
+            noteReminderPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, true);
-            noteReminderCheck.setChecked(true);
+            noteReminderPrefs.setChecked(true);
         }
         checkEnables();
     }
@@ -149,16 +142,16 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.encryptNote:
+            case R.id.encryptNotePrefs:
                 encryptNoteChange();
                 break;
-            case R.id.backupNote:
+            case R.id.backupNotePrefs:
                 backupChange();
                 break;
-            case R.id.noteReminder:
+            case R.id.noteReminderPrefs:
                 noteReminderChange();
                 break;
-            case R.id.deleteFile:
+            case R.id.deleteFilePrefs:
                 deleteChange();
                 break;
             case R.id.noteReminderTime:
@@ -198,14 +191,13 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         protected Integer doInBackground(Void... params) {
             int i = 0;
             db = new NotesBase(tContext);
-            SyncHelper helper = new SyncHelper(tContext);
             db.open();
             Cursor c = db.getNotes();
             if (c != null && c.moveToFirst()){
                 do {
                     String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    String encrypted = helper.encrypt(note);
+                    String encrypted = SyncHelper.encrypt(note);
                     db.updateNote(id, encrypted);
                 } while (c.moveToNext());
             }
@@ -247,14 +239,13 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         protected Integer doInBackground(Void... params) {
             int i = 0;
             db = new NotesBase(tContext);
-            SyncHelper helper = new SyncHelper(tContext);
             db.open();
             Cursor c = db.getNotes();
             if (c != null && c.moveToFirst()){
                 do {
                     String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    String decrypted = helper.decrypt(note);
+                    String decrypted = SyncHelper.decrypt(note);
                     db.updateNote(id, decrypted);
                 } while (c.moveToNext());
             }

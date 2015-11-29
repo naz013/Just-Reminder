@@ -9,30 +9,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.CloudDrives;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
+import com.cray.software.justreminder.views.PrefsView;
 
 import java.util.ArrayList;
 
 public class ExportSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
-
-    private CheckBox exportToCalendarCheck, autoBackupCheck, exportToStockCheck,
-            syncSettingsCheck;
+    
     private TextView eventDuration;
     private TextView selectCalendar;
     private TextView syncInterval;
     private SharedPrefs sPrefs;
     private ActionBar ab;
+    
+    private PrefsView exportToCalendarPrefs, exportToStockPrefs, autoBackupPrefs, 
+            syncSettingsPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,12 +44,23 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             ab.setTitle(R.string.export_settings_block);
         }
 
-        RelativeLayout exportToCalendar = (RelativeLayout) rootView.findViewById(R.id.exportToCalendar);
-        exportToCalendar.setOnClickListener(this);
-
-        exportToCalendarCheck = (CheckBox) rootView.findViewById(R.id.exportToCalendarCheck);
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        exportToCalendarCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR));
+
+        exportToCalendarPrefs = (PrefsView) rootView.findViewById(R.id.exportToCalendarPrefs);
+        exportToCalendarPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR));
+        exportToCalendarPrefs.setOnClickListener(this);
+
+        exportToStockPrefs = (PrefsView) rootView.findViewById(R.id.exportToStockPrefs);
+        exportToStockPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
+        exportToStockPrefs.setOnClickListener(this);
+
+        autoBackupPrefs = (PrefsView) rootView.findViewById(R.id.autoBackupPrefs);
+        autoBackupPrefs.setChecked(sPrefs.loadBoolean(Prefs.AUTO_BACKUP));
+        autoBackupPrefs.setOnClickListener(this);
+
+        syncSettingsPrefs = (PrefsView) rootView.findViewById(R.id.syncSettingsPrefs);
+        syncSettingsPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS));
+        syncSettingsPrefs.setOnClickListener(this);
 
         eventDuration = (TextView) rootView.findViewById(R.id.eventDuration);
         eventDuration.setOnClickListener(this);
@@ -66,24 +77,6 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
         syncInterval = (TextView) rootView.findViewById(R.id.syncInterval);
         syncInterval.setOnClickListener(this);
 
-        RelativeLayout autoBackup = (RelativeLayout) rootView.findViewById(R.id.autoBackup);
-        autoBackup.setOnClickListener(this);
-
-        autoBackupCheck = (CheckBox) rootView.findViewById(R.id.autoBackupCheck);
-        autoBackupCheck.setChecked(sPrefs.loadBoolean(Prefs.AUTO_BACKUP));
-
-        RelativeLayout exportToStock = (RelativeLayout) rootView.findViewById(R.id.exportToStock);
-        exportToStock.setOnClickListener(this);
-
-        exportToStockCheck = (CheckBox) rootView.findViewById(R.id.exportToStockCheck);
-        exportToStockCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
-
-        RelativeLayout syncSettings = (RelativeLayout) rootView.findViewById(R.id.syncSettings);
-        syncSettings.setOnClickListener(this);
-
-        syncSettingsCheck = (CheckBox) rootView.findViewById(R.id.syncSettingsCheck);
-        syncSettingsCheck.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS));
-
         checkEnabling();
         checkBackup();
 
@@ -92,47 +85,47 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
 
     private void prefsChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (syncSettingsCheck.isChecked()){
+        if (syncSettingsPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, false);
-            syncSettingsCheck.setChecked(false);
+            syncSettingsPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, true);
-            syncSettingsCheck.setChecked(true);
+            syncSettingsPrefs.setChecked(true);
         }
     }
 
     private void stockChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (exportToStockCheck.isChecked()){
+        if (exportToStockPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
-            exportToStockCheck.setChecked(false);
+            exportToStockPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, true);
-            exportToStockCheck.setChecked(true);
+            exportToStockPrefs.setChecked(true);
         }
     }
 
     private void autoBackupChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (autoBackupCheck.isChecked()){
+        if (autoBackupPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, false);
-            autoBackupCheck.setChecked(false);
+            autoBackupPrefs.setChecked(false);
             new AutoSyncAlarm().cancelAlarm(getActivity());
         } else {
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            autoBackupCheck.setChecked(true);
+            autoBackupPrefs.setChecked(true);
             new AutoSyncAlarm().setAlarm(getActivity());
         }
         checkBackup();
     }
 
     private void checkBackup(){
-        if (autoBackupCheck.isChecked())syncInterval.setEnabled(true);
+        if (autoBackupPrefs.isChecked())syncInterval.setEnabled(true);
         else syncInterval.setEnabled(false);
     }
 
     private void checkEnabling(){
-        if (exportToCalendarCheck.isChecked()){
+        if (exportToCalendarPrefs.isChecked()){
             eventDuration.setEnabled(true);
             selectCalendar.setEnabled(true);
         } else {
@@ -143,9 +136,9 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
 
     private void exportToCalendarChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (exportToCalendarCheck.isChecked()){
+        if (exportToCalendarPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, false);
-            exportToCalendarCheck.setChecked(false);
+            exportToCalendarPrefs.setChecked(false);
             eventDuration.setEnabled(false);
             selectCalendar.setEnabled(false);
             checkEnabling();
@@ -153,7 +146,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
             if (i != null && i.size() > 0) {
                 sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
-                exportToCalendarCheck.setChecked(true);
+                exportToCalendarPrefs.setChecked(true);
                 eventDuration.setEnabled(true);
                 selectCalendar.setEnabled(true);
                 checkEnabling();
@@ -178,10 +171,10 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.exportToStock:
+            case R.id.exportToStockPrefs:
                 stockChange();
                 break;
-            case R.id.exportToCalendar:
+            case R.id.exportToCalendarPrefs:
                 exportToCalendarChange();
                 break;
             case R.id.eventDuration:
@@ -191,7 +184,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
                 Dialogues.selectCalendar(getActivity(), list);
                 break;
-            case R.id.autoBackup:
+            case R.id.autoBackupPrefs:
                 autoBackupChange();
                 break;
             case R.id.clouds:
@@ -202,7 +195,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             case R.id.clean:
                 Dialogues.cleanFolders(getActivity());
                 break;
-            case R.id.syncSettings:
+            case R.id.syncSettingsPrefs:
                 prefsChange();
                 break;
             case R.id.syncInterval:

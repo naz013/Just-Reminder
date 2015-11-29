@@ -9,22 +9,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.VoiceHelp;
 import com.cray.software.justreminder.activities.TimesOfDay;
+import com.cray.software.justreminder.activities.VoiceHelp;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.views.PrefsView;
 
 public class VoiceSettingsFragment extends Fragment {
 
     private ActionBar ab;
     private TextView voiceLanguage;
-    private CheckBox autoLanguageCheck;
+    private PrefsView autoLanguagePrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,18 +35,17 @@ public class VoiceSettingsFragment extends Fragment {
             ab.setTitle(R.string.voice_block);
         }
 
-        RelativeLayout autoLanguage = (RelativeLayout) rootView.findViewById(R.id.autoLanguage);
-        autoLanguage.setOnClickListener(new View.OnClickListener() {
+        SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        boolean auto = sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE);
+
+        autoLanguagePrefs = (PrefsView) rootView.findViewById(R.id.autoLanguagePrefs);
+        autoLanguagePrefs.setChecked(auto);
+        autoLanguagePrefs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 languageChange();
             }
         });
-
-        autoLanguageCheck = (CheckBox) rootView.findViewById(R.id.autoLanguageCheck);
-        SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        boolean auto = sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE);
-        autoLanguageCheck.setChecked(auto);
 
         voiceLanguage = (TextView) rootView.findViewById(R.id.voiceLanguage);
         voiceLanguage.setOnClickListener(new View.OnClickListener() {
@@ -87,13 +85,13 @@ public class VoiceSettingsFragment extends Fragment {
 
     private void languageChange (){
         SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (autoLanguageCheck.isChecked()){
+        if (autoLanguagePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, false);
-            autoLanguageCheck.setChecked(false);
+            autoLanguagePrefs.setChecked(false);
             voiceLanguage.setEnabled(true);
         } else {
             sPrefs.saveBoolean(Prefs.AUTO_LANGUAGE, true);
-            autoLanguageCheck.setChecked(true);
+            autoLanguagePrefs.setChecked(true);
             voiceLanguage.setEnabled(false);
         }
     }

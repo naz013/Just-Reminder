@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:scrollbars="none">
@@ -12,125 +13,35 @@
         android:layout_marginRight="@dimen/settings_margin"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/missed"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/missedPrefs"
+            app:prefs_primary_text="@string/settings_missed_call_title"
+            app:prefs_secondary_text="@string/settings_missed_call_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/missedCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_missed_call_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_missed_call_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/missedCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <LinearLayout
-            android:id="@+id/missedTime"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:id="@+id/missedTimePrefs"
+            app:prefs_primary_text="@string/settings_missed_time_title"
+            app:prefs_secondary_text="@string/settings_missed_time_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="none"
+            app:prefs_divider_bottom="true"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_missed_time_title"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_vertical"
-                android:id="@+id/textMissed2"
-                android:textSize="@dimen/settings_text_size_primary" />
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/textMissed3"
-                android:textSize="@dimen/settings_text_size_secondary"
-                android:text="@string/settings_missed_time_explanation"
-                android:layout_marginBottom="5dp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
-
-        <RelativeLayout
-            android:id="@+id/quickSMS"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/quickSMSCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_quick_sms_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_quick_sms_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/quickSMSCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/quickSMSPrefs"
+            app:prefs_primary_text="@string/settings_quick_sms_title"
+            app:prefs_secondary_text="@string/settings_quick_sms_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -152,50 +63,15 @@
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"/>
 
-        <RelativeLayout
-            android:id="@+id/followReminder"
+        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toLeftOf="@+id/followReminderCheck">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/settings_follow_reminder_title"
-                    android:textSize="@dimen/settings_text_size_primary"
-                    android:layout_marginBottom="5dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/settings_text_size_secondary"
-                    android:text="@string/settings_follow_reminder_explanation"
-                    android:paddingBottom="10dp" />
-
-            </LinearLayout>
-
-            <CheckBox
-                android:id="@+id/followReminderCheck"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="5dp"
-                android:clickable="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/followReminderPrefs"
+            app:prefs_primary_text="@string/settings_follow_reminder_title"
+            app:prefs_secondary_text="@string/settings_follow_reminder_explanation"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="false"/>
 
     </LinearLayout>
 

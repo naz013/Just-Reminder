@@ -8,26 +8,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.PlacesList;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.dialogs.MarkerStyle;
 import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.dialogs.TrackerOption;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.views.PrefsView;
 
 public class LocationSettingsFragment extends Fragment implements View.OnClickListener {
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    private TextView radiusText;
-    private CheckBox notifCheck, widgetDistanceCheck;
+    
+    private PrefsView notificationOptionPrefs, radiusPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,16 +43,12 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         TextView mapType = (TextView) rootView.findViewById(R.id.mapType);
         mapType.setOnClickListener(this);
 
-        RelativeLayout notificationOption = (RelativeLayout) rootView.findViewById(R.id.notificationOption);
-        notificationOption.setOnClickListener(this);
+        notificationOptionPrefs = (PrefsView) rootView.findViewById(R.id.notificationOptionPrefs);
+        notificationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION));
+        notificationOptionPrefs.setOnClickListener(this);
 
-        notifCheck = (CheckBox) rootView.findViewById(R.id.notifCheck);
-        notifCheck.setChecked(sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION));
-
-        RelativeLayout radius = (RelativeLayout) rootView.findViewById(R.id.radius);
-        radius.setOnClickListener(this);
-
-        radiusText = (TextView) rootView.findViewById(R.id.radiusText);
+        radiusPrefs = (PrefsView) rootView.findViewById(R.id.radiusPrefs);
+        radiusPrefs.setOnClickListener(this);
 
         TextView places = (TextView) rootView.findViewById(R.id.places);
         places.setOnClickListener(this);
@@ -60,14 +56,8 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         TextView tracker = (TextView) rootView.findViewById(R.id.tracker);
         tracker.setOnClickListener(this);
 
-        RelativeLayout widgetDistance = (RelativeLayout) rootView.findViewById(R.id.widgetDistance);
-        widgetDistance.setOnClickListener(this);
-
-        widgetDistanceCheck = (CheckBox) rootView.findViewById(R.id.widgetDistanceCheck);
-        widgetDistanceCheck.setChecked(sPrefs.loadBoolean(Prefs.WIDGET_DISTANCE));
-
         if (Module.isPro()){
-            RelativeLayout markerStyleContainer = (RelativeLayout) rootView.findViewById(R.id.markerStyleContainer);
+            LinearLayout markerStyleContainer = (LinearLayout) rootView.findViewById(R.id.markerStyleContainer);
             markerStyleContainer.setVisibility(View.VISIBLE);
 
             TextView markerStyle = (TextView) rootView.findViewById(R.id.markerStyle);
@@ -77,25 +67,14 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         return rootView;
     }
 
-    private void distanceChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (widgetDistanceCheck.isChecked()){
-            sPrefs.saveBoolean(Prefs.WIDGET_DISTANCE, false);
-            widgetDistanceCheck.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.WIDGET_DISTANCE, true);
-            widgetDistanceCheck.setChecked(true);
-        }
-    }
-
     private void notificationChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (notifCheck.isChecked()){
+        if (notificationOptionPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, false);
-            notifCheck.setChecked(false);
+            notificationOptionPrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, true);
-            notifCheck.setChecked(true);
+            notificationOptionPrefs.setChecked(true);
         }
     }
 
@@ -104,7 +83,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         super.onResume();
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        radiusText.setText(sPrefs.loadInt(Prefs.LOCATION_RADIUS) + getString(R.string.meter));
+        radiusPrefs.setValueText(sPrefs.loadInt(Prefs.LOCATION_RADIUS) + getString(R.string.meter));
     }
 
     @Override
@@ -122,13 +101,10 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
             case R.id.mapType:
                 Dialogues.mapType(getActivity());
                 break;
-            case R.id.notificationOption:
+            case R.id.notificationOptionPrefs:
                 notificationChange();
                 break;
-            case R.id.widgetDistance:
-                distanceChange();
-                break;
-            case R.id.radius:
+            case R.id.radiusPrefs:
                 getActivity().getApplicationContext()
                         .startActivity(new Intent(getActivity().getApplicationContext()
                                 , TargetRadius.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
