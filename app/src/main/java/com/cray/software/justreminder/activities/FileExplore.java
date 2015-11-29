@@ -147,13 +147,12 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                 }
                 // File picked
                 else {
-                    if (chosenFile.endsWith(".mp3") || chosenFile.endsWith(".ogg") 
-                            || chosenFile.endsWith("m4a")) {
+                    if (isMelody(chosenFile)) {
                         if (title.getVisibility() == View.VISIBLE){
                             ViewUtils.hideFull(title);
                             ViewUtils.show(buttonContainer);
                         }
-                        play();
+                        play(false);
                     } else {
                         Messages.toast(FileExplore.this, getString(R.string.file_format_warming));
                     }
@@ -162,15 +161,30 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
         });
     }
     
-    private void play(){
+    private void play(boolean button){
         if (sound.isPlaying()){
-            pause();
-        } else {
-            if (sound.isPaused()) {
-                sound.resume();
+            if (button) {
+                pause();
             } else {
-                sound.play(chosenPath);
-                currentMelody.setText(chosenFile);
+                if (sound.isSameFile(chosenPath)) {
+                    pause();
+                } else {
+                    sound.play(chosenPath);
+                    currentMelody.setText(chosenFile);
+                }
+            }
+        } else {
+            if (button){
+                if (sound.isPaused()){
+                    sound.resume();
+                }
+            } else {
+                if (sound.isPaused() && sound.isSameFile(chosenPath)) {
+                    sound.resume();
+                } else {
+                    sound.play(chosenPath);
+                    currentMelody.setText(chosenFile);
+                }
             }
             playButton.setImageResource(R.drawable.ic_pause_black_24dp);
         }
@@ -293,7 +307,8 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
     }
 
     private boolean isMelody(String file){
-        return file.endsWith(".mp3") || file.endsWith(".ogg") || file.endsWith(".m4a") || file.endsWith(".flac");
+        return file.endsWith(".mp3") || file.endsWith(".ogg") 
+                || file.endsWith(".m4a") || file.endsWith(".flac");
     }
 
     private int getDirectoryIcon(){
@@ -326,7 +341,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.selectButton:
-                if (chosenFile.endsWith(".mp3") || chosenFile.endsWith(".ogg")) {
+                if (isMelody(chosenFile)) {
                     stop();
                     Intent intent = new Intent();
                     intent.putExtra(Constants.FILE_PICKED, chosenPath);
@@ -337,7 +352,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                 }
                 break;
             case R.id.playButton:
-                play();
+                play(true);
                 break;
             case R.id.stopButton:
                 stop();

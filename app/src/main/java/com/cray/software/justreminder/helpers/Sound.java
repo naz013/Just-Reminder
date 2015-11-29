@@ -31,6 +31,7 @@ public class Sound {
     private Context mContext;
     private MediaPlayer mMediaPlayer;
     private boolean isPaused;
+    private String lastFile;
 
     public Sound(Context context){
         this.mContext = context;
@@ -83,10 +84,19 @@ public class Sound {
     }
 
     /**
+     * Check if media player already play this file.
+     * @return boolean
+     */
+    public boolean isSameFile(String path) {
+        return lastFile != null && path.equalsIgnoreCase(lastFile);
+    }
+
+    /**
      * Play melody file.
      * @param path path to file.
      */
     public void play(String path){
+        lastFile = path;
         int maxVolume = 26;
         int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
         float log1 = (float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));

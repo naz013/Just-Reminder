@@ -101,7 +101,11 @@ public class LoadSounds extends AsyncTask<Void, Void, ArrayList<File>> {
             for (File file : fList) {
                 if (file.canRead()) {
                     if (file.isFile()) {
-                        if (file.getName().endsWith(".mp3") || file.getName().endsWith(".ogg")) {
+                        String fileName = file.getName();
+                        if (fileName.endsWith(".mp3") 
+                                || fileName.endsWith(".ogg")
+                                || fileName.endsWith(".m4a")
+                                || fileName.endsWith(".flac")) {
                             files.add(file);
                         }
                     } else if (file.isDirectory()) {

@@ -201,10 +201,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                     if (pathC != null) {
                         File fileC = new File(pathC);
                         if (fileC.exists()) {
-                            String fileName = fileC.getName();
-                            if (fileName.endsWith(".mp3") || fileName.endsWith(".ogg")) {
-                                new SharedPrefs(this).savePrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE, fileC.toString());
-                            }
+                            new SharedPrefs(this).savePrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE, fileC.toString());
                         }
                     }
                 }
@@ -216,10 +213,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                     if (pathStr != null) {
                         File fileC = new File(pathStr);
                         if (fileC.exists()) {
-                            String fileName = fileC.getName();
-                            if (fileName.endsWith(".mp3") || fileName.endsWith(".ogg")) {
-                                new SharedPrefs(this).savePrefs(Prefs.CUSTOM_SOUND_FILE, fileC.toString());
-                            }
+                            new SharedPrefs(this).savePrefs(Prefs.CUSTOM_SOUND_FILE, fileC.toString());
                         }
                     }
                 }
