@@ -6,8 +6,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
-import com.cray.software.justreminder.constants.Prefs;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -97,9 +95,6 @@ public class Sound {
      */
     public void play(String path){
         lastFile = path;
-        int maxVolume = 26;
-        int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
-        float log1 = (float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
         File file = new File(path);
         Uri soundUri = Uri.fromFile(file);
         if (mMediaPlayer != null) {
@@ -112,7 +107,6 @@ public class Sound {
             e.printStackTrace();
         }
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setVolume(1 - log1, 1 - log1);
         mMediaPlayer.setLooping(false);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -133,9 +127,6 @@ public class Sound {
      * @param looping flag for media player looping.
      */
     public void playAlarm(Uri path, boolean looping){
-        int maxVolume = 26;
-        int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
-        float log1 = (float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
@@ -146,7 +137,6 @@ public class Sound {
             e.printStackTrace();
         }
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setVolume(1 - log1, 1 - log1);
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -167,9 +157,6 @@ public class Sound {
      * @param looping flag for media player looping.
      */
     public void playAlarm(AssetFileDescriptor afd, boolean looping){
-        int maxVolume = 26;
-        int currVolume = new SharedPrefs(mContext).loadInt(Prefs.VOLUME);
-        float log1 = (float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
         }
@@ -180,7 +167,6 @@ public class Sound {
             e.printStackTrace();
         }
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setVolume(1 - log1, 1 - log1);
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

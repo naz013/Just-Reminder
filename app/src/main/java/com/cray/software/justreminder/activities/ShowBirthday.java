@@ -21,10 +21,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
@@ -51,7 +51,7 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ShowBirthday extends Activity implements View.OnClickListener, TextToSpeech.OnInitListener {
 
-    private DataBase DB;
+    private DataBase db;
     private long id;
     private SharedPrefs sPrefs;
     private int contactId;
@@ -70,14 +70,19 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         setTheme(cs.getFullscreenStyle());
         sPrefs = new SharedPrefs(ShowBirthday.this);
 
-        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int prefsVol = sPrefs.loadInt(Prefs.VOLUME);
+        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int streamVol = (int) (maxVol * volPercent);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
         
         boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    getWindow().addFlags( WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                             | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                             | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
                 }
@@ -85,13 +90,17 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         }
 
         boolean isWake;
-        if (Module.isPro()){
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+        if (Module.isPro()) {
+            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
                 isWake = sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
-            } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
-        } else isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+            } else {
+                isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+            }
+        } else {
+            isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+        }
         if (isWake) {
-            PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
+            PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
                     PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
             screenLock.acquire();
             screenLock.release();
@@ -107,8 +116,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         Intent i = getIntent();
         id = i.getLongExtra("id", 0);
 
-        LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
-        single_container.setVisibility(View.VISIBLE);
+        findViewById(R.id.single_container).setVisibility(View.VISIBLE);
 
         loadImage();
 
@@ -125,7 +133,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonSend);
-        if (isDark){
+        if (isDark) {
             buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
             buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
             buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
@@ -135,18 +143,20 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
         }
 
-        DB = new DataBase(ShowBirthday.this);
+        db = new DataBase(ShowBirthday.this);
         sPrefs = new SharedPrefs(ShowBirthday.this);
 
-        DB.open();
-        Cursor c = DB.getBirthday(id);
-        if (c != null && c.moveToFirst()){
+        db.open();
+        Cursor c = db.getBirthday(id);
+        if (c != null && c.moveToFirst()) {
             contactId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
             name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
             number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
             birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
         }
-        if (c != null) c.close();
+        if (c != null) {
+            c.close();
+        }
         if (number == null || number.matches("")) {
             number = Contacts.getNumber(name, ShowBirthday.this);
         }
@@ -186,7 +196,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
             try {
                 startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
-            } catch (ActivityNotFoundException e){
+            } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -200,7 +210,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        if (imagePrefs.matches(Constants.DEFAULT)){
+        if (imagePrefs.matches(Constants.DEFAULT)) {
             if (blur && Module.isPro()) {
                 Picasso.with(this)
                         .load(R.drawable.photo)
@@ -214,7 +224,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                         .into(bgImage);
             }
             bgImage.setVisibility(View.VISIBLE);
-        } else if (imagePrefs.matches(Constants.NONE)){
+        } else if (imagePrefs.matches(Constants.NONE)) {
             bgImage.setVisibility(View.GONE);
         } else {
             if (blur && Module.isPro()) {
@@ -233,9 +243,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         }
     }
 
-    private void colorify(FloatingActionButton... fab){
-        for (FloatingActionButton button : fab){
-            if (isDark){
+    private void colorify(final FloatingActionButton... fab) {
+        for (FloatingActionButton button : fab) {
+            if (isDark) {
                 button.setColorNormal(getResources().getColor(R.color.colorWhite));
                 button.setColorPressed(getResources().getColor(R.color.material_divider));
             } else {
@@ -245,7 +255,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         }
     }
 
-    public void removeFlags(){
+    public void removeFlags() {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -265,8 +275,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         switch (v.getId()){
             case R.id.buttonOk:
                 notifier.discardNotification();
-                DB.open();
-                DB.setShown(id, String.valueOf(year));
+                db.open();
+                db.setShown(id, String.valueOf(year));
                 removeFlags();
                 notifier.recreatePermanent();
                 finish();
@@ -275,8 +285,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                 notifier.discardNotification();
                 if (new Permissions(ShowBirthday.this).checkPermission(Permissions.CALL_PHONE)) {
                     Telephony.makeCall(number, ShowBirthday.this);
-                    DB.open();
-                    DB.setShown(id, String.valueOf(year));
+                    db.open();
+                    db.setShown(id, String.valueOf(year));
                     removeFlags();
                     notifier.recreatePermanent();
                     finish();
@@ -289,8 +299,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                 notifier.discardNotification();
                 if (new Permissions(ShowBirthday.this).checkPermission(Permissions.SEND_SMS)) {
                     Telephony.sendSms(number, ShowBirthday.this);
-                    DB.open();
-                    DB.setShown(id, String.valueOf(year));
+                    db.open();
+                    db.setShown(id, String.valueOf(year));
                     removeFlags();
                     notifier.recreatePermanent();
                     finish();
@@ -311,8 +321,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             case 103:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Telephony.sendSms(number, ShowBirthday.this);
-                    DB.open();
-                    DB.setShown(id, String.valueOf(year));
+                    db.open();
+                    db.setShown(id, String.valueOf(year));
                     removeFlags();
                     notifier.recreatePermanent();
                     finish();
@@ -323,8 +333,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Telephony.makeCall(number, ShowBirthday.this);
-                    DB.open();
-                    DB.setShown(id, String.valueOf(year));
+                    db.open();
+                    db.setShown(id, String.valueOf(year));
                     removeFlags();
                     notifier.recreatePermanent();
                     finish();
@@ -388,9 +398,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                    int amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                    am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0);
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         tts.speak(name, TextToSpeech.QUEUE_FLUSH, null, null);
                     } else {
@@ -398,7 +406,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     }
                 }
             }
-        } else
+        } else {
             Log.e("error", "Initialization Failed!");
+        }
     }
 }

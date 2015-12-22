@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
@@ -89,6 +90,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
 
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int prefsVol = sPrefs.loadInt(Prefs.VOLUME);
+        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int streamVol = (int) (maxVol * volPercent);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
 
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
@@ -111,13 +117,15 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             limit = item.getLimit();
             count = item.getCount();
         } else {
-            Log.d(Constants.LOG_TAG, "--------------- null item ");
+            notifier.discardNotification(id);
             finish();
         }
 
         boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         isExtra = sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS);
-        if (isExtra) isFull = unlock == 1;
+        if (isExtra) {
+            isFull = unlock == 1;
+        }
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -129,7 +137,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
 
         boolean isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
-        if (isExtra) isWake = wake == 1;
+        if (isExtra) {
+            isWake = wake == 1;
+        }
         if (isWake) {
             PowerManager.WakeLock screenLock = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(
                     PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
@@ -201,8 +211,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             if (!sPrefs.loadBoolean(Prefs.SILENT_SMS)) {
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.VISIBLE);
-                if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
-                else buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+                if (isDark) {
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
+                } else {
+                    buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+                }
             } else {
                 remText.setText(task + "\n" + number);
                 buttonCall.setVisibility(View.GONE);
@@ -271,9 +284,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                 Reminder.setDelay(WeekDayDialog.this, id, 0, false);
                 update(1);
                 if ((task == null || task.trim().matches("")) &&
-                        (number != null && !number.trim().matches("")))
+                        (number != null && !number.trim().matches(""))) {
                     notifier.showReminderNotification(number, id);
-                else notifier.showReminderNotification(task, id);
+                } else {
+                    notifier.showReminderNotification(task, id);
+                }
                 finish();
             }
         });
@@ -327,7 +342,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
                 type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
             boolean silent = sPrefs.loadBoolean(Prefs.SILENT_SMS);
-            if (isExtra) silent = auto == 1;
+            if (isExtra) {
+                silent = auto == 1;
+            }
             if (silent) {
                 sendSMS(number, task, melody);
             } else {
@@ -338,13 +355,17 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         }
 
         boolean isRepeat = sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT);
-        if (isExtra) isRepeat = notificationRepeat == 1;
+        if (isExtra) {
+            isRepeat = notificationRepeat == 1;
+        }
         if (isRepeat) {
             repeater.setAlarm(WeekDayDialog.this, id);
         }
 
         boolean isTTS = sPrefs.loadBoolean(Prefs.TTS);
-        if (isExtra) isTTS = voice == 1;
+        if (isExtra) {
+            isTTS = voice == 1;
+        }
         if (isTTS) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
@@ -398,7 +419,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     }
 
     private void update(int i){
-        if (i == 1) removeFlags();
+        if (i == 1) {
+            removeFlags();
+        }
         repeater.cancelAlarm(WeekDayDialog.this, id);
         notifier.discardNotification(id);
     }
@@ -412,7 +435,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
             } else {
                 if (id != 0){
                     return reminder.getItem(id).getType();
-                } else return "";
+                } else {
+                    return "";
+                }
             }
         }
     }
@@ -446,7 +471,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         sPrefs = new SharedPrefs(WeekDayDialog.this);
         String type = getType();
         boolean isTTS = sPrefs.loadBoolean(Prefs.TTS);
-        if (isExtra) isTTS = voice == 1;
+        if (isExtra) {
+            isTTS = voice == 1;
+        }
         if (!isTTS) {
             notifier.showNotification(task, type, i, id, melody, color, vibration == 1, isExtra);
         } else {
@@ -611,10 +638,10 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
     @Override
     public void onInit(int status) {
         sPrefs = new SharedPrefs(WeekDayDialog.this);
-        if(status == TextToSpeech.SUCCESS){
+        if (status == TextToSpeech.SUCCESS){
             int result = tts.setLanguage(new Language().getLocale(WeekDayDialog.this, false));
-            if(result == TextToSpeech.LANG_MISSING_DATA ||
-                    result == TextToSpeech.LANG_NOT_SUPPORTED){
+            if (result == TextToSpeech.LANG_MISSING_DATA ||
+                    result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("error", "This Language is not supported");
             } else{
                 if (task != null && !task.matches("")) {
@@ -623,9 +650,7 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                    int amStreamMusicMaxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                    am.setStreamVolume(AudioManager.STREAM_MUSIC, amStreamMusicMaxVol, 0);
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         tts.speak(task, TextToSpeech.QUEUE_FLUSH, null, null);
                     } else {
@@ -633,8 +658,9 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
                     }
                 }
             }
-        } else
+        } else {
             Log.e("error", "Initialization Failed!");
+        }
     }
 
     @Override
@@ -644,8 +670,11 @@ public class WeekDayDialog extends Activity implements TextToSpeech.OnInitListen
         } else {
             showNotification(0);
             remText.setText(getString(R.string.message_send_error));
-            if (isDark) buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
-            else buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
+            if (isDark) {
+                buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_black_24dp));
+            } else {
+                buttonCall.setIconDrawable(ViewUtils.getDrawable(WeekDayDialog.this, R.drawable.ic_cached_white_24dp));
+            }
             if (buttonCall.getVisibility() == View.GONE) {
                 buttonCall.setVisibility(View.VISIBLE);
             }

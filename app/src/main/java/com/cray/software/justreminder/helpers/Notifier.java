@@ -212,7 +212,9 @@ public class Notifier {
         String app;
         if (Module.isPro()){
             app = mContext.getString(R.string.app_name_pro);
-        } else app = mContext.getString(R.string.app_name);
+        } else {
+            app = mContext.getString(R.string.app_name);
+        }
         builder.setContentText(app);
         builder.setSmallIcon(ViewUtils.getIcon(type));
 
@@ -232,7 +234,9 @@ public class Notifier {
         }
 
         boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
-        if (isExtra) isV = vibrate;
+        if (isExtra) {
+            isV = vibrate;
+        }
         if (isV){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){

@@ -31,4 +31,9 @@ public class Configs {
      * Number of reminders used in application.
      */
     public static final int NUMBER_OF_REMINDERS = 10;
+
+    /**
+     * Max volume.
+     */
+    public static final int MAX_VOLUME = 25;
 }

@@ -96,7 +96,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             taskTitle.setText("");
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(5f);
+            }
 
             todoList = (LinearLayout) v.findViewById(R.id.todoList);
             todoList.setVisibility(View.VISIBLE);
@@ -110,8 +112,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mEventListener != null)
+                    if (mEventListener != null) {
                         mEventListener.onItemSwitched(getAdapterPosition(), check);
+                    }
                 }
             });
 
@@ -122,15 +125,19 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         @Override
         public void onClick(View v) {
             View view = itemCard;
-            if (provider.getItem(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER)
+            if (provider.getItem(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
                 view = check;
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), view);
+            }
+            if (mEventListener != null) {
+                mEventListener.onItemClicked(getAdapterPosition(), view);
+            }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if (mEventListener != null)
+            if (mEventListener != null) {
                 mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+            }
             return true;
         }
     }
@@ -170,10 +177,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (due == 0){
                     simpleDate = mContext.getString(R.string.permanent_reminders);
                 } else {
-                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis())))
+                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
                         simpleDate = mContext.getString(R.string._today);
-                    else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY)))
+                    } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
                         simpleDate = mContext.getString(R.string._tomorrow);
+                    }
                 }
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
@@ -195,10 +203,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
                     simpleDate = mContext.getString(R.string.permanent_reminders);
                 } else {
-                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis())))
+                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
                         simpleDate = mContext.getString(R.string._today);
-                    else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY)))
+                    } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
                         simpleDate = mContext.getString(R.string._tomorrow);
+                    }
                 }
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
@@ -206,7 +215,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
 
         if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
-
             holder.reminderContainer.setVisibility(View.VISIBLE);
             holder.subBackground.setVisibility(View.GONE);
 
@@ -225,13 +233,19 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 }
 
                 holder.leftTimeIcon.setImageDrawable(mCount.
@@ -246,13 +260,19 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 }
 
                 holder.leftTimeIcon.setImageDrawable(mCount.
@@ -267,14 +287,20 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                         type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                     holder.reminder_phone.setText(number);
                     String name = Contacts.getContactNameFromNumber(number, mContext);
-                    if (name != null) holder.reminder_contact_name.setText(name);
-                    else holder.reminder_contact_name.setText("");
+                    if (name != null) {
+                        holder.reminder_contact_name.setText(name);
+                    } else {
+                        holder.reminder_contact_name.setText("");
+                    }
                 } else if (type.startsWith(Constants.TYPE_SKYPE)) {
                     holder.reminder_phone.setText(number);
                     holder.reminder_contact_name.setText(number);
@@ -317,7 +343,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     holder.taskDate.setText(String.format("%.5f", lat) + "\n" + String.format("%.5f", lon));
                     holder.leftTime.setVisibility(View.GONE);
                 } else {
-                    if (isDone == 0) holder.leftTime.setText(mCount.getRemaining(due));
+                    if (isDone == 0) {
+                        holder.leftTime.setText(mCount.getRemaining(due));
+                    }
                     holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
                 }
             }
@@ -362,8 +390,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.shoppingTitle.setText(title);
 
             holder.shoppingTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
-            if (title.matches("")) holder.titleContainer.setVisibility(View.GONE);
-            else holder.titleContainer.setVisibility(View.VISIBLE);
+            if (title.matches("")) {
+                holder.titleContainer.setVisibility(View.GONE);
+            } else {
+                holder.titleContainer.setVisibility(View.VISIBLE);
+            }
 
             holder.todoList.setFocusableInTouchMode(false);
             holder.todoList.setFocusable(false);
@@ -378,8 +409,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 checkView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (mEventListener != null)
+                        if (mEventListener != null) {
                             mEventListener.onItemClicked(position, holder.subBackground);
+                        }
                     }
                 });
                 textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));

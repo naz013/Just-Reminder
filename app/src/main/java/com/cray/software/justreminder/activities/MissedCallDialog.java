@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -46,11 +48,21 @@ public class MissedCallDialog extends Activity {
 
     private boolean isDark = false;
     private String number;
+    private int currVolume;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sPrefs = new SharedPrefs(MissedCallDialog.this);
+
+        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int prefsVol = sPrefs.loadInt(Prefs.VOLUME);
+        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int streamVol = (int) (maxVol * volPercent);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
+
         boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
@@ -117,8 +129,11 @@ public class MissedCallDialog extends Activity {
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        if (isDark) buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
-        else buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+        if (isDark) {
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
+        } else {
+            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
+        }
 
         contactPhoto.setVisibility(View.VISIBLE);
         Bitmap photo = Contacts.getPhoto(this, id);
@@ -241,6 +256,8 @@ public class MissedCallDialog extends Activity {
     protected void onDestroy() {
         notifier.recreatePermanent();
         removeFlags();
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
         super.onDestroy();
     }
 
