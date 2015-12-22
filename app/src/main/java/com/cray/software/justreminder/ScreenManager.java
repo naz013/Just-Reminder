@@ -52,6 +52,7 @@ import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.RateDialog;
+import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.fragments.ActiveFragment;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
@@ -76,10 +77,12 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
+import com.cray.software.justreminder.views.QuickReturnRecyclerViewOnScrollListener;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -618,8 +621,30 @@ public class ScreenManager extends AppCompatActivity
         this.listId = listId;
     }
 
+    private QuickReturnRecyclerViewOnScrollListener listener;
+
     @Override
     public void onListChanged(RecyclerView list) {
+        if (list != null){
+            if (listener != null){
+                list.removeOnScrollListener(listener);
+            }
+
+            mPrefs = new SharedPrefs(this);
+            final boolean isExtend = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
+
+            listener = new
+                QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                    .footer(isExtend ? mainMenu : mFab)
+                    .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                    .isSnappable(true)
+                    .build();
+            if (Module.isLollipop()){
+                list.addOnScrollListener(listener);
+            } else {
+                list.setOnScrollListener(listener);
+            }
+        }
     }
 
     @Override
