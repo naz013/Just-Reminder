@@ -333,8 +333,12 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_CANCELED);
-        finish();
+        if (isMelody(chosenFile)) {
+            stop();
+        } else {
+            setResult(RESULT_CANCELED);
+            finish();
+        }
     }
 
     @Override
@@ -361,7 +365,6 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
     }
 
     private class Item {
-        
 		public String fileName;
 		public String filePath;
 		public int icon;
