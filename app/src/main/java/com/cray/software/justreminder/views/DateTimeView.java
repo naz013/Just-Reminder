@@ -78,20 +78,36 @@ public class DateTimeView extends RelativeLayout implements DatePickerDialog.OnD
         updateDateTime(0);
     }
 
+    /**
+     * Set DateTime listener.
+     * @param listener OnSelectListener.
+     */
     public void setListener(OnSelectListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Set date time to view.
+     * @param mills DateTime in mills.
+     */
     public void setDateTime(long mills){
         this.mills = mills;
         updateDateTime(mills);
     }
 
+    /**
+     * Update views for DateTime.
+     * @param mills DateTime in mills.
+     */
     private void updateDateTime(long mills){
         updateTime(mills);
         updateDate(mills);
     }
 
+    /**
+     * Update date view.
+     * @param mills date in mills.
+     */
     private void updateDate(long mills){
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(mills);
@@ -101,6 +117,10 @@ public class DateTimeView extends RelativeLayout implements DatePickerDialog.OnD
         date.setText(TimeUtil.getDate(cal.getTime()));
     }
 
+    /**
+     * Update time view.
+     * @param mills time in mills.
+     */
     private void updateTime(long mills){
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(mills);

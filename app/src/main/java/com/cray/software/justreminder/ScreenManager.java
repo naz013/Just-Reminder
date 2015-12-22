@@ -82,7 +82,7 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.cray.software.justreminder.views.QuickReturnRecyclerViewOnScrollListener;
+import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -621,7 +621,7 @@ public class ScreenManager extends AppCompatActivity
         this.listId = listId;
     }
 
-    private QuickReturnRecyclerViewOnScrollListener listener;
+    private ReturnScrollListener listener;
 
     @Override
     public void onListChanged(RecyclerView list) {
@@ -634,7 +634,7 @@ public class ScreenManager extends AppCompatActivity
             final boolean isExtend = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
 
             listener = new
-                QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
                     .footer(isExtend ? mainMenu : mFab)
                     .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                     .isSnappable(true)
