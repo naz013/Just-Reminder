@@ -17,16 +17,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.RecurrHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -58,7 +58,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
-        public TextView leftTime, taskTitle, taskDate, viewTime, reminder_type, reminder_phone,
+        public TextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
                 repeatInterval, reminder_contact_name, listHeader;
         public SwitchCompat check;
         public ImageView taskIcon, leftTimeIcon;
@@ -79,8 +79,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             taskIcon = (ImageView) v.findViewById(R.id.taskIcon);
             taskDate = (TextView) v.findViewById(R.id.taskDate);
             taskDate.setText("");
-            viewTime = (TextView) v.findViewById(R.id.taskTime);
-            viewTime.setText("");
             reminder_type = (TextView) v.findViewById(R.id.reminder_type);
             reminder_type.setText("");
             reminder_phone = (TextView) v.findViewById(R.id.reminder_phone);
@@ -215,7 +213,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.taskTitle.setText("");
             holder.reminder_contact_name.setText("");
             holder.taskDate.setText("");
-            holder.viewTime.setText("");
             holder.reminder_type.setText("");
             holder.reminder_phone.setText("");
             holder.repeatInterval.setText("");
@@ -240,10 +237,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.leftTimeIcon.setImageDrawable(mCount.
                         getDifference(due));
                 holder.repeatInterval.setVisibility(View.GONE);
-
-                String[] dT = mCount.getNextDateTime(due);
-                holder.taskDate.setText(dT[0]);
-                holder.viewTime.setText(dT[1]);
+                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
 
                 if (isDone == 0) {
                     holder.leftTime.setText(mCount.getRemaining(due));
@@ -264,13 +258,10 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.leftTimeIcon.setImageDrawable(mCount.
                         getDifference(due));
                 holder.repeatInterval.setVisibility(View.GONE);
-
-                String[] dT = mCount.getNextDateTime(due);
                 if (isDone == 0) {
                     holder.leftTime.setText(mCount.getRemaining(due));
                 }
-                holder.taskDate.setText(dT[0]);
-                holder.viewTime.setText(dT[1]);
+                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
             } else {
                 if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                         type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
@@ -322,17 +313,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     }
                 }
 
-                String[] dT = mCount.getNextDateTime(due);
-
                 if (lat != 0.0 || lon != 0.0) {
-                    holder.taskDate.setText(String.format("%.5f", lat));
-                    holder.viewTime.setText(String.format("%.5f", lon));
-                    if (archived > 0) holder.leftTime.setVisibility(View.GONE);
-                    else holder.leftTime.setVisibility(View.GONE);
+                    holder.taskDate.setText(String.format("%.5f", lat) + "\n" + String.format("%.5f", lon));
+                    holder.leftTime.setVisibility(View.GONE);
                 } else {
                     if (isDone == 0) holder.leftTime.setText(mCount.getRemaining(due));
-                    holder.taskDate.setText(dT[0]);
-                    holder.viewTime.setText(dT[1]);
+                    holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
                 }
             }
 
@@ -340,12 +326,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (exclusion != null){
                     if (new RecurrHelper(exclusion).isRange()){
                         holder.leftTimeIcon.setVisibility(View.GONE);
-                        holder.leftTime.setVisibility(View.GONE);
-                        holder.viewTime.setText("");
                         holder.taskDate.setText(R.string.paused);
                     } else {
                         holder.leftTimeIcon.setVisibility(View.VISIBLE);
-                        holder.leftTime.setVisibility(View.VISIBLE);
                     }
                 }
             }

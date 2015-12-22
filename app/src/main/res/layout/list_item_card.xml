@@ -48,8 +48,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:focusable="false"
-                android:visibility="gone"
-                android:layout_marginRight="5dp"
+                android:visibility="visible"
                 android:id="@+id/itemCheck"/>
 
             <LinearLayout
@@ -61,82 +60,62 @@
                 android:layout_marginLeft="5dp"
                 android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:singleLine="true"
+                    android:layout_marginTop="2dp"
+                    android:focusable="false"
+                    android:text="Task"
+                    android:gravity="center_vertical"
+                    android:id="@+id/taskText" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:orientation="vertical">
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
-                        android:orientation="horizontal">
+                        android:singleLine="true"
+                        android:layout_weight="1"
+                        android:text="Type"
+                        android:id="@+id/reminder_type"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:focusable="false"
-                            android:singleLine="true"
-                            android:id="@+id/reminder_type"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true"
-                            android:focusable="false"
-                            android:id="@+id/reminder_contact_name"
-                            android:layout_weight="1.5"/>
-
-                    </LinearLayout>
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:singleLine="true"
                         android:focusable="false"
-                        android:orientation="horizontal">
+                        android:layout_weight="0.75"
+                        android:layout_marginLeft="10dp"
+                        android:text="22 Dec 2015 10:40"
+                        android:id="@+id/taskDate" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="18sp"
-                            android:singleLine="true"
-                            android:layout_marginTop="2dp"
-                            android:layout_weight="1"
-                            android:focusable="false"
-                            android:gravity="center_vertical"
-                            android:id="@+id/taskText" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="18sp"
-                            android:singleLine="true"
-                            android:focusable="false"
-                            android:layout_weight="1.5"
-                            android:layout_marginTop="2dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/reminder_phone" />
-
-                    </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:focusable="false"
-                    android:layout_marginBottom="5dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
-                        android:gravity="left"
-                        android:layout_marginTop="2dp"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_gravity="center"
                             android:scaleType="center"
                             android:focusable="false"
@@ -144,8 +123,8 @@
                             android:id="@+id/taskIcon" />
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:textSize="15sp"
                             android:layout_marginLeft="5dp"
                             android:gravity="center"
@@ -154,8 +133,8 @@
                             android:background="@drawable/round_view_black"/>
 
                         <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:gravity="center"
                             android:focusable="false"
@@ -164,42 +143,49 @@
                             android:src="@drawable/drawable_blue"/>
 
                     </LinearLayout>
-                    <LinearLayout
+
+                    <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.5"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:singleLine="true"
+                        android:layout_weight="0.75"
+                        android:text="@string/remaining_less_minute"
                         android:focusable="false"
-                        android:gravity="center_vertical"
-                        android:orientation="vertical">
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/remainingTime"
+                        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:singleLine="true"
-                            android:focusable="false"
-                            android:id="@+id/taskDate" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:singleLine="true"
-                            android:focusable="false"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:id="@+id/taskTime" />
-                    </LinearLayout>
                 </LinearLayout>
-                <TextView
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:singleLine="true"
-                    android:gravity="center"
-                    android:focusable="false"
-                    android:layout_marginBottom="5dp"
-                    android:id="@+id/remainingTime"
-                    android:textSize="16sp"/>
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:focusable="false"
+                        android:layout_weight="1"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:id="@+id/reminder_contact_name"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:singleLine="true"
+                        android:focusable="false"
+                        android:layout_weight="0.75"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:gravity="center_vertical"
+                        android:id="@+id/reminder_phone" />
+
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
@@ -211,6 +197,7 @@
             android:layout_marginBottom="1dp"
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"
+            android:visibility="gone"
             android:id="@+id/subBackground"
             android:focusable="false">
 
