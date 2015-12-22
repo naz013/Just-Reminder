@@ -92,7 +92,7 @@ public class PrefsView extends RelativeLayout {
                 viewType = a.getInt(R.styleable.PrefsView_prefs_type, check);
                 res = a.getInt(R.styleable.PrefsView_prefs_view_resource, 0);
             } catch (Exception e) {
-                Log.e("MyCheckBox", "There was an error loading attributes.");
+                Log.e("PrefsView", "There was an error loading attributes.");
             } finally {
                 a.recycle();
             }
@@ -110,15 +110,15 @@ public class PrefsView extends RelativeLayout {
     }
 
     private void setView() {
-        if (viewType == check){
+        if (viewType == check) {
             checkBox.setVisibility(VISIBLE);
             prefsValue.setVisibility(GONE);
             prefsView.setVisibility(GONE);
-        } else if (viewType == text){
+        } else if (viewType == text) {
             checkBox.setVisibility(GONE);
             prefsValue.setVisibility(VISIBLE);
             prefsView.setVisibility(GONE);
-        } else if (viewType == view){
+        } else if (viewType == view) {
             checkBox.setVisibility(GONE);
             prefsValue.setVisibility(GONE);
             prefsView.setVisibility(VISIBLE);
@@ -141,14 +141,14 @@ public class PrefsView extends RelativeLayout {
         prefsValue.setText(text);
     }
     
-    public void setViewResource(@DrawableRes int resource){
+    public void setViewResource(@DrawableRes int resource) {
         if (resource != 0) {
             prefsView.setBackgroundResource(resource);
         }
     }
     
-    public void setProMask(boolean mask){
-        if (mask){
+    public void setProMask(boolean mask) {
+        if (mask) {
             proMask.setVisibility(VISIBLE);
         } else {
             proMask.setVisibility(GONE);
@@ -174,16 +174,16 @@ public class PrefsView extends RelativeLayout {
         return isChecked;
     }
     
-    public void setDividerTop(boolean divider){
-        if (divider){
+    public void setDividerTop(boolean divider) {
+        if (divider) {
             dividerTop.setVisibility(VISIBLE);
         } else {
             dividerTop.setVisibility(GONE);
         }
     }
 
-    public void setDividerBottom(boolean divider){
-        if (divider){
+    public void setDividerBottom(boolean divider) {
+        if (divider) {
             dividerBottom.setVisibility(VISIBLE);
         } else {
             dividerBottom.setVisibility(GONE);

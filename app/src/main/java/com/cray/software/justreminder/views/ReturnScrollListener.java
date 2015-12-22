@@ -12,7 +12,7 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
+public class ReturnScrollListener extends RecyclerView.OnScrollListener {
 
     // region Member Variables
     private final QuickReturnViewType mQuickReturnViewType;
@@ -32,7 +32,7 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
     // endregion
 
     // region Constructors
-    private QuickReturnRecyclerViewOnScrollListener(Builder builder) {
+    private ReturnScrollListener(Builder builder) {
         mQuickReturnViewType = builder.mQuickReturnViewType;
         mHeader = builder.mHeader;
         mMinHeaderTranslation = builder.mMinHeaderTranslation;
@@ -283,8 +283,8 @@ public class QuickReturnRecyclerViewOnScrollListener extends RecyclerView.OnScro
             return this;
         }
 
-        public QuickReturnRecyclerViewOnScrollListener build() {
-            return new QuickReturnRecyclerViewOnScrollListener(this);
+        public ReturnScrollListener build() {
+            return new ReturnScrollListener(this);
         }
     }
 }

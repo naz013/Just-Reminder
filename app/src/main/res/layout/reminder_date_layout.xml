@@ -39,35 +39,13 @@
                 android:text="@string/add_to_google_tasks"
                 android:id="@+id/dateTaskExport" />
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/create_margin"
+            <com.cray.software.justreminder.views.DateTimeView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tue, 5 Nov 2015"
-                    android:ems="10"
-                    android:gravity="center|left"
-                    android:layout_toLeftOf="@+id/timeField"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:id="@+id/dateField" />
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|right"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:text="14:05"
-                    android:layout_alignParentRight="true"
-                    android:ems="10"
-                    android:id="@+id/timeField" />
-            </RelativeLayout>
+                android:id="@+id/dateView"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

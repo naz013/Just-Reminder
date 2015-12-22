@@ -26,7 +26,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.views.QuickReturnRecyclerViewOnScrollListener;
+import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -102,8 +102,8 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);  // requires *wrapped* adapter
         listView.setItemAnimator(new DefaultItemAnimator());
-        QuickReturnRecyclerViewOnScrollListener scrollListener = new
-                QuickReturnRecyclerViewOnScrollListener.Builder(QuickReturnViewType.FOOTER)
+        ReturnScrollListener scrollListener = new
+                ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
                 .footer(mFab)
                 .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                 .isSnappable(true)

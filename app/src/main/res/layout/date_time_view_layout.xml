@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tue, 5 Nov 2015"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/timeField"
+            android:textSize="@dimen/create_text_size_normal"
+            android:id="@+id/dateField" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/create_text_size_normal"
+            android:text="14:05"
+            android:layout_alignParentRight="true"
+            android:id="@+id/timeField" />
+
+    </RelativeLayout>
+</merge>

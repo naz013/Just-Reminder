@@ -17,6 +17,11 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="DateTimeView">
+        <attr name="date_text_size" format="dimension"/>
+        <attr name="time_text_size" format="dimension"/>
+    </declare-styleable>
+
     <declare-styleable name="RoundImageView">
 
         <!-- Whether or not to draw a circular border around the image. -->
