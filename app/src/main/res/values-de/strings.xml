@@ -732,6 +732,6 @@
     <string name="blur">Verwischen</string>
     <string name="check_to_enable_background_image_blurring">Überprüfen Sie, Hintergrundbild verwischen aktivieren</string>
     <string name="pro_version_only">Nur Pro-Version</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="next">Nächster</string>
+    <string name="previous">Zurück</string>
 </resources>

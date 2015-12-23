@@ -47,7 +47,7 @@ public class StartHelp extends AppCompatActivity {
                     skipButton.setText(R.string.previous);
                     doneButton.setText(R.string.next);
                 } else if (position == adapter.getCount() - 1){
-                    doneButton.setText(R.string.done_button);
+                    doneButton.setText(R.string.simple_done);
                 } else {
                     skipButton.setText(R.string.skip_button);
                     doneButton.setText(R.string.next);

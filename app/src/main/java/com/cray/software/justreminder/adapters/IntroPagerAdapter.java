@@ -4,6 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.cray.software.justreminder.datas.models.IntroModel;
 import com.cray.software.justreminder.fragments.IntroFragment;
@@ -25,7 +29,7 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class IntroPagerAdapter extends FragmentPagerAdapter {
+public class IntroPagerAdapter extends FragmentStatePagerAdapter {
     private List<IntroModel> fragments;
 
     public IntroPagerAdapter(FragmentManager fm, @NonNull List<IntroModel> fragments) {
