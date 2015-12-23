@@ -28,12 +28,15 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.BackupFileEdit;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.AccountInfo;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.DropboxQuota;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.graph.PieGraph;
@@ -41,14 +44,11 @@ import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
-import com.cray.software.justreminder.ScreenManager;
 
 import org.json.JSONException;
 
@@ -87,7 +87,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private Typeface typefaceThin;
     private boolean isDropboxDeleted = false;
     private boolean isGoogleDeleted = false;
-    private boolean isAnimation = true;
 
     private Toolbar toolbar;
     private Spinner spinner;
@@ -185,7 +184,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         new ScanTask(getActivity()).execute();
 
         sPrefs = new SharedPrefs(getActivity());
-        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
     }
 
     private void setNavigation(){
@@ -263,7 +261,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (filesCloudList.getVisibility() != View.VISIBLE) {
                     loadDropboxList();
                     ViewUtils.collapse(cloudContainer);
-                    ViewUtils.fadeInAnimation(filesCloudList, isAnimation);
+                    ViewUtils.fadeInAnimation(filesCloudList);
                 } else {
                     reloadDropbox();
                 }
@@ -304,7 +302,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void reloadDropbox() {
-        ViewUtils.fadeOutAnimation(filesCloudList, isAnimation);
+        ViewUtils.fadeOutAnimation(filesCloudList);
         if (isDropboxDeleted) {
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
             loadInfo(pd);
@@ -416,7 +414,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (filesGoogleList.getVisibility() != View.VISIBLE) {
                     loadGoogleList();
                     ViewUtils.collapse(googleContainer);
-                    ViewUtils.fadeInAnimation(filesGoogleList, isAnimation);
+                    ViewUtils.fadeInAnimation(filesGoogleList);
                 } else {
                     reloadGoogle();
                 }
@@ -457,7 +455,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void reloadGoogle() {
-        ViewUtils.fadeOutAnimation(filesGoogleList, isAnimation);
+        ViewUtils.fadeOutAnimation(filesGoogleList);
         if (isGoogleDeleted) {
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
             loadGoogleInfo(pd);
@@ -661,7 +659,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (filesList.getVisibility() != View.VISIBLE) {
                     loadLocalList();
                     ViewUtils.collapse(container);
-                    ViewUtils.fadeInAnimation(filesList, isAnimation);
+                    ViewUtils.fadeInAnimation(filesList);
                 } else {
                     reloadLocal();
                 }
@@ -689,7 +687,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     mCallbacks.showSnackbar(R.string.all_files_removed);
                 }
                 if (container.getVisibility() == View.GONE) {
-                    ViewUtils.fadeOutAnimation(filesList, isAnimation);
+                    ViewUtils.fadeOutAnimation(filesList);
                     ViewUtils.expand(container);
                     showFilesCount();
                 }
@@ -702,7 +700,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void reloadLocal() {
-        ViewUtils.fadeOutAnimation(filesList, isAnimation);
+        ViewUtils.fadeOutAnimation(filesList);
         ViewUtils.expand(container);
         showFilesCount();
     }

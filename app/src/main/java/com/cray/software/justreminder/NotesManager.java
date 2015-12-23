@@ -31,10 +31,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.cray.software.justreminder.activities.ImagePreview;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.models.NoteModel;
-import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.dialogs.ColorPicker;
 import com.cray.software.justreminder.dialogs.FontStyleDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -42,8 +44,6 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -130,13 +130,9 @@ public class NotesManager extends AppCompatActivity {
                             case R.id.action_reminder:
                                 if (!isReminderAttached()) {
                                     setDateTime();
-                                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                                        ViewUtils.expand(remindContainer);
-                                    } else remindContainer.setVisibility(View.VISIBLE);
+                                    ViewUtils.expand(remindContainer);
                                 } else {
-                                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                                        ViewUtils.collapse(remindContainer);
-                                    } else remindContainer.setVisibility(View.GONE);
+                                    ViewUtils.collapse(remindContainer);
                                 }
                                 return true;
                             case R.id.action_font:
@@ -172,9 +168,8 @@ public class NotesManager extends AppCompatActivity {
         imageContainer = (RelativeLayout) findViewById(R.id.imageContainer);
         color = new Random().nextInt(15 + 1);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
-        if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-            ViewUtils.fadeInAnimation(layoutContainer, sPrefs.loadBoolean(Prefs.ANIMATIONS));
-        } else layoutContainer.setVisibility(View.VISIBLE);
+
+        ViewUtils.fadeInAnimation(layoutContainer);
 
         Typeface typeface = AssetsUtil.getLightTypeface(this);
 
@@ -240,9 +235,7 @@ public class NotesManager extends AppCompatActivity {
         discardReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                    ViewUtils.collapse(remindContainer);
-                } else remindContainer.setVisibility(View.GONE);
+                ViewUtils.collapse(remindContainer);
             }
         });
 
@@ -251,9 +244,7 @@ public class NotesManager extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isImageAttached()) {
-                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                        ViewUtils.collapse(imageContainer);
-                    } else imageContainer.setVisibility(View.GONE);
+                    ViewUtils.collapse(imageContainer);
                     image = null;
                     img = null;
                 }
@@ -282,7 +273,7 @@ public class NotesManager extends AppCompatActivity {
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ViewUtils.hide(NotesManager.this, mFab, sPrefs.loadBoolean(Prefs.ANIMATIONS));
+                ViewUtils.hide(NotesManager.this, mFab);
                 return false;
             }
         });
@@ -317,12 +308,12 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                        ViewUtils.expand(imageContainer);
-                    } else imageContainer.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(imageContainer);
                 }
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
         } else if (name != null){
             String scheme = name.getScheme();
             if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
@@ -367,9 +358,7 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                        ViewUtils.expand(imageContainer);
-                    } else imageContainer.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(imageContainer);
                 }
             } else {
                 File file = new File(name.getPath());
@@ -387,9 +376,7 @@ public class NotesManager extends AppCompatActivity {
                     img = BitmapFactory.decodeByteArray(imageByte, 0,
                             imageByte.length);
                     noteImage.setImageBitmap(img);
-                    if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                        ViewUtils.expand(imageContainer);
-                    } else imageContainer.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(imageContainer);
                 }
             }
 
@@ -451,11 +438,17 @@ public class NotesManager extends AppCompatActivity {
         String dayStr;
         String monthStr;
 
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
+        if (myDay < 10) {
+            dayStr = "0" + myDay;
+        } else {
+            dayStr = String.valueOf(myDay);
+        }
 
-        if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-        else monthStr = String.valueOf(myMonth + 1);
+        if (myMonth < 9) {
+            monthStr = "0" + (myMonth + 1);
+        } else {
+            monthStr = String.valueOf(myMonth + 1);
+        }
 
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
 
@@ -512,7 +505,9 @@ public class NotesManager extends AppCompatActivity {
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
             long remId = new DataBase(NotesManager.this).insertReminder(note, Constants.TYPE_REMINDER, myDay,
                     myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, SyncHelper.generateID(),
                     null, 0, null, 0, 0, 0, categoryId, null);
@@ -627,9 +622,7 @@ public class NotesManager extends AppCompatActivity {
                         image = outputStream.toByteArray();
                         noteImage.setImageBitmap(bitmapImage);
                         if (!isImageAttached()) {
-                            if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                                ViewUtils.expand(imageContainer);
-                            } else imageContainer.setVisibility(View.VISIBLE);
+                            ViewUtils.expand(imageContainer);
                         }
                     }
                     break;
@@ -642,9 +635,7 @@ public class NotesManager extends AppCompatActivity {
                         image = outputStream.toByteArray();
                         noteImage.setImageBitmap(cameraImage);
                         if (!isImageAttached()) {
-                            if (sPrefs.loadBoolean(Prefs.ANIMATIONS)) {
-                                ViewUtils.expand(imageContainer);
-                            } else imageContainer.setVisibility(View.VISIBLE);
+                            ViewUtils.expand(imageContainer);
                         }
                     }
                     break;
@@ -706,11 +697,17 @@ public class NotesManager extends AppCompatActivity {
             String dayStr;
             String monthStr;
 
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
+            if (myDay < 10) {
+                dayStr = "0" + myDay;
+            } else {
+                dayStr = String.valueOf(myDay);
+            }
 
-            if (myMonth < 9) monthStr = "0" + (myMonth + 1);
-            else monthStr = String.valueOf(myMonth + 1);
+            if (myMonth < 9) {
+                monthStr = "0" + (myMonth + 1);
+            } else {
+                monthStr = String.valueOf(myMonth + 1);
+            }
             remindDate.setText(SuperUtil.appendString(dayStr, "/", monthStr, "/", String.valueOf(myYear)));
         }
     };
@@ -736,7 +733,9 @@ public class NotesManager extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (DB != null && DB.isOpen()) DB.close();
+        if (DB != null && DB.isOpen()) {
+            DB.close();
+        }
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
@@ -746,7 +745,7 @@ public class NotesManager extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (mFab.getVisibility() == View.GONE){
-            ViewUtils.show(NotesManager.this, mFab, sPrefs.loadBoolean(Prefs.ANIMATIONS));
+            ViewUtils.show(NotesManager.this, mFab);
             return;
         }
 

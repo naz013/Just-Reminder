@@ -153,7 +153,6 @@ public class ScreenManager extends AppCompatActivity
     private String accountName;
     private long listId;
     private long dateMills;
-    private boolean isAnimation = false;
     private boolean doubleBackToExitPressedOnce = false;
     private int lastEventPosition = -1;
 
@@ -174,8 +173,6 @@ public class ScreenManager extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
         }
-
-        isAnimation = mPrefs.loadBoolean(Prefs.ANIMATIONS);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
@@ -249,7 +246,7 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (isNoteVisible()) {
-                    ViewUtils.hideReveal(noteCard, isAnimation);
+                    ViewUtils.hideReveal(noteCard);
                 }
 
                 new Handler().postDelayed(new Runnable() {
@@ -264,12 +261,12 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public boolean onLongClick(View v) {
                 if (!isNoteVisible()) {
-                    ViewUtils.showReveal(noteCard, isAnimation);
+                    ViewUtils.showReveal(noteCard);
                 } else {
                     quickNote.setText("");
                     quickNote.setError(null);
 
-                    ViewUtils.hideReveal(noteCard, isAnimation);
+                    ViewUtils.hideReveal(noteCard);
                 }
                 return true;
             }
@@ -420,12 +417,12 @@ public class ScreenManager extends AppCompatActivity
                                 mainMenu.collapse();
                             }
                             if (!isNoteVisible()) {
-                                ViewUtils.showReveal(noteCard, isAnimation);
+                                ViewUtils.showReveal(noteCard);
                             } else {
                                 quickNote.setText("");
                                 quickNote.setError(null);
 
-                                ViewUtils.hideReveal(noteCard, isAnimation);
+                                ViewUtils.hideReveal(noteCard);
                             }
                         }
                     }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_black_24dp);
@@ -612,7 +609,7 @@ public class ScreenManager extends AppCompatActivity
             mainMenu.collapse();
         }
         if (isNoteVisible()) {
-            ViewUtils.hideReveal(noteCard, isAnimation);
+            ViewUtils.hideReveal(noteCard);
         }
     }
 
@@ -1248,7 +1245,7 @@ public class ScreenManager extends AppCompatActivity
         quickNote.setText("");
         quickNote.setError(null);
 
-        ViewUtils.hideReveal(noteCard, isAnimation);
+        ViewUtils.hideReveal(noteCard);
 
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
@@ -1270,13 +1267,13 @@ public class ScreenManager extends AppCompatActivity
 
     private void askNotification(final String note, final long id){
         mPrefs = new SharedPrefs(ScreenManager.this);
-        ViewUtils.showReveal(noteStatusCard, isAnimation);
+        ViewUtils.showReveal(noteStatusCard);
 
         buttonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Notifier(ScreenManager.this).showNoteNotification(note, id);
-                ViewUtils.hideReveal(noteStatusCard, isAnimation);
+                ViewUtils.hideReveal(noteStatusCard);
 
                 if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1292,7 +1289,7 @@ public class ScreenManager extends AppCompatActivity
         buttonNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hideReveal(noteStatusCard, isAnimation);
+                ViewUtils.hideReveal(noteStatusCard);
 
                 if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
@@ -1308,12 +1305,12 @@ public class ScreenManager extends AppCompatActivity
 
     private void askReminder(final String note, final long noteId){
         mPrefs = new SharedPrefs(ScreenManager.this);
-        ViewUtils.showReveal(noteReminderCard, isAnimation);
+        ViewUtils.showReveal(noteReminderCard);
 
         buttonReminderYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hideReveal(noteReminderCard, isAnimation);
+                ViewUtils.hideReveal(noteReminderCard);
                 DataBase db = new DataBase(ScreenManager.this);
                 if (!db.isOpen()) {
                     db.open();
@@ -1352,7 +1349,7 @@ public class ScreenManager extends AppCompatActivity
         buttonReminderNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.hideReveal(noteReminderCard, isAnimation);
+                ViewUtils.hideReveal(noteReminderCard);
             }
         });
     }
@@ -1366,7 +1363,7 @@ public class ScreenManager extends AppCompatActivity
         if (isNoteVisible()){
             quickNote.setText("");
             quickNote.setError(null);
-            ViewUtils.hideReveal(noteCard, isAnimation);
+            ViewUtils.hideReveal(noteCard);
 
             InputMethodManager imm = (InputMethodManager)getSystemService(
                     Context.INPUT_METHOD_SERVICE);

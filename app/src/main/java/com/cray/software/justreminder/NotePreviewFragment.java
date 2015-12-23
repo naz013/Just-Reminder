@@ -131,10 +131,10 @@ public class NotePreviewFragment extends AppCompatActivity {
                 }
                 float percent = getCurrentPercent(scrollY);
                 if (percent >= 60.0 && prevPercent < 60.0){
-                    ViewUtils.hide(NotePreviewFragment.this, mFab, true);
+                    ViewUtils.hide(NotePreviewFragment.this, mFab);
                 }
                 if (percent <= 75.0 && prevPercent > 75.0){
-                    ViewUtils.show(NotePreviewFragment.this, mFab, true);
+                    ViewUtils.show(NotePreviewFragment.this, mFab);
                 }
                 prevPercent = percent;
             }
@@ -271,7 +271,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViewUtils.show(NotePreviewFragment.this, mFab, true);
+                ViewUtils.show(NotePreviewFragment.this, mFab);
             }
         }, 500);
     }

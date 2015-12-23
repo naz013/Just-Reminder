@@ -119,25 +119,21 @@ public class ViewUtils {
         }
     }
 
-    public static void fadeInAnimation(View view, boolean animation){
-        if (animation) {
-            Animation fadeIn = new AlphaAnimation(0, 1);
-            fadeIn.setInterpolator(new DecelerateInterpolator());
-            fadeIn.setStartOffset(400);
-            fadeIn.setDuration(400);
-            view.setAnimation(fadeIn);
-            view.setVisibility(View.VISIBLE);
-        } else view.setVisibility(View.VISIBLE);
+    public static void fadeInAnimation(View view){
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+        fadeIn.setStartOffset(400);
+        fadeIn.setDuration(400);
+        view.setAnimation(fadeIn);
+        view.setVisibility(View.VISIBLE);
     }
 
-    public static void fadeOutAnimation(View view, boolean animation){
-        if (animation) {
-            Animation fadeOut = new AlphaAnimation(1, 0);
-            fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
-            fadeOut.setDuration(400);
-            view.setAnimation(fadeOut);
-            view.setVisibility(View.GONE);
-        } else view.setVisibility(View.GONE);
+    public static void fadeOutAnimation(View view){
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setDuration(400);
+        view.setAnimation(fadeOut);
+        view.setVisibility(View.GONE);
     }
 
     public static void show(View view){
@@ -165,68 +161,48 @@ public class ViewUtils {
         view.setVisibility(View.GONE);
     }
 
-    public static void showOver(View view, boolean animation){
-        if (animation) {
-            Animation fadeIn = new AlphaAnimation(0, 1);
-            fadeIn.setInterpolator(new OvershootInterpolator());
-            fadeIn.setDuration(300);
-            view.setAnimation(fadeIn);
-            view.setVisibility(View.VISIBLE);
-        } else view.setVisibility(View.VISIBLE);
+    public static void showOver(View view){
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new OvershootInterpolator());
+        fadeIn.setDuration(300);
+        view.setAnimation(fadeIn);
+        view.setVisibility(View.VISIBLE);
     }
 
-    public static void hideOver(View view, boolean animation){
-        if (animation) {
-            Animation fadeIn = new AlphaAnimation(1, 0);
-            fadeIn.setInterpolator(new OvershootInterpolator());
-            fadeIn.setDuration(300);
-            view.setAnimation(fadeIn);
-            view.setVisibility(View.GONE);
-        } else view.setVisibility(View.GONE);
+    public static void hideOver(View view){
+        Animation fadeIn = new AlphaAnimation(1, 0);
+        fadeIn.setInterpolator(new OvershootInterpolator());
+        fadeIn.setDuration(300);
+        view.setAnimation(fadeIn);
+        view.setVisibility(View.GONE);
     }
 
-    public static void show(Context context, View v, boolean animation) {
-        if (animation) {
-            Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom);
-            v.startAnimation(slide);
-            v.setVisibility(View.VISIBLE);
-        } else {
-            v.setVisibility(View.VISIBLE);
-        }
+    public static void show(Context context, View v) {
+        Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom);
+        v.startAnimation(slide);
+        v.setVisibility(View.VISIBLE);
     }
 
-    public static void hide(Context context, View v, boolean animation) {
-        if (animation) {
-            Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom_out);
-            v.startAnimation(slide);
-            v.setVisibility(View.GONE);
-        } else {
-            v.setVisibility(View.GONE);
-        }
+    public static void hide(Context context, View v) {
+        Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom_out);
+        v.startAnimation(slide);
+        v.setVisibility(View.GONE);
     }
 
-    public static void showReveal(View v, boolean animation) {
-        if (animation) {
-            Animation fadeIn = new AlphaAnimation(0, 1);
-            fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
-            fadeIn.setDuration(300);
-            v.setAnimation(fadeIn);
-            v.setVisibility(View.VISIBLE);
-        } else {
-            v.setVisibility(View.VISIBLE);
-        }
+    public static void showReveal(View v) {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
+        fadeIn.setDuration(300);
+        v.setAnimation(fadeIn);
+        v.setVisibility(View.VISIBLE);
     }
 
-    public static void hideReveal(View v, boolean animation) {
-        if (animation) {
-            Animation fadeIn = new AlphaAnimation(1, 0);
-            fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
-            fadeIn.setDuration(300);
-            v.setAnimation(fadeIn);
-            v.setVisibility(View.GONE);
-        } else {
-            v.setVisibility(View.GONE);
-        }
+    public static void hideReveal(View v) {
+        Animation fadeIn = new AlphaAnimation(1, 0);
+        fadeIn.setInterpolator(new AccelerateDecelerateInterpolator());
+        fadeIn.setDuration(300);
+        v.setAnimation(fadeIn);
+        v.setVisibility(View.GONE);
     }
 
     public static void zoom(View view, int pos, int number){

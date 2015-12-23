@@ -3,7 +3,6 @@ package com.cray.software.justreminder.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -51,15 +50,6 @@ public class ActionView extends LinearLayout {
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs, R.styleable.RepeatView, 0, 0);
-
-            String titleText = "";
-            try {
-                titleText = a.getString(R.styleable.RepeatView_repeat_type_text);
-            } catch (Exception e) {
-                Log.e("RepeatView", "There was an error loading attributes.");
-            } finally {
-                a.recycle();
-            }
         }
 
         this.mContext = context;

@@ -248,7 +248,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private GeocoderTask task;
 
     private  static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
-    private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
+    private boolean isCalendar = false, isStock = false, isDark = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -261,7 +261,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
@@ -277,16 +276,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         toolbar.setVisibility(View.GONE);
 
-        if (isAnimation) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                    toolbar.startAnimation(slide);
-                    toolbar.setVisibility(View.VISIBLE);
-                }
-            }, 500);
-        } else toolbar.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+                toolbar.startAnimation(slide);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+        }, 500);
 
         category = (TextView) findViewById(R.id.category);
         category.setOnClickListener(new View.OnClickListener() {
@@ -341,10 +338,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                     category.setText(title);
                 }
-                if (cf != null) cf.close();
+                if (cf != null) {
+                    cf.close();
+                }
                 db.close();
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
             if (type != null) {
                 if (type.matches(Constants.TYPE_REMINDER)) {
                     attachDateReminder();
@@ -432,7 +433,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         taskField.setHint(R.string.title);
 
         RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
-        ViewUtils.fadeInAnimation(shoppingLayout, isAnimation);
+        ViewUtils.fadeInAnimation(shoppingLayout);
 
         RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
         CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
@@ -447,8 +448,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         shopTimeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingTimeContainer);
+                }
                 ViewUtils.show(shoppingNoTime);
                 myYear = 0;
                 myMonth = 0;
@@ -458,15 +460,19 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 isShoppingReminder = false;
             }
         });
-        if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+        if (isDark) {
+            shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+        } else {
+            shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+        }
 
         shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
         shoppingNoTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
+                }
                 ViewUtils.show(shoppingTimeContainer);
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
@@ -497,12 +503,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     shoppingAdapter.notifyDataSetChanged();
                     shopEdit.setText("");
                     return true;
-                } else return false;
+                } else {
+                    return false;
+                }
             }
         });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
-        if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
+        if (isDark) {
+            addButton.setImageResource(R.drawable.ic_add_white_24dp);
+        } else {
+            addButton.setImageResource(R.drawable.ic_add_black_24dp);
+        }
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -523,8 +534,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onItemCheck(int position, boolean isChecked) {
                 ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked() == 1) item.setIsChecked(0);
-                else item.setIsChecked(1);
+                if (item.isChecked() == 1) {
+                    item.setIsChecked(0);
+                } else {
+                    item.setIsChecked(1);
+                }
                 shoppingAdapter.notifyDataSetChanged();
             }
 
@@ -560,8 +574,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onItemCheck(int position, boolean isChecked) {
                     ShoppingList item = shoppingLists.getItem(position);
-                    if (item.isChecked() == 1) item.setIsChecked(0);
-                    else item.setIsChecked(1);
+                    if (item.isChecked() == 1) {
+                        item.setIsChecked(0);
+                    } else {
+                        item.setIsChecked(1);
+                    }
                     shoppingAdapter.notifyDataSetChanged();
                 }
 
@@ -584,13 +601,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 dateViewShopping.setDateTime(cal.getTimeInMillis());
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
+                }
                 ViewUtils.show(shoppingTimeContainer);
                 isShoppingReminder = true;
             } else {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingTimeContainer);
+                }
                 ViewUtils.show(shoppingNoTime);
                 isShoppingReminder = false;
             }
@@ -604,7 +623,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private void attachDateReminder(){
         LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        ViewUtils.fadeInAnimation(by_date_layout, isAnimation);
+        ViewUtils.fadeInAnimation(by_date_layout);
 
         final Calendar cal = Calendar.getInstance();
         myYear = cal.get(Calendar.YEAR);
@@ -640,7 +659,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
             taskField.setText(text);
@@ -656,7 +677,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        ViewUtils.fadeInAnimation(monthDayLayout, isAnimation);
+        ViewUtils.fadeInAnimation(monthDayLayout);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -684,9 +705,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         String dayStr;
-        if (myDay > 28) myDay = 28;
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
+        if (myDay > 28) {
+            myDay = 28;
+        }
+        if (myDay < 10) {
+            dayStr = "0" + myDay;
+        } else {
+            dayStr = String.valueOf(myDay);
+        }
 
         monthDayField.setText(dayStr);
         monthDayField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -711,9 +737,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    if (isAnimation) {
-                        ViewUtils.expand(monthDayActionLayout);
-                    } else action_layout.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(monthDayActionLayout);
                     monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
                     monthDayAddNumberButton.setOnClickListener(contactClick);
                     ViewUtils.setImage(monthDayAddNumberButton, isDark);
@@ -726,14 +750,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     monthDayMessageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
+                            if (b) {
+                                taskField.setHint(getString(R.string.message_field_hint));
+                            } else {
+                                taskField.setHint(getString(R.string.tast_hint));
+                            }
                         }
                     });
                 } else {
-                    if (isAnimation) {
-                        ViewUtils.collapse(monthDayActionLayout);
-                    } else monthDayActionLayout.setVisibility(View.GONE);
+                    ViewUtils.collapse(monthDayActionLayout);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
@@ -752,11 +777,18 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
                 myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
-            if (myDay == 0) myDay = 1;
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
+            if (myDay == 0) {
+                myDay = 1;
+            }
+            if (myDay < 10) {
+                dayStr = "0" + myDay;
+            } else {
+                dayStr = String.valueOf(myDay);
+            }
 
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
@@ -778,7 +810,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
                         type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
                     lastCheck.setChecked(true);
-                } else dayCheck.setChecked(true);
+                } else {
+                    dayCheck.setChecked(true);
+                }
                 if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
                     monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
                     monthDayCallCheck.setChecked(true);
@@ -824,9 +858,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             case R.id.mapCheck:
                 if (mapCheck.isChecked()) {
                     currentCheck.setChecked(false);
-                    ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                    ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
-                    if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+                    ViewUtils.fadeOutAnimation(specsContainerOut);
+                    ViewUtils.fadeInAnimation(mapContainerOut);
+                    if (mLocList != null) {
+                        mLocationManager.removeUpdates(mLocList);
+                    }
                 }
                 break;
             default:
@@ -840,7 +876,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private void attachWeekDayReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
         LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        ViewUtils.fadeInAnimation(weekday_layout, isAnimation);
+        ViewUtils.fadeInAnimation(weekday_layout);
 
         final Calendar c = Calendar.getInstance();
         myYear = c.get(Calendar.YEAR);
@@ -896,8 +932,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     messageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
+                            if (b) {
+                                taskField.setHint(getString(R.string.message_field_hint));
+                            } else {
+                                taskField.setHint(getString(R.string.tast_hint));
+                            }
                         }
                     });
                 } else {
@@ -923,7 +962,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 number = x.getString(x.getColumnIndex(Constants.COLUMN_NUMBER));
                 uuID = x.getString(x.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (x != null) x.close();
+            if (x != null) {
+                x.close();
+            }
 
             c.set(Calendar.HOUR_OF_DAY, myHour);
             c.set(Calendar.MINUTE, myMinute);
@@ -956,33 +997,47 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * @param weekdays weekday string.
      */
     private void setCheckForDays(final String weekdays){
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED)) {
             mondayCheck.setChecked(true);
-        else mondayCheck.setChecked(false);
+        } else {
+            mondayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED)) {
             tuesdayCheck.setChecked(true);
-        else tuesdayCheck.setChecked(false);
+        } else {
+            tuesdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED)) {
             wednesdayCheck.setChecked(true);
-        else wednesdayCheck.setChecked(false);
+        } else {
+            wednesdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED)) {
             thursdayCheck.setChecked(true);
-        else thursdayCheck.setChecked(false);
+        } else {
+            thursdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED)) {
             fridayCheck.setChecked(true);
-        else fridayCheck.setChecked(false);
+        } else {
+            fridayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED)) {
             saturdayCheck.setChecked(true);
-        else saturdayCheck.setChecked(false);
+        } else {
+            saturdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED)) {
             sundayCheck.setChecked(true);
-        else sundayCheck.setChecked(false);
+        } else {
+            sundayCheck.setChecked(false);
+        }
     }
 
     /**
@@ -991,7 +1046,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private void attachTimeReminder(){
         cSetter = new ColorSetter(BackupFileEdit.this);
         LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        ViewUtils.fadeInAnimation(after_time_layout, isAnimation);
+        ViewUtils.fadeInAnimation(after_time_layout);
 
         timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
         if (gtx.isLinked()){
@@ -1098,7 +1153,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
                 repeat = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
             taskField.setText(text);
             repeatViewTime.setProgress(repeat);
             timeString = TimeUtil.generateAfterString(afterTime);
@@ -1130,8 +1187,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Set time in time view fields.
      */
     private void updateTimeView() {
-        if (timeString.matches("000000")) deleteButton.setEnabled(false);
-        else deleteButton.setEnabled(true);
+        if (timeString.matches("000000")) {
+            deleteButton.setEnabled(false);
+        } else {
+            deleteButton.setEnabled(true);
+        }
         if (timeString.length() == 6){
             String hours = timeString.substring(0, 2);
             String minutes = timeString.substring(2, 4);
@@ -1149,7 +1209,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        ViewUtils.fadeInAnimation(skype_layout, isAnimation);
+        ViewUtils.fadeInAnimation(skype_layout);
 
         skypeUser = (EditText) findViewById(R.id.skypeUser);
 
@@ -1160,8 +1220,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) taskField.setHint(getString(R.string.message_field_hint));
-                else taskField.setHint(getString(R.string.tast_hint));
+                if (b) {
+                    taskField.setHint(getString(R.string.message_field_hint));
+                } else {
+                    taskField.setHint(getString(R.string.tast_hint));
+                }
             }
         });
 
@@ -1200,15 +1263,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
-            if(type.matches(Constants.TYPE_SKYPE)){
+            if (type.matches(Constants.TYPE_SKYPE)) {
                 skypeCall.setChecked(true);
             }
-            if(type.matches(Constants.TYPE_SKYPE_VIDEO)){
+            if (type.matches(Constants.TYPE_SKYPE_VIDEO)) {
                 skypeVideo.setChecked(true);
             }
-            if(type.matches(Constants.TYPE_SKYPE_CHAT)){
+            if (type.matches(Constants.TYPE_SKYPE_CHAT)) {
                 skypeChat.setChecked(true);
             }
 
@@ -1228,7 +1293,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        ViewUtils.fadeInAnimation(application_layout, isAnimation);
+        ViewUtils.fadeInAnimation(application_layout);
 
         browseLink = (EditText) findViewById(R.id.browseLink);
         browseLink.setVisibility(View.GONE);
@@ -1241,7 +1306,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         sPrefs = new SharedPrefs(BackupFileEdit.this);
         if (isDark){
             pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
-        } else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
+        } else {
+            pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
+        }
 
         application = (RadioButton) findViewById(R.id.application);
         application.setChecked(true);
@@ -1270,9 +1337,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getFile(id);
-            String text="", number="";
-            int repCode=0;
-            if (c != null && c.moveToFirst()){
+            String text = "", number = "";
+            int repCode = 0;
+            if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -1283,11 +1350,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
             selectedPackage = number;
 
-            if(type.matches(Constants.TYPE_APPLICATION)){
+            if (type.matches(Constants.TYPE_APPLICATION)) {
                 application.setChecked(true);
                 browser.setEnabled(false);
                 PackageManager packageManager = getPackageManager();
@@ -1300,7 +1369,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 applicationName.setText(title);
             }
 
-            if(type.matches(Constants.TYPE_APPLICATION_BROWSER)){
+            if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
                 browser.setChecked(true);
                 application.setEnabled(false);
                 browseLink.setText(number);
@@ -1319,7 +1388,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private void attachCall(){
         LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        ViewUtils.fadeInAnimation(call_layout, isAnimation);
+        ViewUtils.fadeInAnimation(call_layout);
 
         ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
         addNumberButton.setOnClickListener(contactClick);
@@ -1336,7 +1405,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         myMinute = cal.get(Calendar.MINUTE);
 
         callTaskExport = (CheckBox) findViewById(R.id.callTaskExport);
-        if (gtx.isLinked()){
+        if (gtx.isLinked()) {
             callTaskExport.setVisibility(View.VISIBLE);
         }
 
@@ -1350,9 +1419,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getFile(id);
-            String text="", number="";
-            int repCode=0;
-            if (c != null && c.moveToFirst()){
+            String text = "", number = "";
+            int repCode = 0;
+            if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -1363,7 +1432,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
@@ -1379,7 +1450,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private void attachMessage(){
         LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        ViewUtils.fadeInAnimation(message_layout, isAnimation);
+        ViewUtils.fadeInAnimation(message_layout);
 
         ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
         addMessageNumberButton.setOnClickListener(contactClick);
@@ -1410,9 +1481,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (id != 0) {
             fdb.open();
             Cursor c = fdb.getFile(id);
-            String text="", number="";
-            int repCode=0;
-            if (c != null && c.moveToFirst()){
+            String text = "", number = "";
+            int repCode = 0;
+            if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
@@ -1423,7 +1494,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
@@ -1437,18 +1510,20 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     @Override
     public void place(final LatLng place) {
         curPlace = place;
-        if (isLocationOutAttached()) mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
+        if (isLocationOutAttached()) {
+            mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
+        }
     }
 
     @Override
     public void onZoomOutClick() {
         if (isLocationAttached()) {
-            ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
-            ViewUtils.fadeInAnimation(specsContainer, isAnimation);
+            ViewUtils.fadeOutAnimation(mapContainer);
+            ViewUtils.fadeInAnimation(specsContainer);
         }
         if (isLocationOutAttached()) {
-            ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
-            ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
+            ViewUtils.fadeOutAnimation(mapContainerOut);
+            ViewUtils.fadeInAnimation(specsContainerOut);
         }
     }
 
@@ -1462,7 +1537,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private void attachLocation() {
         LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        ViewUtils.fadeInAnimation(geolocationlayout, isAnimation);
+        ViewUtils.fadeInAnimation(geolocationlayout);
 
         delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
         specsContainer = (ScrollView) findViewById(R.id.specsContainer);
@@ -1480,13 +1555,10 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (isAnimation) {
-                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                        delayLayout.startAnimation(slide);
-                        delayLayout.setVisibility(View.VISIBLE);
-                    } else delayLayout.setVisibility(View.VISIBLE);
-                }
-                else {
+                    Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+                    delayLayout.startAnimation(slide);
+                    delayLayout.setVisibility(View.VISIBLE);
+                } else {
                     delayLayout.setVisibility(View.GONE);
                 }
             }
@@ -1510,8 +1582,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainer, isAnimation);
-                ViewUtils.fadeInAnimation(mapContainer, isAnimation);
+                ViewUtils.fadeOutAnimation(specsContainer);
+                ViewUtils.fadeInAnimation(mapContainer);
             }
         });
 
@@ -1528,7 +1600,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
+                if (task != null && !task.isCancelled()) {
+                    task.cancel(true);
+                }
                 task = new GeocoderTask(BackupFileEdit.this, BackupFileEdit.this);
                 task.execute(s.toString());
             }
@@ -1551,7 +1625,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     title = pos.toString();
                 }
                 int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-                if (map != null) map.addMarker(pos, title, true, false, radius);
+                if (map != null) {
+                    map.addMarker(pos, title, true, false, radius);
+                }
             }
         });
 
@@ -1563,7 +1639,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    ViewUtils.showOver(actionLocation, isAnimation);
+                    ViewUtils.showOver(actionLocation);
                     addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
                     addNumberButtonLocation.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocation, isDark);
@@ -1576,12 +1652,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     messageCheckLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
+                            if (b) {
+                                taskField.setHint(getString(R.string.message_field_hint));
+                            } else {
+                                taskField.setHint(getString(R.string.tast_hint));
+                            }
                         }
                     });
                 } else {
-                    ViewUtils.hideOver(actionLocation, isAnimation);
+                    ViewUtils.hideOver(actionLocation);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
@@ -1601,8 +1680,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             fdb.open();
             Cursor c = fdb.getFile(id);
             String text = "", number = null;
-            double latitude=0, longitude=0;
-            if (c != null && c.moveToFirst()){
+            double latitude = 0, longitude = 0;
+            if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
@@ -1614,7 +1693,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
             if (myDay > 0 && myMonth > 0 && myYear > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
@@ -1642,7 +1723,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
+            if (map != null) {
+                map.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
+            }
         }
     }
 
@@ -1653,7 +1736,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        ViewUtils.fadeInAnimation(locationOutLayout, isAnimation);
+        ViewUtils.fadeInAnimation(locationOutLayout);
 
         delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
@@ -1671,11 +1754,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (isAnimation) {
-                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                        delayLayoutOut.startAnimation(slide);
-                        delayLayoutOut.setVisibility(View.VISIBLE);
-                    } else delayLayoutOut.setVisibility(View.VISIBLE);
+                    Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+                    delayLayoutOut.startAnimation(slide);
+                    delayLayoutOut.setVisibility(View.VISIBLE);
                 }
                 else {
                     delayLayoutOut.setVisibility(View.GONE);
@@ -1684,9 +1765,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         });
 
         if (attachDelayOut.isChecked()) {
-            if (isAnimation) {
-                ViewUtils.expand(delayLayoutOut);
-            } else delayLayoutOut.setVisibility(View.VISIBLE);
+            ViewUtils.expand(delayLayoutOut);
         }
 
         ImageButton mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
@@ -1699,8 +1778,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
+                ViewUtils.fadeOutAnimation(specsContainerOut);
+                ViewUtils.fadeInAnimation(mapContainerOut);
                 mapCheck.setChecked(true);
             }
         });
@@ -1728,8 +1807,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             }
         });
-        if (pointRadius.getProgress() == 0)
+        if (pointRadius.getProgress() == 0) {
             pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        }
 
         actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
         actionLocationOut.setVisibility(View.GONE);
@@ -1739,7 +1819,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    ViewUtils.showOver(actionLocationOut, isAnimation);
+                    ViewUtils.showOver(actionLocationOut);
                     addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
                     addNumberButtonLocationOut.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocationOut, isDark);
@@ -1752,12 +1832,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     messageCheckLocationOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
+                            if (b) {
+                                taskField.setHint(getString(R.string.message_field_hint));
+                            } else {
+                                taskField.setHint(getString(R.string.tast_hint));
+                            }
                         }
                     });
                 } else {
-                    ViewUtils.hideOver(actionLocationOut, isAnimation);
+                    ViewUtils.hideOver(actionLocationOut);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
@@ -1775,7 +1858,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         if (curPlace != null) {
             int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true, radius);
+            if (mapOut != null) {
+                mapOut.addMarker(curPlace, null, true, true, radius);
+            }
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -1783,8 +1868,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             fdb.open();
             Cursor c = fdb.getFile(id);
             String text = "", number = null;
-            double latitude=0, longitude=0;
-            if (c != null && c.moveToFirst()){
+            double latitude = 0, longitude = 0;
+            if (c != null && c.moveToFirst()) {
                 text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
                 number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
                 latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
@@ -1796,11 +1881,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
                 myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
             }
-            if (c != null) c.close();
+            if (c != null) {
+                c.close();
+            }
 
             if (myDay > 0 && myMonth > 0 && myYear > 0) {
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
                 dateViewLocationOut.setDateTime(cal.getTimeInMillis());
                 attachDelayOut.setChecked(true);
             } else {
@@ -1826,7 +1912,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (longitude != 0 && latitude != 0) {
                 LatLng pos = new LatLng(latitude, longitude);
                 int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-                if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
+                if (mapOut != null) {
+                    mapOut.addMarker(pos, text, true, true, radius);
+                }
                 mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
                 mapCheck.setChecked(true);
             }
@@ -1954,14 +2042,24 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             type = Constants.TYPE_MESSAGE;
         } else if (isLocationAttached()){
             if (attachLocationAction.isChecked()){
-                if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
-                else type = Constants.TYPE_LOCATION_MESSAGE;
-            } else type = Constants.TYPE_LOCATION;
+                if (callCheckLocation.isChecked()) {
+                    type = Constants.TYPE_LOCATION_CALL;
+                } else {
+                    type = Constants.TYPE_LOCATION_MESSAGE;
+                }
+            } else {
+                type = Constants.TYPE_LOCATION;
+            }
         } else if (isLocationOutAttached()){
             if (attachLocationOutAction.isChecked()){
-                if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
-                else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
-            } else type = Constants.TYPE_LOCATION_OUT;
+                if (callCheckLocationOut.isChecked()) {
+                    type = Constants.TYPE_LOCATION_OUT_CALL;
+                } else {
+                    type = Constants.TYPE_LOCATION_OUT_MESSAGE;
+                }
+            } else {
+                type = Constants.TYPE_LOCATION_OUT;
+            }
         }
         return type;
     }
@@ -2038,15 +2136,21 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (isLocationAttached() || isLocationOutAttached()){
             if (LocationUtil.checkLocationEnable(this)) {
                 if (isLocationOutAttached()){
-                    if (attachLocationOutAction.isChecked() && !checkNumber()) saveLocationOut();
-                    else if (attachLocationOutAction.isChecked() && checkNumber())
+                    if (attachLocationOutAction.isChecked() && !checkNumber()) {
+                        saveLocationOut();
+                    } else if (attachLocationOutAction.isChecked() && checkNumber()) {
                         phoneNumberLocationOut.setError(getString(R.string.number_error));
-                    else saveLocationOut();
+                    } else {
+                        saveLocationOut();
+                    }
                 } else {
-                    if (attachLocationAction.isChecked() && !checkNumber()) saveLocation();
-                    else if (attachLocationAction.isChecked() && checkNumber())
+                    if (attachLocationAction.isChecked() && !checkNumber()) {
+                        saveLocation();
+                    } else if (attachLocationAction.isChecked() && checkNumber()) {
                         phoneNumberLocation.setError(getString(R.string.number_error));
-                    else saveLocation();
+                    } else {
+                        saveLocation();
+                    }
                 }
             } else {
                 LocationUtil.showLocationAlert(this);
@@ -2127,7 +2231,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         if (!isShoppingReminder){
             myDay = 0;
@@ -2154,7 +2260,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (attachAction.isChecked()){
             if (callCheck.isChecked()){
                 type = Constants.TYPE_WEEKDAY_CALL;
-            } else type = Constants.TYPE_WEEKDAY_MESSAGE;
+            } else {
+                type = Constants.TYPE_WEEKDAY_MESSAGE;
+            }
         } else {
             type = Constants.TYPE_WEEKDAY;
         }
@@ -2169,15 +2277,24 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         String type;
         if (monthDayAttachAction.isChecked()){
             if (monthDayCallCheck.isChecked()){
-                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
-                else type = Constants.TYPE_MONTHDAY_CALL;
+                if (lastCheck.isChecked()) {
+                    type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                } else {
+                    type = Constants.TYPE_MONTHDAY_CALL;
+                }
             } else {
-                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
-                else type = Constants.TYPE_MONTHDAY_MESSAGE;
+                if (lastCheck.isChecked()) {
+                    type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                } else {
+                    type = Constants.TYPE_MONTHDAY_MESSAGE;
+                }
             }
         } else {
-            if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
-            else type = Constants.TYPE_MONTHDAY;
+            if (lastCheck.isChecked()) {
+                type = Constants.TYPE_MONTHDAY_LAST;
+            } else {
+                type = Constants.TYPE_MONTHDAY;
+            }
         }
         return type;
     }
@@ -2246,7 +2363,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(task, type, 0, 0, 0, myHour, myMinute, 0, number,
                 0, 0, 0, 0, 0, uuID, repeat, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2278,8 +2397,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             number = selectedPackage;
         } else if (browser.isChecked()){
             number = browseLink.getText().toString().trim();
-            if (!number.startsWith("http://") && !number.startsWith("https://"))
+            if (!number.startsWith("http://") && !number.startsWith("https://")) {
                 number = "http://" + number;
+            }
         }
 
         DB = new DataBase(BackupFileEdit.this);
@@ -2293,7 +2413,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2333,7 +2455,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2345,7 +2469,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         ReminderUtils.exportToCalendar(this, task, startTime, ids, isCalendar, isStock);
         if (gtx.isLinked() && skypeTaskExport.isChecked()){
             ReminderUtils.exportToTasks(this, task, startTime, ids);
-        }new UpdatesHelper(BackupFileEdit.this).updateWidget();
+        }
+        new UpdatesHelper(BackupFileEdit.this).updateWidget();
         finish();
     }
 
@@ -2368,7 +2493,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return monthDayPhoneNumber.getText().toString().trim().matches("");
         } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
             return phoneNumberLocationOut.getText().toString().trim().matches("");
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -2378,7 +2505,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private boolean checkApplication() {
         if (application.isChecked()) {
             return applicationName.getText().toString().trim().matches("");
-        } else return browser.isChecked() && browseLink.getText().toString().trim().matches("");
+        } else {
+            return browser.isChecked() && browseLink.getText().toString().trim().matches("");
+        }
     }
 
     /**
@@ -2412,7 +2541,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
 
         int day = myDay;
-        if (type.endsWith("_last")) day = 0;
+        if (type.endsWith("_last")) {
+            day = 0;
+        }
 
         DB.open();
         if (isUID(uuID)){
@@ -2425,7 +2556,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(text, type, myDay, 0, 0, myHour, myMinute, 0, number, 0, 0, 0, 0, 0,
                 uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2463,7 +2596,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
                 repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2490,7 +2625,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         long time = SuperUtil.getAfterTime(this, timeString);
-        if (time == 0) return;
+        if (time == 0) {
+            return;
+        }
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         final Calendar c = Calendar.getInstance();
@@ -2511,7 +2648,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds,
                 null, 0, time, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2551,7 +2690,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2592,7 +2733,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
                 number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
@@ -2620,7 +2763,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = null;
-        if (attachLocationAction.isChecked()) number = phoneNumberLocation.getText().toString().trim();
+        if (attachLocationAction.isChecked()) {
+            number = phoneNumberLocation.getText().toString().trim();
+        }
         LatLng dest = null;
         boolean isNull = true;
         if (curPlace != null) {
@@ -2652,7 +2797,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
         if (attackDelay.isChecked()){
             long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
@@ -2684,7 +2831,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = null;
-        if (attachLocationOutAction.isChecked()) number = phoneNumberLocationOut.getText().toString().trim();
+        if (attachLocationOutAction.isChecked()) {
+            number = phoneNumberLocationOut.getText().toString().trim();
+        }
         LatLng dest = null;
         boolean isNull = true;
         if (curPlace != null) {
@@ -2716,7 +2865,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
-            if (cf != null) cf.close();
+            if (cf != null) {
+                cf.close();
+            }
         }
 
         if (attachDelayOut.isChecked()){
@@ -2807,8 +2958,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             calendar.set(year, monthOfYear, dayOfMonth);
 
             if (isMonthDayAttached()){
-                if (myDay < 29) monthDayField.setText(dayOfMonth);
-                else {
+                if (myDay < 29) {
+                    monthDayField.setText(dayOfMonth);
+                } else {
                     myDay = 28;
                     Messages.toast(BackupFileEdit.this, getString(R.string.string_max_day_message));
                 }
@@ -2851,15 +3003,23 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onDestroy() {
-        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
-        if (DB != null) DB.close();
+        if (mLocList != null) {
+            mLocationManager.removeUpdates(mLocList);
+        }
+        if (DB != null) {
+            DB.close();
+        }
         super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
-        if (map != null && !map.onBackPressed()) return;
-        if (mapOut != null && !mapOut.onBackPressed()) return;
+        if (map != null && !map.onBackPressed()) {
+            return;
+        }
+        if (mapOut != null && !mapOut.onBackPressed()) {
+            return;
+        }
         finish();
     }
 
@@ -2915,7 +3075,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             curPlace = new LatLng(currentLat, currentLong);
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = taskField.getText().toString().trim();
-            if (text.matches("")) text = _Location;
+            if (text.matches("")) {
+                text = _Location;
+            }
             if (isLocationOutAttached()) {
                 currentLocation.setText(_Location);
                 if (mapOut != null) {

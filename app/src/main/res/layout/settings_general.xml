@@ -35,16 +35,6 @@
         <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/animationsPrefs"
-            app:prefs_primary_text="@string/animation_settings_title"
-            app:prefs_secondary_text="@string/animation_settings_explanation"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
-    
-        <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/themeColorPrefs"
             app:prefs_primary_text="@string/theme_title"
             app:prefs_secondary_text="@string/theme_descr"

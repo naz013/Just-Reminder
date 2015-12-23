@@ -71,8 +71,6 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         repeatViewSeek.setOnSeekBarChangeListener(this);
         repeatTitle.addTextChangedListener(this);
 
-        repeatType.setText(context.getString(R.string.string_days));
-
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs, R.styleable.RepeatView, 0, 0);

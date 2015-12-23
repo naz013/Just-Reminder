@@ -28,7 +28,6 @@
     </declare-styleable>
 
     <declare-styleable name="ActionView">
-        <attr name="number_text_size" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="RoundImageView">

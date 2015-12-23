@@ -68,7 +68,6 @@ public class Prefs {
     public static final String QUICK_NOTE_REMINDER_TIME = "quick_note_reminder_time";
     public static final String SYNC_NOTES = "sync_notes";
     public static final String SYNC_BIRTHDAYS = "sync_birthdays";
-    public static final String ANIMATIONS = "animation";
     public static final String DELETE_NOTE_FILE = "delete_note_file";
     public static final String AUTO_LANGUAGE = "auto_language";
     public static final String VOICE_LANGUAGE = "voice_language";
@@ -84,7 +83,6 @@ public class Prefs {
     public static final String REMINDERS_COLOR = "reminders_color";
     public static final String IS_24_TIME_FORMAT = "24_hour_format";
     public static final String UNLOCK_DEVICE = "unlock_device";
-    public static final String WIDGET_DISTANCE = "widget_distance";
     public static final String CALENDAR_FEATURE_TASKS = "feature_tasks";
     public static final String MISSED_CALL_REMINDER = "missed_call_reminder";
     public static final String MISSED_CALL_TIME = "missed_call_time";

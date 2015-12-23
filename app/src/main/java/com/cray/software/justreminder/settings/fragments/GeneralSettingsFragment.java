@@ -27,7 +27,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private SharedPrefs sPrefs;
     private ActionBar ab;
     
-    private PrefsView use24TimePrefs, useDarkStylePrefs, animationsPrefs, themeColorPrefs, 
+    private PrefsView use24TimePrefs, useDarkStylePrefs, themeColorPrefs,
             smartFoldPrefs, wearEnablePrefs, extendedButtonPrefs, itemPreviewPrefs;
 
     @Override
@@ -50,10 +50,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         useDarkStylePrefs = (PrefsView) rootView.findViewById(R.id.useDarkStylePrefs);
         useDarkStylePrefs.setChecked(sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         useDarkStylePrefs.setOnClickListener(this);
-
-        animationsPrefs = (PrefsView) rootView.findViewById(R.id.animationsPrefs);
-        animationsPrefs.setChecked(sPrefs.loadBoolean(Prefs.ANIMATIONS));
-        animationsPrefs.setOnClickListener(this);
 
         themeColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
         themeColorPrefs.setOnClickListener(this);
@@ -143,18 +139,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    private void animationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (animationsPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.ANIMATIONS, false);
-            animationsPrefs.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.ANIMATIONS, true);
-            animationsPrefs.setChecked(true);
-        }
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
-    }
-
     private void smartFoldChange (){
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (smartFoldPrefs.isChecked()){
@@ -203,9 +187,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.wearEnablePrefs:
                 wearChange();
-                break;
-            case R.id.animationsPrefs:
-                animationChange();
                 break;
             case R.id.smartFoldPrefs:
                 smartFoldChange();

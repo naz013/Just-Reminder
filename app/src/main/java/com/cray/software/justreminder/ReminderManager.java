@@ -288,7 +288,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
-    private boolean isAnimation = false, isCalendar = false, isStock = false, isDark = false;
+    private boolean isCalendar = false, isStock = false, isDark = false;
     private boolean isLocationMessage = false;
     private boolean isLocationOutMessage = false;
     private boolean isWeekMessage = false;
@@ -311,7 +311,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
@@ -384,7 +383,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                ViewUtils.fadeInAnimation(repeatLabel, isAnimation);
+                ViewUtils.fadeInAnimation(repeatLabel);
                 handler.removeCallbacks(seek);
             }
 
@@ -393,8 +392,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ViewUtils.fadeOutAnimation(repeatLabel, isAnimation);
-                        ViewUtils.fadeOutAnimation(repeatFrame, isAnimation);
+                        ViewUtils.fadeOutAnimation(repeatLabel);
+                        ViewUtils.fadeOutAnimation(repeatFrame);
                     }
                 }, 500);
             }
@@ -474,16 +473,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         toolbar.setVisibility(View.GONE);
 
-        if (isAnimation) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                    toolbar.startAnimation(slide);
-                    toolbar.setVisibility(View.VISIBLE);
-                }
-            }, 500);
-        } else toolbar.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
+                toolbar.startAnimation(slide);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+        }, 500);
 
         mFab = new FloatingActionButton(ReminderManager.this);
         mFab.setColorNormal(cSetter.colorAccent());
@@ -497,7 +494,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ViewUtils.hide(ReminderManager.this, mFab, isAnimation);
+                ViewUtils.hide(ReminderManager.this, mFab);
                 return false;
             }
         });
@@ -636,7 +633,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             addHandler();
             if (v.getId() == R.id.extraLimit){
                 if (is){
-                    ViewUtils.fadeInAnimation(repeatFrame, isAnimation);
+                    ViewUtils.fadeInAnimation(repeatFrame);
                     handler.postDelayed(seek, 3000);
                 }
             }
@@ -674,7 +671,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         @Override
         public void run() {
             if (repeatFrame.getVisibility() == View.VISIBLE) {
-                ViewUtils.fadeOutAnimation(repeatFrame, isAnimation);
+                ViewUtils.fadeOutAnimation(repeatFrame);
                 repeats = -1;
                 extraLimit.setSelected(false);
             }
@@ -688,7 +685,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         @Override
         public void run() {
             if (isOptionsVisible()) {
-                ViewUtils.hideReveal(extraScroll, isAnimation);
+                ViewUtils.hideReveal(extraScroll);
                 switchIcon();
             }
         }
@@ -699,13 +696,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void invalidateButtons(){
         if (isShoppingAttached()){
-            if (extraHolder.getVisibility() == View.VISIBLE) ViewUtils.hideOver(extraHolder, isAnimation);
+            if (extraHolder.getVisibility() == View.VISIBLE) ViewUtils.hideOver(extraHolder);
         } else {
             if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ViewUtils.showOver(extraHolder, isAnimation);
+                        ViewUtils.showOver(extraHolder);
                     }
                 }, 750);
             } else extraHolder.setVisibility(View.GONE);
@@ -782,11 +779,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void switchOptions(){
         if (isOptionsVisible()) {
-            ViewUtils.hideReveal(extraScroll, isAnimation);
+            ViewUtils.hideReveal(extraScroll);
             handler.removeCallbacks(runnable);
         }
         else {
-            ViewUtils.showReveal(extraScroll, isAnimation);
+            ViewUtils.showReveal(extraScroll);
             addHandler();
         }
         switchIcon();
@@ -907,7 +904,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mFab.getVisibility() == View.GONE){
-                    ViewUtils.show(ReminderManager.this, mFab, isAnimation);
+                    ViewUtils.show(ReminderManager.this, mFab);
                 } else {
                     restoreTask();
                 }
@@ -964,7 +961,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        ViewUtils.fadeInAnimation(by_date_layout, isAnimation);
+        ViewUtils.fadeInAnimation(by_date_layout);
 
         DateType dateType = new DateType(this, Constants.TYPE_REMINDER);
         dateType.inflateView(R.id.by_date_layout);
@@ -1043,7 +1040,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        ViewUtils.fadeInAnimation(monthDayLayout, isAnimation);
+        ViewUtils.fadeInAnimation(monthDayLayout);
 
         MonthdayType dateType = new MonthdayType(this);
         dateType.inflateView(R.id.monthDayLayout);
@@ -1103,7 +1100,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)) {
-                        ViewUtils.showOver(monthDayActionLayout, isAnimation);
+                        ViewUtils.showOver(monthDayActionLayout);
                         monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
                         monthDayAddNumberButton.setOnClickListener(contactClick);
                         ViewUtils.setImage(monthDayAddNumberButton, isDark);
@@ -1128,13 +1125,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                                         new String[]{Permissions.CALL_PHONE, Permissions.SEND_SMS}, 110);
                     }
                 } else {
-                    ViewUtils.hideOver(monthDayActionLayout, isAnimation);
+                    ViewUtils.hideOver(monthDayActionLayout);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
         });
 
-        if (monthDayAttachAction.isChecked()) ViewUtils.showOver(monthDayActionLayout, isAnimation);
+        if (monthDayAttachAction.isChecked()) ViewUtils.showOver(monthDayActionLayout);
 
         invalidateButtons();
 
@@ -1235,8 +1232,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case R.id.mapCheck:
                 if (mapCheck.isChecked()) {
                     currentCheck.setChecked(false);
-                    ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                    ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
+                    ViewUtils.fadeOutAnimation(specsContainerOut);
+                    ViewUtils.fadeInAnimation(mapContainerOut);
                     if (mLocList != null) mLocationManager.removeUpdates(mLocList);
                 }
                 break;
@@ -1252,7 +1249,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         cSetter = new ColorSetter(ReminderManager.this);
 
         LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        ViewUtils.fadeInAnimation(weekday_layout, isAnimation);
+        ViewUtils.fadeInAnimation(weekday_layout);
 
         WeekdayType dateType = new WeekdayType(this);
         dateType.inflateView(R.id.weekday_layout);
@@ -1310,7 +1307,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b){
                     if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)){
-                        ViewUtils.showOver(action_layout, isAnimation);
+                        ViewUtils.showOver(action_layout);
                         weekAddNumberButton = (ImageButton) findViewById(R.id.weekAddNumberButton);
                         weekAddNumberButton.setOnClickListener(contactClick);
                         ViewUtils.setImage(weekAddNumberButton, isDark);
@@ -1335,13 +1332,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                                         new String[]{Permissions.CALL_PHONE, Permissions.SEND_SMS}, 111);
                     }
                 } else {
-                    ViewUtils.hideOver(action_layout, isAnimation);
+                    ViewUtils.hideOver(action_layout);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
         });
 
-        if (attachAction.isChecked()) ViewUtils.showOver(action_layout, isAnimation);
+        if (attachAction.isChecked()) ViewUtils.showOver(action_layout);
 
         invalidateButtons();
 
@@ -1441,7 +1438,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         cSetter = new ColorSetter(ReminderManager.this);
         LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        ViewUtils.fadeInAnimation(after_time_layout, isAnimation);
+        ViewUtils.fadeInAnimation(after_time_layout);
 
         TimerType dateType = new TimerType(this);
         dateType.inflateView(R.id.after_time_layout);
@@ -1602,7 +1599,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        ViewUtils.fadeInAnimation(skype_layout, isAnimation);
+        ViewUtils.fadeInAnimation(skype_layout);
 
         DateType dateType = new DateType(this, Constants.TYPE_SKYPE);
         dateType.inflateView(R.id.skype_layout);
@@ -1709,7 +1706,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        ViewUtils.fadeInAnimation(application_layout, isAnimation);
+        ViewUtils.fadeInAnimation(application_layout);
 
         DateType dateType = new DateType(this, Constants.TYPE_APPLICATION);
         dateType.inflateView(R.id.application_layout);
@@ -1740,21 +1737,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (!b) {
-                    if (isAnimation) {
-                        ViewUtils.collapse(applicationLayout);
-                        ViewUtils.expand(browseLink);
-                    } else {
-                        applicationLayout.setVisibility(View.GONE);
-                        browseLink.setVisibility(View.VISIBLE);
-                    }
+                    ViewUtils.collapse(applicationLayout);
+                    ViewUtils.expand(browseLink);
                 } else {
-                    if (isAnimation) {
-                        ViewUtils.collapse(browseLink);
-                        ViewUtils.expand(applicationLayout);
-                    } else {
-                        browseLink.setVisibility(View.GONE);
-                        applicationLayout.setVisibility(View.VISIBLE);
-                    }
+                    ViewUtils.collapse(browseLink);
+                    ViewUtils.expand(applicationLayout);
                 }
                 invalidateButtons();
             }
@@ -1819,7 +1806,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 appTaskExport.setChecked(true);
             }
 
-            if(type.matches(Constants.TYPE_APPLICATION)){
+            if (type.matches(Constants.TYPE_APPLICATION)) {
                 application.setChecked(true);
                 selectedPackage = number;
                 PackageManager packageManager = getPackageManager();
@@ -1832,7 +1819,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 applicationName.setText(name);
 
             }
-            if(type.matches(Constants.TYPE_APPLICATION_BROWSER)){
+            if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
                 browser.setChecked(true);
                 browseLink.setText(number);
             }
@@ -1854,7 +1841,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        ViewUtils.fadeInAnimation(call_layout, isAnimation);
+        ViewUtils.fadeInAnimation(call_layout);
 
         DateType dateType = new DateType(this, Constants.TYPE_CALL);
         dateType.inflateView(R.id.call_layout);
@@ -1941,7 +1928,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.message_field_hint));
 
         LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        ViewUtils.fadeInAnimation(message_layout, isAnimation);
+        ViewUtils.fadeInAnimation(message_layout);
 
         DateType dateType = new DateType(this, Constants.TYPE_MESSAGE);
         dateType.inflateView(R.id.message_layout);
@@ -2031,12 +2018,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onZoomOutClick() {
         if (isLocationAttached()) {
-            ViewUtils.fadeOutAnimation(mapContainer, isAnimation);
-            ViewUtils.fadeInAnimation(specsContainer, isAnimation);
+            ViewUtils.fadeOutAnimation(mapContainer);
+            ViewUtils.fadeInAnimation(specsContainer);
         }
         if (isLocationOutAttached()) {
-            ViewUtils.fadeOutAnimation(mapContainerOut, isAnimation);
-            ViewUtils.fadeInAnimation(specsContainerOut, isAnimation);
+            ViewUtils.fadeOutAnimation(mapContainerOut);
+            ViewUtils.fadeInAnimation(specsContainerOut);
         }
     }
 
@@ -2052,7 +2039,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        ViewUtils.fadeInAnimation(geolocationlayout, isAnimation);
+        ViewUtils.fadeInAnimation(geolocationlayout);
 
         LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION);
         dateType.inflateView(R.id.geolocationlayout);
@@ -2079,21 +2066,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (isAnimation) {
-                        ViewUtils.expand(delayLayout);
-                    } else delayLayout.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(delayLayout);
                 } else {
-                    if (isAnimation) {
-                        ViewUtils.collapse(delayLayout);
-                    } else delayLayout.setVisibility(View.GONE);
+                    ViewUtils.collapse(delayLayout);
                 }
             }
         });
 
         if (attackDelay.isChecked()) {
-            if (isAnimation) {
-                ViewUtils.expand(delayLayout);
-            } else delayLayout.setVisibility(View.VISIBLE);
+            ViewUtils.expand(delayLayout);
         }
 
         ImageButton clearField = (ImageButton) findViewById(R.id.clearButton);
@@ -2116,8 +2097,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainer, isAnimation);
-                ViewUtils.fadeInAnimation(mapContainer, isAnimation);
+                ViewUtils.fadeOutAnimation(specsContainer);
+                ViewUtils.fadeInAnimation(mapContainer);
             }
         });
 
@@ -2168,7 +2149,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    ViewUtils.showOver(actionLocation, isAnimation);
+                    ViewUtils.showOver(actionLocation);
                     addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
                     addNumberButtonLocation.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocation, isDark);
@@ -2188,13 +2169,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         }
                     });
                 } else {
-                    ViewUtils.hideOver(actionLocation, isAnimation);
+                    ViewUtils.hideOver(actionLocation);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
         });
 
-        if (attachLocationAction.isChecked()) ViewUtils.showOver(actionLocation, isAnimation);
+        if (attachLocationAction.isChecked()) ViewUtils.showOver(actionLocation);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -2270,7 +2251,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(getString(R.string.tast_hint));
 
         LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        ViewUtils.fadeInAnimation(locationOutLayout, isAnimation);
+        ViewUtils.fadeInAnimation(locationOutLayout);
 
         LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION_OUT);
         dateType.inflateView(R.id.locationOutLayout);
@@ -2297,21 +2278,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (isAnimation) {
-                        ViewUtils.expand(delayLayoutOut);
-                    } else delayLayoutOut.setVisibility(View.VISIBLE);
+                    ViewUtils.expand(delayLayoutOut);
                 } else {
-                    if (isAnimation) {
-                        ViewUtils.collapse(delayLayoutOut);
-                    } else delayLayoutOut.setVisibility(View.GONE);
+                    ViewUtils.collapse(delayLayoutOut);
                 }
             }
         });
 
         if (attachDelayOut.isChecked()) {
-            if (isAnimation) {
-                ViewUtils.expand(delayLayoutOut);
-            } else delayLayoutOut.setVisibility(View.VISIBLE);
+            ViewUtils.expand(delayLayoutOut);
         }
         ImageButton mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
         if (isDark){
@@ -2323,8 +2298,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainerOut, isAnimation);
-                ViewUtils.fadeInAnimation(mapContainerOut, isAnimation);
+                ViewUtils.fadeOutAnimation(specsContainerOut);
+                ViewUtils.fadeInAnimation(mapContainerOut);
                 mapCheck.setChecked(true);
             }
         });
@@ -2366,7 +2341,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    ViewUtils.showOver(actionLocationOut, isAnimation);
+                    ViewUtils.showOver(actionLocationOut);
                     addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
                     addNumberButtonLocationOut.setOnClickListener(contactClick);
                     ViewUtils.setImage(addNumberButtonLocationOut, isDark);
@@ -2386,13 +2361,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         }
                     });
                 } else {
-                    ViewUtils.hideOver(actionLocationOut, isAnimation);
+                    ViewUtils.hideOver(actionLocationOut);
                     taskField.setHint(getString(R.string.tast_hint));
                 }
             }
         });
 
-        if (attachLocationOutAction.isChecked()) ViewUtils.showOver(actionLocationOut, isAnimation);
+        if (attachLocationOutAction.isChecked()) ViewUtils.showOver(actionLocationOut);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -2475,7 +2450,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         taskField.setHint(R.string.title);
 
         RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
-        ViewUtils.fadeInAnimation(shoppingLayout, isAnimation);
+        ViewUtils.fadeInAnimation(shoppingLayout);
 
         ShoppingType dateType = new ShoppingType(this);
         dateType.inflateView(R.id.shoppingLayout);
@@ -2661,7 +2636,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void detachCurrentView(){
         if (remControl.getView() != 0) {
-            ViewUtils.fadeOutAnimation(findViewById(remControl.getView()), isAnimation);
+            ViewUtils.fadeOutAnimation(findViewById(remControl.getView()));
         }
     }
 
@@ -3314,7 +3289,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (mapOut != null && !mapOut.onBackPressed()) return;
 
         if (mFab.getVisibility() == View.GONE){
-            ViewUtils.show(ReminderManager.this, mFab, isAnimation);
+            ViewUtils.show(ReminderManager.this, mFab);
             return;
         }
 
@@ -3445,9 +3420,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void onDownSwipe() {
         if (navContainer.getVisibility() == View.GONE) {
-            if (isAnimation) {
-                ViewUtils.expand(navContainer);
-            } else navContainer.setVisibility(View.VISIBLE);
+            ViewUtils.expand(navContainer);
         }
     }
 
@@ -3456,9 +3429,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void onUpSwipe() {
         if (navContainer.getVisibility() == View.VISIBLE) {
-            if (isAnimation) {
-                ViewUtils.collapse(navContainer);
-            } else navContainer.setVisibility(View.GONE);
+            ViewUtils.collapse(navContainer);
         }
     }
 

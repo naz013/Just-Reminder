@@ -26,12 +26,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -64,7 +64,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     /**
      * init variables and flags;
      */
-    private boolean isAnimation = true;
     private boolean isTouch = true;
     private boolean isClose = true;
     private boolean isAll = true;
@@ -98,7 +97,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     public static final String ENABLE_ALL_UI = "enable_all_ui";
     public static final String ENABLE_SEARCH = "enable_search";
     public static final String ENABLE_LIST = "enable_list";
-    public static final String ENABLE_ANIMATION = "enable_animation";
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -320,7 +318,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
      */
     public boolean onBackPressed(){
         if(isLayersVisible()) {
-            ViewUtils.hideOver(layersContainer, isAnimation);
+            ViewUtils.hideOver(layersContainer);
             return false;
         } else return true;
     }
@@ -334,8 +332,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
         final SharedPrefs sPrefs = new SharedPrefs(getActivity());
         cSetter = new ColorSetter(getActivity());
-
-        isAnimation = sPrefs.loadBoolean(Prefs.ANIMATIONS);
 
         map = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map)).getMap();
@@ -357,7 +353,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
+                if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
                 if (isTouch) {
                     if (!spinnerArray.isEmpty()) {
                         placesList.setSelection(0);
@@ -427,14 +423,14 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         layers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
-                else ViewUtils.showOver(layersContainer, isAnimation);
+                if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
+                else ViewUtils.showOver(layersContainer);
             }
         });
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
+                if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
                 Location location = map.getMyLocation();
                 if (location != null) {
                     double lat = location.getLatitude();
@@ -454,7 +450,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
-                ViewUtils.hideOver(layersContainer, isAnimation);
+                ViewUtils.hideOver(layersContainer);
             }
         });
         typeSatellite.setOnClickListener(new View.OnClickListener() {
@@ -462,7 +458,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_SATELLITE);
-                ViewUtils.hideOver(layersContainer, isAnimation);
+                ViewUtils.hideOver(layersContainer);
             }
         });
         typeHybrid.setOnClickListener(new View.OnClickListener() {
@@ -470,7 +466,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_HYBRID);
-                ViewUtils.hideOver(layersContainer, isAnimation);
+                ViewUtils.hideOver(layersContainer);
             }
         });
         typeTerrain.setOnClickListener(new View.OnClickListener() {
@@ -478,7 +474,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             public void onClick(View v) {
                 map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
                 sPrefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_TERRAIN);
-                ViewUtils.hideOver(layersContainer, isAnimation);
+                ViewUtils.hideOver(layersContainer);
             }
         });
 
@@ -491,7 +487,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
         cardSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
+                if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
             }
 
             @Override
@@ -535,7 +531,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             placesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
+                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
                     if (position > 0){
                         String placeName = spinnerArray.get(position);
                         DataBase DB = new DataBase(getActivity());
@@ -553,7 +549,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
-                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer, isAnimation);
+                    if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
                 }
             });
         }
@@ -576,7 +572,6 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
 
     private void initArguments(Bundle arguments) {
         if (arguments != null) {
-            isAnimation = arguments.getBoolean(ENABLE_ANIMATION, true);
             isTouch = arguments.getBoolean(ENABLE_TOUCH, true);
             isAll = arguments.getBoolean(ENABLE_ALL_UI, true);
             isClose = arguments.getBoolean(ENABLE_CLOSE, true);
