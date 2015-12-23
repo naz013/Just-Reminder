@@ -3,7 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:visibility="visible"
     android:id="@+id/geolocationlayout">
@@ -86,75 +85,11 @@
 
                     </RelativeLayout>
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:textSize="@dimen/checkbox_text_size"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:text="@string/action_check_text"
-                    android:id="@+id/attachLocationAction" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:id="@+id/actionLocation"
-                    android:layout_marginTop="@dimen/create_margin"
+                <com.cray.software.justreminder.views.ActionView
                     android:layout_width="match_parent"
-                    android:layout_height="fill_parent">
-
-                    <RadioGroup
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:gravity="center"
-                        android:layout_height="fill_parent">
-
-                        <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/create_text_size_normal"
-                            android:text="@string/reminder_make_call"
-                            android:id="@+id/callCheckLocation" />
-
-                        <RadioButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/create_text_size_normal"
-                            android:layout_marginLeft="15dp"
-                            android:text="@string/reminder_send_message"
-                            android:id="@+id/messageCheckLocation" />
-                    </RadioGroup>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/create_margin"
-                        android:layout_width="fill_parent"
-                        android:layout_marginRight="@dimen/create_margin"
-                        android:layout_marginLeft="@dimen/create_margin"
-                        android:layout_height="fill_parent">
-
-                        <ImageButton
-                            android:layout_width="@dimen/create_imagebutton_size"
-                            android:layout_height="@dimen/create_imagebutton_size"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_person_add_black_24dp"
-                            android:id="@+id/addNumberButtonLocation" />
-
-                        <com.cray.software.justreminder.views.FloatingEditText
-                            app:floating_edit_text_highlighted_color="?attr/colorAccent"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:hint="@string/phone_number_hint"
-                            android:textSize="@dimen/create_text_size_normal"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:layout_gravity="center"
-                            android:id="@+id/phoneNumberLocation"
-                            android:inputType="text|phone" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:id="@+id/actionViewLocation"/>
             </LinearLayout>
         </ScrollView>
 

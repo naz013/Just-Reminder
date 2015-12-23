@@ -84,6 +84,7 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
@@ -100,7 +101,7 @@ import java.util.List;
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener, MapListener, GeocoderTask.GeocoderListener,
         Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener,
-        RepeatView.OnRepeatListener {
+        RepeatView.OnRepeatListener, ActionView.OnActionListener {
 
     /**
      * Date reminder type variables.
@@ -110,24 +111,19 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     /**
      * Weekday reminder type variables.
      */
-    private LinearLayout action_layout;
-    private FloatingEditText weekPhoneNumber;
     private TextView weekTimeField;
-    private ImageButton weekAddNumberButton;
     private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
             fridayCheck, saturdayCheck, sundayCheck;
-    private RadioButton callCheck, messageCheck;
-    private CheckBox attachAction, weekTaskExport;
+    private CheckBox weekTaskExport;
+    private ActionView actionViewWeek;
 
     /**
      * Monthday reminder type variables.
      */
-    private CheckBox monthDayTaskExport, monthDayAttachAction;
-    private LinearLayout monthDayActionLayout;
+    private CheckBox monthDayTaskExport;
     private TextView monthDayField, monthDayTimeField;
-    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    private ImageButton monthDayAddNumberButton;
-    private FloatingEditText monthDayPhoneNumber;
+    private RadioButton dayCheck, lastCheck;
+    private ActionView actionViewMonth;
 
     /**
      * Call reminder variables.
@@ -170,29 +166,23 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private LinearLayout delayLayout;
     private CheckBox attackDelay;
-    private ImageButton addNumberButtonLocation;
-    private LinearLayout actionLocation;
     private RelativeLayout mapContainer;
     private ScrollView specsContainer;
-    private CheckBox attachLocationAction;
-    private RadioButton callCheckLocation, messageCheckLocation;
-    private FloatingEditText phoneNumberLocation;
     private MapFragment map;
     private AutoCompleteTextView searchField;
+    private ActionView actionViewLocation;
 
     /**
      * LocationOut reminder type variables.
      */
-    private ImageButton addNumberButtonLocationOut;
-    private LinearLayout actionLocationOut;
     private LinearLayout delayLayoutOut;
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
     private TextView mapLocation, radiusMark, currentLocation;
-    private CheckBox attachLocationOutAction, attachDelayOut;
-    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    private FloatingEditText phoneNumberLocationOut;
+    private CheckBox attachDelayOut;
+    private RadioButton currentCheck, mapCheck;
     private MapFragment mapOut;
+    private ActionView actionViewLocationOut;
 
     /**
      * Shopping list reminder type variables.
@@ -723,46 +713,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
-        monthDayActionLayout.setVisibility(View.GONE);
-
         dayCheck = (RadioButton) findViewById(R.id.dayCheck);
         dayCheck.setChecked(true);
         lastCheck = (RadioButton) findViewById(R.id.lastCheck);
         dayCheck.setOnCheckedChangeListener(this);
         lastCheck.setOnCheckedChangeListener(this);
 
-        monthDayAttachAction = (CheckBox) findViewById(R.id.monthDayAttachAction);
-        monthDayAttachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    ViewUtils.expand(monthDayActionLayout);
-                    monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
-                    monthDayAddNumberButton.setOnClickListener(contactClick);
-                    ViewUtils.setImage(monthDayAddNumberButton, isDark);
-
-                    monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
-
-                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
-                    monthDayCallCheck.setChecked(true);
-                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
-                    monthDayMessageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) {
-                                taskField.setHint(getString(R.string.message_field_hint));
-                            } else {
-                                taskField.setHint(getString(R.string.tast_hint));
-                            }
-                        }
-                    });
-                } else {
-                    ViewUtils.collapse(monthDayActionLayout);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
+        actionViewMonth = (ActionView) findViewById(R.id.actionViewMonth);
+        actionViewMonth.setListener(this);
+        actionViewMonth.setActivity(this);
 
         if (id != 0) {
             fdb.open();
@@ -798,15 +757,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             monthDayField.setText(dayStr);
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
-                monthDayAttachAction.setChecked(false);
+                actionViewMonth.setAction(false);
                 dayCheck.setChecked(true);
             } else if(type.matches(Constants.TYPE_MONTHDAY_LAST)){
-                monthDayAttachAction.setChecked(false);
+                actionViewMonth.setAction(false);
                 lastCheck.setChecked(true);
             } else {
-                monthDayAttachAction.setChecked(true);
-                monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
-                monthDayPhoneNumber.setText(number);
+                actionViewMonth.setAction(true);
+                actionViewMonth.setNumber(number);
                 if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
                         type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
                     lastCheck.setChecked(true);
@@ -814,11 +772,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                     dayCheck.setChecked(true);
                 }
                 if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
-                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
-                    monthDayCallCheck.setChecked(true);
+                    actionViewMonth.setType(ActionView.TYPE_CALL);
                 } else {
-                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
-                    monthDayMessageCheck.setChecked(true);
+                    actionViewMonth.setType(ActionView.TYPE_MESSAGE);
                 }
             }
         }
@@ -911,40 +867,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         saturdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
         sundayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
 
-        action_layout = (LinearLayout) findViewById(R.id.action_layout);
-        action_layout.setVisibility(View.GONE);
-
-        attachAction = (CheckBox) findViewById(R.id.attachAction);
-        attachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    action_layout.setVisibility(View.VISIBLE);
-                    weekAddNumberButton = (ImageButton) findViewById(R.id.weekAddNumberButton);
-                    weekAddNumberButton.setOnClickListener(contactClick);
-                    ViewUtils.setImage(weekAddNumberButton, isDark);
-
-                    weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
-
-                    callCheck = (RadioButton) findViewById(R.id.callCheck);
-                    callCheck.setChecked(true);
-                    messageCheck = (RadioButton) findViewById(R.id.messageCheck);
-                    messageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) {
-                                taskField.setHint(getString(R.string.message_field_hint));
-                            } else {
-                                taskField.setHint(getString(R.string.tast_hint));
-                            }
-                        }
-                    });
-                } else {
-                    action_layout.setVisibility(View.GONE);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
+        actionViewWeek = (ActionView) findViewById(R.id.actionViewWeek);
+        actionViewWeek.setListener(this);
+        actionViewWeek.setActivity(this);
 
         if (id != 0) {
             fdb.open();
@@ -976,17 +901,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             setCheckForDays(weekdays);
 
             if (type.matches(Constants.TYPE_WEEKDAY)){
-                attachAction.setChecked(false);
+                actionViewWeek.setAction(false);
             } else {
-                attachAction.setChecked(true);
-                weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
-                weekPhoneNumber.setText(number);
+                actionViewWeek.setAction(true);
+                actionViewWeek.setNumber(number);
                 if (type.matches(Constants.TYPE_WEEKDAY_CALL)){
-                    callCheck = (RadioButton) findViewById(R.id.callCheck);
-                    callCheck.setChecked(true);
+                    actionViewWeek.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheck = (RadioButton) findViewById(R.id.messageCheck);
-                    messageCheck.setChecked(true);
+                    actionViewWeek.setType(ActionView.TYPE_MESSAGE);
                 }
             }
         }
@@ -1631,40 +1553,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-        actionLocation = (LinearLayout) findViewById(R.id.actionLocation);
-        actionLocation.setVisibility(View.GONE);
-
-        attachLocationAction = (CheckBox) findViewById(R.id.attachLocationAction);
-        attachLocationAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    ViewUtils.showOver(actionLocation);
-                    addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
-                    addNumberButtonLocation.setOnClickListener(contactClick);
-                    ViewUtils.setImage(addNumberButtonLocation, isDark);
-
-                    phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
-
-                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
-                    callCheckLocation.setChecked(true);
-                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
-                    messageCheckLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) {
-                                taskField.setHint(getString(R.string.message_field_hint));
-                            } else {
-                                taskField.setHint(getString(R.string.tast_hint));
-                            }
-                        }
-                    });
-                } else {
-                    ViewUtils.hideOver(actionLocation);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
+        actionViewLocation = (ActionView) findViewById(R.id.actionViewLocation);
+        actionViewLocation.setListener(this);
+        actionViewLocation.setActivity(this);
 
         final Calendar cal = Calendar.getInstance();
         myYear = cal.get(Calendar.YEAR);
@@ -1707,18 +1598,15 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
 
             if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
-                attachLocationAction.setChecked(true);
-                phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
-                phoneNumberLocation.setText(number);
+                actionViewLocation.setAction(true);
+                actionViewLocation.setNumber(number);
                 if (type.matches(Constants.TYPE_LOCATION_CALL)){
-                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
-                    callCheckLocation.setChecked(true);
+                    actionViewLocation.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
-                    messageCheckLocation.setChecked(true);
+                    actionViewLocation.setType(ActionView.TYPE_MESSAGE);
                 }
             } else {
-                attachLocationAction.setChecked(false);
+                actionViewLocation.setAction(false);
             }
 
             taskField.setText(text);
@@ -1811,40 +1699,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
         }
 
-        actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
-        actionLocationOut.setVisibility(View.GONE);
-
-        attachLocationOutAction = (CheckBox) findViewById(R.id.attachLocationOutAction);
-        attachLocationOutAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    ViewUtils.showOver(actionLocationOut);
-                    addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
-                    addNumberButtonLocationOut.setOnClickListener(contactClick);
-                    ViewUtils.setImage(addNumberButtonLocationOut, isDark);
-
-                    phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
-
-                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
-                    callCheckLocationOut.setChecked(true);
-                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
-                    messageCheckLocationOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) {
-                                taskField.setHint(getString(R.string.message_field_hint));
-                            } else {
-                                taskField.setHint(getString(R.string.tast_hint));
-                            }
-                        }
-                    });
-                } else {
-                    ViewUtils.hideOver(actionLocationOut);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
+        actionViewLocationOut = (ActionView) findViewById(R.id.actionViewLocationOut);
+        actionViewLocationOut.setListener(this);
+        actionViewLocationOut.setActivity(this);
 
         final Calendar cal = Calendar.getInstance();
         myYear = cal.get(Calendar.YEAR);
@@ -1893,19 +1750,16 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 attachDelayOut.setChecked(false);
             }
 
-            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
-                attachLocationOutAction.setChecked(true);
-                phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
-                phoneNumberLocationOut.setText(number);
-                if (type.matches(Constants.TYPE_LOCATION_CALL)){
-                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
-                    callCheckLocationOut.setChecked(true);
+            if (type.matches(Constants.TYPE_LOCATION_OUT_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
+                actionViewLocationOut.setAction(true);
+                actionViewLocationOut.setNumber(number);
+                if (type.matches(Constants.TYPE_LOCATION_OUT_CALL)){
+                    actionViewLocationOut.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
-                    messageCheckLocationOut.setChecked(true);
+                    actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
                 }
             } else {
-                attachLocationOutAction.setChecked(false);
+                actionViewLocationOut.setAction(false);
             }
 
             taskField.setText(text);
@@ -2041,8 +1895,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         } else if (isMessageAttached()){
             type = Constants.TYPE_MESSAGE;
         } else if (isLocationAttached()){
-            if (attachLocationAction.isChecked()){
-                if (callCheckLocation.isChecked()) {
+            if (actionViewLocation.hasAction()){
+                if (actionViewLocation.getType() == ActionView.TYPE_CALL) {
                     type = Constants.TYPE_LOCATION_CALL;
                 } else {
                     type = Constants.TYPE_LOCATION_MESSAGE;
@@ -2051,8 +1905,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 type = Constants.TYPE_LOCATION;
             }
         } else if (isLocationOutAttached()){
-            if (attachLocationOutAction.isChecked()){
-                if (callCheckLocationOut.isChecked()) {
+            if (actionViewLocationOut.hasAction()){
+                if (actionViewLocationOut.getType() == ActionView.TYPE_CALL) {
                     type = Constants.TYPE_LOCATION_OUT_CALL;
                 } else {
                     type = Constants.TYPE_LOCATION_OUT_MESSAGE;
@@ -2076,17 +1930,17 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (isMessageAttached()){
                     messageNumber.setText(number);
                 }
-                if (isWeekDayReminderAttached() && attachAction.isChecked()){
-                    weekPhoneNumber.setText(number);
+                if (isWeekDayReminderAttached() && actionViewWeek.hasAction()){
+                    actionViewWeek.setNumber(number);
                 }
-                if (isMonthDayAttached() && monthDayAttachAction.isChecked()){
-                    monthDayPhoneNumber.setText(number);
+                if (isMonthDayAttached() && actionViewMonth.hasAction()){
+                    actionViewMonth.setNumber(number);
                 }
-                if (isLocationAttached() && attachLocationAction.isChecked()){
-                    phoneNumberLocation.setText(number);
+                if (isLocationAttached() && actionViewLocation.hasAction()){
+                    actionViewLocation.setNumber(number);
                 }
-                if (isLocationOutAttached() && attachLocationOutAction.isChecked()){
-                    phoneNumberLocationOut.setText(number);
+                if (isLocationOutAttached() && actionViewLocationOut.hasAction()){
+                    actionViewLocationOut.setNumber(number);
                 }
             }
         }
@@ -2136,18 +1990,18 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         if (isLocationAttached() || isLocationOutAttached()){
             if (LocationUtil.checkLocationEnable(this)) {
                 if (isLocationOutAttached()){
-                    if (attachLocationOutAction.isChecked() && !checkNumber()) {
+                    if (actionViewLocationOut.hasAction() && !checkNumber()) {
                         saveLocationOut();
-                    } else if (attachLocationOutAction.isChecked() && checkNumber()) {
-                        phoneNumberLocationOut.setError(getString(R.string.number_error));
+                    } else if (actionViewLocationOut.hasAction() && checkNumber()) {
+                        actionViewLocationOut.showError();
                     } else {
                         saveLocationOut();
                     }
                 } else {
-                    if (attachLocationAction.isChecked() && !checkNumber()) {
+                    if (actionViewLocation.hasAction() && !checkNumber()) {
                         saveLocation();
-                    } else if (attachLocationAction.isChecked() && checkNumber()) {
-                        phoneNumberLocation.setError(getString(R.string.number_error));
+                    } else if (actionViewLocation.hasAction() && checkNumber()) {
+                        actionViewLocation.showError();
                     } else {
                         saveLocation();
                     }
@@ -2172,7 +2026,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (!checkNumber()) {
                     saveWeekTask();
                 } else {
-                    weekPhoneNumber.setError(getString(R.string.number_error));
+                    actionViewWeek.showError();
                 }
             } else if (isSkypeAttached()){
                 if (!checkNumber()) {
@@ -2204,7 +2058,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 if (!checkNumber()) {
                     saveMonthTask();
                 } else {
-                    monthDayPhoneNumber.setError(getString(R.string.number_error));
+                    actionViewMonth.showError();
                 }
             }
         }
@@ -2257,8 +2111,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private String getWeekTaskType(){
         String type;
-        if (attachAction.isChecked()){
-            if (callCheck.isChecked()){
+        if (actionViewWeek.hasAction()){
+            if (actionViewWeek.getType() == ActionView.TYPE_CALL){
                 type = Constants.TYPE_WEEKDAY_CALL;
             } else {
                 type = Constants.TYPE_WEEKDAY_MESSAGE;
@@ -2275,8 +2129,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private String getMonthTaskType(){
         String type;
-        if (monthDayAttachAction.isChecked()){
-            if (monthDayCallCheck.isChecked()){
+        if (actionViewMonth.hasAction()){
+            if (actionViewMonth.getType() == ActionView.TYPE_CALL){
                 if (lastCheck.isChecked()) {
                     type = Constants.TYPE_MONTHDAY_CALL_LAST;
                 } else {
@@ -2340,8 +2194,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getWeekTaskType();
         String number = null;
-        if (attachAction.isChecked()) {
-            number = weekPhoneNumber.getText().toString().trim();
+        if (actionViewWeek.hasAction()) {
+            number = actionViewWeek.getNumber();
         }
 
         Interval interval = new Interval(BackupFileEdit.this);
@@ -2485,14 +2339,14 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return skypeUser.getText().toString().trim().matches("");
         } else if (isMessageAttached()){
             return messageNumber.getText().toString().trim().matches("");
-        } else if (isLocationAttached() && attachLocationAction.isChecked()){
-            return phoneNumberLocation.getText().toString().trim().matches("");
-        } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
-            return weekPhoneNumber.getText().toString().trim().matches("");
-        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
-            return monthDayPhoneNumber.getText().toString().trim().matches("");
-        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
-            return phoneNumberLocationOut.getText().toString().trim().matches("");
+        } else if (isLocationAttached() && actionViewLocation.hasAction()){
+            return actionViewLocation.getNumber().matches("");
+        } else if (isWeekDayReminderAttached() && actionViewWeek.hasAction()){
+            return actionViewWeek.getNumber().matches("");
+        } else if (isMonthDayAttached() && actionViewMonth.hasAction()){
+            return actionViewMonth.getNumber().matches("");
+        } else if (isLocationOutAttached() && actionViewLocationOut.hasAction()){
+            return actionViewLocationOut.getNumber().matches("");
         } else {
             return false;
         }
@@ -2517,7 +2371,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private boolean checkMessage(){
         if (isMessageAttached()){
             return taskField.getText().toString().trim().matches("");
-        } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
+        } else if (isWeekDayReminderAttached() && actionViewWeek.hasAction()) {
             return taskField.getText().toString().trim().matches("");
         } else {
             return taskField.getText().toString().trim().matches("");
@@ -2536,8 +2390,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
         String type = getMonthTaskType();
         String number = null;
-        if (monthDayAttachAction.isChecked()) {
-            number = monthDayPhoneNumber.getText().toString().trim();
+        if (actionViewMonth.hasAction()) {
+            number = actionViewMonth.getNumber();
         }
 
         int day = myDay;
@@ -2763,8 +2617,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = null;
-        if (attachLocationAction.isChecked()) {
-            number = phoneNumberLocation.getText().toString().trim();
+        if (actionViewLocation.hasAction()) {
+            number = actionViewLocation.getNumber();
         }
         LatLng dest = null;
         boolean isNull = true;
@@ -2831,8 +2685,8 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = null;
-        if (attachLocationOutAction.isChecked()) {
-            number = phoneNumberLocationOut.getText().toString().trim();
+        if (actionViewLocationOut.hasAction()) {
+            number = actionViewLocationOut.getNumber();
         }
         LatLng dest = null;
         boolean isNull = true;
@@ -3064,6 +2918,22 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onProgress(int progress) {
 
+    }
+
+    @Override
+    public void onActionChange(boolean b) {
+        if (!b){
+            taskField.setHint(getString(R.string.tast_hint));
+        }
+    }
+
+    @Override
+    public void onTypeChange(boolean type) {
+        if (type) {
+            taskField.setHint(getString(R.string.message_field_hint));
+        } else {
+            taskField.setHint(getString(R.string.tast_hint));
+        }
     }
 
     public class CurrentLocation implements LocationListener {

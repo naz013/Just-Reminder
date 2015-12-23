@@ -15,7 +15,6 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:textSize="@dimen/checkbox_text_size"
-            android:layout_marginTop="@dimen/create_margin"
             android:text="@string/action_check_text"
             android:id="@+id/actionCheck" />
 

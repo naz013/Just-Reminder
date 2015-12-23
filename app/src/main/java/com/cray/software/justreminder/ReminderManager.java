@@ -109,6 +109,7 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
@@ -126,7 +127,7 @@ import java.util.List;
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener, View.OnTouchListener, CompoundButton.OnCheckedChangeListener,
         MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener,
-        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener {
+        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener {
 
     /**
      * Date reminder type variables.
@@ -137,24 +138,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     /**
      * Weekday reminder type variables.
      */
-    private LinearLayout action_layout;
-    private FloatingEditText weekPhoneNumber;
     private TextView weekTimeField;
-    private ImageButton weekAddNumberButton;
     private CheckBox weekExport;
     private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    private RadioButton callCheck, messageCheck;
-    private CheckBox attachAction, weekTaskExport;
+    private CheckBox weekTaskExport;
+    private ActionView actionViewWeek;
 
     /**
      * Monthday reminder type variables.
      */
-    private CheckBox monthDayExport, monthDayTaskExport, monthDayAttachAction;
-    private LinearLayout monthDayActionLayout;
+    private CheckBox monthDayExport, monthDayTaskExport;
     private TextView monthDayField, monthDayTimeField;
-    private RadioButton monthDayCallCheck, monthDayMessageCheck, dayCheck, lastCheck;
-    private ImageButton monthDayAddNumberButton;
-    private FloatingEditText monthDayPhoneNumber;
+    private RadioButton dayCheck, lastCheck;
+    private ActionView actionViewMonth;
 
     /**
      * Call reminder variables.
@@ -201,29 +197,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private LinearLayout delayLayout;
     private CheckBox attackDelay;
-    private ImageButton addNumberButtonLocation;
-    private LinearLayout actionLocation;
     private RelativeLayout mapContainer;
     private ScrollView specsContainer;
-    private CheckBox attachLocationAction;
-    private RadioButton callCheckLocation, messageCheckLocation;
-    private FloatingEditText phoneNumberLocation;
     private MapFragment map;
     private AutoCompleteTextView searchField;
+    private ActionView actionViewLocation;
 
     /**
      * LocationOut reminder type variables.
      */
-    private ImageButton addNumberButtonLocationOut;
-    private LinearLayout actionLocationOut;
     private LinearLayout delayLayoutOut;
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
     private TextView currentLocation, mapLocation, radiusMark;
-    private CheckBox attachLocationOutAction, attachDelayOut;
-    private RadioButton callCheckLocationOut, messageCheckLocationOut, currentCheck, mapCheck;
-    private FloatingEditText phoneNumberLocationOut;
+    private CheckBox attachDelayOut;
+    private RadioButton currentCheck, mapCheck;
     private MapFragment mapOut;
+    private ActionView actionViewLocationOut;
 
     /**
      * Shopping list reminder type variables.
@@ -289,10 +279,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
     private boolean isCalendar = false, isStock = false, isDark = false;
-    private boolean isLocationMessage = false;
-    private boolean isLocationOutMessage = false;
-    private boolean isWeekMessage = false;
-    private boolean isMonthMessage = false;
+    private boolean isMessage = false;
     private boolean isDelayed = false;
 
     private Type remControl = new Type(this);
@@ -696,7 +683,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void invalidateButtons(){
         if (isShoppingAttached()){
-            if (extraHolder.getVisibility() == View.VISIBLE) ViewUtils.hideOver(extraHolder);
+            if (extraHolder.getVisibility() == View.VISIBLE) {
+                ViewUtils.hideOver(extraHolder);
+            }
         } else {
             if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
                 new Handler().postDelayed(new Runnable() {
@@ -705,39 +694,62 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         ViewUtils.showOver(extraHolder);
                     }
                 }, 750);
-            } else extraHolder.setVisibility(View.GONE);
-            if (notificationRepeat == 1) extraRepeat.setSelected(true);
-            else extraRepeat.setSelected(false);
+            } else {
+                extraHolder.setVisibility(View.GONE);
+            }
+            if (notificationRepeat == 1) {
+                extraRepeat.setSelected(true);
+            } else {
+                extraRepeat.setSelected(false);
+            }
 
             if (isLocationAttached() || isLocationOutAttached()) {
                 extraLimit.setEnabled(false);
             } else {
                 extraLimit.setEnabled(true);
-                if (repeats > 0) extraLimit.setSelected(true);
-                else extraLimit.setSelected(false);
+                if (repeats > 0) {
+                    extraLimit.setSelected(true);
+                } else {
+                    extraLimit.setSelected(false);
+                }
             }
 
             if (isMessageAttached() || isApplicationAttached() ||
-                    (isWeekDayReminderAttached() && isWeekMessage) ||
-                    (isMonthDayAttached() && isMonthMessage) ||
-                    (isLocationAttached() && isLocationMessage) ||
-                    (isLocationOutAttached() && isLocationOutMessage)) {
+                    ((isWeekDayReminderAttached() || isMonthDayAttached() || isLocationAttached() ||
+                            isLocationOutAttached()) && isMessage)) {
                 extraAuto.setEnabled(true);
-                if (auto == 1) extraAuto.setSelected(true);
-                else extraAuto.setSelected(false);
-            } else extraAuto.setEnabled(false);
+                if (auto == 1) {
+                    extraAuto.setSelected(true);
+                } else {
+                    extraAuto.setSelected(false);
+                }
+            } else {
+                extraAuto.setEnabled(false);
+            }
 
-            if (vibration == 1) extraVibration.setSelected(true);
-            else extraVibration.setSelected(false);
+            if (vibration == 1) {
+                extraVibration.setSelected(true);
+            } else {
+                extraVibration.setSelected(false);
+            }
 
-            if (voice == 1) extraVoice.setSelected(true);
-            else extraVoice.setSelected(false);
+            if (voice == 1) {
+                extraVoice.setSelected(true);
+            } else {
+                extraVoice.setSelected(false);
+            }
 
-            if (wake == 1) extraWake.setSelected(true);
-            else extraWake.setSelected(false);
+            if (wake == 1) {
+                extraWake.setSelected(true);
+            } else {
+                extraWake.setSelected(false);
+            }
 
-            if (unlock == 1) extraUnlock.setSelected(true);
-            else extraUnlock.setSelected(false);
+            if (unlock == 1) {
+                extraUnlock.setSelected(true);
+            } else {
+                extraUnlock.setSelected(false);
+            }
         }
     }
 
@@ -1085,53 +1097,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        monthDayActionLayout = (LinearLayout) findViewById(R.id.monthDayActionLayout);
-        monthDayActionLayout.setVisibility(View.GONE);
-
         dayCheck = (RadioButton) findViewById(R.id.dayCheck);
         dayCheck.setChecked(true);
         lastCheck = (RadioButton) findViewById(R.id.lastCheck);
         dayCheck.setOnCheckedChangeListener(this);
         lastCheck.setOnCheckedChangeListener(this);
 
-        monthDayAttachAction = (CheckBox) findViewById(R.id.monthDayAttachAction);
-        monthDayAttachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)) {
-                        ViewUtils.showOver(monthDayActionLayout);
-                        monthDayAddNumberButton = (ImageButton) findViewById(R.id.monthDayAddNumberButton);
-                        monthDayAddNumberButton.setOnClickListener(contactClick);
-                        ViewUtils.setImage(monthDayAddNumberButton, isDark);
-
-                        monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
-
-                        monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
-                        monthDayCallCheck.setChecked(true);
-                        monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
-                        monthDayMessageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                                if (b) taskField.setHint(getString(R.string.message_field_hint));
-                                else taskField.setHint(getString(R.string.tast_hint));
-                                isMonthMessage = b;
-                                invalidateButtons();
-                            }
-                        });
-                    } else {
-                        new Permissions(ReminderManager.this)
-                                .requestPermission(ReminderManager.this,
-                                        new String[]{Permissions.CALL_PHONE, Permissions.SEND_SMS}, 110);
-                    }
-                } else {
-                    ViewUtils.hideOver(monthDayActionLayout);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
-
-        if (monthDayAttachAction.isChecked()) ViewUtils.showOver(monthDayActionLayout);
+        actionViewMonth = (ActionView) findViewById(R.id.actionViewMonth);
+        actionViewMonth.setListener(this);
+        actionViewMonth.setActivity(this);
 
         invalidateButtons();
 
@@ -1172,25 +1146,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             invalidateButtons();
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
-                monthDayAttachAction.setChecked(false);
+                actionViewMonth.setAction(false);
                 dayCheck.setChecked(true);
-            } else if(type.matches(Constants.TYPE_MONTHDAY_LAST)){
-                monthDayAttachAction.setChecked(false);
+            } else if (type.matches(Constants.TYPE_MONTHDAY_LAST)) {
+                actionViewMonth.setAction(false);
                 lastCheck.setChecked(true);
             } else {
-                monthDayAttachAction.setChecked(true);
-                monthDayPhoneNumber = (FloatingEditText) findViewById(R.id.monthDayPhoneNumber);
-                monthDayPhoneNumber.setText(number);
+                actionViewMonth.setAction(true);
+                actionViewMonth.setNumber(number);
                 if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
                         type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
                     lastCheck.setChecked(true);
-                } else dayCheck.setChecked(true);
-                if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
-                    monthDayCallCheck = (RadioButton) findViewById(R.id.monthDayCallCheck);
-                    monthDayCallCheck.setChecked(true);
                 } else {
-                    monthDayMessageCheck = (RadioButton) findViewById(R.id.monthDayMessageCheck);
-                    monthDayMessageCheck.setChecked(true);
+                    dayCheck.setChecked(true);
+                }
+                if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
+                    actionViewMonth.setType(ActionView.TYPE_CALL);
+                } else {
+                    actionViewMonth.setType(ActionView.TYPE_MESSAGE);
                 }
             }
         }
@@ -1298,47 +1271,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         saturdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
         sundayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
 
-        action_layout = (LinearLayout) findViewById(R.id.action_layout);
-        action_layout.setVisibility(View.GONE);
-
-        attachAction = (CheckBox) findViewById(R.id.attachAction);
-        attachAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
-                    if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)){
-                        ViewUtils.showOver(action_layout);
-                        weekAddNumberButton = (ImageButton) findViewById(R.id.weekAddNumberButton);
-                        weekAddNumberButton.setOnClickListener(contactClick);
-                        ViewUtils.setImage(weekAddNumberButton, isDark);
-
-                        weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
-
-                        callCheck = (RadioButton) findViewById(R.id.callCheck);
-                        callCheck.setChecked(true);
-                        messageCheck = (RadioButton) findViewById(R.id.messageCheck);
-                        messageCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                                if (b) taskField.setHint(getString(R.string.message_field_hint));
-                                else taskField.setHint(getString(R.string.tast_hint));
-                                isWeekMessage = b;
-                                invalidateButtons();
-                            }
-                        });
-                    } else {
-                        new Permissions(ReminderManager.this)
-                                .requestPermission(ReminderManager.this,
-                                        new String[]{Permissions.CALL_PHONE, Permissions.SEND_SMS}, 111);
-                    }
-                } else {
-                    ViewUtils.hideOver(action_layout);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
-
-        if (attachAction.isChecked()) ViewUtils.showOver(action_layout);
+        actionViewWeek = (ActionView) findViewById(R.id.actionViewWeek);
+        actionViewWeek.setListener(this);
+        actionViewWeek.setActivity(this);
 
         invalidateButtons();
 
@@ -1380,17 +1315,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             invalidateButtons();
 
             if (type.matches(Constants.TYPE_WEEKDAY)){
-                attachAction.setChecked(false);
+                actionViewWeek.setAction(false);
             } else {
-                attachAction.setChecked(true);
-                weekPhoneNumber = (FloatingEditText) findViewById(R.id.weekPhoneNumber);
-                weekPhoneNumber.setText(number);
+                actionViewWeek.setAction(true);
+                actionViewWeek.setNumber(number);
                 if (type.matches(Constants.TYPE_WEEKDAY_CALL)){
-                    callCheck = (RadioButton) findViewById(R.id.callCheck);
-                    callCheck.setChecked(true);
+                    actionViewWeek.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheck = (RadioButton) findViewById(R.id.messageCheck);
-                    messageCheck.setChecked(true);
+                    actionViewWeek.setType(ActionView.TYPE_MESSAGE);
                 }
             }
         }
@@ -1401,33 +1333,47 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @param weekdays weekday string.
      */
     private void setCheckForDays(String weekdays){
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED)) {
             mondayCheck.setChecked(true);
-        else mondayCheck.setChecked(false);
+        } else {
+            mondayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED)) {
             tuesdayCheck.setChecked(true);
-        else tuesdayCheck.setChecked(false);
+        } else {
+            tuesdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED)) {
             wednesdayCheck.setChecked(true);
-        else wednesdayCheck.setChecked(false);
+        } else {
+            wednesdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED)) {
             thursdayCheck.setChecked(true);
-        else thursdayCheck.setChecked(false);
+        } else {
+            thursdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED)) {
             fridayCheck.setChecked(true);
-        else fridayCheck.setChecked(false);
+        } else {
+            fridayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED)) {
             saturdayCheck.setChecked(true);
-        else saturdayCheck.setChecked(false);
+        } else {
+            saturdayCheck.setChecked(false);
+        }
 
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))
+        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED)) {
             sundayCheck.setChecked(true);
-        else sundayCheck.setChecked(false);
+        } else {
+            sundayCheck.setChecked(false);
+        }
     }
 
     /**
@@ -2115,7 +2061,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) task.cancel(true);
+                if (task != null && !task.isCancelled()) {
+                    task.cancel(true);
+                }
                 task = new GeocoderTask(ReminderManager.this, ReminderManager.this);
                 task.execute(s.toString());
             }
@@ -2137,45 +2085,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (title.matches("")) {
                     title = pos.toString();
                 }
-                if (map != null) map.addMarker(pos, title, true, true, radius);
-            }
-        });
-
-        actionLocation = (LinearLayout) findViewById(R.id.actionLocation);
-        actionLocation.setVisibility(View.GONE);
-
-        attachLocationAction = (CheckBox) findViewById(R.id.attachLocationAction);
-        attachLocationAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    ViewUtils.showOver(actionLocation);
-                    addNumberButtonLocation = (ImageButton) findViewById(R.id.addNumberButtonLocation);
-                    addNumberButtonLocation.setOnClickListener(contactClick);
-                    ViewUtils.setImage(addNumberButtonLocation, isDark);
-
-                    phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
-
-                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
-                    callCheckLocation.setChecked(true);
-                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
-                    messageCheckLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
-                            isLocationMessage = b;
-                            invalidateButtons();
-                        }
-                    });
-                } else {
-                    ViewUtils.hideOver(actionLocation);
-                    taskField.setHint(getString(R.string.tast_hint));
+                if (map != null) {
+                    map.addMarker(pos, title, true, true, radius);
                 }
             }
         });
 
-        if (attachLocationAction.isChecked()) ViewUtils.showOver(actionLocation);
+        actionViewLocation = (ActionView) findViewById(R.id.actionViewLocation);
+        actionViewLocation.setListener(this);
+        actionViewLocation.setActivity(this);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -2224,23 +2142,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             if (remType.matches(Constants.TYPE_LOCATION_CALL) || remType.matches(Constants.TYPE_LOCATION_MESSAGE)){
-                attachLocationAction.setChecked(true);
-                phoneNumberLocation = (FloatingEditText) findViewById(R.id.phoneNumberLocation);
-                phoneNumberLocation.setText(number);
+                actionViewLocation.setAction(true);
+                actionViewLocation.setNumber(number);
                 if (remType.matches(Constants.TYPE_LOCATION_CALL)){
-                    callCheckLocation = (RadioButton) findViewById(R.id.callCheckLocation);
-                    callCheckLocation.setChecked(true);
+                    actionViewLocation.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheckLocation = (RadioButton) findViewById(R.id.messageCheckLocation);
-                    messageCheckLocation.setChecked(true);
+                    actionViewLocation.setType(ActionView.TYPE_MESSAGE);
                 }
             } else {
-                attachLocationAction.setChecked(false);
+                actionViewLocation.setAction(false);
             }
 
             taskField.setText(text);
             invalidateButtons();
-            if (map != null) map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
+            if (map != null) {
+                map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
+            }
         }
     }
 
@@ -2330,44 +2247,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-        if (pointRadius.getProgress() == 0)
+        if (pointRadius.getProgress() == 0) {
             pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        }
 
-        actionLocationOut = (LinearLayout) findViewById(R.id.actionLocationOut);
-        actionLocationOut.setVisibility(View.GONE);
-
-        attachLocationOutAction = (CheckBox) findViewById(R.id.attachLocationOutAction);
-        attachLocationOutAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    ViewUtils.showOver(actionLocationOut);
-                    addNumberButtonLocationOut = (ImageButton) findViewById(R.id.addNumberButtonLocationOut);
-                    addNumberButtonLocationOut.setOnClickListener(contactClick);
-                    ViewUtils.setImage(addNumberButtonLocationOut, isDark);
-
-                    phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
-
-                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
-                    callCheckLocationOut.setChecked(true);
-                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
-                    messageCheckLocationOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if (b) taskField.setHint(getString(R.string.message_field_hint));
-                            else taskField.setHint(getString(R.string.tast_hint));
-                            isLocationOutMessage = b;
-                            invalidateButtons();
-                        }
-                    });
-                } else {
-                    ViewUtils.hideOver(actionLocationOut);
-                    taskField.setHint(getString(R.string.tast_hint));
-                }
-            }
-        });
-
-        if (attachLocationOutAction.isChecked()) ViewUtils.showOver(actionLocationOut);
+        actionViewLocationOut = (ActionView) findViewById(R.id.actionViewLocationOut);
+        actionViewLocationOut.setListener(this);
+        actionViewLocationOut.setActivity(this);
 
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -2386,7 +2272,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateViewLocationOut.setDateTime(cal.getTimeInMillis());
 
         if (curPlace != null) {
-            if (mapOut != null) mapOut.addMarker(curPlace, null, true, true, radius);
+            if (mapOut != null) {
+                mapOut.addMarker(curPlace, null, true, true, radius);
+            }
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
@@ -2420,23 +2308,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             if (remType.matches(Constants.TYPE_LOCATION_OUT_CALL) || remType.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                attachLocationOutAction.setChecked(true);
-                phoneNumberLocationOut = (FloatingEditText) findViewById(R.id.phoneNumberLocationOut);
-                phoneNumberLocationOut.setText(number);
+                actionViewLocationOut.setAction(true);
+                actionViewLocationOut.setNumber(number);
                 if (remType.matches(Constants.TYPE_LOCATION_OUT_CALL)){
-                    callCheckLocationOut = (RadioButton) findViewById(R.id.callCheckLocationOut);
-                    callCheckLocationOut.setChecked(true);
+                    actionViewLocationOut.setType(ActionView.TYPE_CALL);
                 } else {
-                    messageCheckLocationOut = (RadioButton) findViewById(R.id.messageCheckLocationOut);
-                    messageCheckLocationOut.setChecked(true);
+                    actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
                 }
             } else {
-                attachLocationOutAction.setChecked(false);
+                actionViewLocationOut.setAction(false);
             }
 
             taskField.setText(text);
             LatLng pos = new LatLng(latitude, longitude);
-            if (mapOut != null) mapOut.addMarker(pos, text, true, true, radius);
+            if (mapOut != null) {
+                mapOut.addMarker(pos, text, true, true, radius);
+            }
             mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
             mapCheck.setChecked(true);
             invalidateButtons();
@@ -2482,8 +2369,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         shopTimeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingTimeContainer);
+                }
                 ViewUtils.show(shoppingNoTime);
                 myYear = 0;
                 myMonth = 0;
@@ -2493,15 +2381,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 isShoppingReminder = false;
             }
         });
-        if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-        else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+        if (isDark) {
+            shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+        } else {
+            shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+        }
 
         shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
         shoppingNoTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
+                }
                 ViewUtils.show(shoppingTimeContainer);
                 cal.setTimeInMillis(System.currentTimeMillis());
                 if (myYear > 0){
@@ -2533,12 +2425,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         shopEdit.setText("");
                         return true;
                     }
-                } else return false;
+                } else {
+                    return false;
+                }
             }
         });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
-        if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
+        if (isDark) {
+            addButton.setImageResource(R.drawable.ic_add_white_24dp);
+        } else {
+            addButton.setImageResource(R.drawable.ic_add_black_24dp);
+        }
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2559,8 +2456,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onItemCheck(int position, boolean isChecked) {
                 ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked() == 1) item.setIsChecked(0);
-                else item.setIsChecked(1);
+                if (item.isChecked() == 1) {
+                    item.setIsChecked(0);
+                } else {
+                    item.setIsChecked(1);
+                }
                 shoppingAdapter.notifyDataSetChanged();
             }
 
@@ -2586,8 +2486,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onItemCheck(int position, boolean isChecked) {
                         ShoppingList item = shoppingLists.getItem(position);
-                        if (item.isChecked() == 1) item.setIsChecked(0);
-                        else item.setIsChecked(1);
+                        if (item.isChecked() == 1) {
+                            item.setIsChecked(0);
+                        } else {
+                            item.setIsChecked(1);
+                        }
                         shoppingAdapter.notifyDataSetChanged();
                     }
 
@@ -2616,13 +2519,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 cal.set(myYear, myMonth, myDay, myHour, myMinute);
 
                 dateViewShopping.setDateTime(cal.getTimeInMillis());
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
+                }
                 ViewUtils.show(shoppingTimeContainer);
                 isShoppingReminder = true;
             } else {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
+                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingTimeContainer);
+                }
                 ViewUtils.show(shoppingNoTime);
                 isShoppingReminder = false;
             }
@@ -2763,37 +2668,58 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private String getType(){
         String type;
         if (remControl instanceof MonthdayType){
-            if (monthDayAttachAction.isChecked()){
-                if (monthDayCallCheck.isChecked()){
-                    if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
-                    else type = Constants.TYPE_MONTHDAY_CALL;
+            if (actionViewMonth.hasAction()){
+                if (actionViewMonth.getType() == ActionView.TYPE_CALL){
+                    if (lastCheck.isChecked()) {
+                        type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                    } else {
+                        type = Constants.TYPE_MONTHDAY_CALL;
+                    }
                 } else {
-                    if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
-                    else type = Constants.TYPE_MONTHDAY_MESSAGE;
+                    if (lastCheck.isChecked()) {
+                        type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                    } else {
+                        type = Constants.TYPE_MONTHDAY_MESSAGE;
+                    }
                 }
             } else {
-                if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
-                else type = Constants.TYPE_MONTHDAY;
+                if (lastCheck.isChecked()) {
+                    type = Constants.TYPE_MONTHDAY_LAST;
+                } else {
+                    type = Constants.TYPE_MONTHDAY;
+                }
             }
         } else if (remControl instanceof WeekdayType){
-            if (attachAction.isChecked()){
-                if (callCheck.isChecked()){
+            if (actionViewWeek.hasAction()){
+                if (actionViewWeek.getType() == ActionView.TYPE_CALL){
                     type = Constants.TYPE_WEEKDAY_CALL;
-                } else type = Constants.TYPE_WEEKDAY_MESSAGE;
+                } else {
+                    type = Constants.TYPE_WEEKDAY_MESSAGE;
+                }
             } else {
                 type = Constants.TYPE_WEEKDAY;
             }
         } else if (remControl instanceof LocationType){
             if (remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT)){
-                if (attachLocationOutAction.isChecked()){
-                    if (callCheckLocationOut.isChecked()) type = Constants.TYPE_LOCATION_OUT_CALL;
-                    else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
-                } else type = Constants.TYPE_LOCATION_OUT;
+                if (actionViewLocationOut.hasAction()){
+                    if (actionViewLocationOut.getType() == ActionView.TYPE_CALL) {
+                        type = Constants.TYPE_LOCATION_OUT_CALL;
+                    } else {
+                        type = Constants.TYPE_LOCATION_OUT_MESSAGE;
+                    }
+                } else {
+                    type = Constants.TYPE_LOCATION_OUT;
+                }
             } else {
-                if (attachLocationAction.isChecked()){
-                    if (callCheckLocation.isChecked()) type = Constants.TYPE_LOCATION_CALL;
-                    else type = Constants.TYPE_LOCATION_MESSAGE;
-                } else type = Constants.TYPE_LOCATION;
+                if (actionViewLocation.hasAction()){
+                    if (actionViewLocation.getType() == ActionView.TYPE_CALL) {
+                        type = Constants.TYPE_LOCATION_CALL;
+                    } else {
+                        type = Constants.TYPE_LOCATION_MESSAGE;
+                    }
+                } else {
+                    type = Constants.TYPE_LOCATION;
+                }
             }
         } else if (remControl instanceof TimerType) {
             type = remControl.getType();
@@ -2812,7 +2738,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } else {
                     type = Constants.TYPE_APPLICATION_BROWSER;
                 }
-            } else type = remControl.getType();
+            } else {
+                type = remControl.getType();
+            }
         }
         return type;
     }
@@ -2851,7 +2779,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     return null;
                 }
             }
-            if (checkNumber()) return null;
+            if (checkNumber()) {
+                return null;
+            }
             String number = getNumber();
             if (isApplicationAttached()) {
                 if (application.isChecked()) {
@@ -2862,10 +2792,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     }
                 } else if (browser.isChecked()) {
                     number = browseLink.getText().toString().trim();
-                    if (number.matches("") || number.matches(".*https?://"))
+                    if (number.matches("") || number.matches(".*https?://")) {
                         return null;
-                    if (!number.startsWith("http://") && !number.startsWith("https://"))
+                    }
+                    if (!number.startsWith("http://") && !number.startsWith("https://")) {
                         number = "http://" + number;
+                    }
                 }
             }
             Log.d(Constants.LOG_TAG, "Task number " + (number != null ? number : "no number"));
@@ -2914,7 +2846,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             long repMinute = 0;
             if (isTimeReminderAttached()) {
                 repMinute = SuperUtil.getAfterTime(this, timeString);
-                if (repMinute == 0) return null;
+                if (repMinute == 0) {
+                    return null;
+                }
             }
             Log.d(Constants.LOG_TAG, "Task after minute " + repMinute);
 
@@ -2922,7 +2856,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "Task export code " + export);
 
             if (isMonthDayAttached()) {
-                if (type.endsWith("_last")) myDay = 0;
+                if (type.endsWith("_last")) {
+                    myDay = 0;
+                }
             }
 
             long due = getDue(weekdays, repMinute);
@@ -2962,7 +2898,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int unlock = getUnlock();
             int auto = getAuto();
             long limit = getLimit();
-            if (repeat == 0) limit = -1;
+            if (repeat == 0) {
+                limit = -1;
+            }
 
             Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
                     wake + ", U " + unlock + ", A " + auto + ", L " + limit);
@@ -2971,7 +2909,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
                     mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
                     notification, wake, unlock, auto, limit, exclusion);
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -3139,14 +3079,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return skypeUser.getText().toString().trim();
         } else if (isMessageAttached()){
             return messageNumber.getText().toString().trim();
-        } else if (isLocationAttached() && attachLocationAction.isChecked()){
-            return phoneNumberLocation.getText().toString().trim();
-        } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
-            return weekPhoneNumber.getText().toString().trim();
-        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
-            return monthDayPhoneNumber.getText().toString().trim();
-        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
-            return phoneNumberLocationOut.getText().toString().trim();
+        } else if (isLocationAttached() && actionViewLocation.hasAction()){
+            return actionViewLocation.getNumber();
+        } else if (isWeekDayReminderAttached() && actionViewWeek.hasAction()) {
+            return actionViewWeek.getNumber();
+        } else if (isMonthDayAttached() && actionViewMonth.hasAction()) {
+            return actionViewMonth.getNumber();
+        } else if (isLocationOutAttached() && actionViewLocationOut.hasAction()) {
+            return actionViewLocationOut.getNumber();
         } else return null;
     }
 
@@ -3160,44 +3100,60 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (is) {
                 phoneNumber.setError(getString(R.string.empty_field_error));
                 return true;
-            } else return false;
+            } else {
+                return false;
+            }
         } else if (isSkypeAttached()){
             boolean is = skypeUser.getText().toString().trim().matches("");
             if (is) {
                 skypeUser.setError(getString(R.string.empty_field_error));
                 return true;
-            } else return false;
+            } else {
+                return false;
+            }
         } else if (isMessageAttached()){
             boolean is = messageNumber.getText().toString().trim().matches("");
             if (is) {
                 messageNumber.setError(getString(R.string.empty_field_error));
                 return true;
-            } else return false;
-        } else if (isLocationAttached() && attachLocationAction.isChecked()){
-            boolean is = phoneNumberLocation.getText().toString().trim().matches("");
+            } else {
+                return false;
+            }
+        } else if (isLocationAttached() && actionViewLocation.hasAction()){
+            boolean is = actionViewLocation.getNumber().matches("");
             if (is) {
-                phoneNumberLocation.setError(getString(R.string.empty_field_error));
+                actionViewLocation.showError();
                 return true;
-            } else return false;
-        } else if (isWeekDayReminderAttached() && attachAction.isChecked()) {
-            boolean is = weekPhoneNumber.getText().toString().trim().matches("");
+            } else {
+                return false;
+            }
+        } else if (isWeekDayReminderAttached() && actionViewWeek.hasAction()) {
+            boolean is = actionViewWeek.getNumber().matches("");
             if (is) {
-                weekPhoneNumber.setError(getString(R.string.empty_field_error));
+                actionViewWeek.showError();
                 return true;
-            } else return false;
-        } else if (isMonthDayAttached() && monthDayAttachAction.isChecked()) {
-            boolean is = monthDayPhoneNumber.getText().toString().trim().matches("");
+            } else {
+                return false;
+            }
+        } else if (isMonthDayAttached() && actionViewMonth.hasAction()) {
+            boolean is = actionViewMonth.getNumber().matches("");
             if (is) {
-                monthDayPhoneNumber.setError(getString(R.string.empty_field_error));
+                actionViewMonth.showError();
                 return true;
-            } else return false;
-        } else if (isLocationOutAttached() && attachLocationOutAction.isChecked()) {
-            boolean is = phoneNumberLocationOut.getText().toString().trim().matches("");
+            } else {
+                return false;
+            }
+        } else if (isLocationOutAttached() && actionViewLocationOut.hasAction()) {
+            boolean is = actionViewLocationOut.getNumber().matches("");
             if (is) {
-                phoneNumberLocationOut.setError(getString(R.string.empty_field_error));
+                actionViewLocationOut.showError();
                 return true;
-            } else return false;
-        } else return false;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -3603,19 +3559,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case 110:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    monthDayAttachAction.setChecked(true);
+                    actionViewMonth.setAction(true);
                 } else {
                     new Permissions(ReminderManager.this)
                             .showInfo(ReminderManager.this, Permissions.CALL_PHONE);
-                    monthDayAttachAction.setChecked(false);
+                    actionViewMonth.setAction(false);
                 }
             case 111:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    attachAction.setChecked(true);
+                    actionViewWeek.setAction(false);
                 } else {
                     new Permissions(ReminderManager.this)
                             .showInfo(ReminderManager.this, Permissions.CALL_PHONE);
-                    attachAction.setChecked(false);
+                    actionViewWeek.setAction(false);
                 }
                 break;
         }
@@ -3633,17 +3589,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (isMessageAttached()){
                     messageNumber.setText(number);
                 }
-                if (isWeekDayReminderAttached() && attachAction.isChecked()){
-                    weekPhoneNumber.setText(number);
+                if (isWeekDayReminderAttached() && actionViewWeek.hasAction()){
+                    actionViewWeek.setNumber(number);
                 }
-                if (isMonthDayAttached() && monthDayAttachAction.isChecked()){
-                    monthDayPhoneNumber.setText(number);
+                if (isMonthDayAttached() && actionViewMonth.hasAction()){
+                    actionViewMonth.setNumber(number);
                 }
-                if (isLocationAttached() && attachLocationAction.isChecked()){
-                    phoneNumberLocation.setText(number);
+                if (isLocationAttached() && actionViewLocation.hasAction()){
+                    actionViewLocation.setNumber(number);
                 }
-                if (isLocationOutAttached() && attachLocationOutAction.isChecked()){
-                    phoneNumberLocationOut.setText(number);
+                if (isLocationOutAttached() && actionViewLocationOut.hasAction()){
+                    actionViewLocationOut.setNumber(number);
                 }
             }
         }
@@ -3856,6 +3812,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onProgress(int progress) {
         repeatCode = progress;
+    }
+
+    @Override
+    public void onActionChange(boolean b) {
+        if (!b){
+            taskField.setHint(getString(R.string.tast_hint));
+        }
+    }
+
+    @Override
+    public void onTypeChange(boolean type) {
+        if (type) {
+            taskField.setHint(getString(R.string.message_field_hint));
+        } else {
+            taskField.setHint(getString(R.string.tast_hint));
+        }
+        isMessage = type;
+        invalidateButtons();
     }
 
     public class CurrentLocation implements LocationListener {
