@@ -1,0 +1,50 @@
+package com.cray.software.justreminder.adapters;
+
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+
+import com.cray.software.justreminder.datas.models.IntroModel;
+import com.cray.software.justreminder.fragments.IntroFragment;
+
+import java.util.List;
+
+/**
+ * Copyright 2015 Nazar Suhovich
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+public class IntroPagerAdapter extends FragmentPagerAdapter {
+    private List<IntroModel> fragments;
+
+    public IntroPagerAdapter(FragmentManager fm, @NonNull List<IntroModel> fragments) {
+        super(fm);
+        this.fragments = fragments;
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        return IntroFragment.newInstance(fragments.get(position));
+    }
+
+    @Override
+    public int getCount() {
+        return this.fragments.size();
+    }
+
+    @NonNull
+    public List<IntroModel> getFragments() {
+        return fragments;
+    }
+}

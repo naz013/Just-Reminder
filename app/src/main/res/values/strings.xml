@@ -734,5 +734,7 @@
     <string name="blur">Blur</string>
     <string name="check_to_enable_background_image_blurring">Check to enable background image blurring</string>
     <string name="pro_version_only">Pro version only</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 
 </resources>

@@ -732,4 +732,6 @@
     <string name="blur">Розмитість</string>
     <string name="check_to_enable_background_image_blurring">Відмітьте, щоб увімкнути розмивання фонового зображення</string>
     <string name="pro_version_only">Тільки в ПРО версії</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 </resources>

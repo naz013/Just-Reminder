@@ -732,4 +732,6 @@
     <string name="blur">Размытие</string>
     <string name="check_to_enable_background_image_blurring">Отметьте, чтобы включить размытие фонового изображения</string>
     <string name="pro_version_only">Только для ПРО версии</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 </resources>
