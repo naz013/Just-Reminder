@@ -429,6 +429,25 @@ public class Reminder {
     }
 
     /**
+     * Update reminders count.
+     * @param context application context.
+     * @param id reminder identifier.
+     */
+    public static void skipNext(Context context, long id){
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+            if (repCode > 0) {
+                db.updateReminderCount(id, (c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT)) + 1));
+            }
+        }
+        if (c != null) c.close();
+        db.close();
+    }
+
+    /**
      * Set delay for reminder.
      * @param context application context.
      * @param id reminder identifier.
