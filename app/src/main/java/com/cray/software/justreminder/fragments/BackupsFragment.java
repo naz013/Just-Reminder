@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -35,6 +35,7 @@ import com.cray.software.justreminder.cloud.AccountInfo;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.DropboxQuota;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.FilesDataBase;
@@ -45,6 +46,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -230,12 +232,17 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         cloudLayout = (LinearLayout) rootView.findViewById(R.id.cloudLayout);
         cloudLayout.setVisibility(View.VISIBLE);
 
-        RelativeLayout card1 = (RelativeLayout) rootView.findViewById(R.id.card1);
-        RelativeLayout card2 = (RelativeLayout) rootView.findViewById(R.id.card2);
-        RelativeLayout card3 = (RelativeLayout) rootView.findViewById(R.id.card3);
-        card1.setBackgroundResource(cSetter.getCardDrawableStyle());
-        card2.setBackgroundResource(cSetter.getCardDrawableStyle());
-        card3.setBackgroundResource(cSetter.getCardDrawableStyle());
+        CardView card1 = (CardView) rootView.findViewById(R.id.card1);
+        CardView card2 = (CardView) rootView.findViewById(R.id.card2);
+        CardView card3 = (CardView) rootView.findViewById(R.id.card3);
+        card1.setCardBackgroundColor(cSetter.getCardStyle());
+        card2.setCardBackgroundColor(cSetter.getCardStyle());
+        card3.setCardBackgroundColor(cSetter.getCardStyle());
+        if (Module.isLollipop()) {
+            card3.setCardElevation(Configs.CARD_ELEVATION);
+            card2.setCardElevation(Configs.CARD_ELEVATION);
+            card1.setCardElevation(Configs.CARD_ELEVATION);
+        }
 
         cloudUser = (TextView) rootView.findViewById(R.id.cloudUser);
         cloudUser.setTypeface(typefaceThin);
@@ -385,12 +392,17 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleLayout = (LinearLayout) rootView.findViewById(R.id.googleLayout);
         googleLayout.setVisibility(View.VISIBLE);
 
-        RelativeLayout card4 = (RelativeLayout) rootView.findViewById(R.id.card4);
-        RelativeLayout card5 = (RelativeLayout) rootView.findViewById(R.id.card5);
-        RelativeLayout card6 = (RelativeLayout) rootView.findViewById(R.id.card6);
-        card4.setBackgroundResource(cSetter.getCardDrawableStyle());
-        card5.setBackgroundResource(cSetter.getCardDrawableStyle());
-        card6.setBackgroundResource(cSetter.getCardDrawableStyle());
+        CardView card4 = (CardView) rootView.findViewById(R.id.card4);
+        CardView card5 = (CardView) rootView.findViewById(R.id.card5);
+        CardView card6 = (CardView) rootView.findViewById(R.id.card6);
+        card4.setCardBackgroundColor(cSetter.getCardStyle());
+        card5.setCardBackgroundColor(cSetter.getCardStyle());
+        card6.setCardBackgroundColor(cSetter.getCardStyle());
+        if (Module.isLollipop()) {
+            card4.setCardElevation(Configs.CARD_ELEVATION);
+            card5.setCardElevation(Configs.CARD_ELEVATION);
+            card6.setCardElevation(Configs.CARD_ELEVATION);
+        }
 
         TextView googleUser = (TextView) rootView.findViewById(R.id.googleUser);
         googleUser.setTypeface(typefaceThin);
@@ -643,8 +655,11 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         localLayout = (LinearLayout) rootView.findViewById(R.id.localLayout);
         localLayout.setVisibility(View.VISIBLE);
 
-        RelativeLayout card7 = (RelativeLayout) rootView.findViewById(R.id.card7);
-        card7.setBackgroundResource(cSetter.getCardDrawableStyle());
+        CardView card7 = (CardView) rootView.findViewById(R.id.card7);
+        card7.setCardBackgroundColor(cSetter.getCardStyle());
+        if (Module.isLollipop()) {
+            card7.setCardElevation(Configs.CARD_ELEVATION);
+        }
 
         localCount = (TextView) rootView.findViewById(R.id.localCount);
         localCount.setTypeface(typefaceMedium);

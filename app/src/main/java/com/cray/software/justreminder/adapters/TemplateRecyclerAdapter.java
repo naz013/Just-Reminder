@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.datas.models.TemplateModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -44,7 +45,9 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
             textView.setTypeface(typeface);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -52,13 +55,16 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
 
         @Override
         public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), textView);
+            if (mEventListener != null) {
+                mEventListener.onItemClicked(getAdapterPosition(), textView);
+            }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if (mEventListener != null)
+            if (mEventListener != null) {
                 mEventListener.onItemLongClicked(getAdapterPosition(), textView);
+            }
             return true;
         }
     }

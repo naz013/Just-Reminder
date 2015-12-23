@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -87,7 +88,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
-                itemCard.setCardElevation(5f);
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
 
             v.setOnClickListener(this);

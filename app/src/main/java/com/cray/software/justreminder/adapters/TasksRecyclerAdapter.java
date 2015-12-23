@@ -15,12 +15,12 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,8 +101,11 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         });
 
         String notes = mDataset.get(position).getNote();
-        if (notes != null && !notes.matches("")) holder.note.setText(notes);
-        else holder.note.setVisibility(View.GONE);
+        if (notes != null && !notes.matches("")) {
+            holder.note.setText(notes);
+        } else {
+            holder.note.setVisibility(View.GONE);
+        }
 
         long date = mDataset.get(position).getDate();
         java.util.Calendar calendar = java.util.Calendar.getInstance();
@@ -110,11 +113,15 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
             calendar.setTimeInMillis(date);
             String update = full24Format.format(calendar.getTime());
             holder.txtDate.setText(update);
-        } else holder.txtDate.setVisibility(View.INVISIBLE);
+        } else {
+            holder.txtDate.setVisibility(View.INVISIBLE);
+        }
 
         if (mDataset.get(position).getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             holder.checkBox.setChecked(true);
-        } else holder.checkBox.setChecked(false);
+        } else {
+            holder.checkBox.setChecked(false);
+        }
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

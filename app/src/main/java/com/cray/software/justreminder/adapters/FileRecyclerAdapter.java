@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -19,8 +20,6 @@ import com.cray.software.justreminder.modules.Module;
  * Recycler view adapter for backup files list.
  */
 public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapter.ViewHolder> {
-
-    public static final float CARD_ELEVATION = 5f;
 
     /**
      * Application context.
@@ -88,7 +87,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
-                itemCard.setCardElevation(CARD_ELEVATION);
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
 
             v.setOnClickListener(this);

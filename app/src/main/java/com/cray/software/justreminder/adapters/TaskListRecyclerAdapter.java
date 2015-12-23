@@ -13,10 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 /**
@@ -139,22 +139,27 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
             holder.clearButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null) listener.onItemDelete(position);
+                    if (listener != null) {
+                        listener.onItemDelete(position);
+                    }
                 }
             });
 
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null && item.getStatus() == ShoppingList.DELETED)
+                    if (listener != null && item.getStatus() == ShoppingList.DELETED) {
                         listener.onItemChange(position);
+                    }
                 }
             });
 
             holder.itemCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (listener != null) listener.onItemCheck(position, isChecked);
+                    if (listener != null) {
+                        listener.onItemCheck(position, isChecked);
+                    }
                 }
             });
         }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -29,11 +30,6 @@ import java.util.Date;
  * RecyclerView adapter for today view fragment.
  */
 public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAdapter.ViewHolder> {
-
-    /**
-     * CardView elevation constant.
-     */
-    private final static float CARD_ELEVATION = 5f;
 
     /**
      * List of events models.
@@ -111,7 +107,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
-                itemCard.setCardElevation(CARD_ELEVATION);
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
 
             v.setOnClickListener(this);

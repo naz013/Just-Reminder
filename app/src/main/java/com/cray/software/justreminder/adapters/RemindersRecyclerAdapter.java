@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
@@ -97,7 +98,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
-                itemCard.setCardElevation(5f);
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
 
             todoList = (LinearLayout) v.findViewById(R.id.todoList);

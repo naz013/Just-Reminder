@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -48,7 +49,9 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             noteImage = (ImageView) v.findViewById(R.id.noteImage);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) itemCard.setCardElevation(5f);
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
+            }
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
@@ -56,13 +59,16 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
         @Override
         public void onClick(View v) {
-            if (mEventListener != null) mEventListener.onItemClicked(getAdapterPosition(), noteImage);
+            if (mEventListener != null) {
+                mEventListener.onItemClicked(getAdapterPosition(), noteImage);
+            }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if (mEventListener != null)
+            if (mEventListener != null) {
                 mEventListener.onItemLongClicked(getAdapterPosition(), noteImage);
+            }
             return true;
         }
     }
@@ -92,8 +98,12 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
             if (photo != null){
                 holder.noteImage.setImageBitmap(photo);
-            } else holder.noteImage.setImageDrawable(null);
-        } else holder.noteImage.setImageDrawable(null);
+            } else {
+                holder.noteImage.setImageDrawable(null);
+            }
+        } else {
+            holder.noteImage.setImageDrawable(null);
+        }
 
         if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             title = SyncHelper.decrypt(title);
