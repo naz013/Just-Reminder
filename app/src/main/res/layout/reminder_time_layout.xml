@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/after_time_layout"
     android:visibility="visible"
     android:orientation="vertical"
@@ -288,53 +289,14 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:gravity="left|center"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|left"
-                    android:id="@+id/text1"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:text="@string/string_repeat_every"
-                    android:textSize="@dimen/create_text_size_normal"/>
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:minWidth="50dp"
-                    android:layout_toRightOf="@+id/text1"
-                    android:maxLength="3"
-                    android:inputType="number"
-                    android:gravity="center"
-                    android:layout_marginLeft="@dimen/create_margin"
-                    android:textSize="@dimen/create_text_size_primary"
-                    android:id="@+id/repeatMinutes"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center|left"
-                    android:layout_centerVertical="true"
-                    android:text="@string/remaining_minutes"
-                    android:layout_toRightOf="@+id/repeatMinutes"
-                    android:textSize="@dimen/create_text_size_normal"/>
-
-            </RelativeLayout>
-
-            <SeekBar
+            <com.cray.software.justreminder.views.RepeatView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/repeatMinutesSeek"
-                android:max="120" />
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                app:repeat_type_text="@string/remaining_minutes"
+                android:id="@+id/repeatViewTime"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"

@@ -86,6 +86,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
+import com.cray.software.justreminder.views.RepeatView;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -97,59 +98,25 @@ import java.util.List;
  * Backup file edit activity.
  */
 public class BackupFileEdit extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
-        MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener {
+        CompoundButton.OnCheckedChangeListener, MapListener, GeocoderTask.GeocoderListener,
+        Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener,
+        RepeatView.OnRepeatListener {
 
     /**
      * Date reminder type variables.
      */
-    /**
-     * Export to Google task check.
-     */
     private CheckBox dateTaskExport;
-
-    /**
-     * Repeat interval field.
-     */
-    private EditText repeatDays;
 
     /**
      * Weekday reminder type variables.
      */
-    /**
-     * Container.
-     */
     private LinearLayout action_layout;
-
-    /**
-     * Action phone number field.
-     */
     private FloatingEditText weekPhoneNumber;
-
-    /**
-     * Time text view.
-     */
     private TextView weekTimeField;
-
-    /**
-     * Load list of contact button.
-     */
     private ImageButton weekAddNumberButton;
-
-    /**
-     * Days of week toggle buttons.
-     */
     private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
             fridayCheck, saturdayCheck, sundayCheck;
-
-    /**
-     * Select call or message check button.
-     */
     private RadioButton callCheck, messageCheck;
-
-    /**
-     * Enable/disable reminder action and/or exporting to Google Tasks.
-     */
     private CheckBox attachAction, weekTaskExport;
 
     /**
@@ -167,14 +134,12 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      */
     private FloatingEditText phoneNumber;
     private CheckBox callTaskExport;
-    private EditText repeatDaysCall;
 
     /**
      * Message reminder variables.
      */
     private FloatingEditText messageNumber;
     private CheckBox messageTaskExport;
-    private EditText repeatDaysMessage;
 
     /**
      * Time reminder variables.
@@ -182,14 +147,13 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private CheckBox timeTaskExport;
     private TextView hoursView, minutesView, secondsView, selectExclusion;
     private ImageButton deleteButton, exclusionClear;
-    private EditText repeatMinutes;
     private String timeString = "000000";
 
     /**
      * Application reminder type variables.
      */
     private CheckBox appTaskExport;
-    private EditText browseLink, repeatDaysApp;
+    private EditText browseLink;
     private RadioButton application, browser;
     private TextView applicationName;
 
@@ -197,7 +161,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
      * Skype reminder type variables.
      */
     private CheckBox skypeTaskExport;
-    private EditText skypeUser, repeatDaysSkype;
+    private EditText skypeUser;
     private RadioButton skypeCall;
     private RadioButton skypeVideo;
 
@@ -261,6 +225,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private int wake = -1;
     private int unlock = -1;
     private int auto = -1;
+    private int repeatCode = 0;
     private long limits = -1;
     private long id;
     private String type, selectedPackage = null;
@@ -656,13 +621,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             dateTaskExport.setVisibility(View.VISIBLE);
         }
 
-        repeatDays = (EditText) findViewById(R.id.repeatDays);
-        repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
-        repeatDateInt.setOnSeekBarChangeListener(this);
-        repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
+        RepeatView repeatView = (RepeatView) findViewById(R.id.repeatView);
+        repeatView.setListener(this);
+        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         if (id != 0) {
             fdb.open();
@@ -684,8 +645,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
 
             taskField.setText(text);
             dateView.setDateTime(cal.getTimeInMillis());
-            repeatDateInt.setProgress(repCode);
-            repeatDays.setText(String.valueOf(repCode));
+            repeatView.setProgress(repCode);
         }
     }
 
@@ -1121,12 +1081,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         b9.setOnClickListener(this);
         b0.setOnClickListener(this);
 
-        repeatMinutes = (EditText) findViewById(R.id.repeatMinutes);
-        repeatMinutes.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatMinutesSeek = (SeekBar) findViewById(R.id.repeatMinutesSeek);
-        repeatMinutesSeek.setOnSeekBarChangeListener(this);
-        repeatMinutes.setText(String.valueOf(repeatMinutesSeek.getProgress()));
+        RepeatView repeatViewTime = (RepeatView) findViewById(R.id.repeatViewTime);
+        repeatViewTime.setListener(this);
+        repeatViewTime.setMax(120);
 
         if (id != 0) {
             fdb.open();
@@ -1143,7 +1100,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             }
             if (c != null) c.close();
             taskField.setText(text);
-            repeatMinutesSeek.setProgress(repeat);
+            repeatViewTime.setProgress(repeat);
             timeString = TimeUtil.generateAfterString(afterTime);
             updateTimeView();
             setExclusion(exclusion);
@@ -1223,13 +1180,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DateTimeView dateViewSkype = (DateTimeView) findViewById(R.id.dateViewSkype);
         dateViewSkype.setListener(this);
 
-        repeatDaysSkype = (EditText) findViewById(R.id.repeatDaysSkype);
-        repeatDaysSkype.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatSkype = (SeekBar) findViewById(R.id.repeatSkype);
-        repeatSkype.setOnSeekBarChangeListener(this);
-        repeatSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDaysSkype.setText(String.valueOf(repeatSkype.getProgress()));
+        RepeatView repeatViewSkype = (RepeatView) findViewById(R.id.repeatViewSkype);
+        repeatViewSkype.setListener(this);
+        repeatViewSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         if (id != 0) {
             fdb.open();
@@ -1264,8 +1217,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             skypeUser.setText(number);
             dateViewSkype.setDateTime(cal.getTimeInMillis());
-            repeatSkype.setProgress(repCode);
-            repeatDaysSkype.setText(String.valueOf(repCode));
+            repeatViewSkype.setProgress(repCode);
         }
     }
 
@@ -1311,13 +1263,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DateTimeView dateViewApp = (DateTimeView) findViewById(R.id.dateViewApp);
         dateViewApp.setListener(this);
 
-        repeatDaysApp = (EditText) findViewById(R.id.repeatDaysApp);
-        repeatDaysApp.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatApp = (SeekBar) findViewById(R.id.repeatApp);
-        repeatApp.setOnSeekBarChangeListener(this);
-        repeatApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDaysApp.setText(String.valueOf(repeatApp.getProgress()));
+        RepeatView repeatViewApp = (RepeatView) findViewById(R.id.repeatViewApp);
+        repeatViewApp.setListener(this);
+        repeatViewApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         if (id != 0) {
             fdb.open();
@@ -1362,8 +1310,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
 
             dateViewApp.setDateTime(cal.getTimeInMillis());
-            repeatApp.setProgress(repCode);
-            repeatDaysApp.setText(String.valueOf(repCode));
+            repeatViewApp.setProgress(repCode);
         }
     }
 
@@ -1396,13 +1343,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DateTimeView dateViewCall = (DateTimeView) findViewById(R.id.dateViewCall);
         dateViewCall.setListener(this);
 
-        repeatDaysCall = (EditText) findViewById(R.id.repeatDaysCall);
-        repeatDaysCall.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatCallInt = (SeekBar) findViewById(R.id.repeatCallInt);
-        repeatCallInt.setOnSeekBarChangeListener(this);
-        repeatCallInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDaysCall.setText(String.valueOf(repeatCallInt.getProgress()));
+        RepeatView repeatViewCall = (RepeatView) findViewById(R.id.repeatViewCall);
+        repeatViewCall.setListener(this);
+        repeatViewCall.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         if (id != 0) {
             fdb.open();
@@ -1427,8 +1370,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             phoneNumber.setText(number);
             dateViewCall.setDateTime(cal.getTimeInMillis());
-            repeatCallInt.setProgress(repCode);
-            repeatDaysCall.setText(String.valueOf(repCode));
+            repeatViewCall.setProgress(repCode);
         }
     }
 
@@ -1461,13 +1403,9 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         DateTimeView dateViewMessage = (DateTimeView) findViewById(R.id.dateViewMessage);
         dateViewMessage.setListener(this);
 
-        repeatDaysMessage = (EditText) findViewById(R.id.repeatDaysMessage);
-        repeatDaysMessage.setTypeface(AssetsUtil.getLightTypeface(this));
-
-        SeekBar repeatMessageInt = (SeekBar) findViewById(R.id.repeatMessageInt);
-        repeatMessageInt.setOnSeekBarChangeListener(this);
-        repeatMessageInt.setMax(Configs.REPEAT_SEEKBAR_MAX);
-        repeatDaysMessage.setText(String.valueOf(repeatMessageInt.getProgress()));
+        RepeatView repeatViewMessage = (RepeatView) findViewById(R.id.repeatViewMessage);
+        repeatViewMessage.setListener(this);
+        repeatViewMessage.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         if (id != 0) {
             fdb.open();
@@ -1492,8 +1430,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             taskField.setText(text);
             messageNumber.setText(number);
             dateViewMessage.setDateTime(cal.getTimeInMillis());
-            repeatMessageInt.setProgress(repCode);
-            repeatDaysMessage.setText(String.valueOf(repCode));
+            repeatViewMessage.setProgress(repCode);
         }
     }
 
@@ -2345,7 +2282,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
                 number = "http://" + number;
         }
 
-        int repeat = Integer.parseInt(repeatDaysApp.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
@@ -2360,7 +2296,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+                number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
         alarm.setAlarm(BackupFileEdit.this, ids);
         DB.updateReminderDateTime(ids);
         DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
@@ -2386,7 +2322,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         String type = getSkypeTaskType();
         String number = skypeUser.getText().toString().trim();
 
-        int repeat = Integer.parseInt(repeatDaysSkype.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
@@ -2401,7 +2336,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         long ids = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+                number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
         alarm.setAlarm(BackupFileEdit.this, ids);
         DB.updateReminderDateTime(ids);
         DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
@@ -2517,7 +2452,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             return;
         }
         String type = getTaskType();
-        int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
         if (isUID(uuID)){
@@ -2532,7 +2466,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+                repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
         alarm.setAlarm(BackupFileEdit.this, ids);
         DB.updateReminderDateTime(ids);
         DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
@@ -2604,7 +2538,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = phoneNumber.getText().toString().trim();
-        int repeat = Integer.parseInt(repeatDaysCall.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
 
@@ -2621,7 +2554,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+                number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
         DB.updateReminderDateTime(ids);
         DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         DB.close();
@@ -2646,7 +2579,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
         String type = getTaskType();
         String number = messageNumber.getText().toString().trim();
-        int repeat = Integer.parseInt(repeatDaysMessage.getText().toString().trim());
         DB = new DataBase(BackupFileEdit.this);
         DB.open();
 
@@ -2663,7 +2595,7 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
             if (cf != null) cf.close();
         }
         long ids = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0,
-                number, repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
+                number, repeatCode, 0, 0, 0, 0, uuID, null, 0, null, 0, -1, 0, categoryId, exclusion);
         DB.updateReminderDateTime(ids);
         DB.updateReminderExtra(ids, vibration, voice, notificationRepeat, wake, unlock, auto, limits);
         alarm.setAlarm(BackupFileEdit.this, ids);
@@ -2852,42 +2784,6 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-        switch (seekBar.getId()){
-            case R.id.repeatSkype:
-                repeatDaysSkype.setText(String.valueOf(progress));
-                break;
-            case R.id.repeatApp:
-                repeatDaysApp.setText(String.valueOf(progress));
-                break;
-            case R.id.repeatCallInt:
-                repeatDaysCall.setText(String.valueOf(progress));
-                break;
-            case R.id.repeatMessageInt:
-                repeatDaysMessage.setText(String.valueOf(progress));
-                break;
-            case R.id.repeatDateInt:
-                repeatDays.setText(String.valueOf(progress));
-                break;
-            case R.id.repeatMinutesSeek:
-                repeatMinutes.setText(String.valueOf(progress));
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(final SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(final SeekBar seekBar) {
-
-    }
-
     /**
      * Show date picker dialog.
      */
@@ -3003,6 +2899,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     public void onTimeSelect(long mills, int hour, int minute) {
         myHour = hour;
         myMinute = minute;
+    }
+
+    @Override
+    public void onProgress(int progress) {
+
     }
 
     public class CurrentLocation implements LocationListener {

@@ -68,7 +68,7 @@
                     android:layout_marginRight="@dimen/create_margin"
                     android:layout_toRightOf="@+id/shopTimeIcon"
                     android:layout_centerVertical="true"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:id="@+id/shoppingTimeContainer"
                     android:layout_height="wrap_content">
 

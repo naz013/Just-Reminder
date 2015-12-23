@@ -3,6 +3,7 @@ package com.cray.software.justreminder.views;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
@@ -13,6 +14,7 @@ import android.widget.TimePicker;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;
@@ -60,6 +62,10 @@ public class DateTimeView extends RelativeLayout implements DatePickerDialog.OnD
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         date = (TextView) findViewById(R.id.dateField);
         time = (TextView) findViewById(R.id.timeField);
+
+        Typeface medium = AssetsUtil.getMediumTypeface(context);
+        date.setTypeface(medium);
+        time.setTypeface(medium);
 
         date.setOnClickListener(new OnClickListener() {
             @Override
