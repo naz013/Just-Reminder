@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -36,6 +37,8 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
     private SeekBar repeatViewSeek;
     private Context mContext;
     private OnRepeatListener listener;
+    private InputMethodManager imm;
+
 
     public RepeatView(Context context) {
         super(context);
@@ -54,7 +57,7 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
 
     private void init(Context context, AttributeSet attrs) {
         View.inflate(context, R.layout.repeat_view_layout, this);
-        setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        //setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
         repeatTitle = (EditText) findViewById(R.id.repeatTitle);
         TextView repeatType = (TextView) findViewById(R.id.repeatType);
@@ -70,6 +73,32 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
 
         repeatViewSeek.setOnSeekBarChangeListener(this);
         repeatTitle.addTextChangedListener(this);
+
+        repeatTitle.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                imm = (InputMethodManager) mContext.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                if (!hasFocus) {
+                    imm.hideSoftInputFromWindow(repeatTitle.getWindowToken(), 0);
+                } else {
+                    imm.showSoftInput(repeatTitle, 0);
+                }
+            }
+        });
+        repeatTitle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imm = (InputMethodManager) mContext.getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                if (!imm.isActive(repeatTitle)){
+                    imm.showSoftInput(repeatTitle, 0);
+                }
+            }
+        });
+
+        repeatViewSeek.setProgress(0);
+        repeatTitle.setText(String.valueOf(0));
 
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(

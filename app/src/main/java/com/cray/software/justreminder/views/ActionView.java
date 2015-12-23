@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -43,6 +44,7 @@ public class ActionView extends LinearLayout {
     private RadioButton callAction, messageAction;
     private ImageButton selectNumber;
     private FloatingEditText numberView;
+    private InputMethodManager imm;
 
     private OnActionListener listener;
 
@@ -63,7 +65,7 @@ public class ActionView extends LinearLayout {
 
     private void init(Context context, AttributeSet attrs) {
         View.inflate(context, R.layout.action_view_layout, this);
-        setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        //setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
 
         actionBlock = (LinearLayout) findViewById(R.id.actionBlock);
@@ -80,6 +82,29 @@ public class ActionView extends LinearLayout {
                     ViewUtils.setImage(selectNumber, new SharedPrefs(activity).loadBoolean(Prefs.USE_DARK_THEME));
 
                     numberView = (FloatingEditText) findViewById(R.id.numberView);
+                    numberView.setFocusableInTouchMode(true);
+                    numberView.setOnFocusChangeListener(new OnFocusChangeListener() {
+                        @Override
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            imm = (InputMethodManager) activity.getSystemService(
+                                    Context.INPUT_METHOD_SERVICE);
+                            if (!hasFocus) {
+                                imm.hideSoftInputFromWindow(numberView.getWindowToken(), 0);
+                            } else {
+                                imm.showSoftInput(numberView, 0);
+                            }
+                        }
+                    });
+                    numberView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            imm = (InputMethodManager) activity.getSystemService(
+                                    Context.INPUT_METHOD_SERVICE);
+                            if (!imm.isActive(numberView)){
+                                imm.showSoftInput(numberView, 0);
+                            }
+                        }
+                    });
 
                     callAction = (RadioButton) findViewById(R.id.callAction);
                     callAction.setChecked(true);
