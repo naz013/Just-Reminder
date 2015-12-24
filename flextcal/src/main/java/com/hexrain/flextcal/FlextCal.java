@@ -103,7 +103,6 @@ public class FlextCal extends Fragment {
     protected boolean showNavigationArrows = true;
     protected boolean enableClickOnDisabledDates = false;
     protected boolean enableImage = true;
-    protected boolean enableAnimation = true;
 
     protected ArrayList<DateTime> dateInMonthsList;
     protected ArrayList<DateTime> disableDates = new ArrayList<>();
@@ -124,7 +123,6 @@ public class FlextCal extends Fragment {
     public final static String SIX_WEEKS_IN_CALENDAR = "sixWeeksInCalendar";
     public final static String ENABLE_CLICK_ON_DISABLED_DATES = "enableClickOnDisabledDates";
     public final static String ENABLE_IMAGES = "enableImages";
-    public final static String ENABLE_ANIMATIONS = "enableAnimation";
 
     /**
      * For internal use
@@ -367,7 +365,6 @@ public class FlextCal extends Fragment {
         bundle.putBoolean(SHOW_NAVIGATION_ARROWS, showNavigationArrows);
         bundle.putBoolean(ENABLE_SWIPE, enableSwipe);
         bundle.putBoolean(ENABLE_IMAGES, enableImage);
-        bundle.putBoolean(ENABLE_ANIMATIONS, enableAnimation);
         bundle.putInt(START_DAY_OF_WEEK, startDayOfWeek);
         bundle.putBoolean(SIX_WEEKS_IN_CALENDAR, sixWeeksInCalendar);
 
@@ -787,7 +784,6 @@ public class FlextCal extends Fragment {
             // Should enable swipe to change month
             enableSwipe = args.getBoolean(ENABLE_SWIPE, true);
             enableImage = args.getBoolean(ENABLE_IMAGES, true);
-            enableAnimation = args.getBoolean(ENABLE_ANIMATIONS, true);
 
             // Get sixWeeksInCalendar
             sixWeeksInCalendar = args.getBoolean(SIX_WEEKS_IN_CALENDAR, true);

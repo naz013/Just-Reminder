@@ -561,6 +561,76 @@ public class ColorSetter {
     }
 
     /**
+     * Get RGB color from color resource.
+     * @return Color Resource
+     */
+    public String getRGB(int color){
+        String rgb;
+        switch (color) {
+            case R.color.redPrimary:
+                rgb = "F44336";
+                break;
+            case R.color.purplePrimary:
+                rgb = "9C27B0";
+                break;
+            case R.color.greenLightPrimary:
+                rgb = "8BC34A";
+                break;
+            case R.color.greenPrimary:
+                rgb = "4CAF50";
+                break;
+            case R.color.blueLightPrimary:
+                rgb = "03A9F4";
+                break;
+            case R.color.bluePrimary:
+                rgb = "2196F3";
+                break;
+            case R.color.yellowPrimary:
+                rgb = "FFEB3B";
+                break;
+            case R.color.orangePrimary:
+                rgb = "FF9800";
+                break;
+            case R.color.cyanPrimary:
+                rgb = "00BCD4";
+                break;
+            case R.color.pinkPrimary:
+                rgb = "E91E63";
+                break;
+            case R.color.tealPrimary:
+                rgb = "009688";
+                break;
+            case R.color.amberPrimary:
+                rgb = "FFC107";
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (color) {
+                        case R.color.purpleDeepPrimary:
+                            rgb = "673AB7";
+                            break;
+                        case R.color.orangeDeepPrimary:
+                            rgb = "FF5722";
+                            break;
+                        case R.color.limePrimary:
+                            rgb = "CDDC39";
+                            break;
+                        case R.color.indigoPrimary:
+                            rgb = "3F51B5";
+                            break;
+                        default:
+                            rgb = "4CAF50";
+                            break;
+                    }
+                } else {
+                    rgb = "4CAF50";
+                }
+                break;
+        }
+        return rgb;
+    }
+
+    /**
      * Get current day color for calendar.
      * @return Color Resource
      */
