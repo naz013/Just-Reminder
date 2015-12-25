@@ -224,7 +224,7 @@ public class ScreenManager extends AppCompatActivity
         fab.setTitle(title);
         fab.setSize(size);
         fab.setIcon(icon);
-        fab.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        fab.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
         fab.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         fab.setOnClickListener(listener);
     }

@@ -64,7 +64,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
         imgIcon.setVisibility(View.GONE);
         txtTitle.setText(spinnerNavItem.get(position).getTitle());
-        txtTitle.setTextColor(context.getResources().getColor(R.color.colorWhite));
+        txtTitle.setTextColor(context.getResources().getColor(R.color.whitePrimary));
         return convertView;
     }
 
@@ -85,7 +85,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
 
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
         if (prefs.loadBoolean(Prefs.USE_DARK_THEME)){
-            txtTitle.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            txtTitle.setTextColor(context.getResources().getColor(R.color.whitePrimary));
         } else txtTitle.setTextColor(context.getResources().getColor(R.color.blackPrimary));
         txtTitle.setText(spinnerNavItem.get(position).getTitle());
         return convertView;

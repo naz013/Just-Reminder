@@ -923,7 +923,7 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.material_grey);
-        } else color = getColor(R.color.colorWhite);
+        } else color = getColor(R.color.whitePrimary);
         return color;
     }
 
@@ -1121,7 +1121,7 @@ public class ColorSetter {
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
             color = getColor(R.color.grey_x);
-        } else color = getColor(R.color.colorWhite);
+        } else color = getColor(R.color.whitePrimary);
         return color;
     }
 

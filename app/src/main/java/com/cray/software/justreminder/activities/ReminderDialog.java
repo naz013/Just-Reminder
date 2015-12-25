@@ -557,11 +557,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private void colorify(FloatingActionButton... fab){
         for (FloatingActionButton button : fab){
             if (isDark){
-                button.setColorNormal(getResources().getColor(R.color.colorWhite));
+                button.setColorNormal(getResources().getColor(R.color.whitePrimary));
                 button.setColorPressed(getResources().getColor(R.color.material_divider));
             } else {
                 button.setColorNormal(getResources().getColor(R.color.material_divider));
-                button.setColorPressed(getResources().getColor(R.color.colorWhite));
+                button.setColorPressed(getResources().getColor(R.color.whitePrimary));
             }
         }
     }

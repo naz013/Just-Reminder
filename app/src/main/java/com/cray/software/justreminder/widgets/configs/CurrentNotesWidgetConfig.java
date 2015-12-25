@@ -203,7 +203,7 @@ public class CurrentNotesWidgetConfig extends AppCompatActivity {
                         widgetTitle.setTextColor(title);
                         break;
                     case R.id.radioTitleWhite:
-                        title = getResources().getColor(R.color.colorWhite);
+                        title = getResources().getColor(R.color.whitePrimary);
                         widgetTitle.setTextColor(title);
                         break;
                 }

@@ -29,7 +29,7 @@
         widget:paper_text="@string/string_connect_to_google_drive"
         android:layout_width="wrap_content"
         widget:paper_color="@color/redPrimary"
-        widget:paper_text_color="@color/colorWhite"
+        widget:paper_text_color="@color/whitePrimary"
         widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/log_in_first_button_margin_top"

@@ -116,7 +116,7 @@ public class CalendarActivity extends AppCompatActivity {
         addBirthday.setTitle(getString(R.string.new_birthday));
         addBirthday.setSize(FloatingActionButton.SIZE_MINI);
         addBirthday.setIcon(R.drawable.ic_cake_black_24dp);
-        addBirthday.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        addBirthday.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
         addBirthday.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         addBirthday.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +135,7 @@ public class CalendarActivity extends AppCompatActivity {
         addReminder.setTitle(getString(R.string.new_reminder));
         addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
         addReminder.setIcon(R.drawable.ic_alarm_black_24dp);
-        addReminder.setColorNormal(ViewUtils.getColor(this, R.color.colorWhite));
+        addReminder.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
         addReminder.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
         addReminder.setOnClickListener(new View.OnClickListener() {
             @Override

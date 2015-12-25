@@ -221,7 +221,7 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private void reloadItems(){
-        appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.colorWhite));
+        appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.whitePrimary));
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
                 .resize(1600, 900)

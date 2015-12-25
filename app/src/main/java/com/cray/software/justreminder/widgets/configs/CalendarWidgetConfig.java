@@ -121,9 +121,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
-                        color = getResources().getColor(R.color.colorWhite);
-                        headerColor = getResources().getColor(R.color.colorWhite);
-                        rowColor = getResources().getColor(R.color.colorWhite);
+                        color = getResources().getColor(R.color.whitePrimary);
+                        headerColor = getResources().getColor(R.color.whitePrimary);
+                        rowColor = getResources().getColor(R.color.whitePrimary);
                         break;
                     case 1:
                         color = getResources().getColor(android.R.color.transparent);
@@ -154,8 +154,8 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
                         itemTextColor = getResources().getColor(R.color.blackPrimary);
                         break;
                     case R.id.radioTitleWhite:
-                        title = getResources().getColor(R.color.colorWhite);
-                        itemTextColor = getResources().getColor(R.color.colorWhite);
+                        title = getResources().getColor(R.color.whitePrimary);
+                        itemTextColor = getResources().getColor(R.color.whitePrimary);
                         break;
                 }
             }
@@ -222,86 +222,86 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
     private void loadThemes(){
         list = new ArrayList<>();
         list.clear();
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.tealPrimaryDark, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Teal", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.indigoPrimary, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Indigo", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.limePrimaryDark, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Lime", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.bluePrimaryDark, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Blue", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.colorWhite), R.color.material_divider,
+        list.add(new ThemeItem(getResColor(R.color.whitePrimary), R.color.material_divider,
                 R.color.material_grey, R.color.material_divider,
-                getResColor(R.color.colorWhite), R.color.material_divider,
+                getResColor(R.color.whitePrimary), R.color.material_divider,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Gray", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.greenPrimaryDark, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Green", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.colorWhite), R.color.blackPrimary,
+        list.add(new ThemeItem(getResColor(R.color.whitePrimary), R.color.blackPrimary,
                 R.color.blackPrimary, R.color.blackPrimary,
-                getResColor(R.color.colorWhite), R.color.blackPrimary,
+                getResColor(R.color.whitePrimary), R.color.blackPrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Dark", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
-                R.color.colorWhite, R.color.colorWhite,
-                getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
+                R.color.whitePrimary, R.color.whitePrimary,
+                getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow_black, R.drawable.simple_right_arrow_black,
                 R.drawable.simple_plus_button_black, R.drawable.simple_voice_button_black,
                 R.drawable.simple_settings_button_black, "White", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
-                R.color.orangePrimaryDark, R.color.colorWhite,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
+                R.color.orangePrimaryDark, R.color.whitePrimary,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Orange", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.colorWhite,
+        list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.whitePrimary,
                 R.color.redPrimaryDark, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Red", 0, 0, 0));
 
         list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.orangeAccent,
                 R.color.material_grey_dialog, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.colorWhite,
+                getResColor(R.color.whitePrimary), R.color.whitePrimary,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Simple Black", 0, 0, 0));
 
-        list.add(new ThemeItem(getResColor(R.color.colorWhite), R.color.simple_transparent_widget_color,
+        list.add(new ThemeItem(getResColor(R.color.whitePrimary), R.color.simple_transparent_widget_color,
                 R.color.simple_transparent_header_color, R.color.simple_transparent_border_color,
-                getResColor(R.color.colorWhite), R.color.simple_transparent_row_color,
+                getResColor(R.color.whitePrimary), R.color.simple_transparent_row_color,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Transparent Light", 0, 0, 0));
@@ -315,7 +315,7 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
 
         list.add(new ThemeItem(getResColor(R.color.blackPrimary), R.color.orangeAccent,
                 R.color.cyanPrimary, R.color.material_grey,
-                getResColor(R.color.colorWhite), R.color.orangeAccent,
+                getResColor(R.color.whitePrimary), R.color.orangeAccent,
                 R.drawable.simple_left_arrow, R.drawable.simple_right_arrow,
                 R.drawable.simple_plus_button, R.drawable.simple_voice_button,
                 R.drawable.simple_settings_button, "Simple Brown", 0, 0, 0));

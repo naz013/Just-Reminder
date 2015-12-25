@@ -54,7 +54,7 @@ public class SplashScreen extends Activity{
             name = getString(R.string.app_name_pro);
         } else name = getString(R.string.app_name);
         textView.setText(name.toUpperCase());
-        textView.setTextColor(getResources().getColor(R.color.colorWhite));
+        textView.setTextColor(getResources().getColor(R.color.whitePrimary));
 
         LinearLayout splashBg = (LinearLayout) findViewById(R.id.splashBg);
         splashBg.setBackgroundColor(cs.colorPrimary());

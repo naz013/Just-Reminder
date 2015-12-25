@@ -205,7 +205,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
                         widgetTitle.setTextColor(title);
                         break;
                     case R.id.radioTitleWhite:
-                        title = getResources().getColor(R.color.colorWhite);
+                        title = getResources().getColor(R.color.whitePrimary);
                         widgetTitle.setTextColor(title);
                         break;
                 }
@@ -242,7 +242,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
                         taskDate.setTextColor(itemColor);
                         break;
                     case R.id.radioWhite:
-                        itemColor = getResources().getColor(R.color.colorWhite);
+                        itemColor = getResources().getColor(R.color.whitePrimary);
                         note.setTextColor(itemColor);
                         task.setTextColor(itemColor);
                         taskDate.setTextColor(itemColor);
