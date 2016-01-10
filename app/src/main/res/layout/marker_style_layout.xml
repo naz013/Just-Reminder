@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:id="@+id/blue_simple"
-            android:drawableLeft="@drawable/marker_grey"
+            android:drawableLeft="@drawable/marker_cyan"
             android:layout_margin="5dp"/>
 
         <RadioButton
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:id="@+id/red_round"
-            android:drawableLeft="@drawable/marker_brown"
+            android:drawableLeft="@drawable/marker_amber"
             android:layout_margin="5dp"/>
 
     </RadioGroup>

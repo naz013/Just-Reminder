@@ -1161,68 +1161,8 @@ public class ColorSetter {
      * @return color resources array
      */
     public int[] getMarkerRadiusStyle(){
-        int fillColor;
-        int strokeColor;
-        if (Module.isPro()) {
-            sPrefs = new SharedPrefs(mContext);
-            int color = sPrefs.loadInt(Prefs.MARKER_STYLE);
-            if (color == 1) {
-                fillColor = R.color.redA100;
-                strokeColor = R.color.redPrimaryDark;
-            } else if (color == 2) {
-                fillColor = R.color.greenA100;
-                strokeColor = R.color.greenPrimaryDark;
-            } else if (color == 3) {
-                fillColor = R.color.blueA100;
-                strokeColor = R.color.bluePrimaryDark;
-            } else if (color == 4) {
-                fillColor = R.color.yellowA100;
-                strokeColor = R.color.yellowPrimaryDark;
-            } else if (color == 5) {
-                fillColor = R.color.greenLightA100;
-                strokeColor = R.color.greenLightPrimaryDark;
-            } else if (color == 6) {
-                fillColor = R.color.blueLightA100;
-                strokeColor = R.color.blueLightPrimaryDark;
-            } else if (color == 7) {
-                fillColor = R.color.cyanA100;
-                strokeColor = R.color.cyanPrimaryDark;
-            } else if (color == 8) {
-                fillColor = R.color.purpleA100;
-                strokeColor = R.color.purplePrimaryDark;
-            } else if (color == 9) {
-                fillColor = R.color.amberA100;
-                strokeColor = R.color.amberPrimaryDark;
-            } else if (color == 10) {
-                fillColor = R.color.orangeA100;
-                strokeColor = R.color.orangePrimaryDark;
-            } else if (color == 11) {
-                fillColor = R.color.pinkA100;
-                strokeColor = R.color.pinkPrimaryDark;
-            } else if (color == 12) {
-                fillColor = R.color.tealA100;
-                strokeColor = R.color.tealPrimaryDark;
-            } else if (color == 13) {
-                fillColor = R.color.purpleDeepA100;
-                strokeColor = R.color.purpleDeepPrimaryDark;
-            } else if (color == 14) {
-                fillColor = R.color.orangeDeepA100;
-                strokeColor = R.color.orangeDeepPrimaryDark;
-            } else if (color == 15) {
-                fillColor = R.color.indigoA100;
-                strokeColor = R.color.indigoPrimaryDark;
-            } else if (color == 16) {
-                fillColor = R.color.limeA100;
-                strokeColor = R.color.limePrimaryDark;
-            } else {
-                fillColor = R.color.blueA100;
-                strokeColor = R.color.bluePrimaryDark;
-            }
-        } else {
-            fillColor = R.color.blueA100;
-            strokeColor = R.color.bluePrimaryDark;
-        }
-        return new int[]{fillColor, strokeColor};
+        int color = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
+        return getMarkerRadiusStyle(color);
     }
 
     /**
@@ -1233,57 +1173,75 @@ public class ColorSetter {
     public int[] getMarkerRadiusStyle(int color){
         int fillColor;
         int strokeColor;
-        if (color == 1) {
-            fillColor = R.color.redA100;
-            strokeColor = R.color.redPrimaryDark;
-        } else if (color == 2) {
-            fillColor = R.color.greenA100;
-            strokeColor = R.color.greenPrimaryDark;
-        } else if (color == 3) {
-            fillColor = R.color.blueA100;
-            strokeColor = R.color.bluePrimaryDark;
-        } else if (color == 4) {
-            fillColor = R.color.yellowA100;
-            strokeColor = R.color.yellowPrimaryDark;
-        } else if (color == 5) {
-            fillColor = R.color.greenLightA100;
-            strokeColor = R.color.greenLightPrimaryDark;
-        } else if (color == 6) {
-            fillColor = R.color.blueLightA100;
-            strokeColor = R.color.blueLightPrimaryDark;
-        } else if (color == 7) {
-            fillColor = R.color.cyanA100;
-            strokeColor = R.color.cyanPrimaryDark;
-        } else if (color == 8) {
-            fillColor = R.color.purpleA100;
-            strokeColor = R.color.purplePrimaryDark;
-        } else if (color == 9) {
-            fillColor = R.color.amberA100;
-            strokeColor = R.color.amberPrimaryDark;
-        } else if (color == 10) {
-            fillColor = R.color.orangeA100;
-            strokeColor = R.color.orangePrimaryDark;
-        } else if (color == 11) {
-            fillColor = R.color.pinkA100;
-            strokeColor = R.color.pinkPrimaryDark;
-        } else if (color == 12) {
-            fillColor = R.color.tealA100;
-            strokeColor = R.color.tealPrimaryDark;
-        } else if (color == 13) {
-            fillColor = R.color.purpleDeepA100;
-            strokeColor = R.color.purpleDeepPrimaryDark;
-        } else if (color == 14) {
-            fillColor = R.color.orangeDeepA100;
-            strokeColor = R.color.orangeDeepPrimaryDark;
-        } else if (color == 15) {
-            fillColor = R.color.indigoA100;
-            strokeColor = R.color.indigoPrimaryDark;
-        } else if (color == 16) {
-            fillColor = R.color.limeA100;
-            strokeColor = R.color.limePrimaryDark;
-        } else {
-            fillColor = R.color.blueA100;
-            strokeColor = R.color.bluePrimaryDark;
+        switch (color) {
+            case 0:
+                fillColor = R.color.red50;
+                strokeColor = R.color.redPrimaryDark;
+                break;
+            case 1:
+                fillColor = R.color.green50;
+                strokeColor = R.color.greenPrimaryDark;
+                break;
+            case 2:
+                fillColor = R.color.blue50;
+                strokeColor = R.color.bluePrimaryDark;
+                break;
+            case 3:
+                fillColor = R.color.yellow50;
+                strokeColor = R.color.yellowPrimaryDark;
+                break;
+            case 4:
+                fillColor = R.color.greenLight50;
+                strokeColor = R.color.greenLightPrimaryDark;
+                break;
+            case 5:
+                fillColor = R.color.blueLight50;
+                strokeColor = R.color.blueLightPrimaryDark;
+                break;
+            case 6:
+                fillColor = R.color.cyan50;
+                strokeColor = R.color.cyanPrimaryDark;
+                break;
+            case 7:
+                fillColor = R.color.purple50;
+                strokeColor = R.color.purplePrimaryDark;
+                break;
+            case 8:
+                fillColor = R.color.orange50;
+                strokeColor = R.color.orangePrimaryDark;
+                break;
+            case 9:
+                fillColor = R.color.pink50;
+                strokeColor = R.color.pinkPrimaryDark;
+                break;
+            case 10:
+                fillColor = R.color.teal50;
+                strokeColor = R.color.tealPrimaryDark;
+                break;
+            case 11:
+                fillColor = R.color.amber50;
+                strokeColor = R.color.amberPrimaryDark;
+                break;
+            case 12:
+                fillColor = R.color.purpleDeep50;
+                strokeColor = R.color.purpleDeepPrimaryDark;
+                break;
+            case 13:
+                fillColor = R.color.orangeDeep50;
+                strokeColor = R.color.orangeDeepPrimaryDark;
+                break;
+            case 14:
+                fillColor = R.color.indigo50;
+                strokeColor = R.color.indigoPrimaryDark;
+                break;
+            case 15:
+                fillColor = R.color.lime50;
+                strokeColor = R.color.limePrimaryDark;
+                break;
+            default:
+                fillColor = R.color.blue50;
+                strokeColor = R.color.bluePrimaryDark;
+                break;
         }
         return new int[]{fillColor, strokeColor};
     }
@@ -1293,49 +1251,12 @@ public class ColorSetter {
      * @return Drawable resource
      */
     public int getMarkerStyle(){
-        int color;
         if (Module.isPro()) {
-            sPrefs = new SharedPrefs(mContext);
-            int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
-            if (loaded == 1) {
-                color = R.drawable.marker_red;
-            } else if (loaded == 2) {
-                color = R.drawable.marker_green;
-            } else if (loaded == 3) {
-                color = R.drawable.marker_blue;
-            } else if (loaded == 4) {
-                color = R.drawable.marker_yellow;
-            } else if (loaded == 5) {
-                color = R.drawable.marker_green_light;
-            } else if (loaded == 6) {
-                color = R.drawable.marker_blue_light;
-            } else if (loaded == 7) {
-                color = R.drawable.marker_grey;
-            } else if (loaded == 8) {
-                color = R.drawable.marker_violet;
-            } else if (loaded == 9) {
-                color = R.drawable.marker_brown;
-            } else if (loaded == 10) {
-                color = R.drawable.marker_orange;
-            } else if (loaded == 11) {
-                color = R.drawable.marker_pink;
-            } else if (loaded == 12) {
-                color = R.drawable.marker_teal;
-            } else if (loaded == 13) {
-                color = R.drawable.marker_deep_purple;
-            } else if (loaded == 14) {
-                color = R.drawable.marker_deep_orange;
-            } else if (loaded == 15) {
-                color = R.drawable.marker_indigo;
-            } else if (loaded == 16) {
-                color = R.drawable.marker_lime;
-            } else {
-                color = R.drawable.marker_blue;
-            }
+            int loaded = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
+            return getMarkerStyle(loaded);
         } else {
-            color = R.drawable.marker_blue;
+            return R.drawable.marker_blue;
         }
-        return color;
     }
 
     /**
@@ -1345,40 +1266,58 @@ public class ColorSetter {
      */
     public int getMarkerStyle(int code){
         int color;
-        if (code == 1) {
-            color = R.drawable.marker_red;
-        } else if (code == 2) {
-            color = R.drawable.marker_green;
-        } else if (code == 3) {
-            color = R.drawable.marker_blue;
-        } else if (code == 4) {
-            color = R.drawable.marker_yellow;
-        } else if (code == 5) {
-            color = R.drawable.marker_green_light;
-        } else if (code == 6) {
-            color = R.drawable.marker_blue_light;
-        } else if (code == 7) {
-            color = R.drawable.marker_grey;
-        } else if (code == 8) {
-            color = R.drawable.marker_violet;
-        } else if (code == 9) {
-            color = R.drawable.marker_brown;
-        } else if (code == 10) {
-            color = R.drawable.marker_orange;
-        } else if (code == 11) {
-            color = R.drawable.marker_pink;
-        } else if (code == 12) {
-            color = R.drawable.marker_teal;
-        } else if (code == 13) {
-            color = R.drawable.marker_deep_purple;
-        } else if (code == 14) {
-            color = R.drawable.marker_deep_orange;
-        } else if (code == 15) {
-            color = R.drawable.marker_indigo;
-        } else if (code == 16) {
-            color = R.drawable.marker_lime;
-        } else {
-            color = R.drawable.marker_blue;
+        switch (code) {
+            case 0:
+                color = R.drawable.marker_red;
+                break;
+            case 1:
+                color = R.drawable.marker_green;
+                break;
+            case 2:
+                color = R.drawable.marker_blue;
+                break;
+            case 3:
+                color = R.drawable.marker_yellow;
+                break;
+            case 4:
+                color = R.drawable.marker_green_light;
+                break;
+            case 5:
+                color = R.drawable.marker_blue_light;
+                break;
+            case 6:
+                color = R.drawable.marker_cyan;
+                break;
+            case 7:
+                color = R.drawable.marker_violet;
+                break;
+            case 8:
+                color = R.drawable.marker_orange;
+                break;
+            case 9:
+                color = R.drawable.marker_pink;
+                break;
+            case 10:
+                color = R.drawable.marker_teal;
+                break;
+            case 11:
+                color = R.drawable.marker_amber;
+                break;
+            case 12:
+                color = R.drawable.marker_deep_purple;
+                break;
+            case 13:
+                color = R.drawable.marker_deep_orange;
+                break;
+            case 14:
+                color = R.drawable.marker_indigo;
+                break;
+            case 15:
+                color = R.drawable.marker_lime;
+                break;
+            default:
+                color = R.drawable.marker_blue;
+                break;
         }
         return color;
     }
