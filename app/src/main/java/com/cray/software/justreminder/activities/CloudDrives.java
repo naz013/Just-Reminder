@@ -112,12 +112,14 @@ public class CloudDrives extends AppCompatActivity {
         linkGDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new Permissions(CloudDrives.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                if (Permissions.checkPermission(CloudDrives.this,
+                        Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                        Permissions.WRITE_EXTERNAL)) {
                     switchGdrive();
                 } else {
-                    new Permissions(CloudDrives.this).requestPermission(CloudDrives.this,
-                            new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                    Permissions.WRITE_EXTERNAL}, 103);
+                    Permissions.requestPermission(CloudDrives.this, 103,
+                            Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                            Permissions.WRITE_EXTERNAL);
                 }
             }
         });

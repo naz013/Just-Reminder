@@ -283,7 +283,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                 break;
             case R.id.buttonCall:
                 notifier.discardNotification();
-                if (new Permissions(ShowBirthday.this).checkPermission(Permissions.CALL_PHONE)) {
+                if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
                     Telephony.makeCall(number, ShowBirthday.this);
                     db.open();
                     db.setShown(id, String.valueOf(year));
@@ -291,13 +291,12 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     notifier.recreatePermanent();
                     finish();
                 } else {
-                    new Permissions(ShowBirthday.this).requestPermission(ShowBirthday.this,
-                            new String[]{Permissions.CALL_PHONE}, 104);
+                    Permissions.requestPermission(ShowBirthday.this, 104, Permissions.CALL_PHONE);
                 }
                 break;
             case R.id.buttonSend:
                 notifier.discardNotification();
-                if (new Permissions(ShowBirthday.this).checkPermission(Permissions.SEND_SMS)) {
+                if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
                     Telephony.sendSms(number, ShowBirthday.this);
                     db.open();
                     db.setShown(id, String.valueOf(year));
@@ -305,8 +304,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     notifier.recreatePermanent();
                     finish();
                 } else {
-                    new Permissions(ShowBirthday.this).requestPermission(ShowBirthday.this,
-                            new String[]{Permissions.SEND_SMS}, 103);
+                    Permissions.requestPermission(ShowBirthday.this, 103, Permissions.SEND_SMS);
                 }
                 break;
         }
@@ -327,7 +325,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     notifier.recreatePermanent();
                     finish();
                 } else {
-                    new Permissions(ShowBirthday.this).showInfo(ShowBirthday.this, Permissions.SEND_SMS);
+                    Permissions.showInfo(ShowBirthday.this, Permissions.SEND_SMS);
                 }
                 break;
             case 104:
@@ -339,7 +337,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
                     notifier.recreatePermanent();
                     finish();
                 } else {
-                    new Permissions(ShowBirthday.this).showInfo(ShowBirthday.this, Permissions.CALL_PHONE);
+                    Permissions.showInfo(ShowBirthday.this, Permissions.CALL_PHONE);
                 }
                 break;
         }

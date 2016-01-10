@@ -41,17 +41,18 @@
                 android:layout_height="50dp"
                 android:layout_width="50dp"
                 android:background="@android:color/transparent"
-                android:id="@+id/green_checkbox"
-                android:src="@drawable/circle_drawable_green"
+                android:id="@+id/light_green_checkbox"
+                android:src="@drawable/circle_drawable_green_light"
                 android:layout_margin="5dp"/>
 
             <ImageButton
                 android:layout_height="50dp"
                 android:layout_width="50dp"
                 android:background="@android:color/transparent"
-                android:id="@+id/light_green_checkbox"
-                android:src="@drawable/circle_drawable_green_light"
+                android:id="@+id/green_checkbox"
+                android:src="@drawable/circle_drawable_green"
                 android:layout_margin="5dp"/>
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,17 +62,17 @@
             <ImageButton
                 android:layout_height="50dp"
                 android:layout_width="50dp"
-                android:id="@+id/blue_checkbox"
+                android:id="@+id/light_blue_checkbox"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_blue"
+                android:src="@drawable/circle_drawable_blue_light"
                 android:layout_margin="5dp"/>
 
             <ImageButton
                 android:layout_height="50dp"
                 android:layout_width="50dp"
-                android:id="@+id/light_blue_checkbox"
+                android:id="@+id/blue_checkbox"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_blue_light"
+                android:src="@drawable/circle_drawable_blue"
                 android:layout_margin="5dp"/>
 
             <ImageButton
@@ -148,9 +149,9 @@
             <ImageButton
                 android:layout_height="50dp"
                 android:layout_width="50dp"
-                android:id="@+id/indigoCheckbox"
+                android:id="@+id/deepOrange"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_indigo"
+                android:src="@drawable/circle_drawable_deep_orange"
                 android:layout_margin="5dp"/>
 
             <ImageButton
@@ -164,10 +165,11 @@
             <ImageButton
                 android:layout_height="50dp"
                 android:layout_width="50dp"
-                android:id="@+id/deepOrange"
+                android:id="@+id/indigoCheckbox"
                 android:background="@android:color/transparent"
-                android:src="@drawable/circle_drawable_deep_orange"
+                android:src="@drawable/circle_drawable_indigo"
                 android:layout_margin="5dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

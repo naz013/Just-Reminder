@@ -743,14 +743,16 @@ public class ScreenManager extends AppCompatActivity
                 SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
                 if (!new GTasksHelper(this).isLinked()) {
-                    if (new Permissions(ScreenManager.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                    if (Permissions.checkPermission(ScreenManager.this,
+                            Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                            Permissions.WRITE_EXTERNAL)) {
                         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                                 new String[]{"com.google"}, false, null, null, null, null);
                         startActivityForResult(intent, REQUEST_AUTHORIZATION);
                     } else {
-                        new Permissions(ScreenManager.this).requestPermission(ScreenManager.this,
-                                new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                        Permissions.WRITE_EXTERNAL}, 103);
+                        Permissions.requestPermission(ScreenManager.this, 103,
+                                Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                Permissions.WRITE_EXTERNAL);
                     }
                 }
             } else {

@@ -633,12 +633,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private View.OnClickListener contactClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Permissions permissions = new Permissions(ReminderManager.this);
-            if (permissions.checkPermission(Permissions.READ_CONTACTS)) {
+            if (Permissions.checkPermission(ReminderManager.this, Permissions.READ_CONTACTS)) {
                 SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
             } else {
-                permissions.requestPermission(ReminderManager.this,
-                        new String[]{Permissions.READ_CONTACTS}, 107);
+                Permissions.requestPermission(ReminderManager.this, 107,
+                        new String[]{Permissions.READ_CONTACTS});
             }
         }
     };
@@ -3433,15 +3432,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case 2:
                 detachCurrentView();
-                if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)
-                        && new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)
-                        && new Permissions(ReminderManager.this).checkPermission(Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(ReminderManager.this,
+                        Permissions.CALL_PHONE,
+                        Permissions.SEND_SMS,
+                        Permissions.READ_CONTACTS)) {
                     attachWeekDayReminder();
                 } else {
-                    new Permissions(ReminderManager.this)
-                            .requestPermission(ReminderManager.this,
-                                    new String[]{Permissions.CALL_PHONE, Permissions.READ_CONTACTS,
-                                            Permissions.SEND_SMS}, 113);
+                    Permissions.requestPermission(ReminderManager.this, 113,
+                            Permissions.CALL_PHONE, Permissions.READ_CONTACTS,
+                            Permissions.SEND_SMS);
                 }
                 break;
             case 1:
@@ -3450,39 +3449,33 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case 3:
                 detachCurrentView();
-                if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)) {
+                if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE)) {
                     attachCall();
                 } else {
-                    new Permissions(ReminderManager.this)
-                            .requestPermission(ReminderManager.this,
-                                    new String[]{Permissions.CALL_PHONE}, 109);
+                    Permissions.requestPermission(ReminderManager.this, 109, Permissions.CALL_PHONE);
                 }
                 break;
             case 4:
                 detachCurrentView();
-                if (new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)) {
+                if (Permissions.checkPermission(ReminderManager.this, Permissions.SEND_SMS)) {
                     attachMessage();
                 } else {
-                    new Permissions(ReminderManager.this)
-                            .requestPermission(ReminderManager.this,
-                                    new String[]{Permissions.SEND_SMS}, 108);
+                    Permissions.requestPermission(ReminderManager.this, 108, Permissions.SEND_SMS);
                 }
                 break;
             case 5:
                 detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
-                    if (new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_FINE_LOCATION) &&
-                            new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_COURSE_LOCATION)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.READ_CONTACTS)) {
+                    if (Permissions.checkPermission(ReminderManager.this,
+                            Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
+                            Permissions.SEND_SMS, Permissions.ACCESS_COURSE_LOCATION,
+                            Permissions.READ_CONTACTS)) {
                         attachLocation();
                     } else {
-                        new Permissions(ReminderManager.this)
-                                .requestPermission(ReminderManager.this,
-                                        new String[]{Permissions.ACCESS_COURSE_LOCATION,
-                                                Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
-                                                Permissions.SEND_SMS, Permissions.READ_CONTACTS}, 105);
+                        Permissions.requestPermission(ReminderManager.this, 105,
+                                Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
+                                Permissions.SEND_SMS, Permissions.READ_CONTACTS);
                     }
                 } else {
                     spinner.setSelection(0);
@@ -3503,32 +3496,30 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 break;
             case 8:
                 detachCurrentView();
-                if (new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)
-                        && new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)
-                        && new Permissions(ReminderManager.this).checkPermission(Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(ReminderManager.this,
+                        Permissions.CALL_PHONE,
+                        Permissions.SEND_SMS,
+                        Permissions.READ_CONTACTS)) {
                     attachMonthDay();
                 } else {
-                    new Permissions(ReminderManager.this)
-                            .requestPermission(ReminderManager.this,
-                                    new String[]{Permissions.CALL_PHONE, Permissions.READ_CONTACTS,
-                                            Permissions.SEND_SMS}, 114);
+                    Permissions.requestPermission(ReminderManager.this, 114,
+                            Permissions.CALL_PHONE, Permissions.READ_CONTACTS,
+                            Permissions.SEND_SMS);
                 }
                 break;
             case 9:
                 detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
-                    if (new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_FINE_LOCATION) &&
-                            new Permissions(ReminderManager.this).checkPermission(Permissions.CALL_PHONE)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.SEND_SMS)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.ACCESS_COURSE_LOCATION)
-                            && new Permissions(ReminderManager.this).checkPermission(Permissions.READ_CONTACTS)) {
+                    if (Permissions.checkPermission(ReminderManager.this,
+                            Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
+                            Permissions.SEND_SMS, Permissions.ACCESS_COURSE_LOCATION,
+                            Permissions.READ_CONTACTS)) {
                         attachLocationOut();
                     } else {
-                        new Permissions(ReminderManager.this)
-                                .requestPermission(ReminderManager.this,
-                                        new String[]{Permissions.ACCESS_COURSE_LOCATION,
-                                                Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
-                                                Permissions.SEND_SMS, Permissions.READ_CONTACTS}, 106);
+                        Permissions.requestPermission(ReminderManager.this, 106,
+                                Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
+                                Permissions.SEND_SMS, Permissions.READ_CONTACTS);
                     }
                 } else {
                     spinner.setSelection(0);
@@ -3565,8 +3556,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
                 } else {
-                    new Permissions(ReminderManager.this)
-                            .showInfo(ReminderManager.this, Permissions.READ_CONTACTS);
+                    Permissions.showInfo(ReminderManager.this, Permissions.READ_CONTACTS);
                 }
                 break;
             case 108:

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 public class PermissionsList extends Activity{
 
-    private Permissions permissions;
     private ArrayList<Item> list = new ArrayList<>();
     private ListView musicList;
 
@@ -40,11 +39,10 @@ public class PermissionsList extends Activity{
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-        permissions = new Permissions(this);
         musicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                permissions.requestPermission(PermissionsList.this, new String[]{list.get(position).getPermission()}, position);
+                Permissions.requestPermission(PermissionsList.this, position, list.get(position).getPermission());
             }
         });
 
@@ -56,37 +54,37 @@ public class PermissionsList extends Activity{
 
     private void load(){
         list.clear();
-        if (!permissions.checkPermission(Permissions.ACCESS_COURSE_LOCATION))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_COURSE_LOCATION))
             list.add(new Item(getString(R.string.course_location), Permissions.ACCESS_COURSE_LOCATION));
 
-        if (!permissions.checkPermission(Permissions.ACCESS_FINE_LOCATION))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_FINE_LOCATION))
             list.add(new Item(getString(R.string.fine_location), Permissions.ACCESS_FINE_LOCATION));
 
-        if (!permissions.checkPermission(Permissions.CALL_PHONE))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.CALL_PHONE))
             list.add(new Item(getString(R.string.call_phone), Permissions.CALL_PHONE));
 
-        if (!permissions.checkPermission(Permissions.GET_ACCOUNTS))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.GET_ACCOUNTS))
             list.add(new Item(getString(R.string.get_accounts), Permissions.GET_ACCOUNTS));
 
-        if (!permissions.checkPermission(Permissions.READ_PHONE_STATE))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_PHONE_STATE))
             list.add(new Item(getString(R.string.read_phone_state), Permissions.READ_PHONE_STATE));
 
-        if (!permissions.checkPermission(Permissions.READ_CALENDAR))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALENDAR))
             list.add(new Item(getString(R.string.read_calendar), Permissions.READ_CALENDAR));
 
-        if (!permissions.checkPermission(Permissions.WRITE_CALENDAR))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_CALENDAR))
             list.add(new Item(getString(R.string.write_calendar), Permissions.WRITE_CALENDAR));
 
-        if (!permissions.checkPermission(Permissions.READ_CONTACTS))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CONTACTS))
             list.add(new Item(getString(R.string.read_contacts), Permissions.READ_CONTACTS));
 
-        if (!permissions.checkPermission(Permissions.READ_EXTERNAL))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_EXTERNAL))
             list.add(new Item(getString(R.string.read_external_storage), Permissions.READ_EXTERNAL));
 
-        if (!permissions.checkPermission(Permissions.WRITE_EXTERNAL))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_EXTERNAL))
             list.add(new Item(getString(R.string.write_external_storage), Permissions.WRITE_EXTERNAL));
 
-        if (!permissions.checkPermission(Permissions.SEND_SMS))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.SEND_SMS))
             list.add(new Item(getString(R.string.send_sms), Permissions.SEND_SMS));
 
         Adapter adapter = new Adapter(list, this);
@@ -105,11 +103,9 @@ public class PermissionsList extends Activity{
 
         private ArrayList<Item> list;
         private LayoutInflater inflater;
-        private Context context;
 
         Adapter(ArrayList<Item> list, Context context){
             this.list = list;
-            this.context = context;
             inflater = LayoutInflater.from(context);
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }

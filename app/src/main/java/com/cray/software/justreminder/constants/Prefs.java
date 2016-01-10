@@ -22,7 +22,7 @@ public class Prefs {
     public static final String EVENTS_CALENDAR = "events_calendar";
     public static final String AUTO_CHECK_FOR_EVENTS = "auto_events";
     public static final String AUTO_CHECK_FOR_EVENTS_INTERVAL = "auto_events_interval";
-    public static final String THEME = "theme_color";
+    public static final String APP_THEME = "theme_";
     public static final String DRIVE_USER = "ggl_user";
     public static final String SCREEN = "screen";
     public static final String USE_DARK_THEME = "dark_theme";
@@ -56,8 +56,8 @@ public class Prefs {
     public static final String WEAR_NOTIFICATION = "wear_notification";
     public static final String WIDGET_BIRTHDAYS = "widget_birthdays";
     public static final String NOTIFICATION_REMOVE = "notification_remove";
-    public static final String BIRTHDAY_COLOR = "birthday_color";
-    public static final String CURRENT_COLOR = "current_color";
+    public static final String BIRTH_COLOR = "birth_color";
+    public static final String TODAY_COLOR = "today_color";
     public static final String STATUS_BAR_ICON = "status_icon";
     public static final String STATUS_BAR_NOTIFICATION = "status_notification";
     public static final String TRACK_TIME = "tracking_time";
@@ -80,7 +80,7 @@ public class Prefs {
     public static final String NOTES_ORDER = "notes_ordering";
     public static final String TASKS_ORDER = "tasks_ordering";
     public static final String REMINDERS_IN_CALENDAR = "reminders_in_calendar";
-    public static final String REMINDERS_COLOR = "reminders_color";
+    public static final String REMINDER_COLOR = "reminder_color";
     public static final String IS_24_TIME_FORMAT = "24_hour_format";
     public static final String UNLOCK_DEVICE = "unlock_device";
     public static final String CALENDAR_FEATURE_TASKS = "feature_tasks";

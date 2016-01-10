@@ -15,7 +15,7 @@ public class Configs {
     /**
      * Application default theme.
      */
-    public static final String DEFAULT_THEME = "9";
+    public static final int DEFAULT_THEME = 8;
 
     /**
      * Max day for event calculating.

@@ -317,6 +317,24 @@ public class SuperUtil {
     }
 
     /**
+     * Check if application installed on device.
+     * @param context Application context.
+     * @param packageName package name.
+     * @return boolean
+     */
+    public static boolean isAppInstalled(Context context, String packageName) {
+        PackageManager pm = context.getPackageManager();
+        boolean installed;
+        try {
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            installed = false;
+        }
+        return installed;
+    }
+
+    /**
      * Open Google Play market for Skype client installation.
      * @param context application context.
      */

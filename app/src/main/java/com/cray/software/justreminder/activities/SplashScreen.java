@@ -74,10 +74,10 @@ public class SplashScreen extends Activity{
         if(!settingsUI.exists()){
             SharedPreferences appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor uiEd = appUISettings.edit();
-            uiEd.putString(Prefs.THEME, Configs.DEFAULT_THEME);
-            uiEd.putString(Prefs.CURRENT_COLOR, "1");
-            uiEd.putString(Prefs.BIRTHDAY_COLOR, "3");
-            uiEd.putString(Prefs.REMINDERS_COLOR, "5");
+            uiEd.putInt(Prefs.APP_THEME, Configs.DEFAULT_THEME);
+            uiEd.putInt(Prefs.TODAY_COLOR, 0);
+            uiEd.putInt(Prefs.BIRTH_COLOR, 2);
+            uiEd.putInt(Prefs.REMINDER_COLOR, 4);
             uiEd.putString(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
             uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
             uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
@@ -227,14 +227,17 @@ public class SplashScreen extends Activity{
      */
     private void checkPrefs(){
         sPrefs = new SharedPrefs(SplashScreen.this);
-        if (!sPrefs.isString(Prefs.CURRENT_COLOR)){
-            sPrefs.savePrefs(Prefs.CURRENT_COLOR, "5");
+        if (!sPrefs.isString(Prefs.TODAY_COLOR)){
+            sPrefs.saveInt(Prefs.TODAY_COLOR, 4);
         }
-        if (!sPrefs.isString(Prefs.BIRTHDAY_COLOR)){
-            sPrefs.savePrefs(Prefs.BIRTHDAY_COLOR, "2");
+        if (!sPrefs.isString(Prefs.BIRTH_COLOR)){
+            sPrefs.saveInt(Prefs.BIRTH_COLOR, 1);
         }
-        if (!sPrefs.isString(Prefs.REMINDERS_COLOR)){
-            sPrefs.savePrefs(Prefs.REMINDERS_COLOR, "5");
+        if (!sPrefs.isString(Prefs.REMINDER_COLOR)){
+            sPrefs.saveInt(Prefs.REMINDER_COLOR, 6);
+        }
+        if (!sPrefs.isString(Prefs.APP_THEME)){
+            sPrefs.saveInt(Prefs.APP_THEME, Configs.DEFAULT_THEME);
         }
         if (!sPrefs.isString(Prefs.SCREEN)){
             sPrefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);

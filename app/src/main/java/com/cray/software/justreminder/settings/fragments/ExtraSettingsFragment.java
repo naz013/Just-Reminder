@@ -135,24 +135,20 @@ public class ExtraSettingsFragment extends Fragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.missedPrefs:
-                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_PHONE_STATE)) {
                     missedChange();
                 } else {
-                    new Permissions(getActivity())
-                            .requestPermission(getActivity(),
-                                    new String[]{Permissions.READ_PHONE_STATE}, 107);
+                    Permissions.requestPermission(getActivity(), 107, Permissions.READ_PHONE_STATE);
                 }
                 break;
             case R.id.missedTimePrefs:
                 Dialogues.dialogWithSeek(getActivity(), 60, Prefs.MISSED_CALL_TIME, getString(R.string.repeat_interval_dialog_title), this);
                 break;
             case R.id.quickSMSPrefs:
-                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_PHONE_STATE)) {
                     quickChange();
                 } else {
-                    new Permissions(getActivity())
-                            .requestPermission(getActivity(),
-                                    new String[]{Permissions.READ_PHONE_STATE}, 108);
+                    Permissions.requestPermission(getActivity(), 108, Permissions.READ_PHONE_STATE);
                 }
                 break;
             case R.id.templates:
@@ -161,12 +157,11 @@ public class ExtraSettingsFragment extends Fragment implements
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.followReminderPrefs:
-                if (new Permissions(getActivity()).checkPermission(Permissions.READ_PHONE_STATE)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_PHONE_STATE)) {
                     followChange();
                 } else {
-                    new Permissions(getActivity())
-                            .requestPermission(getActivity(),
-                                    new String[]{Permissions.READ_PHONE_STATE}, 109);
+                    Permissions
+                            .requestPermission(getActivity(), 109, Permissions.READ_PHONE_STATE);
                 }
                 break;
         }
@@ -178,22 +173,16 @@ public class ExtraSettingsFragment extends Fragment implements
             case 107:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     missedChange();
-                } else {
-                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
                 }
                 break;
             case 108:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     quickChange();
-                } else {
-                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
                 }
                 break;
             case 109:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     followChange();
-                } else {
-                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_PHONE_STATE);
                 }
                 break;
         }

@@ -26,6 +26,9 @@ import android.widget.TextView;
 import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -34,9 +37,6 @@ import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.views.CircularProgress;
@@ -114,12 +114,8 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (enabled) {
-                    boolean isIn;
-                    if (Module.isPro()) {
-                        isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
-                    } else {
-                        isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
-                    }
+                    boolean isIn = SuperUtil.isAppInstalled(LogInActivity.this, Module.isPro() ?
+                            MARKET_APP_JUSTREMINDER : MARKET_APP_JUSTREMINDER_PRO);
                     if (isIn) {
                         checkDialog().show();
                     } else {
@@ -134,15 +130,15 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (enabled) {
-                    if (new Permissions(LogInActivity.this).checkPermission(Permissions.GET_ACCOUNTS)) {
+                    if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS)) {
                         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                                 new String[]{"com.google"}, false, null, null, null, null);
                         startActivityForResult(intent, REQUEST_AUTHORIZATION);
                         enabled = false;
                     } else {
-                        new Permissions(LogInActivity.this).requestPermission(LogInActivity.this,
-                                new String[]{Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                        Permissions.WRITE_EXTERNAL}, 103);
+                        Permissions.requestPermission(LogInActivity.this, 103,
+                                Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                                Permissions.WRITE_EXTERNAL);
                     }
                 }
             }
@@ -152,14 +148,13 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (enabled) {
-                    Permissions permissions = new Permissions(LogInActivity.this);
-                    if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                            permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                    if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
+                            Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
                         new LocalSync(LogInActivity.this, progress, progressMesage).execute();
                         enabled = false;
                     } else {
-                        permissions.requestPermission(LogInActivity.this,
-                                new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 101);
+                        Permissions.requestPermission(LogInActivity.this, 101,
+                                Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
                     }
                 }
             }
@@ -223,14 +218,13 @@ public class LogInActivity extends Activity {
                 connectGDrive.setEnabled(false);
                 skipButton.setEnabled(false);
                 sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-                Permissions permissions = new Permissions(LogInActivity.this);
-                if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                        permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
+                        Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                     enabled = false;
                 } else {
-                    permissions.requestPermission(LogInActivity.this,
-                            new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+                    Permissions.requestPermission(LogInActivity.this, 104,
+                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
                 }
             }
         } else {
@@ -238,28 +232,15 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            Permissions permissions = new Permissions(LogInActivity.this);
-            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
+                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                 enabled = false;
             } else {
-                permissions.requestPermission(LogInActivity.this,
-                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+                Permissions.requestPermission(LogInActivity.this, 104,
+                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
         }
-    }
-
-    private boolean isAppInstalled(String packageName) {
-        PackageManager pm = getPackageManager();
-        boolean installed;
-        try {
-            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-            installed = true;
-        } catch (PackageManager.NameNotFoundException e) {
-            installed = false;
-        }
-        return installed;
     }
 
     protected Dialog checkDialog() {
@@ -353,13 +334,12 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            Permissions permissions = new Permissions(LogInActivity.this);
-            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
+                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
             } else {
-                permissions.requestPermission(LogInActivity.this,
-                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+                Permissions.requestPermission(LogInActivity.this, 104,
+                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
@@ -368,13 +348,12 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            Permissions permissions = new Permissions(LogInActivity.this);
-            if (permissions.checkPermission(Permissions.READ_EXTERNAL) &&
-                    permissions.checkPermission(Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
+                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
             } else {
-                permissions.requestPermission(LogInActivity.this,
-                        new String[]{Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL}, 104);
+                Permissions.requestPermission(LogInActivity.this, 104,
+                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
             progressMesage.setText(getString(R.string.string_successfully_logged));
         }
@@ -467,11 +446,11 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
-                if (new Permissions(mContext).checkPermission(Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
                     new ImportBirthdays(LogInActivity.this).execute();
                 } else {
-                    new Permissions(mContext).requestPermission(LogInActivity.this,
-                            new String[]{Permissions.READ_CONTACTS}, 102);
+                    Permissions.requestPermission(LogInActivity.this, 102,
+                            Permissions.READ_CONTACTS);
                 }
             } else {
                 sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
@@ -680,11 +659,11 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
-                if (new Permissions(mContext).checkPermission(Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
                     new ImportBirthdays(LogInActivity.this).execute();
                 } else {
-                    new Permissions(mContext).requestPermission(LogInActivity.this,
-                            new String[]{Permissions.READ_CONTACTS}, 102);
+                    Permissions.requestPermission(LogInActivity.this, 102,
+                            Permissions.READ_CONTACTS);
                 }
             } else {
                 sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);

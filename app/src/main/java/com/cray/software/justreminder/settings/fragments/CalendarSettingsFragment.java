@@ -143,21 +143,18 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     private void reminderColor(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Prefs.REMINDERS_COLOR);
-        reminderColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        themeColorPrefs.setViewResource(new ColorSetter(getActivity())
+                .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.REMINDER_COLOR)));
     }
 
     private void currentColor(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Prefs.CURRENT_COLOR);
-        themeColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        themeColorPrefs.setViewResource(new ColorSetter(getActivity())
+                .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.TODAY_COLOR)));
     }
 
     private void birthdayColor(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        String loadedColor = sPrefs.loadPrefs(Prefs.BIRTHDAY_COLOR);
-        selectedColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        selectedColorPrefs.setViewResource(new ColorSetter(getActivity())
+                .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.BIRTH_COLOR)));
     }
 
     @Override
@@ -200,14 +197,14 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     private void importEvents() {
-        Permissions permissions = new Permissions(getActivity());
-        if (permissions.checkPermission(Permissions.READ_CALENDAR)) {
+        if (Permissions.checkPermission(getActivity(), Permissions.READ_CALENDAR,
+                Permissions.WRITE_CALENDAR)) {
             getActivity().getApplicationContext()
                     .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
-            permissions.requestPermission(getActivity(), new String[]{Permissions.READ_CALENDAR,
-                    Permissions.WRITE_CALENDAR}, 101);
+            Permissions.requestPermission(getActivity(), 101, Permissions.READ_CALENDAR,
+                    Permissions.WRITE_CALENDAR);
         }
     }
 
@@ -220,7 +217,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
                             .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } else {
-                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_CALENDAR);
+                    Permissions.showInfo(getActivity(), Permissions.READ_CALENDAR);
                 }
                 break;
         }

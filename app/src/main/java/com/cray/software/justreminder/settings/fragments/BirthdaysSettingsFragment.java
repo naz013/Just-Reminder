@@ -284,12 +284,12 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.contactsScan:
-                if (new Permissions(getActivity()).checkPermission(Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS)) {
                     new CheckBirthdaysAsync(getActivity(), true).execute();
                 } else {
-                    new Permissions(getActivity())
-                            .requestPermission(getActivity(),
-                                    new String[]{Permissions.READ_CONTACTS}, 106);
+                    Permissions
+                            .requestPermission(getActivity(), 106,
+                                    Permissions.READ_CONTACTS);
                 }
                 break;
             case R.id.daysToPrefs:

@@ -386,12 +386,11 @@ public class BackupFileEdit extends AppCompatActivity implements View.OnClickLis
     private View.OnClickListener contactClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Permissions permissions = new Permissions(BackupFileEdit.this);
-            if (permissions.checkPermission(Permissions.READ_CONTACTS)) {
+            if (Permissions.checkPermission(BackupFileEdit.this, Permissions.READ_CONTACTS)) {
                 SuperUtil.selectContact(BackupFileEdit.this, Constants.REQUEST_CODE_CONTACTS);
             } else {
-                permissions.requestPermission(BackupFileEdit.this,
-                        new String[]{Permissions.READ_CONTACTS}, 107);
+                Permissions.requestPermission(BackupFileEdit.this, 107,
+                        Permissions.READ_CONTACTS);
             }
         }
     };

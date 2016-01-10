@@ -1,9 +1,11 @@
 package com.cray.software.justreminder.settings;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
@@ -222,6 +225,17 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
                 if (resultCode == RESULT_OK) {
                     Uri selectedImage = data.getData();
                     new SharedPrefs(this).savePrefs(Prefs.REMINDER_IMAGE, selectedImage.toString());
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 106:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    new CheckBirthdaysAsync(this, true).execute();
                 }
                 break;
         }

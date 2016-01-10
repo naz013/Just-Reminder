@@ -19,7 +19,6 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.PrefsView;
@@ -563,8 +562,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                     intent.setType("image/*");
                     Intent chooser = Intent.createChooser(intent, getActivity().getString(R.string.choose_picture_title));
                     getActivity().startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
-                } else {
-                    new Permissions(getActivity()).showInfo(getActivity(), Permissions.READ_CALENDAR);
                 }
                 break;
         }

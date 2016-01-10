@@ -21,19 +21,19 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.views.ReturnScrollListener;
-import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
+import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
@@ -92,12 +92,14 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             @Override
             public void onClick(View v) {
                 if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
-                    Permissions permissions = new Permissions(PlacesList.this);
-                    if (permissions.checkPermission(Permissions.ACCESS_COURSE_LOCATION)) {
+                    if (Permissions.checkPermission(PlacesList.this,
+                            Permissions.ACCESS_COURSE_LOCATION,
+                            Permissions.ACCESS_FINE_LOCATION)) {
                         startActivity(new Intent(PlacesList.this, NewPlace.class));
                     } else {
-                        permissions.requestPermission(PlacesList.this, new String[]{Permissions.ACCESS_COURSE_LOCATION,
-                                Permissions.ACCESS_FINE_LOCATION}, 101);
+                        Permissions.requestPermission(PlacesList.this, 101,
+                                Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_FINE_LOCATION);
                     }
                 }
             }
@@ -199,7 +201,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     startActivity(new Intent(PlacesList.this, NewPlace.class));
                 } else {
-                    new Permissions(PlacesList.this).showInfo(PlacesList.this, Permissions.READ_CALENDAR);
+                    Permissions.showInfo(PlacesList.this, Permissions.READ_CALENDAR);
                 }
                 break;
         }

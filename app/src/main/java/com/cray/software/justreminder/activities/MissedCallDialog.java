@@ -180,13 +180,12 @@ public class MissedCallDialog extends Activity {
                 notifier.discardNotification(id);
                 db.open();
                 db.deleteMissedCall(id);
-                if (new Permissions(MissedCallDialog.this).checkPermission(Permissions.CALL_PHONE)) {
+                if (Permissions.checkPermission(MissedCallDialog.this, Permissions.CALL_PHONE)) {
                     Telephony.makeCall(number, MissedCallDialog.this);
                     removeFlags();
                     finish();
                 } else {
-                    new Permissions(MissedCallDialog.this).requestPermission(MissedCallDialog.this,
-                            new String[]{Permissions.CALL_PHONE}, 104);
+                    Permissions.requestPermission(MissedCallDialog.this, 104, Permissions.CALL_PHONE);
                 }
             }
         });
@@ -204,7 +203,7 @@ public class MissedCallDialog extends Activity {
                     removeFlags();
                     finish();
                 } else {
-                    new Permissions(MissedCallDialog.this).showInfo(MissedCallDialog.this, Permissions.CALL_PHONE);
+                    Permissions.showInfo(MissedCallDialog.this, Permissions.CALL_PHONE);
                 }
                 break;
         }
