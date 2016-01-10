@@ -1,5 +1,8 @@
 package com.cray.software.justreminder.json;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -16,4 +19,102 @@ package com.cray.software.justreminder.json;
  * limitations under the License.
  */
 public class JsonLed {
+
+    /**
+     * JSON keys.
+     */
+    private static final String COLOR = "color_led";
+    private static final String STATUS = "status_led";
+
+    private int color, status;
+
+    /**
+     * JSON object.
+     */
+    private JSONObject jsonObject;
+
+    public JsonLed(JSONObject jsonObject){
+        this.jsonObject = jsonObject;
+        parse(jsonObject);
+    }
+
+    public JsonLed(String object){
+        try {
+            jsonObject = new JSONObject(object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        parse(jsonObject);
+    }
+
+    public JsonLed(){
+        jsonObject = new JSONObject();
+    }
+
+    private void parse(JSONObject jsonObject) {
+        if (jsonObject.has(COLOR)) {
+            try {
+                color = jsonObject.getInt(COLOR);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(STATUS)){
+            try {
+                status = jsonObject.getInt(STATUS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Get current JSON object.
+     * @return JSON object
+     */
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    public String getJsonString(){
+        return jsonObject.toString();
+    }
+
+    /**
+     * Set current JSON object
+     * @param jsonObject JSON object
+     */
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        try {
+            jsonObject.put(COLOR, color);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+        try {
+            jsonObject.put(STATUS, status);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public int getStatus() {
+        return status;
+    }
 }

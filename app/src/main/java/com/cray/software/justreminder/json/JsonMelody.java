@@ -1,5 +1,8 @@
 package com.cray.software.justreminder.json;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -16,4 +19,103 @@ package com.cray.software.justreminder.json;
  * limitations under the License.
  */
 public class JsonMelody {
+
+    /**
+     * JSON keys.
+     */
+    private static final String VOLUME = "melody";
+    private static final String PATH = "path";
+
+    private int volume;
+    private String melodyPath;
+
+    /**
+     * JSON object.
+     */
+    private JSONObject jsonObject;
+
+    public JsonMelody(JSONObject jsonObject){
+        this.jsonObject = jsonObject;
+        parse(jsonObject);
+    }
+
+    public JsonMelody(String object){
+        try {
+            jsonObject = new JSONObject(object);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        parse(jsonObject);
+    }
+
+    public JsonMelody(){
+        jsonObject = new JSONObject();
+    }
+
+    private void parse(JSONObject jsonObject) {
+        if (jsonObject.has(VOLUME)) {
+            try {
+                volume = jsonObject.getInt(VOLUME);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(PATH)){
+            try {
+                melodyPath = jsonObject.getString(PATH);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Get current JSON object.
+     * @return JSON object
+     */
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    public String getJsonString(){
+        return jsonObject.toString();
+    }
+
+    /**
+     * Set current JSON object
+     * @param jsonObject JSON object
+     */
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    public void setMelodyPath(String melodyPath) {
+        this.melodyPath = melodyPath;
+        try {
+            jsonObject.put(PATH, melodyPath);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+        try {
+            jsonObject.put(VOLUME, volume);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public String getMelodyPath() {
+        return melodyPath;
+    }
 }

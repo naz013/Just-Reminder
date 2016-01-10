@@ -16,39 +16,30 @@
 
 package com.cray.software.justreminder.json;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-public class JsonExclusion {
+public class JsonAction {
 
     /**
      * JSON keys.
      */
-    private static final String FROM_HOUR = "from_hour";
-    private static final String TO_HOUR = "to_hour";
-    private static final String HOURS = "hours";
+    private static final String TYPE = "_type";
+    private static final String TARGET = "target";
 
-    private String from, to;
-    private List<Integer> hours;
+    private String type, target;
 
     /**
      * JSON object.
      */
     private JSONObject jsonObject;
 
-    public JsonExclusion(JSONObject jsonObject){
+    public JsonAction(JSONObject jsonObject){
         this.jsonObject = jsonObject;
         parse(jsonObject);
     }
 
-    public JsonExclusion(String object){
+    public JsonAction(String object){
         try {
             jsonObject = new JSONObject(object);
         } catch (JSONException e) {
@@ -57,29 +48,21 @@ public class JsonExclusion {
         parse(jsonObject);
     }
 
-    public JsonExclusion(){
+    public JsonAction(){
         jsonObject = new JSONObject();
     }
 
     private void parse(JSONObject jsonObject) {
-        if (jsonObject.has(FROM_HOUR)) {
+        if (jsonObject.has(TYPE)) {
             try {
-                from = jsonObject.getString(FROM_HOUR);
+                type = jsonObject.getString(TYPE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(TO_HOUR)){
+        if (jsonObject.has(TARGET)){
             try {
-                to = jsonObject.getString(TO_HOUR);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        if (jsonObject.has(HOURS)){
-            Type collectionType = new TypeToken<List<Integer>>() {}.getType();
-            try {
-                hours = new Gson().fromJson(jsonObject.get(HOURS).toString(), collectionType);
+                target = jsonObject.getString(TARGET);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -110,58 +93,29 @@ public class JsonExclusion {
         this.jsonObject = jsonObject;
     }
 
-    /**
-     * Add range exclusion to Timer.
-     * @param fromHour start time.
-     * @param toHour end time.
-     */
-    public void addExclusion(String fromHour, String toHour){
-        this.from = fromHour;
-        this.to = toHour;
+    public void setTarget(String target) {
+        this.target = target;
         try {
-            jsonObject.put(FROM_HOUR, fromHour);
-            jsonObject.put(TO_HOUR, toHour);
+            jsonObject.put(TARGET, target);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Add excluded hours to Timer.
-     * @param hours list of excluded hours.
-     */
-    public void addExclusion(List<Integer> hours){
-        this.hours = hours;
-        JSONArray jsonArray = new JSONArray();
-        for (int hour : hours) jsonArray.put(hour);
+    public void setType(String type) {
+        this.type = type;
         try {
-            jsonObject.put(HOURS, jsonArray);
+            jsonObject.put(TYPE, type);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Get excluded range start time.
-     * @return time string
-     */
-    public String getFromHour(){
-        return from;
+    public String getType() {
+        return type;
     }
 
-    /**
-     * Get excluded range end time.
-     * @return time string
-     */
-    public String getToHour(){
-        return to;
-    }
-
-    /**
-     * Get list of excluded hours from Timer.
-     * @return list of hours.
-     */
-    public List<Integer> getHours(){
-        return hours;
+    public String getTarget() {
+        return target;
     }
 }
