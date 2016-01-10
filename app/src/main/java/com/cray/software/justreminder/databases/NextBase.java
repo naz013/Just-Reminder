@@ -8,9 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JsonParser;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -36,9 +34,11 @@ public class NextBase {
     public static final String SUMMARY = "summary";
     public static final String TYPE = "type";
     public static final String START_TIME = "start_time";
+    public static final String DELAY = "delay";
     public static final String CATEGORY = "category";
     public static final String JSON = "_json";
     public static final String DB_STATUS = "db_status";
+    public static final String DB_LIST = "db_list";
     public static final String LOCATION_STATUS = "l_status";
     public static final String REMINDER_STATUS = "r_status";
     public static final String NOTIFICATION_STATUS = "n_status";
@@ -56,7 +56,9 @@ public class NextBase {
                     CATEGORY + " VARCHAR(255), " +
                     UUID + " VARCHAR(255), " +
                     START_TIME + " INTEGER, " +
+                    DELAY + " INTEGER, " +
                     DB_STATUS + " INTEGER, " +
+                    DB_LIST + " INTEGER, " +
                     LOCATION_STATUS + " INTEGER, " +
                     REMINDER_STATUS + " INTEGER, " +
                     NOTIFICATION_STATUS + " INTEGER, " +
@@ -81,8 +83,6 @@ public class NextBase {
 
             }
         }
-
-
     }
 
     public NextBase(Context c) {
@@ -110,91 +110,184 @@ public class NextBase {
         }
     }
 
-    public long saveNote (String note, String date, int color, String uuId, byte[] image, int style) {
+    // Reminders database
+
+    public long insertReminder(String summary, String type, long eventTime,
+                               String uID, String categoryId, String json) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.COLUMN_NOTE, note);
-        cv.put(Constants.COLUMN_DATE, date);
-        cv.put(Constants.COLUMN_COLOR, color);
-        cv.put(Constants.COLUMN_UUID, uuId);
-        cv.put(Constants.COLUMN_IMAGE, image);
-        cv.put(Constants.COLUMN_FONT_STYLE, style);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
+        cv.put(SUMMARY, summary);
+        cv.put(TYPE, type);
+        cv.put(START_TIME, eventTime);
+        cv.put(UUID, uID);
+        cv.put(CATEGORY, categoryId);
+        cv.put(JSON, json);
+        cv.put(DB_LIST, 0);
+        cv.put(DB_STATUS, 0);
+        cv.put(REMINDER_STATUS, 0);
+        cv.put(NOTIFICATION_STATUS, 0);
+        cv.put(DELAY, 0);
         return db.insert(TABLE_NAME, null, cv);
     }
 
-    public boolean updateNote(long rowId, String note, String date, int color, String uuId, byte[] image,
-                              int style) {
+    public boolean updateReminder(long rowId, String summary, String type, long eventTime,
+                                  String uID, String categoryId, String json) {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_NOTE, note);
-        args.put(Constants.COLUMN_DATE, date);
-        args.put(Constants.COLUMN_COLOR, color);
-        args.put(Constants.COLUMN_UUID, uuId);
-        args.put(Constants.COLUMN_IMAGE, image);
-        args.put(Constants.COLUMN_FONT_STYLE, style);
-        return db.update(TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        ContentValues cv = new ContentValues();
+        cv.put(SUMMARY, summary);
+        cv.put(TYPE, type);
+        cv.put(START_TIME, eventTime);
+        cv.put(UUID, uID);
+        cv.put(CATEGORY, categoryId);
+        cv.put(JSON, json);
+        cv.put(DB_LIST, 0);
+        cv.put(DB_STATUS, 0);
+        cv.put(REMINDER_STATUS, 0);
+        cv.put(NOTIFICATION_STATUS, 0);
+        cv.put(DELAY, 0);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateNote(long rowId, String note) {
+    public boolean updateReminderStartTime(long rowId, long eventTime) {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_NOTE, note);
-        return db.update(TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        ContentValues cv = new ContentValues();
+        cv.put(START_TIME, eventTime);
+        cv.put(DELAY, 0);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateNoteColor(long rowId, int color) {
+    public boolean setGroup(long rowId, String group) {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_COLOR, color);
-        return db.update(TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        ContentValues cv = new ContentValues();
+        cv.put(CATEGORY, group);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean linkToReminder(long rowId, long linkId) {
+    public boolean updateCount(long rowId, long count, String json) {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_LINK_ID, linkId);
-        return db.update(TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        JsonParser parser = new JsonParser(json);
+        parser.setCount(count);
+        ContentValues cv = new ContentValues();
+        cv.put(JSON, parser.getJSON());
+        cv.put(DELAY, 0);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getNotes() throws SQLException {
+    public boolean setDelay(long rowId, long delay) {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.NOTES_ORDER);
-        String order = null;
-        if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
-            order = Constants.COLUMN_DATE + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_DATE_Z_A)){
-            order = Constants.COLUMN_DATE + " DESC";
-        } else if (orderPrefs.matches(Constants.ORDER_NAME_A_Z)){
-            order = Constants.COLUMN_NOTE + " ASC";
-        } else if (orderPrefs.matches(Constants.ORDER_NAME_Z_A)){
-            order = Constants.COLUMN_NOTE + " DESC";
-        }
-        return db.query(TABLE_NAME, null, null, null, null, null, order);
+        ContentValues cv = new ContentValues();
+        cv.put(DELAY, delay);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getNote(long rowId) throws SQLException {
+    public boolean setDone(long rowId) {
         openGuard();
-        return db.query(TABLE_NAME, null,
-                Constants.COLUMN_ID  + "=" + rowId, null, null, null, null, null);
+        ContentValues cv = new ContentValues();
+        cv.put(DB_STATUS, 1);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getNoteByReminder(long remId) throws SQLException {
+    public boolean toArchive(long rowId) {
         openGuard();
-        return db.query(TABLE_NAME, null,
-                Constants.COLUMN_LINK_ID  +
-                        "='" + remId + "'", null, null, null, null, null);
+        ContentValues cv = new ContentValues();
+        cv.put(DB_LIST, 1);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean deleteNote(long rowId) {
+    public boolean setUnDone(long rowId, String json) {
         openGuard();
-        return db.delete(TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        JsonParser parser = new JsonParser(json);
+        parser.setCount(0);
+        ContentValues cv = new ContentValues();
+        cv.put(JSON, parser.getJSON());
+        cv.put(DB_STATUS, 0);
+        cv.put(DELAY, 0);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean setLocationStatus(long rowId, int status) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(LOCATION_STATUS, status);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean setNotificationShown(long rowId) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(NOTIFICATION_STATUS, 1);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean setReminderShown(long rowId) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(REMINDER_STATUS, 1);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
+    public Cursor queryAllReminders() throws SQLException {
+        openGuard();
+        return db.query(TABLE_NAME, null, null, null, null, null, null);
+    }
+
+    public Cursor queryGroup(String category) throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'"
+                + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+    }
+
+    public Cursor queryGroup() throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        return db.query(TABLE_NAME, null, DB_LIST  + "='" + 0 + "'", null, null, null, order);
+    }
+
+    public Cursor getArchivedReminders() throws SQLException {
+        openGuard();
+        String order = START_TIME + " ASC";
+        return db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
+    }
+
+    public Cursor getActiveReminders() throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        return db.query(TABLE_NAME, null, DB_STATUS + "='" + 0 + "'" + " AND "+ DB_LIST + "='"
+                + 0 + "'", null, null, null, order);
+    }
+
+    public Cursor getReminder(long rowId) throws SQLException {
+        openGuard();
+        return db.query(TABLE_NAME, null, _ID  + "=" + rowId, null, null, null,
+                null, null);
+    }
+
+    public Cursor getReminder(String uuID) throws SQLException {
+        openGuard();
+        return db.query(TABLE_NAME, null, UUID + "='" + uuID + "'", null, null, null,
+                null, null);
+    }
+
+    public boolean deleteReminder(long rowId) {
+        openGuard();
+        return db.delete(TABLE_NAME, _ID + "=" + rowId, null) > 0;
     }
 
     public int getCount() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME;
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int cnt = cursor.getCount();
+        cursor.close();
+        return cnt;
+    }
+
+    public int getCountActive() throws SQLException {
+        openGuard();
+        String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME +
+                " WHERE " + DB_STATUS + " = '" + 0 + "' AND " + DB_LIST +
+                " = '" + 0 + "'";
         Cursor cursor = db.rawQuery(countQuery, null);
         int cnt = cursor.getCount();
         cursor.close();

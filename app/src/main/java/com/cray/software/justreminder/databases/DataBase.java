@@ -891,25 +891,6 @@ public class DataBase {
                 null, null);
     }
 
-    public Cursor getReminders(int hour, int minute) throws SQLException {
-        openGuard();
-        return db.query(CURRENT_TABLE_NAME, null,
-                Constants.COLUMN_HOUR  + "='" + hour + "'" + " AND "+ Constants.COLUMN_MINUTE + "='"
-                        + minute + "'", null, null, null, null, null);
-    }
-
-    public Cursor getMarkers() throws SQLException {
-        openGuard();
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TYPE  + "='" + Constants.TYPE_LOCATION +
-                "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + Constants.TYPE_LOCATION_CALL + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + Constants.TYPE_LOCATION_MESSAGE + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + Constants.TYPE_LOCATION_OUT + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + Constants.TYPE_LOCATION_OUT_CALL + "'" + " OR "+ Constants.COLUMN_TYPE + "='"
-                + Constants.TYPE_LOCATION_OUT_MESSAGE + "'" + " AND "+ Constants.COLUMN_ARCHIVED + "='"
-                + 0 + "'", null, null, null, null, null);
-    }
-
     public boolean deleteReminder(long rowId) {
         openGuard();
         return db.delete(CURRENT_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
