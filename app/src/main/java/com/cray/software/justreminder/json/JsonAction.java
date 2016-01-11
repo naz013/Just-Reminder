@@ -26,8 +26,10 @@ public class JsonAction {
      */
     private static final String TYPE = "_type";
     private static final String TARGET = "target";
+    private static final String AUTO = "_auto";
 
     private String type, target;
+    private int auto;
 
     /**
      * JSON object.
@@ -52,6 +54,13 @@ public class JsonAction {
         jsonObject = new JSONObject();
     }
 
+    public JsonAction(String type, String target, int auto){
+        jsonObject = new JSONObject();
+        setAuto(auto);
+        setTarget(target);
+        setType(type);
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(TYPE)) {
             try {
@@ -63,6 +72,13 @@ public class JsonAction {
         if (jsonObject.has(TARGET)){
             try {
                 target = jsonObject.getString(TARGET);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(AUTO)){
+            try {
+                auto = jsonObject.getInt(AUTO);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -111,11 +127,24 @@ public class JsonAction {
         }
     }
 
+    public void setAuto(int auto) {
+        this.auto = auto;
+        try {
+            jsonObject.put(AUTO, auto);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getType() {
         return type;
     }
 
     public String getTarget() {
         return target;
+    }
+
+    public int getAuto() {
+        return auto;
     }
 }

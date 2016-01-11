@@ -287,8 +287,7 @@ public class Reminder {
                     long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
                     if (exp == 1 && isCalendar || isStock)
                         ReminderUtils.exportToCalendar(context, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
+                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
                         ReminderUtils.exportToTasks(context, text, startTime, idN);
                     }
                     new AlarmReceiver().setAlarm(context, idN);
@@ -297,8 +296,7 @@ public class Reminder {
                     long startTime = ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
                     if (exp == 1 && isCalendar || isStock)
                         ReminderUtils.exportToCalendar(context, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
+                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
                         ReminderUtils.exportToTasks(context, text, startTime, idN);
                     }
                     new WeekDayReceiver().setAlarm(context, idN);
@@ -307,8 +305,7 @@ public class Reminder {
                     long startTime = ReminderUtils.getMonthTime(myHour, myMinute, myDay);
                     if (exp == 1 && isCalendar || isStock)
                         ReminderUtils.exportToCalendar(context, text, startTime, idN, isCalendar, isStock);
-                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY ||
-                            code == Constants.SYNC_ALL){
+                    if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
                         ReminderUtils.exportToTasks(context, text, startTime, idN);
                     }
                     new MonthDayReceiver().setAlarm(context, idN);

@@ -54,6 +54,14 @@ public class JsonPlace {
         jsonObject = new JSONObject();
     }
 
+    public JsonPlace(double latitude, double longitude, int radius, int marker){
+        jsonObject = new JSONObject();
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setRadius(radius);
+        setMarker(marker);
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(MARKER)) {
             try {

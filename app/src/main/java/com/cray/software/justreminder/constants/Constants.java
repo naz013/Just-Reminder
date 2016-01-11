@@ -177,8 +177,6 @@ public class Constants {
 
     public static final int SYNC_NO = 0;
     public static final int SYNC_GTASKS_ONLY = 1;
-    public static final int SYNC_MS_EXCHANGE_ONLY = 10;
-    public static final int SYNC_ALL = 11;
     public static final String FILE_PICKED = "file_picked";
     
     public static final String NONE = "none";

@@ -51,6 +51,12 @@ public class JsonLed {
         jsonObject = new JSONObject();
     }
 
+    public JsonLed(int color, int status){
+        jsonObject = new JSONObject();
+        setColor(color);
+        setStatus(status);
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(COLOR)) {
             try {

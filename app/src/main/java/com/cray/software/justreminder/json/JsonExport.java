@@ -1,10 +1,5 @@
-package com.cray.software.justreminder.json;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-/**
- * Copyright 2016 Nazar Suhovich
+/*
+ * Copyright 2015 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +13,35 @@ import org.json.JSONObject;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonMelody {
+
+package com.cray.software.justreminder.json;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class JsonExport {
 
     /**
      * JSON keys.
      */
-    private static final String VOLUME = "melody";
-    private static final String PATH = "path";
+    private static final String GTASKS = "g_tasks";
+    private static final String CALENDAR = "to_calendar";
+    private static final String CALENDAR_ID = "calendar_id";
 
-    private int volume;
-    private String melodyPath;
+    private int gTasks, calendar;
+    private String calendarId;
 
     /**
      * JSON object.
      */
     private JSONObject jsonObject;
 
-    public JsonMelody(JSONObject jsonObject){
+    public JsonExport(JSONObject jsonObject){
         this.jsonObject = jsonObject;
         parse(jsonObject);
     }
 
-    public JsonMelody(String object){
+    public JsonExport(String object){
         try {
             jsonObject = new JSONObject(object);
         } catch (JSONException e) {
@@ -48,27 +50,35 @@ public class JsonMelody {
         parse(jsonObject);
     }
 
-    public JsonMelody(){
+    public JsonExport(){
         jsonObject = new JSONObject();
     }
 
-    public JsonMelody(String melodyPath, int volume){
+    public JsonExport(int gTasks, int calendar, String calendarId){
         jsonObject = new JSONObject();
-        setMelodyPath(melodyPath);
-        setVolume(volume);
+        setGtasks(gTasks);
+        setCalendar(calendar);
+        setCalendarId(calendarId);
     }
 
     private void parse(JSONObject jsonObject) {
-        if (jsonObject.has(VOLUME)) {
+        if (jsonObject.has(CALENDAR_ID)) {
             try {
-                volume = jsonObject.getInt(VOLUME);
+                calendarId = jsonObject.getString(CALENDAR_ID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(PATH)){
+        if (jsonObject.has(GTASKS)){
             try {
-                melodyPath = jsonObject.getString(PATH);
+                gTasks = jsonObject.getInt(GTASKS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(CALENDAR)){
+            try {
+                calendar = jsonObject.getInt(CALENDAR);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -99,29 +109,42 @@ public class JsonMelody {
         this.jsonObject = jsonObject;
     }
 
-    public void setMelodyPath(String melodyPath) {
-        this.melodyPath = melodyPath;
+    public void setCalendar(int calendar) {
+        this.calendar = calendar;
         try {
-            jsonObject.put(PATH, melodyPath);
+            jsonObject.put(CALENDAR, calendar);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public void setGtasks(int gTasks) {
+        this.gTasks = gTasks;
         try {
-            jsonObject.put(VOLUME, volume);
+            jsonObject.put(GTASKS, gTasks);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public int getVolume() {
-        return volume;
+    public void setCalendarId(String calendarId) {
+        this.calendarId = calendarId;
+        try {
+            jsonObject.put(CALENDAR_ID, calendarId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    public String getMelodyPath() {
-        return melodyPath;
+    public static String getCalendarId() {
+        return CALENDAR_ID;
+    }
+
+    public int getCalendar() {
+        return calendar;
+    }
+
+    public int getgTasks() {
+        return gTasks;
     }
 }

@@ -61,6 +61,11 @@ public class JsonExclusion {
         jsonObject = new JSONObject();
     }
 
+    public JsonExclusion(String from, String to){
+        jsonObject = new JSONObject();
+        addExclusion(from, to);
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(FROM_HOUR)) {
             try {

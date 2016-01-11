@@ -647,6 +647,7 @@ public class DataBase {
 
     // Reminders database
 
+    @Deprecated
     public long insertReminder(String text, String type, int day, int month, int year, int hour,
                                int minute, int seconds, String number, int repeatCode, long repMinute,
                                long count, double latitude, double longitude, String uID, String weekdays,
@@ -690,6 +691,7 @@ public class DataBase {
         return db.insert(CURRENT_TABLE_NAME, null, cv);
     }
 
+    @Deprecated
     public boolean updateReminder(long rowId, String text, String type, int day, int month, int year,
                                   int hour, int minute, int seconds, String number, int repeatCode,
                                   long repMinute, long count, double latitude, double longitude,
@@ -724,6 +726,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean updateReminderStartTime(long rowId, int day, int month, int year, int hour, int minute, int seconds) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -739,6 +742,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean updateReminderExtra(long rowId, int vibro, int voice, int repeat, int wake,
                                        int unlock, int auto, long limit) {
         openGuard();
@@ -753,6 +757,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public long updateReminderDateTime(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -762,6 +767,7 @@ public class DataBase {
         return time;
     }
 
+    @Deprecated
     public boolean updateReminderAfterTime(long rowId, long time) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -769,6 +775,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean updateReminderGroup(long rowId, String group) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -776,6 +783,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean updateReminderCount(long rowId, long count) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -784,6 +792,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setDelay(long rowId, int delay) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -791,6 +800,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setUniqueId(long rowId, String id) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -798,6 +808,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -806,6 +817,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean toArchive(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -813,6 +825,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setUnDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -822,6 +835,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setLocationStatus(long rowId, int status) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -829,6 +843,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setNotificationShown(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -836,6 +851,7 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public boolean setGroup(long rowId, String groupId) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -843,11 +859,13 @@ public class DataBase {
         return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public Cursor queryAllReminders() throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
     }
 
+    @Deprecated
     public Cursor queryGroup(String category) throws SQLException {
         openGuard();
         String order = Constants.COLUMN_IS_DONE + " ASC, " +
@@ -857,6 +875,7 @@ public class DataBase {
                 + 0 + "'", null, null, null, order);
     }
 
+    @Deprecated
     public Cursor queryGroup() throws SQLException {
         openGuard();
         String order = Constants.COLUMN_IS_DONE + " ASC, " +
@@ -864,12 +883,14 @@ public class DataBase {
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 0 + "'", null, null, null, order);
     }
 
+    @Deprecated
     public Cursor getArchivedReminders() throws SQLException {
         openGuard();
         String order = Constants.COLUMN_FEATURE_TIME + " ASC";
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 1 + "'", null, null, null, order);
     }
 
+    @Deprecated
     public Cursor getActiveReminders() throws SQLException {
         openGuard();
         String order = Constants.COLUMN_IS_DONE + " ASC, " +
@@ -879,23 +900,27 @@ public class DataBase {
                 + 0 + "'", null, null, null, order);
     }
 
+    @Deprecated
     public Cursor getReminder(long rowId) throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + rowId, null, null, null,
                 null, null);
     }
 
+    @Deprecated
     public Cursor getReminder(String uuID) throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TECH_VAR  + "='" + uuID + "'", null, null, null,
                 null, null);
     }
 
+    @Deprecated
     public boolean deleteReminder(long rowId) {
         openGuard();
         return db.delete(CURRENT_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
+    @Deprecated
     public int getCount() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + CURRENT_TABLE_NAME;
@@ -905,6 +930,7 @@ public class DataBase {
         return cnt;
     }
 
+    @Deprecated
     public int getCountActive() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + CURRENT_TABLE_NAME +

@@ -26,11 +26,11 @@ public class JsonModel {
     private JsonMelody melody;
     private JsonRecurrence recurrence;
     private JsonAction action;
+    private JsonExport export;
     private List<String> tags;
     private String summary;
     private String type;
     private String category;
-    private String calendarId;
     private String uuId;
     private long eventTime;
     private long count;
@@ -42,6 +42,10 @@ public class JsonModel {
 
     public JsonModel() {
 
+    }
+
+    public JsonExport getExport() {
+        return export;
     }
 
     public String getType() {
@@ -112,10 +116,6 @@ public class JsonModel {
         return eventTime;
     }
 
-    public String getCalendarId() {
-        return calendarId;
-    }
-
     public String getCategory() {
         return category;
     }
@@ -160,10 +160,6 @@ public class JsonModel {
         this.shoppings = shoppings;
     }
 
-    public void setCalendarId(String calendarId) {
-        this.calendarId = calendarId;
-    }
-
     public void setCategory(String category) {
         this.category = category;
     }
@@ -202,5 +198,9 @@ public class JsonModel {
 
     public void setVoice(int voice) {
         this.voice = voice;
+    }
+
+    public void setExport(JsonExport export) {
+        this.export = export;
     }
 }

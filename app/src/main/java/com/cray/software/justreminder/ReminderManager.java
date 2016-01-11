@@ -1031,7 +1031,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 dateTaskExport.setChecked(true);
             }
 
@@ -1127,7 +1127,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 monthDayExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 monthDayTaskExport.setChecked(true);
             }
 
@@ -1298,7 +1298,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 weekExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 weekTaskExport.setChecked(true);
             }
 
@@ -1511,7 +1511,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 timeExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL) {
+            if (expTasks == Constants.SYNC_GTASKS_ONLY) {
                 timeTaskExport.setChecked(true);
             }
 
@@ -1619,7 +1619,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 skypeExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 skypeTaskExport.setChecked(true);
             }
 
@@ -1747,7 +1747,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 appExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 appTaskExport.setChecked(true);
             }
 
@@ -1852,7 +1852,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 callExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 callTaskExport.setChecked(true);
             }
 
@@ -1940,7 +1940,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 messageExport.setChecked(true);
             }
 
-            if (expTasks == Constants.SYNC_GTASKS_ONLY || expTasks == Constants.SYNC_ALL){
+            if (expTasks == Constants.SYNC_GTASKS_ONLY){
                 messageTaskExport.setChecked(true);
             }
 

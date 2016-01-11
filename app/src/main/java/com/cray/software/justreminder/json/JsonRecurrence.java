@@ -63,6 +63,14 @@ public class JsonRecurrence {
         jsonObject = new JSONObject();
     }
 
+    public JsonRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays){
+        jsonObject = new JSONObject();
+        setMonthday(monthday);
+        setRepeat(repeat);
+        setLimit(limit);
+        setWeekdays(weekdays);
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(REPEAT)) {
             try {
@@ -150,7 +158,7 @@ public class JsonRecurrence {
     public void setWeekdays(ArrayList<Integer> weekdays) {
         this.weekdays = weekdays;
         JSONArray jsonArray = new JSONArray();
-        for (int hour : weekdays) jsonArray.put(hour);
+        for (int day : weekdays) jsonArray.put(day);
         try {
             jsonObject.put(WEEKDAYS, jsonArray);
         } catch (JSONException e) {

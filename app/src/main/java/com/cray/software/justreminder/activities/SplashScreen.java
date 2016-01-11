@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,13 +20,26 @@ import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.json.JsonAction;
+import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonLed;
+import com.cray.software.justreminder.json.JsonMelody;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonPlace;
+import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.services.CheckPosition;
+import com.cray.software.justreminder.services.GeolocationService;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -176,7 +190,7 @@ public class SplashScreen extends Activity{
                 do {
                     long time = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    if(time < 1000) db.updateReminderAfterTime(id, time * TimeCount.minute);
+                    if (time < 1000) db.updateReminderAfterTime(id, time * TimeCount.minute);
                 } while (c.moveToNext());
             }
             if (c != null) {
@@ -208,6 +222,8 @@ public class SplashScreen extends Activity{
             prefs.saveBoolean("isGenB", true);
         }
 
+        migrateToNewDb();
+
         checkPrefs();
 
         sPrefs = new SharedPrefs(SplashScreen.this);
@@ -220,6 +236,102 @@ public class SplashScreen extends Activity{
         new GetExchangeTasksAsync(this, null).execute();
 
         finish();
+    }
+
+    private void migrateToNewDb() {
+        stopService(new Intent(SplashScreen.this, GeolocationService.class));
+        stopService(new Intent(SplashScreen.this, CheckPosition.class));
+        DataBase db = new DataBase(this);
+        db.open();
+        Cursor c = db.queryAllReminders();
+        if (c != null && c.moveToFirst()){
+            NextBase nextBase = new NextBase(this);
+            nextBase.open();
+            AlarmReceiver receiver = new AlarmReceiver();
+            do {
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
+                int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
+                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
+                long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
+                long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
+                int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
+                int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
+                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
+                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+                int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+                int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+                int voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
+                int vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
+                int notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
+                int wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
+                int unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
+                int auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
+                long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
+                String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
+                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
+                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
+                double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
+                double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
+
+                receiver.cancelAlarm(SplashScreen.this, id);
+
+                JsonParser parser = new JsonParser();
+                parser.setCategory(catId);
+                parser.setCount(count);
+                parser.setAwakeScreen(wake);
+                parser.setUnlockScreen(unlock);
+                parser.setNotificationRepeat(notificationRepeat);
+                parser.setVibration(vibration);
+                parser.setVoiceNotification(voice);
+                parser.setSummary(text);
+
+                JsonAction jsonAction = new JsonAction(type, number, auto);
+                parser.setAction(jsonAction);
+
+                JsonExport jsonExport = new JsonExport(expTasks, exp, null);
+                parser.setExport(jsonExport);
+
+                JsonMelody jsonMelody = new JsonMelody(melody, -1);
+                parser.setMelody(jsonMelody);
+
+                int status = ledColor != -1 ? 1 : 0;
+                JsonLed jsonLed = new JsonLed(ledColor, status);
+                parser.setLed(jsonLed);
+
+                JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
+                parser.setPlace(jsonPlace);
+
+                JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
+                parser.setExclusion(jsonExclusion);
+
+                JsonRecurrence jsonRecurrence = new JsonRecurrence();
+                if (weekdays != null) {
+                    ArrayList<Integer> list = new ArrayList<>();
+                    for (char c1 : weekdays.toCharArray()) {
+                        list.add(String.valueOf(c1).matches(Constants.DAY_CHECKED) ? 1 : 0);
+                    }
+                    jsonRecurrence.setWeekdays(list);
+                }
+                jsonRecurrence.setLimit(limit);
+                jsonRecurrence.setMonthday(myDay);
+                jsonRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);
+                parser.setRecurrence(jsonRecurrence);
+
+                String json = parser.getJSON();
+
+                long mId = nextBase.insertReminder(text, type, due, uuId, catId, json);
+                db.deleteReminder(id);
+
+                receiver.enableReminder(SplashScreen.this, mId);
+            } while (c.moveToNext());
+
+            nextBase.close();
+        }
+        if (c != null) c.close();
+        db.close();
     }
 
     /**

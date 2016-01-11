@@ -12,16 +12,16 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.models.CalendarModel;
-import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.RecurrHelper;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.datas.models.CalendarModel;
+import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.Recurrence;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.configs.CurrentTaskWidgetConfig;
@@ -140,7 +140,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                             date = dT[0];
                             time = dT[1];
                             if (type.matches(Constants.TYPE_TIME) && exclusion != null){
-                                if (new RecurrHelper(exclusion).isRange()){
+                                if (new Recurrence(exclusion).isRange()){
                                     date = mContext.getString(R.string.paused);
                                 }
                                 time = "";

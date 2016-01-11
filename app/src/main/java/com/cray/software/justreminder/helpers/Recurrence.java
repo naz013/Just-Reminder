@@ -16,141 +16,62 @@
 
 package com.cray.software.justreminder.helpers;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.utils.TimeUtil;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Recurrence {
 
-    /**
-     * JSON keys.
-     */
-    public static final String FROM_HOUR = "from_hour";
-    public static final String TO_HOUR = "to_hour";
-    public static final String HOURS = "hours";
+    private JsonExclusion recurrence;
 
-    /**
-     * JSON object.
-     */
-    private JSONObject jsonObject;
-
-    public Recurrence(JSONObject jsonObject){
-        this.jsonObject = jsonObject;
+    public Recurrence(String jsonObject){
+        recurrence = new JsonExclusion(jsonObject);
     }
 
-    public Recurrence(String object){
-        try {
-            jsonObject = new JSONObject(object);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    /**
+     * Check if current event time is out of disabled range.
+     * @return boolean
+     */
+    public boolean isRange(){
+        boolean res = false;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int mHour = calendar.get(Calendar.HOUR_OF_DAY);
+        List<Integer> list = recurrence.getHours();
+        if (list != null){
+            return list.contains(mHour);
         }
-    }
-
-    public Recurrence(){
-        jsonObject = new JSONObject();
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object
-     */
-    public JSONObject getJsonObject() {
-        return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    public String getJsonString(){
-        return jsonObject.toString();
-    }
-
-    /**
-     * Set current JSON object
-     * @param jsonObject JSON object
-     */
-    public void setJsonObject(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
-    }
-
-    /**
-     * Add range exclusion to Timer.
-     * @param fromHour start time.
-     * @param toHour end time.
-     */
-    public void addExclusion(String fromHour, String toHour){
-        try {
-            jsonObject.put(FROM_HOUR, fromHour);
-            jsonObject.put(TO_HOUR, toHour);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        long eventTime = calendar.getTimeInMillis();
+        String fromHour = recurrence.getFromHour();
+        String toHour = recurrence.getToHour();
+        if (fromHour != null && toHour != null){
+            Date fromDate = TimeUtil.getDate(fromHour);
+            Date toDate = TimeUtil.getDate(toHour);
+            if (fromDate != null && toDate != null){
+                calendar.setTime(fromDate);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                long start = calendar.getTimeInMillis();
+                calendar.setTime(toDate);
+                hour = calendar.get(Calendar.HOUR_OF_DAY);
+                minute = calendar.get(Calendar.MINUTE);
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                long end = calendar.getTimeInMillis();
+                if (start > end) {
+                    res = eventTime >= start || eventTime < end;
+                } else {
+                    res = eventTime >= start && eventTime <= end;
+                }
+            }
         }
-    }
-
-    /**
-     * Add excluded hours to Timer.
-     * @param hours list of excluded hours.
-     */
-    public void addExclusion(List<Integer> hours){
-        JSONArray jsonArray = new JSONArray();
-        for (int hour : hours) jsonArray.put(hour);
-        try {
-            jsonObject.put(HOURS, jsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Get excluded range start time.
-     * @return time string
-     */
-    public String getFromHour(){
-        if (jsonObject.has(FROM_HOUR)){
-            try {
-                return jsonObject.getString(FROM_HOUR);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else return null;
-    }
-
-    /**
-     * Get excluded range end time.
-     * @return time string
-     */
-    public String getToHour(){
-        if (jsonObject.has(TO_HOUR)){
-            try {
-                return jsonObject.getString(TO_HOUR);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else return null;
-    }
-
-    /**
-     * Get list of excluded hours from Timer.
-     * @return list of hours.
-     */
-    public List<Integer> getHours(){
-        if (jsonObject.has(HOURS)){
-            Type collectionType = new TypeToken<List<Integer>>() {}.getType();
-            try {
-                return new Gson().fromJson(jsonObject.get(HOURS).toString(), collectionType);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else return null;
+        return res;
     }
 }

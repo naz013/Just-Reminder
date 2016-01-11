@@ -25,7 +25,7 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.RecurrHelper;
+import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
@@ -353,7 +353,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             if (type.matches(Constants.TYPE_TIME) && archived == 0){
                 if (exclusion != null){
-                    if (new RecurrHelper(exclusion).isRange()){
+                    if (new Recurrence(exclusion).isRange()){
                         holder.leftTimeIcon.setVisibility(View.GONE);
                         holder.taskDate.setText(R.string.paused);
                     } else {
