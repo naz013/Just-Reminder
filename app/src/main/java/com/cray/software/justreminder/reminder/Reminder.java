@@ -12,6 +12,7 @@ import com.cray.software.justreminder.async.DeleteReminderFiles;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -20,6 +21,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -39,48 +41,7 @@ import java.util.Calendar;
  */
 public class Reminder {
 
-    private String title, type, uuId, number, weekdays, melody, categoryId, exclusion;
-    private int day, month, year, hour, minute, seconds, repCode, export,
-            radius, color, code, vibration, voice, notificationRepeat, wake, unlock, auto;
-    private long id, repMinute, due, count, limit;
-    private double[] place;
-
-    public Reminder(long id, String title, String type, String weekdays, String melody, String categoryId,
-                    String uuId, double[] place, String number, int day, int month, int year,
-                    int hour, int minute, int seconds, int repCode, int export, int radius,
-                    int color, int code, long repMinute, long due, long count, int vibration, int voice,
-                    int notificationRepeat, int wake, int unlock, int auto, long limit, String exclusion){
-        this.id = id;
-        this.title = title;
-        this.type = type;
-        this.weekdays = weekdays;
-        this.melody = melody;
-        this.categoryId = categoryId;
-        this.uuId = uuId;
-        this.place = place;
-        this.number = number;
-        this.day = day;
-        this.month = month;
-        this.year = year;
-        this.hour = hour;
-        this.minute = minute;
-        this.seconds = seconds;
-        this.repCode = repCode;
-        this.export = export;
-        this.radius = radius;
-        this.color = color;
-        this.code = code;
-        this.repMinute = repMinute;
-        this.due = due;
-        this.count = count;
-        this.vibration = vibration;
-        this.voice = voice;
-        this.notificationRepeat = notificationRepeat;
-        this.wake = wake;
-        this.unlock = unlock;
-        this.auto = auto;
-        this.limit = limit;
-        this.exclusion = exclusion;
+    public Reminder(){
     }
 
     /**
@@ -89,7 +50,7 @@ public class Reminder {
      * @param context application context.
      */
     public static void generateToCalendar(long id, Context context){
-        DataBase db = new DataBase(context);
+        NextBase db = new NextBase(context);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
@@ -395,7 +356,7 @@ public class Reminder {
             uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (c != null) c.close();
-        Reminder reminder = new Type(context).getItem(id);
+        JsonModel reminder = new Type(context).getItem(id);
         db.deleteReminder(id);
         if (reminder.getType().matches(Constants.TYPE_SHOPPING_LIST)){
             db.deleteShopItems(id);
@@ -483,257 +444,5 @@ public class Reminder {
         db.open();
         db.updateReminderGroup(id, uuId);
         db.close();
-    }
-
-    public String getExclusion() {
-        return exclusion;
-    }
-
-    public void setExclusion(String exclusion) {
-        this.exclusion = exclusion;
-    }
-
-    public long getLimit() {
-        return limit;
-    }
-
-    public void setLimit(long limit) {
-        this.limit = limit;
-    }
-
-    public int getAuto() {
-        return auto;
-    }
-
-    public void setAuto(int auto) {
-        this.auto = auto;
-    }
-
-    public int getNotificationRepeat() {
-        return notificationRepeat;
-    }
-
-    public void setNotificationRepeat(int notificationRepeat) {
-        this.notificationRepeat = notificationRepeat;
-    }
-
-    public int getUnlock() {
-        return unlock;
-    }
-
-    public void setUnlock(int unlock) {
-        this.unlock = unlock;
-    }
-
-    public int getVibration() {
-        return vibration;
-    }
-
-    public void setVibration(int vibration) {
-        this.vibration = vibration;
-    }
-
-    public int getVoice() {
-        return voice;
-    }
-
-    public void setVoice(int voice) {
-        this.voice = voice;
-    }
-
-    public void setWake(int wake) {
-        this.wake = wake;
-    }
-
-    public int getWake() {
-        return wake;
-    }
-
-    public String getWeekdays(){
-        return weekdays;
-    }
-
-    public void setWeekdays(String weekdays){
-        this.weekdays = weekdays;
-    }
-
-    public String getMelody(){
-        return melody;
-    }
-
-    public void setMelody(String melody){
-        this.melody = melody;
-    }
-
-    public String getCategoryId(){
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId){
-        this.categoryId = categoryId;
-    }
-
-    public int getDay(){
-        return day;
-    }
-
-    public void setDay(int day){
-        this.day = day;
-    }
-
-    public int getMonth(){
-        return month;
-    }
-
-    public void setMonth(int month){
-        this.month = month;
-    }
-
-    public int getYear(){
-        return year;
-    }
-
-    public void setYear(int year){
-        this.year = year;
-    }
-
-    public int getHour(){
-        return hour;
-    }
-
-    public void setHour(int hour){
-        this.hour = hour;
-    }
-
-    public int getMinute(){
-        return minute;
-    }
-
-    public int getSeconds(){
-        return seconds;
-    }
-
-    public int getRepCode(){
-        return repCode;
-    }
-
-    public int getExport(){
-        return export;
-    }
-
-    public void setSeconds(int seconds){
-        this.seconds = seconds;
-    }
-
-    public void setRepCode(int repCode){
-        this.repCode = repCode;
-    }
-
-    public void setExport(int export){
-        this.export = export;
-    }
-
-    public void setRepMinute(int repMinute){
-        this.repMinute = repMinute;
-    }
-
-    public int getRadius(){
-        return radius;
-    }
-
-    public void setRadius(int radius){
-        this.radius = radius;
-    }
-
-    public int getColor(){
-        return color;
-    }
-
-    public void setColor(int color){
-        this.color = color;
-    }
-
-    public int getCode(){
-        return code;
-    }
-
-    public void setCode(int code){
-        this.code = code;
-    }
-
-    public long getRepMinute(){
-        return repMinute;
-    }
-
-    public void setMinute(int minute){
-        this.minute = minute;
-    }
-
-    public long getDue(){
-        return due;
-    }
-
-    public void setDue(long due){
-        this.due = due;
-    }
-
-    public double[] getPlace(){
-        return place;
-    }
-
-    public void  setPlace(double[] place){
-        this.place = place;
-    }
-
-    public long getId(){
-        return id;
-    }
-
-    public void setId(long id){
-        this.id = id;
-    }
-
-    public String getTitle(){
-        return title;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    public String getType(){
-        return type;
-    }
-
-    public void setType(String type){
-        this.type = type;
-    }
-
-    public String getUuId(){
-        return uuId;
-    }
-
-    public void setUuId(String uuId){
-        this.uuId = uuId;
-    }
-
-    public String getNumber(){
-        return number;
-    }
-
-    public void setNumber(String number){
-        this.number = number;
-    }
-
-    public long getCount() {
-        return count;
-    }
-
-    public void setCount(long count) {
-        this.count = count;
-    }
-
-    public void setRepMinute(long repMinute) {
-        this.repMinute = repMinute;
     }
 }

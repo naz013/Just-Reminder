@@ -48,6 +48,11 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
+import com.cray.software.justreminder.json.JsonAction;
+import com.cray.software.justreminder.json.JsonLed;
+import com.cray.software.justreminder.json.JsonMelody;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -76,8 +81,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private BroadcastReceiver deliveredReceiver, sentReceiver;
 
     private long id;
-    private int repCode, color = -1, vibration, voice, notificationRepeat, wake, unlock, auto;
+    private int color = -1, vibration, voice, notificationRepeat, wake, unlock, auto;
     private long count, limit;
+    private long repeaCode;
     private int isMelody;
     private String melody, number, name, task, reminderType;
     private boolean isDark = false;
@@ -85,7 +91,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private int currVolume;
 
     private Type reminder;
-    private Reminder item;
+    private JsonModel item;
+    private JsonRecurrence jsonRecurrence;
+    private JsonMelody jsonMelody;
+    private JsonAction jsonAction;
+    private JsonLed jsonLed;
 
     private ShoppingListDataProvider provider;
 
@@ -115,19 +125,23 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         item = reminder.getItem(id);
         if (item != null) {
-            task = item.getTitle();
+            task = item.getSummary();
             reminderType = item.getType();
-            number = item.getNumber();
-            melody = item.getMelody();
-            repCode = item.getRepCode();
-            color = item.getColor();
-            vibration = item.getVibration();
+            jsonAction = item.getAction();
+            number = jsonAction.getTarget();
+            jsonMelody = item.getMelody();
+            melody = jsonMelody.getMelodyPath();
+            jsonRecurrence = item.getRecurrence();
+            repeaCode = jsonRecurrence.getRepeat();
+            jsonLed = item.getLed();
+            color = jsonLed.getColor();
+            vibration = item.getVibrate();
             voice = item.getVoice();
             notificationRepeat = item.getNotificationRepeat();
-            wake = item.getWake();
+            wake = item.getAwake();
             unlock = item.getUnlock();
-            auto = item.getAuto();
-            limit = item.getLimit();
+            auto = jsonAction.getAuto();
+            limit = jsonRecurrence.getLimit();
             count = item.getCount();
         } else {
             notifier.discardNotification(id);
@@ -285,7 +299,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             buttonDelayFor.setVisibility(View.GONE);
         }
 
-        if (repCode == 0 || (limit > 0 && (limit - count - 1 == 0))) {
+        if (repeaCode == 0 || (limit > 0 && (limit - count - 1 == 0))) {
             buttonCancel.setVisibility(View.GONE);
         } else {
             buttonCancel.setVisibility(View.VISIBLE);
@@ -450,17 +464,19 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
         if (imagePrefs.matches(Constants.DEFAULT)){
             if (blur && Module.isPro()) {
                 Picasso.with(ReminderDialog.this)
                         .load(R.drawable.photo)
-                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .resize(width, height)
                         .transform(new BlurTransformation(this, 15, 2))
                         .into(bgImage);
             } else {
                 Picasso.with(ReminderDialog.this)
                         .load(R.drawable.photo)
-                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .resize(width, height)
                         .into(bgImage);
             }
             bgImage.setVisibility(View.VISIBLE);
@@ -470,13 +486,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             if (blur && Module.isPro()) {
                 Picasso.with(ReminderDialog.this)
                         .load(Uri.parse(imagePrefs))
-                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .resize(width, height)
                         .transform(new BlurTransformation(this, 15, 2))
                         .into(bgImage);
             } else {
                 Picasso.with(ReminderDialog.this)
                         .load(Uri.parse(imagePrefs))
-                        .resize(metrics.heightPixels, metrics.widthPixels)
+                        .resize(width, height)
                         .into(bgImage);
             }
             bgImage.setVisibility(View.VISIBLE);
@@ -533,7 +549,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void make(){
-        if (repCode == 0 || (limit > 0 && (limit - count - 1 == 0))){
+        if (repeaCode == 0 || (limit > 0 && (limit - count - 1 == 0))){
             Reminder.disableReminder(id, ReminderDialog.this);
         } else {
             Reminder.generateToCalendar(id, this);

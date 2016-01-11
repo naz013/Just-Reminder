@@ -310,10 +310,15 @@ public class JsonParser {
     }
 
     public void setShopping(List<JsonShopping> list) {
-        JSONArray array = new JSONArray();
-        for (JsonShopping shopping : list) {
-            array.put(shopping.getJsonObject());
+        JSONObject array = new JSONObject();
+        try {
+            for (JsonShopping shopping : list) {
+                array.put(shopping.getUuId(), shopping.getJsonObject());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
         try {
             jsonObject.put(SHOPPING, array);
         } catch (JSONException e) {

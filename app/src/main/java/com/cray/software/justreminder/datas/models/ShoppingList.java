@@ -150,7 +150,7 @@ public class ShoppingList {
         this.id = id;
     }
 
-    public long getStatus() {
+    public int getStatus() {
         return status;
     }
 

@@ -43,6 +43,7 @@ public class NextBase {
     public static final String REMINDER_STATUS = "r_status";
     public static final String NOTIFICATION_STATUS = "n_status";
     public static final String UUID = "uuid";
+    public static final String TAGS = "_tags_";
 
     private DBHelper dbHelper;
     private static Context mContext;
@@ -55,6 +56,7 @@ public class NextBase {
                     TYPE + " VARCHAR(255), " +
                     CATEGORY + " VARCHAR(255), " +
                     UUID + " VARCHAR(255), " +
+                    TAGS + " VARCHAR(255), " +
                     START_TIME + " INTEGER, " +
                     DELAY + " INTEGER, " +
                     DB_STATUS + " INTEGER, " +

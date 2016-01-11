@@ -21,6 +21,8 @@ import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -33,6 +35,7 @@ import com.cray.software.justreminder.json.JsonMelody;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JsonShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
@@ -40,6 +43,7 @@ import com.cray.software.justreminder.services.GeolocationService;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -287,6 +291,21 @@ public class SplashScreen extends Activity{
                 parser.setVibration(vibration);
                 parser.setVoiceNotification(voice);
                 parser.setSummary(text);
+                parser.setType(type);
+
+                if (type.matches(Constants.TYPE_SHOPPING_LIST)){
+                    List<JsonShopping> list = new ArrayList<>();
+
+                    ShoppingListDataProvider provider =
+                            new ShoppingListDataProvider(SplashScreen.this, id,
+                                    ShoppingList.ACTIVE);
+                    for (ShoppingList item : provider.getData()){
+                        JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
+                                item.getStatus(), item.getUuId(), item.getTime());
+                        list.add(jsonShopping);
+                    }
+                    parser.setShopping(list);
+                }
 
                 JsonAction jsonAction = new JsonAction(type, number, auto);
                 parser.setAction(jsonAction);

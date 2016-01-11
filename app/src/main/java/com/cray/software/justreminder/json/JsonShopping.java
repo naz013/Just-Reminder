@@ -25,9 +25,13 @@ public class JsonShopping {
      */
     private static final String SUMMARY = "summary";
     private static final String STATUS = "status_";
+    private static final String UUID = "uuid_s";
+    private static final String DATE = "date";
 
     private int status;
     private String summary;
+    private String uuId;
+    private long dateTime;
 
     /**
      * JSON object.
@@ -52,6 +56,11 @@ public class JsonShopping {
         jsonObject = new JSONObject();
     }
 
+    public JsonShopping(String summary, int status, String uuId, long dateTime){
+        this.uuId = uuId;
+        jsonObject = new JSONObject();
+    }
+
     private void parse(JSONObject jsonObject) {
         if (jsonObject.has(SUMMARY)) {
             try {
@@ -63,6 +72,13 @@ public class JsonShopping {
         if (jsonObject.has(STATUS)){
             try {
                 status = jsonObject.getInt(STATUS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(DATE)){
+            try {
+                dateTime = jsonObject.getLong(DATE);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -109,6 +125,27 @@ public class JsonShopping {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUuId(String uuId) {
+        this.uuId = uuId;
+    }
+
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+        try {
+            jsonObject.put(DATE, dateTime);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getUuId() {
+        return uuId;
+    }
+
+    public long getDateTime() {
+        return dateTime;
     }
 
     public int getStatus() {

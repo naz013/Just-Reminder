@@ -3,11 +3,14 @@ package com.cray.software.justreminder.reminder;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 public class Type {
@@ -34,51 +37,23 @@ public class Type {
      * @param id reminder identifier.
      * @return reminder object
      */
-    public Reminder getItem(long id){
-        DataBase db = new DataBase(mContext);
+    public JsonModel getItem(long id){
+        NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
-            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-            int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-            int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-            int mySeconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-            long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-            long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
-            long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-            int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
-            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
-            int voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
-            int vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
-            int notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
-            int wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
-            int unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
-            int auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
-            long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
-            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-            String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-            String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
-            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonModel jsonModel = new JsonModel();
+            new JsonParser(json).parse(jsonModel);
             c.close();
             db.close();
+            return jsonModel;
+        }
 
-            return new Reminder(id, text, type, weekdays, melody, catId, uuId,
-                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
-                    voice, notificationRepeat, wake, unlock, auto, limit, exclusion);
-        } else return null;
+        if (c != null) c.close();
+        db.close();
+
+        return null;
     }
 
     /**
@@ -86,51 +61,21 @@ public class Type {
      * @param uuId reminder unique identifier.
      * @return reminder object
      */
-    public Reminder getItem(String uuId){
-        DataBase db = new DataBase(mContext);
+    public JsonModel getItem(String uuId){
+        NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminder(uuId);
         if (c != null && c.moveToFirst()){
-            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            String number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-            int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-            int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-            int mySeconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-            int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-            int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-            int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-            long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-            long due = c.getLong(c.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
-            long count = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-            int exp = c.getInt(c.getColumnIndex(Constants.COLUMN_EXPORT_TO_CALENDAR));
-            int expTasks = c.getInt(c.getColumnIndex(Constants.COLUMN_SYNC_CODE));
-            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-            String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-            int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-            int ledColor = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
-            int voice = c.getInt(c.getColumnIndex(Constants.COLUMN_VOICE));
-            int vibration = c.getInt(c.getColumnIndex(Constants.COLUMN_VIBRATION));
-            int notificationRepeat = c.getInt(c.getColumnIndex(Constants.COLUMN_NOTIFICATION_REPEAT));
-            int wake = c.getInt(c.getColumnIndex(Constants.COLUMN_WAKE_SCREEN));
-            int unlock = c.getInt(c.getColumnIndex(Constants.COLUMN_UNLOCK_DEVICE));
-            int auto = c.getInt(c.getColumnIndex(Constants.COLUMN_AUTO_ACTION));
-            long limit = c.getLong(c.getColumnIndex(Constants.COLUMN_REPEAT_LIMIT));
-            String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-            String catId = c.getString(c.getColumnIndex(Constants.COLUMN_CATEGORY));
-            String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
-            double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-            double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonModel jsonModel = new JsonModel();
+            new JsonParser(json).parse(jsonModel);
             c.close();
             db.close();
-
-            return new Reminder(id, text, type, weekdays, melody, catId, uuId,
-                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                    mySeconds, repCode, exp, radius, ledColor, expTasks, afterTime, due, count, vibration,
-                    voice, notificationRepeat, wake, unlock, auto, limit, exclusion);
-        } else return null;
+            return jsonModel;
+        }
+        if (c != null) c.close();
+        db.close();
+        return null;
     }
 
     /**
@@ -162,18 +107,13 @@ public class Type {
      * @param item reminder object.
      * @return reminder identifier
      */
-    public long save(Reminder item){
-        DataBase db = new DataBase(mContext);
+    public long save(JsonModel item){
+        NextBase db = new NextBase(mContext);
         db.open();
-        long id = db.insertReminder(item.getTitle(), item.getType(), item.getDay(), item.getMonth(),
-                item.getYear(), item.getHour(), item.getMinute(), item.getSeconds(),
-                item.getNumber(), item.getRepCode(), item.getRepMinute(), 0, item.getPlace()[0],
-                item.getPlace()[1], item.getUuId(), item.getWeekdays(), item.getExport(),
-                item.getMelody(), item.getRadius(), item.getColor(), item.getCode(),
-                item.getCategoryId(), item.getExclusion());
-        db.updateReminderDateTime(id);
-        db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
-                item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.toJson(item);
+        long id = db.insertReminder(item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
+                item.getCategory(), jsonParser.getJSON());
         db.close();
         updateViews();
         return id;
@@ -184,17 +124,13 @@ public class Type {
      * @param id reminder identifier.
      * @param item reminder object.
      */
-    public void save(long id, Reminder item){
-        DataBase db = new DataBase(mContext);
+    public void save(long id, JsonModel item){
+        NextBase db = new NextBase(mContext);
         db.open();
-        db.updateReminder(id, item.getTitle(), item.getType(), item.getDay(), item.getMonth(),
-                item.getYear(), item.getHour(), item.getMinute(), item.getSeconds(),
-                item.getNumber(), item.getRepCode(), item.getRepMinute(), 0, item.getPlace()[0],
-                item.getPlace()[1], item.getWeekdays(), item.getExport(), item.getMelody(),
-                item.getRadius(), item.getColor(), item.getCode(), item.getCategoryId(), item.getExclusion());
-        db.updateReminderDateTime(id);
-        db.updateReminderExtra(id, item.getVibration(), item.getVoice(), item.getNotificationRepeat(),
-                item.getWake(), item.getUnlock(), item.getAuto(), item.getLimit());
+        JsonParser jsonParser = new JsonParser();
+        jsonParser.toJson(item);
+        db.updateReminder(id, item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
+                item.getCategory(), jsonParser.getJSON());
         db.close();
         updateViews();
     }
@@ -204,12 +140,15 @@ public class Type {
      * @param item reminder object.
      * @param id reminder identifier.
      */
-    protected void exportToServices(Reminder item, long id){
+    protected void exportToServices(JsonModel item, long id){
         SharedPrefs prefs = new SharedPrefs(mContext);
         boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        if (item.getExport() == 1) ReminderUtils.exportToCalendar(mContext, item.getTitle(), item.getDue(), id, calendar, stock);
-        if (item.getCode() == Constants.SYNC_GTASKS_ONLY) ReminderUtils.exportToTasks(mContext, item.getTitle(), item.getDue(), id);
+        JsonExport jsonExport = item.getExport();
+        if (jsonExport.getCalendar() == 1) ReminderUtils.exportToCalendar(mContext,
+                item.getSummary(), item.getEventTime(), id, calendar, stock);
+        if (jsonExport.getgTasks() == Constants.SYNC_GTASKS_ONLY)
+            ReminderUtils.exportToTasks(mContext, item.getSummary(), item.getEventTime(), id);
     }
 
     /**

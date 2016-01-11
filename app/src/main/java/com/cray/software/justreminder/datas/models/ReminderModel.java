@@ -1,5 +1,10 @@
 package com.cray.software.justreminder.datas.models;
 
+import com.cray.software.justreminder.json.JsonAction;
+import com.cray.software.justreminder.json.JsonMelody;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonPlace;
+
 /**
  * Copyright 2015 Nazar Suhovich
  * <p/>
@@ -16,11 +21,10 @@ package com.cray.software.justreminder.datas.models;
  * limitations under the License.
  */
 public class ReminderModel {
-    private final String title, type, repeat, uuId, number, groupId, exclusion, melody;
-    private final int completed, archived, catColor, viewType, radius;
-    private final long due, id;
-    private final double[] place;
-    private boolean selected;
+    private String title, type, repeat, uuId, number, groupId, exclusion, melody;
+    private int completed, archived, catColor, viewType, radius;
+    private long due, id;
+    private double[] place;
 
     public ReminderModel(String title, String type, String repeat, int catColor, String uuId,
                          int completed, long due, long id, double[] place, String number, int archived,
@@ -39,9 +43,32 @@ public class ReminderModel {
         this.archived = archived;
         this.groupId = groupId;
         this.exclusion = exclusion;
-        this.selected = false;
         this.radius = radius;
         this.melody = melody;
+    }
+
+    public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed, int viewType) {
+        this.id = id;
+        this.catColor = catColor;
+        this.archived = archived;
+        this.completed = completed;
+        this.viewType = viewType;
+        this.groupId = jsonModel.getCategory();
+        this.title = jsonModel.getSummary();
+        this.type = jsonModel.getType();
+        this.uuId = jsonModel.getUuId();
+        this.exclusion = jsonModel.getExclusion().getJsonString();
+        this.due = jsonModel.getEventTime();
+
+        JsonMelody jsonMelody = jsonModel.getMelody();
+        this.melody = jsonMelody.getMelodyPath();
+
+        JsonAction jsonAction = jsonModel.getAction();
+        this.number = jsonAction.getTarget();
+
+        JsonPlace jsonPlace = jsonModel.getPlace();
+        this.radius = jsonPlace.getRadius();
+        this.place = new double[]{jsonPlace.getLatitude(), jsonPlace.getLongitude()};
     }
 
     public String getMelody() {
@@ -62,14 +89,6 @@ public class ReminderModel {
 
     public int getViewType() {
         return viewType;
-    }
-
-    public boolean getSelected(){
-        return selected;
-    }
-
-    public void setSelected(boolean selected){
-        this.selected = selected;
     }
 
     public int getArchived(){
