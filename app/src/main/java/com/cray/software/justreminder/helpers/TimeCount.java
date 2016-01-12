@@ -5,12 +5,16 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,57 +61,6 @@ public class TimeCount {
             long currTime = cal.getTimeInMillis();
 
             long diff = time - currTime;
-            if (isBetween(diff, 0, minute * 5)) {
-                color = getDrawable(R.drawable.drawable_red);
-            } else if (isBetween(diff, minute * 5, hour)) {
-                color = getDrawable(R.drawable.drawable_yellow);
-            } else if (isBetween(diff, hour, halfDay)) {
-                color = getDrawable(R.drawable.drawable_green);
-            } else if (isBetween(diff, halfDay, day)) {
-                color = getDrawable(R.drawable.drawable_blue);
-            } else if ((diff > day)) {
-                color = getDrawable(R.drawable.drawable_indigo);
-            } else {
-                color = getDrawable(R.drawable.drawable_grey);
-            }
-        }
-        return color;
-    }
-
-    /**
-     * Get drawable indicator based on time parameters.
-     * @param weekdays reminder weekdays.
-     * @param year year.
-     * @param month month.
-     * @param dayOfMonth day.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param seconds seconds.
-     * @param inTime timer reminder time.
-     * @param repeatCode reminder repeat code.
-     * @param remCount number of reminder repeats.
-     * @param delay delay for reminder.
-     * @return Drawable
-     */
-    public Drawable getDifference(String weekdays, int year, int month, int dayOfMonth, int hourOfDay,
-                                  int minuteOfHour, int seconds, long inTime, int repeatCode,
-                                  long remCount, int delay){
-        Drawable color;
-        if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            color = getDrawable(R.color.material_divider);
-        } else {
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(System.currentTimeMillis());
-            long currTime = cal.getTimeInMillis();
-
-            long newDbTime;
-            if (weekdays != null && !weekdays.matches("")){
-                newDbTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);
-            } else {
-                newDbTime = getEventTime(year, month, dayOfMonth, hourOfDay, minuteOfHour, seconds,
-                        inTime, repeatCode, remCount, delay);
-            }
-            long diff = newDbTime - currTime;
             if (isBetween(diff, 0, minute * 5)) {
                 color = getDrawable(R.drawable.drawable_red);
             } else if (isBetween(diff, minute * 5, hour)) {
@@ -188,52 +141,83 @@ public class TimeCount {
      * @return Due time
      */
     public long generateDateTime(long id){
-        DataBase db = new DataBase(mContext);
-        int hourOfDay = 0;
-        int minuteOfHour = 0;
-        int seconds = 0;
-        int dayOfMonth = 0;
-        int monthOfYear = 0;
-        int year = 0;
-        int repCode = 0;
+        NextBase db = new NextBase(mContext);
+        long startTime = 0;
         int delay = 0;
+        int dayOfMonth = 0;
         long repTime = 0;
-        long repCount = 0;
         String type = null;
-        String weekdays = null;
+        ArrayList<Integer> weekdays = null;
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
-            repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-            repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-            repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-            dayOfMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-            monthOfYear = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-            year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            hourOfDay = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-            minuteOfHour = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-            seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-            delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-            type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-            weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
+            startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonModel jsonModel = new JsonModel();
+            new JsonParser(json).parse(jsonModel);
+            JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+
+            repTime = jsonRecurrence.getRepeat();
+            dayOfMonth = jsonRecurrence.getMonthday();
+            weekdays = jsonRecurrence.getWeekdays();
         }
         long dateTime;
-        if (year == 0 && monthOfYear == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
+        if (startTime == 0) {
             dateTime = 0;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                dateTime = getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);
+                dateTime = getNextWeekdayTime(startTime, weekdays, delay);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                 if (type.endsWith("_last")){
-                    dateTime = getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
+                    dateTime = getLastMonthDayTime(startTime, delay);
                 } else {
-                    dateTime = getNextMonthDayTime(hourOfDay, minuteOfHour, dayOfMonth, delay);
+                    dateTime = getNextMonthDayTime(dayOfMonth, startTime, delay);
                 }
             } else {
-                dateTime = getEventTime(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour,
-                        seconds, repTime, repCode, repCount, delay);
+                dateTime = startTime + repTime + (delay * 1000 * 60);
             }
         }
         return dateTime;
+    }
+
+    private long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
+        long date = 0;
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        long currTime = cc.getTimeInMillis();
+        int mDay = cc.get(Calendar.DAY_OF_WEEK);
+        cc.setTimeInMillis(startTime);
+        long mTime = cc.getTimeInMillis();
+        boolean isZeroSupport = false;
+        if (mTime > currTime || delay > 0) isZeroSupport = true;
+        if (weekdays != null) {
+            int charDay;
+            int delta = 7;
+            for (int i = 0; i < 7; i++){
+                if (weekdays.get(i) == Constants.DAY_CHECKED){
+                    if (i == 6) charDay = 1;
+                    else charDay = i + 2;
+                    int mDelta = charDay - mDay;
+                    if (mDelta > 0) {
+                        if (mDelta < delta) {
+                            delta = mDelta;
+                        }
+                    } else if (mDelta < 0){
+                        mDelta = 7 + mDelta;
+                        if (mDelta < delta) {
+                            delta = mDelta;
+                        }
+                    } else if (mDelta == 0 && isZeroSupport){
+                        delta = mDelta;
+                    }
+                }
+            }
+
+            date = mTime + (delta * day);
+        }
+        if (delay > 0) date = date + (delay * 1000 * 60);
+        return date;
     }
 
     /**
@@ -356,7 +340,7 @@ public class TimeCount {
     /**
      * Check if time is actual.
      * @param due time in milliseconds.
-     * @return
+     * @return boolean
      */
     public boolean isNext(long due) {
         boolean nextDate = false;
@@ -374,37 +358,6 @@ public class TimeCount {
     }
 
     /**
-     * Check if time is actual.
-     * @param year year.
-     * @param month month.
-     * @param dayOfMonth day.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param seconds seconds.
-     * @param inTime timer reminder time.
-     * @param repeatCode reminder repeat code.
-     * @param remCount number of reminder repeats.
-     * @return
-     */
-    public boolean isNext(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds,
-                          long inTime, int repeatCode, long remCount) {
-        boolean nextDate = false;
-        if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            nextDate = true;
-        } else {
-            Calendar cc = Calendar.getInstance();
-            cc.setTimeInMillis(System.currentTimeMillis());
-            long currentTome = cc.getTimeInMillis();
-            long newDbTime = getEventTime(year, month, dayOfMonth, hourOfDay, minuteOfHour, seconds,
-                    inTime, repeatCode, remCount, 0);
-            if (newDbTime > currentTome) {
-                nextDate = true;
-            }
-        }
-        return nextDate;
-    }
-
-    /**
      * Count next due time for weekday reminder type.
      * @param hourOfDay hour.
      * @param minuteOfHour minute.
@@ -412,7 +365,7 @@ public class TimeCount {
      * @param delay delay for reminder.
      * @return Due time in milliseconds.
      */
-    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour, String weekdays, int delay){
+    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour, ArrayList<Integer> weekdays, int delay){
         long date;
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
@@ -430,7 +383,7 @@ public class TimeCount {
             int charDay;
             int delta = 7;
             for (int i = 0; i < 7; i++){
-                if (Character.toString(weekdays.charAt(i)).matches(Constants.DAY_CHECKED)){
+                if (weekdays.get(i) == Constants.DAY_CHECKED){
                     if (i == 6) charDay = 1;
                     else charDay = i + 2;
                     int mDelta = charDay - mDay;
@@ -481,7 +434,7 @@ public class TimeCount {
      * @param value target.
      * @param min min number.
      * @param max max number.
-     * @return
+     * @return boolean
      */
     private boolean isBetween(long value, long min, long max){
         return((value > min) && (value < max));
@@ -490,32 +443,32 @@ public class TimeCount {
     /**
      * Check if current days of week is selected for weekday reminder.
      * @param repeat weekdays string.
-     * @return
+     * @return boolean
      */
-    public static boolean isDay(String repeat){
+    public static boolean isDay(ArrayList<Integer> repeat){
         boolean res = false;
         Calendar calendar = Calendar.getInstance();
         int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
         if (weekDay == Calendar.MONDAY) {
-            res = Character.toString(repeat.charAt(0)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(0) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.TUESDAY){
-            res = Character.toString(repeat.charAt(1)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(1) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.WEDNESDAY){
-            res = Character.toString(repeat.charAt(2)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(2) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.THURSDAY){
-            res = Character.toString(repeat.charAt(3)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(3) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.FRIDAY){
-            res = Character.toString(repeat.charAt(4)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(4) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.SATURDAY){
-            res = Character.toString(repeat.charAt(5)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(5) == Constants.DAY_CHECKED;
         }
         if (weekDay == Calendar.SUNDAY){
-            res = Character.toString(repeat.charAt(6)).matches(Constants.DAY_CHECKED);
+            res = repeat.get(6) == Constants.DAY_CHECKED;
         }
         return res;
     }
@@ -625,7 +578,7 @@ public class TimeCount {
     /**
      * Check if current day is same as is in reminder.
      * @param dayOfMonth day.
-     * @return
+     * @return boolean
      */
     public static boolean isDay(int dayOfMonth){
         if (dayOfMonth == 0){
@@ -638,7 +591,7 @@ public class TimeCount {
 
     /**
      * Check if current day is the last day in this month.
-     * @return
+     * @return boolean
      */
     public static boolean isLastDay(){
         Calendar cc = Calendar.getInstance();

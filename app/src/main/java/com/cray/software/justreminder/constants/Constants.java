@@ -125,8 +125,8 @@ public class Constants {
     public static final String EDIT_ID = "edit_id";
     public static final String EDIT_WIDGET = "edit_widget";
 
-    public static final String DAY_CHECKED = "1";
-    public static final String DAY_UNCHECKED = "0";
+    public static final int DAY_CHECKED = 1;
+    public static final int DAY_UNCHECKED = 0;
     public static final String NOTHING_CHECKED = "0000000";
     public static final String ALL_CHECKED = "1111111";
 

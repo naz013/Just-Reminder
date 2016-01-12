@@ -13,6 +13,7 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.Recurrence;
+import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -29,9 +30,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
-        Reminder reminder = new Type(context).getItem(id);
+        JsonModel reminder = new Type(context).getItem(id);
         if (reminder.getType().matches(Constants.TYPE_TIME)){
-            String exclusion = reminder.getExclusion();
+            String exclusion = reminder.getExclusion().getJsonString();
             if (exclusion != null){
                 Recurrence helper = new Recurrence(exclusion);
                 if (!helper.isRange()){

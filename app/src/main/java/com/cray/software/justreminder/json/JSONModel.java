@@ -27,6 +27,7 @@ public class JsonModel {
     private JsonRecurrence recurrence;
     private JsonAction action;
     private JsonExport export;
+    private JsonPlace place;
     private List<String> tags;
     private String summary;
     private String type;
@@ -42,6 +43,14 @@ public class JsonModel {
 
     public JsonModel() {
 
+    }
+
+    public JsonPlace getPlace() {
+        return place;
+    }
+
+    public void setPlace(JsonPlace place) {
+        this.place = place;
     }
 
     public JsonExport getExport() {
