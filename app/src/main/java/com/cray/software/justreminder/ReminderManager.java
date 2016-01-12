@@ -69,6 +69,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
@@ -85,6 +86,8 @@ import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
@@ -499,12 +502,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
         int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
         if (i != 0){
-            new AlarmReceiver().cancelAlarm(ReminderManager.this, id);
-            new WeekDayReceiver().cancelAlarm(ReminderManager.this, id);
-            new MonthDayReceiver().cancelAlarm(ReminderManager.this, id);
-            new DelayReceiver().cancelAlarm(ReminderManager.this, id);
-            new PositionDelayReceiver().cancelDelay(ReminderManager.this, id);
-            new DisableAsync(ReminderManager.this).execute();
+            Reminder.disableReminder(id, this);
         }
 
         spinner.setSelection(sPrefs.loadInt(Prefs.LAST_USED_REMINDER));
@@ -3256,57 +3254,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void restoreTask(){
         if (id != 0) {
-            DataBase db = new DataBase(this);
+            NextBase db = new NextBase(this);
             db.open();
-            if (db.getCount() == 0) {
-                stopService(new Intent(ReminderManager.this, GeolocationService.class));
-                stopService(new Intent(ReminderManager.this, CheckPosition.class));
-            } else {
-                Cursor c = db.queryGroup();
-                if (c != null && c.moveToFirst()) {
-                    ArrayList<String> types = new ArrayList<>();
-                    do {
-                        String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                        int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
-                        if (isDone != 1) {
-                            types.add(tp);
-                        }
-                    } while (c.moveToNext());
-                    if (!types.contains(Constants.TYPE_LOCATION) ||
-                            !types.contains(Constants.TYPE_LOCATION_CALL) ||
-                            !types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
-                            !types.contains(Constants.TYPE_LOCATION_OUT) ||
-                            !types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
-                            !types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-                        stopService(new Intent(ReminderManager.this, GeolocationService.class));
-                        stopService(new Intent(ReminderManager.this, CheckPosition.class));
-                    } else {
-                        startService(new Intent(ReminderManager.this, GeolocationService.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                    }
-                }
-                if (c != null) c.close();
-            }
+            new DisableAsync(this).execute();
             Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()) {
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                int isArchive = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
+                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
+                int isArchive = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
                 if (isDone != 1 && isArchive != 1) {
-                    if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                        new WeekDayReceiver().setAlarm(ReminderManager.this, id);
-                    } else if (type.matches(Constants.TYPE_REMINDER) ||
-                            type.matches(Constants.TYPE_TIME) ||
-                            type.matches(Constants.TYPE_CALL) ||
-                            type.matches(Constants.TYPE_MESSAGE) ||
-                            type.matches(Constants.TYPE_SHOPPING_LIST)) {
-                        new AlarmReceiver().setAlarm(ReminderManager.this, id);
-                    } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                        new MonthDayReceiver().setAlarm(ReminderManager.this, id);
-                    } else if (type.startsWith(Constants.TYPE_LOCATION) && isDelayed) {
+                    if (type.contains(Constants.TYPE_LOCATION) && isDelayed) {
                         new PositionDelayReceiver().setDelay(ReminderManager.this, id);
-                    } else if (type.startsWith(Constants.TYPE_LOCATION_OUT) && isDelayed) {
-                        new PositionDelayReceiver().setDelay(ReminderManager.this, id);
+                    } else {
+                        new AlarmReceiver().enableReminder(ReminderManager.this, id);
                     }
                 }
             }
@@ -3708,7 +3668,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void setExclusion(String jsonObject){
         if (jsonObject != null) {
-            Recurrence recurrence = new Recurrence(jsonObject);
+            JsonExclusion recurrence = new JsonExclusion(jsonObject);
             if (recurrence.getHours() != null) {
                 selectExclusion.setText(getString(R.string.excluded_hours) + " " + recurrence.getHours().toString());
                 exclusionClear.setVisibility(View.VISIBLE);

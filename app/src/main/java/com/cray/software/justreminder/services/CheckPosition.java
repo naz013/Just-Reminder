@@ -7,26 +7,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.DisableAsync;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.activities.ReminderDialog;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.utils.LocationUtil;
 
-import java.util.ArrayList;
-
 public class CheckPosition extends IntentService {
-
-    private DataBase DB;
-    private TimeCount tc;
-
 
     public CheckPosition() {
         super("CheckPosition");
@@ -37,143 +32,118 @@ public class CheckPosition extends IntentService {
         return null;
     }
 
-
     @Override
     protected void onHandleIntent(final Intent intent) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                double currentLat = intent.getDoubleExtra("lat", 0);
-                double currentLong = intent.getDoubleExtra("lon", 0);
-                Location locationA = new Location("point A");
-                locationA.setLatitude(currentLat);
-                locationA.setLongitude(currentLong);
-                DB = new DataBase(getApplicationContext());
-                tc = new TimeCount(getApplicationContext());
-                SharedPrefs sPrefs = new SharedPrefs(getApplicationContext());
-                boolean isEnabled = sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION);
-                DB.open();
-                Cursor c = DB.queryGroup();
-                if (c != null && c.moveToFirst()) {
-                    ArrayList<String> types = new ArrayList<>();
-                    do{
-                        String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                        types.add(tp);
-                    } while (c.moveToNext());
-                    if (types.contains(Constants.TYPE_LOCATION) || types.contains(Constants.TYPE_LOCATION_CALL) ||
-                            types.contains(Constants.TYPE_LOCATION_MESSAGE) ||
-                            types.contains(Constants.TYPE_LOCATION_OUT) ||
-                            types.contains(Constants.TYPE_LOCATION_OUT_CALL) ||
-                            types.contains(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-                        c.moveToFirst();
-                        do {
-                            String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                            if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                                double lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                                double lon = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                                String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                                int status = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                                int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                                int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                                int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                                int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                                int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                                int shown = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                                int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
-                                int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-                                if (radius == -1) radius = stockRadius;
-                                if (isDone != 1) {
-                                    if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
-                                        Location locationB = new Location("point B");
-                                        locationB.setLatitude(lat);
-                                        locationB.setLongitude(lon);
-                                        float distance = locationA.distanceTo(locationB);
-                                        int roundedDistance = Math.round(distance);
-                                        if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                                            if (status == LocationUtil.ACTIVE){
-                                                if (roundedDistance < radius) {
-                                                    DB.setLocationStatus(id, LocationUtil.LOCKED);
-                                                }
-                                            }
-                                            if (status == LocationUtil.LOCKED){
-                                                if (roundedDistance > radius) {
-                                                    showReminder(id, task);
-                                                } else {
-                                                    if (isEnabled) {
-                                                        showNotification(id, roundedDistance, shown, task);
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            if (roundedDistance <= radius) {
-                                                if (status != LocationUtil.SHOWN) {
-                                                    showReminder(id, task);
-                                                }
-                                            } else {
-                                                if (isEnabled) {
-                                                    showNotification(id, roundedDistance, shown, task);
-                                                }
-                                            }
-                                        }
+        double currentLat = intent.getDoubleExtra("lat", 0);
+        double currentLong = intent.getDoubleExtra("lon", 0);
+        Location locationA = new Location("point A");
+        locationA.setLatitude(currentLat);
+        locationA.setLongitude(currentLong);
+        NextBase db = new NextBase(getApplicationContext());
+        TimeCount timeCount = new TimeCount(getApplicationContext());
+        SharedPrefs sPrefs = new SharedPrefs(getApplicationContext());
+        boolean isEnabled = sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION);
+        db.open();
+        Cursor c = db.queryAllLocations();
+        if (c != null && c.moveToFirst()) {
+            do {
+                long id = c.getLong(c.getColumnIndex(NextBase._ID));
+                long startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+                String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                int status = c.getInt(c.getColumnIndex(NextBase.LOCATION_STATUS));
+                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
+                int shown = c.getInt(c.getColumnIndex(NextBase.NOTIFICATION_STATUS));
+                String json = c.getString(c.getColumnIndex(NextBase.JSON));
+
+                JsonPlace jsonPlace = new JsonParser(json).getPlace();
+                double lat = jsonPlace.getLatitude();
+                double lon = jsonPlace.getLongitude();
+                int radius = jsonPlace.getRadius();
+
+                int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+                if (radius == -1) radius = stockRadius;
+                if (isDone != 1) {
+                    if (startTime == 0) {
+                        Location locationB = new Location("point B");
+                        locationB.setLatitude(lat);
+                        locationB.setLongitude(lon);
+                        float distance = locationA.distanceTo(locationB);
+                        int roundedDistance = Math.round(distance);
+                        if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                            if (status == LocationUtil.ACTIVE){
+                                if (roundedDistance < radius) {
+                                    db.setLocationStatus(id, LocationUtil.LOCKED);
+                                }
+                            }
+                            if (status == LocationUtil.LOCKED){
+                                if (roundedDistance > radius) {
+                                    showReminder(id, task);
+                                } else {
+                                    if (isEnabled) {
+                                        showNotification(id, roundedDistance, shown, task);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (roundedDistance <= radius) {
+                                if (status != LocationUtil.SHOWN) {
+                                    showReminder(id, task);
+                                }
+                            } else {
+                                if (isEnabled) {
+                                    showNotification(id, roundedDistance, shown, task);
+                                }
+                            }
+                        }
+                    } else {
+                        if (timeCount.isCurrent(startTime)) {
+                            Location locationB = new Location("point B");
+                            locationB.setLatitude(lat);
+                            locationB.setLongitude(lon);
+                            float distance = locationA.distanceTo(locationB);
+                            int roundedDistance = Math.round(distance);
+                            if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+                                if (status == LocationUtil.ACTIVE){
+                                    if (roundedDistance <= radius) {
+                                        db.setLocationStatus(id, LocationUtil.LOCKED);
+                                    }
+                                }
+                                if (status == LocationUtil.LOCKED){
+                                    if (roundedDistance > radius) {
+                                        showReminder(id, task);
                                     } else {
-                                        if (tc.isCurrent(year, month, day, hour, minute, 0)) {
-                                            Location locationB = new Location("point B");
-                                            locationB.setLatitude(lat);
-                                            locationB.setLongitude(lon);
-                                            float distance = locationA.distanceTo(locationB);
-                                            int roundedDistance = Math.round(distance);
-                                            if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                                                if (status == LocationUtil.ACTIVE){
-                                                    if (roundedDistance <= radius) {
-                                                        DB.setLocationStatus(id, LocationUtil.LOCKED);
-                                                    }
-                                                }
-                                                if (status == LocationUtil.LOCKED){
-                                                    if (roundedDistance > radius) {
-                                                        showReminder(id, task);
-                                                    } else {
-                                                        if (isEnabled) {
-                                                            showNotification(id, roundedDistance, shown, task);
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                if (roundedDistance <= radius) {
-                                                    if (status != LocationUtil.SHOWN) {
-                                                        showReminder(id, task);
-                                                    }
-                                                } else {
-                                                    if (isEnabled) {
-                                                        showNotification(id, roundedDistance, shown, task);
-                                                    }
-                                                }
-                                            }
+                                        if (isEnabled) {
+                                            showNotification(id, roundedDistance, shown, task);
                                         }
+                                    }
+                                }
+                            } else {
+                                if (roundedDistance <= radius) {
+                                    if (status != LocationUtil.SHOWN) {
+                                        showReminder(id, task);
+                                    }
+                                } else {
+                                    if (isEnabled) {
+                                        showNotification(id, roundedDistance, shown, task);
                                     }
                                 }
                             }
                         }
-                        while (c.moveToNext());
-                    } else {
-                        getApplication().stopService(new Intent(getApplicationContext(), GeolocationService.class));
-                        stopSelf();
                     }
-                } else {
-                    getApplication().stopService(new Intent(getApplicationContext(), GeolocationService.class));
-                    stopSelf();
                 }
+            } while (c.moveToNext());
+        } else {
+            getApplication().stopService(new Intent(getApplicationContext(), GeolocationService.class));
+            stopSelf();
+        }
 
-                if (c != null) c.close();
-            }
-        }).start();
+        if (c != null) c.close();
     }
 
     private void showReminder(long id, String task){
-        DataBase DB = new DataBase(getApplicationContext());
-        DB.open().setLocationStatus(id, LocationUtil.SHOWN);
+        NextBase db = new NextBase(getApplicationContext());
+        db.open().setLocationStatus(id, LocationUtil.SHOWN);
         Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
         resultIntent.putExtra("taskDialog", task);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);

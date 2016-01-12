@@ -12,11 +12,13 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.activities.ReminderDialog;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.modules.Module;
 
 import java.io.File;
@@ -31,14 +33,17 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         if (id != 0) {
-            DataBase db = new DataBase(context);
+            NextBase db = new NextBase(context);
             db.open();
             Cursor c = db.getReminder(id);
             if (c!= null && c.moveToFirst()) {
-                String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String melody = c.getString(c.getColumnIndex(Constants.COLUMN_CUSTOM_MELODY));
-                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_LED_COLOR));
+                String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+                String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                JsonModel jsonModel = new JsonModel();
+                new JsonParser(json).parse(jsonModel);
+                String melody = jsonModel.getMelody().getMelodyPath();
+                int color = jsonModel.getLed().getColor();
                 showNotification(context, task, type, id, color, melody);
             }
             if (c != null) c.close();

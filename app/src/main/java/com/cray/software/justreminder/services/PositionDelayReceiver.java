@@ -7,10 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.constants.Constants;
-
-import java.util.Calendar;
+import com.cray.software.justreminder.databases.NextBase;
 
 public class PositionDelayReceiver extends BroadcastReceiver {
 
@@ -23,33 +20,21 @@ public class PositionDelayReceiver extends BroadcastReceiver {
     }
 
     public void setDelay(Context context, long id) {
-        DataBase DB = new DataBase(context);
+        NextBase DB = new NextBase(context);
         DB.open();
         Cursor c = DB.getReminder(id);
 
         Integer i = (int) (long) id;
-        int day = 0, month = 0, year = 0, hour = 0, minute = 0, seconds = 0;
+        long startTime = 0;
         if (c != null && c.moveToNext()) {
-            day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-            month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-            year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-            hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-            minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-            seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
+            startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
         }
         if (c != null) c.close();
         Intent intent = new Intent(context, PositionDelayReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, 0);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, day);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, seconds);
-        calendar.set(Calendar.MILLISECOND, 0);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, startTime, alarmIntent);
         DB.close();
     }
 

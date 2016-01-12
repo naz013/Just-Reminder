@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.utils.LocationUtil;
@@ -22,28 +22,24 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        DataBase db = new DataBase(mContext);
+        NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.queryGroup();
         if (c != null && c.moveToFirst()){
             boolean res = false;
             do {
-                String tp = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                if (tp.startsWith(Constants.TYPE_LOCATION) || tp.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                    int year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                    int month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                    int day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                    int hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                    int minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                    int isShown = c.getInt(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                    int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                    if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0) {
+                String tp = c.getString(c.getColumnIndex(NextBase.TYPE));
+                if (tp.contains(Constants.TYPE_LOCATION)) {
+                    long startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                    int isShown = c.getInt(c.getColumnIndex(NextBase.REMINDER_STATUS));
+                    int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
+                    if (startTime == 0) {
                         if (isDone != 1){
                             if (isShown != LocationUtil.SHOWN) res = true;
                         }
                     } else {
                         TimeCount tc = new TimeCount(mContext);
-                        if (tc.isCurrent(year, month, day, hour, minute, 0)) {
+                        if (tc.isCurrent(startTime)) {
                             if (isDone != 1){
                                 if (isShown != LocationUtil.SHOWN) res = true;
                             }

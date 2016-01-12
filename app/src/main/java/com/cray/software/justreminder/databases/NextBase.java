@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JsonParser;
 
 /**
@@ -232,6 +233,12 @@ public class NextBase {
     public Cursor queryAllReminders() throws SQLException {
         openGuard();
         return db.query(TABLE_NAME, null, null, null, null, null, null);
+    }
+
+    public Cursor queryAllLocations() throws SQLException {
+        openGuard();
+        return db.query(TABLE_NAME, null, TYPE + " LIKE ?",
+                new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
     }
 
     public Cursor queryGroup(String category) throws SQLException {

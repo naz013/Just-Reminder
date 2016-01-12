@@ -409,6 +409,17 @@ public class TimeCount {
         return date;
     }
 
+    public boolean isCurrent(long startTime) {
+        boolean res = false;
+        Calendar cc = Calendar.getInstance();
+        cc.setTimeInMillis(System.currentTimeMillis());
+        long currentTome = cc.getTimeInMillis();
+        if (startTime < currentTome) {
+            res = true;
+        }
+        return res;
+    }
+
     public boolean isCurrent(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds) {
         boolean res = false;
         Calendar cc = Calendar.getInstance();
