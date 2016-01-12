@@ -1,5 +1,6 @@
 package com.cray.software.justreminder;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -82,29 +83,23 @@ import com.cray.software.justreminder.helpers.Interval;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
-import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
-import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.ShoppingType;
-import com.cray.software.justreminder.reminder.TimerType;
 import com.cray.software.justreminder.reminder.Type;
-import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.CheckPosition;
-import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.GeolocationService;
-import com.cray.software.justreminder.services.MonthDayReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -122,6 +117,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -253,7 +249,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private int myHour = 0;
     private int myMinute = 0;
-    private int mySeconds = 0;
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
@@ -265,10 +260,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private int auto = -1;
     private long repeats = -1;
     private long id;
+    private long eventTime;
+    private long repeatCode = 0;
     private String categoryId;
     private String exclusion = null;
     private String type, melody = null, selectedPackage = null;
-    private int radius = -1, ledColor = 0, repeatCode = 0;
+    private int radius = -1, ledColor = 0;
     private List<Address> foundPlaces;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> namesList;
@@ -286,7 +283,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private boolean isDelayed = false;
 
     private Type remControl = new Type(this);
-    private Reminder item;
+    private JsonModel item;
     private Handler handler = new Handler();
     private GeocoderTask task;
 
@@ -511,17 +508,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             item = remControl.getItem(id);
             if (item != null) {
                 type = item.getType();
-                radius = item.getRadius();
-                ledColor = item.getColor();
-                melody = item.getWeekdays();
-                vibration = item.getVibration();
+                vibration = item.getVibrate();
                 voice = item.getVoice();
                 notificationRepeat = item.getNotificationRepeat();
-                wake = item.getWake();
+                wake = item.getAwake();
                 unlock = item.getUnlock();
-                auto = item.getAuto();
-                repeats = item.getLimit();
-                String catId = item.getCategoryId();
+
+                radius = item.getPlace().getRadius();
+                ledColor = item.getLed().getColor();
+                auto = item.getAction().getAuto();
+                melody = item.getMelody().getMelodyPath();
+                repeats = item.getRecurrence().getLimit();
+                String catId = item.getCategory();
                 if (radius == 0) radius = -1;
 
                 if (catId != null && !catId.matches("")) categoryId = catId;
@@ -634,8 +632,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (Permissions.checkPermission(ReminderManager.this, Permissions.READ_CONTACTS)) {
                 SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
             } else {
-                Permissions.requestPermission(ReminderManager.this, 107,
-                        new String[]{Permissions.READ_CONTACTS});
+                Permissions.requestPermission(ReminderManager.this, 107, Permissions.READ_CONTACTS);
             }
         }
     };
@@ -875,7 +872,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Delete or move to trash reminder.
      */
     private void deleteReminder() {
-        DataBase db = new DataBase(this);
+        NextBase db = new NextBase(this);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
@@ -976,21 +973,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.by_date_layout);
         remControl = dateType;
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         DateTimeView dateView = (DateTimeView) findViewById(R.id.dateView);
         dateView.setListener(this);
-        dateView.setDateTime(cal.getTimeInMillis());
+        dateView.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         dateExport = (CheckBox) findViewById(R.id.dateExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
@@ -1010,19 +995,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text = "";
-            int repCode = 0;
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                repCode = item.getRepCode();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                text = item.getSummary();
+                eventTime = item.getStartTime();
+                repeatCode = item.getRecurrence().getRepeat();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
             }
 
             if (exp == 1){
@@ -1033,13 +1015,41 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 dateTaskExport.setChecked(true);
             }
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
-            dateView.setDateTime(cal.getTimeInMillis());
-            repeatView.setProgress(repCode);
+            dateView.setDateTime(updateCalendar(eventTime));
+            repeatView.setProgress(repeatCode);
             invalidateButtons();
         }
+    }
+
+    private Date updateTime(long millis) {
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+        if (myYear > 0){
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+        return cal.getTime();
+    }
+
+    private long updateCalendar(long millis) {
+        final Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+        if (myYear > 0){
+            cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        } else {
+            myYear = cal.get(Calendar.YEAR);
+            myMonth = cal.get(Calendar.MONTH);
+            myDay = cal.get(Calendar.DAY_OF_MONTH);
+            myHour = cal.get(Calendar.HOUR_OF_DAY);
+            myMinute = cal.get(Calendar.MINUTE);
+        }
+        return cal.getTimeInMillis();
     }
 
     /**
@@ -1051,21 +1061,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         ViewUtils.fadeInAnimation(monthDayLayout);
 
-        MonthdayType dateType = new MonthdayType(this);
+        DateType dateType = new DateType(this, Constants.TYPE_MONTHDAY);
         dateType.inflateView(R.id.monthDayLayout);
         remControl = dateType;
-
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
 
         monthDayField = (TextView) findViewById(R.id.monthDayField);
         monthDayField.setOnClickListener(dateClick);
@@ -1090,7 +1088,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
         monthDayTimeField.setOnClickListener(timeClick);
-        monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
+        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis()),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
@@ -1112,13 +1110,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
-                number = item.getNumber();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                text = item.getSummary();
+                eventTime = item.getStartTime();
+                repeatCode = item.getRecurrence().getRepeat();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
+                number = item.getAction().getTarget();
             }
 
             if (exp == 1){
@@ -1133,10 +1133,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (myDay < 10) dayStr = "0" + myDay;
             else dayStr = String.valueOf(myDay);
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
-            monthDayTimeField.setText(TimeUtil.getTime(cal.getTime(),
+            monthDayTimeField.setText(TimeUtil.getTime(updateTime(eventTime),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             monthDayField.setText(dayStr);
 
@@ -1221,7 +1219,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
         ViewUtils.fadeInAnimation(weekday_layout);
 
-        WeekdayType dateType = new WeekdayType(this);
+        DateType dateType = new DateType(this, Constants.TYPE_WEEKDAY);
         dateType.inflateView(R.id.weekday_layout);
         remControl = dateType;
 
@@ -1235,21 +1233,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             weekTaskExport.setVisibility(View.VISIBLE);
         }
 
-        final Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            c.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = c.get(Calendar.YEAR);
-            myMonth = c.get(Calendar.MONTH);
-            myDay = c.get(Calendar.DAY_OF_MONTH);
-            myHour = c.get(Calendar.HOUR_OF_DAY);
-            myMinute = c.get(Calendar.MINUTE);
-        }
-
         weekTimeField = (TextView) findViewById(R.id.weekTimeField);
         weekTimeField.setOnClickListener(timeClick);
-        weekTimeField.setText(TimeUtil.getTime(c.getTime(),
+        weekTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis()),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         weekTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
@@ -1277,19 +1263,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (id != 0 && isSame()) {
             String text = "";
             String type = "";
-            String weekdays = "";
+            ArrayList<Integer> weekdays = new ArrayList<>();
             String number = "";
             int exp = 0;
             int expTasks = 0;
             if (item != null) {
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                exp = item.getExport();
-                expTasks = item.getCode();
-                text = item.getTitle();
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+                text = item.getSummary();
                 type = item.getType();
-                weekdays = item.getWeekdays();
-                number = item.getNumber();
+
+                weekdays = item.getRecurrence().getWeekdays();
+                number = item.getAction().getTarget();
+                eventTime = item.getStartTime();
             }
 
             if (exp == 1){
@@ -1300,10 +1287,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 weekTaskExport.setChecked(true);
             }
 
-            c.set(Calendar.HOUR_OF_DAY, myHour);
-            c.set(Calendar.MINUTE, myMinute);
-
-            weekTimeField.setText(TimeUtil.getTime(c.getTime(),
+            weekTimeField.setText(TimeUtil.getTime(updateTime(eventTime),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             taskField.setText(text);
 
@@ -1329,44 +1313,44 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Check days toggle buttons depends on weekday string.
      * @param weekdays weekday string.
      */
-    private void setCheckForDays(String weekdays){
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED)) {
+    private void setCheckForDays(ArrayList<Integer> weekdays){
+        if (weekdays.get(0) == Constants.DAY_CHECKED) {
             mondayCheck.setChecked(true);
         } else {
             mondayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(1) == Constants.DAY_CHECKED) {
             tuesdayCheck.setChecked(true);
         } else {
             tuesdayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(2) == Constants.DAY_CHECKED) {
             wednesdayCheck.setChecked(true);
         } else {
             wednesdayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(3) == Constants.DAY_CHECKED) {
             thursdayCheck.setChecked(true);
         } else {
             thursdayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(4) == Constants.DAY_CHECKED) {
             fridayCheck.setChecked(true);
         } else {
             fridayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(5) == Constants.DAY_CHECKED) {
             saturdayCheck.setChecked(true);
         } else {
             saturdayCheck.setChecked(false);
         }
 
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED)) {
+        if (weekdays.get(6) == Constants.DAY_CHECKED) {
             sundayCheck.setChecked(true);
         } else {
             sundayCheck.setChecked(false);
@@ -1383,7 +1367,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
         ViewUtils.fadeInAnimation(after_time_layout);
 
-        TimerType dateType = new TimerType(this);
+        DateType dateType = new DateType(this, Constants.TYPE_TIME);
         dateType.inflateView(R.id.after_time_layout);
         remControl = dateType;
 
@@ -1490,15 +1474,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text = "";
-            int  exp = 0, expTasks = 0, repeat = 0;
-            long afterTime = 0;
+            int  exp = 0, expTasks = 0;
+            long afterTime = 0, repeat = 0;
             if (item != null){
-                text = item.getTitle();
-                afterTime = item.getRepMinute();
-                exp = item.getExport();
-                expTasks = item.getCode();
-                repeat = item.getRepCode();
-                exclusion = item.getExclusion();
+                text = item.getSummary();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
+                JsonRecurrence jsonRecurrence = item.getRecurrence();
+                repeat = jsonRecurrence.getRepeat();
+                afterTime = jsonRecurrence.getAfter();
+                exclusion = item.getExclusion().getJsonString();
             }
 
             timeString = TimeUtil.generateAfterString(afterTime);
@@ -1562,18 +1550,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         skypeExport = (CheckBox) findViewById(R.id.skypeExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
             skypeExport.setVisibility(View.VISIBLE);
@@ -1586,7 +1562,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewSkype = (DateTimeView) findViewById(R.id.dateViewSkype);
         dateViewSkype.setListener(this);
-        dateViewSkype.setDateTime(cal.getTimeInMillis());
+        dateViewSkype.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         RepeatView repeatViewSkype = (RepeatView) findViewById(R.id.repeatViewSkype);
         repeatViewSkype.setListener(this);
@@ -1596,21 +1572,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text="", number="", type="";
-            int repCode = 0;
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
+                text = item.getSummary();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
                 type = item.getType();
-                number = item.getNumber();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                repCode = item.getRepCode();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                number = item.getAction().getTarget();
+                repeatCode = item.getRecurrence().getRepeat();
+                eventTime = item.getStartTime();
             }
 
             if (exp == 1){
@@ -1631,12 +1605,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 skypeChat.setChecked(true);
             }
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
             skypeUser.setText(number);
-            dateViewSkype.setDateTime(cal.getTimeInMillis());
-            repeatViewSkype.setProgress(repCode);
+            dateViewSkype.setDateTime(updateCalendar(eventTime));
+            repeatViewSkype.setProgress(repeatCode);
 
             invalidateButtons();
         }
@@ -1690,18 +1662,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         appExport = (CheckBox) findViewById(R.id.appExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
             appExport.setVisibility(View.VISIBLE);
@@ -1714,7 +1674,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewApp = (DateTimeView) findViewById(R.id.dateViewApp);
         dateViewApp.setListener(this);
-        dateViewApp.setDateTime(cal.getTimeInMillis());
+        dateViewApp.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         RepeatView repeatViewApp = (RepeatView) findViewById(R.id.repeatViewApp);
         repeatViewApp.setListener(this);
@@ -1724,21 +1684,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text="", number="", type="";
-            int repCode = 0;
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
+                text = item.getSummary();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
                 type = item.getType();
-                number = item.getNumber();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                repCode = item.getRepCode();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                number = item.getAction().getTarget();
+                repeatCode = item.getRecurrence().getRepeat();
+                eventTime = item.getStartTime();
             }
 
             if (exp == 1){
@@ -1767,12 +1725,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 browseLink.setText(number);
             }
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
 
-            dateViewApp.setDateTime(cal.getTimeInMillis());
-            repeatViewApp.setProgress(repCode);
+            dateViewApp.setDateTime(updateCalendar(eventTime));
+            repeatViewApp.setProgress(repeatCode);
             invalidateButtons();
         }
     }
@@ -1796,18 +1752,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         callExport = (CheckBox) findViewById(R.id.callExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
             callExport.setVisibility(View.VISIBLE);
@@ -1820,7 +1764,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewCall = (DateTimeView) findViewById(R.id.dateViewCall);
         dateViewCall.setListener(this);
-        dateViewCall.setDateTime(cal.getTimeInMillis());
+        dateViewCall.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         RepeatView repeatViewCall = (RepeatView) findViewById(R.id.repeatViewCall);
         repeatViewCall.setListener(this);
@@ -1830,20 +1774,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text="", number="";
-            int repCode = 0;
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
-                number = item.getNumber();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                repCode = item.getRepCode();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                text = item.getSummary();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
+                type = item.getType();
+                number = item.getAction().getTarget();
+                repeatCode = item.getRecurrence().getRepeat();
+                eventTime = item.getStartTime();
             }
 
             if (exp == 1){
@@ -1854,12 +1797,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 callTaskExport.setChecked(true);
             }
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
             phoneNumber.setText(number);
-            dateViewCall.setDateTime(cal.getTimeInMillis());
-            repeatViewCall.setProgress(repCode);
+            dateViewCall.setDateTime(updateCalendar(eventTime));
+            repeatViewCall.setProgress(repeatCode);
             invalidateButtons();
         }
     }
@@ -1883,18 +1824,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         messageExport = (CheckBox) findViewById(R.id.messageExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
@@ -1908,7 +1837,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewMessage = (DateTimeView) findViewById(R.id.dateViewMessage);
         dateViewMessage.setListener(this);
-        dateViewMessage.setDateTime(cal.getTimeInMillis());
+        dateViewMessage.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         RepeatView repeatViewMessage = (RepeatView) findViewById(R.id.repeatViewMessage);
         repeatViewMessage.setListener(this);
@@ -1918,20 +1847,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0 && isSame()) {
             String text="", number="";
-            int repCode = 0;
             int exp = 0;
             int expTasks = 0;
             if (item != null){
-                text = item.getTitle();
-                number = item.getNumber();
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                repCode = item.getRepCode();
-                exp = item.getExport();
-                expTasks = item.getCode();
+                text = item.getSummary();
+
+                JsonExport jsonExport = item.getExport();
+                exp = jsonExport.getCalendar();
+                expTasks = jsonExport.getgTasks();
+
+                type = item.getType();
+                number = item.getAction().getTarget();
+                repeatCode = item.getRecurrence().getRepeat();
+                eventTime = item.getStartTime();
             }
 
             if (exp == 1){
@@ -1942,12 +1870,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 messageTaskExport.setChecked(true);
             }
 
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
             taskField.setText(text);
             messageNumber.setText(number);
-            dateViewMessage.setDateTime(cal.getTimeInMillis());
-            repeatViewMessage.setProgress(repCode);
+            dateViewMessage.setDateTime(updateCalendar(eventTime));
+            repeatViewMessage.setProgress(repeatCode);
             invalidateButtons();
         }
     }
@@ -2092,56 +2018,39 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         actionViewLocation.setListener(this);
         actionViewLocation.setActivity(this);
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         DateTimeView dateViewLocation = (DateTimeView) findViewById(R.id.dateViewLocation);
         dateViewLocation.setListener(this);
-        dateViewLocation.setDateTime(cal.getTimeInMillis());
+        dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         invalidateButtons();
 
         if (id != 0 && isSame()) {
-            String text = "", number = null, remType = "";
+            String text = "", number = null;
             double latitude = 0.0, longitude = 0.0;
             if (item != null){
-                text = item.getTitle();
-                number = item.getNumber();
-                remType = item.getType();
-                latitude = item.getPlace()[0];
-                longitude = item.getPlace()[1];
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                radius = item.getRadius();
+                text = item.getSummary();
+                type = item.getType();
+                number = item.getAction().getTarget();
+                eventTime = item.getStartTime();
+
+                JsonPlace jsonPlace = item.getPlace();
+                latitude = jsonPlace.getLatitude();
+                longitude = jsonPlace.getLongitude();
+                radius = jsonPlace.getRadius();
             }
 
-            if (item != null && item.getDue() > 0) {
-                cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
-                dateViewLocation.setDateTime(cal.getTimeInMillis());
+            if (item != null && eventTime > 0) {
+                dateViewLocation.setDateTime(updateCalendar(eventTime));
                 attackDelay.setChecked(true);
                 isDelayed = true;
             } else {
                 attackDelay.setChecked(false);
             }
 
-            if (remType.matches(Constants.TYPE_LOCATION_CALL) || remType.matches(Constants.TYPE_LOCATION_MESSAGE)){
+            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
                 actionViewLocation.setAction(true);
                 actionViewLocation.setNumber(number);
-                if (remType.matches(Constants.TYPE_LOCATION_CALL)){
+                if (type.matches(Constants.TYPE_LOCATION_CALL)){
                     actionViewLocation.setType(ActionView.TYPE_CALL);
                 } else {
                     actionViewLocation.setType(ActionView.TYPE_MESSAGE);
@@ -2252,21 +2161,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         actionViewLocationOut.setListener(this);
         actionViewLocationOut.setActivity(this);
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         DateTimeView dateViewLocationOut = (DateTimeView) findViewById(R.id.dateViewLocationOut);
         dateViewLocationOut.setListener(this);
-        dateViewLocationOut.setDateTime(cal.getTimeInMillis());
+        dateViewLocationOut.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         if (curPlace != null) {
             if (mapOut != null) {
@@ -2278,36 +2175,32 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         invalidateButtons();
 
         if (id != 0 && isSame()) {
-            String text = "", number = null, remType = "";
+            String text = "", number = null;
             double latitude = 0, longitude = 0;
             if (item != null){
-                text = item.getTitle();
-                number = item.getNumber();
-                remType = item.getType();
-                latitude = item.getPlace()[0];
-                longitude = item.getPlace()[1];
-                myHour = item.getHour();
-                myMinute = item.getMinute();
-                myDay = item.getDay();
-                myMonth = item.getMonth();
-                myYear = item.getYear();
-                radius = item.getRadius();
+                text = item.getSummary();
+                type = item.getType();
+                number = item.getAction().getTarget();
+                eventTime = item.getStartTime();
+
+                JsonPlace jsonPlace = item.getPlace();
+                latitude = jsonPlace.getLatitude();
+                longitude = jsonPlace.getLongitude();
+                radius = jsonPlace.getRadius();
             }
 
-            if (item != null && item.getDue() > 0) {
-                cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
-                dateViewLocationOut.setDateTime(cal.getTimeInMillis());
+            if (item != null && eventTime > 0) {
+                dateViewLocationOut.setDateTime(updateCalendar(eventTime));
                 attachDelayOut.setChecked(true);
                 isDelayed = true;
             } else {
                 attachDelayOut.setChecked(false);
             }
 
-            if (remType.matches(Constants.TYPE_LOCATION_OUT_CALL) || remType.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
+            if (type.matches(Constants.TYPE_LOCATION_OUT_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
                 actionViewLocationOut.setAction(true);
                 actionViewLocationOut.setNumber(number);
-                if (remType.matches(Constants.TYPE_LOCATION_OUT_CALL)){
+                if (type.matches(Constants.TYPE_LOCATION_OUT_CALL)){
                     actionViewLocationOut.setType(ActionView.TYPE_CALL);
                 } else {
                     actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
@@ -2340,18 +2233,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.shoppingLayout);
         remControl = dateType;
 
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (myYear > 0){
-            cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        } else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-
         RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
         CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
         cardContainer.setCardBackgroundColor(cSetter.getCardStyle());
@@ -2360,7 +2241,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         dateViewShopping = (DateTimeView) findViewById(R.id.dateViewShopping);
         dateViewShopping.setListener(this);
-        dateViewShopping.setDateTime(cal.getTimeInMillis());
+        dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis()));
 
         ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
         shopTimeIcon.setOnClickListener(new View.OnClickListener() {
@@ -2392,17 +2273,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     ViewUtils.hide(shoppingNoTime);
                 }
                 ViewUtils.show(shoppingTimeContainer);
-                cal.setTimeInMillis(System.currentTimeMillis());
-                if (myYear > 0){
-                    cal.set(myYear, myMonth, myDay, myHour, myMinute);
-                } else {
-                    myYear = cal.get(Calendar.YEAR);
-                    myMonth = cal.get(Calendar.MONTH);
-                    myDay = cal.get(Calendar.DAY_OF_MONTH);
-                    myHour = cal.get(Calendar.HOUR_OF_DAY);
-                    myMinute = cal.get(Calendar.MINUTE);
-                }
-                dateViewShopping.setDateTime(cal.getTimeInMillis());
+                dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis()));
                 isShoppingReminder = true;
             }
         });
@@ -2506,16 +2377,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
             invalidateButtons();
 
-            myHour = item.getHour();
-            myMinute = item.getMinute();
-            myDay = item.getDay();
-            myMonth = item.getMonth();
-            myYear = item.getYear();
+            eventTime = item.getStartTime();
 
-            if (item.getDue() > 0) {
-                cal.set(myYear, myMonth, myDay, myHour, myMinute);
-
-                dateViewShopping.setDateTime(cal.getTimeInMillis());
+            if (eventTime > 0) {
+                dateViewShopping.setDateTime(updateCalendar(eventTime));
                 if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
                 }
@@ -2529,7 +2394,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 isShoppingReminder = false;
             }
 
-            taskField.setText(item.getTitle());
+            taskField.setText(item.getSummary());
         }
     }
 
@@ -2546,7 +2411,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Save new or update current reminder.
      */
     private void save() {
-        Reminder item = getData();
+        JsonModel item = getData();
         if (item == null) return;
         if (id != 0){
             remControl.save(id, item);
@@ -2595,7 +2460,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isTimeReminderAttached() {
-        return remControl instanceof TimerType;
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_TIME);
     }
 
     /**
@@ -2630,7 +2496,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isWeekDayReminderAttached() {
-        return remControl instanceof WeekdayType;
+        return remControl.getType() != null && remControl.getType().contains("weekday");
     }
 
     /**
@@ -2638,8 +2504,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isMessageAttached() {
-        return remControl.getType() != null &&
-                remControl.getType().matches(Constants.TYPE_MESSAGE);
+        return remControl.getType() != null && remControl.getType().matches(Constants.TYPE_MESSAGE);
     }
 
     /**
@@ -2647,7 +2512,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isMonthDayAttached() {
-        return remControl instanceof MonthdayType;
+        return remControl.getType() != null && remControl.getType().contains("month");
     }
 
     /**
@@ -2664,39 +2529,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private String getType(){
         String type;
-        if (remControl instanceof MonthdayType){
-            if (actionViewMonth.hasAction()){
-                if (actionViewMonth.getType() == ActionView.TYPE_CALL){
-                    if (lastCheck.isChecked()) {
-                        type = Constants.TYPE_MONTHDAY_CALL_LAST;
-                    } else {
-                        type = Constants.TYPE_MONTHDAY_CALL;
-                    }
-                } else {
-                    if (lastCheck.isChecked()) {
-                        type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
-                    } else {
-                        type = Constants.TYPE_MONTHDAY_MESSAGE;
-                    }
-                }
-            } else {
-                if (lastCheck.isChecked()) {
-                    type = Constants.TYPE_MONTHDAY_LAST;
-                } else {
-                    type = Constants.TYPE_MONTHDAY;
-                }
-            }
-        } else if (remControl instanceof WeekdayType){
-            if (actionViewWeek.hasAction()){
-                if (actionViewWeek.getType() == ActionView.TYPE_CALL){
-                    type = Constants.TYPE_WEEKDAY_CALL;
-                } else {
-                    type = Constants.TYPE_WEEKDAY_MESSAGE;
-                }
-            } else {
-                type = Constants.TYPE_WEEKDAY;
-            }
-        } else if (remControl instanceof LocationType){
+        if (remControl instanceof LocationType){
             if (remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT)){
                 if (actionViewLocationOut.hasAction()){
                     if (actionViewLocationOut.getType() == ActionView.TYPE_CALL) {
@@ -2718,8 +2551,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     type = Constants.TYPE_LOCATION;
                 }
             }
-        } else if (remControl instanceof TimerType) {
-            type = remControl.getType();
         } else {
             if (isSkypeAttached()){
                 if (skypeCall.isChecked()){
@@ -2735,6 +2566,38 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } else {
                     type = Constants.TYPE_APPLICATION_BROWSER;
                 }
+            } else if (isWeekDayReminderAttached()){
+                if (actionViewWeek.hasAction()){
+                    if (actionViewWeek.getType() == ActionView.TYPE_CALL){
+                        type = Constants.TYPE_WEEKDAY_CALL;
+                    } else {
+                        type = Constants.TYPE_WEEKDAY_MESSAGE;
+                    }
+                } else {
+                    type = Constants.TYPE_WEEKDAY;
+                }
+            } else if (isMonthDayAttached()) {
+                if (actionViewMonth.hasAction()){
+                    if (actionViewMonth.getType() == ActionView.TYPE_CALL){
+                        if (lastCheck.isChecked()) {
+                            type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                        } else {
+                            type = Constants.TYPE_MONTHDAY_CALL;
+                        }
+                    } else {
+                        if (lastCheck.isChecked()) {
+                            type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                        } else {
+                            type = Constants.TYPE_MONTHDAY_MESSAGE;
+                        }
+                    }
+                } else {
+                    if (lastCheck.isChecked()) {
+                        type = Constants.TYPE_MONTHDAY_LAST;
+                    } else {
+                        type = Constants.TYPE_MONTHDAY;
+                    }
+                }
             } else {
                 type = remControl.getType();
             }
@@ -2746,7 +2609,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Create reminder object.
      * @return Reminder object
      */
-    private Reminder getData() {
+    private JsonModel getData() {
         if (isShoppingAttached() && shoppingLists.getCount() == 0){
             Messages.toast(ReminderManager.this, getString(R.string.no_tasks_warming));
             return null;
@@ -2831,10 +2694,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 myDay = c.get(Calendar.DAY_OF_MONTH);
                 myHour = c.get(Calendar.HOUR_OF_DAY);
                 myMinute = c.get(Calendar.MINUTE);
-                mySeconds = c.get(Calendar.SECOND);
             }
 
-            int repeat = getRepeat();
+            long repeat = getRepeat();
             Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
 
             int sync = getSyncCode();
@@ -2868,7 +2730,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
-                    mySeconds = 0;
                 }
                 if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
                     myDay = 0;
@@ -2876,7 +2737,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
-                    mySeconds = 0;
                 }
                 if (!isShoppingReminder){
                     myDay = 0;
@@ -2884,7 +2744,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
-                    mySeconds = 0;
                 }
             }
 
@@ -2902,10 +2761,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
                     wake + ", U " + unlock + ", A " + auto + ", L " + limit);
 
-            return new Reminder(0, task, type, weekdays, melody, categoryId, uuId,
-                    new double[]{latitude, longitude}, number, myDay, myMonth, myYear, myHour, myMinute,
-                    mySeconds, repeat, export, radius, ledColor, sync, repMinute, due, 0, vibro, voice,
-                    notification, wake, unlock, auto, limit, exclusion);
+            return new JsonModel();
         } else {
             return null;
         }
@@ -3056,7 +2912,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Get repeat code for reminder .
      * @return Integer
      */
-    private int getRepeat() {
+    private long getRepeat() {
         if (isSkypeAttached() || isApplicationAttached() || isDateReminderAttached() ||
                 isTimeReminderAttached() || isCallAttached() || isMessageAttached()){
             return repeatCode;
@@ -3784,7 +3640,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onProgress(int progress) {
-        repeatCode = progress;
+        repeatCode = progress * AlarmManager.INTERVAL_DAY;
     }
 
     @Override

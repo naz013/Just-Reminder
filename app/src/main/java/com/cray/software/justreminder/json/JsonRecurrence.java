@@ -32,12 +32,13 @@ public class JsonRecurrence {
      * JSON keys.
      */
     private static final String REPEAT = "repeat";
+    private static final String AFTER = "after";
     private static final String WEEKDAYS = "weekdays";
     private static final String MONTHDAY = "month_day";
     private static final String LIMIT = "limit";
 
     private int monthday;
-    private long repeat, limit;
+    private long repeat, limit, after;
     private ArrayList<Integer> weekdays;
 
     /**
@@ -75,6 +76,13 @@ public class JsonRecurrence {
         if (jsonObject.has(REPEAT)) {
             try {
                 repeat = jsonObject.getLong(REPEAT);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(AFTER)) {
+            try {
+                after = jsonObject.getLong(AFTER);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -155,6 +163,15 @@ public class JsonRecurrence {
         }
     }
 
+    public void setAfter(long after) {
+        this.after = after;
+        try {
+            jsonObject.put(AFTER, after);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setWeekdays(ArrayList<Integer> weekdays) {
         this.weekdays = weekdays;
         JSONArray jsonArray = new JSONArray();
@@ -164,6 +181,10 @@ public class JsonRecurrence {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public long getAfter() {
+        return after;
     }
 
     public ArrayList<Integer> getWeekdays() {

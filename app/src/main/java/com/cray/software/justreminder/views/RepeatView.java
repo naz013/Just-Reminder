@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.views;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
@@ -130,6 +131,13 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
     public void setProgress(int progress){
         if (progress < repeatViewSeek.getMax()) {
             repeatViewSeek.setProgress(progress);
+        }
+    }
+
+    public void setProgress(long mills){
+        long progress = mills / AlarmManager.INTERVAL_DAY;
+        if (progress < repeatViewSeek.getMax()) {
+            repeatViewSeek.setProgress((int) progress);
         }
     }
 

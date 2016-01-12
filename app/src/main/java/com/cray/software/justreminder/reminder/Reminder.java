@@ -225,6 +225,7 @@ public class Reminder {
      * Move reminder to trash.
      * @param id reminder identifier.
      * @param context application context.
+     * @param callbacks Callbacks for messages.
      */
     public static void moveToTrash(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
         NextBase db = new NextBase(context);

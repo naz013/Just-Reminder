@@ -37,6 +37,7 @@ public class JsonParser {
     public static final String UNLOCK_SCREEN = "unlock_screen";
     public static final String EXCLUSION = "exclusion";
     public static final String RECURRENCE = "recurrence";
+    public static final String EVENT_TIME = "event_time";
     public static final String START_DATE = "event_start";
     public static final String EXPORT = "export";
     public static final String COUNT = "count";
@@ -49,6 +50,7 @@ public class JsonParser {
     public static final String LED = "led";
     public static final String TAGS = "tags";
     public static final String PLACES = "places";
+    public static final String PLACE = "place";
     public static final String UUID = "uuid";
     public static final String TYPE = "reminder_type";
     public static final String SHOPPING = "shopping";
@@ -84,17 +86,19 @@ public class JsonParser {
         model.setCategory(getCategory());
         model.setCount(getCount());
         model.setEventTime(getEventTime());
+        model.setStartTime(getStartTime());
         model.setExclusion(getExclusion());
         model.setRecurrence(getRecurrence());
         model.setShoppings(getShoppings());
+        model.setPlace(getPlace());
     }
 
     public void toJson(JsonModel model) {
         try {
-            jsonObject.put(UUID, model.getUuId());
-            jsonObject.put(SUMMARY, model.getSummary());
+            setUuid(model.getUuId());
+            setSummary(model.getSummary());
             jsonObject.put(TYPE, model.getType());
-            jsonObject.put(START_DATE, model.getEventTime());
+            jsonObject.put(EVENT_TIME, model.getEventTime());
             jsonObject.put(COUNT, model.getCount());
             jsonObject.put(VIBRATION, model.getVibrate());
             jsonObject.put(NOTIFICATION_REPEAT, model.getNotificationRepeat());
@@ -104,6 +108,10 @@ public class JsonParser {
             jsonObject.put(CATEGORY, model.getCategory());
             if (model.getExport() != null) {
                 jsonObject.put(EXPORT, model.getExport().getJsonObject());
+            }
+
+            if (model.getPlace() != null) {
+                jsonObject.put(PLACE, model.getPlace().getJsonObject());
             }
 
             if (model.getTags() != null && model.getTags().size() > 0) {
@@ -147,9 +155,17 @@ public class JsonParser {
         }
     }
 
-    public void setStartDate(long startDate) {
+    public void setStartDate(String startDate) {
         try {
             jsonObject.put(START_DATE, startDate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setEventTime(long startDate) {
+        try {
+            jsonObject.put(EVENT_TIME, startDate);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -291,7 +307,7 @@ public class JsonParser {
         JSONArray array = new JSONArray();
         array.put(jsonPlace);
         try {
-            jsonObject.put(PLACES, array);
+            jsonObject.put(PLACE, array);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -368,6 +384,18 @@ public class JsonParser {
         return null;
     }
 
+    public JsonPlace getPlace() {
+        if (jsonObject.has(PLACE)) {
+            try {
+                JSONObject object = jsonObject.getJSONObject(PLACE);
+                return new JsonPlace(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     public JsonExclusion getExclusion() {
         if (jsonObject.has(EXCLUSION)) {
             try {
@@ -381,6 +409,17 @@ public class JsonParser {
     }
 
     public long getEventTime() {
+        if (jsonObject.has(EVENT_TIME)) {
+            try {
+                return jsonObject.getLong(EVENT_TIME);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public long getStartTime() {
         if (jsonObject.has(START_DATE)) {
             try {
                 return jsonObject.getLong(START_DATE);

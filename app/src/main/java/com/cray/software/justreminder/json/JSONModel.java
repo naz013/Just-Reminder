@@ -34,6 +34,7 @@ public class JsonModel {
     private String category;
     private String uuId;
     private long eventTime;
+    private long startTime;
     private long count;
     private int vibrate;
     private int notificationRepeat;
@@ -42,7 +43,14 @@ public class JsonModel {
     private int unlock;
 
     public JsonModel() {
+    }
 
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
     public JsonPlace getPlace() {
