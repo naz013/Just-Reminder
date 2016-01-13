@@ -123,6 +123,7 @@ public class Constants {
     public static final String FILE_NAME_IMAGE = ".jpeg";
 
     public static final String EDIT_ID = "edit_id";
+    public static final String EDIT_PATH = "edit_path";
     public static final String EDIT_WIDGET = "edit_widget";
 
     public static final int DAY_CHECKED = 1;

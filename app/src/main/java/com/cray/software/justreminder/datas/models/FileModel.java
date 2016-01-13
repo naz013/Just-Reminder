@@ -16,28 +16,28 @@ package com.cray.software.justreminder.datas.models;
  * limitations under the License.
  */
 public class FileModel {
-    private String title, fileName, type, lastModified, time, date, repeat, number;
-    private long id;
+    private String fileName, lastModified, filePath;
 
-    public FileModel(String title, String fileName, String type, String lastModified, String time,
-                     String date, String repeat, String number, long id){
-        this.title = title;
+    public FileModel(String fileName, String lastModified, String filePath){
         this.fileName = fileName;
-        this.type = type;
+        this.filePath = filePath;
         this.lastModified = lastModified;
-        this.time = time;
-        this.date = date;
-        this.repeat = repeat;
-        this.number = number;
-        this.id = id;
     }
 
-    public long getId() {
-        return id;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public String getDate() {
-        return date;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 
     public String getFileName() {
@@ -46,25 +46,5 @@ public class FileModel {
 
     public String getLastModified() {
         return lastModified;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public String getRepeat() {
-        return repeat;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getType() {
-        return type;
     }
 }

@@ -64,12 +64,13 @@ public class JsonRecurrence {
         jsonObject = new JSONObject();
     }
 
-    public JsonRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays){
+    public JsonRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays, long after){
         jsonObject = new JSONObject();
         setMonthday(monthday);
         setRepeat(repeat);
         setLimit(limit);
         setWeekdays(weekdays);
+        setAfter(after);
     }
 
     private void parse(JSONObject jsonObject) {

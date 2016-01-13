@@ -215,14 +215,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BackupFileEdit"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.StartHelp"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteFullscreen">

@@ -8,21 +8,17 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.FilesDataBase;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
-import com.cray.software.justreminder.reminder.MonthdayType;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ShoppingType;
-import com.cray.software.justreminder.reminder.TimerType;
 import com.cray.software.justreminder.reminder.Type;
-import com.cray.software.justreminder.reminder.WeekdayType;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.WeekDayReceiver;
 
@@ -64,7 +60,6 @@ public class SyncHelper {
     private DataBase DB;
     private NotesBase db;
     private AlarmReceiver alarm = new AlarmReceiver();
-    private WeekDayReceiver weekDayReceiver = new WeekDayReceiver();
 
     public SyncHelper(Context context){
         this.mContext = context;
@@ -443,21 +438,7 @@ public class SyncHelper {
                         String fileLoc = sdPathDr + "/" + fileName;
                         String fileNameS = fileName.substring(0, pos);
                         if (!namesPass.contains(fileNameS)) {
-                            FileInputStream stream = new FileInputStream(fileLoc);
-                            Writer writer = new StringWriter();
-                            char[] buffer = new char[1024];
-                            try {
-                                BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(stream, "UTF-8")
-                                );
-                                int n;
-                                while ((n = reader.read(buffer)) != -1) {
-                                    writer.write(buffer, 0, n);
-                                }
-                            } finally {
-                                stream.close();
-                            }
-                            String jsonText = writer.toString();
+                            String jsonText = readFile(fileLoc);
                             JSONObject jsonObj = new JSONObject(jsonText);
                             noteObject(jsonObj);
                         }
@@ -466,6 +447,38 @@ public class SyncHelper {
                 db.close();
             }
         }
+    }
+
+    public static String readFile(String path) {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (stream != null) {
+            Writer writer = new StringWriter();
+            char[] buffer = new char[1024];
+            try {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(stream, "UTF-8")
+                );
+                int n;
+                while ((n = reader.read(buffer)) != -1) {
+                    writer.write(buffer, 0, n);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return writer.toString();
+        }
+        return null;
     }
 
     /**
@@ -1425,221 +1438,6 @@ public class SyncHelper {
             DB.addBirthday(name, conId, date, day, month, number, uuID);
         }
         DB.close();
-    }
-
-    /**
-     * Scan application folders on SD Card for a JSON files.
-     * @throws IOException
-     * @throws JSONException
-     */
-    public void findJson() throws IOException, JSONException {
-        if (isSdPresent()){
-            FilesDataBase fdb = new FilesDataBase(mContext);
-            fdb.open();
-            Cursor e = fdb.getFiles();
-            if (e != null && e.moveToFirst()){
-                do{
-                    long rowId = e.getLong(e.getColumnIndex(Constants.COLUMN_ID));
-                    if (rowId != 0) {
-                        fdb.deleteFile(rowId);
-                    }
-                }while (e.moveToNext());
-            }
-            if (e != null) e.close();
-            File sdPath = Environment.getExternalStorageDirectory();
-            if (sdPath == null) sdPath = Environment.getDataDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            if (!sdPathDr.exists()) sdPathDr.mkdirs();
-            File[] files = sdPathDr.listFiles();
-            if (files != null){
-                for (File file1 : files) {
-                    String fileName = file1.getName();
-                    long lastEdit = file1.lastModified();
-                    String fileLoc = sdPathDr + "/" + fileName;
-                    Writer writer = new StringWriter();
-                    char[] buffer = new char[1024];
-                    try {
-                        FileInputStream stream = new FileInputStream(fileLoc);
-                        BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(stream, "UTF-8")
-                        );
-                        int n;
-                        while ((n = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, n);
-                        }
-                    } catch (FileNotFoundException s){
-                        throw s;
-                    }
-                    String jsonText = writer.toString();
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    saveFiles(jsonObj, fileName, Constants.FilesConstants.FILE_TYPE_LOCAL, fileLoc, lastEdit);
-                }
-            }
-            // scanning Dropbox tmp folder
-            File sdPathDrop = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-            if (!sdPathDrop.exists()) sdPathDrop.mkdirs();
-            File[] dFiles = sdPathDrop.listFiles();
-            if (dFiles != null){
-                for (File file1 : dFiles) {
-                    String fileName = file1.getName();
-                    long lastEdit = file1.lastModified();
-                    String fileLoc = sdPathDrop + "/" + fileName;
-                    FileInputStream stream = new FileInputStream(fileLoc);
-                    Writer writer = new StringWriter();
-                    char[] buffer = new char[1024];
-                    try {
-                        BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(stream, "UTF-8")
-                        );
-                        int n;
-                        while ((n = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, n);
-                        }
-                    } finally {
-                        stream.close();
-                    }
-                    String jsonText = writer.toString();
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    saveFiles(jsonObj, fileName, Constants.FilesConstants.FILE_TYPE_DROPBOX, fileLoc, lastEdit);
-                }
-            }
-            // scanning Google Drive tmp folder
-            File gFolder = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-            if (!gFolder.exists()) gFolder.mkdirs();
-            File[] gFiles = gFolder.listFiles();
-            if (gFiles != null){
-                for (File file1 : gFiles) {
-                    String fileName = file1.getName();
-                    long lastEdit = file1.lastModified();
-                    String fileLoc = gFolder + "/" + fileName;
-                    FileInputStream stream = new FileInputStream(fileLoc);
-                    Writer writer = new StringWriter();
-                    char[] buffer = new char[1024];
-                    try {
-                        BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(stream, "UTF-8")
-                        );
-                        int n;
-                        while ((n = reader.read(buffer)) != -1) {
-                            writer.write(buffer, 0, n);
-                        }
-                    } finally {
-                        stream.close();
-                    }
-                    String jsonText = writer.toString();
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    saveFiles(jsonObj, fileName, Constants.FilesConstants.FILE_TYPE_GDRIVE, fileLoc, lastEdit);
-                }
-            }
-        }
-    }
-
-    /**
-     * Insert found JSON file to files database.
-     * @param jsonObj JSON object.
-     * @param fileName file name.
-     * @param fileType type of file.
-     * @param fileLocation path to file.
-     * @param lastEdit file last edit time in milliseconds.
-     * @throws JSONException
-     */
-    private void saveFiles(JSONObject jsonObj, String fileName, String fileType, String fileLocation, long lastEdit) throws JSONException {
-        String text = null;
-        if (!jsonObj.isNull(Constants.COLUMN_TEXT)) {
-            text = jsonObj.getString(Constants.COLUMN_TEXT);
-        }
-        String type = null;
-        if (!jsonObj.isNull(Constants.COLUMN_TYPE)) {
-            type = jsonObj.getString(Constants.COLUMN_TYPE);
-        }
-        String weekdays = null;
-        if (!jsonObj.isNull(Constants.COLUMN_WEEKDAYS)) {
-            weekdays = jsonObj.getString(Constants.COLUMN_WEEKDAYS);
-        }
-
-        int day = 0;
-        int month = 0;
-        int year = 0;
-        int hour = 0;
-        int minute = 0;
-        int seconds = 0;
-        try {
-            day = jsonObj.getInt(Constants.COLUMN_DAY);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        try {
-            month = jsonObj.getInt(Constants.COLUMN_MONTH);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        try {
-            year = jsonObj.getInt(Constants.COLUMN_YEAR);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        try {
-            hour = jsonObj.getInt(Constants.COLUMN_HOUR);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        try {
-            minute = jsonObj.getInt(Constants.COLUMN_MINUTE);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        try {
-            seconds = jsonObj.getInt(Constants.COLUMN_SECONDS);
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-
-        String number = null;
-        if (!jsonObj.isNull(Constants.COLUMN_NUMBER)) {
-            number = jsonObj.getString(Constants.COLUMN_NUMBER);
-        }
-        int repeatCode = jsonObj.getInt(Constants.COLUMN_REPEAT);
-        long repMinute = jsonObj.getLong(Constants.COLUMN_REMIND_TIME);
-        long count = jsonObj.getLong(Constants.COLUMN_REMINDERS_COUNT);
-        double latitude = jsonObj.getDouble(Constants.COLUMN_LATITUDE);
-        double longitude = jsonObj.getDouble(Constants.COLUMN_LONGITUDE);
-
-        int vibration = -1;
-        if (jsonObj.has(Constants.COLUMN_VIBRATION))
-            vibration = jsonObj.getInt(Constants.COLUMN_VIBRATION);
-        int voice = -1;
-        if (jsonObj.has(Constants.COLUMN_VOICE))
-            voice = jsonObj.getInt(Constants.COLUMN_VOICE);
-        int wake = -1;
-        if (jsonObj.has(Constants.COLUMN_WAKE_SCREEN))
-            wake = jsonObj.getInt(Constants.COLUMN_WAKE_SCREEN);
-        int unlock = -1;
-        if (jsonObj.has(Constants.COLUMN_UNLOCK_DEVICE))
-            unlock = jsonObj.getInt(Constants.COLUMN_UNLOCK_DEVICE);
-        int notificationRepeat = -1;
-        if (jsonObj.has(Constants.COLUMN_NOTIFICATION_REPEAT))
-            notificationRepeat = jsonObj.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
-        int auto = -1;
-        if (jsonObj.has(Constants.COLUMN_AUTO_ACTION))
-            auto = jsonObj.getInt(Constants.COLUMN_AUTO_ACTION);
-        long limit = -1;
-        if (jsonObj.has(Constants.COLUMN_REPEAT_LIMIT))
-            limit = jsonObj.getInt(Constants.COLUMN_REPEAT_LIMIT);
-        String exclusion = null;
-        if (jsonObj.has(Constants.COLUMN_EXTRA_3))
-            exclusion = jsonObj.getString(Constants.COLUMN_EXTRA_3);
-
-        String uuID = null;
-        if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
-            uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
-        }
-        FilesDataBase fdb = new FilesDataBase(mContext);
-        fdb.open();
-        if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
-        long id = fdb.insertFile(fileName, fileType, fileLocation, lastEdit, text, type, day, month, year, hour, minute, seconds, number,
-                repeatCode, repMinute, count, latitude, longitude, uuID, weekdays, exclusion);
-        fdb.updateFileExtra(id, vibration, voice, notificationRepeat, wake, unlock, auto, limit);
-        fdb.close();
     }
 
     public static ArrayList<ShoppingList> getList(String fileLoc){

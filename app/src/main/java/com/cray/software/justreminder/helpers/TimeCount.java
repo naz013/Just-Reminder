@@ -135,6 +135,24 @@ public class TimeCount {
         return new String[]{date, time};
     }
 
+    public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
+                                  int minute, int seconds, ArrayList<Integer> weekdays) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (type.startsWith(Constants.TYPE_WEEKDAY)){
+            return getNextWeekdayTime(calendar.getTimeInMillis(), weekdays, 0);
+        } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+            if (type.endsWith("_last")){
+                return getLastMonthDayTime(calendar.getTimeInMillis(), 0);
+            } else {
+                return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis(), 0);
+            }
+        } else {
+            calendar.set(year, month, dayOfMonth, hour, minute, seconds);
+            return calendar.getTimeInMillis();
+        }
+    }
+
     /**
      * Generate new due time for reminder.
      * @param id reminder identifier.

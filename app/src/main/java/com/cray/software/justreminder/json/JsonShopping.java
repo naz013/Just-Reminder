@@ -57,8 +57,11 @@ public class JsonShopping {
     }
 
     public JsonShopping(String summary, int status, String uuId, long dateTime){
-        this.uuId = uuId;
         jsonObject = new JSONObject();
+        setSummary(summary);
+        setStatus(status);
+        setUuId(uuId);
+        setDateTime(dateTime);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -79,6 +82,13 @@ public class JsonShopping {
         if (jsonObject.has(DATE)){
             try {
                 dateTime = jsonObject.getLong(DATE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(UUID)) {
+            try {
+                uuId = jsonObject.getString(UUID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -129,6 +139,11 @@ public class JsonShopping {
 
     public void setUuId(String uuId) {
         this.uuId = uuId;
+        try {
+            jsonObject.put(UUID, uuId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setDateTime(long dateTime) {

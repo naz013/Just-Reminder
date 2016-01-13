@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -675,7 +674,6 @@ public class LogInActivity extends Activity {
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.simple_done));
             startActivity(new Intent(LogInActivity.this, ScreenManager.class));
-            new ScanTask(LogInActivity.this).execute();
             finish();
         }
     }

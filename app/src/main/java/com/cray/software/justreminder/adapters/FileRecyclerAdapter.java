@@ -10,11 +10,12 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+
+import java.util.ArrayList;
 
 /**
  * Recycler view adapter for backup files list.
@@ -34,7 +35,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     /**
      * List provider.
      */
-    private FileDataProvider provider;
+    private ArrayList<FileModel> list;
 
     /**
      * Recycler view action listerner.
@@ -44,11 +45,11 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     /**
      * Adapter constructor.
      * @param context application context.
-     * @param provider data provider.
+     * @param list list of files in folder.
      */
-    public FileRecyclerAdapter(final Context context, final FileDataProvider provider) {
+    public FileRecyclerAdapter(final Context context, ArrayList<FileModel> list) {
         this.mContext = context;
-        this.provider = provider;
+        this.list = list;
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
@@ -67,8 +68,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         /**
          * TextView fields
          */
-        public TextView fileName, lastModified, task, type, number,
-                date, time, repeat;
+        public TextView fileName, lastModified;
 
         /**
          * Ho;der constructor.
@@ -78,12 +78,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
             super(v);
             fileName = (TextView) v.findViewById(R.id.fileName);
             lastModified = (TextView) v.findViewById(R.id.lastModified);
-            task = (TextView) v.findViewById(R.id.task);
-            type = (TextView) v.findViewById(R.id.type);
-            number = (TextView) v.findViewById(R.id.number);
-            date = (TextView) v.findViewById(R.id.date);
-            time = (TextView) v.findViewById(R.id.time);
-            repeat = (TextView) v.findViewById(R.id.repeat);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
@@ -123,15 +117,8 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final FileModel item = provider.getData().get(position);
-
-        holder.task.setText(item.getTitle());
-        holder.date.setText(item.getDate());
-        holder.time.setText(item.getTime());
-        holder.repeat.setText(item.getRepeat());
+        final FileModel item = list.get(position);
         holder.lastModified.setText(item.getLastModified());
-        holder.type.setText(item.getType());
-        holder.number.setText(item.getNumber());
         holder.fileName.setText(item.getFileName());
     }
 
@@ -141,13 +128,8 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     }
 
     @Override
-    public long getItemId(final int position) {
-        return provider.getData().get(position).getId();
-    }
-
-    @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return list.size();
     }
 
     /**

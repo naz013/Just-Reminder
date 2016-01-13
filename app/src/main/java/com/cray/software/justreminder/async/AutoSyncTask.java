@@ -4,17 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-
-import org.json.JSONException;
-
-import java.io.IOException;
 
 public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
 
@@ -26,24 +22,24 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        DataBase DB = new DataBase(mContext);
-        DB.open();
+        DataBase db = new DataBase(mContext);
+        db.open();
         IOHelper ioHelper = new IOHelper(mContext);
 
         ioHelper.backupGroup(true);
         ioHelper.restoreGroup(true);
 
-        Cursor cat = DB.queryCategories();
+        Cursor cat = db.queryCategories();
         if (cat == null || cat.getCount() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.addCategory("General", time, defUiID, 5);
-            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
-            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-            Cursor c = DB.queryGroup();
+            db.addCategory("General", time, defUiID, 5);
+            db.addCategory("Work", time, SyncHelper.generateID(), 3);
+            db.addCategory("Personal", time, SyncHelper.generateID(), 0);
+            Cursor c = db.queryGroup();
             if (c != null && c.moveToFirst()) {
                 do {
-                    DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                    db.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
                 } while (c.moveToNext());
             }
             if (c != null) c.close();
@@ -67,13 +63,7 @@ public class AutoSyncTask extends AsyncTask<Void, String, Boolean> {
             ioHelper.backupBirthday(true);
         }
 
-        DB.close();
-
-        try {
-            new SyncHelper(mContext).findJson();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
+        db.close();
         return true;
     }
 

@@ -333,7 +333,7 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             try {
-                mDBApi.delete(dbxFolder + name + Constants.FILE_NAME_REMINDER);
+                mDBApi.delete(dbxFolder + name);
             } catch (DropboxException e) {
                 e.printStackTrace();
             }

@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,11 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.BackupFileEdit;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
-import com.cray.software.justreminder.async.ScanTask;
 import com.cray.software.justreminder.cloud.AccountInfo;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.DropboxQuota;
@@ -38,8 +36,8 @@ import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.FilesDataBase;
 import com.cray.software.justreminder.datas.FileDataProvider;
+import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -51,8 +49,6 @@ import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
-
-import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +119,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_scan:
-                new ScanTask(getActivity()).execute();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -143,10 +138,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
         spinner = (Spinner) inflater.inflate(R.layout.spinner, null);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        layoutParams.setMargins(56, 0, 0, 0);
         toolbar.addView(spinner);
 
         setNavigation();
@@ -183,7 +174,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 setNavigation();
             }
         }
-        new ScanTask(getActivity()).execute();
 
         sPrefs = new SharedPrefs(getActivity());
     }
@@ -279,22 +269,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-                filesDataBase.open();
-                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
-                if (c != null && c.moveToFirst()) {
-                    do {
-                        long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        deleteFile(id);
-                    } while (c.moveToNext());
-                }
-                if (c != null) {
-                    c.close();
-                }
-                filesDataBase.close();
-                if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.all_files_removed);
-                }
+                removeFilesInFolder(Constants.DIR_SD_DBX_TMP);
                 if (cloudContainer.getVisibility() == View.GONE) {
                     isDropboxDeleted = true;
                 }
@@ -305,7 +280,35 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         filesCloudList = (RecyclerView) rootView.findViewById(R.id.filesCloudList);
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
         cloudContainer.setVisibility(View.GONE);
+        loadDropboxList();
         loadInfo(pd);
+    }
+
+    private void removeFilesInFolder(String folder) {
+        File file = new File(folder);
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                provider = new FileDataProvider(getActivity(), folder);
+                ArrayList<FileModel> list = provider.getData();
+                if (list != null && list.size() > 0) {
+                    for (FileModel model : list) {
+                        File file1 = new File(model.getFilePath());
+                        if (file1.exists()) {
+                            file1.delete();
+                        }
+                    }
+                }
+                if (mCallbacks != null) {
+                    mCallbacks.showSnackbar(R.string.all_files_removed);
+                }
+            } else {
+                file.delete();
+                if (mCallbacks != null) {
+                    mCallbacks.showSnackbar(R.string.file_delted);
+                }
+            }
+        }
+
     }
 
     private void reloadDropbox() {
@@ -320,42 +323,20 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void loadDropboxList(){
-        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_DROPBOX);
-        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        provider = new FileDataProvider(getActivity(), Constants.DIR_SD_DBX_TMP);
+        adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
         filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesCloudList.setAdapter(adapter);
         filesCloudList.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void deleteFile(long itemId) {
-        if (itemId != 0) {
-            String uuID = "";
-            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-            filesDataBase.open();
-            Cursor c = filesDataBase.getFile(itemId);
-            if (c != null && c.moveToFirst()){
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (c != null) {
-                c.close();
-            }
-            if (SyncHelper.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                File file = new File(sdPathDr, exportFileName);
-                if (file.exists()){
-                    file.delete();
-                }
-            }
+    private void deleteFile(String filePath) {
+        if (filePath != null) {
+            File file = new File(filePath);
+            removeFilesInFolder(filePath);
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
-            deleteFromDropbox(uuID, pd);
-            filesDataBase.deleteFile(itemId);
-            filesDataBase.close();
-            if (mCallbacks != null) {
-                mCallbacks.showSnackbar(R.string.file_delted);
-            }
+            deleteFromDropbox(file.getName(), pd);
             isDropboxDeleted = true;
         }
     }
@@ -437,22 +418,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleDeleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-                filesDataBase.open();
-                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_GDRIVE);
-                if (c != null && c.moveToFirst()) {
-                    do {
-                        long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        deleteGoogleFile(id);
-                    } while (c.moveToNext());
-                }
-                if (c != null) {
-                    c.close();
-                }
-                filesDataBase.close();
-                if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.all_files_removed);
-                }
+                removeFilesInFolder(Constants.DIR_SD_GDRIVE_TMP);
                 if (googleContainer.getVisibility() == View.GONE) {
                     isGoogleDeleted = true;
                 }
@@ -478,39 +444,20 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void loadGoogleList(){
-        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_GDRIVE);
-        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        provider = new FileDataProvider(getActivity(), Constants.DIR_SD_GDRIVE_TMP);
+        adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
         filesGoogleList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesGoogleList.setAdapter(adapter);
         filesGoogleList.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void deleteGoogleFile(long itemId) {
-        if (itemId != 0) {
-            String uuID = "";
-            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-            filesDataBase.open();
-            Cursor c = filesDataBase.getFile(itemId);
-            if (c != null && c.moveToFirst()){
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (c != null) {
-                c.close();
-            }
-            if (SyncHelper.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                File file = new File(sdPathDr, exportFileName);
-                if (file.exists()){
-                    file.delete();
-                }
-            }
+    private void deleteGoogleFile(String filePath) {
+        if (filePath != null) {
+            File file = new File(filePath);
+            removeFilesInFolder(filePath);
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
-            deleteFromGoogle(uuID, pd);
-            filesDataBase.deleteFile(itemId);
-            filesDataBase.close();
+            deleteFromGoogle(file.getName(), pd);
             if (mCallbacks != null) {
                 mCallbacks.showSnackbar(R.string.file_delted);
             }
@@ -525,7 +472,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 gdx = new GDriveHelper(getActivity());
                 if (gdx.isLinked()){
                     if (SyncHelper.isConnected(getActivity())){
-                        gdx.deleteReminder(name + Constants.FILE_NAME_REMINDER);
+                        gdx.deleteReminder(name);
                     }
                 }
 
@@ -553,12 +500,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     e.printStackTrace();
                 }
                 final int count = gdx.countFiles();
-                SyncHelper sHelp = new SyncHelper(getActivity());
-                try {
-                    sHelp.findJson();
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -607,12 +548,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 final float used = (int)((usedQ * 100.0f) / quota);
 
                 final int count = new DropboxHelper(getActivity()).countFiles();
-                SyncHelper sHelp = new SyncHelper(getActivity());
-                try {
-                    sHelp.findJson();
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -685,22 +620,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-                filesDataBase.open();
-                Cursor c = filesDataBase.getFile(Constants.FilesConstants.FILE_TYPE_LOCAL);
-                if (c != null && c.moveToFirst()) {
-                    do {
-                        long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                        deleteLocalFile(id);
-                    } while (c.moveToNext());
-                }
-                if (c != null) {
-                    c.close();
-                }
-                filesDataBase.close();
-                if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.all_files_removed);
-                }
+                removeFilesInFolder(Constants.DIR_SD);
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList);
                     ViewUtils.expand(container);
@@ -721,8 +641,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void loadLocalList(){
-        provider = new FileDataProvider(getActivity(), Constants.FilesConstants.FILE_TYPE_LOCAL);
-        adapter = new FileRecyclerAdapter(getActivity(), provider);
+        provider = new FileDataProvider(getActivity(), Constants.DIR_SD);
+        adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
         filesList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesList.setAdapter(adapter);
@@ -744,31 +664,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         }
     }
 
-    private void deleteLocalFile(long itemId) {
-        if (itemId != 0) {
-            String uuID = "";
-            FilesDataBase filesDataBase = new FilesDataBase(getActivity());
-            filesDataBase.open();
-            Cursor c = filesDataBase.getFile(itemId);
-            if (c != null && c.moveToFirst()){
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (c != null) {
-                c.close();
-            }
-            if (SyncHelper.isSdPresent()){
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
-                File file = new File(sdPathDr, exportFileName);
-                if (file.exists()){
-                    file.delete();
-                }
-            }
-            filesDataBase.close();
-            if (mCallbacks != null) {
-                mCallbacks.showSnackbar(R.string.file_delted);
-            }
+    private void deleteLocalFile(String filePath) {
+        if (filePath != null) {
+            removeFilesInFolder(filePath);
             loadLocalList();
         }
     }
@@ -899,15 +797,15 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void actionDelete(int position){
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_DROPBOX)){
-            deleteFile(provider.getItem(position).getId());
+            deleteFile(provider.getItem(position).getFilePath());
             reloadDropbox();
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_GDRIVE)){
-            deleteGoogleFile(provider.getItem(position).getId());
+            deleteGoogleFile(provider.getItem(position).getFilePath());
             reloadGoogle();
         }
         if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_LOCAL)){
-            deleteLocalFile(provider.getItem(position).getId());
+            deleteLocalFile(provider.getItem(position).getFilePath());
             reloadLocal();
         }
     }
@@ -915,7 +813,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onItemClicked(int position, View view) {
         startActivity(new Intent(getActivity(),
-                BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+                ReminderManager.class).putExtra(Constants.EDIT_PATH,
+                provider.getItem(position).getFilePath()));
     }
 
     @Override
@@ -927,7 +826,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 dialog.dismiss();
                 if (item == 0) {
                     startActivity(new Intent(getActivity(),
-                            BackupFileEdit.class).putExtra(Constants.EDIT_ID, provider.getItem(position).getId()));
+                            ReminderManager.class).putExtra(Constants.EDIT_PATH,
+                            provider.getItem(position).getFilePath()));
                 }
                 if (item == 1) {
                     actionDelete(position);

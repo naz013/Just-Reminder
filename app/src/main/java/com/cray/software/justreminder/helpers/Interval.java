@@ -1,10 +1,13 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Intervals;
+
+import java.util.ArrayList;
 
 /**
  * Helper class.
@@ -28,24 +31,35 @@ public class Interval {
      * @param sun sunday.
      * @return
      */
-    public String getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
-                                boolean sat, boolean sun){
-        StringBuilder sb = new StringBuilder();
-        if (mon) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (tue) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (wed) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (thu) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (fri) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (sat) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        if (sun) sb.append(Constants.DAY_CHECKED);
-        else sb.append(Constants.DAY_UNCHECKED);
-        return sb.toString();
+    public ArrayList<Integer> getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
+                                   boolean sat, boolean sun){
+        ArrayList<Integer> sb = new ArrayList<>();
+        if (mon) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (tue) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (wed) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (thu) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (fri) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (sat) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        if (sun) sb.add(Constants.DAY_CHECKED);
+        else sb.add(Constants.DAY_UNCHECKED);
+        return sb;
+    }
+
+    public boolean isWeekday(ArrayList<Integer> weekday) {
+        boolean is = false;
+        for (int day : weekday) {
+            if (day == Constants.DAY_CHECKED) {
+                is = true;
+                break;
+            }
+        }
+        return is;
     }
 
     /**

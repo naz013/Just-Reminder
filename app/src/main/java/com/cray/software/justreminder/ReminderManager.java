@@ -85,12 +85,18 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.json.JsonAction;
 import com.cray.software.justreminder.json.JsonExclusion;
 import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonLed;
+import com.cray.software.justreminder.json.JsonMelody;
 import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JsonShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
@@ -263,6 +269,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private long eventTime;
     private long repeatCode = 0;
     private String categoryId;
+    private String filePath;
     private String exclusion = null;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = 0;
@@ -442,13 +449,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DataBase db = new DataBase(this);
         db.open();
-        Cursor cf = db.queryCategories();
-        if (cf != null && cf.moveToFirst()) {
-            String title = cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT));
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        Cursor c = db.queryCategories();
+        if (c != null && c.moveToFirst()) {
+            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
             category.setText(title);
         }
-        if (cf != null) cf.close();
+        if (c != null) c.close();
         db.close();
 
         setUpNavigation();
@@ -497,6 +504,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
+        filePath = intent.getStringExtra(Constants.EDIT_PATH);
         int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
         if (i != 0){
             Reminder.disableReminder(id, this);
@@ -506,64 +514,84 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (id != 0){
             item = remControl.getItem(id);
-            if (item != null) {
-                type = item.getType();
-                vibration = item.getVibrate();
-                voice = item.getVoice();
-                notificationRepeat = item.getNotificationRepeat();
-                wake = item.getAwake();
-                unlock = item.getUnlock();
-
-                radius = item.getPlace().getRadius();
-                ledColor = item.getLed().getColor();
-                auto = item.getAction().getAuto();
-                melody = item.getMelody().getMelodyPath();
-                repeats = item.getRecurrence().getLimit();
-                String catId = item.getCategory();
-                if (radius == 0) radius = -1;
-
-                if (catId != null && !catId.matches("")) categoryId = catId;
-
-                db = new DataBase(this);
-                db.open();
-                if (categoryId != null && !categoryId.matches("")) {
-                    Cursor cx = db.getCategory(categoryId);
-                    if (cx != null && cx.moveToFirst()) {
-                        String title = cx.getString(cx.getColumnIndex(Constants.COLUMN_TEXT));
-                        category.setText(title);
-                    }
-                    if (cf != null) cf.close();
-                }
-                db.close();
-            }
-
-            if (type.matches(Constants.TYPE_REMINDER)) {
-                spinner.setSelection(0);
-            } else if (type.matches(Constants.TYPE_TIME)){
-                spinner.setSelection(1);
-            } else if (type.matches(Constants.TYPE_CALL)){
-                spinner.setSelection(3);
-            } else if (type.matches(Constants.TYPE_MESSAGE)){
-                spinner.setSelection(4);
-            } else if (type.startsWith(Constants.TYPE_LOCATION)){
-                spinner.setSelection(5);
-            } else if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                spinner.setSelection(2);
-            } else if (type.startsWith(Constants.TYPE_SKYPE)){
-                spinner.setSelection(6);
-            } else if (type.startsWith(Constants.TYPE_APPLICATION)){
-                spinner.setSelection(7);
-            } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                spinner.setSelection(8);
-            } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                spinner.setSelection(9);
-            } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                spinner.setSelection(10);
+            readReminder();
+        } else if (filePath != null) {
+            File file = new File(filePath);
+            if (file.exists()) {
+                item = new JsonModel();
+                new JsonParser(SyncHelper.readFile(filePath)).parse(item);
+                readReminder();
             } else {
-                spinner.setSelection(0);
+                Messages.toast(this, getString(R.string.something_went_wrong));
+                finish();
             }
+        } else {
+            Messages.toast(this, getString(R.string.something_went_wrong));
+            finish();
         }
         clearViews();
+    }
+
+    private void readReminder() {
+        if (item != null) {
+            type = item.getType();
+            vibration = item.getVibrate();
+            voice = item.getVoice();
+            notificationRepeat = item.getNotificationRepeat();
+            wake = item.getAwake();
+            unlock = item.getUnlock();
+
+            radius = item.getPlace().getRadius();
+            ledColor = item.getLed().getColor();
+            auto = item.getAction().getAuto();
+            melody = item.getMelody().getMelodyPath();
+            repeats = item.getRecurrence().getLimit();
+            String catId = item.getCategory();
+            if (radius == 0) radius = -1;
+
+            if (catId != null && !catId.matches("")) categoryId = catId;
+
+            DataBase db = new DataBase(this);
+            db.open();
+            if (categoryId != null && !categoryId.matches("")) {
+                Cursor c = db.getCategory(categoryId);
+                if (c != null && c.moveToFirst()) {
+                    String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                    category.setText(title);
+                }
+                if (c != null) c.close();
+            }
+            db.close();
+        } else {
+            Messages.toast(this, getString(R.string.something_went_wrong));
+            finish();
+        }
+
+        if (type.matches(Constants.TYPE_REMINDER)) {
+            spinner.setSelection(0);
+        } else if (type.matches(Constants.TYPE_TIME)){
+            spinner.setSelection(1);
+        } else if (type.matches(Constants.TYPE_CALL)){
+            spinner.setSelection(3);
+        } else if (type.matches(Constants.TYPE_MESSAGE)){
+            spinner.setSelection(4);
+        } else if (type.startsWith(Constants.TYPE_LOCATION)){
+            spinner.setSelection(5);
+        } else if (type.startsWith(Constants.TYPE_WEEKDAY)){
+            spinner.setSelection(2);
+        } else if (type.startsWith(Constants.TYPE_SKYPE)){
+            spinner.setSelection(6);
+        } else if (type.startsWith(Constants.TYPE_APPLICATION)){
+            spinner.setSelection(7);
+        } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+            spinner.setSelection(8);
+        } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
+            spinner.setSelection(9);
+        } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
+            spinner.setSelection(10);
+        } else {
+            spinner.setSelection(0);
+        }
     }
 
     /**
@@ -2610,19 +2638,30 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Reminder object
      */
     private JsonModel getData() {
-        if (isShoppingAttached() && shoppingLists.getCount() == 0){
-            Messages.toast(ReminderManager.this, getString(R.string.no_tasks_warming));
-            return null;
+        ArrayList<JsonShopping> jsonShoppings = new ArrayList<>();
+        if (isShoppingAttached()){
+            if (shoppingLists.getCount() == 0) {
+                Messages.toast(ReminderManager.this, getString(R.string.no_tasks_warming));
+                return null;
+            } else {
+                for (ShoppingList shoppingList : shoppingLists.getData()) {
+                    String title = shoppingList.getTitle();
+                    String uuid = shoppingList.getUuId();
+                    long time = shoppingList.getTime();
+                    int status = shoppingList.getStatus();
+                    jsonShoppings.add(new JsonShopping(title, status, uuid, time));
+                }
+            }
         }
         String type = getType();
         Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
         if (type != null) {
-            String weekdays = null;
+            ArrayList<Integer> weekdays = new ArrayList<>();
             if (isWeekDayReminderAttached()) {
                 Interval interval = new Interval(ReminderManager.this);
                 weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                         thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-                if (weekdays.matches(Constants.NOTHING_CHECKED)) {
+                if (interval.isWeekday(weekdays)) {
                     Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
                     return null;
                 }
@@ -2686,6 +2725,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
             Log.d(Constants.LOG_TAG, "Place coords " + latitude + "," + longitude);
 
+            int mySeconds = 0;
             if (isTimeReminderAttached()) {
                 final Calendar c = Calendar.getInstance();
                 c.setTimeInMillis(System.currentTimeMillis());
@@ -2694,34 +2734,32 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 myDay = c.get(Calendar.DAY_OF_MONTH);
                 myHour = c.get(Calendar.HOUR_OF_DAY);
                 myMinute = c.get(Calendar.MINUTE);
+                mySeconds = c.get(Calendar.SECOND);
             }
 
             long repeat = getRepeat();
             Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
 
-            int sync = getSyncCode();
-            Log.d(Constants.LOG_TAG, "Task sync code " + sync);
+            int gTaskSync = getSyncCode();
+            Log.d(Constants.LOG_TAG, "Task sync code " + gTaskSync);
 
-            long repMinute = 0;
+            long timeAfter = 0;
             if (isTimeReminderAttached()) {
-                repMinute = SuperUtil.getAfterTime(this, timeString);
-                if (repMinute == 0) {
+                timeAfter = SuperUtil.getAfterTime(this, timeString);
+                if (timeAfter == 0) {
                     return null;
                 }
             }
-            Log.d(Constants.LOG_TAG, "Task after minute " + repMinute);
+            Log.d(Constants.LOG_TAG, "Task after minute " + timeAfter);
 
-            int export = getExportCode();
-            Log.d(Constants.LOG_TAG, "Task export code " + export);
+            int calendarSync = getExportCode();
+            Log.d(Constants.LOG_TAG, "Task export code " + calendarSync);
 
             if (isMonthDayAttached()) {
                 if (type.endsWith("_last")) {
                     myDay = 0;
                 }
             }
-
-            long due = getDue(weekdays, repMinute);
-            Log.d(Constants.LOG_TAG, "Task due " + due);
 
             if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()) {
                 if (isLocationAttached() && !attackDelay.isChecked()) {
@@ -2747,6 +2785,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
 
+            long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
+                    myYear, myHour, myMinute, mySeconds, weekdays);
+            Log.d(Constants.LOG_TAG, "Task due " + startTime);
+
             int vibro = getVibro();
             int voice = getVoice();
             int notification = getNotification();
@@ -2761,7 +2803,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
                     wake + ", U " + unlock + ", A " + auto + ", L " + limit);
 
-            return new JsonModel();
+            JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
+            JsonLed jsonLed = new JsonLed(ledColor, 1);
+            JsonMelody jsonMelody = new JsonMelody(melody, 25);
+            JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, limit, weekdays, timeAfter);
+            JsonAction jsonAction = new JsonAction(type, number, auto);
+            JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
+            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, 0);
+
+            return new JsonModel(task, type, categoryId, uuId, startTime, eventTime, 0, vibro,
+                    notification, voice, wake, unlock, jsonExclusion, jsonLed, jsonMelody,
+                    jsonRecurrence, jsonAction, jsonExport, jsonPlace, null, null, jsonShoppings);
         } else {
             return null;
         }
@@ -2866,22 +2918,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             else if (isDateReminderAttached()) return dateExport.isChecked() ? 1 : 0;
             else return 0;
         } else return 0;
-    }
-
-    /**
-     * Calculate due time for reminder.
-     * @param weekdays selected day of week string.
-     * @param time current time in millisecond for timer.
-     * @return time in milliseconds.
-     */
-    private long getDue(String weekdays, long time) {
-        if (isWeekDayReminderAttached()){
-            return ReminderUtils.getWeekTime(myHour, myMinute, weekdays);
-        } else if (isMonthDayAttached()){
-            return ReminderUtils.getMonthTime(myHour, myMinute, myDay);
-        } else if (isTimeReminderAttached()){
-            return ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, time);
-        } else return ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
     }
 
     /**
