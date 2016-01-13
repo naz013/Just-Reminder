@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.async.GetExchangeTasksAsync;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
@@ -237,8 +236,6 @@ public class SplashScreen extends Activity{
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         }
 
-        new GetExchangeTasksAsync(this, null).execute();
-
         finish();
     }
 
@@ -301,7 +298,7 @@ public class SplashScreen extends Activity{
                                     ShoppingList.ACTIVE);
                     for (ShoppingList item : provider.getData()){
                         JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
-                                item.getStatus(), item.getUuId(), item.getTime());
+                                item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
                         list.add(jsonShopping);
                     }
                     parser.setShopping(list);
@@ -330,7 +327,7 @@ public class SplashScreen extends Activity{
                 if (weekdays != null) {
                     ArrayList<Integer> list = new ArrayList<>();
                     for (char c1 : weekdays.toCharArray()) {
-                        list.add(String.valueOf(c1).matches(Constants.DAY_CHECKED) ? 1 : 0);
+                        list.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
                     }
                     jsonRecurrence.setWeekdays(list);
                 }

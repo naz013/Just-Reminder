@@ -9,9 +9,10 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.android.AuthActivity;
@@ -348,7 +349,7 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             try {
-                mDBApi.delete(dbxNoteFolder + name + Constants.FILE_NAME_NOTE);
+                mDBApi.delete(dbxNoteFolder + name + FileConfig.FILE_NAME_NOTE);
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
@@ -363,7 +364,7 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             try {
-                mDBApi.delete(dbxGroupFolder + name + Constants.FILE_NAME_GROUP);
+                mDBApi.delete(dbxGroupFolder + name + FileConfig.FILE_NAME_GROUP);
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
@@ -378,7 +379,7 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             try {
-                mDBApi.delete(dbxBirthFolder + name + Constants.FILE_NAME_BIRTHDAY);
+                mDBApi.delete(dbxBirthFolder + name + FileConfig.FILE_NAME_BIRTHDAY);
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
@@ -636,7 +637,7 @@ public class DropboxHelper {
                 for (DropboxAPI.Entry e : newEntry.contents) {
                     if (!e.isDeleted) {
                         String fileName = e.fileName();
-                        if (fileName.endsWith(Constants.FILE_NAME_REMINDER)) {
+                        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
                             res += 1;
                         }
                     }

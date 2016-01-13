@@ -4,10 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.json.JsonParser;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -34,7 +35,7 @@ public class ShoppingList {
      */
     private int isChecked;
     private String uuId;
-    private long remId, id, time;
+    private long time;
     private int status;
 
     public static final int DELETED = -1;
@@ -48,12 +49,10 @@ public class ShoppingList {
         this.time = System.currentTimeMillis();
     }
 
-    public ShoppingList(long id, String title, int isChecked, String uuId, long remId, int status, long time){
+    public ShoppingList(String title, int isChecked, String uuId, int status, long time){
         this.uuId = uuId;
         this.title = title;
         this.isChecked = isChecked;
-        this.remId = remId;
-        this.id = id;
         this.status = status;
         this.time = time;
     }
@@ -99,8 +98,9 @@ public class ShoppingList {
      * Remove task from database.
      * @param context application context.
      * @param id task identifier.
+     * @param uuId shop item unique identifier.
      */
-    public static void removeItem(Context context, long id){
+    public static void removeItem(Context context, long id, String uuId){
         DataBase db = new DataBase(context);
         db.open();
         db.deleteShopItem(id);
@@ -113,17 +113,14 @@ public class ShoppingList {
      * @param remId reminder identifier.
      * @return Map with unique identifier as key and database identifier as value
      */
-    public static HashMap<String, Long> getUuIds(Context context, long remId){
-        DataBase db = new DataBase(context);
+    public static ArrayList<String> getUuIds(Context context, long remId){
+        NextBase db = new NextBase(context);
         db.open();
-        HashMap<String, Long> ids = new HashMap<>();
-        Cursor c = db.getShopItems(remId);
+        ArrayList<String> ids = new ArrayList<>();
+        Cursor c = db.getReminder(remId);
         if (c != null && c.moveToFirst()){
-            do {
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                ids.put(uuId, id);
-            } while (c.moveToNext());
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            ids = new JsonParser(json).getShoppingKeys();
         }
         if (c != null) c.close();
         db.close();
@@ -142,28 +139,12 @@ public class ShoppingList {
         return isChecked;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public long getRemId() {
-        return remId;
-    }
-
-    public void setRemId(long remId) {
-        this.remId = remId;
     }
 
     public String getUuId() {

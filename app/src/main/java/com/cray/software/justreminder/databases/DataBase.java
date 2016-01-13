@@ -13,7 +13,7 @@ import com.cray.software.justreminder.helpers.TimeCount;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
-    private static final int DB_VERSION = 13;
+    private static final int DB_VERSION = 14;
     private static final String CURRENT_TABLE_NAME = "current_task_table";
     private static final String CONTACTS_TABLE_NAME = "contacts_task_table";
     private static final String LOCATION_TABLE_NAME = "locations_table";
@@ -617,14 +617,6 @@ public class DataBase {
         openGuard();
         return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId,
                 null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
-    }
-
-    @Deprecated
-    public Cursor getShopItemsActive(long remId) throws SQLException {
-        openGuard();
-        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId +
-                " AND "+ Constants.COLUMN_EXTRA_1 + "=" + 1, null, null, null,
-                Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
     }
 
     @Deprecated

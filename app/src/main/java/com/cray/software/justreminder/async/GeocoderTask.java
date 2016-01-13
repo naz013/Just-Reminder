@@ -25,9 +25,8 @@ import java.util.List;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/**
+ *
+ *
  * Task that helps find place by name.
  */
 public class GeocoderTask extends AsyncTask<String, Void, List<Address>> {

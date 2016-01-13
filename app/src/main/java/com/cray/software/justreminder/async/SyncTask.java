@@ -10,6 +10,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -64,12 +65,20 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             db.addCategory("General", time, defUiID, 5);
             db.addCategory("Work", time, SyncHelper.generateID(), 3);
             db.addCategory("Personal", time, SyncHelper.generateID(), 0);
-            Cursor c = db.queryGroup();
+            NextBase nextBase = new NextBase(mContext);
+            nextBase.open();
+            Cursor c = nextBase.queryGroup();
             if (c != null && c.moveToFirst()) {
-                db.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                do {
+                    nextBase.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                } while (c.moveToNext());
             }
             if (c != null) c.close();
+            nextBase.close();
+        } else {
+            cat.close();
         }
+        db.close();
 
         //export & import reminders
         publishProgress(mContext.getString(R.string.message_sync_reminders));
@@ -91,8 +100,6 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             ioHelper.restoreBirthday(true);
             ioHelper.backupBirthday(true);
         }
-
-        db.close();
         return true;
     }
 

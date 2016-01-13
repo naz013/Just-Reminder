@@ -116,12 +116,6 @@ public class Constants {
     public final static String DIR_GROUP_SD_BOX_TMP = "tmp_box_group";
     public final static String DIR_BIRTHDAY_SD_BOX_TMP = "tmp_box_birthdays";
 
-    public static final String FILE_NAME_REMINDER = ".json";
-    public static final String FILE_NAME_NOTE = ".note";
-    public static final String FILE_NAME_GROUP = ".rgroup";
-    public static final String FILE_NAME_BIRTHDAY = ".rbd";
-    public static final String FILE_NAME_IMAGE = ".jpeg";
-
     public static final String EDIT_ID = "edit_id";
     public static final String EDIT_PATH = "edit_path";
     public static final String EDIT_WIDGET = "edit_widget";

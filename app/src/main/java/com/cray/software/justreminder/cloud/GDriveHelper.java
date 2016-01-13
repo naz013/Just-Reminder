@@ -3,10 +3,11 @@ package com.cray.software.justreminder.cloud;
 import android.content.Context;
 import android.os.Environment;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.media.MediaHttpDownloader;
@@ -101,7 +102,7 @@ public class GDriveHelper {
             for (com.google.api.services.drive.model.File f : fileList) {
                 String fileTitle = f.getTitle();
 
-                if (fileTitle.trim().endsWith(Constants.FILE_NAME_REMINDER)) {
+                if (fileTitle.trim().endsWith(FileConfig.FILE_NAME_REMINDER)) {
                     i += 1;
                 }
             }
@@ -291,7 +292,7 @@ public class GDriveHelper {
                         throw new IOException("Unable to create parent directory");
                     }
 
-                    if (title.endsWith(Constants.FILE_NAME_REMINDER)) {
+                    if (title.endsWith(FileConfig.FILE_NAME_REMINDER)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
@@ -351,7 +352,7 @@ public class GDriveHelper {
                         throw new IOException("Unable to create parent directory");
                     }
 
-                    if (title.endsWith(Constants.FILE_NAME_NOTE)) {
+                    if (title.endsWith(FileConfig.FILE_NAME_NOTE)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
@@ -411,7 +412,7 @@ public class GDriveHelper {
                         throw new IOException("Unable to create parent directory");
                     }
 
-                    if (title.endsWith(Constants.FILE_NAME_GROUP)) {
+                    if (title.endsWith(FileConfig.FILE_NAME_GROUP)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
@@ -471,7 +472,7 @@ public class GDriveHelper {
                         throw new IOException("Unable to create parent directory");
                     }
 
-                    if (title.endsWith(Constants.FILE_NAME_BIRTHDAY)) {
+                    if (title.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
@@ -524,7 +525,7 @@ public class GDriveHelper {
                 for (com.google.api.services.drive.model.File f : fileList) {
                     String fileTitle = f.getTitle();
 
-                    if (fileTitle.endsWith(Constants.FILE_NAME_REMINDER) && fileTitle.contains(title)) {
+                    if (fileTitle.endsWith(FileConfig.FILE_NAME_REMINDER) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {
@@ -563,7 +564,7 @@ public class GDriveHelper {
                 for (com.google.api.services.drive.model.File f : fileList) {
                     String fileTitle = f.getTitle();
 
-                    if (fileTitle.endsWith(Constants.FILE_NAME_NOTE) && fileTitle.contains(title)) {
+                    if (fileTitle.endsWith(FileConfig.FILE_NAME_NOTE) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {
@@ -602,7 +603,7 @@ public class GDriveHelper {
                 for (com.google.api.services.drive.model.File f : fileList) {
                     String fileTitle = f.getTitle();
 
-                    if (fileTitle.endsWith(Constants.FILE_NAME_GROUP) && fileTitle.contains(title)) {
+                    if (fileTitle.endsWith(FileConfig.FILE_NAME_GROUP) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {
@@ -641,7 +642,7 @@ public class GDriveHelper {
                 for (com.google.api.services.drive.model.File f : fileList) {
                     String fileTitle = f.getTitle();
 
-                    if (fileTitle.endsWith(Constants.FILE_NAME_BIRTHDAY) && fileTitle.contains(title)) {
+                    if (fileTitle.endsWith(FileConfig.FILE_NAME_BIRTHDAY) && fileTitle.contains(title)) {
                         try {
                             m_client.files().delete(f.getId()).execute();
                         } catch (IOException e) {

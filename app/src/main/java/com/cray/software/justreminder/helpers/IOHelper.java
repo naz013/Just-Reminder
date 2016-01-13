@@ -6,6 +6,7 @@ import android.os.Environment;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 
 import org.json.JSONException;
@@ -34,7 +35,7 @@ public class IOHelper {
         if (SyncHelper.isSdPresent()) {
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            String exportFileName = name + Constants.FILE_NAME_REMINDER;
+            String exportFileName = name + FileConfig.FILE_NAME_REMINDER;
             File file = new File(sdPathDr, exportFileName);
             if (file.exists()) {
                 file.delete();

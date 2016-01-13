@@ -25,10 +25,11 @@ public class JsonShopping {
      */
     private static final String SUMMARY = "summary";
     private static final String STATUS = "status_";
+    private static final String DELETED = "deleted_";
     private static final String UUID = "uuid_s";
     private static final String DATE = "date";
 
-    private int status;
+    private int status, deleted;
     private String summary;
     private String uuId;
     private long dateTime;
@@ -56,12 +57,13 @@ public class JsonShopping {
         jsonObject = new JSONObject();
     }
 
-    public JsonShopping(String summary, int status, String uuId, long dateTime){
+    public JsonShopping(String summary, int status, String uuId, long dateTime, int deleted){
         jsonObject = new JSONObject();
         setSummary(summary);
         setStatus(status);
         setUuId(uuId);
         setDateTime(dateTime);
+        setDeleted(deleted);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -75,6 +77,13 @@ public class JsonShopping {
         if (jsonObject.has(STATUS)){
             try {
                 status = jsonObject.getInt(STATUS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(DELETED)){
+            try {
+                deleted = jsonObject.getInt(DELETED);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -128,6 +137,15 @@ public class JsonShopping {
         }
     }
 
+    public void setDeleted(int deleted) {
+        this.deleted = deleted;
+        try {
+            jsonObject.put(DELETED, deleted);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setSummary(String summary) {
         this.summary = summary;
         try {
@@ -153,6 +171,10 @@ public class JsonShopping {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getDeleted() {
+        return deleted;
     }
 
     public String getUuId() {
