@@ -221,15 +221,13 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 Looper.prepare();
                 db = new DataBase(getActivity());
                 db.open();
-                if (db.getCountBirthdays() > 0){
-                    Cursor c = db.getBirthdays();
-                    if (c != null && c.moveToFirst()){
-                        do {
-                            long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                            db.deleteBirthday(id);
-                        } while (c.moveToNext());
-                        c.close();
-                    }
+                Cursor c = db.getBirthdays();
+                if (c != null && c.moveToFirst()){
+                    do {
+                        long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
+                        db.deleteBirthday(id);
+                    } while (c.moveToNext());
+                    c.close();
                 }
                 db.close();
             }

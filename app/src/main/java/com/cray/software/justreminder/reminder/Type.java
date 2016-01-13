@@ -43,8 +43,7 @@ public class Type {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonModel jsonModel = new JsonModel();
-            new JsonParser(json).parse(jsonModel);
+            JsonModel jsonModel = new JsonParser(json).parse();
             c.close();
             db.close();
             return jsonModel;
@@ -67,8 +66,7 @@ public class Type {
         Cursor c = db.getReminder(uuId);
         if (c != null && c.moveToFirst()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonModel jsonModel = new JsonModel();
-            new JsonParser(json).parse(jsonModel);
+            JsonModel jsonModel = new JsonParser(json).parse();
             c.close();
             db.close();
             return jsonModel;

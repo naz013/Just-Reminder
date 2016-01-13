@@ -45,6 +45,37 @@ public class JsonModel {
     public JsonModel() {
     }
 
+    public JsonModel(String summary, String type, String category, String uuId,
+                     long eventTime, long startTime, long count, int vibrate,
+                     int notificationRepeat, int voice, int awake, int unlock,
+                     JsonExclusion jsonExclusion, JsonLed jsonLed, JsonMelody jsonMelody,
+                     JsonRecurrence jsonRecurrence, JsonAction jsonAction, JsonExport jsonExport,
+                     JsonPlace jsonPlace, List<String> tags, List<JsonPlace> places,
+                     List<JsonShopping> shoppings) {
+        this.summary = summary;
+        this.type = type;
+        this.category = category;
+        this.uuId = uuId;
+        this.eventTime = eventTime;
+        this.startTime = startTime;
+        this.count = count;
+        this.vibrate = vibrate;
+        this.notificationRepeat = notificationRepeat;
+        this.voice = voice;
+        this.awake = awake;
+        this.unlock = unlock;
+        this.exclusion = jsonExclusion;
+        this.led = jsonLed;
+        this.melody = jsonMelody;
+        this.recurrence = jsonRecurrence;
+        this.action = jsonAction;
+        this.export = jsonExport;
+        this.place = jsonPlace;
+        this.tags = tags;
+        this.places = places;
+        this.shoppings = shoppings;
+    }
+
     public long getStartTime() {
         return startTime;
     }

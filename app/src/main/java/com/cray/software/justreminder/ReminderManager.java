@@ -102,7 +102,6 @@ import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.reminder.ShoppingType;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
@@ -518,8 +517,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else if (filePath != null) {
             File file = new File(filePath);
             if (file.exists()) {
-                item = new JsonModel();
-                new JsonParser(SyncHelper.readFile(filePath)).parse(item);
+                item = new JsonParser(SyncHelper.readFile(filePath)).parse();
                 readReminder();
             } else {
                 Messages.toast(this, getString(R.string.something_went_wrong));
@@ -2257,7 +2255,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
         ViewUtils.fadeInAnimation(shoppingLayout);
 
-        ShoppingType dateType = new ShoppingType(this);
+        DateType dateType = new DateType(this, Constants.TYPE_SHOPPING_LIST);
         dateType.inflateView(R.id.shoppingLayout);
         remControl = dateType;
 
@@ -2375,7 +2373,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         todoList.setAdapter(shoppingAdapter);
         invalidateButtons();
         if (id != 0 && isSame()){
-            if (remControl instanceof ShoppingType) {
+            if (remControl instanceof DateType) {
                 shoppingLists.clear();
                 shoppingLists = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
                 shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
@@ -2443,14 +2441,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item == null) return;
         if (id != 0){
             remControl.save(id, item);
-            if (remControl instanceof ShoppingType){
-                ((ShoppingType) remControl).saveShopList(id, shoppingLists.getData(), shoppingLists.getRemovedItems());
-            }
         } else {
-            long remId = remControl.save(item);
-            if (remControl instanceof ShoppingType){
-                ((ShoppingType) remControl).saveShopList(remId, shoppingLists.getData(), null);
-            }
+            remControl.save(item);
         }
         new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
@@ -2524,7 +2516,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isWeekDayReminderAttached() {
-        return remControl.getType() != null && remControl.getType().contains("weekday");
+        return remControl.getType() != null &&
+                remControl.getType().contains("weekday");
     }
 
     /**
@@ -2532,7 +2525,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isMessageAttached() {
-        return remControl.getType() != null && remControl.getType().matches(Constants.TYPE_MESSAGE);
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_MESSAGE);
     }
 
     /**
@@ -2540,7 +2534,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isMonthDayAttached() {
-        return remControl.getType() != null && remControl.getType().contains("month");
+        return remControl.getType() != null &&
+                remControl.getType().contains("month");
     }
 
     /**
@@ -2548,7 +2543,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Boolean
      */
     private boolean isShoppingAttached() {
-        return remControl instanceof ShoppingType;
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_SHOPPING_LIST);
     }
 
     /**

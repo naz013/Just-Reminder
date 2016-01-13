@@ -6,11 +6,11 @@ import android.widget.CheckBox;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,19 +70,19 @@ public class ReminderUtils {
      */
     public static ArrayList<Integer> getRepeatArray(String weekdays){
         ArrayList<Integer> res = new ArrayList<>();
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECKED))res.add(1);
+        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
         return res;
     }
@@ -94,7 +94,7 @@ public class ReminderUtils {
      * @param weekdays weekdays string.
      * @return time in mills.
      */
-    public static long getWeekTime(int hour, int minute, String weekdays){
+    public static long getWeekTime(int hour, int minute, ArrayList<Integer> weekdays){
         return TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
     }
 
@@ -131,40 +131,51 @@ public class ReminderUtils {
      * @param repCode system weekdays string.
      * @return get selected weekdays string.
      */
-    public static String getRepeatString(Context context, String repCode){
+    public static String getRepeatString(Context context, ArrayList<Integer> repCode){
         String res;
         StringBuilder sb = new StringBuilder();
-        if (Character.toString(repCode.charAt(0)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(0) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_monday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(1)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(1) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_tuesday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(2)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(2) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_wednesday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(3)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(3) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_thursday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(4)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(4) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_friday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(5)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(5) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_saturday));
             sb.append(",");
         }
-        if (Character.toString(repCode.charAt(6)).matches(Constants.DAY_CHECKED)){
+        if (repCode.get(6) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.weekday_sunday));
         }
-        if (repCode.matches(Constants.ALL_CHECKED)){
+        if (isAllChecked(repCode)){
             res = context.getString(R.string.interval_day);
         } else res = sb.toString();
         return res;
+    }
+
+    public static boolean isAllChecked(ArrayList<Integer> repCode) {
+        boolean is = true;
+        for (int i : repCode) {
+            if (i == Constants.DAY_UNCHECKED) {
+                is = false;
+                break;
+            }
+        }
+        return is;
     }
 
     /**

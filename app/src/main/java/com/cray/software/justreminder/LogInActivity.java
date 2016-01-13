@@ -695,22 +695,20 @@ public class LogInActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            ContentResolver cr = getContentResolver(); //getContnetResolver()
+            ContentResolver cr = getContentResolver();
             DataBase db = new DataBase(mContext);
             db.open();
             ArrayList<String> names = new ArrayList<>();
             ArrayList<Integer> ids = new ArrayList<>();
-            if (db.getCountBirthdays() > 0){
-                Cursor c = db.getBirthdays();
-                if (c != null && c.moveToFirst()){
-                    do {
-                        int id = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-                        String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                        ids.add(id);
-                        names.add(name);
-                    } while (c.moveToNext());
-                    c.close();
-                }
+            Cursor c = db.getBirthdays();
+            if (c != null && c.moveToFirst()){
+                do {
+                    int id = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
+                    String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
+                    ids.add(id);
+                    names.add(name);
+                } while (c.moveToNext());
+                c.close();
             }
             String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
 
@@ -733,7 +731,6 @@ public class LogInActivity extends Activity {
                         "' and "                  + ContactsContract.Data.CONTACT_ID + " = " + contactId;
 
                 String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
-                Contacts cc = new Contacts(mContext);
                 Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, null, sortOrder);
                 if (birthdayCur.getCount() > 0) {
                     while (birthdayCur.moveToNext()) {

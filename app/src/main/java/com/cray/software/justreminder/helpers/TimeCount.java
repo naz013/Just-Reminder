@@ -172,8 +172,7 @@ public class TimeCount {
             delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
             type = c.getString(c.getColumnIndex(NextBase.TYPE));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonModel jsonModel = new JsonModel();
-            new JsonParser(json).parse(jsonModel);
+            JsonModel jsonModel = new JsonParser(json).parse();
             JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
 
             repTime = jsonRecurrence.getRepeat();
@@ -438,7 +437,8 @@ public class TimeCount {
         return res;
     }
 
-    public boolean isCurrent(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour, int seconds) {
+    public boolean isCurrent(int year, int month, int dayOfMonth, int hourOfDay,
+                             int minuteOfHour, int seconds) {
         boolean res = false;
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
