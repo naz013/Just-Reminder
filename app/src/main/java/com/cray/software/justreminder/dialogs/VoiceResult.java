@@ -28,6 +28,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -111,7 +112,7 @@ public class VoiceResult extends Activity {
         double lat = model.getPlace()[0];
         double lon = model.getPlace()[1];
         int isDone = model.getCompleted();
-        String repeat = model.getRepeat();
+        String repeat = IntervalUtil.getInterval(this, model.getRepeat());
         String exclusion = model.getExclusion();
         int archived = model.getArchived();
         int categoryColor = model.getCatColor();

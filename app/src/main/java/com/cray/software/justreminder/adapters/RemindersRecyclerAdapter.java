@@ -25,6 +25,7 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -164,7 +165,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         double lat = item.getPlace()[0];
         double lon = item.getPlace()[1];
         int isDone = item.getCompleted();
-        String repeat = item.getRepeat();
+        long repeat = item.getRepeat();
         String exclusion = item.getExclusion();
         int archived = item.getArchived();
         int categoryColor = item.getCatColor();
@@ -325,11 +326,11 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                         type.startsWith(Constants.TYPE_APPLICATION)) {
                     holder.leftTimeIcon.setImageDrawable(mCount.
                             getDifference(due));
-                    holder.repeatInterval.setText(repeat);
+                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
                 } else if (type.matches(Constants.TYPE_TIME)) {
                     holder.leftTimeIcon.setImageDrawable(mCount.
                             getDifference(due));
-                    holder.repeatInterval.setText(repeat);
+                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
                 } else {
                     if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
                         holder.leftTimeIcon.setVisibility(View.GONE);

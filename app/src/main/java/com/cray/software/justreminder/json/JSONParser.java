@@ -1,5 +1,9 @@
 package com.cray.software.justreminder.json;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -62,12 +66,10 @@ public class JsonParser {
     }
 
     public JsonParser(String jsonObject) {
-        if (jsonObject != null) {
-            try {
-                this.jsonObject = new JSONObject(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        try {
+            this.jsonObject = new JSONObject(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -78,30 +80,183 @@ public class JsonParser {
     }
 
     public JsonModel parse(){
-        JsonModel model = new JsonModel();
-        model.setAction(getAction());
-        model.setExport(getExport());
-        model.setSummary(getSummary());
-        model.setTags(getTags());
-        model.setNotificationRepeat(getNotificationRepeat());
-        model.setVoice(getVoice());
-        model.setUnlock(getUnlock());
-        model.setPlaces(getPlaces());
-        model.setMelody(getMelody());
-        model.setUuId(getUuid());
-        model.setAwake(getAwake());
-        model.setVibrate(getVibrate());
-        model.setType(getType());
-        model.setCategory(getCategory());
-        model.setCount(getCount());
-        model.setEventTime(getEventTime());
-        model.setStartTime(getStartTime());
-        model.setExclusion(getExclusion());
-        model.setRecurrence(getRecurrence());
-        model.setShoppings(getShoppings());
-        model.setLed(getLed());
-        model.setPlace(getPlace());
-        return model;
+        if (jsonObject != null && jsonObject.has(Constants.COLUMN_TECH_VAR)) {
+            try {
+                return modelFromOld();
+            } catch (JSONException e) {
+                return null;
+            }
+        } else {
+            JsonModel model = new JsonModel();
+            model.setAction(getAction());
+            model.setExport(getExport());
+            model.setSummary(getSummary());
+            model.setTags(getTags());
+            model.setNotificationRepeat(getNotificationRepeat());
+            model.setVoice(getVoice());
+            model.setUnlock(getUnlock());
+            model.setPlaces(getPlaces());
+            model.setMelody(getMelody());
+            model.setUuId(getUuid());
+            model.setAwake(getAwake());
+            model.setVibrate(getVibrate());
+            model.setType(getType());
+            model.setCategory(getCategory());
+            model.setCount(getCount());
+            model.setEventTime(getEventTime());
+            model.setStartTime(getStartTime());
+            model.setExclusion(getExclusion());
+            model.setRecurrence(getRecurrence());
+            model.setShoppings(getShoppings());
+            model.setLed(getLed());
+            model.setPlace(getPlace());
+            return model;
+        }
+    }
+
+    private JsonModel modelFromOld() throws JSONException {
+        String text = null;
+        if (!jsonObject.isNull(Constants.COLUMN_TEXT)) {
+            text = jsonObject.getString(Constants.COLUMN_TEXT);
+        }
+        String type = null;
+        if (!jsonObject.isNull(Constants.COLUMN_TYPE)) {
+            type = jsonObject.getString(Constants.COLUMN_TYPE);
+        }
+        String weekdays = null;
+        if (!jsonObject.isNull(Constants.COLUMN_WEEKDAYS)) {
+            weekdays = jsonObject.getString(Constants.COLUMN_WEEKDAYS);
+        }
+        String categoryId = null;
+        if (!jsonObject.isNull(Constants.COLUMN_CATEGORY)) {
+            categoryId = jsonObject.getString(Constants.COLUMN_CATEGORY);
+        }
+        String melody = null;
+        if (!jsonObject.isNull(Constants.COLUMN_CUSTOM_MELODY)) {
+            melody = jsonObject.getString(Constants.COLUMN_CUSTOM_MELODY);
+        }
+        int day = jsonObject.getInt(Constants.COLUMN_DAY);
+        int month = jsonObject.getInt(Constants.COLUMN_MONTH);
+        int year = jsonObject.getInt(Constants.COLUMN_YEAR);
+        int hour = jsonObject.getInt(Constants.COLUMN_HOUR);
+        int minute = jsonObject.getInt(Constants.COLUMN_MINUTE);
+        int radius = jsonObject.getInt(Constants.COLUMN_CUSTOM_RADIUS);
+        if (radius == 0) radius = -1;
+        String number = null;
+        if (!jsonObject.isNull(Constants.COLUMN_NUMBER)) {
+            number = jsonObject.getString(Constants.COLUMN_NUMBER);
+        }
+        int repeatCode = jsonObject.getInt(Constants.COLUMN_REPEAT);
+        long repMinute = jsonObject.getLong(Constants.COLUMN_REMIND_TIME);
+        long count = jsonObject.getLong(Constants.COLUMN_REMINDERS_COUNT);
+        double latitude = jsonObject.getDouble(Constants.COLUMN_LATITUDE);
+        double longitude = jsonObject.getDouble(Constants.COLUMN_LONGITUDE);
+        String uuID = null;
+        if (!jsonObject.isNull(Constants.COLUMN_TECH_VAR)) {
+            uuID = jsonObject.getString(Constants.COLUMN_TECH_VAR);
+        }
+        if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
+
+        int vibration = -1;
+        if (jsonObject.has(Constants.COLUMN_VIBRATION))
+            vibration = jsonObject.getInt(Constants.COLUMN_VIBRATION);
+        int voice = -1;
+        if (jsonObject.has(Constants.COLUMN_VOICE))
+            voice = jsonObject.getInt(Constants.COLUMN_VOICE);
+        int wake = -1;
+        if (jsonObject.has(Constants.COLUMN_WAKE_SCREEN))
+            wake = jsonObject.getInt(Constants.COLUMN_WAKE_SCREEN);
+        int unlock = -1;
+        if (jsonObject.has(Constants.COLUMN_UNLOCK_DEVICE))
+            unlock = jsonObject.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        int notificationRepeat = -1;
+        if (jsonObject.has(Constants.COLUMN_NOTIFICATION_REPEAT))
+            notificationRepeat = jsonObject.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        int auto = -1;
+        if (jsonObject.has(Constants.COLUMN_AUTO_ACTION))
+            auto = jsonObject.getInt(Constants.COLUMN_AUTO_ACTION);
+        long limit = -1;
+        if (jsonObject.has(Constants.COLUMN_REPEAT_LIMIT))
+            limit = jsonObject.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        String exclusion = null;
+        if (jsonObject.has(Constants.COLUMN_EXTRA_3))
+            exclusion = jsonObject.getString(Constants.COLUMN_EXTRA_3);
+
+        long due = ReminderUtils.getTime(day, month, year, hour, minute, 0);
+
+        JsonModel jsonModel = new JsonModel();
+        jsonModel.setCategory(categoryId);
+        jsonModel.setCount(count);
+        jsonModel.setAwake(wake);
+        jsonModel.setUnlock(unlock);
+        jsonModel.setNotificationRepeat(notificationRepeat);
+        jsonModel.setVibrate(vibration);
+        jsonModel.setNotificationRepeat(voice);
+        jsonModel.setSummary(text);
+        jsonModel.setType(type);
+        jsonModel.setEventTime(due);
+        jsonModel.setStartTime(due);
+        jsonModel.setUuId(uuID);
+
+        JsonAction jsonAction = new JsonAction(type, number, auto);
+        jsonModel.setAction(jsonAction);
+
+        JsonExport jsonExport = new JsonExport(0, 0, null);
+        jsonModel.setExport(jsonExport);
+
+        JsonMelody jsonMelody = new JsonMelody(melody, -1);
+        jsonModel.setMelody(jsonMelody);
+
+        JsonLed jsonLed = new JsonLed(-1, 0);
+        jsonModel.setLed(jsonLed);
+
+        JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
+        jsonModel.setPlace(jsonPlace);
+
+        JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
+        jsonModel.setExclusion(jsonExclusion);
+
+        JsonRecurrence jsonRecurrence = new JsonRecurrence();
+        if (weekdays != null) {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (char c1 : weekdays.toCharArray()) {
+                list.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
+            }
+            jsonRecurrence.setWeekdays(list);
+        }
+        jsonRecurrence.setLimit(limit);
+        jsonRecurrence.setMonthday(day);
+        jsonRecurrence.setRepeat(repeatCode * TimeCount.day);
+        jsonRecurrence.setAfter(repMinute);
+        jsonModel.setRecurrence(jsonRecurrence);
+
+        if (jsonObject.has("shopping_list")) {
+            List<JsonShopping> list = new ArrayList<>();
+            JSONObject listObject = jsonObject.getJSONObject("shopping_list");
+            ArrayList<ShoppingList> arrayList = new ArrayList<>();
+            Iterator<?> keys = listObject.keys();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                JSONObject item = (JSONObject) listObject.get(key);
+                if (item != null) {
+                    String title = item.getString(Constants.COLUMN_TEXT);
+                    String uuId = item.getString(Constants.COLUMN_TECH_VAR);
+                    long time = item.getInt(Constants.COLUMN_DATE_TIME);
+                    int status = 1;
+                    if (item.has(Constants.COLUMN_EXTRA_1)) status = item.getInt(Constants.COLUMN_EXTRA_1);
+                    int checked = item.getInt(Constants.COLUMN_ARCHIVED);
+                    arrayList.add(new ShoppingList(title, checked, uuId, status, time));
+                }
+            }
+
+            for (ShoppingList item : arrayList){
+                JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
+                        item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
+                list.add(jsonShopping);
+            }
+            jsonModel.setShoppings(list);
+        }
+        return jsonModel;
     }
 
     public String toJson(JsonModel model) {

@@ -291,6 +291,7 @@ public class SplashScreen extends Activity{
                 parser.setType(type);
                 parser.setEventTime(due);
                 parser.setStartDate(due);
+                parser.setUuid(uuId);
 
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                     List<JsonShopping> list = new ArrayList<>();

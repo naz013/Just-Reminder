@@ -38,10 +38,7 @@ public class Constants {
     public static final String COLUMN_VOICE = "voice_notification";
     public static final String COLUMN_REPEAT_LIMIT = "column_extra";
     public static final String COLUMN_EXTRA_1 = "column_extra_1";
-    public static final String COLUMN_EXTRA_2 = "column_extra_2";
     public static final String COLUMN_EXTRA_3 = "column_extra_3";
-    public static final String COLUMN_EXTRA_4 = "column_extra_4";
-    public static final String COLUMN_EXTRA_5 = "column_extra_5";
 
     public static final String COLUMN_NOTE = "note";
     public static final String COLUMN_DATE = "date";

@@ -79,6 +79,7 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
                 data.add(title, listId, TasksConstants.INSERT, 0, null, note, localId, time, null);
             }
         }
+        data.close();
         return null;
     }
 

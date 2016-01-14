@@ -864,6 +864,7 @@ public class Notifier {
                 list.add(new BirthdayModel(name, years, birthDate));
             } while (c.moveToNext());
         }
+        if (c != null) c.close();
         db.close();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);

@@ -45,6 +45,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -199,7 +200,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             long due = item.getDue();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-                String repeatStr = item.getRepeat();
+                String repeatStr = IntervalUtil.getInterval(this, item.getRepeat());
                 if (repeatStr != null) {
                     repeat.setText(repeatStr);
                 } else {

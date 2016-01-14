@@ -71,6 +71,7 @@ public class CalendarManager {
                     long eventID = Long.parseLong(event.getLastPathSegment());
                     db.addCalendarEvent(event.toString(), id, eventID);
                 }
+                db.close();
             } catch (Exception e) {
                 Toast.makeText(ctx, ctx.getString(R.string.no_google_calendars_found), Toast.LENGTH_LONG).show();
             }
@@ -96,6 +97,7 @@ public class CalendarManager {
             } while (c.moveToNext());
         }
         if (c != null) c.close();
+        db.close();
     }
 
     /**

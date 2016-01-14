@@ -78,7 +78,7 @@ import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
-import com.cray.software.justreminder.helpers.Interval;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -998,7 +998,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateView = (DateTimeView) findViewById(R.id.dateView);
         dateView.setListener(this);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         dateExport = (CheckBox) findViewById(R.id.dateExport);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK))){
@@ -1022,7 +1022,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int expTasks = 0;
             if (item != null){
                 text = item.getSummary();
-                eventTime = item.getStartTime();
+                eventTime = item.getEventTime();
                 repeatCode = item.getRecurrence().getRepeat();
 
                 JsonExport jsonExport = item.getExport();
@@ -1039,16 +1039,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             taskField.setText(text);
-            dateView.setDateTime(updateCalendar(eventTime));
+            dateView.setDateTime(updateCalendar(eventTime, true));
             repeatView.setProgress(repeatCode);
             invalidateButtons();
         }
     }
 
-    private Date updateTime(long millis) {
+    private Date updateTime(long millis, boolean deny) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        if (myYear > 0){
+        if (myYear > 0 && !deny){
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
         } else {
             myYear = cal.get(Calendar.YEAR);
@@ -1060,10 +1060,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         return cal.getTime();
     }
 
-    private long updateCalendar(long millis) {
+    private long updateCalendar(long millis, boolean deny) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        if (myYear > 0){
+        if (myYear > 0 && !deny){
             cal.set(myYear, myMonth, myDay, myHour, myMinute);
         } else {
             myYear = cal.get(Calendar.YEAR);
@@ -1111,7 +1111,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
         monthDayTimeField.setOnClickListener(timeClick);
-        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis()),
+        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
@@ -1157,7 +1157,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             else dayStr = String.valueOf(myDay);
 
             taskField.setText(text);
-            monthDayTimeField.setText(TimeUtil.getTime(updateTime(eventTime),
+            monthDayTimeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             monthDayField.setText(dayStr);
 
@@ -1258,7 +1258,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         weekTimeField = (TextView) findViewById(R.id.weekTimeField);
         weekTimeField.setOnClickListener(timeClick);
-        weekTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis()),
+        weekTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         weekTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
@@ -1310,7 +1310,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 weekTaskExport.setChecked(true);
             }
 
-            weekTimeField.setText(TimeUtil.getTime(updateTime(eventTime),
+            weekTimeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
             taskField.setText(text);
 
@@ -1585,7 +1585,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewSkype = (DateTimeView) findViewById(R.id.dateViewSkype);
         dateViewSkype.setListener(this);
-        dateViewSkype.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewSkype.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         RepeatView repeatViewSkype = (RepeatView) findViewById(R.id.repeatViewSkype);
         repeatViewSkype.setListener(this);
@@ -1630,7 +1630,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             skypeUser.setText(number);
-            dateViewSkype.setDateTime(updateCalendar(eventTime));
+            dateViewSkype.setDateTime(updateCalendar(eventTime, true));
             repeatViewSkype.setProgress(repeatCode);
 
             invalidateButtons();
@@ -1697,7 +1697,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewApp = (DateTimeView) findViewById(R.id.dateViewApp);
         dateViewApp.setListener(this);
-        dateViewApp.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewApp.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         RepeatView repeatViewApp = (RepeatView) findViewById(R.id.repeatViewApp);
         repeatViewApp.setListener(this);
@@ -1750,7 +1750,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
 
-            dateViewApp.setDateTime(updateCalendar(eventTime));
+            dateViewApp.setDateTime(updateCalendar(eventTime, true));
             repeatViewApp.setProgress(repeatCode);
             invalidateButtons();
         }
@@ -1787,7 +1787,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewCall = (DateTimeView) findViewById(R.id.dateViewCall);
         dateViewCall.setListener(this);
-        dateViewCall.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewCall.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         RepeatView repeatViewCall = (RepeatView) findViewById(R.id.repeatViewCall);
         repeatViewCall.setListener(this);
@@ -1822,7 +1822,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             phoneNumber.setText(number);
-            dateViewCall.setDateTime(updateCalendar(eventTime));
+            dateViewCall.setDateTime(updateCalendar(eventTime, true));
             repeatViewCall.setProgress(repeatCode);
             invalidateButtons();
         }
@@ -1860,7 +1860,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewMessage = (DateTimeView) findViewById(R.id.dateViewMessage);
         dateViewMessage.setListener(this);
-        dateViewMessage.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewMessage.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         RepeatView repeatViewMessage = (RepeatView) findViewById(R.id.repeatViewMessage);
         repeatViewMessage.setListener(this);
@@ -1895,7 +1895,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(text);
             messageNumber.setText(number);
-            dateViewMessage.setDateTime(updateCalendar(eventTime));
+            dateViewMessage.setDateTime(updateCalendar(eventTime, true));
             repeatViewMessage.setProgress(repeatCode);
             invalidateButtons();
         }
@@ -2043,7 +2043,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewLocation = (DateTimeView) findViewById(R.id.dateViewLocation);
         dateViewLocation.setListener(this);
-        dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         invalidateButtons();
 
@@ -2063,7 +2063,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             if (item != null && eventTime > 0) {
-                dateViewLocation.setDateTime(updateCalendar(eventTime));
+                dateViewLocation.setDateTime(updateCalendar(eventTime, true));
                 attackDelay.setChecked(true);
                 isDelayed = true;
             } else {
@@ -2186,7 +2186,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         DateTimeView dateViewLocationOut = (DateTimeView) findViewById(R.id.dateViewLocationOut);
         dateViewLocationOut.setListener(this);
-        dateViewLocationOut.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewLocationOut.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         if (curPlace != null) {
             if (mapOut != null) {
@@ -2213,7 +2213,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             if (item != null && eventTime > 0) {
-                dateViewLocationOut.setDateTime(updateCalendar(eventTime));
+                dateViewLocationOut.setDateTime(updateCalendar(eventTime, true));
                 attachDelayOut.setChecked(true);
                 isDelayed = true;
             } else {
@@ -2264,7 +2264,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         dateViewShopping = (DateTimeView) findViewById(R.id.dateViewShopping);
         dateViewShopping.setListener(this);
-        dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis()));
+        dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
         shopTimeIcon.setOnClickListener(new View.OnClickListener() {
@@ -2296,7 +2296,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     ViewUtils.hide(shoppingNoTime);
                 }
                 ViewUtils.show(shoppingTimeContainer);
-                dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis()));
+                dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
                 isShoppingReminder = true;
             }
         });
@@ -2403,7 +2403,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             eventTime = item.getStartTime();
 
             if (eventTime > 0) {
-                dateViewShopping.setDateTime(updateCalendar(eventTime));
+                dateViewShopping.setDateTime(updateCalendar(eventTime, true));
                 if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
                 }
@@ -2651,10 +2651,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (type != null) {
             ArrayList<Integer> weekdays = new ArrayList<>();
             if (isWeekDayReminderAttached()) {
-                Interval interval = new Interval(ReminderManager.this);
-                weekdays = interval.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
+                weekdays = IntervalUtil.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                         thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-                if (interval.isWeekday(weekdays)) {
+                if (IntervalUtil.isWeekday(weekdays)) {
                     Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
                     return null;
                 }
@@ -3700,41 +3699,29 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
-            } else {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
-            }
+            updateListener();
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
-            } else {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
-            }
+            updateListener();
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
-            } else {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
-            }
+            updateListener();
+        }
+    }
+
+    private void updateListener() {
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        SharedPrefs prefs = new SharedPrefs(getApplicationContext());
+        long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
+        int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+        } else {
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
         }
     }
 }
