@@ -22,6 +22,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
@@ -102,13 +103,12 @@ public class Reminder {
             disableReminder(id, context);
             res = true;
         } else {
-            if (type.startsWith(Constants.TYPE_LOCATION) ||
-                    type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+            if (type.contains(Constants.TYPE_LOCATION)) {
                 if (!LocationUtil.checkLocationEnable(context)){
                     LocationUtil.showLocationAlert(context);
                     res = false;
                 } else {
-                    db.setUnDone(id, json);
+                    db.setUnDone(id);
                     if (eventTime <= 0) {
                         if (!SuperUtil.isServiceRunning(context, GeolocationService.class)) {
                             context.startService(new Intent(context, GeolocationService.class)
@@ -119,9 +119,16 @@ public class Reminder {
                     }
                     res = true;
                 }
+            } else if(type.matches(Constants.TYPE_TIME)) {
+                db.setUnDone(id);
+                JsonModel jsonModel = new TimeCount(context).generateTimer(json);
+                db.updateReminderTime(id, jsonModel.getEventTime());
+                db.setJson(id, new JsonParser().toJson(jsonModel));
+                new AlarmReceiver().enableReminder(context, id);
+                res = true;
             } else {
                 if (new TimeCount(context).isNext(eventTime)) {
-                    db.setUnDone(id, json);
+                    db.setUnDone(id);
                     new AlarmReceiver().enableReminder(context, id);
                     res = true;
                 } else {
@@ -143,7 +150,8 @@ public class Reminder {
      * @param time due time for copy.
      * @param context application context.
      */
-    public static void copy(long id, long time, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
+    public static void copy(long id, long time, Context context,
+                            NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
         NextBase db = new NextBase(context);
         SharedPrefs sPrefs = new SharedPrefs(context);
         if (!db.isOpen()) db.open();
@@ -154,15 +162,19 @@ public class Reminder {
             String categoryId = c.getString(c.getColumnIndex(NextBase.CATEGORY));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
 
-            JsonExport jsonExport = new JsonParser(json).getExport();
+            JsonParser jsonParser = new JsonParser(json);
+            JsonModel jsonModel = jsonParser.parse();
+            JsonExport jsonExport = jsonModel.getExport();
             int exp = jsonExport.getCalendar();
             int code = jsonExport.getgTasks();
+            jsonModel.setEventTime(time);
+            jsonModel.setStartTime(time);
+            jsonParser.toJson(jsonModel);
 
             String uuID = SyncHelper.generateID();
-            long idN = db.insertReminder(summary, type, time, uuID, categoryId, json);
+            long idN = db.insertReminder(summary, type, time, uuID, categoryId, jsonParser.getJSON());
 
-            if (type.startsWith(Constants.TYPE_LOCATION) ||
-                    type.startsWith(Constants.TYPE_LOCATION_OUT)){
+            if (type.contains(Constants.TYPE_LOCATION)){
                 if (time > 0){
                     new PositionDelayReceiver().setDelay(context, idN);
                 } else {
@@ -317,6 +329,7 @@ public class Reminder {
         NextBase db = new NextBase(context);
         db.open();
         db.setDelay(id, delay);
+        updateDate(context, id, delay);
         if (addAlarm) new DelayReceiver().setAlarm(context, id, delay);
         db.close();
     }
@@ -326,10 +339,17 @@ public class Reminder {
      * @param context application context.
      * @param id reminder identifier.
      */
-    public static void updateDate(Context context, long id){
+    public static void updateDate(Context context, long id, int delay){
         NextBase db = new NextBase(context);
         db.open();
-        //// TODO: 12.01.2016 Add function for counting next event time.
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonModel jsonModel = new TimeCount(context).generateDateTime(json, delay);
+            db.updateReminderTime(id, jsonModel.getEventTime());
+            db.setJson(id, new JsonParser().toJson(jsonModel));
+        }
+        if (c != null) c.close();
         db.close();
     }
 

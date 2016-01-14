@@ -62,15 +62,19 @@ public class JsonParser {
     }
 
     public JsonParser(String jsonObject) {
-        try {
-            this.jsonObject = new JSONObject(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (jsonObject != null) {
+            try {
+                this.jsonObject = new JSONObject(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public JsonParser(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
+        if (jsonObject != null) {
+            this.jsonObject = jsonObject;
+        }
     }
 
     public JsonModel parse(){
@@ -95,16 +99,18 @@ public class JsonParser {
         model.setExclusion(getExclusion());
         model.setRecurrence(getRecurrence());
         model.setShoppings(getShoppings());
+        model.setLed(getLed());
         model.setPlace(getPlace());
         return model;
     }
 
-    public void toJson(JsonModel model) {
+    public String toJson(JsonModel model) {
         try {
             setUuid(model.getUuId());
             setSummary(model.getSummary());
             jsonObject.put(TYPE, model.getType());
             jsonObject.put(EVENT_TIME, model.getEventTime());
+            jsonObject.put(START_DATE, model.getStartTime());
             jsonObject.put(COUNT, model.getCount());
             jsonObject.put(VIBRATION, model.getVibrate());
             jsonObject.put(NOTIFICATION_REPEAT, model.getNotificationRepeat());
@@ -159,9 +165,10 @@ public class JsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return getJSON();
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(long startDate) {
         try {
             jsonObject.put(START_DATE, startDate);
         } catch (JSONException e) {
@@ -310,10 +317,8 @@ public class JsonParser {
     }
 
     public void setPlace(JsonPlace jsonPlace) {
-        JSONArray array = new JSONArray();
-        array.put(jsonPlace);
         try {
-            jsonObject.put(PLACE, array);
+            jsonObject.put(PLACE, jsonPlace.getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -392,7 +397,7 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonRecurrence();
     }
 
     public JsonExport getExport() {
@@ -404,7 +409,7 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonExport();
     }
 
     public JsonPlace getPlace() {
@@ -416,7 +421,7 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonPlace();
     }
 
     public JsonExclusion getExclusion() {
@@ -428,7 +433,19 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonExclusion();
+    }
+
+    public JsonLed getLed() {
+        if (jsonObject.has(LED)) {
+            try {
+                JSONObject object = jsonObject.getJSONObject(LED);
+                return new JsonLed(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return new JsonLed();
     }
 
     public long getEventTime() {
@@ -578,7 +595,7 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonMelody();
     }
 
     public int getNotificationRepeat() {
@@ -601,7 +618,7 @@ public class JsonParser {
                 e.printStackTrace();
             }
         }
-        return null;
+        return new JsonAction();
     }
 
     public List<String> getTags() {
@@ -628,6 +645,7 @@ public class JsonParser {
     }
 
     public String getJSON() {
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 }

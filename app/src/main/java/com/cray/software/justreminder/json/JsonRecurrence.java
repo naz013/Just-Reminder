@@ -66,6 +66,11 @@ public class JsonRecurrence {
 
     public JsonRecurrence(){
         jsonObject = new JSONObject();
+        setMonthday(0);
+        setRepeat(0);
+        setLimit(-1);
+        setWeekdays(null);
+        setAfter(0);
     }
 
     public JsonRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays, long after){
@@ -130,7 +135,8 @@ public class JsonRecurrence {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**
@@ -178,13 +184,15 @@ public class JsonRecurrence {
     }
 
     public void setWeekdays(ArrayList<Integer> weekdays) {
-        this.weekdays = weekdays;
-        JSONArray jsonArray = new JSONArray();
-        for (int day : weekdays) jsonArray.put(day);
-        try {
-            jsonObject.put(WEEKDAYS, jsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (weekdays != null) {
+            this.weekdays = weekdays;
+            JSONArray jsonArray = new JSONArray();
+            for (int day : weekdays) jsonArray.put(day);
+            try {
+                jsonObject.put(WEEKDAYS, jsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

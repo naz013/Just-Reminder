@@ -1,13 +1,11 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonRecurrence;
@@ -100,41 +98,6 @@ public class TimeCount {
         return new String[]{date, time};
     }
 
-    /**
-     * Get next date and time for time parameters.
-     * @param year year.
-     * @param month month.
-     * @param dayOfMonth day.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param seconds seconds.
-     * @param inTime timer reminder time.
-     * @param repeatCode reminder repeat code.
-     * @param remCount number of reminder repeats.
-     * @param delay delay for reminder.
-     * @return [0 - date] [1 - time]
-     */
-    public String[] getNextDateTime(int year, int month, int dayOfMonth, int hourOfDay,
-                                    int minuteOfHour, int seconds, long inTime, int repeatCode,
-                                    long remCount, int delay){
-        String date;
-        String time;
-        if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            date = null;
-            time = null;
-        } else {
-            long newDbTime = getEventTime(year, month, dayOfMonth, hourOfDay, minuteOfHour, seconds,
-                    inTime, repeatCode, remCount, delay);
-            Calendar cl = Calendar.getInstance();
-            cl.setTimeInMillis(newDbTime);
-            Date mTime = cl.getTime();
-            date = TimeUtil.dateFormat.format(mTime);
-            time = TimeUtil.getTime(mTime,
-                    new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT));
-        }
-        return new String[]{date, time};
-    }
-
     public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
                                   int minute, int seconds, ArrayList<Integer> weekdays) {
         Calendar calendar = Calendar.getInstance();
@@ -154,48 +117,52 @@ public class TimeCount {
     }
 
     /**
-     * Generate new due time for reminder.
-     * @param id reminder identifier.
-     * @return Due time
+     * Generate new due time for timer.
+     * @param json Reminder JSON object.
+     * @return Next event time
      */
-    public long generateDateTime(long id){
-        NextBase db = new NextBase(mContext);
-        long startTime = 0;
-        int delay = 0;
-        int dayOfMonth = 0;
-        long repTime = 0;
-        String type = null;
-        ArrayList<Integer> weekdays = null;
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()) {
-            startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-            delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
-            type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonModel jsonModel = new JsonParser(json).parse();
-            JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+    public JsonModel generateTimer(String json){
+        JsonModel jsonModel = new JsonParser(json).parse();
+        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+        long after = jsonRecurrence.getAfter() + System.currentTimeMillis();
+        jsonModel.setEventTime(after);
+        jsonModel.setStartTime(after);
+        return jsonModel;
+    }
 
-            repTime = jsonRecurrence.getRepeat();
-            dayOfMonth = jsonRecurrence.getMonthday();
-            weekdays = jsonRecurrence.getWeekdays();
-        }
+    /**
+     * Generate new due time for reminder.
+     * @param json Reminder JSON object.
+     * @param delay Snooze for reminder in minutes.
+     * @return Next event time
+     */
+    public JsonModel generateDateTime(String json, int delay){
+        JsonModel jsonModel = new JsonParser(json).parse();
+        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+        String type = jsonModel.getType();
+
+        long eventTime = jsonModel.getEventTime();
+        long repTime = jsonRecurrence.getRepeat();
+        int dayOfMonth = jsonRecurrence.getMonthday();
+        ArrayList<Integer> weekdays = jsonRecurrence.getWeekdays();
         long dateTime;
-        if (startTime == 0) {
+        if (eventTime == 0) {
             dateTime = 0;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                dateTime = getNextWeekdayTime(startTime, weekdays, delay);
+                dateTime = getNextWeekdayTime(eventTime, weekdays, delay);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                 if (type.endsWith("_last")){
-                    dateTime = getLastMonthDayTime(startTime, delay);
+                    dateTime = getLastMonthDayTime(eventTime, delay);
                 } else {
-                    dateTime = getNextMonthDayTime(dayOfMonth, startTime, delay);
+                    dateTime = getNextMonthDayTime(dayOfMonth, eventTime, delay);
                 }
             } else {
-                dateTime = startTime + repTime + (delay * 1000 * 60);
+                dateTime = eventTime + repTime + (delay * 1000 * 60);
             }
         }
-        return dateTime;
+        jsonModel.setEventTime(dateTime);
+        return jsonModel;
     }
 
     public long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
@@ -234,62 +201,6 @@ public class TimeCount {
             date = mTime + (delta * day);
         }
         if (delay > 0) date = date + (delay * 1000 * 60);
-        return date;
-    }
-
-    /**
-     * Count due time in milliseconds for time parameters.
-     * @param year year.
-     * @param month month.
-     * @param dayOfMonth day.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param seconds seconds.
-     * @param inTime timer reminder time.
-     * @param repeatCode reminder repeat code.
-     * @param remCount number of reminder repeats.
-     * @param delay delay for reminder.
-     * @return Due time in milliseconds.
-     */
-    public static long getEventTime(int year, int month, int dayOfMonth, int hourOfDay, int minuteOfHour,
-                             int seconds, long inTime, int repeatCode, long remCount, int delay){
-        long date;
-        if (year == 0 && month == 0 && dayOfMonth == 0 && hourOfDay == 0 && minuteOfHour == 0) {
-            date = 0;
-        } else {
-            Calendar cc = Calendar.getInstance();
-            cc.setTimeInMillis(System.currentTimeMillis());
-            if (inTime > 0) cc.set(year, month, dayOfMonth, hourOfDay, minuteOfHour, seconds);
-            else {
-                cc.set(year, month, dayOfMonth, hourOfDay, minuteOfHour, seconds);
-                cc.set(Calendar.MILLISECOND, 0);
-            }
-            long dbTime = cc.getTimeInMillis();
-            long newDbTime;
-            if (inTime > 0){
-                if (repeatCode > 0){
-                    if (remCount > 0){
-                        newDbTime = dbTime + inTime + (remCount * repeatCode * minute);
-                    } else {
-                        newDbTime = dbTime + inTime;
-                    }
-                } else {
-                    newDbTime = dbTime + inTime;
-                }
-            } else {
-                if (repeatCode > 0){
-                    if (remCount > 0){
-                        newDbTime = dbTime + (repeatCode * day * remCount);
-                    } else {
-                        newDbTime = dbTime;
-                    }
-                } else {
-                    newDbTime = dbTime;
-                }
-            }
-            if (delay > 0) newDbTime = newDbTime + delay * 60 * 1000;
-            date = newDbTime;
-        }
         return date;
     }
 
@@ -432,27 +343,6 @@ public class TimeCount {
         cc.setTimeInMillis(System.currentTimeMillis());
         long currentTome = cc.getTimeInMillis();
         if (startTime < currentTome) {
-            res = true;
-        }
-        return res;
-    }
-
-    public boolean isCurrent(int year, int month, int dayOfMonth, int hourOfDay,
-                             int minuteOfHour, int seconds) {
-        boolean res = false;
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        long currentTome = cc.getTimeInMillis();
-        Calendar db = Calendar.getInstance();
-        db.set(Calendar.DATE, dayOfMonth);
-        db.set(Calendar.MONTH, month);
-        db.set(Calendar.YEAR, year);
-        db.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        db.set(Calendar.MINUTE, minuteOfHour);
-        db.set(Calendar.SECOND, seconds);
-        db.set(Calendar.MILLISECOND, 0);
-        long dbTime = db.getTimeInMillis();
-        if (dbTime < currentTome) {
             res = true;
         }
         return res;

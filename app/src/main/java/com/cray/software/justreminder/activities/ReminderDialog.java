@@ -730,7 +730,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         new UpdatesHelper(ReminderDialog.this).updateWidget();
-        Reminder.updateDate(this, id);
+        Reminder.updateDate(this, id, 0);
     }
 
     @Override

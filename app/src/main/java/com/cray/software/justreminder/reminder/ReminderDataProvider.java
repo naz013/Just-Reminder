@@ -3,6 +3,7 @@ package com.cray.software.justreminder.reminder;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -84,7 +85,7 @@ public class ReminderDataProvider {
         NextBase db = new NextBase(mContext);
         db.open();
         Map<String, Integer> map = getCategories(mContext);
-        Cursor c = isArchive ? db.getArchivedReminders() : db.getActiveReminders();
+        Cursor c = isArchive ? db.getArchivedReminders() : db.getReminders();
         if (categoryId != null) c = db.queryGroup(categoryId);
         if (c != null && c.moveToNext()){
             do {
@@ -101,6 +102,7 @@ public class ReminderDataProvider {
                 int catColor = 0;
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
+                Log.d(Constants.LOG_TAG, "Json ---- " + json);
                 JsonModel jsonModel = new JsonParser(json).parse();
                 data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());

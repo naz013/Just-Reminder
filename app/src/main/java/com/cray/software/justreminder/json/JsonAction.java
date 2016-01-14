@@ -56,6 +56,9 @@ public class JsonAction {
 
     public JsonAction(){
         jsonObject = new JSONObject();
+        setAuto(-1);
+        setTarget(null);
+        setType(null);
     }
 
     public JsonAction(String type, String target, int auto){
@@ -102,7 +105,8 @@ public class JsonAction {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**

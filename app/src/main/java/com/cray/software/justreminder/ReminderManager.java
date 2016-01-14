@@ -28,7 +28,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -271,7 +270,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private String filePath;
     private String exclusion = null;
     private String type, melody = null, selectedPackage = null;
-    private int radius = -1, ledColor = 0;
+    private int radius = -1, ledColor = -1;
     private List<Address> foundPlaces;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> namesList;
@@ -523,10 +522,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 Messages.toast(this, getString(R.string.something_went_wrong));
                 finish();
             }
-        } else {
-            Messages.toast(this, getString(R.string.something_went_wrong));
-            finish();
         }
+
         clearViews();
     }
 
@@ -1302,7 +1299,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
                 weekdays = item.getRecurrence().getWeekdays();
                 number = item.getAction().getTarget();
-                eventTime = item.getStartTime();
+                eventTime = item.getEventTime();
             }
 
             if (exp == 1){
@@ -2651,7 +2648,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }
         String type = getType();
-        Log.d(Constants.LOG_TAG, "Task type " + (type != null ? type : "no type"));
         if (type != null) {
             ArrayList<Integer> weekdays = new ArrayList<>();
             if (isWeekDayReminderAttached()) {
@@ -2696,7 +2692,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             }
-            Log.d(Constants.LOG_TAG, "Task number " + (number != null ? number : "no number"));
             String uuId = SyncHelper.generateID();
 
             Double latitude = 0.0;
@@ -2720,7 +2715,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 latitude = dest.latitude;
                 longitude = dest.longitude;
             }
-            Log.d(Constants.LOG_TAG, "Place coords " + latitude + "," + longitude);
 
             int mySeconds = 0;
             if (isTimeReminderAttached()) {
@@ -2735,10 +2729,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             long repeat = getRepeat();
-            Log.d(Constants.LOG_TAG, "Task repeat " + repeat);
 
             int gTaskSync = getSyncCode();
-            Log.d(Constants.LOG_TAG, "Task sync code " + gTaskSync);
 
             long timeAfter = 0;
             if (isTimeReminderAttached()) {
@@ -2747,10 +2739,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     return null;
                 }
             }
-            Log.d(Constants.LOG_TAG, "Task after minute " + timeAfter);
 
             int calendarSync = getExportCode();
-            Log.d(Constants.LOG_TAG, "Task export code " + calendarSync);
 
             if (isMonthDayAttached()) {
                 if (type.endsWith("_last")) {
@@ -2784,7 +2774,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
                     myYear, myHour, myMinute, mySeconds, weekdays);
-            Log.d(Constants.LOG_TAG, "Task due " + startTime);
 
             int vibro = getVibro();
             int voice = getVoice();
@@ -2797,18 +2786,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 limit = -1;
             }
 
-            Log.d(Constants.LOG_TAG, "V " + vibro + ", Vo " + voice + ", N " + notification + ", W " +
-                    wake + ", U " + unlock + ", A " + auto + ", L " + limit);
-
             JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
-            JsonLed jsonLed = new JsonLed(ledColor, 1);
-            JsonMelody jsonMelody = new JsonMelody(melody, 25);
+            JsonLed jsonLed = new JsonLed(ledColor, ledColor == -1 ? 0 : 1);
+            JsonMelody jsonMelody = new JsonMelody(melody, -1);
             JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, limit, weekdays, timeAfter);
             JsonAction jsonAction = new JsonAction(type, number, auto);
             JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
-            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, 0);
+            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
 
-            return new JsonModel(task, type, categoryId, uuId, startTime, eventTime, 0, vibro,
+            return new JsonModel(task, type, categoryId, uuId, startTime, startTime, 0, vibro,
                     notification, voice, wake, unlock, jsonExclusion, jsonLed, jsonMelody,
                     jsonRecurrence, jsonAction, jsonExport, jsonPlace, null, null, jsonShoppings);
         } else {

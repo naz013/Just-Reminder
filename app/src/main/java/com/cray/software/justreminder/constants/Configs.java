@@ -10,7 +10,7 @@ public class Configs {
     /**
      * Application code name.
      */
-    public static final String CODENAME = "Grapefruit";
+    public static final String CODENAME = "Honeydew";
 
     /**
      * Application default theme.

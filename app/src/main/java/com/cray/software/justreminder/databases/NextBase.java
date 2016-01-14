@@ -151,7 +151,7 @@ public class NextBase {
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateReminderStartTime(long rowId, long eventTime) {
+    public boolean updateReminderTime(long rowId, long eventTime) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(EVENT_TIME, eventTime);
@@ -205,12 +205,9 @@ public class NextBase {
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public boolean setUnDone(long rowId, String json) {
+    public boolean setUnDone(long rowId) {
         openGuard();
-        JsonParser parser = new JsonParser(json);
-        parser.setCount(0);
         ContentValues cv = new ContentValues();
-        cv.put(JSON, parser.getJSON());
         cv.put(DB_STATUS, 0);
         cv.put(DELAY, 0);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
@@ -265,6 +262,12 @@ public class NextBase {
         openGuard();
         String order = EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
+    }
+
+    public Cursor getReminders() throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
+        return db.query(TABLE_NAME, null, DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getActiveReminders() throws SQLException {

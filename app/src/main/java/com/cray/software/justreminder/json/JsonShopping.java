@@ -59,6 +59,11 @@ public class JsonShopping {
 
     public JsonShopping(){
         jsonObject = new JSONObject();
+        setSummary(null);
+        setStatus(0);
+        setUuId(null);
+        setDateTime(0);
+        setDeleted(0);
     }
 
     public JsonShopping(String summary, int status, String uuId, long dateTime, int deleted){
@@ -121,7 +126,8 @@ public class JsonShopping {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**

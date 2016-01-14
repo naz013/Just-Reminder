@@ -56,6 +56,9 @@ public class JsonExport {
 
     public JsonExport(){
         jsonObject = new JSONObject();
+        setGtasks(0);
+        setCalendar(0);
+        setCalendarId(null);
     }
 
     public JsonExport(int gTasks, int calendar, String calendarId){
@@ -102,7 +105,8 @@ public class JsonExport {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**
@@ -140,8 +144,8 @@ public class JsonExport {
         }
     }
 
-    public static String getCalendarId() {
-        return CALENDAR_ID;
+    public String getCalendarId() {
+        return calendarId;
     }
 
     public int getCalendar() {

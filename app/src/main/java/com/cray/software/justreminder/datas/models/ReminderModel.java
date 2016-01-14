@@ -26,33 +26,13 @@ public class ReminderModel {
     private long due, id;
     private double[] place;
 
-    public ReminderModel(String title, String type, String repeat, int catColor, String uuId,
-                         int completed, long due, long id, double[] place, String number, int archived,
-                         int viewType, String groupId, String exclusion, int radius, String melody){
-        this.catColor = catColor;
-        this.viewType = viewType;
-        this.title = title;
-        this.type = type;
-        this.due = due;
-        this.id = id;
-        this.completed = completed;
-        this.uuId = uuId;
-        this.place = place;
-        this.repeat = repeat;
-        this.number = number;
-        this.archived = archived;
-        this.groupId = groupId;
-        this.exclusion = exclusion;
-        this.radius = radius;
-        this.melody = melody;
-    }
-
     public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed, int viewType) {
         this.id = id;
         this.catColor = catColor;
         this.archived = archived;
         this.completed = completed;
         this.viewType = viewType;
+
         this.groupId = jsonModel.getCategory();
         this.title = jsonModel.getSummary();
         this.type = jsonModel.getType();

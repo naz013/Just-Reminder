@@ -63,6 +63,8 @@ public class JsonExclusion {
 
     public JsonExclusion(){
         jsonObject = new JSONObject();
+        addExclusion(null, null);
+        addExclusion(null);
     }
 
     public JsonExclusion(String from, String to){
@@ -108,7 +110,8 @@ public class JsonExclusion {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**
@@ -140,13 +143,15 @@ public class JsonExclusion {
      * @param hours list of excluded hours.
      */
     public void addExclusion(List<Integer> hours){
-        this.hours = hours;
-        JSONArray jsonArray = new JSONArray();
-        for (int hour : hours) jsonArray.put(hour);
-        try {
-            jsonObject.put(HOURS, jsonArray);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (hours != null) {
+            this.hours = hours;
+            JSONArray jsonArray = new JSONArray();
+            for (int hour : hours) jsonArray.put(hour);
+            try {
+                jsonObject.put(HOURS, jsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

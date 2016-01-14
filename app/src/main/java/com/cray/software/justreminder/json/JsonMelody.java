@@ -54,6 +54,8 @@ public class JsonMelody {
 
     public JsonMelody(){
         jsonObject = new JSONObject();
+        setMelodyPath(null);
+        setVolume(-1);
     }
 
     public JsonMelody(String melodyPath, int volume){
@@ -92,7 +94,8 @@ public class JsonMelody {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**

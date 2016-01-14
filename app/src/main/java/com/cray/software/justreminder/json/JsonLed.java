@@ -53,6 +53,8 @@ public class JsonLed {
 
     public JsonLed(){
         jsonObject = new JSONObject();
+        setColor(0);
+        setStatus(-1);
     }
 
     public JsonLed(int color, int status){
@@ -91,7 +93,8 @@ public class JsonLed {
      * @return JSON object string
      */
     public String getJsonString(){
-        return jsonObject.toString();
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
     }
 
     /**
