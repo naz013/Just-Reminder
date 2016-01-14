@@ -22,21 +22,20 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,7 +55,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     private int myYear = 0, customYear = 0;
     private int myMonth = 0, customMonth = 0;
     private int myDay = 1, customDay = 1;
-    private int mySeconds = 0;
     private long tomorrow, nextWork, currTime;
 
     private boolean is24Hour = true;
@@ -282,37 +280,30 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
         String type = getType();
         setUpTimes();
-        DataBase DB = new DataBase(FollowReminder.this);
-        DB.open();
-        String uuID = SyncHelper.generateID();
+        DataBase db = new DataBase(FollowReminder.this);
+        db.open();
         SharedPrefs prefs = new SharedPrefs(FollowReminder.this);
-        long id;
-        Cursor cf = DB.queryCategories();
+        Cursor cf = db.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+        db.close();
+
+        long due = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+        JsonModel jsonModel = new JsonModel(text, type, categoryId,
+                SyncHelper.generateID(), due, due, null, null, null);
+        long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
         if (prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || prefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) {
-            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
-                    0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
-            ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, startTime, id,
+            ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, due, remId,
                     sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR),
                     sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
-        } else {
-            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, mySeconds, number,
-                    0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
-            ReminderUtils.exportToTasks(this, text, startTime, id);
+            ReminderUtils.exportToTasks(this, text, due, remId);
         }
-        DB.updateReminderDateTime(id);
-        DB.close();
 
-        new AlarmReceiver().setAlarm(FollowReminder.this, id);
-        new UpdatesHelper(FollowReminder.this).updateWidget();
-        new Notifier(FollowReminder.this).recreatePermanent();
         removeFlags();
         finish();
     }
@@ -328,7 +319,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
             myMinute = customMinute;
             myMonth = customMonth;
             myYear = customYear;
-            mySeconds = 0;
         } else {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(currTime + (1000 * 60 * getAfterMins(afterTime.getSelectedItemPosition())));
@@ -337,7 +327,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
             myYear = c.get(Calendar.YEAR);
             myMonth = c.get(Calendar.MONTH);
             myDay = c.get(Calendar.DAY_OF_MONTH);
-            mySeconds = c.get(Calendar.SECOND);
         }
     }
 
@@ -408,7 +397,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         myYear = c.get(Calendar.YEAR);
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
-        mySeconds = 0;
     }
 
     private void setUpTomorrow() {
@@ -419,6 +407,5 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         myYear = c.get(Calendar.YEAR);
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
-        mySeconds = 0;
     }
 }

@@ -19,18 +19,17 @@ import android.widget.RemoteViews;
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.activities.ReminderDialog;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
-import com.cray.software.justreminder.activities.ReminderDialog;
-import com.cray.software.justreminder.activities.WeekDayDialog;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.BirthdayPermanentService;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.ScreenManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -412,12 +411,8 @@ public class Notifier {
             }
         }
 
-        Intent notificationIntent = new Intent(mContext, WeekDayDialog.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, 0);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
-        builder.setContentIntent(intent);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){

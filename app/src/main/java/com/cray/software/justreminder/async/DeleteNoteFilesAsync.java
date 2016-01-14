@@ -6,6 +6,7 @@ import android.os.Environment;
 
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.constants.Constants;
 
@@ -26,7 +27,7 @@ public class DeleteNoteFilesAsync extends AsyncTask<String, Void, Boolean> {
             if (SyncHelper.isSdPresent()) {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD);
-                String exportFileName = uuID + Constants.FILE_NAME_NOTE;
+                String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
                 File file = new File(sdPathDr, exportFileName);
                 if (file.exists()) {
                     file.delete();

@@ -32,7 +32,9 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
@@ -288,8 +290,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                     e.printStackTrace();
                                 }
                             }
-                            String text = item.getTitle();
-                            String type = Constants.TYPE_REMINDER;
+                            String summary = item.getTitle();
 
                             String uuID = SyncHelper.generateID();
                             Cursor cf = DB.queryCategories();
@@ -302,19 +303,13 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             Calendar calendar = Calendar.getInstance();
                             long dtStart = item.getDtStart();
                             calendar.setTimeInMillis(dtStart);
-                            int day = calendar.get(Calendar.DAY_OF_MONTH);
-                            int month = calendar.get(Calendar.MONTH);
-                            int year = calendar.get(Calendar.YEAR);
-                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                            int minute = calendar.get(Calendar.MINUTE);
                             if (dtStart >= currTime){
                                 eventsCount += 1;
-                                long id = DB.insertReminder(text, type, day, month, year, hour,
-                                        minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
-                                        0, categoryId, null);
-                                DB.updateReminderDateTime(id);
+                                JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
+                                JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                        dtStart, jsonRecurrence, null, null);
+                                long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
                                 DB.addCalendarEvent(null, id, item.getId());
-                                new AlarmReceiver().setAlarm(context, id);
                             } else {
                                 if (repeat > 0) {
                                     do {
@@ -322,17 +317,11 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                         dtStart = calendar.getTimeInMillis();
                                     } while (dtStart < currTime);
                                     eventsCount += 1;
-                                    day = calendar.get(Calendar.DAY_OF_MONTH);
-                                    month = calendar.get(Calendar.MONTH);
-                                    year = calendar.get(Calendar.YEAR);
-                                    hour = calendar.get(Calendar.HOUR_OF_DAY);
-                                    minute = calendar.get(Calendar.MINUTE);
-                                    long id = DB.insertReminder(text, type, day, month, year, hour,
-                                            minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
-                                            0, categoryId, null);
-                                    DB.updateReminderDateTime(id);
+                                    JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
+                                    JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                            dtStart, jsonRecurrence, null, null);
+                                    long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
                                     DB.addCalendarEvent(null, id, item.getId());
-                                    new AlarmReceiver().setAlarm(context, id);
                                 }
                             }
                         }

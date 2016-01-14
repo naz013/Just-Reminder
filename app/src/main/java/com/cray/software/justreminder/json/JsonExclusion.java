@@ -44,17 +44,21 @@ public class JsonExclusion {
     private JSONObject jsonObject;
 
     public JsonExclusion(JSONObject jsonObject){
-        this.jsonObject = jsonObject;
-        parse(jsonObject);
+        if (jsonObject != null) {
+            this.jsonObject = jsonObject;
+            parse(jsonObject);
+        }
     }
 
     public JsonExclusion(String object){
-        try {
-            jsonObject = new JSONObject(object);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (object != null) {
+            try {
+                jsonObject = new JSONObject(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            parse(jsonObject);
         }
-        parse(jsonObject);
     }
 
     public JsonExclusion(){

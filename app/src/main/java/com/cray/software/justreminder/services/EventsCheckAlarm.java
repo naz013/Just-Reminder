@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.reminder.DateType;
 
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.dmfs.rfc5545.recur.RecurrenceRule;
@@ -39,7 +42,6 @@ public class EventsCheckAlarm extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        long currTime = calendar.getTimeInMillis();
         SharedPrefs prefs = new SharedPrefs(context);
         int interval = prefs.loadInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL);
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -80,6 +82,7 @@ public class EventsCheckAlarm extends BroadcastReceiver {
                         ids.add(eventId);
                     } while (c.moveToNext());
                 }
+                if (c != null) c.close();
                 for (CalendarManager.EventItem item : eventItems){
                     long itemId = item.getId();
                     if (!ids.contains(itemId)) {
@@ -101,9 +104,7 @@ public class EventsCheckAlarm extends BroadcastReceiver {
                                 e.printStackTrace();
                             }
                         }
-                        String text = item.getTitle();
-                        String type = Constants.TYPE_REMINDER;
-
+                        String summary = item.getTitle();
                         String uuID = SyncHelper.generateID();
                         Cursor cf = DB.queryCategories();
                         String categoryId = null;
@@ -112,20 +113,12 @@ public class EventsCheckAlarm extends BroadcastReceiver {
                         }
                         if (cf != null) cf.close();
 
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(item.getDtStart());
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        int year = calendar.get(Calendar.YEAR);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = calendar.get(Calendar.MINUTE);
-
-                        long id = DB.insertReminder(text, type, day, month, year, hour,
-                                minute, 0, null, repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0,
-                                0, categoryId, null);
-                        DB.updateReminderDateTime(id);
+                        long due = item.getDtStart() + (repeat * AlarmManager.INTERVAL_DAY);
+                        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
+                        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
+                                due, jsonRecurrence, null, null);
+                        long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
                         DB.addCalendarEvent(null, id, item.getId());
-                        new AlarmReceiver().setAlarm(context, id);
                     }
                 }
                 DB.close();

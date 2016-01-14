@@ -166,6 +166,13 @@ public class NextBase {
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
+    public boolean setJson(long rowId, String json) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(JSON, json);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
     public boolean updateCount(long rowId, String json) {
         openGuard();
         JsonParser parser = new JsonParser(json);

@@ -292,11 +292,9 @@ public class SplashScreen extends Activity{
 
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                     List<JsonShopping> list = new ArrayList<>();
-
-                    ShoppingListDataProvider provider =
-                            new ShoppingListDataProvider(SplashScreen.this, id,
-                                    ShoppingList.ACTIVE);
-                    for (ShoppingList item : provider.getData()){
+                    ArrayList<ShoppingList> shoppingLists =
+                            ShoppingListDataProvider.load(SplashScreen.this, id);
+                    for (ShoppingList item : shoppingLists){
                         JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
                                 item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
                         list.add(jsonShopping);

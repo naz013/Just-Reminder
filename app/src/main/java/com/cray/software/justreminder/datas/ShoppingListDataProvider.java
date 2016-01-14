@@ -3,6 +3,8 @@ package com.cray.software.justreminder.datas;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.json.JsonParser;
@@ -84,6 +86,27 @@ public class ShoppingListDataProvider {
         }
 
         return data.get(index);
+    }
+
+    public static ArrayList<ShoppingList> load(Context mContext, long remId) {
+        ArrayList<ShoppingList> data = new ArrayList<>();
+        data.clear();
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor c = db.getShopItemsActive(remId);
+        if (c != null && c.moveToFirst()){
+            do {
+                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                int checked = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
+                long time = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+                int status = c.getInt(c.getColumnIndex(Constants.COLUMN_EXTRA_1));
+                data.add(new ShoppingList(title, checked, uuId, status, time));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        db.close();
+        return data;
     }
 
     public void load() {

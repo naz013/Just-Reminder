@@ -18,7 +18,7 @@ import android.widget.ToggleButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.Recurrence;
+import com.cray.software.justreminder.json.JsonExclusion;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -31,9 +31,6 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     private CheckBox selectInterval, selectHours;
     private LinearLayout intervalContainer, hoursContainer;
     private TextView from, to;
-    private ToggleButton zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven,
-            twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty,
-            twentyOne, twentyTwo, twentyThree;
 
     private int fromHour, fromMinute;
     private int toHour, toMinute;
@@ -99,7 +96,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
 
     private void saveResult() {
         if (selectHours.isChecked()) {
-            Recurrence recurrence = new Recurrence();
+            JsonExclusion recurrence = new JsonExclusion();
             List<Integer> list = getSelectedList();
             if(list.size() == 0) {
                 Messages.toast(this, "You don't check any hours!");
@@ -112,7 +109,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             finish();
         }
         if (selectInterval.isChecked()) {
-            Recurrence recurrence = new Recurrence();
+            JsonExclusion recurrence = new JsonExclusion();
             recurrence.addExclusion(getHour(fromHour, fromMinute), getHour(toHour, toMinute));
             Intent i = new Intent();
             i.putExtra("excl", recurrence.getJsonString());
@@ -134,30 +131,30 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     }
 
     private void initButtons() {
-        zero = (ToggleButton) findViewById(R.id.zero);
-        one = (ToggleButton) findViewById(R.id.one);
-        two = (ToggleButton) findViewById(R.id.two);
-        three = (ToggleButton) findViewById(R.id.three);
-        four = (ToggleButton) findViewById(R.id.four);
-        five = (ToggleButton) findViewById(R.id.five);
-        six = (ToggleButton) findViewById(R.id.six);
-        seven = (ToggleButton) findViewById(R.id.seven);
-        eight = (ToggleButton) findViewById(R.id.eight);
-        nine = (ToggleButton) findViewById(R.id.nine);
-        ten = (ToggleButton) findViewById(R.id.ten);
-        eleven = (ToggleButton) findViewById(R.id.eleven);
-        twelve = (ToggleButton) findViewById(R.id.twelve);
-        thirteen = (ToggleButton) findViewById(R.id.thirteen);
-        fourteen = (ToggleButton) findViewById(R.id.fourteen);
-        fifteen = (ToggleButton) findViewById(R.id.fifteen);
-        sixteen = (ToggleButton) findViewById(R.id.sixteen);
-        seventeen = (ToggleButton) findViewById(R.id.seventeen);
-        eighteen = (ToggleButton) findViewById(R.id.eighteen);
-        nineteen = (ToggleButton) findViewById(R.id.nineteen);
-        twenty = (ToggleButton) findViewById(R.id.twenty);
-        twentyOne = (ToggleButton) findViewById(R.id.twentyOne);
-        twentyTwo = (ToggleButton) findViewById(R.id.twentyTwo);
-        twentyThree = (ToggleButton) findViewById(R.id.twentyThree);
+        ToggleButton zero = (ToggleButton) findViewById(R.id.zero);
+        ToggleButton one = (ToggleButton) findViewById(R.id.one);
+        ToggleButton two = (ToggleButton) findViewById(R.id.two);
+        ToggleButton three = (ToggleButton) findViewById(R.id.three);
+        ToggleButton four = (ToggleButton) findViewById(R.id.four);
+        ToggleButton five = (ToggleButton) findViewById(R.id.five);
+        ToggleButton six = (ToggleButton) findViewById(R.id.six);
+        ToggleButton seven = (ToggleButton) findViewById(R.id.seven);
+        ToggleButton eight = (ToggleButton) findViewById(R.id.eight);
+        ToggleButton nine = (ToggleButton) findViewById(R.id.nine);
+        ToggleButton ten = (ToggleButton) findViewById(R.id.ten);
+        ToggleButton eleven = (ToggleButton) findViewById(R.id.eleven);
+        ToggleButton twelve = (ToggleButton) findViewById(R.id.twelve);
+        ToggleButton thirteen = (ToggleButton) findViewById(R.id.thirteen);
+        ToggleButton fourteen = (ToggleButton) findViewById(R.id.fourteen);
+        ToggleButton fifteen = (ToggleButton) findViewById(R.id.fifteen);
+        ToggleButton sixteen = (ToggleButton) findViewById(R.id.sixteen);
+        ToggleButton seventeen = (ToggleButton) findViewById(R.id.seventeen);
+        ToggleButton eighteen = (ToggleButton) findViewById(R.id.eighteen);
+        ToggleButton nineteen = (ToggleButton) findViewById(R.id.nineteen);
+        ToggleButton twenty = (ToggleButton) findViewById(R.id.twenty);
+        ToggleButton twentyOne = (ToggleButton) findViewById(R.id.twentyOne);
+        ToggleButton twentyTwo = (ToggleButton) findViewById(R.id.twentyTwo);
+        ToggleButton twentyThree = (ToggleButton) findViewById(R.id.twentyThree);
         if (one != null){
             setId(zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen,
                     fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twentyOne,

@@ -228,8 +228,6 @@
         <receiver android:name=".services.AutoSyncAlarm" />
         <receiver android:name=".services.EventsCheckAlarm" />
         <receiver android:name=".services.PositionDelayReceiver" />
-        <receiver android:name=".services.WeekDayReceiver" />
-        <receiver android:name=".services.MonthDayReceiver" />
         <receiver android:name=".services.DelayReceiver" />
         <receiver android:name=".services.BirthdayAlarm" />
         <receiver android:name=".services.BirthdayPermanentAlarm" />
@@ -407,14 +405,6 @@
         <activity
             android:name=".activities.FollowReminder"
             android:configChanges="keyboardHidden|orientation">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.WeekDayDialog"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteFullscreen">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

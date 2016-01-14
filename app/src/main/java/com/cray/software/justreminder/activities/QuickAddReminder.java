@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.activities;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -23,19 +24,19 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.Calendar;
 
@@ -205,35 +206,28 @@ public class QuickAddReminder extends AppCompatActivity {
         }
         String type = Constants.TYPE_REMINDER;
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
-        DataBase DB = new DataBase(QuickAddReminder.this);
-        DB.open();
-        String uuID = SyncHelper.generateID();
-        Cursor cf = DB.queryCategories();
+        DataBase db = new DataBase(QuickAddReminder.this);
+        db.open();
+        Cursor cf = db.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        long id;
+        db.close();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
+        JsonModel jsonModel = new JsonModel(text, type, categoryId,
+                SyncHelper.generateID(), startTime, startTime, jsonRecurrence, null, null);
+        long remId = new DateType(QuickAddReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
         if (isCalendar || isStock) {
-            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                    repeat, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
-            ReminderUtils.exportToCalendar(this, text, startTime, id, isCalendar, isStock);
-        } else {
-            id = DB.insertReminder(text, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                    repeat, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
+            ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }
         if (gtx.isLinked() && taskExport.isChecked()) {
-            ReminderUtils.exportToTasks(this, text, startTime, id);
+            ReminderUtils.exportToTasks(this, text, startTime, remId);
         }
-        DB.updateReminderDateTime(id);
-        DB.close();
-        new AlarmReceiver().setAlarm(QuickAddReminder.this, id);
-        new UpdatesHelper(QuickAddReminder.this).updateWidget();
-        new Notifier(QuickAddReminder.this).recreatePermanent();
         new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
     }

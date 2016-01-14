@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.helpers.TimeCount;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
@@ -192,61 +191,6 @@ public class DataBase {
 
     // Reminders database
 
-    @Deprecated
-    public long insertReminder(String text, String type, int day, int month, int year, int hour,
-                               int minute, int seconds, String number, int repeatCode, long repMinute,
-                               long count, double latitude, double longitude, String uID, String weekdays,
-                               int export, String melody, int radius, int color, int code,
-                               String categoryId, String exclusion) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(Constants.COLUMN_TEXT, text);
-        cv.put(Constants.COLUMN_TYPE, type);
-        cv.put(Constants.COLUMN_DAY, day);
-        cv.put(Constants.COLUMN_MONTH, month);
-        cv.put(Constants.COLUMN_YEAR, year);
-        cv.put(Constants.COLUMN_HOUR, hour);
-        cv.put(Constants.COLUMN_MINUTE, minute);
-        cv.put(Constants.COLUMN_SECONDS, seconds);
-        cv.put(Constants.COLUMN_NUMBER, number);
-        cv.put(Constants.COLUMN_REPEAT, repeatCode);
-        cv.put(Constants.COLUMN_REMIND_TIME, repMinute);
-        cv.put(Constants.COLUMN_REMINDERS_COUNT, count);
-        cv.put(Constants.COLUMN_LATITUDE, latitude);
-        cv.put(Constants.COLUMN_LONGITUDE, longitude);
-        cv.put(Constants.COLUMN_TECH_VAR, uID);
-        cv.put(Constants.COLUMN_WEEKDAYS, weekdays);
-        cv.put(Constants.COLUMN_IS_DONE, 0);
-        cv.put(Constants.COLUMN_ARCHIVED, 0);
-        cv.put(Constants.COLUMN_CUSTOM_RADIUS, radius);
-        cv.put(Constants.COLUMN_CUSTOM_MELODY, melody);
-        cv.put(Constants.COLUMN_EXPORT_TO_CALENDAR, export);
-        cv.put(Constants.COLUMN_LED_COLOR, color);
-        cv.put(Constants.COLUMN_SYNC_CODE, code);
-        cv.put(Constants.COLUMN_CATEGORY, categoryId);
-        cv.put(Constants.COLUMN_VIBRATION, -1);
-        cv.put(Constants.COLUMN_VOICE, -1);
-        cv.put(Constants.COLUMN_NOTIFICATION_REPEAT, -1);
-        cv.put(Constants.COLUMN_WAKE_SCREEN, -1);
-        cv.put(Constants.COLUMN_UNLOCK_DEVICE, -1);
-        cv.put(Constants.COLUMN_AUTO_ACTION, -1);
-        cv.put(Constants.COLUMN_REPEAT_LIMIT, -1);
-        cv.put(Constants.COLUMN_EXTRA_3, exclusion);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
-        return db.insert(CURRENT_TABLE_NAME, null, cv);
-    }
-
-    @Deprecated
-    public long updateReminderDateTime(long rowId) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        long time = new TimeCount(mContext).generateDateTime(rowId);
-        args.put(Constants.COLUMN_FEATURE_TIME, time);
-        db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null);
-        return time;
-    }
-
-    @Deprecated
     public boolean updateReminderAfterTime(long rowId, long time) {
         openGuard();
         ContentValues args = new ContentValues();
@@ -260,17 +204,6 @@ public class DataBase {
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
     }
 
-    @Deprecated
-    public Cursor queryGroup(String category) throws SQLException {
-        openGuard();
-        String order = Constants.COLUMN_IS_DONE + " ASC, " +
-                Constants.COLUMN_FEATURE_TIME + " ASC";
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_CATEGORY  + "='" + category + "'"
-                + " AND "+ Constants.COLUMN_ARCHIVED + "='"
-                + 0 + "'", null, null, null, order);
-    }
-
-    @Deprecated
     public Cursor queryGroup() throws SQLException {
         openGuard();
         String order = Constants.COLUMN_IS_DONE + " ASC, " +
@@ -279,33 +212,9 @@ public class DataBase {
     }
 
     @Deprecated
-    public Cursor getReminder(long rowId) throws SQLException {
-        openGuard();
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + rowId, null, null, null,
-                null, null);
-    }
-
-    @Deprecated
-    public Cursor getReminder(String uuID) throws SQLException {
-        openGuard();
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_TECH_VAR  + "='" + uuID + "'", null, null, null,
-                null, null);
-    }
-
-    @Deprecated
     public boolean deleteReminder(long rowId) {
         openGuard();
         return db.delete(CURRENT_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    @Deprecated
-    public int getCount() throws SQLException {
-        openGuard();
-        String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + CURRENT_TABLE_NAME;
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int cnt = cursor.getCount();
-        cursor.close();
-        return cnt;
     }
 
     // Contacts birthdays database
@@ -557,28 +466,12 @@ public class DataBase {
         return db.delete(CATEGORIES_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    //Working with reminder shopping list type table
-
     @Deprecated
-    public boolean updateShopItem(long rowId, int checked){
+    public Cursor getShopItemsActive(long remId) throws SQLException {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_ARCHIVED, checked);
-        return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    @Deprecated
-    public boolean updateShopItemStatus(long rowId, int status){
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_EXTRA_1, status);
-        return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    @Deprecated
-    public boolean deleteShopItem(long rowId) {
-        openGuard();
-        return db.delete(SHOPPING_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId +
+                        " AND "+ Constants.COLUMN_EXTRA_1 + "=" + 1, null, null, null,
+                Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
     }
 
     public void openGuard() throws SQLiteException {

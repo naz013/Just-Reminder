@@ -176,7 +176,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
 
     @Override
     public long getItemId(final int position) {
-        return provider.getItem(position).getId();
+        return 0;
     }
 
     @Override

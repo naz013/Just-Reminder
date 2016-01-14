@@ -37,17 +37,21 @@ public class JsonPlace {
     private JSONObject jsonObject;
 
     public JsonPlace(JSONObject jsonObject){
-        this.jsonObject = jsonObject;
-        parse(jsonObject);
+        if (jsonObject != null) {
+            this.jsonObject = jsonObject;
+            parse(jsonObject);
+        }
     }
 
     public JsonPlace(String object){
-        try {
-            jsonObject = new JSONObject(object);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (object != null) {
+            try {
+                jsonObject = new JSONObject(object);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            parse(jsonObject);
         }
-        parse(jsonObject);
     }
 
     public JsonPlace(){

@@ -167,19 +167,19 @@ public class ShoppingListPreview extends AppCompatActivity {
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList.switchItem(ShoppingListPreview.this, provider.getItem(position).getId(), isChecked);
+                ShoppingList.switchItem(ShoppingListPreview.this, id, isChecked, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemDelete(int position) {
-                ShoppingList.hideItem(ShoppingListPreview.this, provider.getItem(position).getId());
+                ShoppingList.hideItem(ShoppingListPreview.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemChange(int position) {
-                ShoppingList.showItem(ShoppingListPreview.this, provider.getItem(position).getId());
+                ShoppingList.showItem(ShoppingListPreview.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
         });

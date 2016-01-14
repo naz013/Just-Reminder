@@ -28,18 +28,19 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
@@ -70,8 +71,6 @@ public class TaskManager extends AppCompatActivity {
     private String action;
     private boolean isReminder = false;
     private boolean isDate = false;
-
-    private TasksData data = new TasksData(TaskManager.this);
 
     private static final int MENU_ITEM_DELETE = 12;
     private static final int MENU_ITEM_MOVE = 14;
@@ -163,6 +162,7 @@ public class TaskManager extends AppCompatActivity {
         if (action.matches(TasksConstants.CREATE)){
             toolbar.setTitle(getString(R.string.string_add_task));
             if (tmp == 0) {
+                TasksData data = new TasksData(TaskManager.this);
                 data.open();
                 Cursor c = data.getDefaultTasksList();
                 if (c != null && c.moveToFirst()) {
@@ -173,7 +173,9 @@ public class TaskManager extends AppCompatActivity {
                     setColor(color);
                 }
                 if (c != null) c.close();
+                data.close();
             } else {
+                TasksData data = new TasksData(TaskManager.this);
                 data.open();
                 Cursor c = data.getTasksList(tmp);
                 if (c != null && c.moveToFirst()) {
@@ -184,11 +186,13 @@ public class TaskManager extends AppCompatActivity {
                     setColor(color);
                 }
                 if (c != null) c.close();
+                data.close();
             }
         } else {
             toolbar.setTitle(getString(R.string.string_edit_task));
             id = tmp;
             if (id != 0) {
+                TasksData data = new TasksData(TaskManager.this);
                 data.open();
                 Cursor c = data.getTask(id);
                 if (c != null && c.moveToFirst()) {
@@ -221,16 +225,15 @@ public class TaskManager extends AppCompatActivity {
                         listText.setText(listTitle);
                         setColor(color);
                     }
+                    if (x != null) x.close();
 
                     if (remId > 0) {
-                        DataBase db = new DataBase(this);
+                        NextBase db = new NextBase(this);
                         db.open();
                         Cursor r = db.getReminder(remId);
                         if (r != null && r.moveToFirst()){
-                            int hour = r.getInt(r.getColumnIndex(Constants.COLUMN_HOUR));
-                            int minute = r.getInt(r.getColumnIndex(Constants.COLUMN_MINUTE));
-                            calendar.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar.set(Calendar.MINUTE, minute);
+                            long eventTime = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
+                            calendar.setTimeInMillis(eventTime);
                             timeField.setText(TimeUtil.getTime(calendar.getTime(),
                                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                             isReminder = true;
@@ -238,9 +241,9 @@ public class TaskManager extends AppCompatActivity {
                         if (r != null) r.close();
                         db.close();
                     }
-                    if (x != null) x.close();
                 }
                 if (c != null) c.close();
+                data.close();
             }
         }
         switchDate();
@@ -310,6 +313,7 @@ public class TaskManager extends AppCompatActivity {
 
     private void moveTask(String listId) {
         if (!listId.matches(initListId)) {
+            TasksData data = new TasksData(TaskManager.this);
             data.open();
             data.updateTask(id, listId);
             new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
@@ -322,6 +326,8 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void selectList(final boolean move) {
+        TasksData data = new TasksData(TaskManager.this);
+        data.open();
         Cursor c = data.getTasksLists();
         if (c != null && c.moveToFirst()){
             do {
@@ -330,6 +336,8 @@ public class TaskManager extends AppCompatActivity {
                 categories.add(new CategoryModel(listTitle, listId));
             } while (c.moveToNext());
         }
+        if (c != null) c.close();
+        data.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.select_list));
         builder.setAdapter(new SimpleAdapter(TaskManager.this,
@@ -381,6 +389,7 @@ public class TaskManager extends AppCompatActivity {
         if (isDate) due = calendar.getTimeInMillis();
         long remId = 0;
         if (isReminder) remId = saveReminder(taskName);
+        TasksData data = new TasksData(TaskManager.this);
         data.open();
         if (action.matches(TasksConstants.CREATE)){
             long localId = data.addTask(taskName, null, 0, false, due, null, null, note,
@@ -403,30 +412,28 @@ public class TaskManager extends AppCompatActivity {
                 }
             }
         }
-        if (data != null) data.close();
+        data.close();
         finish();
     }
 
     private long saveReminder(String task){
-        String type = Constants.TYPE_REMINDER;
-        DataBase DB = new DataBase(TaskManager.this);
-        DB.open();
-        String uuID = SyncHelper.generateID();
-        Cursor cf = DB.queryCategories();
+        DataBase db = new DataBase(TaskManager.this);
+        db.open();
+        Cursor cf = db.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
-        long id = DB.insertReminder(task, type, myDay, myMonth, myYear, myHour, myMinute, 0, null,
-                0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
-        DB.updateReminderDateTime(id);
-        new AlarmReceiver().setAlarm(TaskManager.this, id);
-        DB.close();
-        UpdatesHelper updatesHelper = new UpdatesHelper(TaskManager.this);
-        updatesHelper.updateWidget();
-        new Notifier(TaskManager.this).recreatePermanent();
-        return id;
+        db.close();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(myYear, myMonth, myDay, myHour, myMinute);
+        long due = calendar.getTimeInMillis();
+        JsonModel jsonModel = new JsonModel(task, Constants.TYPE_REMINDER, categoryId,
+                SyncHelper.generateID(), due, due, null, null, null);
+        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jsonModel);
     }
 
     private void deleteDialog() {
@@ -454,6 +461,7 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void deleteTask() {
+        TasksData data = new TasksData(TaskManager.this);
         data.open();
         Cursor c = data.getTask(id);
         if (c != null && c.moveToFirst()){
@@ -464,6 +472,7 @@ public class TaskManager extends AppCompatActivity {
                     0, null, id).execute();
         }
         if (c != null) c.close();
+        data.close();
     }
 
     private void setColor(int i){

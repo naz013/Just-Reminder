@@ -24,12 +24,12 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JsonExport;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 /**
@@ -109,11 +109,11 @@ public class Reminder {
                     res = false;
                 } else {
                     db.setUnDone(id, json);
-                    if (eventTime == 0) {
-                        context.startService(new Intent(context, GeolocationService.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        context.startService(new Intent(context, CheckPosition.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    if (eventTime <= 0) {
+                        if (!SuperUtil.isServiceRunning(context, GeolocationService.class)) {
+                            context.startService(new Intent(context, GeolocationService.class)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }
                     } else {
                         new PositionDelayReceiver().setDelay(context, id);
                     }
@@ -166,8 +166,10 @@ public class Reminder {
                 if (time > 0){
                     new PositionDelayReceiver().setDelay(context, idN);
                 } else {
-                    context.startService(new Intent(context, GeolocationService.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    if (!SuperUtil.isServiceRunning(context, GeolocationService.class)) {
+                        context.startService(new Intent(context, GeolocationService.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
                 }
             } else {
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
@@ -315,7 +317,7 @@ public class Reminder {
         NextBase db = new NextBase(context);
         db.open();
         db.setDelay(id, delay);
-        if (addAlarm) new DelayReceiver().setAlarm(context, 1, id, delay);
+        if (addAlarm) new DelayReceiver().setAlarm(context, id, delay);
         db.close();
     }
 

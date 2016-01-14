@@ -504,19 +504,19 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList.switchItem(ReminderDialog.this, provider.getItem(position).getId(), isChecked);
+                ShoppingList.switchItem(ReminderDialog.this, id, isChecked, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemDelete(int position) {
-                ShoppingList.hideItem(ReminderDialog.this, provider.getItem(position).getId());
+                ShoppingList.hideItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemChange(int position) {
-                ShoppingList.showItem(ReminderDialog.this, provider.getItem(position).getId());
+                ShoppingList.showItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
         });

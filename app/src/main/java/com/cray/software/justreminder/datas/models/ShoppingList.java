@@ -3,12 +3,14 @@ package com.cray.software.justreminder.datas.models;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonShopping;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -62,11 +64,29 @@ public class ShoppingList {
      * @param context application context.
      * @param id task identifier.
      * @param checked task status.
+     * @param uuId shopping item unique identifier.
      */
-    public static void switchItem(Context context, long id, boolean checked){
-        DataBase db = new DataBase(context);
+    public static void switchItem(Context context, long id, boolean checked, String uuId){
+        NextBase db = new NextBase(context);
         db.open();
-        db.updateShopItem(id, checked ? 1 : 0);
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()) {
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonParser jsonParser = new JsonParser(json);
+            JsonModel jsonModel = jsonParser.parse();
+            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            for (JsonShopping shopping : shoppings) {
+                if (shopping.getUuId().matches(uuId)) {
+                    shopping.setStatus(checked ? 1 : 0);
+                    break;
+                }
+            }
+
+            jsonModel.setShoppings(shoppings);
+            jsonParser.toJson(jsonModel);
+            db.setJson(id, jsonParser.getJSON());
+        }
+        if (c != null) c.close();
         db.close();
     }
 
@@ -75,10 +95,27 @@ public class ShoppingList {
      * @param context application context.
      * @param id task identifier.
      */
-    public static void hideItem(Context context, long id){
-        DataBase db = new DataBase(context);
+    public static void hideItem(Context context, long id, String uuId){
+        NextBase db = new NextBase(context);
         db.open();
-        db.updateShopItemStatus(id, DELETED);
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()) {
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonParser jsonParser = new JsonParser(json);
+            JsonModel jsonModel = jsonParser.parse();
+            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            for (JsonShopping shopping : shoppings) {
+                if (shopping.getUuId().matches(uuId)) {
+                    shopping.setDeleted(DELETED);
+                    break;
+                }
+            }
+
+            jsonModel.setShoppings(shoppings);
+            jsonParser.toJson(jsonModel);
+            db.setJson(id, jsonParser.getJSON());
+        }
+        if (c != null) c.close();
         db.close();
     }
 
@@ -87,10 +124,27 @@ public class ShoppingList {
      * @param context application context.
      * @param id task identifier.
      */
-    public static void showItem(Context context, long id){
-        DataBase db = new DataBase(context);
+    public static void showItem(Context context, long id, String uuId){
+        NextBase db = new NextBase(context);
         db.open();
-        db.updateShopItemStatus(id, ACTIVE);
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()) {
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonParser jsonParser = new JsonParser(json);
+            JsonModel jsonModel = jsonParser.parse();
+            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            for (JsonShopping shopping : shoppings) {
+                if (shopping.getUuId().matches(uuId)) {
+                    shopping.setDeleted(ACTIVE);
+                    break;
+                }
+            }
+
+            jsonModel.setShoppings(shoppings);
+            jsonParser.toJson(jsonModel);
+            db.setJson(id, jsonParser.getJSON());
+        }
+        if (c != null) c.close();
         db.close();
     }
 
@@ -101,9 +155,25 @@ public class ShoppingList {
      * @param uuId shop item unique identifier.
      */
     public static void removeItem(Context context, long id, String uuId){
-        DataBase db = new DataBase(context);
+        NextBase db = new NextBase(context);
         db.open();
-        db.deleteShopItem(id);
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()) {
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            JsonParser jsonParser = new JsonParser(json);
+            JsonModel jsonModel = jsonParser.parse();
+            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            for (int i = 0; i < shoppings.size(); i++) {
+                if (shoppings.get(i).getUuId().matches(uuId)) {
+                    shoppings.remove(i);
+                    break;
+                }
+            }
+            jsonModel.setShoppings(shoppings);
+            jsonParser.toJson(jsonModel);
+            db.setJson(id, jsonParser.getJSON());
+        }
+        if (c != null) c.close();
         db.close();
     }
 

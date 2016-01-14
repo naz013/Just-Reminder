@@ -40,8 +40,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                 String type = c.getString(c.getColumnIndex(NextBase.TYPE));
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                JsonModel jsonModel = new JsonModel();
-                new JsonParser(json).parse(jsonModel);
+                JsonModel jsonModel = new JsonParser(json).parse();
                 String melody = jsonModel.getMelody().getMelodyPath();
                 int color = jsonModel.getLed().getColor();
                 showNotification(context, task, type, id, color, melody);
