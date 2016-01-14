@@ -168,7 +168,7 @@ public class TimeCount {
         ArrayList<Integer> weekdays = null;
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
-            startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
             type = c.getString(c.getColumnIndex(NextBase.TYPE));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
@@ -198,7 +198,7 @@ public class TimeCount {
         return dateTime;
     }
 
-    private long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
+    public long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
         long date = 0;
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());

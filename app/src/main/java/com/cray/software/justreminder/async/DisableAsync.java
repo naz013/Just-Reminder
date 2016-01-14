@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.utils.LocationUtil;
 
@@ -30,7 +29,7 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
             do {
                 String tp = c.getString(c.getColumnIndex(NextBase.TYPE));
                 if (tp.contains(Constants.TYPE_LOCATION)) {
-                    long startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                    long startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                     int isShown = c.getInt(c.getColumnIndex(NextBase.REMINDER_STATUS));
                     int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
                     if (startTime == 0) {

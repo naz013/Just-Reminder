@@ -68,7 +68,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         long due = 0;
         long repeat = 0;
         if (c != null && c.moveToNext()) {
-            due = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             repeat = new JsonParser(json).getRecurrence().getRepeat();
         }

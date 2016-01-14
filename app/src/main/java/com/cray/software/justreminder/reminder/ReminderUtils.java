@@ -121,7 +121,7 @@ public class ReminderUtils {
      */
     public static long getTime(int day, int month, int year, int hour, int minute, long after){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day, hour, minute);
+        calendar.set(year, month, day, hour, minute, 0);
         return calendar.getTimeInMillis() + after;
     }
 

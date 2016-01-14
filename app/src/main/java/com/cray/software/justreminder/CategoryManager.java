@@ -33,7 +33,6 @@ public class CategoryManager extends AppCompatActivity {
             deepOrange;
     private Toolbar toolbar;
 
-    private DataBase db;
     private long id;
     private int color = 0;
     private int prevId;
@@ -60,7 +59,7 @@ public class CategoryManager extends AppCompatActivity {
 
         editField = (EditText) findViewById(R.id.editField);
         if (id != 0) {
-            db = new DataBase(CategoryManager.this);
+            DataBase db = new DataBase(CategoryManager.this);
             db.open();
             Cursor c = db.getCategory(id);
             if (c != null && c.moveToFirst()){
@@ -126,7 +125,7 @@ public class CategoryManager extends AppCompatActivity {
             editField.setError(getString(R.string.empty_field_error));
             return;
         }
-        db = new DataBase(CategoryManager.this);
+        DataBase db = new DataBase(CategoryManager.this);
         db.open();
         if (id != 0){
             db.updateCategory(id, text, System.currentTimeMillis(), color);

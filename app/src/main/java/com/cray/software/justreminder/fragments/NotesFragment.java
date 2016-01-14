@@ -42,7 +42,6 @@ import com.cray.software.justreminder.NotePreviewFragment;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
-    private NotesBase db;
     private SharedPrefs sPrefs;
     private RecyclerView currentList;
     private LinearLayout emptyItem;
@@ -81,13 +80,14 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
             item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
         }
-        db = new NotesBase(getActivity());
+        NotesBase db = new NotesBase(getActivity());
         if (!db.isOpen()) {
             db.open();
         }
         if (db.getCount() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
         }
+        db.close();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -257,7 +257,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void deleteAll(){
-        db = new NotesBase(getActivity());
+        NotesBase db = new NotesBase(getActivity());
         if (!db.isOpen()) {
             db.open();
         }
@@ -272,6 +272,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (c != null) {
             c.close();
         }
+        db.close();
     }
 
     private void previewNote(long id, View view){

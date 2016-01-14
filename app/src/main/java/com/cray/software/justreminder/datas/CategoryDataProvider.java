@@ -13,8 +13,6 @@ import java.util.List;
 public class CategoryDataProvider {
     private List<CategoryModel> data;
     private Context mContext;
-    private CategoryModel mLastRemovedData;
-    private int mLastRemovedPosition = -1;
 
     public CategoryDataProvider(Context mContext){
         data = new ArrayList<>();
@@ -58,66 +56,10 @@ public class CategoryDataProvider {
         return res;
     }
 
-    public int removeItem(CategoryModel item){
-        int res = 0;
-        if (data.size() > 0) {
-            for (int i = 0; i < data.size(); i++){
-                CategoryModel item1 = data.get(i);
-                if (item.getUuID().matches(item1.getUuID())) {
-                    data.remove(i);
-                    res = i;
-                    break;
-                }
-            }
-        }
-        return res;
-    }
-
-    public void removeItem(int position){
-        mLastRemovedData = data.remove(position);
-        mLastRemovedPosition = position;
-    }
-
-    public void moveItem(int from, int to){
-        if (to < 0 || to >= getCount()) {
-            throw new IndexOutOfBoundsException("index = " + to);
-        }
-
-        if (from == to) {
-            return;
-        }
-
-        final CategoryModel item = data.remove(from);
-
-        data.add(to, item);
-        mLastRemovedPosition = -1;
-    }
-
-    public int undoLastRemoval() {
-        if (mLastRemovedData != null) {
-            int insertedPosition;
-            if (mLastRemovedPosition >= 0 && mLastRemovedPosition < data.size()) {
-                insertedPosition = mLastRemovedPosition;
-            } else {
-                insertedPosition = data.size();
-            }
-
-            data.add(insertedPosition, mLastRemovedData);
-
-            mLastRemovedData = null;
-            mLastRemovedPosition = -1;
-
-            return insertedPosition;
-        } else {
-            return -1;
-        }
-    }
-
     public CategoryModel getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
-
         return data.get(index);
     }
 

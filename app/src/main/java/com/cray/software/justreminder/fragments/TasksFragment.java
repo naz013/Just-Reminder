@@ -236,22 +236,16 @@ public class TasksFragment extends Fragment {
                     db.deleteTask(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
                 } while (x.moveToNext());
             }
-            if (x != null) {
-                x.close();
-            }
+            if (x != null) x.close();
             if (def == 1){
                 Cursor cc = db.getTasksLists();
                 if (cc != null && cc.moveToFirst()){
                     db.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
                 }
-                if (cc != null) {
-                    cc.close();
-                }
+                if (cc != null) cc.close();
             }
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
     }
 
@@ -346,9 +340,7 @@ public class TasksFragment extends Fragment {
                 map.put(listId, color);
             } while (c.moveToNext());
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
         return lists;
     }
@@ -374,9 +366,7 @@ public class TasksFragment extends Fragment {
                     }
                 } while (c.moveToNext());
             }
-            if (c != null) {
-                c.close();
-            }
+            if (c != null) c.close();
         } else {
             Cursor c = db.getTasks(taskList.getListId());
             if (c != null && c.moveToFirst()){
@@ -394,6 +384,7 @@ public class TasksFragment extends Fragment {
                     }
                 } while (c.moveToNext());
             }
+            if (c != null) c.close();
         }
         db.close();
         return mData;
@@ -417,6 +408,7 @@ public class TasksFragment extends Fragment {
         if (c != null) {
             c.close();
         }
+        db.close();
         new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 
         if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);

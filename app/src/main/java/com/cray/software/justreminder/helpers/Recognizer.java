@@ -21,9 +21,12 @@ import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.BirthdaysVoiceList;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceResult;
+import com.cray.software.justreminder.json.JsonAction;
+import com.cray.software.justreminder.json.JsonExport;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.RecognizerUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
@@ -40,12 +43,7 @@ import java.util.regex.Pattern;
 public class Recognizer {
 
     private Context mContext;
-    private DataBase DB = new DataBase(mContext);
-    private SyncHelper sHelp;
-    private UpdatesHelper updatesHelper;
     private SharedPrefs sPrefs;
-
-    private AlarmReceiver alarm = new AlarmReceiver();
 
     private final SimpleDateFormat[] dateTaskFormats = {
             new SimpleDateFormat("HH mm"),
@@ -1910,69 +1908,61 @@ public class Recognizer {
         }
     }
 
-    private void saveTimeReminder(String task, boolean isWidget, boolean export, int dayOfMonth,
+    private long saveTimeReminder(String summary, boolean isWidget, boolean export, int dayOfMonth,
                               int monthOfYear, int mYear, int hourOfDay, int minuteOfHour,
                               long after){
-        DB = new DataBase(mContext);
+        DataBase DB = new DataBase(mContext);
         DB.open();
-        sHelp = new SyncHelper(mContext);
-        String uuID = SyncHelper.generateID();
-        sPrefs = new SharedPrefs(mContext);
-        long id;
         Cursor cf = DB.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
+        DB.close();
+
+        String uuID = SyncHelper.generateID();
+        sPrefs = new SharedPrefs(mContext);
+        long due = ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after);
+        JsonRecurrence jsonRecurrence = new JsonRecurrence(dayOfMonth, 0, -1, null, after);
+        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
+        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_TIME, categoryId, uuID, due,
+                due, jsonRecurrence, null, jsonExport);
+        long id = new DateType(mContext, Constants.TYPE_TIME).save(jsonModel);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-            id = DB.insertReminder(task, Constants.TYPE_TIME,
-                    dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
-                    0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
-            exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after), id);
-        } else {
-            id = DB.insertReminder(task, Constants.TYPE_TIME,
-                    dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, 0, after, 0,
-                    0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
+            exportToCalendar(summary, due, id);
         }
-        DB.updateReminderDateTime(id);
-        alarm.setAlarm(mContext, id);
-        updatesHelper = new UpdatesHelper(mContext);
-        updatesHelper.updateWidget();
         showResult(id, isWidget);
+        return id;
     }
 
-    private void saveReminder(String task, boolean isWidget, boolean export, int dayOfMonth,
+    private void saveReminder(String summary, boolean isWidget, boolean export, int dayOfMonth,
                               int monthOfYear, int mYear, int hourOfDay, int minuteOfHour,
-                              int repeat){
-        DB = new DataBase(mContext);
+                              long repeat){
+        DataBase DB = new DataBase(mContext);
         DB.open();
-        sHelp = new SyncHelper(mContext);
-        String uuID = SyncHelper.generateID();
-        sPrefs = new SharedPrefs(mContext);
-        long id;
         Cursor cf = DB.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {
             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
         }
         if (cf != null) cf.close();
+        DB.close();
+
+        String uuID = SyncHelper.generateID();
+        sPrefs = new SharedPrefs(mContext);
+        if (repeat < 10000) repeat *= AlarmManager.INTERVAL_DAY;
+        long due = ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0);
+        JsonRecurrence jsonRecurrence = new JsonRecurrence(dayOfMonth, repeat, -1, null, 0);
+        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
+        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
+                due, jsonRecurrence, null, jsonExport);
+        long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-            id = DB.insertReminder(task, Constants.TYPE_REMINDER,
-                    dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
-                    0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
-            exportToCalendar(task, ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0), id);
-        } else {
-            id = DB.insertReminder(task, Constants.TYPE_REMINDER,
-                    dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0, null, repeat, 0, 0,
-                    0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
+            exportToCalendar(summary, due, id);
         }
-        DB.updateReminderDateTime(id);
-        alarm.setAlarm(mContext, id);
-        updatesHelper = new UpdatesHelper(mContext);
-        updatesHelper.updateWidget();
         showResult(id, isWidget);
     }
 
@@ -3063,28 +3053,27 @@ public class Recognizer {
             res = keyStr.substring(indexStart).trim();
         }
 
-        sHelp = new SyncHelper(mContext);
         sPrefs = new SharedPrefs(mContext);
         ColorSetter cs = new ColorSetter(mContext);
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
         int year = calendar1.get(Calendar.YEAR);
-        int hour = calendar1.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar1.get(Calendar.MINUTE);
         String date = day + "-" + month + "-" + year;
 
         String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(mContext);
         db.open();
+        long id = 0;
         if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            db.saveNote(sHelp.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
+            id = db.saveNote(SyncHelper.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
         } else {
-            db.saveNote(res, date, cs.getNoteColor(12), uuID, null, 5);
+            id = db.saveNote(res, date, cs.getNoteColor(12), uuID, null, 5);
         }
 
+        long remId = 0;
         if (sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
-            DB = new DataBase(mContext);
+            DataBase DB = new DataBase(mContext);
             DB.open();
             Cursor cf = DB.queryCategories();
             String categoryId = null;
@@ -3092,13 +3081,18 @@ public class Recognizer {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
             }
             if (cf != null) cf.close();
-            long id = DB.insertReminder(res, Constants.TYPE_TIME, day, month, year, hour, minute, 0, null,
-                    0, sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME),
-                    0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId, null);
-            alarm.setAlarm(mContext, id);
-            DB.updateReminderDateTime(id);
-            new UpdatesHelper(mContext).updateWidget();
+            DB.close();
+
+            sPrefs = new SharedPrefs(mContext);
+            long after = sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
+            long due = calendar1.getTimeInMillis() + after;
+            JsonRecurrence jsonRecurrence = new JsonRecurrence(0, 0, -1, null, after);
+            JsonModel jsonModel = new JsonModel(res, Constants.TYPE_REMINDER, categoryId,
+                    SyncHelper.generateID(), due, due, jsonRecurrence, null, null);
+            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
         }
+        db.linkToReminder(id, remId);
+        db.close();
         new UpdatesHelper(mContext).updateNotesWidget();
         Toast.makeText(mContext, mContext.getString(R.string.note_saved_toast), Toast.LENGTH_SHORT).show();
     }
@@ -3122,7 +3116,6 @@ public class Recognizer {
             user = keyStr.substring(indexStart, indexEnd).trim();
         }
 
-        Contacts contacts = new Contacts(mContext);
         String number = Contacts.getNumber(user, mContext);
 
         if (keyStr.matches(".*send .* to .* at [0-9][0-9]?(:? ?)[0-9]?[0-9]? .*")) {
@@ -3144,14 +3137,10 @@ public class Recognizer {
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
 
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        /*if (keyStr.matches(".*(p|a?m).*") && locale){
-            pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        }*/
         Matcher matcher = pattern.matcher(keyStr);
         if (matcher.find()) {
             String time = matcher.group().trim();
-            for (SimpleDateFormat format:dateTaskFormats){
-                Date date;
+            for (SimpleDateFormat format : dateTaskFormats) {
                 Calendar calendar = Calendar.getInstance();
                 if (keyStr.matches(".*tomorrow.*") || keyStr.matches(".*завтра.*") || keyStr.matches(".*завтра.*")) {
                     calendar.setTimeInMillis(calendar.getTimeInMillis() + dayLong);
@@ -3160,39 +3149,15 @@ public class Recognizer {
                 int currentMonth = calendar.get(Calendar.MONTH);
                 int currentYear = calendar.get(Calendar.YEAR);
                 try {
-                    date = format.parse(time);
+                    Date date = format.parse(time);
                     if (date != null){
                         calendar.setTime(date);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(mContext);
-                        DB.open();
-                        sHelp = new SyncHelper(mContext);
-                        String uuID = SyncHelper.generateID();
-                        sPrefs = new SharedPrefs(mContext);
-                        long id;
-                        Cursor cf = DB.queryCategories();
-                        String categoryId = null;
-                        if (cf != null && cf.moveToFirst()) {
-                            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        }
-                        if (cf != null) cf.close();
-                        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-                            id = DB.insertReminder(text, Constants.TYPE_MESSAGE,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
-                                    1, null, 0, 0, 0, categoryId, null);
-                            exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth, currentYear, hour, minute, 0), id);
-                        } else {
-                            id = DB.insertReminder(text, Constants.TYPE_MESSAGE,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number, 0, 0, 0, 0, 0, uuID, null,
-                                    0, null, 0, 0, 0, categoryId, null);
-                        }
-                        DB.updateReminderDateTime(id);
-                        alarm.setAlarm(mContext, id);
-                        DB.close();
-                        updatesHelper = new UpdatesHelper(mContext);
-                        updatesHelper.updateWidget();
+                        calendar.set(Calendar.DAY_OF_MONTH, currentDay);
+                        calendar.set(Calendar.MONTH, currentMonth);
+                        calendar.set(Calendar.YEAR, currentYear);
+
+                        long id = saveActionReminder(Constants.TYPE_MESSAGE, text,
+                                calendar.getTimeInMillis(), number, export);
                         showResult(id, isWidget);
                         break;
                     }
@@ -3201,6 +3166,32 @@ public class Recognizer {
                 }
             }
         }
+    }
+
+    private long saveActionReminder(String type, String summary, long due, String number,
+                                    boolean export) {
+        DataBase DB = new DataBase(mContext);
+        DB.open();
+        String uuID = SyncHelper.generateID();
+        sPrefs = new SharedPrefs(mContext);
+        Cursor cf = DB.queryCategories();
+        String categoryId = null;
+        if (cf != null && cf.moveToFirst()) {
+            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        }
+        if (cf != null) cf.close();
+        DB.close();
+
+        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
+        JsonAction jsonAction = new JsonAction(type, number, -1);
+        JsonModel jsonModel = new JsonModel(summary, type,
+                categoryId, uuID, due, due, null, jsonAction, jsonExport);
+        long id = new DateType(mContext, type).save(jsonModel);
+        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
+            exportToCalendar(summary, due, id);
+        }
+        return id;
     }
 
     private void callTask(String keyStr, boolean isWidget) {
@@ -3226,13 +3217,9 @@ public class Recognizer {
 
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
 
-        Contacts contacts = new Contacts(mContext);
         String number = Contacts.getNumber(user, mContext);
 
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        /*if (keyStr.matches(".*(p|a?m).*") && locale){
-            pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        }*/
         Matcher matcher = pattern.matcher(keyStr);
         if (matcher.find()) {
             String time = matcher.group().trim();
@@ -3249,37 +3236,11 @@ public class Recognizer {
                     date = format.parse(time);
                     if (date != null){
                         calendar.setTime(date);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(mContext);
-                        DB.open();
-                        sHelp = new SyncHelper(mContext);
-                        String uuID = SyncHelper.generateID();
-                        sPrefs = new SharedPrefs(mContext);
-                        long id;
-                        Cursor cf = DB.queryCategories();
-                        String categoryId = null;
-                        if (cf != null && cf.moveToFirst()) {
-                            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        }
-                        if (cf != null) cf.close();
-                        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-                            id = DB.insertReminder(user, Constants.TYPE_CALL,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number,
-                                    0, 0, 0, 0, 0, uuID, null, 1, null, 0, 0, 0, categoryId, null);
-                            exportToCalendar(user, ReminderUtils.getTime(currentDay, currentMonth,
-                                    currentYear, hour, minute, 0), id);
-                        } else {
-                            id = DB.insertReminder(user, Constants.TYPE_CALL,
-                                    currentDay, currentMonth, currentYear, hour, minute, 0, number,
-                                    0, 0, 0, 0, 0, uuID, null, 0, null, 0, 0, 0, categoryId, null);
-                        }
-                        DB.updateReminderDateTime(id);
-                        alarm.setAlarm(mContext, id);
-                        DB.close();
-                        updatesHelper = new UpdatesHelper(mContext);
-                        updatesHelper.updateWidget();
+                        calendar.set(Calendar.DAY_OF_MONTH, currentDay);
+                        calendar.set(Calendar.MONTH, currentMonth);
+                        calendar.set(Calendar.YEAR, currentYear);
+                        long id = saveActionReminder(Constants.TYPE_MESSAGE, user,
+                                calendar.getTimeInMillis(), number, export);
                         showResult(id, isWidget);
                         break;
                     }
@@ -3308,10 +3269,9 @@ public class Recognizer {
             res = keyStr.substring(0, index).trim();
         }
 
+        boolean export = RecognizerUtils.isCalendarExportable(keyStr);
+
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        /*if (keyStr.matches(".*(p|a?m).*") && locale){
-            pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        }*/
         Matcher matcher = pattern.matcher(keyStr);
         if (matcher.find()) {
             String time = matcher.group().trim();
@@ -3322,25 +3282,32 @@ public class Recognizer {
                     date = format.parse(time);
                     if (date != null){
                         calendar.setTime(date);
-                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = calendar.get(Calendar.MINUTE);
-                        DB = new DataBase(mContext);
-                        DB.open();
-                        Cursor cf = DB.queryCategories();
+
+                        DataBase db = new DataBase(mContext);
+                        db.open();
+                        Cursor cf = db.queryCategories();
                         String categoryId = null;
                         if (cf != null && cf.moveToFirst()) {
                             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
                         }
                         if (cf != null) cf.close();
-                        sHelp = new SyncHelper(mContext);
+                        db.close();
+
                         String uuID = SyncHelper.generateID();
-                        long id = DB.insertReminder(res, Constants.TYPE_WEEKDAY, 0, 0, 0,
-                                hour, minute, 0, null, 0, 0, 0, 0, 0, uuID, weekdays, 0, null, 0, 0,
-                                0, categoryId, null);
-                        new WeekDayReceiver().setAlarm(mContext, id);
-                        DB.close();
-                        updatesHelper = new UpdatesHelper(mContext);
-                        updatesHelper.updateWidget();
+                        sPrefs = new SharedPrefs(mContext);
+                        ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
+                        long due = new TimeCount(mContext).getNextWeekdayTime(calendar.getTimeInMillis(),
+                                list, 0);
+                        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, 0, -1, list, 0);
+                        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
+                        JsonModel jsonModel = new JsonModel(res, Constants.TYPE_WEEKDAY, categoryId, uuID, due,
+                                due, jsonRecurrence, null, jsonExport);
+                        long id = new DateType(mContext, Constants.TYPE_WEEKDAY).save(jsonModel);
+                        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
+                                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
+                            exportToCalendar(res, due, id);
+                        }
+
                         showResult(id, isWidget);
                         break;
                     }
@@ -3389,39 +3356,10 @@ public class Recognizer {
                 int currentYear = calendar.get(Calendar.YEAR);
                 int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int currentMinute = calendar.get(Calendar.MINUTE);
-                int currentSeconds = calendar.get(Calendar.SECOND);
-                long minute = hour * 60 * 1000;
-                DB = new DataBase(mContext);
-                DB.open();
-                sHelp = new SyncHelper(mContext);
-                String uuID = SyncHelper.generateID();
-                sPrefs = new SharedPrefs(mContext);
-                long id;
-                Cursor cf = DB.queryCategories();
-                String categoryId = null;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                }
-                if (cf != null) cf.close();
-                if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                        sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-                    id = DB.insertReminder(res, Constants.TYPE_TIME,
-                            currentDay, currentMonth, currentYear, currentHour,
-                            currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 1,
-                            null, 0, 0, 0, categoryId, null);
-                    exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
-                            currentHour, currentMinute, minute), id);
-                } else {
-                    id = DB.insertReminder(res, Constants.TYPE_TIME,
-                            currentDay, currentMonth, currentYear, currentHour,
-                            currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null, 0,
-                            null, 0, 0, 0, categoryId, null);
-                }
-                DB.updateReminderDateTime(id);
-                alarm.setAlarm(mContext, id);
-                DB.close();
-                updatesHelper = new UpdatesHelper(mContext);
-                updatesHelper.updateWidget();
+                long after = hour * 60 * 1000;
+
+                long id = saveTimeReminder(res, isWidget, export, currentDay, currentMonth, currentYear,
+                        currentHour, currentMinute, after);
                 showResult(id, isWidget);
             } else if (keyStr.matches(".* minutes?.*") ||
                     keyStr.matches(".* хвилини?у?.*") ||
@@ -3433,39 +3371,10 @@ public class Recognizer {
                 int currentYear = calendar.get(Calendar.YEAR);
                 int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
                 int currentMinute = calendar.get(Calendar.MINUTE);
-                int currentSeconds = calendar.get(Calendar.SECOND);
-                long minute = hour * 1000;
-                DB = new DataBase(mContext);
-                DB.open();
-                sHelp = new SyncHelper(mContext);
-                String uuID = SyncHelper.generateID();
-                sPrefs = new SharedPrefs(mContext);
-                long id;
-                Cursor cf = DB.queryCategories();
-                String categoryId = null;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                }
-                if (cf != null) cf.close();
-                if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                        sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
-                    id = DB.insertReminder(res, Constants.TYPE_TIME,
-                            currentDay, currentMonth, currentYear, currentHour,
-                            currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
-                            1, null, 0, 0, 0, categoryId, null);
-                    exportToCalendar(res, ReminderUtils.getTime(currentDay, currentMonth, currentYear,
-                            currentHour, currentMinute, minute), id);
-                } else {
-                    id = DB.insertReminder(res, Constants.TYPE_TIME,
-                            currentDay, currentMonth, currentYear, currentHour,
-                            currentMinute, currentSeconds, null, 0, minute, 0, 0, 0, uuID, null,
-                            0, null, 0, 0, 0, categoryId, null);
-                }
-                DB.updateReminderDateTime(id);
-                alarm.setAlarm(mContext, id);
-                DB.close();
-                updatesHelper = new UpdatesHelper(mContext);
-                updatesHelper.updateWidget();
+                long after = hour * 1000;
+                long id = saveTimeReminder(res, isWidget, export, currentDay, currentMonth, currentYear,
+                        currentHour, currentMinute, after);
+                showResult(id, isWidget);
                 showResult(id, isWidget);
             }
         }
@@ -3494,9 +3403,6 @@ public class Recognizer {
         boolean export = RecognizerUtils.isCalendarExportable(keyStr);
 
         Pattern pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        /*if (keyStr.matches(".*(p|a?m).*") && locale){
-            pattern = Pattern.compile("([01]?\\d|2[0-3]) ?(([0-5]?\\d?)?)");
-        }*/
         Matcher matcher = pattern.matcher(keyStr);
         if (matcher.find()) {
             String time = matcher.group().trim();

@@ -29,6 +29,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -406,16 +407,22 @@ public class LogInActivity extends Activity {
                 DB.addCategory("General", time, defUiID, 5);
                 DB.addCategory("Work", time, SyncHelper.generateID(), 3);
                 DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-                Cursor c = DB.queryGroup();
+
+                NextBase db = new NextBase(mContext);
+                db.open();
+                Cursor c = db.queryGroup();
                 if (c != null && c.moveToFirst()){
                     do {
-                        DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                        db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
                     } while (c.moveToNext());
                 }
                 if (c != null) {
                     c.close();
                 }
+                db.close();
             }
+            if (cat != null) cat.close();
+            DB.close();
 
             //import reminders
             publishProgress(getString(R.string.string_getting_reminders));
@@ -430,8 +437,6 @@ public class LogInActivity extends Activity {
                 publishProgress(getString(R.string.string_getting_birthdays));
                 ioHelper.restoreBirthday(false);
             }
-
-            DB.close();
             return null;
         }
 
@@ -513,14 +518,22 @@ public class LogInActivity extends Activity {
                 DB.addCategory("General", time, defUiID, 5);
                 DB.addCategory("Work", time, SyncHelper.generateID(), 3);
                 DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-                Cursor c = DB.queryGroup();
+
+                NextBase db = new NextBase(mContext);
+                db.open();
+                Cursor c = db.queryGroup();
                 if (c != null && c.moveToFirst()){
-                    DB.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
+                    do {
+                        db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
+                    } while (c.moveToNext());
                 }
                 if (c != null) {
                     c.close();
                 }
+                db.close();
             }
+            if (cat != null) cat.close();
+            DB.close();
 
             //import reminders
             publishProgress(getString(R.string.string_getting_reminders));
@@ -536,8 +549,6 @@ public class LogInActivity extends Activity {
                 ioHelper.restoreBirthday(true);
             }
 
-            DB.close();
-
             //getting Google Tasks
             GTasksHelper helper = new GTasksHelper(ctx);
             TaskLists lists = null;
@@ -549,7 +560,6 @@ public class LogInActivity extends Activity {
 
             TasksData data = new TasksData(ctx);
             data.open();
-
             if (lists != null && lists.size() > 0) {
                 publishProgress(getString(R.string.string_getting_google_tasks));
                 for (TaskList item : lists.getItems()) {
@@ -646,6 +656,8 @@ public class LogInActivity extends Activity {
                     }
                 }
             }
+
+            data.close();
             return null;
         }
 
@@ -708,13 +720,13 @@ public class LogInActivity extends Activity {
                     ids.add(id);
                     names.add(name);
                 } while (c.moveToNext());
-                c.close();
             }
-            String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
+            if (c != null) c.close();
+            db.close();
 
+            String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
             Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null,
                     ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
             while (cur.moveToNext()) {
                 String contactId = cur.getString(cur.getColumnIndex(ContactsContract.Data._ID));
 

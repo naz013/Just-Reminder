@@ -11,13 +11,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,7 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.cray.software.justreminder.ScreenManager;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -106,27 +108,32 @@ public class GeolocationFragment extends Fragment {
 
     private void loadMarkers(){
         googleMap.clear();
-        DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen()) {
-            DB.open();
+        NextBase db = new NextBase(getActivity());
+        if (!db.isOpen()) {
+            db.open();
         }
-        Cursor c = DB.queryGroup();
+        Cursor c = db.queryAllLocations();
         Random random = new Random();
         ArrayList<MarkerModel> list = new ArrayList<>();
         if (c != null && c.moveToFirst()){
             ColorSetter cSetter = new ColorSetter(getActivity());
             do {
-                String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                int radius = c.getInt(c.getColumnIndex(Constants.COLUMN_CUSTOM_RADIUS));
+                String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+                String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                long id = c.getLong(c.getColumnIndex(NextBase._ID));
+
+                JsonPlace jsonPlace = new JsonParser(json).getPlace();
+
+                double latitude = jsonPlace.getLatitude();
+                double longitude = jsonPlace.getLongitude();
+                int radius = jsonPlace.getRadius();
                 if (radius == -1) {
                     radius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
                 }
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                    int rand = random.nextInt(16-2)+1;
+
+                if (type.contains(Constants.TYPE_LOCATION)) {
+                    int rand = random.nextInt(16 - 2) + 1;
                     LatLng pos = new LatLng(latitude, longitude);
                     list.add(new MarkerModel(task, pos, rand, id));
                     googleMap.addMarker(new MarkerOptions()
@@ -150,7 +157,7 @@ public class GeolocationFragment extends Fragment {
         if (c != null) {
             c.close();
         }
-        DB.close();
+        db.close();
     }
 
     public void loaderAdapter(ArrayList<MarkerModel> list){

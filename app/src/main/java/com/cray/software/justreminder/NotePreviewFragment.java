@@ -27,7 +27,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.constants.FileConfig;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.activities.ImagePreview;
@@ -55,7 +56,6 @@ public class NotePreviewFragment extends AppCompatActivity {
 
     private long remId;
     private ColorSetter cSetter;
-    private SharedPrefs sPrefs;
     private Toolbar toolbar;
     private long mParam1;
     private Bitmap img;
@@ -67,7 +67,6 @@ public class NotePreviewFragment extends AppCompatActivity {
     private ImageView imageView;
     private TextView noteText, reminderTime;
     private FloatingActionButton mFab;
-    private NotesBase base;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,11 +110,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                 });
 
         toolbar.inflateMenu(R.menu.preview_note_menu);
-
-        sPrefs = new SharedPrefs(NotePreviewFragment.this);
-
         mParam1 = getIntent().getLongExtra(Constants.EDIT_ID, 0);
-
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
         scrollContent = (ScrollView) findViewById(R.id.scrollContent);
@@ -182,7 +177,7 @@ public class NotePreviewFragment extends AppCompatActivity {
                         isDirectory = sdPathDr.mkdirs();
                     }
                     if (isDirectory) {
-                        String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
+                        String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
                         File f = new File(sdPathDr
                                 + File.separator + fileName);
                         boolean isFile = false;
@@ -277,12 +272,12 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void moveToStatus() {
-        base = new NotesBase(this);
+        NotesBase base = new NotesBase(this);
         if (!base.isOpen()) {
             base.open();
         }
         Cursor c = base.getNote(mParam1);
-        sPrefs = new SharedPrefs(NotePreviewFragment.this);
+        SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
         if (c != null && c.moveToFirst()){
             new Notifier(this)
                     .showNoteNotification((sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT) ?
@@ -292,6 +287,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         if (c != null) {
             c.close();
         }
+        base.close();
     }
 
     @Override
@@ -321,7 +317,7 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void loadData(){
-        base = new NotesBase(NotePreviewFragment.this);
+        NotesBase base = new NotesBase(NotePreviewFragment.this);
         base.open();
         imageByte = null;
         img = null;
@@ -369,11 +365,11 @@ public class NotePreviewFragment extends AppCompatActivity {
             }
 
             if (remId != 0){
-                DataBase dataBase = new DataBase(NotePreviewFragment.this);
+                NextBase dataBase = new NextBase(NotePreviewFragment.this);
                 dataBase.open();
                 Cursor r = dataBase.getReminder(remId);
                 if (r != null && r.moveToFirst()){
-                    long feature = r.getLong(r.getColumnIndex(Constants.COLUMN_FEATURE_TIME));
+                    long feature = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     if (feature != 0) {
@@ -384,8 +380,12 @@ public class NotePreviewFragment extends AppCompatActivity {
                             sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                     reminderContainer.setVisibility(View.VISIBLE);
                 }
+                if (r != null) r.close();
+                dataBase.close();
             }
         }
+        if (c != null) c.close();
+        base.close();
     }
 
     private void shareNote(){
@@ -464,7 +464,6 @@ public class NotePreviewFragment extends AppCompatActivity {
 
     private void deleteNote() {
         NoteModel.deleteNote(mParam1, this, null);
-        sPrefs = new SharedPrefs(this);
-        sPrefs.saveBoolean("isNew", true);
+        new SharedPrefs(this).saveBoolean("isNew", true);
     }
 }

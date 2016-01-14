@@ -20,23 +20,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.ScreenManager;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
     private LinearLayout emptyItem;
-
-    private DataBase DB;
     private ReminderDataProvider provider;
 
     private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
@@ -58,12 +55,14 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
-        DB = new DataBase(getActivity());
-        DB.open();
-        Cursor c = DB.getArchivedReminders();
+        NextBase db = new NextBase(getActivity());
+        db.open();
+        Cursor c = db.getArchivedReminders();
         if (c.getCount() == 0){
             menu.findItem(R.id.action_delete_all).setVisible(false);
         }
+        c.close();
+        db.close();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -131,12 +130,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     public void loaderAdapter(){
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        DB = new DataBase(getActivity());
-        if (!DB.isOpen()) {
-            DB.open();
-        }
-        provider = new ReminderDataProvider(getActivity());
-        provider.setCursor(DB.getArchivedReminders());
+        provider = new ReminderDataProvider(getActivity(), true, null);
         reloadView();
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
@@ -159,20 +153,19 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     }
 
     private void deleteAll(){
-        DB = new DataBase(getActivity());
-        if (!DB.isOpen()) {
-            DB.open();
+        NextBase db = new NextBase(getActivity());
+        if (!db.isOpen()) {
+            db.open();
         }
-        Cursor c = DB.getArchivedReminders();
+        Cursor c = db.getArchivedReminders();
         if (c != null && c.moveToFirst()){
             do{
-                long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                long rowId = c.getLong(c.getColumnIndex(NextBase._ID));
                 Reminder.delete(rowId, getActivity());
             }while (c.moveToNext());
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
+        db.close();
         if (mCallbacks != null) {
             mCallbacks.showSnackbar(R.string.string_trash_cleared);
         }

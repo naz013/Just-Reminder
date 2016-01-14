@@ -74,6 +74,10 @@ public class ShoppingListDataProvider {
         return res;
     }
 
+    public void removeItem(int position){
+        data.remove(position);
+    }
+
     public ShoppingList getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;

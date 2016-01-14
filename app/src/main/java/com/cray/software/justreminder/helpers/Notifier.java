@@ -20,6 +20,7 @@ import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.activities.WeekDayDialog;
@@ -782,53 +783,24 @@ public class Notifier {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.text, resultPendingInt);
         remoteViews.setOnClickPendingIntent(R.id.featured, resultPendingInt);
-        DataBase db = new DataBase(mContext);
+        NextBase db = new NextBase(mContext);
         db.open();
         int count = db.getCountActive();
         ArrayList<Long> dates = new ArrayList<>();
         ArrayList<String> tasks = new ArrayList<>();
         dates.clear();
         tasks.clear();
-        Cursor c = db.queryGroup();
+        Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()){
             do {
-                int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                long remCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                long afterTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                if ((type.startsWith(Constants.TYPE_SKYPE) ||
-                        type.matches(Constants.TYPE_CALL) ||
-                        type.startsWith(Constants.TYPE_APPLICATION) ||
-                        type.matches(Constants.TYPE_MESSAGE) ||
-                        type.matches(Constants.TYPE_REMINDER) ||
-                        type.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                    long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
-                            afterTime, repCode, remCount, 0);
-                    if (time > 0) {
-                        dates.add(time);
-                        tasks.add(text);
-                    }
-                } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
-                    long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
-                    if (time > 0) {
-                        dates.add(time);
-                        tasks.add(text);
-                    }
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                    long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
-                    if (time > 0) {
-                        dates.add(time);
-                        tasks.add(text);
-                    }
+                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
+                String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+
+                if (eventTime > 0) {
+                    dates.add(eventTime);
+                    tasks.add(summary);
                 }
+
             } while (c.moveToNext());
         }
         if (c != null) {

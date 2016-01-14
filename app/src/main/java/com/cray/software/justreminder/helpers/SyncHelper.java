@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
@@ -49,7 +50,6 @@ import java.util.UUID;
  */
 public class SyncHelper {
 
-    private static final String SHOPPING_REMINDER_TASKS = "shopping_tasks";
     private static final String SHOPPING_REMINDER_LIST = "shopping_list";
 
     private Context mContext;
@@ -90,7 +90,7 @@ public class SyncHelper {
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }
-                    String exportFileName = uuID + Constants.FILE_NAME_GROUP;
+                    String exportFileName = uuID + FileConfig.FILE_NAME_GROUP;
 
                     File file = new File(sdPathDr, exportFileName);
                     if (file.exists()) {
@@ -142,7 +142,7 @@ public class SyncHelper {
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }
-                    String exportFileName = uuID + Constants.FILE_NAME_BIRTHDAY;
+                    String exportFileName = uuID + FileConfig.FILE_NAME_BIRTHDAY;
 
                     File file = new File(sdPathDr, exportFileName);
                     if (file.exists()) {
@@ -180,7 +180,7 @@ public class SyncHelper {
                         if (!sdPathDr.exists()) {
                             sdPathDr.mkdirs();
                         }
-                        String exportFileName = uuID + Constants.FILE_NAME_REMINDER;
+                        String exportFileName = uuID + FileConfig.FILE_NAME_REMINDER;
 
                         File file = new File(sdPathDr, exportFileName);
                         if (file.exists()) {
@@ -232,7 +232,7 @@ public class SyncHelper {
             if (!sdPathDr.exists()) {
                 sdPathDr.mkdirs();
             }
-            String exportFileName = uuID + Constants.FILE_NAME_NOTE;
+            String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
 
             file = new File(sdPathDr, exportFileName);
             if (file.exists()) {
@@ -286,7 +286,7 @@ public class SyncHelper {
                     if (!sdPathDr.exists()) {
                         sdPathDr.mkdirs();
                     }
-                    String exportFileName = uuID + Constants.FILE_NAME_NOTE;
+                    String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
 
                     File file = new File(sdPathDr, exportFileName);
                     if (file.exists()) {
@@ -983,7 +983,7 @@ public class SyncHelper {
                         if (item.has(Constants.COLUMN_EXTRA_1))
                             status = item.getInt(Constants.COLUMN_EXTRA_1);
                         int checked = item.getInt(Constants.COLUMN_ARCHIVED);
-                        list.add(new ShoppingList(0, title, checked, uuId, 0, status, time));
+                        list.add(new ShoppingList(title, checked, uuId, status, time));
                     }
                 }
             }
@@ -1007,10 +1007,8 @@ public class SyncHelper {
      */
     public static boolean isSdPresent() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
     public static String getSdCardPath() {

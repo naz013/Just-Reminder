@@ -46,6 +46,33 @@ public class JsonModel {
     }
 
     public JsonModel(String summary, String type, String category, String uuId,
+                     long eventTime, long startTime, JsonRecurrence jsonRecurrence,
+                     JsonAction jsonAction, JsonExport jsonExport) {
+        this.summary = summary;
+        this.type = type;
+        this.category = category;
+        this.uuId = uuId;
+        this.eventTime = eventTime;
+        this.startTime = startTime;
+        this.count = 0;
+        this.vibrate = -1;
+        this.notificationRepeat = -1;
+        this.voice = -1;
+        this.awake = -1;
+        this.unlock = -1;
+        this.exclusion = null;
+        this.led = null;
+        this.melody = null;
+        this.recurrence = jsonRecurrence;
+        this.action = jsonAction;
+        this.export = jsonExport;
+        this.place = null;
+        this.tags = null;
+        this.places = null;
+        this.shoppings = null;
+    }
+
+    public JsonModel(String summary, String type, String category, String uuId,
                      long eventTime, long startTime, long count, int vibrate,
                      int notificationRepeat, int voice, int awake, int unlock,
                      JsonExclusion jsonExclusion, JsonLed jsonLed, JsonMelody jsonMelody,

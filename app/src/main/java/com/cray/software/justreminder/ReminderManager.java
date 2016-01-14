@@ -2644,8 +2644,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     String title = shoppingList.getTitle();
                     String uuid = shoppingList.getUuId();
                     long time = shoppingList.getTime();
-                    int status = shoppingList.getStatus();
-                    jsonShoppings.add(new JsonShopping(title, status, uuid, time));
+                    int status = shoppingList.getIsChecked();
+                    int deleted = shoppingList.getStatus();
+                    jsonShoppings.add(new JsonShopping(title, status, uuid, time, deleted));
                 }
             }
         }

@@ -92,7 +92,7 @@ public class WidgetDataProvider {
             do {
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
                 String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
 
                 if (!mType.contains(Constants.TYPE_LOCATION)) {
                     Calendar calendar1 = Calendar.getInstance();

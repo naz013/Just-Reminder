@@ -147,7 +147,7 @@ public class EventsDataProvider {
                 String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
                 String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                 String category = c.getString(c.getColumnIndex(NextBase.CATEGORY));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
 
                 int color = 0;

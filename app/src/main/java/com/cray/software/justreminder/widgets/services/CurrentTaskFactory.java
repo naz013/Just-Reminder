@@ -69,7 +69,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
                 String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
                 String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
 
                 JsonModel jsonModel = new JsonParser(json).parse();

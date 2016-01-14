@@ -28,10 +28,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.CategoryModel;
@@ -40,16 +42,9 @@ import com.cray.software.justreminder.datas.models.ReminderNote;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.services.AlarmReceiver;
-import com.cray.software.justreminder.services.DelayReceiver;
-import com.cray.software.justreminder.services.PositionDelayReceiver;
-import com.cray.software.justreminder.services.WeekDayReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -127,15 +122,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentId = new Intent(ReminderPreviewFragment.this, ReminderManager.class);
                 if (id != 0) {
-                    intentId.putExtra(Constants.EDIT_ID, id);
-                    new AlarmReceiver().cancelAlarm(ReminderPreviewFragment.this, id);
-                    new WeekDayReceiver().cancelAlarm(ReminderPreviewFragment.this, id);
-                    new DelayReceiver().cancelAlarm(ReminderPreviewFragment.this, id);
-                    new PositionDelayReceiver().cancelDelay(ReminderPreviewFragment.this, id);
-                    startActivity(intentId);
-                    new DisableAsync(ReminderPreviewFragment.this).execute();
+                    Reminder.edit(id, ReminderPreviewFragment.this);
                 }
             }
         });
@@ -353,17 +341,19 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             }
         }
         if (ids == R.id.action_make_copy){
-            DataBase db = new DataBase(this);
+            NextBase db = new NextBase(this);
             if (!db.isOpen()) {
                 db.open();
             }
             Cursor c = db.getReminder(id);
             if (c != null && c.moveToFirst()){
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                if (!type.startsWith(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)){
+                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+                if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)){
                     showDialog();
                 }
             }
+            if (c != null) c.close();
+            db.close();
         }
 
         return super.onOptionsItemSelected(item);
@@ -473,6 +463,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                 reminderNote.setTaskListId(taskListId);
                 reminderNote.setTaskIdentifier(taskId);
             }
+            if (c != null) c.close();
+            data.close();
             return reminderNote;
         }
 

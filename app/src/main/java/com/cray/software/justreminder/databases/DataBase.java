@@ -255,14 +255,6 @@ public class DataBase {
     }
 
     @Deprecated
-    public boolean setGroup(long rowId, String groupId) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_CATEGORY, groupId);
-        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    @Deprecated
     public Cursor queryAllReminders() throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
@@ -284,23 +276,6 @@ public class DataBase {
         String order = Constants.COLUMN_IS_DONE + " ASC, " +
                 Constants.COLUMN_FEATURE_TIME + " ASC";
         return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 0 + "'", null, null, null, order);
-    }
-
-    @Deprecated
-    public Cursor getArchivedReminders() throws SQLException {
-        openGuard();
-        String order = Constants.COLUMN_FEATURE_TIME + " ASC";
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 1 + "'", null, null, null, order);
-    }
-
-    @Deprecated
-    public Cursor getActiveReminders() throws SQLException {
-        openGuard();
-        String order = Constants.COLUMN_IS_DONE + " ASC, " +
-                Constants.COLUMN_FEATURE_TIME + " ASC";
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_IS_DONE  + "='" + 0 + "'"
-                + " AND "+ Constants.COLUMN_ARCHIVED + "='"
-                + 0 + "'", null, null, null, order);
     }
 
     @Deprecated
@@ -327,18 +302,6 @@ public class DataBase {
     public int getCount() throws SQLException {
         openGuard();
         String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + CURRENT_TABLE_NAME;
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int cnt = cursor.getCount();
-        cursor.close();
-        return cnt;
-    }
-
-    @Deprecated
-    public int getCountActive() throws SQLException {
-        openGuard();
-        String countQuery = "SELECT " + Constants.COLUMN_TYPE + " FROM " + CURRENT_TABLE_NAME +
-                " WHERE " + Constants.COLUMN_ARCHIVED + " = '" + 0 + "' AND " + Constants.COLUMN_IS_DONE +
-                " = '" + 0 + "'";
         Cursor cursor = db.rawQuery(countQuery, null);
         int cnt = cursor.getCount();
         cursor.close();
@@ -610,13 +573,6 @@ public class DataBase {
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_EXTRA_1, status);
         return db.update(SHOPPING_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    @Deprecated
-    public Cursor getShopItems(long remId) throws SQLException {
-        openGuard();
-        return db.query(SHOPPING_TABLE_NAME, null, Constants.COLUMN_REMINDER_ID + "=" + remId,
-                null, null, null, Constants.COLUMN_ARCHIVED + " ASC, " + Constants.COLUMN_DATE_TIME + " ASC", null);
     }
 
     @Deprecated

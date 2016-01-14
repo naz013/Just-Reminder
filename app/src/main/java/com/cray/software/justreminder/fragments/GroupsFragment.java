@@ -20,19 +20,21 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.ScreenManager;
 
 import java.io.File;
 
@@ -208,7 +210,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             if (SyncHelper.isSdPresent()) {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-                String exportFileName = uuId + Constants.FILE_NAME_GROUP;
+                String exportFileName = uuId + FileConfig.FILE_NAME_GROUP;
                 File file = new File(sdPathDr, exportFileName);
                 if (file.exists()) {
                     file.delete();
@@ -233,17 +235,17 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             if (gdx.isLinked() && isInternet) {
                 gdx.deleteGroup(uuId);
             }
-            DataBase dataBase = new DataBase(mContext);
-            dataBase.open();
-            Cursor c = dataBase.queryGroup(uuId);
+            NextBase db = new NextBase(mContext);
+            db.open();
+            Cursor c = db.queryGroup(uuId);
             if (c != null && c.moveToFirst()){
                 do {
-                    String remUUId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                    dataBase.deleteReminder(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)));
+                    String remUUId = c.getString(c.getColumnIndex(NextBase.UUID));
+                    db.deleteReminder(c.getLong(c.getColumnIndex(NextBase._ID)));
                     if (SyncHelper.isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        String exportFileName = remUUId + Constants.FILE_NAME_REMINDER;
+                        String exportFileName = remUUId + FileConfig.FILE_NAME_REMINDER;
                         File file = new File(sdPathDr, exportFileName);
                         if (file.exists()) {
                             file.delete();

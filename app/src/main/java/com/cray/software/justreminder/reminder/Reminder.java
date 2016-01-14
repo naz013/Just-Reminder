@@ -51,7 +51,7 @@ public class Reminder {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-            long due = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            long due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             JsonExport jsonExport = new JsonParser(json).getExport();
             int exp = jsonExport.getCalendar();
@@ -94,7 +94,7 @@ public class Reminder {
             type = c.getString(c.getColumnIndex(NextBase.TYPE));
             json = c.getString(c.getColumnIndex(NextBase.JSON));
             isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-            eventTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
         }
         if (c != null) c.close();
         boolean res;

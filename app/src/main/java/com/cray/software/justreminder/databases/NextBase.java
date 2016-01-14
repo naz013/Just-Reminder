@@ -34,7 +34,7 @@ public class NextBase {
     public static final String _ID = "_id";
     public static final String SUMMARY = "summary";
     public static final String TYPE = "type";
-    public static final String START_TIME = "start_time";
+    public static final String EVENT_TIME = "event_time";
     public static final String DELAY = "delay";
     public static final String CATEGORY = "category";
     public static final String JSON = "_json";
@@ -58,7 +58,7 @@ public class NextBase {
                     CATEGORY + " VARCHAR(255), " +
                     UUID + " VARCHAR(255), " +
                     TAGS + " VARCHAR(255), " +
-                    START_TIME + " INTEGER, " +
+                    EVENT_TIME + " INTEGER, " +
                     DELAY + " INTEGER, " +
                     DB_STATUS + " INTEGER, " +
                     DB_LIST + " INTEGER, " +
@@ -121,7 +121,7 @@ public class NextBase {
         ContentValues cv = new ContentValues();
         cv.put(SUMMARY, summary);
         cv.put(TYPE, type);
-        cv.put(START_TIME, eventTime);
+        cv.put(EVENT_TIME, eventTime);
         cv.put(UUID, uID);
         cv.put(CATEGORY, categoryId);
         cv.put(JSON, json);
@@ -139,7 +139,7 @@ public class NextBase {
         ContentValues cv = new ContentValues();
         cv.put(SUMMARY, summary);
         cv.put(TYPE, type);
-        cv.put(START_TIME, eventTime);
+        cv.put(EVENT_TIME, eventTime);
         cv.put(UUID, uID);
         cv.put(CATEGORY, categoryId);
         cv.put(JSON, json);
@@ -154,7 +154,7 @@ public class NextBase {
     public boolean updateReminderStartTime(long rowId, long eventTime) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(START_TIME, eventTime);
+        cv.put(EVENT_TIME, eventTime);
         cv.put(DELAY, 0);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
@@ -243,26 +243,26 @@ public class NextBase {
 
     public Cursor queryGroup(String category) throws SQLException {
         openGuard();
-        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'"
                 + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor queryGroup() throws SQLException {
         openGuard();
-        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_LIST  + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getArchivedReminders() throws SQLException {
         openGuard();
-        String order = START_TIME + " ASC";
+        String order = EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
     }
 
     public Cursor getActiveReminders() throws SQLException {
         openGuard();
-        String order = DB_STATUS + " ASC, " + START_TIME + " ASC";
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_STATUS + "='" + 0 + "'" + " AND "+ DB_LIST + "='"
                 + 0 + "'", null, null, null, order);
     }
@@ -305,15 +305,9 @@ public class NextBase {
     }
 
     public void openGuard() throws SQLiteException {
-        if (isOpen()) {
-            return;
-        }
-
+        if (isOpen()) return;
         open();
-
-        if (isOpen()) {
-            return;
-        }
+        if (isOpen()) return;
         throw new SQLiteException("Could not open database");
     }
 }

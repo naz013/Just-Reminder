@@ -33,6 +33,7 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
@@ -44,7 +45,8 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -85,9 +87,6 @@ public class NotesManager extends AppCompatActivity {
     private TextView remindDate, remindTime;
     private ImageButton discardReminder;
     private ImageView noteImage;
-    private AlarmReceiver alarm = new AlarmReceiver();
-
-    private NotesBase DB = new NotesBase(NotesManager.this);
 
     private ColorSetter cSetter = new ColorSetter(NotesManager.this);
     private SharedPrefs sPrefs = new SharedPrefs(NotesManager.this);
@@ -212,7 +211,7 @@ public class NotesManager extends AppCompatActivity {
                         isDirectory = sdPathDr.mkdirs();
                     }
                     if (isDirectory) {
-                        String fileName = SyncHelper.generateID() + Constants.FILE_NAME_IMAGE;
+                        String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
                         File f = new File(sdPathDr
                                 + File.separator + fileName);
                         boolean isCreated = f.createNewFile();
@@ -290,8 +289,9 @@ public class NotesManager extends AppCompatActivity {
             id = intent.getLongExtra(Constants.EDIT_ID, 0);
         }
         if (id != 0){
-            DB.open();
-            Cursor c = DB.getNote(id);
+            NotesBase db = new NotesBase(NotesManager.this);
+            db.open();
+            Cursor c = db.getNote(id);
             if (c != null && c.moveToFirst()){
                 String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                 if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
@@ -314,6 +314,7 @@ public class NotesManager extends AppCompatActivity {
             if (c != null) {
                 c.close();
             }
+            db.close();
         } else if (name != null){
             String scheme = name.getScheme();
             if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
@@ -484,23 +485,24 @@ public class NotesManager extends AppCompatActivity {
         if (uuID == null || uuID.matches("")) {
             uuID = SyncHelper.generateID();
         }
-        DB.open();
+        NotesBase db = new NotesBase(NotesManager.this);
+        db.open();
         if (id != 0){
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                DB.updateNote(id, SyncHelper.encrypt(note), date, color, uuID, image, style);
+                db.updateNote(id, SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
-                DB.updateNote(id, note, date, color, uuID, image, style);
+                db.updateNote(id, note, date, color, uuID, image, style);
             }
         } else {
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-                id = DB.saveNote(SyncHelper.encrypt(note), date, color, uuID, image, style);
+                id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
-                id = DB.saveNote(note, date, color, uuID, image, style);
+                id = db.saveNote(note, date, color, uuID, image, style);
             }
         }
 
         if (isReminderAttached()){
-            Cursor cf = new DataBase(NotesManager.this).queryCategories();
+            Cursor cf = new DataBase(NotesManager.this).open().queryCategories();
             String categoryId = null;
             if (cf != null && cf.moveToFirst()) {
                 categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -508,14 +510,15 @@ public class NotesManager extends AppCompatActivity {
             if (cf != null) {
                 cf.close();
             }
-            long remId = new DataBase(NotesManager.this).insertReminder(note, Constants.TYPE_REMINDER, myDay,
-                    myMonth, myYear, myHour, myMinute, 0, null, 0, 0, 0, 0, 0, SyncHelper.generateID(),
-                    null, 0, null, 0, 0, 0, categoryId, null);
-            new DataBase(NotesManager.this).updateReminderDateTime(remId);
-            DB.linkToReminder(id, remId);
-            alarm.setAlarm(NotesManager.this, remId);
-        }
 
+            calendar1.set(myYear, myMonth, myDay, myHour, myMinute);
+            long due = calendar1.getTimeInMillis();
+            JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
+                    SyncHelper.generateID(), due, due, null, null, null);
+            long remId = new DateType(NotesManager.this, Constants.TYPE_REMINDER).save(jsonModel);
+            db.linkToReminder(id, remId);
+        }
+        db.close();
         new SharedPrefs(this).saveBoolean(Prefs.NOTE_CHANGED, true);
         new UpdatesHelper(NotesManager.this).updateNotesWidget();
         finish();
@@ -733,9 +736,6 @@ public class NotesManager extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (DB != null && DB.isOpen()) {
-            DB.close();
-        }
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);

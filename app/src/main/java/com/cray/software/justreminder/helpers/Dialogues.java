@@ -400,9 +400,11 @@ public class Dialogues {
             public void onClick(DialogInterface dialog, int which) {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
-                    CalendarManager.CalendarItem item = list.get(which);
-                    prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
-                    prefs.savePrefs(Prefs.CALENDAR_ID, item.getId());
+                    if (list != null) {
+                        CalendarManager.CalendarItem item = list.get(which);
+                        prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
+                        prefs.savePrefs(Prefs.CALENDAR_ID, item.getId());
+                    }
                 }
             }
         });
@@ -571,7 +573,6 @@ public class Dialogues {
             public void onClick(DialogInterface dialog, int which) {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
-                    String locale = Language.ENGLISH;
                     if (which == 0) {
                         prefs.saveInt(prefsToSave, LED.WHITE);
                     } else if (which == 1) {

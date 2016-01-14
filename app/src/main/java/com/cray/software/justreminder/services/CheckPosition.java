@@ -48,7 +48,7 @@ public class CheckPosition extends IntentService {
         if (c != null && c.moveToFirst()) {
             do {
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
-                long startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                long startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 String type = c.getString(c.getColumnIndex(NextBase.TYPE));
                 String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                 int status = c.getInt(c.getColumnIndex(NextBase.LOCATION_STATUS));

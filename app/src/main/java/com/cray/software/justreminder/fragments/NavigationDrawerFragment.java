@@ -31,6 +31,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
@@ -295,10 +296,6 @@ public class NavigationDrawerFragment extends Fragment implements
         }
     }
 
-    public boolean isDrawerOpen() {
-        return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
-    }
-
     public void setUp(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -510,16 +507,17 @@ public class NavigationDrawerFragment extends Fragment implements
         super.onResume();
         reloadItems();
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        DataBase DB = new DataBase(getActivity());
-        if (!DB.isOpen()) {
-            DB.open();
+        NextBase db = new NextBase(getActivity());
+        if (!db.isOpen()) {
+            db.open();
         }
-        if (DB.getCountActive() > 0){
+        if (db.getCountActive() > 0){
             if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
                 startActivity(new Intent(getActivity(), HelpOverflow.class)
                         .putExtra(Constants.ITEM_ID_INTENT, 1));
             }
         }
+        db.close();
 
         if (mCallbacks != null) {
             mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);

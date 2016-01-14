@@ -27,7 +27,7 @@ public class PositionDelayReceiver extends BroadcastReceiver {
         Integer i = (int) (long) id;
         long startTime = 0;
         if (c != null && c.moveToNext()) {
-            startTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+            startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
         }
         if (c != null) c.close();
         Intent intent = new Intent(context, PositionDelayReceiver.class);

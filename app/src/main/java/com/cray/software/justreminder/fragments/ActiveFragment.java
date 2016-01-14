@@ -182,17 +182,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void loaderAdapter(final String groupId){
         lastId = groupId;
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        DataBase db = new DataBase(getActivity());
-        if (!db.isOpen()) {
-            db.open();
-        }
-        provider = new ReminderDataProvider(getActivity());
-        if (groupId != null) {
-            provider.setCursor(db.queryGroup(groupId));
-        } else {
-            provider.setCursor(db.queryGroup());
-        }
-        db.close();
+        provider = new ReminderDataProvider(getActivity(), false, groupId);
         reloadView();
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);

@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -29,7 +28,7 @@ public class Interval {
      * @param fri friday.
      * @param sat saturday.
      * @param sun sunday.
-     * @return
+     * @return list of integers for each day of week
      */
     public ArrayList<Integer> getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
                                    boolean sat, boolean sun){
@@ -65,7 +64,7 @@ public class Interval {
     /**
      * Get repeat interval string by repeat code.
      * @param code repeat code.
-     * @return
+     * @return String that represent repeat interval for reminder
      */
     public String getInterval(int code){
         String interval;
@@ -100,7 +99,7 @@ public class Interval {
     /**
      * Get repeat interval string for time by repeat code.
      * @param code repeat code.
-     * @return
+     * @return String that represent time interval for reminder (TIME)
      */
     public String getTimeInterval(int code){
         if (code == 0) return mContext.getString(R.string.interval_zero);

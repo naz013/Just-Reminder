@@ -3,7 +3,6 @@ package com.cray.software.justreminder;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -42,9 +41,7 @@ import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Intervals;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
@@ -71,15 +68,14 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.services.AlarmReceiver;
+import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
@@ -95,11 +91,9 @@ import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccoun
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
 import com.hexrain.flextcal.FlextCal;
-import com.hexrain.flextcal.FlextHelper;
 import com.hexrain.flextcal.FlextListener;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -160,8 +154,6 @@ public class ScreenManager extends AppCompatActivity
     private Activity a = this;
     private Date eventsDate = null;
     private FlextCal calendarView;
-
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -977,168 +969,18 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void loadReminders() {
-        DataBase db = new DataBase(this);
-        if (!db.isOpen()) {
-            db.open();
-        }
         mPrefs = new SharedPrefs(this);
         boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        HashMap<DateTime, String> dates = new HashMap<>();
-        dates.clear();
+        HashMap<DateTime, String> dates = ReminderDataProvider.getReminders(this, isFeature);
         calendarView.setBackgroundForOne(ViewUtils.getColor(this, cSetter.colorReminderCalendar()));
-        Cursor c = db.getActiveReminders();
-        if (c != null && c.moveToFirst()){
-            do {
-                int myHour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                int myMinute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                int myDay = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                int myMonth = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                int myYear = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                int repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                long remCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                long afterTime = c.getInt(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                String type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                String task = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                int isDone = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                if ((type.startsWith(Constants.TYPE_SKYPE) ||
-                        type.matches(Constants.TYPE_CALL) ||
-                        type.startsWith(Constants.TYPE_APPLICATION) ||
-                        type.matches(Constants.TYPE_MESSAGE) ||
-                        type.matches(Constants.TYPE_REMINDER) ||
-                        type.matches(Constants.TYPE_TIME)) && isDone == 0) {
-                    long time = TimeCount.getEventTime(myYear, myMonth, myDay, myHour, myMinute, 0,
-                            afterTime, repCode, remCount, 0);
-                    Calendar calendar = Calendar.getInstance();
-                    if (time > 0) {
-                        calendar.setTimeInMillis(time);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        int year = calendar.get(Calendar.YEAR);
-                        Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
-                        int days = 0;
-                        if (!type.matches(Constants.TYPE_TIME) && isFeature && repCode > 0){
-                            do {
-                                calendar.setTimeInMillis(calendar.getTimeInMillis() + (repCode *
-                                        AlarmManager.INTERVAL_DAY));
-                                days = days + repCode;
-                                day = calendar.get(Calendar.DAY_OF_MONTH);
-                                month = calendar.get(Calendar.MONTH);
-                                year = calendar.get(Calendar.YEAR);
-                                date = TimeUtil.getDate(year, month, day);
-                                dates.put(FlextHelper.convertDateToDateTime(date), task);
-                            } while (days < Configs.MAX_DAYS_COUNT);
-                        }
-                    }
-                } else if (type.startsWith(Constants.TYPE_WEEKDAY) && isDone == 0){
-                    long time = TimeCount.getNextWeekdayTime(myHour, myMinute, weekdays, 0);
-                    Calendar calendar = Calendar.getInstance();
-                    if (time > 0) {
-                        calendar.setTimeInMillis(time);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        int year = calendar.get(Calendar.YEAR);
-                        Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
-                    }
-                    int days = 0;
-                    if (isFeature){
-                        ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
-                        do {
-                            calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
-                            int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
-                            days = days + 1;
-                            if (list.get(weekDay - 1) == 1){
-                                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                int month = calendar.get(Calendar.MONTH);
-                                int year = calendar.get(Calendar.YEAR);
-                                Date date = TimeUtil.getDate(year, month, day);
-                                dates.put(FlextHelper.convertDateToDateTime(date), task);
-                            }
-                        } while (days < Configs.MAX_DAYS_COUNT);
-                    }
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY) && isDone == 0){
-                    long time = TimeCount.getNextMonthDayTime(myHour, myMinute, myDay, 0);
-                    Calendar calendar = Calendar.getInstance();
-                    if (time > 0) {
-                        calendar.setTimeInMillis(time);
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month = calendar.get(Calendar.MONTH);
-                        int year = calendar.get(Calendar.YEAR);
-                        Date date = TimeUtil.getDate(year, month, day);
-                        dates.put(FlextHelper.convertDateToDateTime(date), task);
-                    }
-                    int days = 1;
-                    if (isFeature){
-                        do {
-                            time = TimeCount.getNextMonthDayTime(myDay, calendar.getTimeInMillis(), days);
-                            days = days + 1;
-                            calendar.setTimeInMillis(time);
-                            int day = calendar.get(Calendar.DAY_OF_MONTH);
-                            int month = calendar.get(Calendar.MONTH);
-                            int year = calendar.get(Calendar.YEAR);
-                            Date date = TimeUtil.getDate(year, month, day);
-                            dates.put(FlextHelper.convertDateToDateTime(date), task);
-                        } while (days < Configs.MAX_MONTH_COUNT);
-                    }
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) {
-            c.close();
-        }
-        db.close();
-
         if (calendarView != null) {
             calendarView.setTextForEventOne(dates);
         }
     }
 
     private void loadEvents(){
-        DataBase db = new DataBase(this);
-        if (!db.isOpen()) {
-            db.open();
-        }
-        HashMap<DateTime, String> dates = new HashMap<>();
+        HashMap<DateTime, String> dates = ReminderDataProvider.getBirthdays(this);
         calendarView.setBackgroundForTwo(ViewUtils.getColor(this, cSetter.colorBirthdayCalendar()));
-        Cursor c = db.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            do {
-                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                Date date = null;
-                try {
-                    date = format.parse(birthday);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int year = calendar.get(Calendar.YEAR);
-                if (date != null) {
-                    try {
-                        calendar.setTime(date);
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
-                    }
-                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                    int month = calendar.get(Calendar.MONTH);
-                    Date bdDate = TimeUtil.getDate(year, month, day);
-                    Date prevDate = TimeUtil.getDate(year - 1, month, day);
-                    Date nextDate = TimeUtil.getDate(year + 1, month, day);
-                    Date nextTwoDate = TimeUtil.getDate(year + 2, month, day);
-                    dates.put(FlextHelper.convertDateToDateTime(bdDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(prevDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(nextDate), name);
-                    dates.put(FlextHelper.convertDateToDateTime(nextTwoDate), name);
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) {
-            c.close();
-        }
-        db.close();
 
         if (calendarView != null) {
             calendarView.setTextForEventTwo(dates);
@@ -1319,12 +1161,7 @@ public class ScreenManager extends AppCompatActivity
                 }
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTimeInMillis(System.currentTimeMillis());
-                int day = calendar1.get(Calendar.DAY_OF_MONTH);
-                int month = calendar1.get(Calendar.MONTH);
-                int year = calendar1.get(Calendar.YEAR);
-                int hour = calendar1.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar1.get(Calendar.MINUTE);
-                Cursor cf = db.queryCategories();
+                Cursor cf = new DataBase(ScreenManager.this).open().queryCategories();
                 String categoryId = null;
                 if (cf != null && cf.moveToFirst()) {
                     categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -1332,12 +1169,12 @@ public class ScreenManager extends AppCompatActivity
                 if (cf != null) {
                     cf.close();
                 }
-                long remId = db.insertReminder(note, Constants.TYPE_TIME, day, month, year, hour,
-                        minute, 0, null, 0, mPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * Intervals.MILLS_INTERVAL_MINUTE,
-                        0, 0, 0, SyncHelper.generateID(), null, 0, null, 0, 0, 0, categoryId, null);
-                new AlarmReceiver().setAlarm(ScreenManager.this, remId);
-                db.updateReminderDateTime(remId);
-                new UpdatesHelper(ScreenManager.this).updateWidget();
+                db.close();
+                long after = new SharedPrefs(ScreenManager.this).loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
+                long due = calendar1.getTimeInMillis() + after;
+                JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
+                        SyncHelper.generateID(), due, due, null, null, null);
+                long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jsonModel);
                 NotesBase base = new NotesBase(ScreenManager.this);
                 base.open();
                 base.linkToReminder(noteId, remId);

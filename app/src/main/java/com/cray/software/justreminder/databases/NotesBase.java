@@ -189,7 +189,6 @@ public class NotesBase {
         if(isOpen()) return;
         open();
         if(isOpen()) return;
-        //Log.d(LOG_TAG, "open guard failed");
         throw new SQLiteException("Could not open database");
     }
 }
