@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -48,6 +49,28 @@ import java.util.List;
  */
 public class SuperUtil {
 
+    /**
+     * Check if service is already running.
+     * @param context application context.
+     * @param serviceClass service class.
+     * @return boolean
+     */
+    public static boolean isServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get path to file from URI.
+     * @param context application context.
+     * @param uri uri.
+     * @return path string
+     */
     public static String getPath(Context context, Uri uri) {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             String[] projection = { "_data" };

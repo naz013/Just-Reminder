@@ -15,6 +15,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.CalendarModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
@@ -22,6 +23,9 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.configs.CurrentTaskWidgetConfig;
@@ -36,7 +40,6 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     private ArrayList<CalendarModel> data;
     private Map<Long, ArrayList<ShoppingList>> map;
     private Context mContext;
-    private DataBase db;
     private TimeCount mCount;
     private int widgetID;
 
@@ -51,7 +54,6 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onCreate() {
         data = new ArrayList<>();
-        db = new DataBase(mContext);
         map = new HashMap<>();
     }
 
@@ -59,102 +61,68 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     public void onDataSetChanged() {
         data.clear();
         map.clear();
-        db = new DataBase(mContext);
+        NextBase db = new NextBase(mContext);
         db.open();
-        String title;
-        String type;
-        String number;
-        String weekdays;
-        int hour;
-        int minute;
-        int seconds;
-        int day;
-        int month;
-        int year;
-        int repCode;
-        long repTime;
-        int done;
-        int delay;
-        double lat;
-        double longi;
-        long repCount;
-        long id;
-        Cursor c = db.queryGroup();
+        Cursor c = db.getActiveReminders();
         if (c != null && c.moveToFirst()) {
             do {
-                id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                repCode = c.getInt(c.getColumnIndex(Constants.COLUMN_REPEAT));
-                repCount = c.getLong(c.getColumnIndex(Constants.COLUMN_REMINDERS_COUNT));
-                repTime = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                lat = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
-                longi = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-                day = c.getInt(c.getColumnIndex(Constants.COLUMN_DAY));
-                month = c.getInt(c.getColumnIndex(Constants.COLUMN_MONTH));
-                year = c.getInt(c.getColumnIndex(Constants.COLUMN_YEAR));
-                hour = c.getInt(c.getColumnIndex(Constants.COLUMN_HOUR));
-                minute = c.getInt(c.getColumnIndex(Constants.COLUMN_MINUTE));
-                seconds = c.getInt(c.getColumnIndex(Constants.COLUMN_SECONDS));
-                done = c.getInt(c.getColumnIndex(Constants.COLUMN_IS_DONE));
-                delay = c.getInt(c.getColumnIndex(Constants.COLUMN_DELAY));
-                number = c.getString(c.getColumnIndex(Constants.COLUMN_NUMBER));
-                title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                type = c.getString(c.getColumnIndex(Constants.COLUMN_TYPE));
-                weekdays = c.getString(c.getColumnIndex(Constants.COLUMN_WEEKDAYS));
-                String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
+                String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
+                String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                long eventTime = c.getLong(c.getColumnIndex(NextBase.START_TIME));
+                long id = c.getLong(c.getColumnIndex(NextBase._ID));
 
-                if (done != 1) {
-                    long due = 0;
-                    String time = "";
-                    String date = "";
-                    int viewType = 1;
-                    if (lat != 0.0 || longi != 0.0) {
-                        date = String.format("%.5f", lat);
-                        time = String.format("%.5f", longi);
+                JsonModel jsonModel = new JsonParser(json).parse();
+                JsonPlace jsonPlace = jsonModel.getPlace();
+
+                ArrayList<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
+                String exclusion = jsonModel.getExclusion().getJsonString();
+
+                String time = "";
+                String date = "";
+                int viewType = 1;
+                if (mType.contains(Constants.TYPE_LOCATION)) {
+                    date = String.format("%.5f", jsonPlace.getLatitude());
+                    time = String.format("%.5f", jsonPlace.getLongitude());
+                } else {
+                    boolean is24 = new SharedPrefs(mContext)
+                            .loadBoolean(Prefs.IS_24_TIME_FORMAT);
+                    if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(eventTime);
+
+                        date = ReminderUtils.getRepeatString(mContext, weekdays);
+                        time = TimeUtil.getTime(calendar.getTime(), is24);
+                    } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTimeInMillis(eventTime);
+                        date = TimeUtil.dateFormat.format(calendar1.getTime());
+                        time = TimeUtil.getTime(calendar1.getTime(), is24);
+                    } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
+                        viewType = 2;
+                        map.put(id, new ShoppingListDataProvider(mContext, id, ShoppingList.ACTIVE).getData());
                     } else {
-                        boolean is24 = new SharedPrefs(mContext)
-                                .loadBoolean(Prefs.IS_24_TIME_FORMAT);
-                        if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.set(Calendar.HOUR_OF_DAY, hour);
-                            calendar.set(Calendar.MINUTE, minute);
-
-                            date = ReminderUtils.getRepeatString(mContext, weekdays);
-                            time = TimeUtil.getTime(calendar.getTime(), is24);
-                            due = TimeCount.getNextWeekdayTime(hour, minute, weekdays, delay);
-                        } else if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                            long timeL = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
-                            Calendar calendar1 = Calendar.getInstance();
-                            if (timeL > 0) {
-                                calendar1.setTimeInMillis(timeL);
-
-                                date = TimeUtil.dateFormat.format(calendar1.getTime());
-                                time = TimeUtil.getTime(calendar1.getTime(), is24);
+                        String[] dT = mCount.getNextDateTime(eventTime);
+                        date = dT[0];
+                        time = dT[1];
+                        if (mType.matches(Constants.TYPE_TIME) && exclusion != null){
+                            if (new Recurrence(exclusion).isRange()){
+                                date = mContext.getString(R.string.paused);
                             }
-                            due = TimeCount.getNextMonthDayTime(hour, minute, day, delay);
-                        } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
-                            viewType = 2;
-                            map.put(id, new ShoppingListDataProvider(mContext, id, ShoppingList.ACTIVE).getData());
-                        } else {
-                            due = TimeCount.getEventTime(year, month, day, hour, minute, seconds, repTime, repCode, repCount, delay);
-                            String[] dT = mCount.getNextDateTime(due);
-                            date = dT[0];
-                            time = dT[1];
-                            if (type.matches(Constants.TYPE_TIME) && exclusion != null){
-                                if (new Recurrence(exclusion).isRange()){
-                                    date = mContext.getString(R.string.paused);
-                                }
-                                time = "";
-                            }
+                            time = "";
                         }
                     }
-
-                    data.add(new CalendarModel(title, number, id, time, date, due, viewType));
                 }
+
+                data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
+                        id, time, date, eventTime, viewType));
             } while (c.moveToNext());
         }
-
         if(c != null) c.close();
+        db.close();
 
+        DataBase DB = new DataBase(mContext);
+        DB.open();
         SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS)) {
             int mDay;
@@ -164,7 +132,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);
-                Cursor cursor = db.getBirthdays(mDay, mMonth);
+                Cursor cursor = DB.getBirthdays(mDay, mMonth);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
@@ -180,6 +148,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 n++;
             } while (n <= 7);
         }
+        DB.close();
     }
 
     @Override
@@ -272,7 +241,6 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
 
             int count = 0;
             ArrayList<ShoppingList> lists = map.get(item.getId());
-            int size = lists.size();
             rView.removeAllViews(R.id.todoList);
             for (ShoppingList list : lists){
                 RemoteViews view = new RemoteViews(mContext.getPackageName(),

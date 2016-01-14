@@ -5,19 +5,17 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.WidgetDataProvider;
 import com.cray.software.justreminder.datas.models.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.widgets.configs.CalendarWidgetConfig;
 
 import java.util.ArrayList;
@@ -140,19 +138,12 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        DataBase db = new DataBase(context);
-        if (!db.isOpen()) db.open();
-        WidgetDataProvider provider = new WidgetDataProvider();
-        Cursor c = db.getBirthdays();
-        provider.setBirthdays(c);
+        WidgetDataProvider provider = new WidgetDataProvider(context);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
-            Cursor s = db.getActiveReminders();
-            provider.setReminders(s);
             provider.setFeature(isFeature);
         }
         provider.fillArray();
-
         pagerData.clear();
 
         int position = 0;

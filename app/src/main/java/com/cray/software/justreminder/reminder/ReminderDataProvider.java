@@ -142,9 +142,7 @@ public class ReminderDataProvider {
                 int catColor = 0;
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-                JsonModel jsonModel = new JsonModel();
-                new JsonParser(json).parse(jsonModel);
-
+                JsonModel jsonModel = new JsonParser(json).parse();
                 data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());
         }
@@ -188,9 +186,7 @@ public class ReminderDataProvider {
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-            JsonModel jsonModel = new JsonModel();
-            new JsonParser(json).parse(jsonModel);
-
+            JsonModel jsonModel = new JsonParser(json).parse();
             item = new ReminderModel(id, jsonModel, catColor, archived, completed, viewType);
         }
         if (c != null) c.close();

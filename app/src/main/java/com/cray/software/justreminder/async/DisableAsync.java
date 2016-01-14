@@ -49,14 +49,9 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
             } while (c.moveToNext());
             if (!res) {
                 mContext.stopService(new Intent(mContext, GeolocationService.class));
-                mContext.stopService(new Intent(mContext, CheckPosition.class));
-            } else {
-                mContext.startService(new Intent(mContext, GeolocationService.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         } else {
             mContext.stopService(new Intent(mContext, GeolocationService.class));
-            mContext.stopService(new Intent(mContext, CheckPosition.class));
         }
         if (c != null) c.close();
         db.close();

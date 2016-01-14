@@ -69,7 +69,12 @@ public class JsonParser {
         }
     }
 
-    public void parse(JsonModel model){
+    public JsonParser(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    public JsonModel parse(){
+        JsonModel model = new JsonModel();
         model.setAction(getAction());
         model.setExport(getExport());
         model.setSummary(getSummary());
@@ -91,6 +96,7 @@ public class JsonParser {
         model.setRecurrence(getRecurrence());
         model.setShoppings(getShoppings());
         model.setPlace(getPlace());
+        return model;
     }
 
     public void toJson(JsonModel model) {
@@ -144,9 +150,9 @@ public class JsonParser {
                 jsonObject.put(PLACES, array);
             }
             if (model.getShoppings() != null && model.getShoppings().size() > 0) {
-                JSONArray array = new JSONArray();
+                JSONObject array = new JSONObject();
                 for (JsonShopping shopping : model.getShoppings()) {
-                    array.put(shopping.getJsonObject());
+                    array.put(shopping.getUuId(), shopping.getJsonObject());
                 }
                 jsonObject.put(SHOPPING, array);
             }
@@ -340,6 +346,23 @@ public class JsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getShoppingKeys() {
+        ArrayList<String> list = new ArrayList<>();
+        if (jsonObject.has(SHOPPING)) {
+            try {
+                JSONObject object = jsonObject.getJSONObject(SHOPPING);
+                Iterator<String> keys = object.keys();
+                while (keys.hasNext()) {
+                    list.add(keys.next());
+                }
+                return list;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public List<JsonShopping> getShoppings() {
