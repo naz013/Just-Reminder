@@ -83,8 +83,8 @@ public class ShoppingList {
             }
 
             jsonModel.setShoppings(shoppings);
-            jsonParser.toJson(jsonModel);
-            db.setJson(id, jsonParser.getJSON());
+            jsonParser.toJsonString(jsonModel);
+            db.setJson(id, jsonParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -112,8 +112,8 @@ public class ShoppingList {
             }
 
             jsonModel.setShoppings(shoppings);
-            jsonParser.toJson(jsonModel);
-            db.setJson(id, jsonParser.getJSON());
+            jsonParser.toJsonString(jsonModel);
+            db.setJson(id, jsonParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -141,8 +141,8 @@ public class ShoppingList {
             }
 
             jsonModel.setShoppings(shoppings);
-            jsonParser.toJson(jsonModel);
-            db.setJson(id, jsonParser.getJSON());
+            jsonParser.toJsonString(jsonModel);
+            db.setJson(id, jsonParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -170,8 +170,8 @@ public class ShoppingList {
                 }
             }
             jsonModel.setShoppings(shoppings);
-            jsonParser.toJson(jsonModel);
-            db.setJson(id, jsonParser.getJSON());
+            jsonParser.toJsonString(jsonModel);
+            db.setJson(id, jsonParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();

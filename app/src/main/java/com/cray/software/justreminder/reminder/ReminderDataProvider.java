@@ -160,7 +160,7 @@ public class ReminderDataProvider {
                             if (isLimited) max = limit - count;
                             do {
                                 eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                        calendar1.getTimeInMillis(), (int)days);
+                                        calendar1.getTimeInMillis() + TimeCount.DAY);
                                 calendar1.setTimeInMillis(eventTime);
                                 if (eventTime > 0) {
                                     days++;

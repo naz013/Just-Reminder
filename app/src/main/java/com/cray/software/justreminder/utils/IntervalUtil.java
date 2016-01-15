@@ -64,14 +64,12 @@ public class IntervalUtil {
     }
 
     public static boolean isWeekday(ArrayList<Integer> weekday) {
-        boolean is = false;
         for (int day : weekday) {
             if (day == Constants.DAY_CHECKED) {
-                is = true;
-                break;
+                return true;
             }
         }
-        return is;
+        return false;
     }
 
     /**

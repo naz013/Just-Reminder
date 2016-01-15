@@ -38,7 +38,7 @@ public class ReminderModel {
         this.title = jsonModel.getSummary();
         this.type = jsonModel.getType();
         this.uuId = jsonModel.getUuId();
-        this.exclusion = jsonModel.getExclusion().getJsonString();
+        this.exclusion = jsonModel.getExclusion().toString();
         this.due = jsonModel.getEventTime();
 
         JsonMelody jsonMelody = jsonModel.getMelody();

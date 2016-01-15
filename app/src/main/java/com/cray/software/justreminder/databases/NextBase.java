@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JsonParser;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -175,11 +174,8 @@ public class NextBase {
 
     public boolean updateCount(long rowId, String json) {
         openGuard();
-        JsonParser parser = new JsonParser(json);
-        long count = parser.getCount();
-        parser.setCount(count + 1);
         ContentValues cv = new ContentValues();
-        cv.put(JSON, parser.getJSON());
+        cv.put(JSON, json);
         cv.put(DELAY, 0);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }

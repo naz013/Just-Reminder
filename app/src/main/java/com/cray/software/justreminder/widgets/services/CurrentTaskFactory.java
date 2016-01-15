@@ -76,7 +76,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 JsonPlace jsonPlace = jsonModel.getPlace();
 
                 ArrayList<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
-                String exclusion = jsonModel.getExclusion().getJsonString();
+                String exclusion = jsonModel.getExclusion().toString();
 
                 String time = "";
                 String date = "";

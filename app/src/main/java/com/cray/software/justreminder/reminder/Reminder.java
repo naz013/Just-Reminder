@@ -24,6 +24,7 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JsonExport;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -41,37 +42,49 @@ public class Reminder {
     public Reminder(){
     }
 
-    /**
-     * Add next event to calendars.
-     * @param id reminder identifier.
-     * @param context application context.
-     */
-    public static void generateToCalendar(long id, Context context){
+    public static void update(Context context, long id) {
         NextBase db = new NextBase(context);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
-            String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-            long due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonExport jsonExport = new JsonParser(json).getExport();
-            int exp = jsonExport.getCalendar();
-            SharedPrefs sPrefs = new SharedPrefs(context);
-            boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-            boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-            if ((isCalendar || isStock) && exp == 1) {
-                ReminderUtils.exportToCalendar(context, summary, due, id, isCalendar, isStock);
+            String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            JsonModel jsonModel = new JsonParser(json).parse();
+            JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+            long repeat = jsonRecurrence.getRepeat();
+            long limit = jsonRecurrence.getLimit();
+            long count = jsonModel.getCount() + 1;
+            long eventTime = new TimeCount(context).generateDateTime(type,
+                    jsonRecurrence.getMonthday(), jsonModel.getStartTime(),
+                    repeat, jsonRecurrence.getWeekdays(), count, delay);
+            jsonModel.setEventTime(eventTime);
+            if (repeat == 0 || (limit > 0 && (limit - count - 1 == 0))){
+                disableReminder(id, context);
+            } else {
+                jsonModel.setCount(count);
+                db.updateReminderTime(id, eventTime);
+                db.setJson(id, new JsonParser().toJsonString(jsonModel));
+                int exp = jsonModel.getExport().getCalendar();
+                SharedPrefs sPrefs = new SharedPrefs(context);
+                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+                if ((isCalendar || isStock) && exp == 1) {
+                    ReminderUtils.exportToCalendar(context, summary, eventTime, id, isCalendar, isStock);
+                }
             }
         }
         if (c != null) c.close();
         db.close();
+        backup(context);
     }
 
     /**
      * Make backup files for all data.
      * @param context application context.
      */
-    public static void backup(Context context){
+    private static void backup(Context context){
         if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
             new BackupTask(context).execute();
         }
@@ -123,7 +136,7 @@ public class Reminder {
                 db.setUnDone(id);
                 JsonModel jsonModel = new TimeCount(context).generateTimer(json);
                 db.updateReminderTime(id, jsonModel.getEventTime());
-                db.setJson(id, new JsonParser().toJson(jsonModel));
+                db.setJson(id, new JsonParser().toJsonString(jsonModel));
                 new AlarmReceiver().enableReminder(context, id);
                 res = true;
             } else {
@@ -169,10 +182,10 @@ public class Reminder {
             int code = jsonExport.getgTasks();
             jsonModel.setEventTime(time);
             jsonModel.setStartTime(time);
-            jsonParser.toJson(jsonModel);
+            jsonParser.toJsonString(jsonModel);
 
             String uuID = SyncHelper.generateID();
-            long idN = db.insertReminder(summary, type, time, uuID, categoryId, jsonParser.getJSON());
+            long idN = db.insertReminder(summary, type, time, uuID, categoryId, jsonParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){
                 if (time > 0){
@@ -289,30 +302,16 @@ public class Reminder {
      * @param context application context.
      * @param id reminder identifier.
      */
-    public static void updateCount(Context context, long id){
-        NextBase db = new NextBase(context);
-        db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            db.updateCount(id, json);
-        }
-        if (c != null) c.close();
-        db.close();
-    }
-
-    /**
-     * Update reminders count.
-     * @param context application context.
-     * @param id reminder identifier.
-     */
     public static void skipNext(Context context, long id){
         NextBase db = new NextBase(context);
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            db.updateCount(id, json);
+            JsonParser parser = new JsonParser(json);
+            long count = parser.getCount();
+            parser.setCount(count + 1);
+            db.updateCount(id, parser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -329,27 +328,8 @@ public class Reminder {
         NextBase db = new NextBase(context);
         db.open();
         db.setDelay(id, delay);
-        updateDate(context, id, delay);
+        update(context, id);
         if (addAlarm) new DelayReceiver().setAlarm(context, id, delay);
-        db.close();
-    }
-
-    /**
-     * Update next date and time for reminder.
-     * @param context application context.
-     * @param id reminder identifier.
-     */
-    public static void updateDate(Context context, long id, int delay){
-        NextBase db = new NextBase(context);
-        db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonModel jsonModel = new TimeCount(context).generateDateTime(json, delay);
-            db.updateReminderTime(id, jsonModel.getEventTime());
-            db.setJson(id, new JsonParser().toJson(jsonModel));
-        }
-        if (c != null) c.close();
         db.close();
     }
 

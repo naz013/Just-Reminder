@@ -193,7 +193,7 @@ public class SplashScreen extends Activity{
                 do {
                     long time = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    if (time < 1000) db.updateReminderAfterTime(id, time * TimeCount.minute);
+                    if (time < 1000) db.updateReminderAfterTime(id, time * TimeCount.MINUTE);
                 } while (c.moveToNext());
             }
             if (c != null) {
@@ -337,7 +337,7 @@ public class SplashScreen extends Activity{
                 jsonRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);
                 parser.setRecurrence(jsonRecurrence);
 
-                String json = parser.getJSON();
+                String json = parser.toJsonString();
 
                 long mId = nextBase.insertReminder(text, type, due, uuId, catId, json);
                 db.deleteReminder(id);

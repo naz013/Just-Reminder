@@ -60,7 +60,8 @@ public class Contacts {
                             new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID},
                             null, null, null);
             while(contactLookupCursor.moveToNext()){
-                phoneContactID = contactLookupCursor.getInt(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
+                phoneContactID = contactLookupCursor.getInt(
+                        contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
             }
             contactLookupCursor.close();
         } catch (IllegalArgumentException iae) {
@@ -80,9 +81,13 @@ public class Contacts {
         if (contactNumber != null) {
             try {
             String contact = Uri.encode(contactNumber);
-            Cursor contactLookupCursor = context.getContentResolver().query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contact), new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID}, null, null, null);
+            Cursor contactLookupCursor = context.getContentResolver().query(
+                    Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contact),
+                    new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID},
+                    null, null, null);
             while (contactLookupCursor.moveToNext()) {
-                phoneContactID = contactLookupCursor.getString(contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME));
+                phoneContactID = contactLookupCursor.getString(
+                        contactLookupCursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME));
             }
             contactLookupCursor.close();
             } catch (IllegalArgumentException iae) {

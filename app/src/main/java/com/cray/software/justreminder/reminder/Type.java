@@ -109,9 +109,9 @@ public class Type {
         NextBase db = new NextBase(mContext);
         db.open();
         JsonParser jsonParser = new JsonParser();
-        jsonParser.toJson(item);
+        jsonParser.toJsonString(item);
         long id = db.insertReminder(item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
-                item.getCategory(), jsonParser.getJSON());
+                item.getCategory(), jsonParser.toJsonString());
         db.close();
         updateViews();
         return id;
@@ -126,9 +126,9 @@ public class Type {
         NextBase db = new NextBase(mContext);
         db.open();
         JsonParser jsonParser = new JsonParser();
-        jsonParser.toJson(item);
+        jsonParser.toJsonString(item);
         db.updateReminder(id, item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
-                item.getCategory(), jsonParser.getJSON());
+                item.getCategory(), jsonParser.toJsonString());
         db.close();
         updateViews();
     }

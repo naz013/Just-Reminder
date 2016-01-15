@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.json;
 
+import android.util.Log;
+
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -87,6 +89,7 @@ public class JsonParser {
                 return null;
             }
         } else {
+            long start = System.currentTimeMillis();
             JsonModel model = new JsonModel();
             model.setAction(getAction());
             model.setExport(getExport());
@@ -110,11 +113,13 @@ public class JsonParser {
             model.setShoppings(getShoppings());
             model.setLed(getLed());
             model.setPlace(getPlace());
+            Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
             return model;
         }
     }
 
     private JsonModel modelFromOld() throws JSONException {
+        long start = System.currentTimeMillis();
         String text = null;
         if (!jsonObject.isNull(Constants.COLUMN_TEXT)) {
             text = jsonObject.getString(Constants.COLUMN_TEXT);
@@ -155,7 +160,7 @@ public class JsonParser {
         if (!jsonObject.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObject.getString(Constants.COLUMN_TECH_VAR);
         }
-        if (repMinute < 1000) repMinute = repMinute * TimeCount.minute;
+        if (repMinute < 1000) repMinute = repMinute * TimeCount.MINUTE;
 
         int vibration = -1;
         if (jsonObject.has(Constants.COLUMN_VIBRATION))
@@ -226,7 +231,7 @@ public class JsonParser {
         }
         jsonRecurrence.setLimit(limit);
         jsonRecurrence.setMonthday(day);
-        jsonRecurrence.setRepeat(repeatCode * TimeCount.day);
+        jsonRecurrence.setRepeat(repeatCode * TimeCount.DAY);
         jsonRecurrence.setAfter(repMinute);
         jsonModel.setRecurrence(jsonRecurrence);
 
@@ -256,10 +261,11 @@ public class JsonParser {
             }
             jsonModel.setShoppings(list);
         }
+        Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
         return jsonModel;
     }
 
-    public String toJson(JsonModel model) {
+    public String toJsonString(JsonModel model) {
         try {
             setUuid(model.getUuId());
             setSummary(model.getSummary());
@@ -320,7 +326,7 @@ public class JsonParser {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return getJSON();
+        return toJsonString();
     }
 
     public void setStartDate(long startDate) {
@@ -799,7 +805,7 @@ public class JsonParser {
         return null;
     }
 
-    public String getJSON() {
+    public String toJsonString() {
         if (jsonObject != null) return jsonObject.toString();
         else return null;
     }

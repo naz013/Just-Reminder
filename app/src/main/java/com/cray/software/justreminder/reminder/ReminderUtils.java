@@ -94,7 +94,7 @@ public class ReminderUtils {
     /**
      * Get time in milliseconds for weekday reminder type.
      * @param hour hour.
-     * @param minute minute.
+     * @param minute MINUTE.
      * @param weekdays weekdays string.
      * @return time in mills.
      */
@@ -105,7 +105,7 @@ public class ReminderUtils {
     /**
      * Get time in milliseconds for MonthDay reminder type.
      * @param hour hour.
-     * @param minute minute.
+     * @param minute MINUTE.
      * @param day day (if 0 get time for last day in month).
      * @return time in mills.
      */
@@ -119,7 +119,7 @@ public class ReminderUtils {
      * @param month month.
      * @param year year.
      * @param hour hour.
-     * @param minute minute.
+     * @param minute MINUTE.
      * @param after time for timer.
      * @return time in mills.
      */

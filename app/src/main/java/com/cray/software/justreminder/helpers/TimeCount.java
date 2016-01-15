@@ -24,10 +24,11 @@ public class TimeCount {
     /**
      * Millisecond constants.
      */
-    public final static long minute = 60 * 1000;
-    public final static long hour = minute  * 60;
-    public final static long halfDay = hour * 12;
-    public final static long day = halfDay * 2;
+    public final static long SECOND = 1000;
+    public final static long MINUTE = 60 * SECOND;
+    public final static long HOUR = MINUTE * 60;
+    public final static long HALF_DAY = HOUR * 12;
+    public final static long DAY = HALF_DAY * 2;
 
     private Context mContext;
 
@@ -59,15 +60,15 @@ public class TimeCount {
             long currTime = cal.getTimeInMillis();
 
             long diff = time - currTime;
-            if (isBetween(diff, 0, minute * 5)) {
+            if (isBetween(diff, 0, MINUTE * 5)) {
                 color = getDrawable(R.drawable.drawable_red);
-            } else if (isBetween(diff, minute * 5, hour)) {
+            } else if (isBetween(diff, MINUTE * 5, HOUR)) {
                 color = getDrawable(R.drawable.drawable_yellow);
-            } else if (isBetween(diff, hour, halfDay)) {
+            } else if (isBetween(diff, HOUR, HALF_DAY)) {
                 color = getDrawable(R.drawable.drawable_green);
-            } else if (isBetween(diff, halfDay, day)) {
+            } else if (isBetween(diff, HALF_DAY, DAY)) {
                 color = getDrawable(R.drawable.drawable_blue);
-            } else if ((diff > day)) {
+            } else if ((diff > DAY)) {
                 color = getDrawable(R.drawable.drawable_indigo);
             } else {
                 color = getDrawable(R.drawable.drawable_grey);
@@ -99,20 +100,21 @@ public class TimeCount {
     }
 
     public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
-                                  int minute, int seconds, ArrayList<Integer> weekdays) {
+                                  int minute, int seconds, ArrayList<Integer> weekdays, long after) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(year, month, dayOfMonth, hour, minute, seconds);
         if (type.startsWith(Constants.TYPE_WEEKDAY)){
             return getNextWeekdayTime(calendar.getTimeInMillis(), weekdays, 0);
         } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
             if (type.endsWith("_last")){
-                return getLastMonthDayTime(calendar.getTimeInMillis(), 0);
+                return getLastMonthDayTime(calendar.getTimeInMillis());
             } else {
-                return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis(), 0);
+                return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis());
             }
         } else {
-            calendar.set(year, month, dayOfMonth, hour, minute, seconds);
-            return calendar.getTimeInMillis();
+            long mills = calendar.getTimeInMillis();
+            if (type.matches(Constants.TYPE_TIME)) mills += after;
+            return mills;
         }
     }
 
@@ -127,81 +129,43 @@ public class TimeCount {
         long after = jsonRecurrence.getAfter() + System.currentTimeMillis();
         jsonModel.setEventTime(after);
         jsonModel.setStartTime(after);
+        jsonModel.setCount(0);
         return jsonModel;
     }
 
     /**
      * Generate new due time for reminder.
-     * @param json Reminder JSON object.
+     * @param type Reminder type.
      * @param delay Snooze for reminder in minutes.
      * @return Next event time
      */
-    public JsonModel generateDateTime(String json, int delay){
-        JsonModel jsonModel = new JsonParser(json).parse();
-        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
-        String type = jsonModel.getType();
-
-        long eventTime = jsonModel.getEventTime();
-        long repTime = jsonRecurrence.getRepeat();
-        int dayOfMonth = jsonRecurrence.getMonthday();
-        ArrayList<Integer> weekdays = jsonRecurrence.getWeekdays();
+    public long generateDateTime(String type, int dayOfMonth, long startTime, long repeat,
+                                      ArrayList<Integer> weekdays, long count, int delay){
         long dateTime;
-        if (eventTime == 0) {
+        if (startTime == 0) {
             dateTime = 0;
         } else {
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
-                dateTime = getNextWeekdayTime(eventTime, weekdays, delay);
+                dateTime = getNextWeekdayTime(startTime, weekdays, delay);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
                 if (type.endsWith("_last")){
-                    dateTime = getLastMonthDayTime(eventTime, delay);
+                    dateTime = getLastMonthDayTime(startTime);
                 } else {
-                    dateTime = getNextMonthDayTime(dayOfMonth, eventTime, delay);
+                    dateTime = getNextMonthDayTime(dayOfMonth, startTime);
                 }
             } else {
-                dateTime = eventTime + repTime + (delay * 1000 * 60);
+                dateTime = startTime + (repeat * count) + (delay * MINUTE);
             }
         }
-        jsonModel.setEventTime(dateTime);
-        return jsonModel;
+        return dateTime;
     }
 
     public long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
-        long date = 0;
         Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        long currTime = cc.getTimeInMillis();
-        int mDay = cc.get(Calendar.DAY_OF_WEEK);
         cc.setTimeInMillis(startTime);
-        long mTime = cc.getTimeInMillis();
-        boolean isZeroSupport = false;
-        if (mTime > currTime || delay > 0) isZeroSupport = true;
-        if (weekdays != null) {
-            int charDay;
-            int delta = 7;
-            for (int i = 0; i < 7; i++){
-                if (weekdays.get(i) == Constants.DAY_CHECKED){
-                    if (i == 6) charDay = 1;
-                    else charDay = i + 2;
-                    int mDelta = charDay - mDay;
-                    if (mDelta > 0) {
-                        if (mDelta < delta) {
-                            delta = mDelta;
-                        }
-                    } else if (mDelta < 0){
-                        mDelta = 7 + mDelta;
-                        if (mDelta < delta) {
-                            delta = mDelta;
-                        }
-                    } else if (mDelta == 0 && isZeroSupport){
-                        delta = mDelta;
-                    }
-                }
-            }
-
-            date = mTime + (delta * day);
-        }
-        if (delay > 0) date = date + (delay * 1000 * 60);
-        return date;
+        int hourOfDay = cc.get(Calendar.HOUR_OF_DAY);
+        int minuteOfHour = cc.get(Calendar.MINUTE);
+        return getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);
     }
 
     /**
@@ -210,17 +174,11 @@ public class TimeCount {
      * @return Remaining String
      */
     public String getRemaining(long eventTime){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        long difference = eventTime - calendar.getTimeInMillis();
-        long secondMills = 1000;
-        long minuteMills = secondMills * 60;
-        long hourMills = minuteMills * 60;
-        long dayMills = hourMills * 24;
-        long days = (difference / (dayMills));
-        long hours = ((difference - (dayMills * days)) / (hourMills));
-        long min = (difference - (dayMills * days) - (hourMills * hours)) / (minuteMills);
-        long sec = (difference - (dayMills * days) - (hourMills * hours) - (minuteMills * min)) / (secondMills);
+        long difference = eventTime - System.currentTimeMillis();
+        long days = (difference / (DAY));
+        long hours = ((difference - (DAY * days)) / (HOUR));
+        long min = (difference - (DAY * days) - (HOUR * hours)) / (MINUTE);
+        long sec = (difference - (DAY * days) - (HOUR * hours) - (MINUTE * min)) / (SECOND);
         hours = (hours < 0 ? -hours : hours);
         String result;
         if (days > 5){
@@ -271,18 +229,14 @@ public class TimeCount {
      * @return boolean
      */
     public boolean isNext(long due) {
-        boolean nextDate = false;
         if (due == 0) {
-            nextDate = true;
+            return true;
         } else {
             Calendar cc = Calendar.getInstance();
             cc.setTimeInMillis(System.currentTimeMillis());
             long currentTome = cc.getTimeInMillis();
-            if (due > currentTome) {
-                nextDate = true;
-            }
+            return due > currentTome;
         }
-        return nextDate;
     }
 
     /**
@@ -293,11 +247,11 @@ public class TimeCount {
      * @param delay delay for reminder.
      * @return Due time in milliseconds.
      */
-    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour, ArrayList<Integer> weekdays, int delay){
-        long date;
+    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour,
+                                          ArrayList<Integer> weekdays, int delay){
+        long currTime = System.currentTimeMillis();
         Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        long currTime = cc.getTimeInMillis();
+        cc.setTimeInMillis(currTime);
         int mDay = cc.get(Calendar.DAY_OF_WEEK);
         cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cc.set(Calendar.MINUTE, minuteOfHour);
@@ -330,11 +284,9 @@ public class TimeCount {
                 }
             }
 
-            newDbTime = mTime + (delta * day);
+            newDbTime = mTime + (delta * DAY);
         }
-        if (delay > 0) newDbTime = newDbTime + delay * 1000 * 60;
-        date = newDbTime;
-        return date;
+        return newDbTime + (delay * MINUTE);
     }
 
     public boolean isCurrent(long startTime) {
@@ -367,6 +319,7 @@ public class TimeCount {
     public static boolean isDay(ArrayList<Integer> repeat){
         boolean res = false;
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
         if (weekDay == Calendar.MONDAY) {
             res = repeat.get(0) == Constants.DAY_CHECKED;
@@ -406,40 +359,28 @@ public class TimeCount {
         }
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
-        long currTime = cc.getTimeInMillis();
         cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cc.set(Calendar.MINUTE, minuteOfHour);
-        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        cc.set(Calendar.SECOND, 0);
-        cc.set(Calendar.MILLISECOND, 0);
-        long mTime = cc.getTimeInMillis();
-        boolean isZeroSupport = false;
-        if (mTime > currTime) isZeroSupport = true;
-        long newDbTime;
-        if (isZeroSupport){
-            newDbTime = mTime + (delay * 1000 * 60);
-        } else {
-            cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + 1);
-            newDbTime = cc.getTimeInMillis() + (delay * 1000 * 60);
-        }
-        return newDbTime;
+        long mTime = getNextMonthDayTime(dayOfMonth, cc.getTimeInMillis());
+        return mTime + (delay * MINUTE);
     }
 
     /**
      * Get next due time for MonthDay reminder type starts from selected date and time.
      * @param dayOfMonth day.
      * @param fromTime start time.
-     * @param multi step for next due.
      * @return Due time in milliseconds.
      */
-    public static long getNextMonthDayTime(int dayOfMonth, long fromTime, int multi){
+    public static long getNextMonthDayTime(int dayOfMonth, long fromTime){
         if (dayOfMonth == 0){
-            return getLastMonthDayTime(fromTime, multi);
+            return getLastMonthDayTime(fromTime);
         }
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
         cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + multi);
+        if (fromTime < System.currentTimeMillis()) {
+            cc.setTimeInMillis(cc.getTimeInMillis() + (30 * DAY));
+        }
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();
@@ -448,17 +389,20 @@ public class TimeCount {
     /**
      * Get next due time for next last day of month.
      * @param fromTime start time.
-     * @param multi step for calculating.
      * @return Due time in milliseconds.
      */
-    public static long getLastMonthDayTime(long fromTime, int multi) {
+    public static long getLastMonthDayTime(long fromTime) {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
-        int month = cc.get(Calendar.MONTH);
-        cc.set(Calendar.DAY_OF_MONTH, 15);
-        cc.set(Calendar.MONTH, month + multi);
-        int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
-        cc.set(Calendar.DAY_OF_MONTH, lastDay);
+        if (fromTime < System.currentTimeMillis()) {
+            cc.set(Calendar.DAY_OF_MONTH, 15);
+            cc.setTimeInMillis(cc.getTimeInMillis() + (30 * DAY));
+            int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
+            cc.set(Calendar.DAY_OF_MONTH, lastDay);
+        } else {
+            int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
+            cc.set(Calendar.DAY_OF_MONTH, lastDay);
+        }
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();
@@ -474,24 +418,10 @@ public class TimeCount {
     public static long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
-        int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
-        long currTime = cc.getTimeInMillis();
         cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cc.set(Calendar.MINUTE, minuteOfHour);
-        cc.set(Calendar.DAY_OF_MONTH, lastDay);
-        cc.set(Calendar.SECOND, 0);
-        cc.set(Calendar.MILLISECOND, 0);
-        long mTime = cc.getTimeInMillis();
-        boolean isZeroSupport = false;
-        if (mTime > currTime) isZeroSupport = true;
-        long newDbTime;
-        if (isZeroSupport){
-            newDbTime = mTime + (delay * 1000 * 60);
-        } else {
-            cc.set(Calendar.MONTH, cc.get(Calendar.MONTH) + 1);
-            newDbTime = cc.getTimeInMillis() + (delay * 1000 * 60);
-        }
-        return newDbTime;
+        long mTime = getLastMonthDayTime(cc.getTimeInMillis());
+        return mTime + (delay * MINUTE);
     }
 
     /**

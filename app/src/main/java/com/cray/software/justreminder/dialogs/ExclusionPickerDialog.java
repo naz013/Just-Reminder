@@ -104,7 +104,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             }
             recurrence.addExclusion(list);
             Intent i = new Intent();
-            i.putExtra("excl", recurrence.getJsonString());
+            i.putExtra("excl", recurrence.toString());
             setResult(RESULT_OK, i);
             finish();
         }
@@ -112,7 +112,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             JsonExclusion recurrence = new JsonExclusion();
             recurrence.addExclusion(getHour(fromHour, fromMinute), getHour(toHour, toMinute));
             Intent i = new Intent();
-            i.putExtra("excl", recurrence.getJsonString());
+            i.putExtra("excl", recurrence.toString());
             setResult(RESULT_OK, i);
             finish();
         }

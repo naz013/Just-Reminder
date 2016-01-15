@@ -1,6 +1,5 @@
 package com.cray.software.justreminder;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -78,7 +77,6 @@ import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
-import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -107,6 +105,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -1101,6 +1100,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             monthDayTaskExport.setVisibility(View.VISIBLE);
         }
 
+        monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
+        monthDayTimeField.setOnClickListener(timeClick);
+        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
+                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+        monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
+
         String dayStr;
         if (myDay > 28) myDay = 28;
         if (myDay < 10) dayStr = "0" + myDay;
@@ -1108,12 +1113,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         monthDayField.setText(dayStr);
         monthDayField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
-        monthDayTimeField.setOnClickListener(timeClick);
-        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         dayCheck = (RadioButton) findViewById(R.id.dayCheck);
         dayCheck.setChecked(true);
@@ -1152,13 +1151,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 monthDayTaskExport.setChecked(true);
             }
 
-            if (myDay == 0) myDay = 1;
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-
             taskField.setText(text);
             monthDayTimeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+
+            if (myDay == 0) myDay = 1;
+            if (myDay < 10) dayStr = "0" + myDay;
+            else dayStr = String.valueOf(myDay);
             monthDayField.setText(dayStr);
 
             invalidateButtons();
@@ -1509,7 +1508,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 JsonRecurrence jsonRecurrence = item.getRecurrence();
                 repeat = jsonRecurrence.getRepeat();
                 afterTime = jsonRecurrence.getAfter();
-                exclusion = item.getExclusion().getJsonString();
+                exclusion = item.getExclusion().toString();
             }
 
             timeString = TimeUtil.generateAfterString(afterTime);
@@ -2653,7 +2652,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isWeekDayReminderAttached()) {
                 weekdays = IntervalUtil.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                         thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-                if (IntervalUtil.isWeekday(weekdays)) {
+                if (!IntervalUtil.isWeekday(weekdays)) {
                     Messages.toast(ReminderManager.this, getString(R.string.weekday_nothing_checked));
                     return null;
                 }
@@ -2728,9 +2727,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             long repeat = getRepeat();
-
             int gTaskSync = getSyncCode();
-
             long timeAfter = 0;
             if (isTimeReminderAttached()) {
                 timeAfter = SuperUtil.getAfterTime(this, timeString);
@@ -2740,7 +2737,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             int calendarSync = getExportCode();
-
             if (isMonthDayAttached()) {
                 if (type.endsWith("_last")) {
                     myDay = 0;
@@ -2772,7 +2768,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
-                    myYear, myHour, myMinute, mySeconds, weekdays);
+                    myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
 
             int vibro = getVibro();
             int voice = getVoice();
@@ -3068,11 +3064,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             calendar.set(year, monthOfYear, dayOfMonth);
 
             if (isMonthDayAttached()){
-                if (myDay < 29) monthDayField.setText(dayOfMonth);
-                else {
+                String dayStr;
+                if (myDay > 28) {
                     myDay = 28;
                     Messages.toast(ReminderManager.this, getString(R.string.string_max_day_message));
                 }
+
+                if (myDay < 10) dayStr = "0" + myDay;
+                else dayStr = String.valueOf(myDay);
+
+                monthDayField.setText(dayStr);
             }
         }
     };
@@ -3549,8 +3550,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else {
                 String fromHour = recurrence.getFromHour();
                 String toHour = recurrence.getToHour();
-                selectExclusion.setText(getString(R.string.from_) + " " + fromHour + " " + getString(R.string.to_) + " " + toHour);
-                exclusionClear.setVisibility(View.VISIBLE);
+                if (fromHour != null && toHour != null) {
+                    selectExclusion.setText(getString(R.string.from_) + " " + fromHour + " " + getString(R.string.to_) + " " + toHour);
+                    exclusionClear.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -3658,7 +3661,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onProgress(int progress) {
-        repeatCode = progress * AlarmManager.INTERVAL_DAY;
+        if (isTimeReminderAttached()) repeatCode = progress * TimeCount.MINUTE;
+        else repeatCode = progress * TimeCount.DAY;
     }
 
     @Override

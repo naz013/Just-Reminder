@@ -137,7 +137,7 @@ public class WidgetDataProvider {
                             if (isLimited) max = limit - count;
                             do {
                                 eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                        calendar1.getTimeInMillis(), (int)days);
+                                        calendar1.getTimeInMillis() + TimeCount.DAY);
                                 calendar1.setTimeInMillis(eventTime);
                                 int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
                                 int sMonth = calendar1.get(Calendar.MONTH);

@@ -29,14 +29,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         context.startService(service);
         JsonModel reminder = new Type(context).getItem(id);
         if (reminder.getType().matches(Constants.TYPE_TIME)){
-            String exclusion = reminder.getExclusion().getJsonString();
+            String exclusion = reminder.getExclusion().toString();
             if (exclusion != null){
                 Recurrence helper = new Recurrence(exclusion);
                 if (!helper.isRange()){
                     start(context, id);
                 } else {
-                    Reminder.updateCount(context, id);
-                    Reminder.backup(context);
+                    Reminder.update(context, id);
                     new UpdatesHelper(context).updateWidget();
                 }
             } else {

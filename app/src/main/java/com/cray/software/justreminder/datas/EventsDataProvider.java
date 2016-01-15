@@ -201,7 +201,7 @@ public class EventsDataProvider {
                             if (isLimited) max = limit - count;
                             do {
                                 eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                        calendar1.getTimeInMillis(), (int)days);
+                                        calendar1.getTimeInMillis() + TimeCount.DAY);
                                 calendar1.setTimeInMillis(eventTime);
                                 mDay = calendar1.get(Calendar.DAY_OF_MONTH);
                                 mMonth = calendar1.get(Calendar.MONTH);

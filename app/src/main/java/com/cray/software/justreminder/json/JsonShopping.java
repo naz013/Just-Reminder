@@ -125,7 +125,8 @@ public class JsonShopping {
      * Get current JSON object.
      * @return JSON object string
      */
-    public String getJsonString(){
+    @Override
+    public String toString(){
         if (jsonObject != null) return jsonObject.toString();
         else return null;
     }
