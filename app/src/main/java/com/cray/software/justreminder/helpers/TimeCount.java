@@ -6,9 +6,6 @@ import android.graphics.drawable.Drawable;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -106,31 +103,16 @@ public class TimeCount {
         if (type.startsWith(Constants.TYPE_WEEKDAY)){
             return getNextWeekdayTime(calendar.getTimeInMillis(), weekdays, 0);
         } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-            if (type.endsWith("_last")){
+            if (type.endsWith("_last"))
                 return getLastMonthDayTime(calendar.getTimeInMillis());
-            } else {
+            else
                 return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis());
-            }
         } else {
-            long mills = calendar.getTimeInMillis();
-            if (type.matches(Constants.TYPE_TIME)) mills += after;
-            return mills;
-        }
-    }
+            if (type.matches(Constants.TYPE_TIME))
+                return System.currentTimeMillis() + after;
 
-    /**
-     * Generate new due time for timer.
-     * @param json Reminder JSON object.
-     * @return Next event time
-     */
-    public JsonModel generateTimer(String json){
-        JsonModel jsonModel = new JsonParser(json).parse();
-        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
-        long after = jsonRecurrence.getAfter() + System.currentTimeMillis();
-        jsonModel.setEventTime(after);
-        jsonModel.setStartTime(after);
-        jsonModel.setCount(0);
-        return jsonModel;
+            return calendar.getTimeInMillis();
+        }
     }
 
     /**
@@ -229,9 +211,8 @@ public class TimeCount {
      * @return boolean
      */
     public boolean isNext(long due) {
-        if (due == 0) {
-            return true;
-        } else {
+        if (due == 0) return true;
+        else {
             Calendar cc = Calendar.getInstance();
             cc.setTimeInMillis(System.currentTimeMillis());
             long currentTome = cc.getTimeInMillis();
@@ -290,14 +271,10 @@ public class TimeCount {
     }
 
     public boolean isCurrent(long startTime) {
-        boolean res = false;
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());
         long currentTome = cc.getTimeInMillis();
-        if (startTime < currentTome) {
-            res = true;
-        }
-        return res;
+        return startTime < currentTome;
     }
 
     /**
@@ -308,7 +285,7 @@ public class TimeCount {
      * @return boolean
      */
     private boolean isBetween(long value, long min, long max){
-        return((value > min) && (value < max));
+        return ((value > min) && (value < max));
     }
 
     /**
@@ -378,9 +355,9 @@ public class TimeCount {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
         cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        if (fromTime < System.currentTimeMillis()) {
+        if (fromTime < System.currentTimeMillis())
             cc.setTimeInMillis(cc.getTimeInMillis() + (30 * DAY));
-        }
+
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();

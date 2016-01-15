@@ -34,12 +34,29 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
+import java.util.ArrayList;
+
 /**
  * Helper class for interaction with reminders.
  */
 public class Reminder {
 
     public Reminder(){
+    }
+
+    public static boolean isUuId(Context context, String uuId) {
+        NextBase db = new NextBase(context);
+        db.open();
+        ArrayList<String> list = new ArrayList<>();
+        Cursor c = db.queryAllReminders();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(c.getString(c.getColumnIndex(NextBase.UUID)));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        db.close();
+        return list.contains(uuId);
     }
 
     public static void update(Context context, long id) {
@@ -60,7 +77,9 @@ public class Reminder {
                     jsonRecurrence.getMonthday(), jsonModel.getStartTime(),
                     repeat, jsonRecurrence.getWeekdays(), count, delay);
             jsonModel.setEventTime(eventTime);
-            if (repeat == 0 || (limit > 0 && (limit - count - 1 == 0))){
+            if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
+                    !type.startsWith(Constants.TYPE_WEEKDAY) &&
+                    !type.contains(Constants.TYPE_MONTHDAY)){
                 disableReminder(id, context);
             } else {
                 jsonModel.setCount(count);
@@ -134,8 +153,25 @@ public class Reminder {
                 }
             } else if(type.matches(Constants.TYPE_TIME)) {
                 db.setUnDone(id);
-                JsonModel jsonModel = new TimeCount(context).generateTimer(json);
-                db.updateReminderTime(id, jsonModel.getEventTime());
+                JsonModel jsonModel = new JsonParser(json).parse();
+                long newTime = System.currentTimeMillis() + jsonModel.getRecurrence().getAfter();
+                jsonModel.setEventTime(newTime);
+                jsonModel.setStartTime(newTime);
+                jsonModel.setCount(0);
+                db.updateReminderTime(id, newTime);
+                db.setJson(id, new JsonParser().toJsonString(jsonModel));
+                new AlarmReceiver().enableReminder(context, id);
+                res = true;
+            } else if (type.contains(Constants.TYPE_MONTHDAY) ||
+                    type.contains(Constants.TYPE_WEEKDAY)) {
+                db.setUnDone(id);
+                JsonModel jsonModel = new JsonParser(json).parse();
+                JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+                long nextTime = new TimeCount(context).generateDateTime(type,
+                        jsonRecurrence.getMonthday(), System.currentTimeMillis(),
+                        0, jsonRecurrence.getWeekdays(), 0, 0);
+                db.updateReminderTime(id, nextTime);
+                jsonModel.setEventTime(nextTime);
                 db.setJson(id, new JsonParser().toJsonString(jsonModel));
                 new AlarmReceiver().enableReminder(context, id);
                 res = true;

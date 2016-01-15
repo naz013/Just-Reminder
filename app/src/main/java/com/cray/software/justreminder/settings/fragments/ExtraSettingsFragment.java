@@ -160,8 +160,7 @@ public class ExtraSettingsFragment extends Fragment implements
                 if (Permissions.checkPermission(getActivity(), Permissions.READ_PHONE_STATE)) {
                     followChange();
                 } else {
-                    Permissions
-                            .requestPermission(getActivity(), 109, Permissions.READ_PHONE_STATE);
+                    Permissions.requestPermission(getActivity(), 109, Permissions.READ_PHONE_STATE);
                 }
                 break;
         }

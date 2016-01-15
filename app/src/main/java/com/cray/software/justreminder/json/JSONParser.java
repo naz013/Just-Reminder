@@ -82,7 +82,7 @@ public class JsonParser {
     }
 
     public JsonModel parse(){
-        if (jsonObject != null && jsonObject.has(Constants.COLUMN_TECH_VAR)) {
+        if (jsonObject.has(Constants.COLUMN_TEXT)) {
             try {
                 return modelFromOld();
             } catch (JSONException e) {
@@ -261,7 +261,7 @@ public class JsonParser {
             }
             jsonModel.setShoppings(list);
         }
-        Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
+        Log.d("------TIME_F------", "Parsing time - " + (System.currentTimeMillis() - start));
         return jsonModel;
     }
 

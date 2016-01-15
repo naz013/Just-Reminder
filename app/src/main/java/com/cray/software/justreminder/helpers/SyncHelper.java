@@ -385,6 +385,7 @@ public class SyncHelper {
                     e.printStackTrace();
                 }
             }
+            Log.d(Constants.LOG_TAG, "Read file ----" + writer.toString() + "----");
             return writer.toString();
         }
         return null;

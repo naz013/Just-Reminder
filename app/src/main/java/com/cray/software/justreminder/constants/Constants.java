@@ -73,7 +73,7 @@ public class Constants {
 
     public static final String LOG_TAG = "JustRem";
     public static final String ITEM_ID_INTENT = "itemId";
-    public static final String WINDOW_INTENT = "window";
+    public static final String ITEM_CODE_INTENT = "item_code";
 
     // Contact List Constants
     public final static int REQUEST_CODE_CONTACTS = 101;

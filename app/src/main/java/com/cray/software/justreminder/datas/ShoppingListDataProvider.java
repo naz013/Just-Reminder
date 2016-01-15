@@ -31,9 +31,9 @@ public class ShoppingListDataProvider {
         load();
     }
 
-    public ShoppingListDataProvider(ArrayList<ShoppingList> data){
+    public ShoppingListDataProvider(List<JsonShopping> data){
         this.data = new ArrayList<>();
-        this.data.addAll(data);
+        loadFromList(data);
     }
 
     public void setFlag(int flag) {
@@ -109,13 +109,21 @@ public class ShoppingListDataProvider {
         return data;
     }
 
+    public void loadFromList(List<JsonShopping> jsonShoppings) {
+        data = new ArrayList<>();
+        data.clear();
+        for (JsonShopping item : jsonShoppings) {
+            data.add(new ShoppingList(item.getSummary(), item.getStatus(),
+                    item.getUuId(), item.getDeleted(), item.getDateTime()));
+        }
+    }
+
     public void load() {
         data = new ArrayList<>();
         data.clear();
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminder(remId);
-        //if (flag == ShoppingList.ACTIVE)
         if (c != null && c.moveToFirst()){
             do {
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
