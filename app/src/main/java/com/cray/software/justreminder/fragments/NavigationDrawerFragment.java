@@ -234,25 +234,20 @@ public class NavigationDrawerFragment extends Fragment implements
             googleTasks.setVisibility(View.VISIBLE);
         }
 
-        DataBase DB = new DataBase(getActivity());
+        DataBase db = new DataBase(getActivity());
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        if (!DB.isOpen()) {
-            DB.open();
-        }
-        Cursor c = DB.queryTemplates();
+        if (!db.isOpen()) db.open();
+        Cursor c = db.queryTemplates();
         if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
-        if (!DB.isOpen()) {
-            DB.open();
-        }
-        c = DB.queryPlaces();
+        if (!db.isOpen()) db.open();
+        c = db.queryPlaces();
         if (c != null && c.moveToFirst()){
             places.setVisibility(View.VISIBLE);
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
+        db.close();
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -508,9 +503,7 @@ public class NavigationDrawerFragment extends Fragment implements
         reloadItems();
         SharedPrefs sPrefs = new SharedPrefs(getActivity());
         NextBase db = new NextBase(getActivity());
-        if (!db.isOpen()) {
-            db.open();
-        }
+        if (!db.isOpen()) db.open();
         if (db.getCountActive() > 0){
             if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
                 startActivity(new Intent(getActivity(), HelpOverflow.class)

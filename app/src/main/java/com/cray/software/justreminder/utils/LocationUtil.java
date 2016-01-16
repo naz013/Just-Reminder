@@ -35,7 +35,7 @@ public class LocationUtil {
     /**
      * Check if user enable on device any location service.
      * @param context application context.
-     * @return
+     * @return boolean
      */
     public static boolean checkLocationEnable(Context context){
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -74,7 +74,7 @@ public class LocationUtil {
     /**
      * Check if user has installed Google Play Services.
      * @param a activity.
-     * @return
+     * @return boolean
      */
     public static boolean checkGooglePlayServicesAvailability(Activity a) {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(a.getApplicationContext());
@@ -99,7 +99,7 @@ public class LocationUtil {
      * Get shorter string coordinates.
      * @param currentLat latitude.
      * @param currentLong longitude.
-     * @return
+     * @return Address string
      */
     public static String getAddress(double currentLat, double currentLong){
         return String.format("%.5f", currentLat) + ", " +
@@ -111,7 +111,7 @@ public class LocationUtil {
      * @param context application context.
      * @param lat latitude.
      * @param lon longitude.
-     * @return
+     * @return Address string
      */
     public static String getAddress(Context context, double lat, double lon){
         String place = null;

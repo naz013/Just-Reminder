@@ -109,9 +109,7 @@ public class GeolocationFragment extends Fragment {
     private void loadMarkers(){
         googleMap.clear();
         NextBase db = new NextBase(getActivity());
-        if (!db.isOpen()) {
-            db.open();
-        }
+        if (!db.isOpen()) db.open();
         Cursor c = db.queryAllLocations();
         Random random = new Random();
         ArrayList<MarkerModel> list = new ArrayList<>();
@@ -154,9 +152,7 @@ public class GeolocationFragment extends Fragment {
             } while (c.moveToNext());
         }
         loaderAdapter(list);
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
     }
 

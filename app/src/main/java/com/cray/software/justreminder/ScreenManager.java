@@ -1083,6 +1083,7 @@ public class ScreenManager extends AppCompatActivity
         } else {
             id = db.saveNote(note, date, cSetter.getNoteColor(color), uuID, null, 5);
         }
+        db.close();
 
         new UpdatesHelper(ScreenManager.this).updateNotesWidget();
 

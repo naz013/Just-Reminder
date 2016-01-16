@@ -72,9 +72,9 @@ public class EventsCheckAlarm extends BroadcastReceiver {
             String calID = prefs.loadPrefs(Prefs.EVENTS_CALENDAR);
             ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(calID);
             if (eventItems != null && eventItems.size() > 0){
-                DataBase DB = new DataBase(context);
-                DB.open();
-                Cursor c = DB.getCalendarEvents();
+                DataBase db = new DataBase(context);
+                db.open();
+                Cursor c = db.getCalendarEvents();
                 ArrayList<Long> ids = new ArrayList<>();
                 if (c != null && c.moveToFirst()){
                     do {
@@ -106,7 +106,7 @@ public class EventsCheckAlarm extends BroadcastReceiver {
                         }
                         String summary = item.getTitle();
                         String uuID = SyncHelper.generateID();
-                        Cursor cf = DB.queryCategories();
+                        Cursor cf = db.queryCategories();
                         String categoryId = null;
                         if (cf != null && cf.moveToFirst()) {
                             categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
@@ -118,10 +118,10 @@ public class EventsCheckAlarm extends BroadcastReceiver {
                         JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
                                 due, jsonRecurrence, null, null);
                         long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
-                        DB.addCalendarEvent(null, id, item.getId());
+                        db.addCalendarEvent(null, id, item.getId());
                     }
                 }
-                DB.close();
+                db.close();
             }
             return null;
         }

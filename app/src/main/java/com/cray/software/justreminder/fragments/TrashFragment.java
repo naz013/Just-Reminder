@@ -154,9 +154,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     private void deleteAll(){
         NextBase db = new NextBase(getActivity());
-        if (!db.isOpen()) {
-            db.open();
-        }
+        if (!db.isOpen()) db.open();
         Cursor c = db.getArchivedReminders();
         if (c != null && c.moveToFirst()){
             do{

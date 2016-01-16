@@ -153,6 +153,8 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
             }
             if (c != null) c.close();
         }
+
+        mData.close();
         return null;
     }
 

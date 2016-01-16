@@ -405,9 +405,7 @@ public class TasksFragment extends Fragment {
             } while (c.moveToNext());
         }
 
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
         new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 

@@ -208,16 +208,18 @@ public class SplashScreen extends Activity{
             prefs.saveBoolean("isGenB", true);
         }
 
-        try {
-            migrateToNewDb();
-        } catch (SQLiteException e) {
-            e.printStackTrace();
+        if (!prefs.loadBoolean(Prefs.IS_MIGRATION)) {
+            try {
+                migrateToNewDb();
+            } catch (SQLiteException e) {
+                e.printStackTrace();
+            }
+            prefs.saveBoolean(Prefs.IS_MIGRATION, true);
         }
 
         checkPrefs();
 
-        sPrefs = new SharedPrefs(SplashScreen.this);
-        if (isFirstTime() && !sPrefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
+        if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
             startActivity(new Intent(SplashScreen.this, StartHelp.class));
         } else {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));

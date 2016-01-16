@@ -54,8 +54,6 @@ public class SyncHelper {
     private static final String SHOPPING_REMINDER_LIST = "shopping_list";
 
     private Context mContext;
-    private DataBase DB;
-    private NotesBase db;
 
     public SyncHelper(Context context){
         this.mContext = context;
@@ -252,7 +250,7 @@ public class SyncHelper {
      * @throws IOException
      */
     public void noteToJson() throws JSONException, IOException {
-        db = new NotesBase(mContext);
+        NotesBase db = new NotesBase(mContext);
         db.open();
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()){
@@ -312,7 +310,7 @@ public class SyncHelper {
      */
     public void noteFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            db = new NotesBase(mContext);
+            NotesBase db = new NotesBase(mContext);
             db.open();
             List<String> namesPass = new ArrayList<>();
             Cursor e = db.getNotes();
@@ -324,6 +322,8 @@ public class SyncHelper {
                 }
                 e.close();
             }
+            db.close();
+
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
@@ -349,7 +349,6 @@ public class SyncHelper {
                         }
                     }
                 }
-                db.close();
             }
         }
     }
@@ -426,10 +425,11 @@ public class SyncHelper {
         }
         long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
 
-        db = new NotesBase(mContext);
+        NotesBase db = new NotesBase(mContext);
         db.open();
         long id = db.saveNote(note, date, color, uuID, image, style);
         db.linkToReminder(id, linkId);
+        db.close();
     }
 
     /**
@@ -752,16 +752,18 @@ public class SyncHelper {
      */
     public void groupFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(mContext);
-            DB.open();
+            DataBase db = new DataBase(mContext);
+            db.open();
             List<String> namesPass = new ArrayList<>();
-            Cursor e = DB.queryCategories();
+            Cursor e = db.queryCategories();
             while (e.moveToNext()) {
                 for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                     namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
                 }
             }
             e.close();
+            db.close();
+
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
@@ -787,7 +789,6 @@ public class SyncHelper {
                         }
                     }
                 }
-                DB.close();
             }
         }
     }
@@ -808,9 +809,9 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
-        DB = new DataBase(mContext);
-        DB.open();
-        Cursor cf = DB.queryCategories();
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor cf = db.queryCategories();
         if (cf != null && cf.moveToFirst()) {
             List<String> namesPass = new ArrayList<>();
             List<String> titles = new ArrayList<>();
@@ -821,12 +822,13 @@ public class SyncHelper {
                 }
             }
             if (!namesPass.contains(uuID) && !titles.contains(title)) {
-                DB.addCategory(title, date, uuID, color);
+                db.addCategory(title, date, uuID, color);
             }
         } else {
-            DB.addCategory(title, date, uuID, color);
+            db.addCategory(title, date, uuID, color);
         }
         if (cf != null) cf.close();
+        db.close();
     }
 
     /**
@@ -838,16 +840,18 @@ public class SyncHelper {
      */
     public void birthdayFromJson(String file, String fileNameR) throws IOException, JSONException {
         if (isSdPresent()){
-            DB = new DataBase(mContext);
-            DB.open();
+            DataBase db = new DataBase(mContext);
+            db.open();
             List<String> namesPass = new ArrayList<>();
-            Cursor e = DB.getBirthdays();
+            Cursor e = db.getBirthdays();
             while (e.moveToNext()) {
                 for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
                     namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
                 }
             }
             e.close();
+            db.close();
+
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
@@ -873,7 +877,6 @@ public class SyncHelper {
                         }
                     }
                 }
-                DB.close();
             }
         }
     }
@@ -934,9 +937,9 @@ public class SyncHelper {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        DB = new DataBase(mContext);
-        DB.open();
-        Cursor cf = DB.getBirthdays();
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor cf = db.getBirthdays();
         if (cf != null && cf.moveToFirst()) {
             List<String> namesPass = new ArrayList<>();
             List<String> numbers = new ArrayList<>();
@@ -947,12 +950,12 @@ public class SyncHelper {
                 }
             }
             if (!namesPass.contains(name) && !numbers.contains(number)) {
-                DB.addBirthday(name, conId, date, day, month, number, uuID);
+                db.addBirthday(name, conId, date, day, month, number, uuID);
             }
         } else {
-            DB.addBirthday(name, conId, date, day, month, number, uuID);
+            db.addBirthday(name, conId, date, day, month, number, uuID);
         }
-        DB.close();
+        db.close();
     }
 
     public static ArrayList<ShoppingList> getList(String fileLoc){

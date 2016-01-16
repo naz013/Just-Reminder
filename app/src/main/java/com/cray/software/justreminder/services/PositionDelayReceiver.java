@@ -20,9 +20,9 @@ public class PositionDelayReceiver extends BroadcastReceiver {
     }
 
     public void setDelay(Context context, long id) {
-        NextBase DB = new NextBase(context);
-        DB.open();
-        Cursor c = DB.getReminder(id);
+        NextBase db = new NextBase(context);
+        db.open();
+        Cursor c = db.getReminder(id);
 
         Integer i = (int) (long) id;
         long startTime = 0;
@@ -35,7 +35,7 @@ public class PositionDelayReceiver extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         alarmMgr.set(AlarmManager.RTC_WAKEUP, startTime, alarmIntent);
-        DB.close();
+        db.close();
     }
 
     public void cancelDelay(Context context, long id) {

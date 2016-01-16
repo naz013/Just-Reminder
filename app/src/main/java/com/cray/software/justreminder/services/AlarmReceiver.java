@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
@@ -18,6 +19,7 @@ import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("----ON_RECEIVE-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         int code = intent.getIntExtra(Constants.ITEM_CODE_INTENT, 0);
         Intent service = new Intent(context, AlarmReceiver.class);

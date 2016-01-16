@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.settings.fragments;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Looper;
@@ -18,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.BirthdayImport;
 import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -38,13 +36,13 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.Calendar;
 
-public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
+public class BirthdaysSettingsFragment extends Fragment implements View.OnClickListener,
+        DialogInterface.OnDismissListener {
 
     private ActionBar ab;
     private SharedPrefs sPrefs;
     private TextView contactsScan, reminderTimeText;
     private SwitchCompat contactsSwitch;
-    private DataBase db;
     
     private PrefsView birthReminderPrefs, widgetShowPrefs, birthdayPermanentPrefs, 
             daysToPrefs, backupBirthPrefs, autoScanPrefs;
@@ -95,10 +93,6 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         autoScanPrefs = (PrefsView) rootView.findViewById(R.id.autoScanPrefs);
         autoScanPrefs.setOnClickListener(this);
         autoScanPrefs.setChecked(sPrefs.loadBoolean(Prefs.AUTO_CHECK_BIRTHDAYS));
-
-        TextView birthImport = (TextView) rootView.findViewById(R.id.birthImport);
-        birthImport.setOnClickListener(this);
-        birthImport.setVisibility(View.GONE);
 
         if (Module.isPro()){
             RelativeLayout birthdayNotifContainer = (RelativeLayout) rootView.findViewById(R.id.birthdayNotifContainer);
@@ -219,7 +213,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             @Override
             public void run() {
                 Looper.prepare();
-                db = new DataBase(getActivity());
+                DataBase db = new DataBase(getActivity());
                 db.open();
                 Cursor c = db.getBirthdays();
                 if (c != null && c.moveToFirst()){
@@ -275,11 +269,6 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.birthdayPermanentPrefs:
                 setBirthdayPermanentCheck();
-                break;
-            case R.id.birthImport:
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), BirthdayImport.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.contactsScan:
                 if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS)) {

@@ -83,11 +83,11 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         if (encryptNotePrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, false);
             encryptNotePrefs.setChecked(false);
-            new decryptNotes(getActivity()).execute();
+            new EncryptNotes(getActivity(), false).execute();
         } else {
             sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, true);
             encryptNotePrefs.setChecked(true);
-            new encryptNotes(getActivity()).execute();
+            new EncryptNotes(getActivity(), true).execute();
         }
     }
 
@@ -168,17 +168,19 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
 
     }
 
-    class encryptNotes extends AsyncTask<Void, Void, Integer> {
+    class EncryptNotes extends AsyncTask<Void, Void, Integer> {
 
-        ProgressDialog pd;
-        Context tContext;
-        NotesBase db;
+        private ProgressDialog pd;
+        private Context tContext;
+        private boolean encrypt;
 
-        public encryptNotes(Context context) {
+        public EncryptNotes(Context context, boolean encrypt) {
             this.tContext = context;
+            this.encrypt = encrypt;
             pd = new ProgressDialog(context);
             pd.setCancelable(false);
-            pd.setMessage(tContext.getString(R.string.encrypting_notes));
+            if (encrypt) pd.setMessage(tContext.getString(R.string.encrypting_notes));
+            else pd.setMessage(tContext.getString(R.string.decrypting_notes_title));
         }
 
         @Override
@@ -190,66 +192,18 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         @Override
         protected Integer doInBackground(Void... params) {
             int i = 0;
-            db = new NotesBase(tContext);
+            NotesBase db = new NotesBase(tContext);
             db.open();
             Cursor c = db.getNotes();
             if (c != null && c.moveToFirst()){
                 do {
                     String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                     long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    String encrypted = SyncHelper.encrypt(note);
-                    db.updateNote(id, encrypted);
+                    String converted = encrypt ? SyncHelper.encrypt(note) : SyncHelper.decrypt(note);
+                    db.updateNote(id, converted);
                 } while (c.moveToNext());
             }
-            return i;
-        }
-
-        @Override
-        protected void onPostExecute(Integer files) {
-            try {
-                if ((pd != null) && pd.isShowing()) {
-                    pd.dismiss();
-                }
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class decryptNotes extends AsyncTask<Void, Void, Integer> {
-
-        ProgressDialog pd;
-        Context tContext;
-        NotesBase db;
-
-        public decryptNotes(Context context) {
-            this.tContext = context;
-            pd = new ProgressDialog(context);
-            pd.setCancelable(false);
-            pd.setMessage(tContext.getString(R.string.decrypting_notes_title));
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd.show();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            int i = 0;
-            db = new NotesBase(tContext);
-            db.open();
-            Cursor c = db.getNotes();
-            if (c != null && c.moveToFirst()){
-                do {
-                    String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                    long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    String decrypted = SyncHelper.decrypt(note);
-                    db.updateNote(id, decrypted);
-                } while (c.moveToNext());
-            }
-
+            db.close();
             return i;
         }
 

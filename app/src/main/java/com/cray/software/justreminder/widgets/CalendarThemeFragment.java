@@ -17,10 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.models.WidgetItem;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.widgets.configs.CalendarWidgetConfig;
 import com.hexrain.flextcal.FlextHelper;
 
@@ -200,7 +199,6 @@ public class CalendarThemeFragment extends Fragment{
     private class MonthGridAdapter extends BaseAdapter{
 
         ArrayList<DateTime> datetimeList;
-        ArrayList<WidgetItem> pagerData = new ArrayList<>();
         int SUNDAY = 1;
         int startDayOfWeek = SUNDAY;
         int mDay, mMonth, mYear, prefsMonth;

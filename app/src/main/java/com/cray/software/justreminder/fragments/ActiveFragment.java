@@ -228,9 +228,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));
@@ -271,9 +269,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 ids.add(catId);
             } while (c.moveToNext());
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.string_select_category));

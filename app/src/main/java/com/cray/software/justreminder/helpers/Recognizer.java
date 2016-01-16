@@ -2967,6 +2967,7 @@ public class Recognizer {
             days = time;
             int days = Integer.parseInt(time);
             DataBase db = new DataBase(mContext);
+            db.open();
             Calendar calendar = Calendar.getInstance();
             int mDay;
             int mMonth;
@@ -2995,6 +2996,7 @@ public class Recognizer {
                 calendar.setTimeInMillis(calendar.getTimeInMillis() + (1000 * 60 * 60 * 24));
                 i++;
             } while (i <= days);
+            db.close();
             return null;
         }
 
@@ -3064,7 +3066,7 @@ public class Recognizer {
         String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(mContext);
         db.open();
-        long id = 0;
+        long id;
         if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
             id = db.saveNote(SyncHelper.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
         } else {

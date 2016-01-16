@@ -478,7 +478,9 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     tasksContainer.setVisibility(View.VISIBLE);
                     taskText.setText(reminderNote.getTaskTitle());
                     String mNote = reminderNote.getTaskNote();
-                    Cursor c = new TasksData(mContext).getTasksList(reminderNote.getTaskListId());
+                    TasksData data = new TasksData(mContext);
+                    data.open();
+                    Cursor c = data.getTasksList(reminderNote.getTaskListId());
                     if (c != null && c.moveToFirst()){
                         listColor.setBackgroundColor(
                                 new ColorSetter(mContext)
@@ -486,6 +488,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     } else {
                         listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(8));
                     }
+                    if (c != null) c.close();
+                    data.close();
 
                     if (mNote != null && !mNote.matches("")) {
                         taskNote.setText(mNote);

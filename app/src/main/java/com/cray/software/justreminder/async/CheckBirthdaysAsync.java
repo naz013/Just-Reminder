@@ -125,6 +125,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
         }
 
         cur.close();
+        db.close();
         return i;
     }
 

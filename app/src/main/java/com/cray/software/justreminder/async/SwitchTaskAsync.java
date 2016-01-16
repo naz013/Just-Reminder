@@ -53,6 +53,7 @@ public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
                 data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GTasksHelper.TASKS_NEED_ACTION);
             }
         }
+        data.close();
         return null;
     }
 

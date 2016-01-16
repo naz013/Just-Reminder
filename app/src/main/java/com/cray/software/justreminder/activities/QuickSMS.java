@@ -20,21 +20,19 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 
 public class QuickSMS extends Activity {
 
-    private DataBase DB;
     private TextView buttonSend;
     private ListView messagesList;
-    private SharedPrefs sPrefs;
     private String number;
     private ColorSetter cs = new ColorSetter(QuickSMS.this);
 
@@ -42,7 +40,7 @@ public class QuickSMS extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        sPrefs = new SharedPrefs(QuickSMS.this);
+        SharedPrefs sPrefs = new SharedPrefs(QuickSMS.this);
         runOnUiThread(new Runnable() {
             public void run() {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -80,10 +78,6 @@ public class QuickSMS extends Activity {
         });
         buttonSend.setTypeface(typeface);
 
-        DB = new DataBase(QuickSMS.this);
-        sPrefs = new SharedPrefs(QuickSMS.this);
-
-        DB.open();
         String name = Contacts.getContactNameFromNumber(number, QuickSMS.this);
 
         TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
@@ -97,14 +91,16 @@ public class QuickSMS extends Activity {
     }
 
     private void loadTemplates(){
-        DB.open();
+        DataBase db = new DataBase(QuickSMS.this);
+        db.open();
         SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
                 QuickSMS.this,
                 android.R.layout.simple_list_item_single_choice,
-                DB.queryTemplates(),
+                db.queryTemplates(),
                 new String[] {Constants.COLUMN_TEXT},
                 new int[] { android.R.id.text1 }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         messagesList.setAdapter(simpleCursorAdapter);
+        db.close();
     }
 
     public void removeFlags(){
@@ -129,7 +125,6 @@ public class QuickSMS extends Activity {
 
             @Override
             public void onReceive(Context arg0, Intent arg1) {
-                sPrefs = new SharedPrefs(QuickSMS.this);
                 switch (getResultCode()) {
                     case Activity.RESULT_OK:
                         removeFlags();

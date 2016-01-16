@@ -46,6 +46,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
                 showNotification(context, task, type, id, color, melody);
             }
             if (c != null) c.close();
+            db.close();
         }
     }
 

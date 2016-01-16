@@ -137,4 +137,5 @@ public class Prefs {
     public static final String IS_CREATE_SHOWN = "create_showcase";
     public static final String IS_CALENDAR_SHOWN = "calendar_showcase";
     public static final String IS_LIST_SHOWN = "list_showcase";
+    public static final String IS_MIGRATION = "is_migrate";
 }

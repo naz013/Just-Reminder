@@ -27,6 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -2528,6 +2529,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             JsonAction jsonAction = new JsonAction(type, number, auto);
             JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
             JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
+
+            Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
+            Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
 
             return new JsonModel(task, type, categoryId, uuId, startTime, startTime, 0, vibro,
                     notification, voice, wake, unlock, jsonExclusion, jsonLed, jsonMelody,

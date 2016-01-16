@@ -113,7 +113,7 @@ public class JsonParser {
             model.setShoppings(getShoppings());
             model.setLed(getLed());
             model.setPlace(getPlace());
-            Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
+            //Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
             return model;
         }
     }
@@ -261,7 +261,7 @@ public class JsonParser {
             }
             jsonModel.setShoppings(list);
         }
-        Log.d("------TIME_F------", "Parsing time - " + (System.currentTimeMillis() - start));
+        //Log.d("------TIME_F------", "Parsing time - " + (System.currentTimeMillis() - start));
         return jsonModel;
     }
 

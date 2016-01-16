@@ -256,6 +256,7 @@ public class GTasksHelper {
                 long updated = dateTime != null ? dateTime.getValue() : 0;
                 data.updateTasksList(id, result.getTitle(), result.getId(), 0, result.getEtag(), result.getKind(),
                         result.getSelfLink(), updated, color);
+                data.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -152,6 +152,7 @@ public class CloudDrives extends AppCompatActivity {
                     data.deleteTasksList(s.getLong(s.getColumnIndex(TasksConstants.COLUMN_ID)));
                 } while (s.moveToNext());
             }
+            data.close();
         } else {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);

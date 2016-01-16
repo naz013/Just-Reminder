@@ -534,9 +534,9 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                     if (isLayersVisible()) ViewUtils.hideOver(layersContainer);
                     if (position > 0){
                         String placeName = spinnerArray.get(position);
-                        DataBase DB = new DataBase(getActivity());
-                        DB.open();
-                        Cursor c = DB.getPlace(placeName);
+                        DataBase db = new DataBase(getActivity());
+                        db.open();
+                        Cursor c = db.getPlace(placeName);
                         if (c != null && c.moveToFirst()) {
                             double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
                             double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
@@ -544,6 +544,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
                             addMarker(latLng, markerTitle, true, true, markerRadius);
                         }
                         if (c != null) c.close();
+                        db.close();
                     }
                 }
 
@@ -585,9 +586,9 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
     }
 
     private void loadPlaces(){
-        DataBase DB = new DataBase(getActivity());
-        DB.open();
-        Cursor c = DB.queryPlaces();
+        DataBase db = new DataBase(getActivity());
+        db.open();
+        Cursor c = db.queryPlaces();
         spinnerArray = new ArrayList<>();
         spinnerArray.clear();
         spinnerArray.add(getString(R.string.other_settings));
@@ -599,6 +600,7 @@ public class MapFragment extends Fragment implements View.OnLongClickListener {
             } while (c.moveToNext());
         } else spinnerArray.clear();
         if (c != null) c.close();
+        db.close();
     }
 
     private boolean isLayersVisible(){

@@ -129,6 +129,8 @@ public class GetTasksListsAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
         }
+
+        data.close();
         return null;
     }
 

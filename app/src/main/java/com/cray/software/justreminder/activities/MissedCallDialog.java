@@ -44,9 +44,6 @@ public class MissedCallDialog extends Activity {
     private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(MissedCallDialog.this);
     private Notifier notifier = new Notifier(MissedCallDialog.this);
-    private DataBase db = new DataBase(MissedCallDialog.this);
-
-    private boolean isDark = false;
     private String number;
     private int currVolume;
 
@@ -106,17 +103,10 @@ public class MissedCallDialog extends Activity {
         RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
-        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
-        if (isDark){
-            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
-        } else {
-            buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_white_24dp));
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_white_24dp));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_white_24dp));
-        }
+        buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
+        buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
+        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
 
         TextView remText = (TextView) findViewById(R.id.remText);
         Calendar calendar = Calendar.getInstance();
@@ -129,33 +119,23 @@ public class MissedCallDialog extends Activity {
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        if (isDark) {
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
-        } else {
-            buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_white_24dp));
-        }
+        buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
 
         contactPhoto.setVisibility(View.VISIBLE);
         Bitmap photo = Contacts.getPhoto(this, id);
-        if (photo != null) {
-            contactPhoto.setImageBitmap(photo);
-        } else {
-            contactPhoto.setVisibility(View.GONE);
-        }
+        if (photo != null) contactPhoto.setImageBitmap(photo);
+        else contactPhoto.setVisibility(View.GONE);
 
         wakeScreen();
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarm.cancelAlarm(getApplicationContext(), id);
-                notifier.discardNotification(id);
                 Intent sendIntent = new Intent(Intent.ACTION_VIEW);
                 sendIntent.setType("vnd.android-dir/mms-sms");
                 sendIntent.putExtra("address", number);
                 startActivity(Intent.createChooser(sendIntent, "SMS:"));
-                db.open();
-                db.deleteMissedCall(id);
+                removeMissed();
                 removeFlags();
                 finish();
             }
@@ -164,10 +144,7 @@ public class MissedCallDialog extends Activity {
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarm.cancelAlarm(getApplicationContext(), id);
-                notifier.discardNotification(id);
-                db.open();
-                db.deleteMissedCall(id);
+                removeMissed();
                 removeFlags();
                 finish();
             }
@@ -176,10 +153,7 @@ public class MissedCallDialog extends Activity {
         buttonCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarm.cancelAlarm(getApplicationContext(), id);
-                notifier.discardNotification(id);
-                db.open();
-                db.deleteMissedCall(id);
+                removeMissed();
                 if (Permissions.checkPermission(MissedCallDialog.this, Permissions.CALL_PHONE)) {
                     Telephony.makeCall(number, MissedCallDialog.this);
                     removeFlags();
@@ -191,6 +165,15 @@ public class MissedCallDialog extends Activity {
         });
 
         notifier.showMissedReminder(name == null || name.matches("") ? number : name, id);
+    }
+
+    private void removeMissed() {
+        alarm.cancelAlarm(getApplicationContext(), id);
+        notifier.discardNotification(id);
+        DataBase db = new DataBase(MissedCallDialog.this);
+        db.open();
+        db.deleteMissedCall(id);
+        db.close();
     }
 
     @Override
@@ -211,13 +194,8 @@ public class MissedCallDialog extends Activity {
 
     private void colorify(FloatingActionButton... fab){
         for (FloatingActionButton button:fab){
-            if (isDark){
-                button.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
-                button.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
-            } else {
-                button.setColorNormal(ViewUtils.getColor(this, R.color.material_divider));
-                button.setColorPressed(ViewUtils.getColor(this, R.color.whitePrimary));
-            }
+            button.setColorNormal(cs.colorAccent());
+            button.setColorPressed(cs.colorPrimary());
         }
     }
 
@@ -253,11 +231,11 @@ public class MissedCallDialog extends Activity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         notifier.recreatePermanent();
         removeFlags();
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
-        super.onDestroy();
     }
 
     @Override
@@ -266,8 +244,6 @@ public class MissedCallDialog extends Activity {
         if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
-        } else {
-            Messages.toast(getApplicationContext(), getString(R.string.must_click_message));
-        }
+        } else Messages.toast(getApplicationContext(), getString(R.string.must_click_message));
     }
 }

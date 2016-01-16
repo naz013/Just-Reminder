@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ReminderDialog;
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
@@ -139,17 +138,18 @@ public class CheckPosition extends IntentService {
         }
 
         if (c != null) c.close();
+        db.close();
     }
 
     private void showReminder(long id, String task){
         NextBase db = new NextBase(getApplicationContext());
         db.open().setLocationStatus(id, LocationUtil.SHOWN);
+        db.close();
         Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
         resultIntent.putExtra("taskDialog", task);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication().startActivity(resultIntent);
-        stopIt();
     }
 
     private void showNotification(long id, int roundedDistance, int shown, String task){
@@ -164,9 +164,5 @@ public class CheckPosition extends IntentService {
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotifyMgr.notify(i, builder.build());
-    }
-
-    private void stopIt(){
-        new DisableAsync(getApplicationContext()).execute();
     }
 }

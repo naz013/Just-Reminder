@@ -45,6 +45,7 @@ public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
                 data.deleteTask(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
             } while (cc.moveToNext());
         }
+        if (cc != null) cc.close();
 
         if (lists != null && lists.size() > 0){
             for (TaskList item : lists.getItems()){
@@ -134,6 +135,8 @@ public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
         }
+
+        data.close();
         return null;
     }
 

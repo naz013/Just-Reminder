@@ -238,7 +238,6 @@ public class EventsDataProvider {
         }
         if (c != null) c.close();
         db.close();
-        long diff = System.currentTimeMillis() - start;
-        Log.d(Constants.LOG_TAG, "Calculate time " + diff);
+        Log.d(Constants.LOG_TAG, "Calculate time " + (System.currentTimeMillis() - start));
     }
 }

@@ -121,6 +121,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
             DataBase db = new DataBase(getActivity());
             db.open();
             db.deleteBirthday(datas.get(position).getId());
+            db.close();
             datas.remove(position);
             loaderAdapter();
             Messages.toast(getActivity(), getString(R.string.swipe_delete));

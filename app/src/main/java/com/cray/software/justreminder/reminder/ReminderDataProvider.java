@@ -102,7 +102,7 @@ public class ReminderDataProvider {
                 int catColor = 0;
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-                Log.d(Constants.LOG_TAG, "Json ---- " + json);
+                //Log.d(Constants.LOG_TAG, "Json ---- " + json);
                 JsonModel jsonModel = new JsonParser(json).parse();
                 data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());

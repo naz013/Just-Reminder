@@ -23,21 +23,6 @@
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/import_birth_from_facebook"
-        android:id="@+id/birthImport"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
-
     <com.cray.software.justreminder.views.PrefsView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

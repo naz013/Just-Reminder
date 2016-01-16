@@ -11,22 +11,17 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
-import android.util.Log;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ContactsList;
 import com.cray.software.justreminder.activities.SelectApplication;
-import com.cray.software.justreminder.dialogs.SelectMelody;
-import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -208,89 +203,6 @@ public class SuperUtil {
                 Intent i = new Intent(activity, ContactsList.class);
                 i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
                 activity.startActivityForResult(i, requestCode);
-            }
-        }
-
-        new Async().execute();
-    }
-
-    /**
-     * Load list of sound files on SDCard and show chooser activity.
-     * @param activity context activity.
-     * @param requestCode result request code.
-     */
-    public static void selectMelody(final Activity activity, final int requestCode){
-        class Async extends AsyncTask<Void, Void, Void>{
-
-            private ProgressDialog pd;
-            private ArrayList<String> names, foldersFile;
-            private ArrayList<File> fileList;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                pd = ProgressDialog.show(activity, null, activity.getString(R.string.sounds_loading_text), true);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                fileList = new ArrayList<>();
-                fileList.clear();
-                File dir;
-                if (SyncHelper.isSdPresent()) {
-                    dir = new File(SyncHelper.getSdCardPath());
-                    listf(dir.toString(), fileList);
-                } else {
-                    dir = new File(Environment.getDataDirectory().toString());
-                    listf(dir.toString(), fileList);
-                }
-                Collections.sort(fileList);
-                names = new ArrayList<>();
-                foldersFile = new ArrayList<>();
-                names.clear();
-                foldersFile.clear();
-                for (File aFile : fileList) {
-                    names.add(aFile.getName());
-                    String folder = aFile.toString();
-                    foldersFile.add(folder);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (pd != null && pd.isShowing()) pd.dismiss();
-                if (fileList != null){
-                    Intent i = new Intent(activity, SelectMelody.class);
-                    i.putStringArrayListExtra("names", names);
-                    i.putStringArrayListExtra("folders", foldersFile);
-                    i.putExtra(Constants.BIRTHDAY_INTENT_ID, 1);
-                    activity.startActivityForResult(i, requestCode);
-                } else {
-                    Messages.toast(activity, activity.getString(R.string.no_music));
-                }
-            }
-
-            public void listf(String directoryName, ArrayList<File> files) {
-                File directory = new File(directoryName);
-
-                File[] fList = directory.listFiles();
-                if (fList != null) {
-                    for (File file : fList) {
-                        if (file.canRead()) {
-                            if (file.isFile()) {
-                                if (file.getName().endsWith(".mp3") || file.getName().endsWith(".ogg")) {
-                                    files.add(file);
-                                }
-                            } else if (file.isDirectory()) {
-                                listf(file.toString(), files);
-                            }
-                        } else {
-                            Log.d(Constants.LOG_TAG, "secure file");
-                        }
-                    }
-                } else Log.i(Constants.LOG_TAG, "No files");
             }
         }
 

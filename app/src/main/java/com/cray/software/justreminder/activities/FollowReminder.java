@@ -295,10 +295,11 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         JsonModel jsonModel = new JsonModel(text, type, categoryId,
                 SyncHelper.generateID(), due, due, null, null, null);
         long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
-        if (prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) || prefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) {
-            ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, due, remId,
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR),
-                    sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
+        boolean cal = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+        boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        if (cal || stock) {
+            ReminderUtils.exportToCalendar(this, text.matches("") ? number : text, due,
+                    remId, cal, stock);
         }
         if (gtx.isLinked() && taskExport.isChecked()){
             ReminderUtils.exportToTasks(this, text, due, remId);

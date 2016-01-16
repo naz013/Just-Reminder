@@ -119,14 +119,12 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             DataBase db = new DataBase(getActivity());
             db.open();
             Cursor s = db.getCategory(itemId);
-            if (s != null && s.moveToFirst()){
+            if (s != null && s.moveToFirst()) {
                 String uuId = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 db.deleteCategory(itemId);
                 new DeleteAsync(getActivity(), uuId).execute();
             }
-            if (s != null) {
-                s.close();
-            }
+            if (s != null) s.close();
             db.close();
             if (mCallbacks != null) {
                 mCallbacks.showSnackbar(R.string.group_deleted);
@@ -269,6 +267,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     }
                 } while (c.moveToNext());
             }
+            db.close();
             return null;
         }
     }

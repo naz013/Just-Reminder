@@ -7,13 +7,12 @@ import android.database.Cursor;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.activities.FollowReminder;
 import com.cray.software.justreminder.activities.QuickSMS;
-import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
 public class CallReceiver extends BroadcastReceiver {
 
@@ -53,15 +52,11 @@ public class CallReceiver extends BroadcastReceiver {
                         //Start quick contact reminder window
                         boolean isFollow = prefs.loadBoolean(Prefs.FOLLOW_REMINDER);
                         if (incoming_nr != null && isFollow ) {
-                            String contact = Contacts.getContactNameFromNumber(incoming_nr, mContext);
-                            //boolean isEnabled = prefs.loadBoolean(contact);
-                            //if (isEnabled) {
-                                mContext.startActivity(new Intent(mContext, FollowReminder.class)
-                                        .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
-                                        .putExtra(Constants.SELECTED_RADIUS, startCallTime)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                                                Intent.FLAG_ACTIVITY_SINGLE_TOP));
-                            //}
+                            mContext.startActivity(new Intent(mContext, FollowReminder.class)
+                                    .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
+                                    .putExtra(Constants.SELECTED_RADIUS, startCallTime)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                            Intent.FLAG_ACTIVITY_SINGLE_TOP));
                             break;
                         }
                     }
@@ -105,6 +100,7 @@ public class CallReceiver extends BroadcastReceiver {
                                 Cursor c = db.queryTemplates();
                                 int size = 0;
                                 if (c != null) size = c.getCount();
+                                db.close();
                                 if (size > 0) {
                                     mContext.startActivity(new Intent(mContext, QuickSMS.class)
                                             .putExtra(Constants.ITEM_ID_INTENT, incoming_nr)

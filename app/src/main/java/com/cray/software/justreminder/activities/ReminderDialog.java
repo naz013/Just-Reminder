@@ -59,6 +59,7 @@ import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.DeliveredReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.SendReceiver;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
@@ -99,6 +100,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("----ON_REMINDER-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
+
         SharedPrefs prefs = new SharedPrefs(ReminderDialog.this);
 
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);

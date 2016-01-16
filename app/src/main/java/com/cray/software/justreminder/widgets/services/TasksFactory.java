@@ -11,11 +11,11 @@ import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.widgets.configs.TasksWidgetConfig;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +27,6 @@ import java.util.Map;
 public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
-    private TasksData data;
     private int widgetID;
     private ColorSetter cs;
     private ArrayList<Task> mData;
@@ -43,7 +42,6 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         mData = new ArrayList<>();
-        data = new TasksData(mContext);
         cs = new ColorSetter(mContext);
         map = new HashMap<>();
     }
@@ -52,12 +50,11 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         mData.clear();
         map.clear();
+        TasksData data = new TasksData(mContext);
         data.open();
         Cursor c = data.getTasksLists();
         if (c != null && c.moveToFirst()){
-            int position = 1;
             do {
-                position++;
                 String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                 int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
                 map.put(listId, color);
@@ -88,6 +85,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
             } while (c.moveToNext());
         }
         if(c != null) c.close();
+        data.close();
     }
 
     @Override
@@ -115,7 +113,6 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
 
         rView.setViewVisibility(R.id.checkDone, View.GONE);
 
-        Cursor c = data.getTasksList(mData.get(i).getListId());
         rView.setInt(R.id.listColor, "setBackgroundColor", cs.getNoteColor(map.get(mData.get(i).getListId())));
 
         final String name = mData.get(i).getTitle();

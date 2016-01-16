@@ -258,20 +258,16 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private void deleteAll(){
         NotesBase db = new NotesBase(getActivity());
-        if (!db.isOpen()) {
-            db.open();
-        }
+        if (!db.isOpen()) db.open();
         Cursor c = db.getNotes();
-        if (c != null && c.moveToFirst()){
-            do{
+        if (c != null && c.moveToFirst()) {
+            do {
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 NoteModel.deleteNote(rowId, getActivity(), mCallbacks);
 
-            }while (c.moveToNext());
+            } while (c.moveToNext());
         }
-        if (c != null) {
-            c.close();
-        }
+        if (c != null) c.close();
         db.close();
     }
 

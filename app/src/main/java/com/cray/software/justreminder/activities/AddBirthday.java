@@ -210,6 +210,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 } else
                     db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, null);
 
+                db.close();
                 finish();
             }
         } else {
@@ -225,12 +226,14 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                     } else
                         db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, null, uuId);
 
+                    db.close();
                     finish();
                 }
             } else {
                 String contact = birthName.getText().toString();
                 if (!contact.matches("")) {
                     db.addBirthday(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, uuId);
+                    db.close();
                     finish();
                 } else {
                     birthName.setError(getString(R.string.empty_field_error));

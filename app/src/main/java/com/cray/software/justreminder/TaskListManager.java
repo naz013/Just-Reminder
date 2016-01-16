@@ -43,8 +43,6 @@ public class TaskListManager extends AppCompatActivity {
     private int color, sysDef;
     private int prevId;
 
-    private TasksData data = new TasksData(TaskListManager.this);
-
     private static final int MENU_ITEM_DELETE = 12;
 
     @Override
@@ -95,6 +93,7 @@ public class TaskListManager extends AppCompatActivity {
         id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         color = 4;
         if (id != 0){
+            TasksData data = new TasksData(TaskListManager.this);
             data.open();
             Cursor c = data.getTasksList(id);
             if (c != null && c.moveToFirst()){
@@ -109,6 +108,7 @@ public class TaskListManager extends AppCompatActivity {
                 setColor(color);
             }
             if (c != null) c.close();
+            data.close();
         }
 
         initRadio();
@@ -167,7 +167,7 @@ public class TaskListManager extends AppCompatActivity {
             editField.setError(getString(R.string.empty_field_error));
             return;
         }
-
+        TasksData data = new TasksData(TaskListManager.this);
         data.open();
         if (id != 0){
             Cursor c = data.getTasksList(id);
@@ -206,6 +206,7 @@ public class TaskListManager extends AppCompatActivity {
                     System.currentTimeMillis(), color);
             new TaskListAsync(TaskListManager.this, listName, idN, color, null, TasksConstants.INSERT_TASK_LIST).execute();
         }
+        data.close();
         finish();
     }
 
@@ -245,6 +246,7 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     private void deleteList() {
+        TasksData data = new TasksData(TaskListManager.this);
         data.open();
         Cursor c = data.getTasksList(id);
         if (c != null && c.moveToFirst()){
@@ -268,6 +270,7 @@ public class TaskListManager extends AppCompatActivity {
             }
         }
         if (c != null) c.close();
+        data.close();
     }
 
     @Override

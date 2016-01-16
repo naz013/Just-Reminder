@@ -149,13 +149,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.BirthdayImport"
-            android:configChanges="keyboardHidden|orientation">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.QuickSMS"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
