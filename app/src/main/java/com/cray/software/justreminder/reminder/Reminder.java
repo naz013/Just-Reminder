@@ -184,8 +184,8 @@ public class Reminder {
                 JsonModel jsonModel = new JsonParser(json).parse();
                 JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
                 long nextTime = new TimeCount(context).generateDateTime(type,
-                        jsonRecurrence.getMonthday(), System.currentTimeMillis(),
-                        0, jsonRecurrence.getWeekdays(), 0, 0);
+                        jsonRecurrence.getMonthday(), eventTime, 0,
+                        jsonRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(id, nextTime);
                 jsonModel.setEventTime(nextTime);
                 db.setJson(id, new JsonParser().toJsonString(jsonModel));
