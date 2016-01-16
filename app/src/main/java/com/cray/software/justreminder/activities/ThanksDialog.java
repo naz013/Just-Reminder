@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 /**
  * Show all open source libraries used in project.
@@ -29,7 +30,7 @@ public final class ThanksDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

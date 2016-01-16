@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.cray.software.justreminder.datas.models.TaskListData;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.TaskListFragment;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
 
@@ -40,7 +41,7 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * Navigation drawer callback.
      */
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     /**
      * Adapter constructor.
@@ -56,7 +57,7 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
      * Set navigation drawer callback for adapter.
      * @param callbacks navigation drawer callback.
      */
-    public void setCallbacks(final NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
+    public void setCallbacks(NavigationCallbacks callbacks){
         this.mCallbacks = callbacks;
     }
 

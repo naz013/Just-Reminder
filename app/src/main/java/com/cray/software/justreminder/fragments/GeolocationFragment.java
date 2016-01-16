@@ -19,6 +19,7 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -41,7 +42,7 @@ public class GeolocationFragment extends Fragment {
 
     private boolean onCreate = false;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static GeolocationFragment newInstance() {
         return new GeolocationFragment();
@@ -84,7 +85,7 @@ public class GeolocationFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

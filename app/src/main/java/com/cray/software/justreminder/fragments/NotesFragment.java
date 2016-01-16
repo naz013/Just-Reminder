@@ -34,6 +34,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
@@ -49,7 +50,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private boolean enableGrid = false;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static NotesFragment newInstance() {
         return new NotesFragment();
@@ -153,7 +154,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

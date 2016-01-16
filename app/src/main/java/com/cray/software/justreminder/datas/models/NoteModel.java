@@ -5,16 +5,16 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.DeleteNoteFilesAsync;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 
 import org.json.JSONException;
 
@@ -28,8 +28,6 @@ public class NoteModel {
     private int color, style;
     private byte[] image;
     private long id;
-
-    public NoteModel(){}
 
     public NoteModel(String note, int color, int style, byte[] image, long id){
         this.color = color;
@@ -95,7 +93,7 @@ public class NoteModel {
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
             SharedPrefs sPrefs = new SharedPrefs(context);
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)) {
-                note = sHelp.decrypt(note);
+                note = SyncHelper.decrypt(note);
             }
             Calendar calendar1 = Calendar.getInstance();
             int day = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -132,7 +130,7 @@ public class NoteModel {
      * @param context application context.
      * @param callbacks callback for toast or snackbar message.
      */
-    public static void deleteNote(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
+    public static void deleteNote(long id, Context context, NavigationCallbacks callbacks) {
         NotesBase db = new NotesBase(context);
         db.open();
         String uuId = null;

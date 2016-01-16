@@ -21,6 +21,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class NewTemplate extends AppCompatActivity {
 
@@ -34,7 +35,7 @@ public class NewTemplate extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.new_template_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());

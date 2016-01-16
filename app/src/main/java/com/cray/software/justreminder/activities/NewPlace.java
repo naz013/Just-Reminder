@@ -19,6 +19,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 public class NewPlace extends AppCompatActivity implements MapListener {
@@ -36,7 +37,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.new_place_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());

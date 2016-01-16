@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -84,6 +86,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.json.JsonAction;
 import com.cray.software.justreminder.json.JsonExclusion;
@@ -115,7 +118,6 @@ import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -130,7 +132,7 @@ import java.util.List;
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener, View.OnTouchListener, CompoundButton.OnCheckedChangeListener,
         MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener,
-        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener {
+        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener, ActionCallbacks {
 
     /**
      * Date reminder type variables.
@@ -298,7 +300,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         cSetter = new ColorSetter(ReminderManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -474,9 +476,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         }, 500);
 
-        mFab = new FloatingActionButton(ReminderManager.this);
-        mFab.setColorNormal(cSetter.colorAccent());
-        mFab.setColorPressed(cSetter.colorAccent());
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -486,19 +486,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ViewUtils.hide(ReminderManager.this, mFab);
+                mFab.hide();
                 return false;
             }
         });
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.EDIT_ID, 0);
@@ -900,7 +891,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (mFab.getVisibility() == View.GONE)
-                    ViewUtils.show(ReminderManager.this, mFab);
+                    mFab.show();
                 else restoreTask();
                 return true;
             default:
@@ -2400,14 +2391,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         jsonShoppings.add(new JsonShopping(title, status, uuid, time, deleted));
                     }
                 }
-
-                if (!isShoppingReminder){
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
-                }
             }
 
 
@@ -2455,7 +2438,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             Double longitude = 0.0;
             if (isLocationAttached() || isLocationOutAttached()) {
                 if (!LocationUtil.checkLocationEnable(this)) {
-                    LocationUtil.showLocationAlert(this);
+                    LocationUtil.showLocationAlert(this, this);
                     return null;
                 }
                 LatLng dest = null;
@@ -2490,8 +2473,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int mySeconds = 0;
             long timeAfter = 0;
             if (isTimeReminderAttached()) {
-                timeAfter = SuperUtil.getAfterTime(this, timeString);
-                if (timeAfter == 0) return null;
+                timeAfter = SuperUtil.getAfterTime(timeString);
+                if (timeAfter == 0) {
+                    Messages.snackbar(mFab, getString(R.string.string_timer_warming));
+                    return null;
+                }
                 Calendar c = Calendar.getInstance();
                 c.setTimeInMillis(System.currentTimeMillis());
                 myYear = c.get(Calendar.YEAR);
@@ -2754,7 +2740,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 String dayStr;
                 if (myDay > 28) {
                     myDay = 28;
-                    Messages.toast(ReminderManager.this, getString(R.string.string_max_day_message));
+                    Messages.snackbar(mFab, getString(R.string.string_max_day_message));
                 }
 
                 if (myDay < 10) dayStr = "0" + myDay;
@@ -2804,7 +2790,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (mapOut != null && !mapOut.onBackPressed()) return;
 
         if (mFab.getVisibility() == View.GONE){
-            ViewUtils.show(ReminderManager.this, mFab);
+            mFab.show();
             return;
         }
 
@@ -3121,7 +3107,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 melody = data.getStringExtra(Constants.FILE_PICKED);
                 if (melody != null) {
                     File musicFile = new File(melody);
-                    Messages.toast(ReminderManager.this, getString(R.string.selected_melody_string) + musicFile.getName());
+                    Messages.snackbar(mFab, getString(R.string.selected_melody_string) + musicFile.getName());
                 }
             }
         }
@@ -3130,7 +3116,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (resultCode == RESULT_OK){
                 radius = data.getIntExtra(Constants.SELECTED_RADIUS, -1);
                 if (radius != -1) {
-                    Messages.toast(ReminderManager.this, getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter));
+                    Messages.snackbar(mFab, getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter));
                     if (isLocationAttached()) map.recreateMarker(radius);
                     if (isLocationOutAttached()) mapOut.recreateMarker(radius);
                 }
@@ -3176,7 +3162,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     ledColor = LED.BLUE_LIGHT;
                     selColor = getString(R.string.led_color_blue_light);
                 }
-                Messages.toast(ReminderManager.this, getString(R.string.string_selected_led_color) + " " + selColor);
+                Messages.snackbar(mFab, getString(R.string.string_selected_led_color) + " " + selColor);
             }
         }
 
@@ -3334,6 +3320,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else taskField.setHint(getString(R.string.tast_hint));
         isMessage = type;
         invalidateButtons();
+    }
+
+    @Override
+    public void showSnackbar(int message, int actionTitle, View.OnClickListener listener) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .setAction(actionTitle, listener)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(int message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .show();
     }
 
     public class CurrentLocation implements LocationListener {

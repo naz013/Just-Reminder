@@ -42,7 +42,7 @@ public class CategoryManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.category_manager_layout);
         setRequestedOrientation(cs.getRequestOrientation());

@@ -1,9 +1,13 @@
 package com.cray.software.justreminder.utils;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +20,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -26,13 +29,24 @@ import com.cray.software.justreminder.modules.Module;
 
 public class ViewUtils {
 
+    public static ColorStateList getFabState(Context context, @ColorRes int colorNormal, @ColorRes int colorPressed) {
+        int[][] states = {
+                new int[] {android.R.attr.state_pressed},
+                new int[] {android.R.attr.state_focused}, new int[] {}
+        };
+        int colorP = getColor(context, colorPressed);
+        int colorN = getColor(context, colorNormal);
+        int colors[] = {colorP, colorN, colorN};
+        return new ColorStateList(states, colors);
+    }
+
     /**
      * Get drawable from resource.
      * @param context application context.
      * @param resource drawable resource.
      * @return Drawable
      */
-    public static Drawable getDrawable (Context context, int resource){
+    public static Drawable getDrawable (Context context, @DrawableRes int resource){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             return context.getResources().getDrawable(resource, null);
         } else {
@@ -46,7 +60,8 @@ public class ViewUtils {
      * @param resource color resource.
      * @return Color
      */
-    public static int getColor(Context context, int resource){
+    @ColorInt
+    public static int getColor(Context context, @ColorRes int resource){
         if (Module.isMarshmallow()) return context.getResources().getColor(resource, null);
         return context.getResources().getColor(resource);
     }
@@ -56,6 +71,7 @@ public class ViewUtils {
      * @param typePrefs type of reminder.
      * @return Drawable resource
      */
+    @DrawableRes
     public static int getIcon(String typePrefs) {
         int icon;
         if (typePrefs.matches(Constants.TYPE_CALL) ||
@@ -94,17 +110,6 @@ public class ViewUtils {
         if (isDark){
             ib.setImageResource(R.drawable.ic_person_add_white_24dp);
         } else ib.setImageResource(R.drawable.ic_person_add_black_24dp);
-    }
-
-    /**
-     * Set compound drawable for button.
-     * @param ib Button.
-     * @param isDark dark theme flag.
-     */
-    public static void setImage(Button ib, boolean isDark){
-        if (isDark){
-            ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_white_24dp, 0, 0, 0);
-        } else ib.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_add_black_24dp, 0, 0, 0);
     }
 
     /**

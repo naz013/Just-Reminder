@@ -18,6 +18,7 @@ import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 
 import java.util.ArrayList;
@@ -28,13 +29,13 @@ public class TaskListFragment extends Fragment implements SyncListener {
     private LinearLayout emptyItem;
     private ArrayList<Task> datas;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public void setData(ArrayList<Task> datas){
         this.datas = datas;
     }
 
-    public void setmCallbacks(NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks) {
+    public void setmCallbacks(NavigationCallbacks mCallbacks) {
         this.mCallbacks = mCallbacks;
     }
 

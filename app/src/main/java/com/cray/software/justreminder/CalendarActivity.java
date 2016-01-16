@@ -4,8 +4,8 @@ import android.app.AlarmManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.RecognizerIntent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,22 +17,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
+import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.datas.models.EventsPagerItem;
-import com.cray.software.justreminder.activities.AddBirthday;
-import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,7 +37,6 @@ import java.util.Date;
 public class CalendarActivity extends AppCompatActivity {
 
     private SharedPrefs sPrefs;
-    private FloatingActionsMenu mainMenu;
     private long dateMills;
     private Button currentEvent;
     private TextView title;
@@ -59,7 +54,7 @@ public class CalendarActivity extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(CalendarActivity.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.calender_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -110,49 +105,15 @@ public class CalendarActivity extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        mainMenu = (FloatingActionsMenu) findViewById(R.id.mainMenu);
-
-        FloatingActionButton addBirthday = new FloatingActionButton(getBaseContext());
-        addBirthday.setTitle(getString(R.string.new_birthday));
-        addBirthday.setSize(FloatingActionButton.SIZE_MINI);
-        addBirthday.setIcon(R.drawable.ic_cake_black_24dp);
-        addBirthday.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
-        addBirthday.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
-        addBirthday.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
+        if (dateMills == 0) dateMills = System.currentTimeMillis();
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-
-                if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER))
-                    Messages.toast(CalendarActivity.this, getString(R.string.calendar_birthday_info));
-                else {
-                    addBirthday();
-                }
+                startActivity(new Intent(CalendarActivity.this, ActionPickerDialog.class)
+                        .putExtra("date", dateMills));
             }
         });
-
-        FloatingActionButton addReminder = new FloatingActionButton(getBaseContext());
-        addReminder.setTitle(getString(R.string.new_reminder));
-        addReminder.setSize(FloatingActionButton.SIZE_NORMAL);
-        addReminder.setIcon(R.drawable.ic_alarm_black_24dp);
-        addReminder.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
-        addReminder.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
-        addReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mainMenu.isExpanded()) mainMenu.collapse();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(CalendarActivity.this, QuickAddReminder.class)
-                                .putExtra("date", dateMills));
-                    }
-                }, 150);
-            }
-        });
-
-        mainMenu.addButton(addBirthday);
-        mainMenu.addButton(addReminder);
 
         if (dateMills != 0){
             cal.setTimeInMillis(dateMills);
@@ -173,13 +134,6 @@ public class CalendarActivity extends AppCompatActivity {
             new Recognizer(this).selectTask(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void addBirthday() {
-        sPrefs = new SharedPrefs(CalendarActivity.this);
-        if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
-            Messages.toast(CalendarActivity.this, getString(R.string.calendar_birthday_info));
-        } else startActivity(new Intent(CalendarActivity.this, AddBirthday.class));
     }
 
     private void showEvents(Date date) {

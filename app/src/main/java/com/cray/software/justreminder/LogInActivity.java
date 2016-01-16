@@ -39,6 +39,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -90,7 +91,7 @@ public class LogInActivity extends Activity {
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.activity_log_in);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setRequestedOrientation(cs.getRequestOrientation());
 

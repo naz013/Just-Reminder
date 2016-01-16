@@ -36,6 +36,7 @@ import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
@@ -66,7 +67,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         ColorSetter cs = new ColorSetter(EventsImport.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_events_import);
 

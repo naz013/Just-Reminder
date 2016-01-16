@@ -89,7 +89,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         SharedPrefs sPrefs = new SharedPrefs(this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.add_birthday_layout);
         setRequestedOrientation(cs.getRequestOrientation());

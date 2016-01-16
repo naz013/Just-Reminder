@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +43,6 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -129,9 +129,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
         FloatingActionButton buttonSend = (FloatingActionButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(this);
         colorify(buttonOk, buttonCall, buttonSend);
-        buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
-        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
-        buttonSend.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
+        buttonOk.setImageResource(R.drawable.ic_done_black_24dp);
+        buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
+        buttonSend.setImageResource(R.drawable.ic_send_black_24dp);
 
         DataBase db = new DataBase(ShowBirthday.this);
         db.open();
@@ -236,8 +236,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
     private void colorify(final FloatingActionButton... fab) {
         for (FloatingActionButton button : fab) {
-            button.setColorNormal(cs.colorAccent());
-            button.setColorPressed(cs.colorPrimary());
+            button.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));
         }
     }
 

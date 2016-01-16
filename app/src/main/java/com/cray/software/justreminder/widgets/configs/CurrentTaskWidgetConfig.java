@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.CurrentTaskWidget;
 import com.cray.software.justreminder.widgets.utils.WidgetUtils;
 
@@ -97,7 +98,7 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         setTheme(cSetter.getStyle());
         setContentView(R.layout.current_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

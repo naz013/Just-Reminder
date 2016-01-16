@@ -26,6 +26,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -36,7 +37,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     private LinearLayout emptyItem;
     private ReminderDataProvider provider;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static TrashFragment newInstance() {
         return new TrashFragment();
@@ -107,7 +108,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,8 +10,10 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -50,25 +51,14 @@ public class LocationUtil {
      * Show dialog for enabling location service on device.
      * @param context application context.
      */
-    public static void showLocationAlert(final Context context){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(context.getString(R.string.gps_title));
-        alertDialog.setMessage(context.getString(R.string.gps_text));
-
-        alertDialog.setPositiveButton(context.getString(R.string.action_settings), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
+    public static void showLocationAlert(final Context context, ActionCallbacks callbacks){
+        callbacks.showSnackbar(R.string.gps_text, R.string.action_settings, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 context.startActivity(intent);
             }
         });
-
-        alertDialog.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
     }
 
     /**

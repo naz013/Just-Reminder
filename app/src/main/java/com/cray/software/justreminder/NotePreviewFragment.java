@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -27,23 +28,22 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.activities.ImagePreview;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.models.NoteModel;
-import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -77,7 +77,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         cSetter = new ColorSetter(NotePreviewFragment.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.fragment_note_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -228,13 +228,8 @@ public class NotePreviewFragment extends AppCompatActivity {
             }
         });
 
-        mFab = new FloatingActionButton(NotePreviewFragment.this);
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_create_white_24dp);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setVisibility(View.GONE);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.container);
-        wrapper.addView(mFab);
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,11 +332,13 @@ public class NotePreviewFragment extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
             }
-            mFab.setColorNormal(cSetter.colorAccent(color));
-            mFab.setColorPressed(cSetter.colorAccent(color));
+
+            mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(color), cSetter.colorAccent(color)));
             RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
             paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreviewFragment.this, 36)), 0, 0);
+            paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreviewFragment.this, 28)),
+                    QuickReturnUtils.dp2px(NotePreviewFragment.this, 16), 0);
+
             if (imageByte != null){
                 Bitmap imgB = BitmapFactory.decodeByteArray(imageByte, 0,
                         imageByte.length);

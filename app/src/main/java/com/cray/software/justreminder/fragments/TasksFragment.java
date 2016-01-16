@@ -16,21 +16,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.TaskListManager;
 import com.cray.software.justreminder.adapters.TasksPagerAdapter;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.datas.models.TaskList;
 import com.cray.software.justreminder.datas.models.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class TasksFragment extends Fragment {
 
     private boolean onCreate = false;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static TasksFragment newInstance() {
         return new TasksFragment();
@@ -133,7 +134,7 @@ public class TasksFragment extends Fragment {
         super.onAttach(activity);
         this.activity = activity;
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -158,7 +159,7 @@ public class TasksFragment extends Fragment {
         if (sPrefs.loadBoolean(Prefs.TASK_CHANGED)) {
             sPrefs.saveBoolean(Prefs.TASK_CHANGED, false);
             if (mCallbacks != null) {
-                mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+                mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
             }
         }
     }
@@ -211,7 +212,7 @@ public class TasksFragment extends Fragment {
                 deleteList();
                 dialog.dismiss();
                 if (mCallbacks != null) {
-                    mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
                 }
             }
         });
@@ -314,7 +315,7 @@ public class TasksFragment extends Fragment {
                 TaskList taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
-                mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
+                mCallbacks.onUiChanged(mColor.colorPrimary(tmp), mColor.colorPrimaryDark(tmp),
                         mColor.colorAccent(tmp));
                 long idS = taskList.getId();
                 mCallbacks.onListIdChanged(idS);
@@ -409,6 +410,6 @@ public class TasksFragment extends Fragment {
         db.close();
         new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 
-        if (mCallbacks != null) mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_TASKS);
+        if (mCallbacks != null) mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
     }
 }

@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:id="@+id/windowBackground"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/windowBackground"
     tools:context=".ReminderManager">
 
-    <include layout="@layout/toolbar_reminder"
-        android:id="@+id/toolbar"/>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <RelativeLayout
+        <include layout="@layout/toolbar_reminder"
+            android:id="@+id/toolbar"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/wrapper">
+        android:id="@+id/wrapper"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".ReminderManager">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center|top"
-        android:id="@+id/layoutContainer">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center|top"
+            android:id="@+id/layoutContainer">
 
-        <include layout="@layout/reminder_call_layout"/>
-        <include layout="@layout/reminder_weekdays_layout"/>
-        <include layout="@layout/reminder_message_layout"/>
-        <include layout="@layout/reminder_date_layout"/>
-        <include layout="@layout/reminder_time_layout"/>
-        <include layout="@layout/reminder_location_layout"/>
-        <include layout="@layout/reminder_skype_layout"/>
-        <include layout="@layout/reminder_application_layout"/>
-        <include layout="@layout/reminder_day_of_month_layout"/>
-        <include layout="@layout/reminder_location_out_layout"/>
-        <include layout="@layout/reminder_shopping_list_layout"/>
+            <include layout="@layout/reminder_call_layout"/>
+            <include layout="@layout/reminder_weekdays_layout"/>
+            <include layout="@layout/reminder_message_layout"/>
+            <include layout="@layout/reminder_date_layout"/>
+            <include layout="@layout/reminder_time_layout"/>
+            <include layout="@layout/reminder_location_layout"/>
+            <include layout="@layout/reminder_skype_layout"/>
+            <include layout="@layout/reminder_application_layout"/>
+            <include layout="@layout/reminder_day_of_month_layout"/>
+            <include layout="@layout/reminder_location_out_layout"/>
+            <include layout="@layout/reminder_shopping_list_layout"/>
 
         </LinearLayout>
 
@@ -129,8 +139,9 @@
 
             <SeekBar
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:id="@+id/repeatSeek"
+                android:layout_gravity="center"
                 android:layout_margin="5dp"
                 android:max="100"/>
 
@@ -146,4 +157,12 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_done_white_24dp" />
+
+</android.support.design.widget.CoordinatorLayout>

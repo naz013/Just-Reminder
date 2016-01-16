@@ -35,6 +35,7 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
@@ -76,7 +77,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         });
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.follow_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());

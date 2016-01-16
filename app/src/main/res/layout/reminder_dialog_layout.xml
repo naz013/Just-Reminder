@@ -82,19 +82,19 @@
         android:gravity="center"
         android:layout_height="wrap_content">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonOk"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonCall"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonCancel"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
@@ -112,25 +112,25 @@
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonDelay"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonDelayFor"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonNotification"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"
             android:layout_height="50dp"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonEdit"
             android:layout_width="50dp"
             android:layout_margin="@dimen/reminder_margin_top"

@@ -14,13 +14,13 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.json.JsonExport;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
@@ -130,7 +130,7 @@ public class Reminder {
      * @param context application context.
      * @return boolean
      */
-    public static boolean toggle(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
+    public static boolean toggle(long id, Context context, ActionCallbacks callbacks){
         NextBase db = new NextBase(context);
         db.open();
         Cursor c = db.getReminder(id);
@@ -152,8 +152,9 @@ public class Reminder {
         } else {
             if (type.contains(Constants.TYPE_LOCATION)) {
                 if (!LocationUtil.checkLocationEnable(context)){
-                    LocationUtil.showLocationAlert(context);
-                    res = false;
+                    db.close();
+                    LocationUtil.showLocationAlert(context, callbacks);
+                    return false;
                 } else {
                     db.setUnDone(id);
                     if (eventTime <= 0) {
@@ -214,8 +215,7 @@ public class Reminder {
      * @param time due time for copy.
      * @param context application context.
      */
-    public static void copy(long id, long time, Context context,
-                            NavigationDrawerFragment.NavigationDrawerCallbacks callbacks) {
+    public static void copy(long id, long time, Context context, ActionCallbacks callbacks) {
         NextBase db = new NextBase(context);
         SharedPrefs sPrefs = new SharedPrefs(context);
         if (!db.isOpen()) db.open();
@@ -305,7 +305,7 @@ public class Reminder {
      * @param context application context.
      * @param callbacks Callbacks for messages.
      */
-    public static void moveToTrash(long id, Context context, NavigationDrawerFragment.NavigationDrawerCallbacks callbacks){
+    public static void moveToTrash(long id, Context context, ActionCallbacks callbacks){
         NextBase db = new NextBase(context);
         if (!db.isOpen()) db.open();
         db.toArchive(id);

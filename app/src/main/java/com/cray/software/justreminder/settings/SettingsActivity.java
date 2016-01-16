@@ -30,6 +30,7 @@ import com.cray.software.justreminder.settings.fragments.NotificationSettingsFra
 import com.cray.software.justreminder.settings.fragments.OtherSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.SettingsFragment;
 import com.cray.software.justreminder.settings.fragments.VoiceSettingsFragment;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.util.Calendar;
@@ -49,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         cSetter = new ColorSetter(SettingsActivity.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.category_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

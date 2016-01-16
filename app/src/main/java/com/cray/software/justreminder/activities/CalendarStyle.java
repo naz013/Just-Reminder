@@ -16,6 +16,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 public class CalendarStyle extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class CalendarStyle extends AppCompatActivity {
         ColorSetter cs = new ColorSetter(CalendarStyle.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.theme_color_layout);
 

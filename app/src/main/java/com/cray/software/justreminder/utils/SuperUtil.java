@@ -215,8 +215,7 @@ public class SuperUtil {
      * @param timeString human readable time string.
      * @return time in milliseconds.
      */
-    public static long getAfterTime(Context context, String timeString) {
-        long res = 0;
+    public static long getAfterTime(String timeString) {
         if (timeString.length() == 6 && !timeString.matches("000000")){
             String hours = timeString.substring(0, 2);
             String minutes = timeString.substring(2, 4);
@@ -227,9 +226,8 @@ public class SuperUtil {
             long s = 1000;
             long m = s * 60;
             long h = m * 60;
-            res = (hour * h) + (minute * m) + (sec * s);
-        } else Messages.toast(context, context.getString(R.string.string_timer_warming));
-        return res;
+            return (hour * h) + (minute * m) + (sec * s);
+        } else return 0;
     }
 
     /**

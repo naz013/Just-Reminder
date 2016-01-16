@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +33,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
@@ -46,7 +46,7 @@ public class NavigationDrawerFragment extends Fragment implements
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
 
-    private NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
@@ -365,13 +365,13 @@ public class NavigationDrawerFragment extends Fragment implements
                 public void run() {
                     if (tag != null) {
                         try {
-                            mCallbacks.onNavigationDrawerItemSelected(tag);
+                            mCallbacks.onItemSelected(tag);
                         } catch (NullPointerException e){
                             e.printStackTrace();
-                            mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+                            mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                         }
                     } else {
-                        mCallbacks.onNavigationDrawerItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+                        mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                     }
                 }
             }, 250);
@@ -418,7 +418,7 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
@@ -513,7 +513,7 @@ public class NavigationDrawerFragment extends Fragment implements
         db.close();
 
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(mCurrentSelectedPosition);
+            mCallbacks.onItemSelected(mCurrentSelectedPosition);
         }
     }
 
@@ -538,17 +538,5 @@ public class NavigationDrawerFragment extends Fragment implements
             editor.commit();
         }
         return !ranBefore;
-    }
-
-
-    public interface NavigationDrawerCallbacks {
-        void onNavigationDrawerItemSelected(String tag);
-        void onTitleChanged(String title);
-        void showSnackbar(int message);
-        void onDateChanged(long dateMills, int position);
-        void onListIdChanged(long listId);
-        void onListChanged(RecyclerView list);
-        void isDrawerOpen(boolean isOpen);
-        void onUiChanged(int colorSetter, int colorStatus, int colorChooser);
     }
 }

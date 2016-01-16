@@ -42,22 +42,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="?attr/actionBarSize"/>
 
-                <com.getbase.floatingactionbutton.FloatingActionsMenu
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:visibility="gone"
-                    fab:fab_addButtonColorNormal="?attr/colorAccent"
-                    fab:fab_addButtonColorPressed="?attr/colorAccent"
-                    fab:fab_addButtonPlusIconColor="@color/colorWhite"
-                    fab:fab_addButtonSize="normal"
-                    fab:fab_addButtonStrokeVisible="true"
-                    android:id="@+id/mainMenu"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    fab:fab_labelStyle="@style/menu_labels_style"
-                    fab:fab_labelsPosition="left"/>
-
                 <android.support.v7.widget.CardView
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -212,6 +196,14 @@
                 </android.support.v7.widget.CardView>
 
             </RelativeLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_add_white_24dp" />
 
         </android.support.design.widget.CoordinatorLayout>
     </RelativeLayout>

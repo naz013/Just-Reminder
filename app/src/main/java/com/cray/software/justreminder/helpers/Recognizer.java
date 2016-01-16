@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -3056,7 +3057,6 @@ public class Recognizer {
         }
 
         sPrefs = new SharedPrefs(mContext);
-        ColorSetter cs = new ColorSetter(mContext);
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
@@ -3065,12 +3065,13 @@ public class Recognizer {
 
         String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(mContext);
+        int color = new Random().nextInt(15);
         db.open();
         long id;
         if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            id = db.saveNote(SyncHelper.encrypt(res), date, cs.getNoteColor(12), uuID, null, 5);
+            id = db.saveNote(SyncHelper.encrypt(res), date, color, uuID, null, 5);
         } else {
-            id = db.saveNote(res, date, cs.getNoteColor(12), uuID, null, 5);
+            id = db.saveNote(res, date, color, uuID, null, 5);
         }
 
         long remId = 0;

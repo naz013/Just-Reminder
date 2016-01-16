@@ -25,9 +25,9 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class QuickSMS extends Activity {
 
@@ -40,7 +40,6 @@ public class QuickSMS extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        SharedPrefs sPrefs = new SharedPrefs(QuickSMS.this);
         runOnUiThread(new Runnable() {
             public void run() {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -52,7 +51,7 @@ public class QuickSMS extends Activity {
         setContentView(R.layout.quick_message_layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 

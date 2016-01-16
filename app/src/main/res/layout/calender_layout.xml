@@ -1,71 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2015 Nazar Suhovich
+  ~ <p/>
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~ <p/>
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ <p/>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    xmlns:widget="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:id="@+id/windowBackground"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:widget="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:id="@+id/windowBackground">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_height="?attr/actionBarSize"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:id="@+id/toolbar"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-            <ImageButton
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="match_parent"
-                android:id="@+id/voiceButton"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_mic_white_24dp"/>
-
-            <Button
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/currentEvent"
-                android:textSize="16sp"
-                android:text="30/6/2015"
-                android:textStyle="bold"
-                android:layout_toLeftOf="@+id/voiceButton"
-                android:background="?android:attr/selectableItemBackground"
-                android:textColor="@color/colorWhite"/>
+                android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/title"
-                android:textStyle="bold"
-                android:text="@string/calendar_fragment"
-                android:textColor="@color/colorWhite"
-                android:textSize="20sp"
-                android:layout_toLeftOf="@+id/currentEvent"
-                android:gravity="center|left"/>
+                <ImageButton
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="match_parent"
+                    android:id="@+id/voiceButton"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_mic_white_24dp"/>
 
-        </RelativeLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/currentEvent"
+                    android:textSize="16sp"
+                    android:text="30/6/2015"
+                    android:textStyle="bold"
+                    android:layout_toLeftOf="@+id/voiceButton"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:textColor="@color/colorWhite"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/title"
+                    android:textStyle="bold"
+                    android:text="@string/calendar_fragment"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp"
+                    android:layout_toLeftOf="@+id/currentEvent"
+                    android:gravity="center|left"/>
+
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:id="@+id/wrapper"
-        android:layout_height="match_parent">
+    </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/calendarView" />
+        android:id="@+id/wrapper"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/calendarView" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
@@ -85,21 +107,14 @@
             widget:circular_progress_color="?attr/colorPrimaryDark"
             widget:circular_progress_size="Small"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:visibility="visible"
-            fab:fab_addButtonColorNormal="?attr/colorAccent"
-            fab:fab_addButtonColorPressed="?attr/colorAccent"
-            fab:fab_addButtonPlusIconColor="@color/colorWhite"
-            fab:fab_addButtonSize="normal"
-            fab:fab_addButtonStrokeVisible="true"
-            android:id="@+id/mainMenu"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            fab:fab_labelStyle="@style/menu_labels_style"
-            fab:fab_labelsPosition="left"/>
-
     </RelativeLayout>
-</LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_white_24dp" />
+
+</android.support.design.widget.CoordinatorLayout>

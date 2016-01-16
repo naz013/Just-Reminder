@@ -13,6 +13,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.Locale;
@@ -27,7 +28,7 @@ public class Help extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(Help.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.help_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());

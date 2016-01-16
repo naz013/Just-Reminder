@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
@@ -64,7 +65,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
@@ -201,11 +201,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         int mins = prefs.loadInt(Prefs.DELAY_TIME);
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
-        buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
-        buttonEdit.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_create_black_24dp));
-        buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
-        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
-        buttonNotification.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_favorite_black_24dp));
+        buttonOk.setImageResource(R.drawable.ic_done_black_24dp);
+        buttonEdit.setImageResource(R.drawable.ic_create_black_24dp);
+        buttonCancel.setImageResource(R.drawable.ic_clear_black_24dp);
+        buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
+        buttonNotification.setImageResource(R.drawable.ic_favorite_black_24dp);
 
         RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
@@ -253,7 +253,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
             if (!silentSMS) {
                 buttonCall.setVisibility(View.VISIBLE);
-                buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
+                buttonCall.setImageResource(R.drawable.ic_send_black_24dp);
             } else {
                 buttonCall.setVisibility(View.GONE);
                 buttonDelay.setVisibility(View.GONE);
@@ -270,11 +270,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     packageManager.getApplicationLabel(applicationInfo) : "???");
             remText.setText(nameA);
             buttonCall.setVisibility(View.VISIBLE);
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_black_24dp));
+            buttonCall.setImageResource(R.drawable.ic_open_in_browser_black_24dp);
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
             remText.setText(number);
             buttonCall.setVisibility(View.VISIBLE);
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_open_in_browser_black_24dp));
+            buttonCall.setImageResource(R.drawable.ic_open_in_browser_black_24dp);
         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
             remText.setText(task);
             buttonCall.setVisibility(View.GONE);
@@ -521,13 +521,12 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 .toUpperCase()
                 .endConfig()
                 .buildRound(text, Color.TRANSPARENT);
-        button.setIconDrawable(drawable);
+        button.setImageDrawable(drawable);
     }
 
     private void colorify(FloatingActionButton... fab){
         for (FloatingActionButton button : fab){
-            button.setColorNormal(cs.colorAccent());
-            button.setColorPressed(cs.colorPrimary());
+            button.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));
         }
     }
 
@@ -746,7 +745,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         } else {
             showReminder(0);
             remText.setText(getString(R.string.message_send_error));
-            buttonCall.setIconDrawable(ViewUtils.getDrawable(ReminderDialog.this, R.drawable.ic_cached_black_24dp));
+            buttonCall.setImageResource(R.drawable.ic_cached_black_24dp);
             if (buttonCall.getVisibility() == View.GONE) {
                 buttonCall.setVisibility(View.VISIBLE);
             }

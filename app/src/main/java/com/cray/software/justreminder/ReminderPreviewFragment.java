@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -42,6 +44,7 @@ import com.cray.software.justreminder.datas.models.ReminderNote;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
@@ -51,7 +54,6 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -66,7 +68,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ReminderPreviewFragment extends AppCompatActivity {
+public class ReminderPreviewFragment extends AppCompatActivity implements ActionCallbacks {
 
     private SharedPrefs sPrefs;
 
@@ -89,7 +91,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_reminder_preview_fragment);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -106,19 +108,13 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        mFab = new FloatingActionButton(this);
-        mFab.setSize(FloatingActionButton.SIZE_MINI);
-        mFab.setIcon(R.drawable.ic_create_white_24dp);
-        mFab.setColorNormal(cSetter.colorAccent());
-        mFab.setColorPressed(cSetter.colorAccent());
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
-        wrapper.addView(mFab);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
 
         RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
         paramsR.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         paramsR.addRule(RelativeLayout.BELOW, R.id.toolbar);
-        paramsR.setMargins(0, -(QuickReturnUtils.dp2px(this, 28)), 0, 0);
+        paramsR.setMargins(QuickReturnUtils.dp2px(this, 16), -(QuickReturnUtils.dp2px(this, 20)), 0, 0);
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +135,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         switchWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Reminder.toggle(id, ReminderPreviewFragment.this, null);
+                Reminder.toggle(id, ReminderPreviewFragment.this, ReminderPreviewFragment.this);
                 loadInfo();
             }
         });
@@ -185,7 +181,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
 
     private void loadInfo() {
         ReminderModel item = ReminderDataProvider.getItem(this, id);
-        if (item != null){
+        if (item != null) {
             if (item.getCompleted() == 1) {
                 statusSwitch.setChecked(false);
                 statusText.setText(getString(R.string.simple_disabled));
@@ -214,7 +210,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             double[] place = item.getPlace();
             double lat = place[0];
             double lon = place[1];
-            if (lat != 0.0 && lon != 0.0){
+            if (lat != 0.0 && lon != 0.0) {
                 location.setText(lat + "\n" + lon);
                 mapContainer.setVisibility(View.VISIBLE);
                 location.setVisibility(View.VISIBLE);
@@ -288,8 +284,8 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
             }
-            mFab.setColorNormal(setter.colorAccent(catColor));
-            mFab.setColorPressed(setter.colorAccent(catColor));
+            mFab.setBackgroundTintList(ViewUtils.getFabState(this, setter.colorAccent(catColor),
+                    setter.colorAccent(catColor)));
 
             new LoadOtherData(this, progress, id).execute();
         }
@@ -334,22 +330,22 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             }
             return true;
         }
-        if (ids == android.R.id.home){
+        if (ids == android.R.id.home) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else {
                 finish();
             }
         }
-        if (ids == R.id.action_make_copy){
+        if (ids == R.id.action_make_copy) {
             NextBase db = new NextBase(this);
             if (!db.isOpen()) {
                 db.open();
             }
             Cursor c = db.getReminder(id);
-            if (c != null && c.moveToFirst()){
+            if (c != null && c.moveToFirst()) {
                 String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)){
+                if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)) {
                     showDialog();
                 }
             }
@@ -360,7 +356,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showDialog(){
+    public void showDialog() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -371,7 +367,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         ArrayList<String> time = new ArrayList<>();
 
         do {
-            if (hour == 23 && minute == 30){
+            if (hour == 23 && minute == 30) {
                 hour = -1;
             } else {
                 long tmp = calendar.getTimeInMillis();
@@ -407,14 +403,27 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         alert.show();
     }
 
-    public class LoadOtherData extends AsyncTask<Void, Void, ReminderNote>{
+    @Override
+    public void showSnackbar(int message, int actionTitle, View.OnClickListener listener) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .setAction(actionTitle, listener)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(int message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    public class LoadOtherData extends AsyncTask<Void, Void, ReminderNote> {
 
         Context mContext;
         CircularProgress mProgress;
         long mId;
         SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
-        public LoadOtherData(Context context, CircularProgress circularProgress, long id){
+        public LoadOtherData(Context context, CircularProgress circularProgress, long id) {
             this.mContext = context;
             this.mProgress = circularProgress;
             this.mId = id;
@@ -432,7 +441,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             notesBase.open();
             ReminderNote reminderNote = new ReminderNote();
             Cursor c = notesBase.getNoteByReminder(mId);
-            if (c != null && c.moveToFirst()){
+            if (c != null && c.moveToFirst()) {
                 String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                 byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
                 long noteId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
@@ -448,7 +457,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
             TasksData data = new TasksData(mContext);
             data.open();
             c = data.getTaskByReminder(mId);
-            if (c != null && c.moveToFirst()){
+            if (c != null && c.moveToFirst()) {
                 String task = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 String taskNote = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                 String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
@@ -473,15 +482,15 @@ public class ReminderPreviewFragment extends AppCompatActivity {
         protected void onPostExecute(final ReminderNote reminderNote) {
             super.onPostExecute(reminderNote);
             mProgress.setVisibility(View.GONE);
-            if (reminderNote != null){
-                if (reminderNote.getTaskId() > 0){
+            if (reminderNote != null) {
+                if (reminderNote.getTaskId() > 0) {
                     tasksContainer.setVisibility(View.VISIBLE);
                     taskText.setText(reminderNote.getTaskTitle());
                     String mNote = reminderNote.getTaskNote();
                     TasksData data = new TasksData(mContext);
                     data.open();
                     Cursor c = data.getTasksList(reminderNote.getTaskListId());
-                    if (c != null && c.moveToFirst()){
+                    if (c != null && c.moveToFirst()) {
                         listColor.setBackgroundColor(
                                 new ColorSetter(mContext)
                                         .getNoteColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR))));
@@ -505,7 +514,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     } else {
                         taskDate.setVisibility(View.INVISIBLE);
                     }
-                    if (reminderNote.getTaskStatus().matches(GTasksHelper.TASKS_COMPLETE)){
+                    if (reminderNote.getTaskStatus().matches(GTasksHelper.TASKS_COMPLETE)) {
                         checkDone.setChecked(true);
                     } else {
                         checkDone.setChecked(false);
@@ -515,7 +524,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             final TasksData data = new TasksData(mContext);
                             data.open();
-                            if (isChecked){
+                            if (isChecked) {
                                 data.setTaskDone(reminderNote.getTaskId());
                             } else {
                                 data.setTaskUnDone(reminderNote.getTaskId());
@@ -536,10 +545,10 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                     });
                 }
 
-                if (reminderNote.getNoteId() > 0){
+                if (reminderNote.getNoteId() > 0) {
                     notesContainer.setVisibility(View.VISIBLE);
                     String note = reminderNote.getNoteText();
-                    if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
+                    if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)) {
                         note = SyncHelper.decrypt(note);
                     }
                     noteText.setText(note);
@@ -562,7 +571,7 @@ public class ReminderPreviewFragment extends AppCompatActivity {
                         }
                     });
                     byte[] image = reminderNote.getImage();
-                    if (image != null){
+                    if (image != null) {
                         final Bitmap imgB = BitmapFactory.decodeByteArray(image, 0,
                                 image.length);
                         imageView.setImageBitmap(imgB);

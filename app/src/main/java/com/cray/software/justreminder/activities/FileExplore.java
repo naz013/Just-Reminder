@@ -61,7 +61,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
         ColorSetter cs = new ColorSetter(this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
 		setContentView(R.layout.activity_file_chooser);
         setRequestedOrientation(cs.getRequestOrientation());

@@ -43,6 +43,7 @@ import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.spinner.SpinnerItem;
@@ -93,7 +94,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private FileRecyclerAdapter adapter;
     private FileDataProvider provider;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static BackupsFragment newInstance() {
         return new BackupsFragment();
@@ -150,7 +151,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

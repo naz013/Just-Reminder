@@ -24,6 +24,7 @@ import com.cray.software.justreminder.activities.NewPlace;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.ScreenManager;
 
@@ -34,7 +35,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
 
     private PlaceDataProvider provider;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static PlacesFragment newInstance() {
         return new PlacesFragment();
@@ -78,7 +79,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

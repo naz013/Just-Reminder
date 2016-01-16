@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
@@ -27,14 +30,11 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.services.MissedCallAlarm;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 
@@ -104,9 +104,9 @@ public class MissedCallDialog extends Activity {
         contactPhoto.setVisibility(View.GONE);
 
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
-        buttonOk.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_done_black_24dp));
-        buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_clear_black_24dp));
-        buttonCall.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_call_black_24dp));
+        buttonOk.setImageResource(R.drawable.ic_done_black_24dp);
+        buttonCancel.setImageResource(R.drawable.ic_clear_black_24dp);
+        buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
 
         TextView remText = (TextView) findViewById(R.id.remText);
         Calendar calendar = Calendar.getInstance();
@@ -119,7 +119,7 @@ public class MissedCallDialog extends Activity {
         } else {
             remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
         }
-        buttonCancel.setIconDrawable(ViewUtils.getDrawable(this, R.drawable.ic_send_black_24dp));
+        buttonCancel.setImageResource(R.drawable.ic_send_black_24dp);
 
         contactPhoto.setVisibility(View.VISIBLE);
         Bitmap photo = Contacts.getPhoto(this, id);
@@ -194,8 +194,7 @@ public class MissedCallDialog extends Activity {
 
     private void colorify(FloatingActionButton... fab){
         for (FloatingActionButton button:fab){
-            button.setColorNormal(cs.colorAccent());
-            button.setColorPressed(cs.colorPrimary());
+            button.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));
         }
     }
 

@@ -31,6 +31,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -74,7 +75,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     /**
      * Navigation drawer callbacks.
      */
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     /**
      * Fragment default instance.
@@ -110,7 +111,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 break;
             case R.id.action_voice:
                 if (mCallbacks != null) {
-                    mCallbacks.onNavigationDrawerItemSelected(ScreenManager.VOICE_RECOGNIZER);
+                    mCallbacks.onItemSelected(ScreenManager.VOICE_RECOGNIZER);
                 }
                 break;
             case R.id.action_filter:
@@ -154,7 +155,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

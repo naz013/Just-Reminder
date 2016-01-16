@@ -37,6 +37,7 @@ import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.Calendar;
 
@@ -62,7 +63,7 @@ public class QuickAddReminder extends AppCompatActivity {
         ColorSetter cs = new ColorSetter(QuickAddReminder.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.quick_add_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());

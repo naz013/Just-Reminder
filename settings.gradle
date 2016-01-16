@@ -1,1 +1,1 @@
-include ':app', ':photoPreview', ':fab', ':flextcal'
+include ':app', ':photoPreview', ':flextcal'

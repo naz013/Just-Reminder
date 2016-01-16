@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.StyleRes;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -62,7 +66,8 @@ public class ColorSetter {
      * @param color resource.
      * @return Color
      */
-    private int getColor(int color){
+    @ColorInt
+    private int getColor(@ColorRes int color){
         return ViewUtils.getColor(mContext, color);
     }
 
@@ -70,14 +75,16 @@ public class ColorSetter {
      * Get current theme primary color.
      * @return Color
      */
+    @ColorRes
     public int colorPrimary(){
-        return getColor(getColorByCode(new SharedPrefs(mContext).loadInt(Prefs.APP_THEME)));
+        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.APP_THEME));
     }
 
     /**
      * Get current theme accent color.
      * @return Color
      */
+    @ColorRes
     public int colorAccent(){
         return colorAccent(new SharedPrefs(mContext).loadInt(Prefs.APP_THEME));
     }
@@ -86,6 +93,7 @@ public class ColorSetter {
      * Get accent color by code.
      * @return Color
      */
+    @ColorRes
     public int colorAccent(int code){
         int color;
         boolean isDark = new SharedPrefs(mContext).loadBoolean(Prefs.USE_DARK_THEME);
@@ -210,13 +218,14 @@ public class ColorSetter {
                     break;
             }
         }
-        return getColor(color);
+        return color;
     }
 
     /**
      * Get theme for application based on user choice.
      * @return Theme resource
      */
+    @StyleRes
     public int getStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
@@ -350,8 +359,9 @@ public class ColorSetter {
      * Get birthdays color for calendar.
      * @return Color Resource
      */
+    @ColorRes
     public int colorBirthdayCalendar(){
-        return getColorByCode(new SharedPrefs(mContext).loadInt(Prefs.BIRTH_COLOR));
+        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.BIRTH_COLOR));
     }
 
     /**
@@ -359,7 +369,8 @@ public class ColorSetter {
      * @param code code.
      * @return Color resource
      */
-    public int getColorByCode(int code) {
+    @ColorRes
+    public int colorPrimary(int code) {
         int color;
         switch (code) {
             case 0:
@@ -429,8 +440,9 @@ public class ColorSetter {
      * Get reminders color for calendar.
      * @return Color Resource
      */
+    @ColorRes
     public int colorReminderCalendar(){
-        return getColorByCode(new SharedPrefs(mContext).loadInt(Prefs.REMINDER_COLOR));
+        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.REMINDER_COLOR));
     }
 
     /**
@@ -507,8 +519,9 @@ public class ColorSetter {
      * Get current day color for calendar.
      * @return Color Resource
      */
+    @ColorRes
     public int colorCurrentCalendar(){
-        return getColorByCode(new SharedPrefs(mContext).loadInt(Prefs.TODAY_COLOR));
+        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.TODAY_COLOR));
     }
 
     /**
@@ -516,6 +529,7 @@ public class ColorSetter {
      * @param color color identifier.
      * @return Drawable identifier
      */
+    @DrawableRes
     public int getIndicator(int color){
         int drawable;
         switch (color) {
@@ -579,7 +593,7 @@ public class ColorSetter {
      * @param i resource.
      * @return Drawable
      */
-    private Drawable getDrawable(int i){
+    private Drawable getDrawable(@DrawableRes int i){
         return ViewUtils.getDrawable(mContext, i);
     }
 
@@ -589,64 +603,129 @@ public class ColorSetter {
      */
     public Drawable toggleDrawable(){
         int loadedColor = new SharedPrefs(mContext).loadInt(Prefs.APP_THEME);
-        Drawable color;
+        int color;
         switch (loadedColor) {
             case 0:
-                color = getDrawable(R.drawable.toggle_red);
+                color = R.drawable.toggle_red;
                 break;
             case 1:
-                color = getDrawable(R.drawable.toggle_purple);
+                color = R.drawable.toggle_purple;
                 break;
             case 2:
-                color = getDrawable(R.drawable.toggle_green_light);
+                color = R.drawable.toggle_green_light;
                 break;
             case 3:
-                color = getDrawable(R.drawable.toggle_green);
+                color = R.drawable.toggle_green;
                 break;
             case 4:
-                color = getDrawable(R.drawable.toggle_blue_light);
+                color = R.drawable.toggle_blue_light;
                 break;
             case 5:
-                color = getDrawable(R.drawable.toggle_blue);
+                color = R.drawable.toggle_blue;
                 break;
             case 6:
-                color = getDrawable(R.drawable.toggle_yellow);
+                color = R.drawable.toggle_yellow;
                 break;
             case 7:
-                color = getDrawable(R.drawable.toggle_orange);
+                color = R.drawable.toggle_orange;
                 break;
             case 8:
-                color = getDrawable(R.drawable.toggle_cyan);
+                color = R.drawable.toggle_cyan;
                 break;
             case 9:
-                color = getDrawable(R.drawable.toggle_pink);
+                color = R.drawable.toggle_pink;
                 break;
             case 10:
-                color = getDrawable(R.drawable.toggle_teal);
+                color = R.drawable.toggle_teal;
                 break;
             case 11:
-                color = getDrawable(R.drawable.toggle_amber);
+                color = R.drawable.toggle_amber;
                 break;
             default:
                 if (Module.isPro()){
                     switch (loadedColor) {
                         case 12:
-                            color = getDrawable(R.drawable.toggle_deep_purple);
+                            color = R.drawable.toggle_deep_purple;
                             break;
                         case 13:
-                            color = getDrawable(R.drawable.toggle_deep_orange);
+                            color = R.drawable.toggle_deep_orange;
                             break;
                         case 14:
-                            color = getDrawable(R.drawable.toggle_lime);
+                            color = R.drawable.toggle_lime;
                             break;
                         case 15:
-                            color = getDrawable(R.drawable.toggle_indigo);
+                            color = R.drawable.toggle_indigo;
                             break;
                         default:
-                            color = getDrawable(R.drawable.toggle_cyan);
+                            color = R.drawable.toggle_cyan;
                             break;
                     }
-                } else color = getDrawable(R.drawable.toggle_cyan);
+                } else color = R.drawable.toggle_cyan;
+                break;
+        }
+        return getDrawable(color);
+    }
+
+    @ColorRes
+    public int colorPrimaryDark(int code) {
+        int color;
+        switch (code) {
+            case 0:
+                color = R.color.redPrimaryDark;
+                break;
+            case 1:
+                color = R.color.purplePrimaryDark;
+                break;
+            case 2:
+                color = R.color.greenLightPrimaryDark;
+                break;
+            case 3:
+                color = R.color.greenPrimaryDark;
+                break;
+            case 4:
+                color = R.color.blueLightPrimaryDark;
+                break;
+            case 5:
+                color = R.color.bluePrimaryDark;
+                break;
+            case 6:
+                color = R.color.yellowPrimaryDark;
+                break;
+            case 7:
+                color = R.color.orangePrimaryDark;
+                break;
+            case 8:
+                color = R.color.cyanPrimaryDark;
+                break;
+            case 9:
+                color = R.color.pinkPrimaryDark;
+                break;
+            case 10:
+                color = R.color.tealPrimaryDark;
+                break;
+            case 11:
+                color = R.color.amberPrimaryDark;
+                break;
+            default:
+                if (Module.isPro()){
+                    switch (code) {
+                        case 12:
+                            color = R.color.purpleDeepPrimaryDark;
+                            break;
+                        case 13:
+                            color = R.color.orangeDeepPrimaryDark;
+                            break;
+                        case 14:
+                            color = R.color.limePrimaryDark;
+                            break;
+                        case 15:
+                            color = R.color.indigoPrimaryDark;
+                            break;
+                        default:
+                            color = R.color.cyanPrimaryDark;
+                            break;
+                    }
+                } else color = R.color.cyanPrimaryDark;
                 break;
         }
         return color;
@@ -656,69 +735,10 @@ public class ColorSetter {
      * Get status bar color based on current application theme.
      * @return Color
      */
+    @ColorRes
     public int colorPrimaryDark(){
         int loadedColor = new SharedPrefs(mContext).loadInt(Prefs.APP_THEME);
-        int color;
-        switch (loadedColor) {
-            case 0:
-                color = getColor(R.color.redPrimaryDark);
-                break;
-            case 1:
-                color = getColor(R.color.purplePrimaryDark);
-                break;
-            case 2:
-                color = getColor(R.color.greenLightPrimaryDark);
-                break;
-            case 3:
-                color = getColor(R.color.greenPrimaryDark);
-                break;
-            case 4:
-                color = getColor(R.color.blueLightPrimaryDark);
-                break;
-            case 5:
-                color = getColor(R.color.bluePrimaryDark);
-                break;
-            case 6:
-                color = getColor(R.color.yellowPrimaryDark);
-                break;
-            case 7:
-                color = getColor(R.color.orangePrimaryDark);
-                break;
-            case 8:
-                color = getColor(R.color.cyanPrimaryDark);
-                break;
-            case 9:
-                color = getColor(R.color.pinkPrimaryDark);
-                break;
-            case 10:
-                color = getColor(R.color.tealPrimaryDark);
-                break;
-            case 11:
-                color = getColor(R.color.amberPrimaryDark);
-                break;
-            default:
-                if (Module.isPro()){
-                    switch (loadedColor) {
-                        case 12:
-                            color = getColor(R.color.purpleDeepPrimaryDark);
-                            break;
-                        case 13:
-                            color = getColor(R.color.orangeDeepPrimaryDark);
-                            break;
-                        case 14:
-                            color = getColor(R.color.limePrimaryDark);
-                            break;
-                        case 15:
-                            color = getColor(R.color.indigoPrimaryDark);
-                            break;
-                        default:
-                            color = getColor(R.color.cyanPrimaryDark);
-                            break;
-                    }
-                } else color = getColor(R.color.cyanPrimaryDark);
-                break;
-        }
-        return color;
+        return colorPrimaryDark(loadedColor);
     }
 
     /**
@@ -729,15 +749,16 @@ public class ColorSetter {
         int color;
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            color = getColor(R.color.material_grey);
-        } else color = getColor(R.color.whitePrimary);
-        return color;
+            color = R.color.material_grey;
+        } else color = R.color.whitePrimary;
+        return getColor(color);
     }
 
     /**
      * Get theme for dialog styled activity based on current application theme.
      * @return Theme resource
      */
+    @StyleRes
     public int getDialogStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
@@ -871,6 +892,7 @@ public class ColorSetter {
      * Get theme for fullscreen activities.
      * @return Theme resource
      */
+    @StyleRes
     public int getFullscreenStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
@@ -884,6 +906,7 @@ public class ColorSetter {
      * Get theme for translucent activities.
      * @return Theme resource
      */
+    @StyleRes
     public int getTransparentStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
@@ -897,6 +920,7 @@ public class ColorSetter {
      * Get window background color based on current theme.
      * @return Color
      */
+    @ColorInt
     public int getBackgroundStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
@@ -910,19 +934,19 @@ public class ColorSetter {
      * Get status bar color for reminder window based on current theme.
      * @return Color
      */
+    @ColorInt
     public int getStatusBarStyle(){
-        int id;
         sPrefs = new SharedPrefs(mContext);
         if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            id = getColor(R.color.material_grey);
-        } else id = getColor(R.color.material_divider);
-        return id;
+            return getColor(R.color.material_grey);
+        } else return getColor(colorPrimaryDark());
     }
 
     /**
      * Get background color for CardView based on current theme.
      * @return Color
      */
+    @ColorInt
     public int getCardStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);
@@ -936,6 +960,7 @@ public class ColorSetter {
      * Get card-like background drawable based on current theme.
      * @return Drawable resource
      */
+    @DrawableRes
     public int getCardDrawableStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);
@@ -967,6 +992,7 @@ public class ColorSetter {
      * Get fill amd stroke color for drawing circle around marker on Google Map.
      * @return color resources array
      */
+    @ColorRes
     public int[] getMarkerRadiusStyle(){
         int color = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
         return getMarkerRadiusStyle(color);
@@ -977,6 +1003,7 @@ public class ColorSetter {
      * @param color marker color.
      * @return  color resources array
      */
+    @ColorRes
     public int[] getMarkerRadiusStyle(int color){
         int fillColor;
         int strokeColor;
@@ -1057,6 +1084,7 @@ public class ColorSetter {
      * Get marker icon, based on user settings.
      * @return Drawable resource
      */
+    @DrawableRes
     public int getMarkerStyle(){
         if (Module.isPro()) {
             int loaded = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
@@ -1071,6 +1099,7 @@ public class ColorSetter {
      * @param code code of marker icon.
      * @return Drawable resource
      */
+    @DrawableRes
     public int getMarkerStyle(int code){
         int color;
         switch (code) {
@@ -1134,6 +1163,7 @@ public class ColorSetter {
      * @param code indicator code.
      * @return Drawable resource
      */
+    @DrawableRes
     public int getCategoryIndicator(int code){
         int color;
         switch (code){
@@ -1203,8 +1233,9 @@ public class ColorSetter {
      * @param code indicator code.
      * @return Color resource
      */
+    @ColorRes
     public int getCategoryColor(int code){
-        return getColorByCode(code);
+        return colorPrimary(code);
     }
 
     /**
@@ -1212,8 +1243,9 @@ public class ColorSetter {
      * @param code color code.
      * @return Color resource
      */
+    @ColorInt
     public int getNoteColor(int code){
-        return getColor(getColorByCode(code));
+        return getColor(colorPrimary(code));
     }
 
     /**
@@ -1221,68 +1253,9 @@ public class ColorSetter {
      * @param code color code.
      * @return Color
      */
+    @ColorInt
     public int getNoteDarkColor(int code){
-        int color;
-        switch (code){
-            case 0:
-                color = R.color.redPrimaryDark;
-                break;
-            case 1:
-                color = R.color.purplePrimaryDark;
-                break;
-            case 2:
-                color = R.color.greenLightPrimaryDark;
-                break;
-            case 3:
-                color = R.color.greenPrimaryDark;
-                break;
-            case 4:
-                color = R.color.blueLightPrimaryDark;
-                break;
-            case 5:
-                color = R.color.bluePrimaryDark;
-                break;
-            case 6:
-                color = R.color.yellowPrimaryDark;
-                break;
-            case 7:
-                color = R.color.orangePrimaryDark;
-                break;
-            case 8:
-                color = R.color.cyanPrimaryDark;
-                break;
-            case 9:
-                color = R.color.pinkPrimaryDark;
-                break;
-            case 10:
-                color = R.color.tealPrimaryDark;
-                break;
-            case 11:
-                color = R.color.amberPrimaryDark;
-                break;
-            default:
-                if (Module.isPro()){
-                    switch (code){
-                        case 12:
-                            color = R.color.purpleDeepPrimaryDark;
-                            break;
-                        case 13:
-                            color = R.color.orangeDeepPrimaryDark;
-                            break;
-                        case 14:
-                            color = R.color.limePrimaryDark;
-                            break;
-                        case 15:
-                            color = R.color.indigoPrimaryDark;
-                            break;
-                        default:
-                            color = R.color.bluePrimaryDark;
-                            break;
-                    }
-                } else color = R.color.bluePrimaryDark;
-                break;
-        }
-        return getColor(color);
+        return getColor(colorPrimaryDark(code));
     }
 
     /**
@@ -1290,6 +1263,7 @@ public class ColorSetter {
      * @param code color code.
      * @return Color
      */
+    @ColorInt
     public int getNoteLightColor(int code){
         int color;
         switch (code){

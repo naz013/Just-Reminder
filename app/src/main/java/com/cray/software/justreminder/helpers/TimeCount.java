@@ -111,6 +111,10 @@ public class TimeCount {
             if (type.matches(Constants.TYPE_TIME))
                 return System.currentTimeMillis() + after;
 
+            if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+                if (dayOfMonth == 0) return 0;
+            }
+
             return calendar.getTimeInMillis();
         }
     }

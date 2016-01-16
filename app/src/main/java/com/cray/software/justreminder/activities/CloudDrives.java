@@ -37,6 +37,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -71,7 +72,7 @@ public class CloudDrives extends AppCompatActivity {
         ColorSetter cs = new ColorSetter(CloudDrives.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.clouds_dialog_layout);
         setRequestedOrientation(cs.getRequestOrientation());

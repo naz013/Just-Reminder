@@ -2,6 +2,7 @@ package com.cray.software.justreminder.activities;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -15,11 +16,14 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class ThemerDialog extends AppCompatActivity {
 
     private ImageButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
+    private FloatingActionButton mFab;
+
     private SharedPrefs sPrefs;
     private ColorSetter cs;
     private Toolbar toolbar;
@@ -31,7 +35,7 @@ public class ThemerDialog extends AppCompatActivity {
         cs = new ColorSetter(ThemerDialog.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.theme_color_layout);
 
@@ -72,6 +76,9 @@ public class ThemerDialog extends AppCompatActivity {
                 amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime);
 
         setUpRadio();
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));
     }
 
     private void setOnClickListener(View... views){
@@ -201,10 +208,12 @@ public class ThemerDialog extends AppCompatActivity {
                 break;
         }
         cs = new ColorSetter(ThemerDialog.this);
-        toolbar.setBackgroundColor(cs.colorPrimary());
+        toolbar.setBackgroundColor(ViewUtils.getColor(this, cs.colorPrimary()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));
+        mFab.setRippleColor(ViewUtils.getColor(this, cs.colorPrimary()));
     }
 
     private void setSelected(int radio) {

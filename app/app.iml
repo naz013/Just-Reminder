@@ -159,7 +159,6 @@
     <orderEntry type="library" exported="" name="google-http-client-1.20.0" level="project" />
     <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-8.4.0" level="project" />
-    <orderEntry type="module" module-name="fab" exported="" />
     <orderEntry type="module" module-name="flextcal" exported="" />
     <orderEntry type="module" module-name="photoPreview" exported="" />
   </component>

@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -53,7 +54,6 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,7 +104,7 @@ public class NotesManager extends AppCompatActivity {
         cSetter = new ColorSetter(NotesManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.create_note_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -169,7 +169,6 @@ public class NotesManager extends AppCompatActivity {
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
 
         ViewUtils.fadeInAnimation(layoutContainer);
-
         Typeface typeface = AssetsUtil.getLightTypeface(this);
 
         remindDate = (TextView) findViewById(R.id.remindDate);
@@ -252,15 +251,7 @@ public class NotesManager extends AppCompatActivity {
 
         setImages();
 
-        mFab = new FloatingActionButton(NotesManager.this);
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-        mFab.setIcon(R.drawable.ic_done_white_24dp);
-
-        layoutContainer.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -276,8 +267,7 @@ public class NotesManager extends AppCompatActivity {
                 return false;
             }
         });
-        mFab.setColorNormal(cSetter.colorPrimary());
-        mFab.setColorPressed(cSetter.colorAccent());
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(), cSetter.colorAccent()));
 
         Intent intent = getIntent();
         Uri name = null;
@@ -384,13 +374,13 @@ public class NotesManager extends AppCompatActivity {
         }
 
         taskField.setTypeface(cSetter.getTypeface(style));
-        toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
+        toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.getNoteLightColor(color)));
         layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.getNoteDarkColor(color)));
         }
-        mFab.setColorNormal(cSetter.getNoteColor(color));
-        mFab.setColorPressed(cSetter.getNoteDarkColor(color));
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
+                cSetter.colorPrimaryDark(color)));
     }
 
     private void shareNote() {
@@ -647,10 +637,10 @@ public class NotesManager extends AppCompatActivity {
                     layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
                     toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
+                        getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.getNoteDarkColor(color)));
                     }
-                    mFab.setColorNormal(cSetter.getNoteColor(color));
-                    mFab.setColorPressed(cSetter.getNoteDarkColor(color));
+                    mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
+                            cSetter.colorPrimaryDark(color)));
                     break;
                 case Constants.REQUEST_CODE_FONT_STYLE:
                     style = data.getIntExtra(Constants.SELECTED_FONT_STYLE, 5);

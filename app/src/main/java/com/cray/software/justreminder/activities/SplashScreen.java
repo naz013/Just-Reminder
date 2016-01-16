@@ -40,6 +40,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class SplashScreen extends Activity{
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.splash_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setRequestedOrientation(cs.getRequestOrientation());
 

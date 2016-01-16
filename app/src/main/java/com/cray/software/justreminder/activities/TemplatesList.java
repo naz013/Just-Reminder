@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,32 +15,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
+import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.views.ReturnScrollListener;
-import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
-import com.getbase.floatingactionbutton.AddFloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.cray.software.justreminder.utils.ViewUtils;
+import com.cray.software.justreminder.views.ReturnScrollListener;
 
 public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyItem;
     private ColorSetter cs = new ColorSetter(TemplatesList.this);
-    private AddFloatingActionButton mFab;
-
+    private FloatingActionButton mFab;
     private TemplateDataProvider provider;
 
     @Override
@@ -47,7 +45,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
@@ -75,23 +73,13 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
         listView = (RecyclerView) findViewById(R.id.currentList);
 
-        mFab = new AddFloatingActionButton(TemplatesList.this);
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.wrapper);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(TemplatesList.this, NewTemplate.class));
             }
         });
-        mFab.setColorNormal(cs.colorAccent());
-        mFab.setColorPressed(cs.colorAccent());
     }
 
     private void loadTemplates(){

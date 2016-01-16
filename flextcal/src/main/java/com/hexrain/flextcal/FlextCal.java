@@ -8,6 +8,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
@@ -159,7 +161,7 @@ public class FlextCal extends Fragment {
      */
     protected HashMap<String, Object> extraData = new HashMap<>();
 
-    protected int backgroundForToday = 0, bgForEventOne = 0, bgForEventTwo = 0;
+    @ColorInt protected int backgroundForToday = 0, bgForEventOne = 0, bgForEventTwo = 0;
     protected HashMap<DateTime, FlextData> textMapForEvents = new HashMap<>();
 
     protected int startDayOfWeek = SUNDAY;
@@ -283,7 +285,7 @@ public class FlextCal extends Fragment {
     /**
      * Set backgroundForDateMap
      */
-    public void setBackgroundForToday(int backgroundForToday){
+    public void setBackgroundForToday(@ColorInt int backgroundForToday){
         this.backgroundForToday = backgroundForToday;
     }
 

@@ -21,6 +21,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +35,7 @@ public class EventsFragment extends Fragment {
     private int lastPosition = -1;
     private String dayString;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static EventsFragment newInstance(long date, int lastPosition) {
         EventsFragment pageFragment = new EventsFragment();
@@ -82,12 +83,12 @@ public class EventsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_voice:
                 if (mCallbacks != null){
-                    mCallbacks.onNavigationDrawerItemSelected(ScreenManager.VOICE_RECOGNIZER);
+                    mCallbacks.onItemSelected(ScreenManager.VOICE_RECOGNIZER);
                 }
                 return true;
             case R.id.action_month:
                 if (mCallbacks != null){
-                    mCallbacks.onNavigationDrawerItemSelected(ScreenManager.ACTION_CALENDAR);
+                    mCallbacks.onItemSelected(ScreenManager.ACTION_CALENDAR);
                 }
                 return true;
         }
@@ -119,7 +120,7 @@ public class EventsFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

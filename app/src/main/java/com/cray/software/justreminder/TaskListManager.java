@@ -25,6 +25,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 
@@ -51,7 +52,7 @@ public class TaskListManager extends AppCompatActivity {
         cSetter = new ColorSetter(TaskListManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.task_list_manager_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -441,7 +442,7 @@ public class TaskListManager extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        new UpdatesHelper(TaskListManager.this).updateTasksWidget();
         super.onDestroy();
+        new UpdatesHelper(TaskListManager.this).updateTasksWidget();
     }
 }

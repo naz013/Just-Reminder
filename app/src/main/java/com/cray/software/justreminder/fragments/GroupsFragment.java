@@ -33,6 +33,7 @@ import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 
@@ -44,7 +45,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     private CategoryDataProvider provider;
 
-    private NavigationDrawerFragment.NavigationDrawerCallbacks mCallbacks;
+    private NavigationCallbacks mCallbacks;
 
     public static GroupsFragment newInstance() {
         return new GroupsFragment();
@@ -80,7 +81,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (NavigationDrawerFragment.NavigationDrawerCallbacks) activity;
+            mCallbacks = (NavigationCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }

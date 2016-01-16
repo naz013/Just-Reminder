@@ -22,6 +22,7 @@ import android.widget.ListView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class ContactsList extends AppCompatActivity {
         ColorSetter cs = new ColorSetter(ContactsList.this);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cs.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.contact_picker_layout);
         setRequestedOrientation(cs.getRequestOrientation());

@@ -2,6 +2,7 @@ package com.cray.software.justreminder;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,19 +17,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
-import com.cray.software.justreminder.datas.models.ReminderModel;
-import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.getbase.floatingactionbutton.FloatingActionButton;
 
 public class ShoppingListPreview extends AppCompatActivity {
 
@@ -51,7 +51,7 @@ public class ShoppingListPreview extends AppCompatActivity {
         cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_shopping_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
@@ -96,11 +96,8 @@ public class ShoppingListPreview extends AppCompatActivity {
         todoList = (RecyclerView) findViewById(R.id.todoList);
         todoList.setLayoutManager(new LinearLayoutManager(this));
 
-        mFab = new FloatingActionButton(this);
-        mFab.setSize(FloatingActionButton.SIZE_MINI);
-        mFab.setIcon(R.drawable.ic_create_white_24dp);
-        mFab.setColorNormal(cSetter.colorAccent());
-        mFab.setColorPressed(cSetter.colorAccent());
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
         mFab.setVisibility(View.GONE);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,12 +110,11 @@ public class ShoppingListPreview extends AppCompatActivity {
 
         RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
         wrapper.setBackgroundColor(cSetter.getBackgroundStyle());
-        wrapper.addView(mFab);
 
         RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
         paramsR.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         paramsR.addRule(RelativeLayout.BELOW, R.id.toolbar);
-        paramsR.setMargins(0, -(QuickReturnUtils.dp2px(this, 28)), 0, 0);
+        paramsR.setMargins(QuickReturnUtils.dp2px(this, 16), -(QuickReturnUtils.dp2px(this, 20)), 0, 0);
 
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -157,8 +153,8 @@ public class ShoppingListPreview extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(catColor));
             }
-            mFab.setColorNormal(cSetter.colorAccent(catColor));
-            mFab.setColorPressed(cSetter.colorAccent(catColor));
+            mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
+                    cSetter.colorAccent(catColor)));
         }
     }
 

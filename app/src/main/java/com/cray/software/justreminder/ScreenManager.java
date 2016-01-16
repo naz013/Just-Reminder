@@ -19,6 +19,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -30,14 +32,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.activities.NewPlace;
 import com.cray.software.justreminder.activities.NewTemplate;
-import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -68,6 +67,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
@@ -80,9 +80,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.getbase.floatingactionbutton.AddFloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -105,7 +102,7 @@ import java.util.Random;
 import hirondelle.date4j.DateTime;
 
 public class ScreenManager extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationCallbacks {
 
     private Toolbar toolbar;
     private FloatingEditText quickNote;
@@ -114,10 +111,7 @@ public class ScreenManager extends AppCompatActivity
     private TextView buttonNo;
     private TextView buttonReminderYes;
     private TextView buttonReminderNo;
-    private FloatingActionsMenu mainMenu;
-    private FloatingActionButton addNote, addBirthday, addTask, addReminder, 
-            addQuick, mFab, addTemplate, addPlace, addGroup;
-    private FloatingActionButton[] prevButtons;
+    private FloatingActionButton mFab;
 
     private ColorSetter cSetter = new ColorSetter(this);
     private SharedPrefs mPrefs = new SharedPrefs(this);
@@ -163,7 +157,7 @@ public class ScreenManager extends AppCompatActivity
         setRequestedOrientation(cSetter.getRequestOrientation());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -201,39 +195,17 @@ public class ScreenManager extends AppCompatActivity
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
         if (mPrefs.loadBoolean(Prefs.UI_CHANGED)) {
-            onNavigationDrawerItemSelected(mPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
+            onItemSelected(mPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
             mPrefs.saveBoolean(Prefs.UI_CHANGED, false);
         }
     }
 
-    private void setUpButton(FloatingActionButton fab, View.OnClickListener listener, String title,
-                             int size, int icon){
-        fab.setTitle(title);
-        fab.setSize(size);
-        fab.setIcon(icon);
-        fab.setColorNormal(ViewUtils.getColor(this, R.color.whitePrimary));
-        fab.setColorPressed(ViewUtils.getColor(this, R.color.material_divider));
-        fab.setOnClickListener(listener);
-    }
-
     private void initButton() {
-        mainMenu = (FloatingActionsMenu) findViewById(R.id.mainMenu);
-
-        addNote = new FloatingActionButton(this);
-        addPlace = new FloatingActionButton(this);
-        addTemplate = new FloatingActionButton(this);
-        addQuick = new FloatingActionButton(this);
-        addTask = new FloatingActionButton(this);
-        addReminder = new FloatingActionButton(this);
-        addBirthday = new FloatingActionButton(this);
-        addGroup = new FloatingActionButton(this);
-
-        mFab = new AddFloatingActionButton(this);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -263,345 +235,139 @@ public class ScreenManager extends AppCompatActivity
                 return true;
             }
         });
-        mFab.setColorNormal(cSetter.colorAccent());
-        mFab.setColorPressed(cSetter.colorAccent());
-        mFab.setSize(FloatingActionButton.SIZE_NORMAL);
-
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
-        wrapper.addView(mFab);
-
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-    }
-
-    private void attachButtons(FloatingActionButton... buttons){
-        if (prevButtons != null) {
-            for (FloatingActionButton button : prevButtons) {
-                mainMenu.removeButton(button);
-            }
-        }
-        prevButtons = buttons;
-        for (FloatingActionButton button : buttons){
-            mainMenu.addButton(button);
-        }
     }
 
     private void reloadButton(){
         mPrefs = new SharedPrefs(this);
-        final boolean isExtend = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
-            mFab.setVisibility(View.GONE);
-            setUpButton(addReminder, new View.OnClickListener() {
+            mFab.setVisibility(View.VISIBLE);
+            mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    collapseViews();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(ScreenManager.this, QuickAddReminder.class)
-                                    .putExtra("date", dateMills));
-                        }
-                    }, 150);
+                    if (dateMills == 0) dateMills = System.currentTimeMillis();
+                    startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
+                            .putExtra("date", dateMills));
                 }
-            }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
+            });
+        } else if (mTag.matches(FRAGMENT_BACKUPS)){
+            mFab.setVisibility(View.GONE);
+        } else {
+            mFab.setVisibility(View.GONE);
+            if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
+                    mTag.matches(FRAGMENT_LOCATIONS)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collapseViews();
 
-            setUpButton(addBirthday, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    collapseViews();
-
-                    if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
-                        Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
-                    } else {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                startActivity(new Intent(ScreenManager.this, AddBirthday.class)
-                                        .putExtra("date", dateMills));
+                                startActivity(new Intent(ScreenManager.this, ReminderManager.class));
                             }
                         }, 150);
                     }
-                }
-            }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_black_24dp);
-            attachButtons(addBirthday, addReminder);
-            mainMenu.setVisibility(View.VISIBLE);
-        } else if (mTag.matches(FRAGMENT_BACKUPS)){
-            mFab.setVisibility(View.GONE);
-            mainMenu.setVisibility(View.GONE);
-        } else {
-            if (isExtend) {
-                mFab.setVisibility(View.GONE);
-                mainMenu.setVisibility(View.GONE);
-                if (mTag.matches(FRAGMENT_TASKS) || mTag.matches(FRAGMENT_ARCHIVE) ||
-                        mTag.matches(FRAGMENT_ACTIVE) || mTag.matches(FRAGMENT_NOTE)){
-                    setUpButton(addReminder, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                });
+                mFab.setVisibility(View.VISIBLE);
+            } else if (mTag.matches(FRAGMENT_TASKS)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (new GTasksHelper(ScreenManager.this).isLinked()) {
                             collapseViews();
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+                                    startActivity(new Intent(ScreenManager.this, TaskManager.class)
+                                            .putExtra(Constants.ITEM_ID_INTENT, listId)
+                                            .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
                                 }
                             }, 150);
+
+                        } else {
+                            showSnackbar(R.string.tasks_connection_warming);
                         }
-                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
-                    setUpButton(addBirthday, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
-
-                            if (!mPrefs.loadBoolean(Prefs.BIRTHDAY_REMINDER)) {
-                                Messages.toast(ScreenManager.this, getString(R.string.calendar_birthday_info));
-                            } else {
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startActivity(new Intent(ScreenManager.this, AddBirthday.class));
-                                    }
-                                }, 150);
-                            }
-                        }
-                    }, getString(R.string.new_birthday), FloatingActionButton.SIZE_MINI, R.drawable.ic_cake_black_24dp);
-                    setUpButton(addTask, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mainMenu.isExpanded()) {
-                                mainMenu.collapse();
-                            }
-                            if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                                collapseViews();
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                                .putExtra(Constants.ITEM_ID_INTENT, listId)
-                                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
-                                    }
-                                }, 150);
-
-                            } else {
-                                Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
-                            }
-                        }
-                    }, getString(R.string.new_task), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_available_black_24dp);
-                    setUpButton(addNote, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, NotesManager.class));
-                                }
-                            }, 150);
-                        }
-                    }, getString(R.string.new_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_event_note_black_24dp);
-                    setUpButton(addQuick, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mainMenu.isExpanded()) {
-                                mainMenu.collapse();
-                            }
-                            if (!isNoteVisible()) {
-                                ViewUtils.showReveal(noteCard);
-                            } else {
-                                quickNote.setText("");
-                                quickNote.setError(null);
-
-                                ViewUtils.hideReveal(noteCard);
-                            }
-                        }
-                    }, getString(R.string.new_quick_note), FloatingActionButton.SIZE_MINI, R.drawable.ic_done_black_24dp);
-                    attachButtons(addBirthday, addTask, addNote, addQuick, addReminder);
-                    mainMenu.setVisibility(View.VISIBLE);
-                } else {
-                    setUpButton(addReminder, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
-                                }
-                            }, 150);
-                        }
-                    }, getString(R.string.new_reminder), FloatingActionButton.SIZE_NORMAL, R.drawable.ic_alarm_black_24dp);
-                    if (mTag.matches(FRAGMENT_LOCATIONS) || mTag.matches(FRAGMENT_PLACES)){
-                        setUpButton(addPlace, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                collapseViews();
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                                            startActivity(new Intent(ScreenManager.this, NewPlace.class));
-                                        }
-                                    }
-                                }, 150);
-                            }
-                        }, getString(R.string.string_new_place), FloatingActionButton.SIZE_MINI, R.drawable.ic_place_black_24dp);
-                        attachButtons(addPlace, addReminder);
-                        mainMenu.setVisibility(View.VISIBLE);
-                    } else if (mTag.matches(FRAGMENT_GROUPS)){
-                        setUpButton(addGroup, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        collapseViews();
-
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                startActivity(new Intent(ScreenManager.this, CategoryManager.class));
-                                            }
-                                        }, 150);
-                                    }
-                                }, getString(R.string.string_new_category), FloatingActionButton.SIZE_MINI,
-                                R.drawable.ic_local_offer_black_24dp);
-                        attachButtons(addGroup, addReminder);
-                        mainMenu.setVisibility(View.VISIBLE);
-                    } else if (mTag.matches(FRAGMENT_TEMPLATES)){
-                        setUpButton(addTemplate, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        collapseViews();
-
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                startActivity(new Intent(ScreenManager.this, NewTemplate.class));
-                                            }
-                                        }, 150);
-                                    }
-                                }, getString(R.string.string_new_template), FloatingActionButton.SIZE_MINI,
-                                R.drawable.ic_textsms_black_24dp);
-                        attachButtons(addTemplate, addReminder);
-                        mainMenu.setVisibility(View.VISIBLE);
                     }
-                }
-            } else {
-                mFab.setVisibility(View.GONE);
-                mainMenu.setVisibility(View.GONE);
-                if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
-                        mTag.matches(FRAGMENT_LOCATIONS)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
+                });
+                mFab.setVisibility(View.VISIBLE);
+            } else if (mTag.matches(FRAGMENT_NOTE)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collapseViews();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, ReminderManager.class));
-                                }
-                            }, 150);
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                } else if (mTag.matches(FRAGMENT_TASKS)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                                collapseViews();
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                                .putExtra(Constants.ITEM_ID_INTENT, listId)
-                                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
-                                    }
-                                }, 150);
-
-                            } else {
-                                Messages.toast(ScreenManager.this, getString(R.string.tasks_connection_warming));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(ScreenManager.this, NotesManager.class));
                             }
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                } else if (mTag.matches(FRAGMENT_NOTE)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
+                        }, 150);
+                    }
+                });
+                mFab.setVisibility(View.VISIBLE);
+            } else if (mTag.matches(FRAGMENT_GROUPS)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collapseViews();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, NotesManager.class));
-                                }
-                            }, 150);
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                } else if (mTag.matches(FRAGMENT_GROUPS)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                            }
+                        }, 150);
+                    }
+                });
+                mFab.setVisibility(View.VISIBLE);
+            } else if (mTag.matches(FRAGMENT_PLACES)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collapseViews();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, CategoryManager.class));
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
+                                    startActivity(new Intent(ScreenManager.this, NewPlace.class));
                                 }
-                            }, 150);
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                } else if (mTag.matches(FRAGMENT_PLACES)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
+                            }
+                        }, 150);
+                    }
+                });
+                mFab.setVisibility(View.VISIBLE);
+            } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collapseViews();
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                                        startActivity(new Intent(ScreenManager.this, NewPlace.class));
-                                    }
-                                }
-                            }, 150);
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                } else if (mTag.matches(FRAGMENT_TEMPLATES)){
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collapseViews();
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, NewTemplate.class));
-                                }
-                            }, 150);
-                        }
-                    });
-                    mFab.setVisibility(View.VISIBLE);
-                }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+                            }
+                        }, 150);
+                    }
+                });
+                mFab.setVisibility(View.VISIBLE);
             }
         }
     }
 
     private void collapseViews() {
-        if (mainMenu.isExpanded()) {
-            mainMenu.collapse();
-        }
         if (isNoteVisible()) {
             ViewUtils.hideReveal(noteCard);
+        }
+    }
+
+    @Override
+    public void onTitleChanged(String string) {
+        if (string != null) {
+            mTitle = string;
+            toolbar.setTitle(mTitle);
         }
     }
 
@@ -620,11 +386,9 @@ public class ScreenManager extends AppCompatActivity
             }
 
             mPrefs = new SharedPrefs(this);
-            final boolean isExtend = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
 
-            listener = new
-                ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                    .footer(isExtend ? mainMenu : mFab)
+            listener = new ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                    .footer(mFab)
                     .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                     .isSnappable(true)
                     .build();
@@ -646,34 +410,21 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     public void isDrawerOpen(boolean isOpen) {
-        if (isOpen && mainMenu.isExpanded()) {
-            mainMenu.collapse();
-        }
+
     }
 
     @Override
-    public void onTitleChanged(String title) {
-        if (title != null) {
-            mTitle = title;
-            toolbar.setTitle(mTitle);
+    public void onUiChanged(int colorPrimary, int colorPrimaryDark, int colorAccent) {
+        if (colorPrimary != 0){
+            toolbar.setBackgroundColor(ViewUtils.getColor(this, colorPrimary));
         }
-    }
-
-    @Override
-    public void onUiChanged(int colorSetter, int colorStatus, int colorChooser) {
-        if (colorSetter != 0){
-            toolbar.setBackgroundColor(colorSetter);
-        }
-        if (colorStatus != 0){
+        if (colorPrimaryDark != 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(colorStatus);
+                getWindow().setStatusBarColor(ViewUtils.getColor(this, colorPrimaryDark));
             }
         }
-        if (colorChooser != 0){
-            mFab.setColorPressed(colorChooser);
-            mainMenu.setButtonColorPressed(colorChooser);
-            mFab.setColorNormal(colorChooser);
-            mainMenu.setButtonColorNormal(colorChooser);
+        if (colorPrimary != 0 && colorAccent != 0) {
+            mFab.setBackgroundTintList(ViewUtils.getFabState(this, colorAccent, colorPrimary));
         }
     }
 
@@ -687,7 +438,7 @@ public class ScreenManager extends AppCompatActivity
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(String tag) {
+    public void onItemSelected(String tag) {
         // update the main content by replacing fragments
         if (tag != null) {
             restoreUi();
@@ -755,6 +506,31 @@ public class ScreenManager extends AppCompatActivity
         }
     }
 
+    @Override
+    public void showSnackbar(int message, int actionTitle, View.OnClickListener listener) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .setAction(actionTitle, listener)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(String message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showSnackbar(String message, int actionTitle, View.OnClickListener listener) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .setAction(actionTitle, listener)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(int message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
     public void onSectionAttached(String tag) {
         if(tag != null) {
             if (tag.matches(FRAGMENT_ACTIVE)) {
@@ -778,21 +554,15 @@ public class ScreenManager extends AppCompatActivity
             } else if (tag.matches(FRAGMENT_BACKUPS)) {
                 mTitle = getString(R.string.manage_backup_title);
             }
+            if (mTitle == null) mTitle = getString(R.string.drawer_active_reminder);
+            if (toolbar != null) toolbar.setTitle(mTitle);
         }
     }
 
     private void restoreUi(){
-        toolbar.setBackgroundColor(cSetter.colorPrimary());
+        toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.colorPrimary()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
-        }
-        boolean isExtended = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-        if (!isExtended) {
-            mFab.setColorNormal(cSetter.colorAccent());
-            mFab.setColorPressed(cSetter.colorAccent());
-        } else {
-            mainMenu.setButtonColorNormal(cSetter.colorAccent());
-            mainMenu.setButtonColorPressed(cSetter.colorAccent());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
     }
 
@@ -812,7 +582,7 @@ public class ScreenManager extends AppCompatActivity
         args.putBoolean(FlextCal.SIX_WEEKS_IN_CALENDAR, true);
         args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
         calendarView.setArguments(args);
-        calendarView.setBackgroundForToday(cSetter.colorCurrentCalendar());
+        calendarView.setBackgroundForToday(ViewUtils.getColor(this, cSetter.colorCurrentCalendar()));
         replace(calendarView, mTag);
 
         final FlextListener listener = new FlextListener() {
@@ -820,7 +590,7 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClickDate(Date date, View view) {
                 eventsDate = date;
-                onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
+                onItemSelected(FRAGMENT_EVENTS);
             }
 
             @Override
@@ -909,7 +679,6 @@ public class ScreenManager extends AppCompatActivity
             menu.findItem(R.id.action_day).setTitle(day + "/" + (month + 1) + "/" + year);
         }
         toolbar.setTitle(mTitle);
-        mainMenu.collapse();
         reloadButton();
         return super.onCreateOptionsMenu(menu);
     }
@@ -921,7 +690,7 @@ public class ScreenManager extends AppCompatActivity
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 eventsDate = calendar.getTime();
-                onNavigationDrawerItemSelected(FRAGMENT_EVENTS);
+                onItemSelected(FRAGMENT_EVENTS);
                 return true;
             case R.id.action_voice:
                 SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
@@ -946,12 +715,10 @@ public class ScreenManager extends AppCompatActivity
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
 
-        if (mTag != null) {
-            onNavigationDrawerItemSelected(mTag);
-        }
+        if (mTag != null) onItemSelected(mTag);
 
         if (sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)){
             new Notifier(this).recreatePermanent();
@@ -964,8 +731,8 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        new UpdatesHelper(this).updateWidget();
         super.onDestroy();
+        new UpdatesHelper(this).updateWidget();
     }
 
     private void loadReminders() {
@@ -981,7 +748,6 @@ public class ScreenManager extends AppCompatActivity
     private void loadEvents(){
         HashMap<DateTime, String> dates = ReminderDataProvider.getBirthdays(this);
         calendarView.setBackgroundForTwo(ViewUtils.getColor(this, cSetter.colorBirthdayCalendar()));
-
         if (calendarView != null) {
             calendarView.setTextForEventTwo(dates);
         }
@@ -1001,9 +767,7 @@ public class ScreenManager extends AppCompatActivity
             e.printStackTrace();
         }
         String version = null;
-        if (pInfo != null) {
-            version = pInfo.versionName;
-        }
+        if (pInfo != null) version = pInfo.versionName;
         boolean ranBefore = sPrefs.loadVersionBoolean(version);
         if (!ranBefore) {
             sPrefs.saveVersionBoolean(version);
@@ -1020,15 +784,12 @@ public class ScreenManager extends AppCompatActivity
             e.printStackTrace();
         }
         String version = null;
-        if (pInfo != null) {
-            version = pInfo.versionName;
-        }
+        if (pInfo != null) version = pInfo.versionName;
         return sPrefs.loadVersionBoolean(version);
     }
 
     private void showRate(){
         SharedPrefs sPrefs = new SharedPrefs(this);
-
         if (sPrefs.isString(Prefs.RATE_SHOW)) {
             if (!sPrefs.loadBoolean(Prefs.RATE_SHOW)) {
                 int counts = sPrefs.loadInt(Prefs.APP_RUNS_COUNT);
@@ -1075,13 +836,12 @@ public class ScreenManager extends AppCompatActivity
         String uuID = SyncHelper.generateID();
         NotesBase db = new NotesBase(ScreenManager.this);
         db.open();
-        Random r = new Random();
-        int color = r.nextInt(15);
+        int color = new Random().nextInt(15);
         final long id;
         if (mPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            id = db.saveNote(SyncHelper.encrypt(note), date, cSetter.getNoteColor(color), uuID, null, 5);
+            id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, null, 5);
         } else {
-            id = db.saveNote(note, date, cSetter.getNoteColor(color), uuID, null, 5);
+            id = db.saveNote(note, date, color, uuID, null, 5);
         }
         db.close();
 
@@ -1106,7 +866,7 @@ public class ScreenManager extends AppCompatActivity
         }, 300);
 
         if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
-            onNavigationDrawerItemSelected(mTag);
+            onItemSelected(mTag);
         }
     }
 
@@ -1181,7 +941,7 @@ public class ScreenManager extends AppCompatActivity
                 base.linkToReminder(noteId, remId);
                 base.close();
                 if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
-                    onNavigationDrawerItemSelected(mTag);
+                    onItemSelected(mTag);
                 }
             }
         });
@@ -1208,10 +968,6 @@ public class ScreenManager extends AppCompatActivity
             InputMethodManager imm = (InputMethodManager)getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
-            return;
-        }
-        if (mainMenu.isExpanded()) {
-            mainMenu.collapse();
             return;
         }
         if (doubleBackToExitPressedOnce) {
@@ -1287,7 +1043,6 @@ public class ScreenManager extends AppCompatActivity
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             getIntent().setAction("JustActivity Created");
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
             new Recognizer(this).selectTask(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -1324,11 +1079,5 @@ public class ScreenManager extends AppCompatActivity
             new SharedPrefs(this).savePrefsBackup();
         }
         super.onStop();
-    }
-
-    @Override
-    public void showSnackbar(int message) {
-        boolean ext = mPrefs.loadBoolean(Prefs.EXTENDED_BUTTON);
-        Messages.snackbar(ext ? mainMenu : mFab, message);
     }
 }

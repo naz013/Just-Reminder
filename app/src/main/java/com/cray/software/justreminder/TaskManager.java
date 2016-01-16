@@ -43,6 +43,7 @@ import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class TaskManager extends AppCompatActivity {
         cSetter = new ColorSetter(TaskManager.this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(cSetter.colorPrimaryDark());
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.task_manager_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
