@@ -36,12 +36,6 @@ android {
             keyAlias 'com.cray.software.justreminderpro'
             keyPassword 'craysoftware2014'
         }
-        debugApp {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
     }
 
     productFlavors {
@@ -66,8 +60,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            productFlavors.free.proguardFiles 'proguard-rules.txt'
-            productFlavors.pro.proguardFiles 'proguard-rules.txt'
+            proguardFiles 'proguard-rules.txt'
             debuggable false
             zipAlignEnabled true
             jniDebuggable false
@@ -75,9 +68,7 @@ android {
             productFlavors.pro.signingConfig signingConfigs.proApp
         }
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-DEBUG'
-            signingConfig signingConfigs.debugApp
+            signingConfig signingConfigs.proApp
         }
     }
     compileOptions {

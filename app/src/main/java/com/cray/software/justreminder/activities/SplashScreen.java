@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -185,24 +186,6 @@ public class SplashScreen extends Activity{
     protected void onResume() {
         super.onResume();
         SharedPrefs prefs = new SharedPrefs(this);
-        if (!prefs.loadBoolean("isGen")){
-            DataBase db = new DataBase(this);
-            db.open();
-            Cursor c = db.queryGroup();
-            if (c != null && c.moveToFirst()){
-                do {
-                    long time = c.getLong(c.getColumnIndex(Constants.COLUMN_REMIND_TIME));
-                    long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    if (time < 1000) db.updateReminderAfterTime(id, time * TimeCount.MINUTE);
-                } while (c.moveToNext());
-            }
-            if (c != null) {
-                c.close();
-            }
-            db.close();
-            prefs.saveBoolean("isGen", true);
-        }
-
         if (!prefs.loadBoolean("isGenB")){
             DataBase db = new DataBase(this);
             db.open();
@@ -225,7 +208,11 @@ public class SplashScreen extends Activity{
             prefs.saveBoolean("isGenB", true);
         }
 
-        migrateToNewDb();
+        try {
+            migrateToNewDb();
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
 
         checkPrefs();
 
@@ -239,7 +226,7 @@ public class SplashScreen extends Activity{
         finish();
     }
 
-    private void migrateToNewDb() {
+    private void migrateToNewDb() throws SQLiteException{
         stopService(new Intent(SplashScreen.this, GeolocationService.class));
         stopService(new Intent(SplashScreen.this, CheckPosition.class));
         DataBase db = new DataBase(this);
@@ -278,6 +265,19 @@ public class SplashScreen extends Activity{
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
 
                 receiver.cancelAlarm(SplashScreen.this, id);
+
+                ArrayList<Integer> listW = new ArrayList<>();
+                if (weekdays != null) {
+                    for (char c1 : weekdays.toCharArray()) {
+                        listW.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
+                    }
+                }
+
+                due = new TimeCount(SplashScreen.this)
+                        .generateDateTime(type, myDay, due, repCode * TimeCount.DAY, listW, count, 0);
+                if (due < System.currentTimeMillis()) {
+                    continue;
+                }
 
                 JsonParser parser = new JsonParser();
                 parser.setCategory(catId);
@@ -325,13 +325,7 @@ public class SplashScreen extends Activity{
                 parser.setExclusion(jsonExclusion);
 
                 JsonRecurrence jsonRecurrence = new JsonRecurrence();
-                if (weekdays != null) {
-                    ArrayList<Integer> list = new ArrayList<>();
-                    for (char c1 : weekdays.toCharArray()) {
-                        list.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
-                    }
-                    jsonRecurrence.setWeekdays(list);
-                }
+                jsonRecurrence.setWeekdays(listW);
                 jsonRecurrence.setLimit(limit);
                 jsonRecurrence.setMonthday(myDay);
                 jsonRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);

@@ -124,6 +124,7 @@ public class TimeCount {
     public long generateDateTime(String type, int dayOfMonth, long startTime, long repeat,
                                       ArrayList<Integer> weekdays, long count, int delay){
         long dateTime;
+        if (startTime > System.currentTimeMillis()) return startTime;
         if (startTime == 0) {
             dateTime = 0;
         } else {

@@ -148,13 +148,14 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (enabled) {
-                    if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
-                            Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
+                    if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
+                            Permissions.ACCESS_COURSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
                         new LocalSync(LogInActivity.this, progress, progressMesage).execute();
                         enabled = false;
                     } else {
                         Permissions.requestPermission(LogInActivity.this, 101,
-                                Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+                                Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
+                                Permissions.ACCESS_COURSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
                     }
                 }
             }
@@ -218,13 +219,15 @@ public class LogInActivity extends Activity {
                 connectGDrive.setEnabled(false);
                 skipButton.setEnabled(false);
                 sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
-                        Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
+                        Permissions.WRITE_EXTERNAL, Permissions.ACCESS_COURSE_LOCATION,
+                        Permissions.ACCESS_FINE_LOCATION)) {
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 104,
-                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
+                            Permissions.ACCESS_COURSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
                 }
             }
         } else {
@@ -232,13 +235,15 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
-                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
+                    Permissions.WRITE_EXTERNAL, Permissions.ACCESS_COURSE_LOCATION,
+                    Permissions.ACCESS_FINE_LOCATION)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                 enabled = false;
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
-                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
+                        Permissions.ACCESS_COURSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
             }
         }
     }

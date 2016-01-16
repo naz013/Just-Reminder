@@ -191,24 +191,10 @@ public class DataBase {
 
     // Reminders database
 
-    public boolean updateReminderAfterTime(long rowId, long time) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_REMIND_TIME, time);
-        return db.update(CURRENT_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
     @Deprecated
     public Cursor queryAllReminders() throws SQLException {
         openGuard();
         return db.query(CURRENT_TABLE_NAME, null, null, null, null, null, null);
-    }
-
-    public Cursor queryGroup() throws SQLException {
-        openGuard();
-        String order = Constants.COLUMN_IS_DONE + " ASC, " +
-                Constants.COLUMN_FEATURE_TIME + " ASC";
-        return db.query(CURRENT_TABLE_NAME, null, Constants.COLUMN_ARCHIVED  + "='" + 0 + "'", null, null, null, order);
     }
 
     @Deprecated

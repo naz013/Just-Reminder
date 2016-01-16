@@ -19,6 +19,7 @@ import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
+import com.cray.software.justreminder.reminder.Reminder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -726,21 +727,10 @@ public class SyncHelper {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
 
-        NextBase db = new NextBase(mContext);
-        db.open();
-        List<String> uuIdArray = new ArrayList<>();
-        Cursor e = db.queryAllReminders();
-        while (e.moveToNext()) {
-            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                uuIdArray.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-            }
-        }
-        e.close();
-
         if (type == null) return;
 
         JsonModel jsonModel = new JsonParser(jsonObj).parse();
-        if (!uuIdArray.contains(uuID)) {
+        if (!Reminder.isUuId(mContext, uuID)) {
             if (type.contains(Constants.TYPE_LOCATION)){
                 new DateType(mContext, type).save(jsonModel);
             } else {

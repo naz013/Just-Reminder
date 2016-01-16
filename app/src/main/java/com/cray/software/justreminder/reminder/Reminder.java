@@ -44,6 +44,21 @@ public class Reminder {
     public Reminder(){
     }
 
+    public static ArrayList<String> getUuIds(Context context) {
+        NextBase db = new NextBase(context);
+        db.open();
+        ArrayList<String> list = new ArrayList<>();
+        Cursor c = db.queryAllReminders();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(c.getString(c.getColumnIndex(NextBase.UUID)));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        db.close();
+        return list;
+    }
+
     public static boolean isUuId(Context context, String uuId) {
         NextBase db = new NextBase(context);
         db.open();
