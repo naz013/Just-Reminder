@@ -16,7 +16,7 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/titleDialog"
-        android:text="@string/settings_volume_title" />
+        android:text="@string/loudness" />
 
     <ImageView
         android:layout_width="65dp"
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:text="@string/button_ok"
+        android:text="@string/ok"
         android:clickable="false"
         android:textSize="18sp"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"

@@ -448,24 +448,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".dialogs.SelectMelody"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.SelectApplication"
             android:configChanges="keyboardHidden|orientation">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.HelpOverflow"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/Transparent">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -21,7 +21,7 @@
             android:layout_height="72dp"
             android:id="@+id/editField"
             android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/hint_list_name"
+            android:hint="@string/name"
             android:textColorHint="@color/colorWhite"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
@@ -47,13 +47,13 @@
                 android:layout_gravity="center"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="10dp"
-                android:text="@string/string_default"/>
+                android:text="@string/default_string"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/string_list_color"
+                android:text="@string/color"
                 android:textStyle="bold"
                 android:clickable="false"
                 android:textAllCaps="true"

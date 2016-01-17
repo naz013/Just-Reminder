@@ -17,8 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/birthReminderPrefs"
-        app:prefs_primary_text="@string/settings_birthday_reminder_title"
-        app:prefs_secondary_text="@string/settings_birthday_reminder_explanation"
+        app:prefs_primary_text="@string/birthday_reminder"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -27,8 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/widgetShowPrefs"
-        app:prefs_primary_text="@string/widget_birthdays_title"
-        app:prefs_secondary_text="@string/widget_birthdays_explanation"
+        app:prefs_primary_text="@string/show_in_home_screen"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -37,8 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/birthdayPermanentPrefs"
-        app:prefs_primary_text="@string/permanent_notification_title"
-        app:prefs_secondary_text="@string/birthday_permanent_explanation"
+        app:prefs_primary_text="@string/permanent_status_bar_notification"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -47,8 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/daysToPrefs"
-        app:prefs_primary_text="@string/days_to_title"
-        app:prefs_secondary_text="@string/days_to_explanation"
+        app:prefs_primary_text="@string/days_to_birthday"
         app:prefs_divider_top="false"
         app:prefs_type="text"
         app:prefs_divider_bottom="true"/>
@@ -70,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/birthday_reminder_time"
+                android:text="@string/remind_at"
                 android:paddingRight="15dp"
                 android:paddingTop="15dp"
                 android:textSize="@dimen/settings_text_size_primary"
@@ -99,8 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/backupBirthPrefs"
-        app:prefs_primary_text="@string/string_backup_birthdays"
-        app:prefs_secondary_text="@string/string_backup_birthdays_explanation"
+        app:prefs_primary_text="@string/backup"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -120,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/birthday_settings_notification"
+                android:text="@string/action_settings"
                 android:id="@+id/birthdayNotification"
                 android:paddingRight="15dp"
                 android:paddingTop="15dp"
@@ -151,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/birthdays_option"
+            android:text="@string/contacts"
             android:paddingRight="15dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
@@ -181,8 +176,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/autoScanPrefs"
-        app:prefs_primary_text="@string/auto_scan_settings_title"
-        app:prefs_secondary_text="@string/auto_scan_settings_explanation"
+        app:prefs_primary_text="@string/check_automatically"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -191,7 +185,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/scan_contacts"
+        android:text="@string/scan"
         android:id="@+id/contactsScan"
         android:paddingRight="15dp"
         android:paddingTop="15dp"
@@ -201,11 +195,6 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center_vertical"
         android:textSize="@dimen/settings_text_size_primary" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
 
 </LinearLayout>
     </ScrollView>

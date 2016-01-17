@@ -20,7 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class MarkerModel {
     private String title;
     private LatLng position;
-    private int icon;
+    private int icon, radius;
     private long id;
 
     public MarkerModel(String title, long id){
@@ -33,6 +33,10 @@ public class MarkerModel {
         this.title = title;
         this.icon = icon;
         this.id = id;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 
     public long getId() {

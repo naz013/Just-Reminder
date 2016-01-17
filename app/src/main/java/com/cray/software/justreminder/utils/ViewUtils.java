@@ -66,6 +66,34 @@ public class ViewUtils {
         return context.getResources().getColor(resource);
     }
 
+    public static void slideInUp(Context context, View view){
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slide_up);
+        view.startAnimation(animation);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    public static void slideOutDown(Context context, View view){
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slide_down);
+        view.startAnimation(animation);
+        view.setVisibility(View.GONE);
+    }
+
+    public static void slideOutUp(Context context, View view){
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slide_up_out);
+        view.startAnimation(animation);
+        view.setVisibility(View.GONE);
+    }
+
+    public static void slideInDown(Context context, View view){
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slide_down_in);
+        view.startAnimation(animation);
+        view.setVisibility(View.VISIBLE);
+    }
+
     /**
      * Get icon for reminder type.
      * @param typePrefs type of reminder.

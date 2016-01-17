@@ -52,15 +52,18 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
         placeName = (EditText) findViewById(R.id.placeName);
-        MapFragment googleMap = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        googleMap.enableTouch(true);
-        googleMap.enableCloseButton(false);
-        googleMap.enablePlaceList(false);
+        MapFragment googleMap = MapFragment.newInstance(false, false, false, false,
+                sPrefs.loadInt(Prefs.MARKER_STYLE), sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         googleMap.setListener(this);
-        googleMap.moveToMyLocation();
+        int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+        googleMap.setMarkerRadius(radius);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, googleMap)
+                .addToBackStack(null)
+                .commit();
 
         if (id != 0){
-            int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
             DataBase db = new DataBase(NewPlace.this);
             db.open();
             Cursor c = db.getPlace(id);
@@ -126,12 +129,17 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     }
 
     @Override
-    public void place(LatLng place) {
+    public void placeChanged(LatLng place) {
         this.place = place;
     }
 
     @Override
-    public void onZoomOutClick() {
+    public void onBackClick() {
+
+    }
+
+    @Override
+    public void onZoomClick(boolean isFull) {
 
     }
 

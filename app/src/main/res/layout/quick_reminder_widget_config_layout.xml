@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/select_widget_bg_color"
+            android:text="@string/background"
             android:id="@+id/textView" />
 
         <Spinner

@@ -23,14 +23,14 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Custom style"
+            android:text="@string/custom"
             android:id="@+id/customRadio"/>
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/theme"
-            android:text="Theme"/>
+            android:text="@string/theme"/>
 
     </RadioGroup>
 
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/widget_bg_color_title"
+                android:text="@string/background"
                 android:textSize="@dimen/widget_config_text_size"
                 android:id="@+id/textView3" />
 
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/text_color_string"/>
+                android:text="@string/text_color"/>
 
             <RadioGroup
                 android:layout_width="match_parent"
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/checkbox_text_size"
-                    android:text="@string/black_radio_text"
+                    android:text="@string/black"
                     android:id="@+id/radioTitleBlack" />
 
                 <RadioButton
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/checkbox_text_size"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/white_radio_text"
+                    android:text="@string/white"
                     android:id="@+id/radioTitleWhite" />
             </RadioGroup>
         </LinearLayout>
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/string_button_colot"/>
+                android:text="@string/button_color"/>
 
             <RadioGroup
                 android:layout_width="match_parent"
@@ -129,7 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/black_radio_text"
+                    android:text="@string/black"
                     android:id="@+id/radioButtonBlack" />
 
                 <RadioButton
@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/white_radio_text"
+                    android:text="@string/white"
                     android:id="@+id/radioButtonWhite" />
             </RadioGroup>
         </LinearLayout>

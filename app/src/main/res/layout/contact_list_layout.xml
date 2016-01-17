@@ -14,7 +14,7 @@
         app:floating_edit_text_highlighted_color="?attr/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/search_hint"
+        android:hint="@string/search"
         android:layout_marginTop="@dimen/contact_margin_top"
         android:layout_marginLeft="@dimen/contact_margin"
         android:layout_marginRight="@dimen/contact_margin"

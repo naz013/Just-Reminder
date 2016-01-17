@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/shopEdit"
                     android:layout_centerVertical="true"
-                    android:hint="@string/add_item"
+                    android:hint="@string/task"
                     android:lines="2"
                     android:background="@android:color/transparent"
                     android:layout_toLeftOf="@+id/addButton" />

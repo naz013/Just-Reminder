@@ -17,6 +17,8 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 public class ColorSetter {
 
+    public static final int NUM_OF_MARKERS = 16;
+
     private Context mContext;
     private SharedPrefs sPrefs;
 
@@ -67,7 +69,7 @@ public class ColorSetter {
      * @return Color
      */
     @ColorInt
-    private int getColor(@ColorRes int color){
+    public int getColor(@ColorRes int color){
         return ViewUtils.getColor(mContext, color);
     }
 

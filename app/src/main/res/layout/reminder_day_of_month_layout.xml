@@ -25,7 +25,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/export_check_title"
+                android:text="@string/add_to_calendar"
                 android:id="@+id/monthDayExport" />
 
             <CheckBox
@@ -35,7 +35,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/monthDayTaskExport" />
 
             <TextView
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/dayCheck"
                     android:layout_gravity="center|left"
-                    android:text="@string/string_day_of_month_max"/>
+                    android:text="@string/select_day"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|left"
                 android:id="@+id/lastCheck"
-                android:text="@string/string_last_day_of_month"/>
+                android:text="@string/last_day"/>
 
             <com.cray.software.justreminder.views.ActionView
                 android:layout_width="match_parent"

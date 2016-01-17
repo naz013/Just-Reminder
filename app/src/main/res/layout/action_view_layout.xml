@@ -15,7 +15,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:textSize="@dimen/checkbox_text_size"
-            android:text="@string/action_check_text"
+            android:text="@string/action"
             android:id="@+id/actionCheck" />
 
         <LinearLayout
@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/create_text_size_normal"
-                    android:text="@string/reminder_make_call"
+                    android:text="@string/make_call"
                     android:id="@+id/callAction" />
 
                 <RadioButton
@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/create_text_size_normal"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/reminder_send_message"
+                    android:text="@string/sms"
                     android:id="@+id/messageAction" />
             </RadioGroup>
 
@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:hint="@string/phone_number_hint"
+                    android:hint="@string/phone"
                     android:textSize="@dimen/create_text_size_normal"
                     android:gravity="center"
                     android:ems="10"

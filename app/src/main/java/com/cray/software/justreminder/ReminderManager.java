@@ -61,7 +61,6 @@ import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.activities.FileExplore;
-import com.cray.software.justreminder.activities.HelpOverflow;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.GeocoderTask;
@@ -810,6 +809,26 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.monthDayLayout).setVisibility(View.GONE);
         findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
+
+        map = new MapFragment();
+        map.setListener(this);
+        map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        map.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
+
+        mapOut = new MapFragment();
+        mapOut.setListener(this);
+        mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        mapOut.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
+
+        addFragment(R.id.map, map);
+        addFragment(R.id.mapOut, mapOut);
+    }
+
+    private void addFragment(int res, MapFragment fragment) {
+        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentTransaction fragTransaction = fragMan.beginTransaction();
+        fragTransaction.add(res, fragment);
+        fragTransaction.commitAllowingStateLoss();
     }
 
     /**
@@ -1717,14 +1736,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     @Override
-    public void place(LatLng place) {
+    public void placeChanged(LatLng place) {
         curPlace = place;
         if (isLocationOutAttached())
             mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
     }
 
     @Override
-    public void onZoomOutClick() {
+    public void onBackClick() {
         if (isLocationAttached()) {
             ViewUtils.fadeOutAnimation(mapContainer);
             ViewUtils.fadeInAnimation(specsContainer);
@@ -1733,6 +1752,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             ViewUtils.fadeOutAnimation(mapContainerOut);
             ViewUtils.fadeInAnimation(specsContainerOut);
         }
+    }
+
+    @Override
+    public void onZoomClick(boolean isFull) {
+
     }
 
     @Override
@@ -1758,16 +1782,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         specsContainer = (ScrollView) findViewById(R.id.specsContainer);
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
-
-        map = new MapFragment();
-        map.setListener(this);
-        map.enableTouch(true);
-        map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-
-        FragmentManager fragMan = getSupportFragmentManager();
-        FragmentTransaction fragTransaction = fragMan.beginTransaction();
-        fragTransaction.add(R.id.map, map);
-        fragTransaction.commitAllowingStateLoss();
 
         attackDelay = (CheckBox) findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1905,16 +1919,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
-
-        mapOut = new MapFragment();
-        mapOut.setListener(this);
-        mapOut.enableTouch(true);
-        mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-
-        FragmentManager fragMan = getSupportFragmentManager();
-        FragmentTransaction fragTransaction = fragMan.beginTransaction();
-        fragTransaction.add(R.id.mapOut, mapOut);
-        fragTransaction.commitAllowingStateLoss();
 
         attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -3235,8 +3239,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         if (isListFirstTime()){
-            startActivity(new Intent(ReminderManager.this, HelpOverflow.class)
-                    .putExtra(Constants.ITEM_ID_INTENT, 2));
+            // TODO: 17.01.2016 Add showcase.
         }
     }
 

@@ -17,8 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/globalOptionPrefs"
-            app:prefs_primary_text="@string/settings_global_title"
-            app:prefs_secondary_text="@string/settings_global_explanation"
+            app:prefs_primary_text="@string/global_settings"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -27,8 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/vibrationOptionPrefs"
-            app:prefs_primary_text="@string/vibration_title"
-            app:prefs_secondary_text="@string/vibration_explanation"
+            app:prefs_primary_text="@string/vibrate"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -37,8 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/infiniteVibrateOptionPrefs"
-            app:prefs_primary_text="@string/infinite_vibrate_title"
-            app:prefs_secondary_text="@string/infinite_vibrate_explanation"
+            app:prefs_primary_text="@string/infinite_vibrate"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -47,8 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/soundOptionPrefs"
-            app:prefs_primary_text="@string/sound_title"
-            app:prefs_secondary_text="@string/sound_explanation"
+            app:prefs_primary_text="@string/sound_in_silent_mode"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -57,8 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/infiniteSoundOptionPrefs"
-            app:prefs_primary_text="@string/infinite_title"
-            app:prefs_secondary_text="@string/infinite_explanation"
+            app:prefs_primary_text="@string/infinite_sound"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -67,8 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/wakeScreenOptionPrefs"
-            app:prefs_primary_text="@string/wake_title"
-            app:prefs_secondary_text="@string/wake_explanation"
+            app:prefs_primary_text="@string/turn_on_screen"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -77,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/chooseSoundPrefs"
-            app:prefs_primary_text="@string/rem_sound"
+            app:prefs_primary_text="@string/melody"
             app:prefs_divider_top="false"
             app:prefs_type="none"
             app:prefs_divider_bottom="true"/>
@@ -86,8 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/ttsPrefs"
-            app:prefs_primary_text="@string/settings_tts_title"
-            app:prefs_secondary_text="@string/settings_tts_explanation"
+            app:prefs_primary_text="@string/voice_notification"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -96,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/settings_voice_language_title"
+            android:text="@string/language"
             android:id="@+id/locale"
             android:paddingRight="15dp"
             android:paddingTop="15dp"
@@ -111,8 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/ledPrefs"
-            app:prefs_primary_text="@string/led_title"
-            app:prefs_secondary_text="@string/led_explanation"
+            app:prefs_primary_text="@string/led_notification"
             app:prefs_divider_top="true"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -121,8 +113,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/chooseLedColorPrefs"
-            app:prefs_primary_text="@string/led_color_title"
-            app:prefs_secondary_text="@string/led_color_explanation"
+            app:prefs_primary_text="@string/led_color"
             app:prefs_divider_top="false"
             app:prefs_type="none"
             app:prefs_divider_bottom="false"/>

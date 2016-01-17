@@ -11,22 +11,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/string_cloud_connecting"
+        android:text="@string/connect_to_cloud"
         android:textSize="@dimen/log_in_title_text_size"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/string_cloud_connecting_explanation"
-        android:layout_marginTop="@dimen/log_in_first_button_margin_top"
-        android:gravity="center"
-        android:textSize="@dimen/log_in_explanation_text_size"
-        android:layout_gravity="center_horizontal" />
 
     <com.cray.software.justreminder.views.PaperButton
-        widget:paper_text="@string/string_connect_to_google_drive"
+        widget:paper_text="@string/google_drive"
         android:layout_width="wrap_content"
         widget:paper_color="@color/redPrimary"
         widget:paper_text_color="@color/whitePrimary"
@@ -38,7 +29,7 @@
         android:layout_height="@dimen/log_in_button_height" />
 
     <com.cray.software.justreminder.views.PaperButton
-        widget:paper_text="@string/string_connect_to_dropbox"
+        widget:paper_text="@string/dropbox"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
@@ -49,19 +40,10 @@
         widget:paper_text_size="@dimen/log_in_button_text_size"
         android:layout_height="@dimen/log_in_button_height" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/log_in_settings_margin_yop"
-        android:text="@string/string_connection_explanation" />
-
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/string_import_contacts"
+        android:text="@string/import_birthdays"
         android:id="@+id/checkBox"
         android:layout_marginTop="@dimen/log_in_check_margin_top"
         android:layout_gravity="center_horizontal" />
@@ -70,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/skip_button"
+        android:text="@string/skip"
         android:layout_marginTop="@dimen/log_in_skip_margin_top"
         android:id="@+id/skipButton"
         android:textSize="@dimen/log_in_skip_text_size"

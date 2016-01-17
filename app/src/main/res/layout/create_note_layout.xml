@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/task_message"
                     android:textSize="@dimen/create_note_text_size"
-                    android:hint="@string/quick_note_hint"
+                    android:hint="@string/note"
                     android:textColor="@color/blackPrimary"
                     android:textColorHint="@color/blackPrimary"
                     android:layout_gravity="center_horizontal"

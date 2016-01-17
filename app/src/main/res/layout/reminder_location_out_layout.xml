@@ -29,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/attachDelayOut"
                     android:textSize="@dimen/checkbox_text_size"
-                    android:text="@string/location_delay_checkbox"
+                    android:text="@string/delay_tracking"
                     android:gravity="center"
                     android:layout_gravity="center"/>
 
@@ -60,7 +60,7 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/string_current_location"
+                        android:text="@string/current_location"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:id="@+id/currentCheck"/>
@@ -84,7 +84,7 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/string_map_point"
+                        android:text="@string/choose_location"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:id="@+id/mapCheck"/>

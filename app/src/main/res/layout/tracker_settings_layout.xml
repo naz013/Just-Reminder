@@ -16,7 +16,7 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/titleDialog"
-        android:text="@string/tracking_title" />
+        android:text="@string/tracking_settings" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
         android:gravity="center"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
-        android:text="@string/tracker_info"
+        android:text="@string/for_lower_battery_usage_set_bigger_values"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:text="@string/button_ok"
+        android:text="@string/ok"
         android:clickable="false"
         android:textSize="18sp"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"

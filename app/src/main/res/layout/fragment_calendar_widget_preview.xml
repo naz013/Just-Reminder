@@ -10,7 +10,7 @@
         android:id="@+id/note"
         android:textSize="20sp"
         android:gravity="center"
-        android:text="@string/string_swipe_left_or_right"
+        android:text="@string/swipe_to_change_theme"
         android:layout_marginTop="10dp"
         android:layout_alignParentTop="true"/>
 

@@ -36,7 +36,7 @@
                         android:layout_gravity="center"
                         android:visibility="gone"
                         android:textSize="@dimen/checkbox_text_size"
-                        android:text="@string/export_check_title"
+                        android:text="@string/add_to_calendar"
                         android:id="@+id/timeExport" />
 
                     <CheckBox
@@ -45,7 +45,7 @@
                         android:layout_gravity="center"
                         android:visibility="gone"
                         android:textSize="@dimen/checkbox_text_size"
-                        android:text="@string/add_to_google_tasks"
+                        android:text="@string/google_tasks"
                         android:id="@+id/timeTaskExport" />
 
                     <RelativeLayout
@@ -75,7 +75,7 @@
                                 android:id="@+id/hours"
                                 android:textSize="20sp"
                                 android:gravity="center|top"
-                                android:text="@string/char_h"
+                                android:text="@string/h"
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@+id/minutesView"
                                 android:layout_marginRight="5dp"/>
@@ -96,7 +96,7 @@
                                 android:id="@+id/minutes"
                                 android:textSize="20sp"
                                 android:gravity="center|bottom"
-                                android:text="@string/char_m"
+                                android:text="@string/m"
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@+id/secondsView"
                                 android:layout_marginRight="5dp"/>
@@ -118,7 +118,7 @@
                                 android:textSize="20sp"
                                 android:layout_alignParentTop="true"
                                 android:gravity="center|bottom"
-                                android:text="@string/char_s"
+                                android:text="@string/c"
                                 android:layout_alignParentRight="true"/>
 
                         </RelativeLayout>
@@ -295,7 +295,7 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                app:repeat_type_text="@string/remaining_minutes"
+                app:repeat_type_text="@string/minutes"
                 android:id="@+id/repeatViewTime"/>
 
             <RelativeLayout
@@ -306,7 +306,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/select_exclusion"
+                    android:text="@string/exclusion"
                     android:layout_marginLeft="@dimen/create_margin"
                     android:layout_marginTop="@dimen/create_margin"
                     android:layout_marginRight="@dimen/create_margin"

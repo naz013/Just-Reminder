@@ -97,7 +97,7 @@ public class SplashScreen extends Activity{
             uiEd.putInt(Prefs.TODAY_COLOR, 0);
             uiEd.putInt(Prefs.BIRTH_COLOR, 2);
             uiEd.putInt(Prefs.REMINDER_COLOR, 4);
-            uiEd.putString(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
+            uiEd.putInt(Prefs.MAP_TYPE, Constants.MAP_NORMAL);
             uiEd.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
             uiEd.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
             uiEd.putString(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
@@ -451,6 +451,9 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.VOLUME)){
             sPrefs.saveInt(Prefs.VOLUME, 25);
+        }
+        if (!sPrefs.isString(Prefs.MAP_TYPE)){
+            sPrefs.saveInt(Prefs.MAP_TYPE, Constants.MAP_NORMAL);
         }
         if (!sPrefs.isString(Prefs.MISSED_CALL_TIME)){
             sPrefs.saveInt(Prefs.MISSED_CALL_TIME, 10);

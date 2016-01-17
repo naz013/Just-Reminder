@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/use24TimePrefs"
-            app:prefs_primary_text="@string/settings_24_hour_title"
+            app:prefs_primary_text="@string/_24_hour_time_format"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/useDarkStylePrefs"
-            app:prefs_primary_text="@string/settings_dark_theme_title"
+            app:prefs_primary_text="@string/dark_mode"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/themeColorPrefs"
-            app:prefs_primary_text="@string/theme_title"
+            app:prefs_primary_text="@string/theme"
             app:prefs_divider_top="false"
             app:prefs_type="view"
             app:prefs_divider_bottom="true"/>
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/screen_orientation_title"
+            android:text="@string/screen_orientation"
             android:id="@+id/screenOrientation"
             android:paddingRight="15dp"
             android:paddingTop="15dp"
@@ -63,8 +63,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/smartFoldPrefs"
-            app:prefs_primary_text="@string/smart_fold_title"
-            app:prefs_secondary_text="@string/smart_fold_explanation"
+            app:prefs_primary_text="@string/smart_fold"
+            app:prefs_secondary_text="@string/enable_folding_reminder_window"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/wearEnablePrefs"
-            app:prefs_primary_text="@string/wear_title"
+            app:prefs_primary_text="@string/android_wear_notification"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -82,8 +82,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/itemPreviewPrefs"
-            app:prefs_primary_text="@string/settings_item_preview_title"
-            app:prefs_secondary_text="@string/settings_item_preview_explanation"
+            app:prefs_primary_text="@string/preview"
+            app:prefs_secondary_text="@string/enable_reminder_preview"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="false"/>

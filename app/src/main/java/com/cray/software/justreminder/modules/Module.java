@@ -40,4 +40,8 @@ public class Module {
     public static boolean isKitkat(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
     }
+
+    public static boolean isJellyMR2() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+    }
 }

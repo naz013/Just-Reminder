@@ -83,7 +83,7 @@
             android:id="@android:id/empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/widget_empty_list" />
+            android:text="@string/no_events" />
     </LinearLayout>
     </LinearLayout>
 </LinearLayout>

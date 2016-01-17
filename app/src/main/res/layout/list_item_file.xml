@@ -33,13 +33,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@string/file_name_text"/>
+                    android:text="@string/title"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:text="@string/last_modified_text"/>
+                    android:text="@string/last_modified"/>
 
             </LinearLayout>
 

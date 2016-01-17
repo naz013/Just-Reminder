@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/header_bg_text"
+            android:text="@string/background"
             android:id="@+id/textView" />
 
         <Spinner
@@ -54,7 +54,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/header_text_color_title"
+            android:text="@string/text_color"
             android:textSize="@dimen/widget_config_text_size"
             android:id="@+id/textView2" />
 
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/black_radio_text"
+                android:text="@string/black"
                 android:id="@+id/radioBlack" />
 
             <RadioButton
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
                 android:layout_marginLeft="15dp"
-                android:text="@string/white_radio_text"
+                android:text="@string/white"
                 android:id="@+id/radioWhite" />
         </RadioGroup>
     </LinearLayout>
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/config_text_size" />
+            android:text="@string/text_size" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -122,7 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/widget_bg_color_title"
+            android:text="@string/background"
             android:id="@+id/textView3" />
 
         <Spinner
@@ -148,7 +148,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/list_item_background_spinner"
+            android:text="@string/background"
             android:id="@+id/textView4" />
 
         <Spinner
@@ -173,7 +173,7 @@
             android:layout_width="match_parent"
             android:textSize="@dimen/widget_config_text_size"
             android:layout_height="wrap_content"
-            android:text="@string/list_item_text_color_title"
+            android:text="@string/text_color"
             android:id="@+id/textView5" />
 
         <RadioGroup
@@ -186,7 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/black_radio_text"
+                android:text="@string/black"
                 android:id="@+id/radioItemBlack" />
 
             <RadioButton
@@ -194,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/white_radio_text"
+                android:text="@string/black"
                 android:id="@+id/radioItemWhite" />
         </RadioGroup>
     </LinearLayout>
@@ -214,7 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/plus_button_color_title"/>
+            android:text="@string/button_color"/>
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -226,7 +226,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/black_radio_text"
+                android:text="@string/black"
                 android:id="@+id/radioButtonBlack" />
 
             <RadioButton
@@ -234,7 +234,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/white_radio_text"
+                android:text="@string/white"
                 android:id="@+id/radioButtonWhite" />
         </RadioGroup>
     </LinearLayout>
@@ -254,7 +254,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/widget_config_text_size"
-            android:text="@string/transparency_settings"/>
+            android:text="@string/transparency"/>
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -267,21 +267,21 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/headerButton"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/header_title_tr"/>
+                android:text="@string/header"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/bodyButton"
                 android:layout_marginLeft="15dp"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/body_settings_tr"/>
+                android:text="@string/body"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/itemButton"
                 android:layout_marginLeft="15dp"
                 android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/list_item_transparency"/>
+                android:text="@string/item"/>
 
             </RadioGroup>
 

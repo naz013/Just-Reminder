@@ -53,7 +53,7 @@
                         android:textSize="18sp"
                         android:paddingTop="30dp"
                         android:textAllCaps="true"
-                        android:text="@string/reminder_type"/>
+                        android:text="@string/type"/>
 
                     <View
                         android:layout_width="match_parent"
@@ -83,7 +83,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/editReminder"
                             style="?android:attr/buttonTint"
-                            android:text="@string/edit_dialog_button"/>
+                            android:text="@string/edit"/>
 
                         <Button
                             android:layout_width="wrap_content"
@@ -91,7 +91,7 @@
                             android:layout_marginLeft="15dp"
                             android:id="@+id/deleteReminder"
                             style="?android:attr/buttonTint"
-                            android:text="@string/dialog_button_delete"/>
+                            android:text="@string/delete"/>
 
                     </LinearLayout>
 

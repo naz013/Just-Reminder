@@ -27,7 +27,7 @@
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
-                android:text="@string/export_check_title"
+                android:text="@string/add_to_calendar"
                 android:id="@+id/weekExport" />
 
             <CheckBox
@@ -39,7 +39,7 @@
                 android:layout_marginBottom="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/weekTaskExport" />
 
             <TextView
@@ -73,8 +73,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_monday"
-                        android:textOff="@string/short_monday"
+                        android:textOn="@string/mon"
+                        android:textOff="@string/mon"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:background="@drawable/toggle_blue"
@@ -83,8 +83,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_tuesday"
-                        android:textOff="@string/short_tuesday"
+                        android:textOn="@string/tue"
+                        android:textOff="@string/tue"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:background="@drawable/toggle_blue"
@@ -94,8 +94,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_wednesday"
-                        android:textOff="@string/short_wednesday"
+                        android:textOn="@string/wed"
+                        android:textOff="@string/wed"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:background="@drawable/toggle_blue"
@@ -105,8 +105,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_thursday"
-                        android:textOff="@string/short_thursday"
+                        android:textOn="@string/thu"
+                        android:textOff="@string/thu"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:layout_marginLeft="@dimen/create_toggle_margin_left"
@@ -116,8 +116,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_friday"
-                        android:textOff="@string/short_friday"
+                        android:textOn="@string/fri"
+                        android:textOff="@string/fri"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:layout_marginLeft="@dimen/create_toggle_margin_left"
@@ -127,8 +127,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_saturday"
-                        android:textOff="@string/short_saturday"
+                        android:textOn="@string/sat"
+                        android:textOff="@string/sat"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_small"
                         android:layout_marginLeft="@dimen/create_toggle_margin_left"
@@ -138,8 +138,8 @@
                     <ToggleButton
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/short_sunday"
-                        android:textOff="@string/short_sunday"
+                        android:textOn="@string/sun"
+                        android:textOff="@string/sun"
                         android:textSize="@dimen/create_text_size_small"
                         android:background="@drawable/toggle_blue"
                         android:singleLine="true"

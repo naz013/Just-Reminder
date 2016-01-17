@@ -26,7 +26,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/export_check_title"
+                android:text="@string/add_to_calendar"
                 android:id="@+id/callExport" />
 
             <CheckBox
@@ -36,7 +36,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/callTaskExport" />
 
             <LinearLayout
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:hint="@string/phone_number_hint"
+                    android:hint="@string/phone"
                     android:textSize="@dimen/create_text_size_normal"
                     android:gravity="center"
                     android:ems="10"
@@ -82,7 +82,7 @@
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 android:layout_marginBottom="88dp"
-                app:repeat_type_text="@string/string_days"
+                app:repeat_type_text="@string/days"
                 android:id="@+id/repeatViewCall"/>
 
             </LinearLayout>

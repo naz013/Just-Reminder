@@ -26,7 +26,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/export_check_title"
+                android:text="@string/add_to_calendar"
                 android:id="@+id/appExport" />
 
             <CheckBox
@@ -36,7 +36,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/appTaskExport" />
 
             <RelativeLayout
@@ -58,7 +58,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/pickApplication"
                     android:layout_centerVertical="true"
-                    android:text="@string/application_empty_fieald_title"
+                    android:text="@string/no_application"
                     android:textSize="@dimen/create_text_size_normal"
                     android:gravity="center"
                     android:ems="10"
@@ -72,7 +72,7 @@
                 app:floating_edit_text_highlighted_color="?attr/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/link_field_hint"
+                android:hint="@string/url"
                 android:textSize="@dimen/create_text_size_normal"
                 android:gravity="center"
                 android:ems="10"
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/checkbox_text_size"
-                    android:text="@string/reminder_type_application"
+                    android:text="@string/application"
                     android:id="@+id/application" />
 
                 <RadioButton
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:textSize="@dimen/checkbox_text_size"
-                    android:text="@string/reminder_type_open_link"
+                    android:text="@string/open_link"
                     android:id="@+id/browser" />
             </RadioGroup>
 
@@ -118,7 +118,7 @@
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 android:layout_marginBottom="88dp"
-                app:repeat_type_text="@string/string_days"
+                app:repeat_type_text="@string/days"
                 android:id="@+id/repeatViewApp"/>
 
             </LinearLayout>

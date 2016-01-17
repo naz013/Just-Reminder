@@ -28,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/attackDelay"
                     android:textSize="@dimen/checkbox_text_size"
-                    android:text="@string/location_delay_checkbox"
+                    android:text="@string/delay_tracking"
                     android:gravity="center"
                     android:layout_gravity="center"/>
 
@@ -59,7 +59,7 @@
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/string_address"
+                        android:hint="@string/address"
                         android:singleLine="true"
                         android:textSize="@dimen/create_text_size_normal"
                         android:layout_toLeftOf="@+id/clearButton"

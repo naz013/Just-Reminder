@@ -18,7 +18,8 @@ import com.google.android.gms.maps.model.LatLng;
  * limitations under the License.
  */
 public interface MapListener {
-    void place(LatLng place);
-    void onZoomOutClick();
+    void placeChanged(LatLng place);
+    void onZoomClick(boolean isFull);
+    void onBackClick();
     void placeName(String name);
 }

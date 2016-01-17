@@ -19,6 +19,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.PrefsView;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
@@ -61,6 +62,8 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearEnablePrefs = (PrefsView) rootView.findViewById(R.id.wearEnablePrefs);
         wearEnablePrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
         wearEnablePrefs.setOnClickListener(this);
+        if (Module.isJellyMR2()) wearEnablePrefs.setVisibility(View.VISIBLE);
+        else wearEnablePrefs.setVisibility(View.GONE);
 
         itemPreviewPrefs = (PrefsView) rootView.findViewById(R.id.itemPreviewPrefs);
         itemPreviewPrefs.setChecked(sPrefs.loadBoolean(Prefs.ITEM_PREVIEW));

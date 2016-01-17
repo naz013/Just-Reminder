@@ -191,7 +191,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="@string/tast_hint"
+                android:text="@string/task"
                 android:paddingTop="30dp"
                 android:textAllCaps="true"/>
 
@@ -274,7 +274,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="@string/fragment_notes"
+                android:text="@string/notes"
                 android:paddingTop="30dp"
                 android:textAllCaps="true"/>
 

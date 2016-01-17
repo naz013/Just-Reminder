@@ -22,7 +22,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/select_interval"
+        android:text="@string/interval"
         android:id="@+id/selectInterval"/>
 
     <LinearLayout
@@ -52,7 +52,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/select_hours"
+        android:text="@string/hours"
         android:layout_marginTop="@dimen/create_margin"
         android:id="@+id/selectHours"/>
 
@@ -347,7 +347,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_ok"
+        android:text="@string/ok"
         android:clickable="false"
         android:textSize="18sp"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"

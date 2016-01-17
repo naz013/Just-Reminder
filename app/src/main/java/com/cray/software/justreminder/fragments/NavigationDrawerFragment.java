@@ -25,9 +25,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.HelpOverflow;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
@@ -506,8 +504,7 @@ public class NavigationDrawerFragment extends Fragment implements
         if (!db.isOpen()) db.open();
         if (db.getCountActive() > 0){
             if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
-                startActivity(new Intent(getActivity(), HelpOverflow.class)
-                        .putExtra(Constants.ITEM_ID_INTENT, 1));
+                // TODO: 17.01.2016 Add showcase.
             }
         }
         db.close();

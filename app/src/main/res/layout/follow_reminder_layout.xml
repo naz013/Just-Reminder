@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save_dialog_button"
+            android:text="@string/save"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:clickable="true"
             android:layout_weight="1"
@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_cancel"
+            android:text="@string/cancel"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:clickable="true"
             android:layout_weight="1"
@@ -73,7 +73,7 @@
                 android:textAllCaps="true"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical"
-                android:text="@string/string_type"
+                android:text="@string/type"
                 android:layout_marginTop="5dp"
                 android:textSize="@dimen/follow_text_size_header"/>
 
@@ -101,7 +101,7 @@
                     android:id="@+id/typeCall"
                     android:layout_marginLeft="15dp"
                     android:textSize="@dimen/follow_text_size_normal"
-                    android:text="@string/reminder_make_call"/>
+                    android:text="@string/make_call"/>
 
                 </RadioGroup>
 
@@ -110,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textField"
-                android:hint="@string/message_field_hint"/>
+                android:hint="@string/message"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -122,7 +122,7 @@
                 android:layout_marginTop="@dimen/follow_margin_top"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_vertical"
-                android:text="@string/string_date_and_time"
+                android:text="@string/date_and_time"
                 android:textSize="@dimen/follow_text_size_header"/>
 
             <View
@@ -141,7 +141,7 @@
                     android:textSize="@dimen/follow_text_size_normal"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/string_tomorrow"/>
+                    android:text="@string/tomorrow"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -169,7 +169,7 @@
                     android:textSize="@dimen/follow_text_size_normal"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/string_next_working_day"/>
+                    android:text="@string/next_business_day"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
                     android:textSize="@dimen/follow_text_size_normal"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/string_after"/>
+                    android:text="@string/after"/>
 
                 <Spinner
                     android:layout_width="wrap_content"
@@ -225,7 +225,7 @@
                     android:textSize="@dimen/follow_text_size_normal"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/string_select_time"/>
+                    android:text="@string/time"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -266,7 +266,7 @@
                 android:id="@+id/exportCheck"
                 android:layout_gravity="center"
                 android:textSize="@dimen/checkbox_text_size"
-                android:text="@string/export_check_title"/>
+                android:text="@string/add_to_calendar"/>
 
             <CheckBox
                 android:layout_width="wrap_content"
@@ -276,7 +276,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/follow_margin_top"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/taskExport" />
 
             </LinearLayout>

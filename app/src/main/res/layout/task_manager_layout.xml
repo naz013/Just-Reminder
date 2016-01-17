@@ -20,7 +20,7 @@
             android:layout_height="72dp"
             android:id="@+id/editField"
             android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/tast_hint"
+            android:hint="@string/task"
             android:textColorHint="@color/colorWhite"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
@@ -61,7 +61,7 @@
                         android:background="@android:color/transparent"
                         android:id="@+id/noteField"
                         android:textSize="@dimen/create_text_size_secondary"
-                        android:hint="@string/quick_note_hint"
+                        android:hint="@string/note"
                         android:gravity="center_vertical"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="@dimen/create_margin"/>

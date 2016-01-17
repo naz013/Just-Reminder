@@ -118,7 +118,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/total_backup_text"
+                        android:text="@string/files"
                         android:gravity="center_vertical"
                         android:id="@+id/googleText"
                         android:singleLine="true"
@@ -145,7 +145,7 @@
                 android:orientation="horizontal">
 
                 <com.cray.software.justreminder.views.PaperButton
-                    widget:paper_text="@string/files_text"
+                    widget:paper_text="@string/list"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
                     widget:paper_color="?attr/colorAccent"
@@ -157,7 +157,7 @@
                     android:layout_height="@dimen/log_in_button_height" />
 
                 <com.cray.software.justreminder.views.PaperButton
-                    widget:paper_text="@string/delete_all_button"
+                    widget:paper_text="@string/delete_all"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
                     widget:paper_color="?attr/colorAccent"

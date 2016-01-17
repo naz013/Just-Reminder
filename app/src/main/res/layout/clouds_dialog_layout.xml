@@ -35,7 +35,7 @@
                     android:id="@+id/dropboxTitle"
                     android:drawablePadding="10dp"
                     android:drawableLeft="@drawable/dropbox_icon_white"
-                    android:text="Dropbox"
+                    android:text="@string/dropbox"
                     android:textSize="@dimen/clouds_text_size"/>
 
                 <Button
@@ -43,7 +43,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/linkDropbox"
-                    android:text="@string/login_button"/>
+                    android:text="@string/connect"/>
 
             </LinearLayout>
 
@@ -61,7 +61,7 @@
                     android:id="@+id/gDriveTitle"
                     android:drawablePadding="10dp"
                     android:drawableLeft="@drawable/gdrive_icon_white"
-                    android:text="@string/google_drive_title"
+                    android:text="@string/google"
                     android:textSize="@dimen/clouds_text_size"/>
 
                 <Button
@@ -69,16 +69,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:id="@+id/linkGDrive"
-                    android:text="@string/login_button"/>
+                    android:text="@string/connect"/>
 
             </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/clouds_text_size_secondary"
-                android:layout_marginTop="@dimen/clouds_margin_top"
-                android:text="@string/google_drive_warming"/>
 
             </LinearLayout>
 

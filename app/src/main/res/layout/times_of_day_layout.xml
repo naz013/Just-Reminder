@@ -22,7 +22,7 @@
             android:textSize="@dimen/create_text_size_secondary"
             android:layout_centerVertical="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/time_morning_title"/>
+            android:text="@string/morning"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:layout_toLeftOf="@+id/dayTime"
             android:layout_centerVertical="true"
             android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/time_day_title"/>
+            android:text="@string/day"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:layout_toLeftOf="@+id/eveningTime"
             android:layout_centerVertical="true"
             android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/time_evening_title"/>
+            android:text="@string/evening"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
             android:layout_toLeftOf="@+id/nightTime"
             android:layout_centerVertical="true"
             android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/time_night_title"/>
+            android:text="@string/night"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

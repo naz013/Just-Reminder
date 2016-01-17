@@ -62,10 +62,10 @@ public class Constants {
 
     public final static String BIRTHDAY_INTENT_ID = "birthday_intent_id";
 
-    public static final String MAP_TYPE_NORMAL = "normal";
-    public static final String MAP_TYPE_SATELLITE = "satellite";
-    public static final String MAP_TYPE_HYBRID = "hybrid";
-    public static final String MAP_TYPE_TERRAIN = "terrain";
+    public static final int MAP_NORMAL = 1;
+    public static final int MAP_SATELLITE = 2;
+    public static final int MAP_HYBRID = 4;
+    public static final int MAP_TERRAIN = 3;
 
     public static final String SCREEN_AUTO = "auto";
     public static final String SCREEN_PORTRAIT = "portrait";

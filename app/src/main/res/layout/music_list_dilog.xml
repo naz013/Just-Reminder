@@ -16,8 +16,7 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/dialogTitle"
-        android:layout_weight="0.001"
-        android:text="@string/sounds_dialog_title" />
+        android:layout_weight="0.001" />
 
     <ListView
         android:layout_width="match_parent"
@@ -32,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="@string/button_ok"
+        android:text="@string/ok"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:gravity="center"
         android:id="@+id/musicDialogOk"

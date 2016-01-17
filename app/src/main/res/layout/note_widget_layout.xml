@@ -48,7 +48,7 @@
                 android:paddingLeft="15dp"
                 android:textColor="@color/colorWhite"
                 android:textSize="18sp"
-                android:text="@string/fragment_notes"
+                android:text="@string/notes"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_toLeftOf="@+id/settingsButton"/>
@@ -75,7 +75,7 @@
                 android:id="@android:id/empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/no_notes_text" />
+                android:text="@string/no_notes" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

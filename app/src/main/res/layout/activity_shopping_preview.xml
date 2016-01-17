@@ -41,7 +41,7 @@
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/show_hidden_tasks"
+                android:text="@string/show_hidden"
                 android:id="@+id/showHidden"/>
 
         </LinearLayout>

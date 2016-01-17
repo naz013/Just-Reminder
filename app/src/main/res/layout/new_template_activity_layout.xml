@@ -23,7 +23,7 @@
             android:layout_height="72dp"
             android:id="@+id/placeName"
             android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/message_field_hint"
+            android:hint="@string/title"
             android:textColorHint="@color/colorWhite"
             android:maxLength="120"
             android:layout_gravity="center_horizontal"

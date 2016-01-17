@@ -150,7 +150,6 @@
                         android:visibility="visible"
                         android:singleLine="true"
                         android:layout_weight="0.75"
-                        android:text="@string/remaining_less_minute"
                         android:focusable="false"
                         android:layout_marginLeft="10dp"
                         android:id="@+id/remainingTime"

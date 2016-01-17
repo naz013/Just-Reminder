@@ -32,7 +32,7 @@
                         android:layout_weight="1"
                         android:layout_gravity="center|left"
                         android:id="@+id/eventsCheck"
-                        android:text="@string/birthdays_dialog_title"/>
+                        android:text="@string/birthdays"/>
                     <Spinner
                         android:layout_width="match_parent"
                         android:layout_weight="1"
@@ -53,14 +53,14 @@
                     android:layout_height="wrap_content"
                     android:padding="20dp"
                     android:id="@+id/autoCheck"
-                    android:text="@string/string_auto_check"/>
+                    android:text="@string/check_automatically"/>
 
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:id="@+id/syncInterval"
                     android:textSize="16sp"
-                    android:text="@string/event_import_interval"/>
+                    android:text="@string/interval"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -85,7 +85,7 @@
             android:layout_margin="0dp"
             style="?android:borderlessButtonStyle"
             android:layout_alignParentBottom="true"
-            android:text="@string/simple_import"/>
+            android:text="@string/import_string"/>
 
     </RelativeLayout>
 </LinearLayout>

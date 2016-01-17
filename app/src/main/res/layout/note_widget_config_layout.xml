@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/header_bg_text"
+                    android:text="@string/background"
                     android:id="@+id/textView" />
 
                 <Spinner
@@ -56,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/widget_bg_color_title"
+                    android:text="@string/background"
                     android:id="@+id/textView3" />
 
                 <Spinner
@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/widget_title_color"/>
+                    android:text="@string/text_color"/>
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/widget_config_text_size"
-                        android:text="@string/black_radio_text"
+                        android:text="@string/black"
                         android:id="@+id/radioTitleBlack" />
 
                     <RadioButton
@@ -103,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/widget_config_text_size"
                         android:layout_marginLeft="15dp"
-                        android:text="@string/white_radio_text"
+                        android:text="@string/white"
                         android:id="@+id/radioTitleWhite" />
                 </RadioGroup>
             </LinearLayout>
@@ -123,7 +123,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/plus_button_color_title"/>
+                    android:text="@string/button_color"/>
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/widget_config_text_size"
-                        android:text="@string/black_radio_text"
+                        android:text="@string/black"
                         android:id="@+id/radioButtonBlack" />
 
                     <RadioButton
@@ -143,7 +143,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/widget_config_text_size"
                         android:layout_marginLeft="15dp"
-                        android:text="@string/white_radio_text"
+                        android:text="@string/white"
                         android:id="@+id/radioButtonWhite" />
                 </RadioGroup>
             </LinearLayout>
@@ -163,7 +163,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/widget_config_text_size"
-                    android:text="@string/transparency_settings"/>
+                    android:text="@string/transparency"/>
 
                 <RadioGroup
                     android:layout_width="match_parent"
@@ -176,14 +176,14 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/headerButton"
                         android:textSize="@dimen/widget_config_text_size"
-                        android:text="@string/header_title_tr"/>
+                        android:text="@string/header"/>
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/bodyButton"
                         android:textSize="@dimen/widget_config_text_size"
                         android:layout_marginLeft="15dp"
-                        android:text="@string/body_settings_tr"/>
+                        android:text="@string/body"/>
 
                 </RadioGroup>
 
@@ -220,7 +220,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/google_tasks_title"
+                        android:text="@string/google_tasks"
                         android:textSize="20sp"
                         android:gravity="center|left"
                         android:layout_marginLeft="20dp"

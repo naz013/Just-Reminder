@@ -65,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/title"
                     android:textStyle="bold"
-                    android:text="@string/calendar_fragment"
+                    android:text="@string/calendar"
                     android:textColor="@color/colorWhite"
                     android:textSize="20sp"
                     android:layout_toLeftOf="@+id/currentEvent"

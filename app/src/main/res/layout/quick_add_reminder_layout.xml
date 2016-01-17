@@ -21,7 +21,7 @@
             android:layout_height="72dp"
             android:id="@+id/task_text"
             android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/tast_hint"
+            android:hint="@string/remind_me"
             android:textColorHint="@color/colorWhite"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
@@ -112,7 +112,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/text1"
-                                android:text="@string/string_repeat_every"
+                                android:text="@string/repeat"
                                 android:textSize="@dimen/create_text_size_normal"/>
 
                             <EditText
@@ -130,7 +130,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/remaining_days"
+                                android:text="@string/days"
                                 android:textSize="@dimen/create_text_size_normal"/>
 
                         </TableRow>
@@ -165,7 +165,7 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/taskExport" />
 
         </LinearLayout>

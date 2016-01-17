@@ -16,7 +16,7 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/titleDialog"
-        android:text="@string/select_radius" />
+        android:text="@string/radius" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -69,12 +69,12 @@
         android:id="@+id/transportCheck"
         android:visibility="gone"
         android:gravity="center"
-        android:text="@string/use_transport_text"/>
+        android:text="@string/i_use_transport"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_ok"
+        android:text="@string/ok"
         android:clickable="false"
         android:textSize="18sp"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"

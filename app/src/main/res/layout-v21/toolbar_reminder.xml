@@ -38,7 +38,7 @@
                 android:maxLength="300"
                 android:textColorHint="@color/whitePrimary"
                 android:textColor="@color/whitePrimary"
-                android:hint="@string/tast_hint"
+                android:hint="@string/remind_me"
                 android:maxHeight="72dp"
                 android:singleLine="false"
                 android:inputType="textMultiLine"

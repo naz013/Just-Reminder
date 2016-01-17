@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:id="@+id/emptyText"
             android:textSize="25sp"
-            android:text="@string/events_empty_text"
+            android:text="@string/no_events"
             android:gravity="center|top"
             android:layout_height="wrap_content" />
 

@@ -685,15 +685,15 @@ public class Dialogues {
                 android.R.layout.simple_list_item_single_choice);
 
         SharedPrefs prefs = new SharedPrefs(context);
-        String type = prefs.loadPrefs(Prefs.MAP_TYPE);
+        int type = prefs.loadInt(Prefs.MAP_TYPE);
         int position;
-        if (type.matches(Constants.MAP_TYPE_NORMAL)){
+        if (type == Constants.MAP_NORMAL){
             position = 0;
-        } else if (type.matches(Constants.MAP_TYPE_SATELLITE)){
+        } else if (type == Constants.MAP_SATELLITE){
             position = 1;
-        } else if (type.matches(Constants.MAP_TYPE_HYBRID)){
+        } else if (type == Constants.MAP_TERRAIN){
             position = 2;
-        } else if (type.matches(Constants.MAP_TYPE_TERRAIN)){
+        } else if (type == Constants.MAP_HYBRID){
             position = 3;
         } else {
             position = 0;
@@ -704,17 +704,7 @@ public class Dialogues {
             public void onClick(DialogInterface dialog, int which) {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
-                    if (which == 0) {
-                        prefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
-                    } else if (which == 1) {
-                        prefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_SATELLITE);
-                    } else if (which == 2) {
-                        prefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_HYBRID);
-                    } else if (which == 3) {
-                        prefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_TERRAIN);
-                    } else {
-                        prefs.savePrefs(Prefs.MAP_TYPE, Constants.MAP_TYPE_NORMAL);
-                    }
+                    prefs.saveInt(Prefs.MAP_TYPE, which + 1);
                 }
             }
         });

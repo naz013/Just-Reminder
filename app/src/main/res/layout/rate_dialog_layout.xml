@@ -15,21 +15,21 @@
         android:id="@+id/appVersion"
         android:textSize="20sp"
         android:gravity="center"
-        android:text="@string/rate_dialog_text"
+        android:text="@string/can_you_rate_this_application"
         android:layout_gravity="center" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="right"
-
         android:layout_marginTop="24dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="@string/rate_button_never"
+            android:text="@string/never"
             android:id="@+id/rateNever"
             android:clickable="true"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="@string/rate_button_later"
+            android:text="@string/later"
             android:id="@+id/rateLater"
             android:clickable="true"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="@string/rate_button"
+            android:text="@string/rate"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:layout_marginLeft="5dp"
             android:id="@+id/buttonRate"

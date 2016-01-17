@@ -20,7 +20,7 @@
                 android:id="@+id/text1"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:text="@string/string_repeat_every"
+                android:text="@string/repeat"
                 android:textSize="@dimen/create_text_size_normal"/>
 
             <EditText
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center|left"
                 android:layout_centerVertical="true"
-                android:text="@string/remaining_days"
+                android:text="@string/days"
                 android:id="@+id/repeatType"
                 android:layout_toRightOf="@+id/repeatTitle"
                 android:textSize="@dimen/create_text_size_normal"/>

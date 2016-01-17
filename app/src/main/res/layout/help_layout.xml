@@ -18,7 +18,7 @@
             app:floating_edit_text_highlighted_color="?attr/colorAccent"
             android:layout_width="match_parent"
             android:id="@+id/searchEdit"
-            android:hint="@string/search_hint"
+            android:hint="@string/search"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="5dp"

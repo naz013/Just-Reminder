@@ -22,7 +22,7 @@
             style="?attr/borderlessButtonStyle"
             android:background="@null"
             android:id="@+id/skipButton"
-            android:text="@string/skip_button"/>
+            android:text="@string/skip"/>
 
         <Button
             android:layout_width="match_parent"

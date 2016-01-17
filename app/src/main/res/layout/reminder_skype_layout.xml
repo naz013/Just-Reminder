@@ -26,7 +26,7 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/export_check_title"
+                android:text="@string/add_to_calendar"
                 android:id="@+id/skypeExport" />
 
             <CheckBox
@@ -36,14 +36,14 @@
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginBottom="@dimen/create_margin"
-                android:text="@string/add_to_google_tasks"
+                android:text="@string/google_tasks"
                 android:id="@+id/skypeTaskExport" />
 
             <com.cray.software.justreminder.views.FloatingEditText
                 app:floating_edit_text_highlighted_color="?attr/colorAccent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/skype_user_hint"
+                android:hint="@string/contact"
                 android:textSize="@dimen/create_text_size_normal"
                 android:gravity="center"
                 android:ems="10"
@@ -61,7 +61,7 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/reminder_make_call"
+                    android:text="@string/make_call"
                     android:textSize="@dimen/create_text_size_normal"
                     android:id="@+id/skypeCall" />
 
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/create_text_size_normal"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/skype_video_title"
+                    android:text="@string/video_call"
                     android:id="@+id/skypeVideo" />
 
                 <RadioButton
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/create_text_size_normal"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/skype_chat_title"
+                    android:text="@string/message"
                     android:id="@+id/skypeChat" />
             </RadioGroup>
 
@@ -97,7 +97,7 @@
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 android:layout_marginBottom="88dp"
-                app:repeat_type_text="@string/string_days"
+                app:repeat_type_text="@string/days"
                 android:id="@+id/repeatViewSkype"/>
 
             </LinearLayout>
