@@ -54,7 +54,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.birthday_settings);
+            ab.setTitle(R.string.birthdays);
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
@@ -280,7 +280,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 }
                 break;
             case R.id.daysToPrefs:
-                Dialogues.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 5, Prefs.DAYS_TO_BIRTHDAY, getString(R.string.days_to_birthday), this);
                 break;
             case R.id.birthdayNotification:
                 BirthdayNotificationSettingsFragment newFragment = new BirthdayNotificationSettingsFragment();

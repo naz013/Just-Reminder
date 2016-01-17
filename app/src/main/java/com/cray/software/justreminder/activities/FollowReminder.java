@@ -96,7 +96,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         currTime = c.getTimeInMillis();
 
         textField = (FloatingEditText) findViewById(R.id.textField);
-        textField.setHint(getString(R.string.message_field_hint) + getString(R.string.hint_attention));
+        textField.setHint(getString(R.string.message));
 
         TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -154,16 +154,16 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
 
         afterTime = (Spinner) findViewById(R.id.afterTime);
         List<String> spinnerArray = new ArrayList<>();
-        spinnerArray.add(getString(R.string.repeat_5_min));
-        spinnerArray.add(getString(R.string.repeat_10_min));
-        spinnerArray.add(getString(R.string.repeat_15_min));
-        spinnerArray.add(getString(R.string.repeat_30_min));
-        spinnerArray.add(getString(R.string.repeat_45_min));
-        spinnerArray.add(getString(R.string.repeat_1_hour));
-        spinnerArray.add(getString(R.string.repeat_2_hours));
-        spinnerArray.add(getString(R.string.repeat_3_hours));
-        spinnerArray.add(getString(R.string.repeat_4_hours));
-        spinnerArray.add(getString(R.string.repeat_5_hours));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 5));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 10));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 15));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 30));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 45));
+        spinnerArray.add(String.format(getString(R.string.x_minutes), 60));
+        spinnerArray.add(String.format(getString(R.string.x_hours), 2));
+        spinnerArray.add(String.format(getString(R.string.x_hours), 3));
+        spinnerArray.add(String.format(getString(R.string.x_hours), 4));
+        spinnerArray.add(String.format(getString(R.string.x_hours), 5));
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, spinnerArray);
         afterTime.setAdapter(spinnerArrayAdapter);
 
@@ -276,7 +276,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     private void saveDateTask(){
         String text = textField.getText().toString().trim();
         if (text.matches("") && typeMessage.isChecked()){
-            textField.setError(getString(R.string.empty_field_error));
+            textField.setError(getString(R.string.must_be_not_empty));
             return;
         }
         String type = getType();

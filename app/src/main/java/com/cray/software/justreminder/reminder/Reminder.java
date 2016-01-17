@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.view.View;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
@@ -130,7 +131,7 @@ public class Reminder {
      * @param context application context.
      * @return boolean
      */
-    public static boolean toggle(long id, Context context, ActionCallbacks callbacks){
+    public static boolean toggle(final long id, final Context context, ActionCallbacks callbacks){
         NextBase db = new NextBase(context);
         db.open();
         Cursor c = db.getReminder(id);
@@ -198,8 +199,14 @@ public class Reminder {
                     res = true;
                 } else {
                     res = false;
-                    if (callbacks != null) callbacks.showSnackbar(R.string.edit_reminder_toast);
-                    else Messages.toast(context, R.string.edit_reminder_toast);
+                    if (callbacks != null) {
+                        callbacks.showSnackbar(R.string.reminder_is_outdated, R.string.edit, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                edit(id, context);
+                            }
+                        });
+                    } else Messages.toast(context, R.string.reminder_is_outdated);
                 }
             }
         }
@@ -263,8 +270,8 @@ public class Reminder {
         db.close();
         new UpdatesHelper(context).updateWidget();
         new Notifier(context).recreatePermanent();
-        if (callbacks != null) callbacks.showSnackbar(R.string.string_reminder_created);
-        else Messages.toast(context, R.string.string_reminder_created);
+        if (callbacks != null) callbacks.showSnackbar(R.string.reminder_created);
+        else Messages.toast(context, R.string.reminder_created);
     }
 
     /**
@@ -303,16 +310,13 @@ public class Reminder {
      * Move reminder to trash.
      * @param id reminder identifier.
      * @param context application context.
-     * @param callbacks Callbacks for messages.
      */
-    public static void moveToTrash(long id, Context context, ActionCallbacks callbacks){
+    public static void moveToTrash(long id, Context context){
         NextBase db = new NextBase(context);
         if (!db.isOpen()) db.open();
         db.toArchive(id);
         db.close();
         disable(context, id);
-        if (callbacks != null) callbacks.showSnackbar(R.string.archived_result_message);
-        else Messages.toast(context, R.string.archived_result_message);
     }
 
     /**

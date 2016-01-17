@@ -218,10 +218,10 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         String[] colorsArray = getResources().getStringArray(R.array.colors_list);
         Collections.addAll(spinnerArray, colorsArray);
         if (isPro){
-            spinnerArray.add(getString(R.string.color_deep_purple));
-            spinnerArray.add(getString(R.string.color_deep_orange));
-            spinnerArray.add(getString(R.string.color_lime));
-            spinnerArray.add(getString(R.string.color_indigo));
+            spinnerArray.add(getString(R.string.dark_purple));
+            spinnerArray.add(getString(R.string.dark_orange));
+            spinnerArray.add(getString(R.string.lime));
+            spinnerArray.add(getString(R.string.indigo));
         }
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, spinnerArray);

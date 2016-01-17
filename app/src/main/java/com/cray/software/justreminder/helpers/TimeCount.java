@@ -165,47 +165,16 @@ public class TimeCount {
         long days = (difference / (DAY));
         long hours = ((difference - (DAY * days)) / (HOUR));
         long min = (difference - (DAY * days) - (HOUR * hours)) / (MINUTE);
-        long sec = (difference - (DAY * days) - (HOUR * hours) - (MINUTE * min)) / (SECOND);
         hours = (hours < 0 ? -hours : hours);
         String result;
-        if (days > 5){
-            result = days + " " + mContext.getString(R.string.remaining_days);
-        } else if (days > 0 && days <= 5){
-            if (days > 1) {
-                result = days + " " + mContext.getString(R.string.remaining_days) + "," + " " + hours
-                        + " " + (hours > 1 ? mContext.getString(R.string.remaining_hours) :
-                        mContext.getString(R.string.remaining_hour)) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
-            } else {
-                result = days + " " + mContext.getString(R.string.remaining_day) +
-                        "," + " " + hours + " " +(hours > 1 ? mContext.getString(R.string.remaining_hours) :
-                        mContext.getString(R.string.remaining_hour)) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
-            }
-        } else if (days == 0 && hours > 0){
-            if (hours > 1) {
-                result = hours + " " + mContext.getString(R.string.remaining_hours) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
-            } else {
-                result = hours + " " + mContext.getString(R.string.remaining_hour) + " " +
-                        mContext.getString(R.string.remaining_and) + " " + min + " " +
-                        (min > 1 ? mContext.getString(R.string.remaining_minutes) : mContext.getString(R.string.remaining_minute));
-            }
+        if (difference > DAY){
+            result = String.format(mContext.getString(R.string.x_days), days);
+        } else if (difference > HOUR){
+            result = String.format(mContext.getString(R.string.x_hours), (days * 24) + hours);
+        } else if (difference > MINUTE){
+            result = String.format(mContext.getString(R.string.x_minutes), (hours * 60) + min);
         } else {
-            if (min >= 1) {
-                if (min == 1){
-                    result = min + " " + mContext.getString(R.string.remaining_minute) + " " +
-                            mContext.getString(R.string.remaining_and) +
-                            " " + sec + " " + mContext.getString(R.string.remaining_seconds);
-                } else {
-                    result = min + " " + mContext.getString(R.string.remaining_minutes);
-                }
-            } else {
-                result = mContext.getString(R.string.remaining_less_minute);
-            }
+            result = mContext.getString(R.string.less_than_minute);
         }
         return result;
     }

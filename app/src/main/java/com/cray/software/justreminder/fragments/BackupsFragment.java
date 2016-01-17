@@ -184,9 +184,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         sPrefs = new SharedPrefs(getActivity());
         boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_sd_storage_white_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local), R.drawable.ic_sd_storage_white_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
         } else {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local_list_item), R.drawable.ic_sd_storage_black_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local), R.drawable.ic_sd_storage_black_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
         }
         dbx = new DropboxHelper(getActivity());
         dbx.startSession();
@@ -200,9 +200,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         gdx = new GDriveHelper(getActivity());
         if (gdx.isLinked()) {
             if (isDark) {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon_white), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive), R.drawable.gdrive_icon_white), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
             } else {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive_title), R.drawable.gdrive_icon), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive), R.drawable.gdrive_icon), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
             }
         }
 
@@ -279,7 +279,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         filesCloudList = (RecyclerView) rootView.findViewById(R.id.filesCloudList);
-        pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+        pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
         cloudContainer.setVisibility(View.GONE);
         loadDropboxList();
         loadInfo(pd);
@@ -300,12 +300,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     }
                 }
                 if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.all_files_removed);
+                    mCallbacks.showSnackbar(getString(R.string.all_files_removed));
                 }
             } else {
                 file.delete();
                 if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.file_delted);
+                    mCallbacks.showSnackbar(R.string.deleted);
                 }
             }
         }
@@ -315,7 +315,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private void reloadDropbox() {
         ViewUtils.fadeOutAnimation(filesCloudList);
         if (isDropboxDeleted) {
-            pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
             loadInfo(pd);
         } else {
             ViewUtils.expand(cloudContainer);
@@ -428,7 +428,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         filesGoogleList = (RecyclerView) rootView.findViewById(R.id.filesGoogleList);
-        pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+        pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
         googleContainer.setVisibility(View.GONE);
         loadGoogleInfo(pd);
     }
@@ -436,7 +436,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private void reloadGoogle() {
         ViewUtils.fadeOutAnimation(filesGoogleList);
         if (isGoogleDeleted) {
-            pd = ProgressDialog.show(getActivity(), null, getString(R.string.receiving_data_text), false);
+            pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
             loadGoogleInfo(pd);
         } else {
             ViewUtils.expand(googleContainer);
@@ -460,7 +460,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             pd = ProgressDialog.show(getActivity(), null, getString(R.string.deleting), false);
             deleteFromGoogle(file.getName(), pd);
             if (mCallbacks != null) {
-                mCallbacks.showSnackbar(R.string.file_delted);
+                mCallbacks.showSnackbar(R.string.deleted);
             }
             isGoogleDeleted = true;
         }
@@ -562,18 +562,18 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         cloudUser.setText(finalName);
                         usedSizeGraph.removeSlices();
                         PieSlice slice = new PieSlice();
-                        slice.setTitle(getString(R.string.used_text) + " " + used);
+                        slice.setTitle(String.format(getString(R.string.used_x), used));
                         slice.setColor(getResources().getColor(R.color.redPrimary));
                         slice.setValue(used);
                         usedSizeGraph.addSlice(slice);
                         slice = new PieSlice();
-                        slice.setTitle(getString(R.string.available_text) + " " + free);
+                        slice.setTitle(String.format(getString(R.string.available_x), free));
                         slice.setColor(getResources().getColor(R.color.greenPrimary));
                         slice.setValue(free);
                         usedSizeGraph.addSlice(slice);
 
-                        usedSpace.setText(getString(R.string.used_text) + " " + humanReadableByteCount(usedQ, false));
-                        freeSpace.setText(getString(R.string.available_text) + " " + humanReadableByteCount(availQ, false));
+                        usedSpace.setText(String.format(getString(R.string.used_x), humanReadableByteCount(usedQ, false)));
+                        freeSpace.setText(String.format(getString(R.string.available_x), humanReadableByteCount(availQ, false)));
 
                         cloudCount.setText(String.valueOf(count));
 

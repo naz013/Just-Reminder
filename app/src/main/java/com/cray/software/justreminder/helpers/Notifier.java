@@ -317,7 +317,7 @@ public class Notifier {
             builder.setOngoing(true);
         }
 
-        builder.setContentText(mContext.getString(R.string.missed_call_event_title));
+        builder.setContentText(mContext.getString(R.string.missed_call));
 
         int icon = R.drawable.ic_call_white_24dp;
         builder.setSmallIcon(icon);
@@ -368,7 +368,7 @@ public class Notifier {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(name);
-                wearableNotificationBuilder.setContentText(mContext.getString(R.string.missed_call_event_title));
+                wearableNotificationBuilder.setContentText(mContext.getString(R.string.missed_call));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
@@ -526,7 +526,7 @@ public class Notifier {
         }
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
-        builder.setContentText(years + " " + mContext.getString(R.string.years_string));
+        builder.setContentText(String.format(mContext.getString(R.string.x_years), years));
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -614,7 +614,7 @@ public class Notifier {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(name);
-                wearableNotificationBuilder.setContentText(years + " " + mContext.getString(R.string.years_string));
+                wearableNotificationBuilder.setContentText(String.format(mContext.getString(R.string.x_years), years));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
@@ -689,7 +689,7 @@ public class Notifier {
 
         builder = new NotificationCompat.Builder(mContext);
 
-        builder.setContentText(mContext.getString(R.string.notification_note_string));
+        builder.setContentText(mContext.getString(R.string.note));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
@@ -714,7 +714,7 @@ public class Notifier {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(content);
-                wearableNotificationBuilder.setContentText(mContext.getString(R.string.notification_note_string));
+                wearableNotificationBuilder.setContentText(mContext.getString(R.string.note));
                 wearableNotificationBuilder.setOngoing(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
@@ -827,11 +827,11 @@ public class Notifier {
                 remoteViews.setTextViewText(R.id.text, event);
                 remoteViews.setViewVisibility(R.id.featured, View.VISIBLE);
             } else {
-                remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.drawer_active_reminder) + " " + String.valueOf(count));
+                remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.active_reminders) + " " + String.valueOf(count));
                 remoteViews.setViewVisibility(R.id.featured, View.GONE);
             }
         } else {
-            remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.no_active_text));
+            remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.no_events));
             remoteViews.setViewVisibility(R.id.featured, View.GONE);
         }
         ColorSetter cs = new ColorSetter(mContext);
@@ -860,7 +860,7 @@ public class Notifier {
             do {
                 String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                 String birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String years = TimeUtil.getYears(birthDate) + " " + mContext.getString(R.string.years_string);
+                String years = String.format(mContext.getString(R.string.x_years), TimeUtil.getYears(birthDate));
                 list.add(new BirthdayModel(name, years, birthDate));
             } while (c.moveToNext());
         }
@@ -872,19 +872,20 @@ public class Notifier {
         builder.setAutoCancel(false);
         builder.setOngoing(true);
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        builder.setContentTitle(mContext.getString(R.string.birthdays_dialog_title));
+        builder.setContentTitle(mContext.getString(R.string.events));
         if (list.size() > 0) {
             builder.setContentText(list.get(0).getDate() + " | " + list.get(0).getName() + " | " + list.get(0).getAge());
             if (list.size() > 1) {
                 StringBuilder stringBuilder = new StringBuilder();
                 for (BirthdayModel birthdayModel : list){
-                    stringBuilder.append(birthdayModel.getDate()).append(" | ").append(birthdayModel.getName()).append(" | ").append(birthdayModel.getAge());
+                    stringBuilder.append(birthdayModel.getDate()).append(" | ").
+                            append(birthdayModel.getName()).append(" | ")
+                            .append(birthdayModel.getAge());
                     stringBuilder.append("\n");
                 }
                 builder.setStyle(new NotificationCompat.BigTextStyle().bigText(stringBuilder.toString()));
             }
-            builder.addAction(R.drawable.ic_clear_white_24dp,
-                    mContext.getString(R.string.hide_dialog_button), piDismiss);
+            builder.addAction(R.drawable.ic_clear_white_24dp, mContext.getString(R.string.ok), piDismiss);
 
             NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
             notifier.notify(1115, builder.build());

@@ -44,7 +44,6 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
         if (showDialog){
             pd = new ProgressDialog(context);
             pd.setCancelable(true);
-            pd.setMessage(context.getString(R.string.checking_new_birthdays_title));
         }
     }
 
@@ -140,12 +139,10 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
                 // Handle or log or ignore
             }
             if (files > 0) {
-                Toast.makeText(mContext,
-                        mContext.getString(R.string.found_word) + " " + files + " " + mContext.getString(R.string.birthdays_word),
+                Toast.makeText(mContext, files + " " +mContext.getString(R.string.events_found),
                         Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(mContext,
-                        mContext.getString(R.string.nothing_found),
+                Toast.makeText(mContext, R.string.found_nothing,
                         Toast.LENGTH_SHORT).show();
             }
         }

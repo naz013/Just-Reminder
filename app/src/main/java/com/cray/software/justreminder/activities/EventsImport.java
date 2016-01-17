@@ -77,7 +77,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.settings_events_import));
+        toolbar.setTitle(getString(R.string.import_events));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -88,7 +88,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         syncInterval.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.event_import_interval);
+                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval);
             }
         });
 
@@ -109,12 +109,12 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         list = new CalendarManager(this).getCalendarsList();
 
         if (list == null || list.size() == 0){
-            Messages.toast(EventsImport.this, getString(R.string.no_google_calendars_found));
+            Messages.toast(EventsImport.this, getString(R.string.no_calendars_found));
             finish();
         }
 
         ArrayList<String> spinnerArray = new ArrayList<>();
-        spinnerArray.add(getString(R.string.select_calendar_settings_title));
+        spinnerArray.add(getString(R.string.choose_calendar));
         if (list != null && list.size() > 0) {
             for (CalendarManager.CalendarItem item : list) {
                 spinnerArray.add(item.getName());
@@ -156,12 +156,12 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     private void importEvents() {
         if (!eventsCheck.isChecked()) {
-            Messages.toast(EventsImport.this, getString(R.string.string_no_action_selected));
+            Messages.toast(EventsImport.this, getString(R.string.no_action_selected));
             return;
         }
 
         if (eventCalendar.getSelectedItemPosition() == 0){
-            Messages.toast(EventsImport.this, getString(R.string.string_no_calendar_selected));
+            Messages.toast(EventsImport.this, getString(R.string.you_dont_select_any_calendar));
             return;
         }
 
@@ -243,7 +243,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = ProgressDialog.show(context, null, context.getString(R.string.loading_wait), true, false);
+            dialog = ProgressDialog.show(context, null, getString(R.string.please_wait), true, false);
         }
 
         @SafeVarargs
@@ -338,12 +338,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             super.onPostExecute(result);
             if (dialog != null && dialog.isShowing()) dialog.dismiss();
 
-            if (result == 0) Messages.toast(EventsImport.this, getString(R.string.string_no_events_found));
+            if (result == 0) Messages.toast(EventsImport.this, getString(R.string.no_events_found));
 
             if (result > 0) {
-                Messages.toast(EventsImport.this, getString(R.string.simple_imported) + " " + result + " " +
-                        getString(R.string.simple_event) +
-                        (result == 1 ? "." : getString(R.string.char_s_with_point)));
+                Messages.toast(EventsImport.this, result + " " + getString(R.string.events_found));
                 new UpdatesHelper(context).updateWidget();
                 new Notifier(context).recreatePermanent();
                 finish();

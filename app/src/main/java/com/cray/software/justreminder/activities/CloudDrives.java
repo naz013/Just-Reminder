@@ -28,15 +28,14 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -81,7 +80,7 @@ public class CloudDrives extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.cloud_drives_title));
+        toolbar.setTitle(getString(R.string.cloud_services));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -99,7 +98,7 @@ public class CloudDrives extends AppCompatActivity {
                 } else {
                     if (dbx.isLinked()) {
                         if (dbx.unlink()) {
-                            linkDropbox.setText(getString(R.string.login_button));
+                            linkDropbox.setText(getString(R.string.connect));
                         }
                     } else {
                         dbx.startLink();
@@ -127,7 +126,6 @@ public class CloudDrives extends AppCompatActivity {
 
         dropboxTitle = (TextView) findViewById(R.id.dropboxTitle);
         gDriveTitle = (TextView) findViewById(R.id.gDriveTitle);
-        gDriveTitle.setText(SuperUtil.appendString(gDriveTitle.getText().toString(), " ", getString(R.string.string_and), " ", getString(R.string.google_tasks_title)));
 
         setUpButton();
 
@@ -198,9 +196,8 @@ public class CloudDrives extends AppCompatActivity {
 
     protected Dialog checkDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.other_version_dialog_title))
-                .setMessage(getString(R.string.other_version_dialog_text))
-                .setPositiveButton(getString(R.string.dialog_button_open), new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.other_version_detected))
+                .setPositiveButton(getString(R.string.open), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i;
                         PackageManager manager = getPackageManager();
@@ -210,7 +207,7 @@ public class CloudDrives extends AppCompatActivity {
                         startActivity(i);
                     }
                 })
-                .setNegativeButton(getString(R.string.dialog_button_delete), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
@@ -218,7 +215,7 @@ public class CloudDrives extends AppCompatActivity {
                         startActivity(intent);
                     }
                 })
-                .setNeutralButton(getString(R.string.button_close), new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
@@ -229,9 +226,9 @@ public class CloudDrives extends AppCompatActivity {
 
     private void setUpButton(){
         if (gdx.isLinked()){
-            linkGDrive.setText(getString(R.string.logout_button));
+            linkGDrive.setText(R.string.disconnect);
         } else {
-            linkGDrive.setText(getString(R.string.login_button));
+            linkGDrive.setText(getString(R.string.connect));
         }
     }
 
@@ -251,18 +248,18 @@ public class CloudDrives extends AppCompatActivity {
         super.onResume();
         if (!dbx.isLinked()) {
             if (dbx.checkLink()) {
-                linkDropbox.setText(getString(R.string.logout_button));
+                linkDropbox.setText(getString(R.string.disconnect));
                 linkDropbox.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (dbx.unlink()){
-                            linkDropbox.setText(getString(R.string.login_button));
+                            linkDropbox.setText(getString(R.string.connect));
                         }
                     }
                 });
             }
         } else {
-            linkDropbox.setText(getString(R.string.logout_button));
+            linkDropbox.setText(getString(R.string.disconnect));
         }
 
         setUpButton();
@@ -277,8 +274,7 @@ public class CloudDrives extends AppCompatActivity {
             protected void onPreExecute() {
                 progressDlg = new ProgressDialog(CloudDrives.this, ProgressDialog.STYLE_SPINNER);
                 progressDlg.setMax(100);
-                progressDlg.setTitle(getString(R.string.connecting_dialog_title));
-                progressDlg.setMessage(getString(R.string.application_verifying_text));
+                progressDlg.setMessage(getString(R.string.trying_to_log_in));
                 progressDlg.setCancelable(false);
                 progressDlg.setIndeterminate(false);
                 progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {

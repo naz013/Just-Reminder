@@ -60,7 +60,7 @@ public class CalendarManager {
             values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone);
             values.put(CalendarContract.Events.ALL_DAY, 0);
             values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED);
-            values.put(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.event_description));
+            values.put(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.from_reminder));
             Uri l_eventUri = Uri.parse("content://com.android.calendar/events");
             Uri event;
             try {
@@ -73,7 +73,7 @@ public class CalendarManager {
                 }
                 db.close();
             } catch (Exception e) {
-                Toast.makeText(ctx, ctx.getString(R.string.no_google_calendars_found), Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, R.string.no_calendars_found, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -113,7 +113,7 @@ public class CalendarManager {
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTime +
                         (60 * 1000 * sPrefs.loadInt(Prefs.EVENT_DURATION)))
                 .putExtra(CalendarContract.Events.TITLE, summary)
-                .putExtra(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.event_description));
+                .putExtra(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.from_reminder));
         ctx.startActivity(intent);
     }
 

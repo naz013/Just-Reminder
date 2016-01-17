@@ -162,7 +162,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             birthName.setText(name);
             if (number != null) phone.setText(number);
 
-            toolbar.setTitle(getString(R.string.edit_birthday_title));
+            toolbar.setTitle(R.string.edit_birthday);
             if (number != null) contactCheck.setChecked(true);
         } else if (receivedDate != 0) {
             calendar.setTimeInMillis(receivedDate);
@@ -202,7 +202,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         if (id != 0) {
             String contact = birthName.getText().toString();
             if (contact.matches("")) {
-                birthName.setError(getString(R.string.empty_field_error));
+                birthName.setError(getString(R.string.must_be_not_empty));
             } else {
                 int contactId = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                 if (number != null) {
@@ -218,7 +218,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             if (contactCheck.isChecked()) {
                 String contact = birthName.getText().toString();
                 if (contact.matches("")) {
-                    birthName.setError(getString(R.string.empty_field_error));
+                    birthName.setError(getString(R.string.must_be_not_empty));
                 } else {
                     int id = Contacts.getContactIDFromNumber(number, AddBirthday.this);
                     if (number != null) {
@@ -236,7 +236,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                     db.close();
                     finish();
                 } else {
-                    birthName.setError(getString(R.string.empty_field_error));
+                    birthName.setError(getString(R.string.must_be_not_empty));
                 }
             }
         }

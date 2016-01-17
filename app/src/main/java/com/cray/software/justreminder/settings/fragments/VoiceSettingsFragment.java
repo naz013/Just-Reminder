@@ -32,7 +32,7 @@ public class VoiceSettingsFragment extends Fragment {
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.voice_block);
+            ab.setTitle(R.string.voice_control);
         }
 
         SharedPrefs sPrefs = new SharedPrefs(getActivity().getApplicationContext());

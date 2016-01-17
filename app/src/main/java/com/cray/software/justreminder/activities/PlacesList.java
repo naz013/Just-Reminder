@@ -59,7 +59,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.settings_places));
+        toolbar.setTitle(getString(R.string.places));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -67,7 +67,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) findViewById(R.id.emptyText);
-        emptyText.setText(getString(R.string.empty_places_list_text));
+        emptyText.setText(getString(R.string.no_places));
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
         if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -132,7 +132,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             db.open();
             db.deletePlace(id);
             db.close();
-            Messages.toast(this, getString(R.string.delete_place_toast));
+            Messages.toast(this, getString(R.string.deleted));
             loadPlaces();
         }
     }

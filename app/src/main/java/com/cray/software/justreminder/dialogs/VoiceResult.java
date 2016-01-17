@@ -239,7 +239,7 @@ public class VoiceResult extends Activity {
                     repeatInterval.setVisibility(View.GONE);
                 } else {
                     leftTimeIcon.setVisibility(View.GONE);
-                    repeatInterval.setText(getString(R.string.interval_zero));
+                    repeatInterval.setText("0");
                 }
             }
 

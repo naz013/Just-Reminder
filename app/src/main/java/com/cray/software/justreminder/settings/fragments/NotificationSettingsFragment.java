@@ -46,7 +46,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.notification_settings);
+            ab.setTitle(R.string.notification);
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
@@ -237,11 +237,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                     String fileNameS = fileName.substring(0, pos);
                     chooseSoundPrefs.setDetailText(fileNameS);
                 } else {
-                    chooseSoundPrefs.setDetailText(getResources().getString(R.string.sound_default));
+                    chooseSoundPrefs.setDetailText(getResources().getString(R.string.default_string));
                 }
             }
         } else {
-            chooseSoundPrefs.setDetailText(getResources().getString(R.string.sound_default));
+            chooseSoundPrefs.setDetailText(getResources().getString(R.string.default_string));
         }
     }
 
@@ -520,13 +520,13 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 repeatChange();
                 break;
             case R.id.delayForPrefs:
-                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.DELAY_TIME, getString(R.string.delay_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.DELAY_TIME, getString(R.string.snooze_time), this);
                 break;
             case R.id.volume:
-                Dialogues.dialogWithSeek(getActivity(), 25, Prefs.VOLUME, getString(R.string.settings_volume_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 25, Prefs.VOLUME, getString(R.string.loudness), this);
                 break;
             case R.id.repeatIntervalPrefs:
-                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.NOTIFICATION_REPEAT_INTERVAL, getString(R.string.repeat_interval_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.NOTIFICATION_REPEAT_INTERVAL, getString(R.string.interval), this);
                 break;
             case R.id.ttsPrefs:
                 ttsChange();
@@ -558,7 +558,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                     }
                     intent.setType("image/*");
-                    Intent chooser = Intent.createChooser(intent, getActivity().getString(R.string.choose_picture_title));
+                    Intent chooser = Intent.createChooser(intent, getActivity().getString(R.string.image));
                     getActivity().startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                 }
                 break;

@@ -47,9 +47,9 @@ public class StartHelp extends AppCompatActivity {
                     skipButton.setText(R.string.previous);
                     doneButton.setText(R.string.next);
                 } else if (position == adapter.getCount() - 1){
-                    doneButton.setText(R.string.simple_done);
+                    doneButton.setText(R.string.done);
                 } else {
-                    skipButton.setText(R.string.skip_button);
+                    skipButton.setText(R.string.skip);
                     doneButton.setText(R.string.next);
                 }
             }
@@ -91,33 +91,27 @@ public class StartHelp extends AppCompatActivity {
     public void init() {
         ArrayList<IntroModel> list = new ArrayList<>();
         list.add(new IntroModel(
-                getString(R.string.guide_title_flexible),
-                getString(R.string.flexible_explanation),
+                getString(R.string.flexible),
                 R.drawable.flexible_tr,
                 getColorRes(R.color.bluePrimaryDark)));
         list.add(new IntroModel(
-                getString(R.string.guide_smart_title),
-                getString(R.string.smart_explanation),
+                getString(R.string.smart),
                 R.drawable.smart_tr,
                 getColorRes(R.color.indigoPrimary)));
         list.add(new IntroModel(
-                getString(R.string.widgets_support_guide_title),
-                getString(R.string.widget_explanation),
+                getString(R.string.widgets_support),
                 R.drawable.widgets_tr,
                 getColorRes(R.color.purpleDeepPrimary)));
         list.add(new IntroModel(
-                getString(R.string.dark_theme_guide_title),
-                getString(R.string.dark_mode_explanation),
+                getString(R.string.dark_theme_support),
                 R.drawable.dark_tr,
                 getColorRes(R.color.purplePrimary)));
         list.add(new IntroModel(
-                getString(R.string.guide_sync_title),
-                getString(R.string.cloud_sync_explanation),
+                getString(R.string.cloud_sync),
                 R.drawable.cloud_tr,
                 getColorRes(R.color.pinkPrimary)));
         list.add(new IntroModel(
-                getString(R.string.simple_note),
-                getString(R.string.note_explnation),
+                getString(R.string.notes_support),
                 R.drawable.note_tr,
                 getColorRes(R.color.redPrimary)));
 

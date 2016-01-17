@@ -15,12 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 public class NewTemplate extends AppCompatActivity {
@@ -72,7 +71,7 @@ public class NewTemplate extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = s.length();
-                leftCharacters.setText(SuperUtil.appendString(getString(R.string.string_left_characters), " " , String.valueOf(120 - length)));
+                leftCharacters.setText(String.format(getString(R.string.left_characters_x), (120 - length)));
             }
 
             @Override
@@ -85,7 +84,7 @@ public class NewTemplate extends AppCompatActivity {
     private void addTemplate(){
         String text = placeName.getText().toString().trim();
         if (text.length() == 0) {
-            placeName.setError(getString(R.string.empty_field_error));
+            placeName.setError(getString(R.string.must_be_not_empty));
             return;
         }
         DataBase db = new DataBase(NewTemplate.this);

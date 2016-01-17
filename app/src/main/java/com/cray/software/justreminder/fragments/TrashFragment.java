@@ -87,7 +87,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getActivity().getString(R.string.string_no_archived));
+        emptyText.setText(R.string.trash_is_empty);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -166,7 +166,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         if (c != null) c.close();
         db.close();
         if (mCallbacks != null) {
-            mCallbacks.showSnackbar(R.string.string_trash_cleared);
+            mCallbacks.showSnackbar(getString(R.string.trash_cleared));
         }
         loaderAdapter();
     }
@@ -190,7 +190,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                 if (item == 1) {
                     Reminder.delete(item1.getId(), getActivity());
                     if (mCallbacks != null) {
-                        mCallbacks.showSnackbar(R.string.string_deleted);
+                        mCallbacks.showSnackbar(R.string.delete);
                     }
                     loaderAdapter();
                 }

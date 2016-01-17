@@ -161,7 +161,7 @@ public class TaskManager extends AppCompatActivity {
         if (action == null) action = TasksConstants.CREATE;
 
         if (action.matches(TasksConstants.CREATE)){
-            toolbar.setTitle(getString(R.string.string_add_task));
+            toolbar.setTitle(R.string.new_task);
             if (tmp == 0) {
                 TasksData data = new TasksData(TaskManager.this);
                 data.open();
@@ -190,7 +190,7 @@ public class TaskManager extends AppCompatActivity {
                 data.close();
             }
         } else {
-            toolbar.setTitle(getString(R.string.string_edit_task));
+            toolbar.setTitle(R.string.edit_task);
             id = tmp;
             if (id != 0) {
                 TasksData data = new TasksData(TaskManager.this);
@@ -322,7 +322,7 @@ public class TaskManager extends AppCompatActivity {
             data.close();
             finish();
         } else {
-            Messages.toast(this, getString(R.string.same_list_warming));
+            Messages.toast(this, getString(R.string.this_is_same_list));
         }
     }
 
@@ -340,7 +340,7 @@ public class TaskManager extends AppCompatActivity {
         if (c != null) c.close();
         data.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.select_list));
+        builder.setTitle(R.string.choose_list);
         builder.setAdapter(new SimpleAdapter(TaskManager.this,
                 data.getTasksLists()), new DialogInterface.OnClickListener() {
             @Override
@@ -375,7 +375,7 @@ public class TaskManager extends AppCompatActivity {
         sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
-            editField.setError(getString(R.string.empty_field_error));
+            editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
 
@@ -440,15 +440,14 @@ public class TaskManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
-        builder.setTitle(getString(R.string.string_delete_task));
-        builder.setMessage(getString(R.string.delete_task_question));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.delete_this_task);
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteTask();
@@ -489,8 +488,8 @@ public class TaskManager extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
         if (id != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task));
-            menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, getString(R.string.move_to_list));
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, R.string.delete_task);
+            menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, R.string.move_to_another_list);
         }
         return true;
     }

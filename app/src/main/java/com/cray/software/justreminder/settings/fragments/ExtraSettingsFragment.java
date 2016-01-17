@@ -38,7 +38,7 @@ public class ExtraSettingsFragment extends Fragment implements
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.extra_settings_fragment);
+            ab.setTitle(R.string.additional);
         }
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
@@ -142,7 +142,7 @@ public class ExtraSettingsFragment extends Fragment implements
                 }
                 break;
             case R.id.missedTimePrefs:
-                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.MISSED_CALL_TIME, getString(R.string.repeat_interval_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 60, Prefs.MISSED_CALL_TIME, getString(R.string.interval), this);
                 break;
             case R.id.quickSMSPrefs:
                 if (Permissions.checkPermission(getActivity(), Permissions.READ_PHONE_STATE)) {

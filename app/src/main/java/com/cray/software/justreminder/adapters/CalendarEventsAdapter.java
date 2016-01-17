@@ -148,7 +148,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
         if (type == EventType.birthday) {
             holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext,
                     cs.colorBirthdayCalendar()));
-            holder.eventType.setText(mContext.getString(R.string.birthday_text));
+            holder.eventType.setText(R.string.birthday);
             String title = item.getName();
             String phone = item.getNumber();
             if (phone == null || phone.matches("")) {
@@ -165,12 +165,12 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             cl.setTimeInMillis(item.getDate());
             Date time = cl.getTime();
             holder.eventDate.setText(SuperUtil.appendString(TimeUtil.getDateTime(time, is24),
-                    "\n", String.valueOf(TimeUtil.getAge(item.getYear())), " ",
-                    mContext.getString(R.string.years_string)));
+                    "\n", String.format(mContext.getString(R.string.x_years),
+                            String.valueOf(TimeUtil.getAge(item.getYear())))));
         } else {
             holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext,
                     cs.getCategoryColor(item.getColor())));
-            holder.eventType.setText(mContext.getString(R.string.reminder_type));
+            holder.eventType.setText(mContext.getString(R.string.type));
 
             String number = item.getNumber();
 

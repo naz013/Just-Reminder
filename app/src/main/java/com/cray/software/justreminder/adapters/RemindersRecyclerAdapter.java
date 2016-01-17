@@ -177,12 +177,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due == 0){
-                    simpleDate = mContext.getString(R.string.permanent_reminders);
+                    simpleDate = mContext.getString(R.string.permanent);
                 } else {
                     if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                        simpleDate = mContext.getString(R.string._today);
+                        simpleDate = mContext.getString(R.string.today);
                     } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                        simpleDate = mContext.getString(R.string._tomorrow);
+                        simpleDate = mContext.getString(R.string.tomorrow);
                     }
                 }
                 holder.listHeader.setText(simpleDate);
@@ -190,25 +190,25 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             }
         } else {
             if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == 0){
-                simpleDate = mContext.getString(R.string.simple_disabled);
+                simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
             } else if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == 1){
                 holder.listHeader.setVisibility(View.GONE);
             } else if (isDone == 1 && position == 0){
-                simpleDate = mContext.getString(R.string.simple_disabled);
+                simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
             } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))){
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
-                    simpleDate = mContext.getString(R.string.permanent_reminders);
+                    simpleDate = mContext.getString(R.string.permanent);
                 } else {
                     if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                        simpleDate = mContext.getString(R.string._today);
+                        simpleDate = mContext.getString(R.string.today);
                     } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                        simpleDate = mContext.getString(R.string._tomorrow);
+                        simpleDate = mContext.getString(R.string.tomorrow);
                     }
                 }
                 holder.listHeader.setText(simpleDate);
@@ -337,7 +337,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                         holder.repeatInterval.setVisibility(View.GONE);
                     } else {
                         holder.leftTimeIcon.setVisibility(View.GONE);
-                        holder.repeatInterval.setText(mContext.getString(R.string.interval_zero));
+                        holder.repeatInterval.setText("0");
                     }
                 }
 

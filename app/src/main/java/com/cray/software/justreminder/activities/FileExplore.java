@@ -154,7 +154,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                         }
                         play(false);
                     } else {
-                        Messages.toast(FileExplore.this, getString(R.string.file_format_warming));
+                        Messages.toast(FileExplore.this, getString(R.string.not_music_file));
                     }
                 }
             }
@@ -352,7 +352,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Messages.toast(FileExplore.this, getString(R.string.file_format_warming));
+                    Messages.toast(FileExplore.this, getString(R.string.not_music_file));
                 }
                 break;
             case R.id.playButton:

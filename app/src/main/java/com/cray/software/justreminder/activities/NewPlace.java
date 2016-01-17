@@ -86,7 +86,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
                 task = placeTitle;
             }
             if (task == null || task.matches("")) {
-                placeName.setError(getString(R.string.empty_field_error));
+                placeName.setError(getString(R.string.must_be_not_empty));
                 return;
             }
             Double latitude = place.latitude;
@@ -103,7 +103,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             new SharedPrefs(this).saveBoolean(Prefs.PLACE_CHANGED, true);
             finish();
         } else {
-            Toast.makeText(NewPlace.this, getString(R.string.point_warning), Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
         }
     }
 

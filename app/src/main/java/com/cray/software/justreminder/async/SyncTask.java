@@ -34,8 +34,9 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        builder.setContentTitle(mContext.getString(R.string.sync_start_message));
-        builder.setContentText(mContext.getString(R.string.loading_wait));
+        builder.setContentTitle(Module.isPro() ? mContext.getString(R.string.app_name_pro) :
+                mContext.getString(R.string.app_name));
+        builder.setContentText(mContext.getString(R.string.sync));
         builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(2, builder.build());
@@ -81,7 +82,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         db.close();
 
         //export & import reminders
-        publishProgress(mContext.getString(R.string.message_sync_reminders));
+        publishProgress(mContext.getString(R.string.syncing_reminders));
 
         ioHelper.restoreReminder(true);
         ioHelper.backupReminder(true);
@@ -89,14 +90,14 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         //export & import notes
         SharedPrefs prefs = new SharedPrefs(mContext);
         if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
-            publishProgress(mContext.getString(R.string.message_sync_notes));
+            publishProgress(mContext.getString(R.string.syncing_notes));
             ioHelper.restoreNote(true);
             ioHelper.backupNote(true);
         }
 
         //export & import birthdays
         if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
-            publishProgress(mContext.getString(R.string.message_sync_birthdays));
+            publishProgress(mContext.getString(R.string.syncing_birthdays));
             ioHelper.restoreBirthday(true);
             ioHelper.backupBirthday(true);
         }
@@ -106,7 +107,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentTitle(mContext.getString(R.string.sync_end_message));
+        builder.setContentTitle(mContext.getString(R.string.done));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
         if (Module.isPro()) {
             builder.setContentText(mContext.getString(R.string.app_name_pro));

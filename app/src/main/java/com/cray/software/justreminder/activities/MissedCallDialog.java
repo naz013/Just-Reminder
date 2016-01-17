@@ -114,10 +114,10 @@ public class MissedCallDialog extends Activity {
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
-            remText.setText(SuperUtil.appendString(name, "\n", number, "\n\n\n\n", getString(R.string.string_last_called),
+            remText.setText(SuperUtil.appendString(name, "\n", number, "\n\n\n\n", getString(R.string.last_called),
                     "\n", formattedTime));
         } else {
-            remText.setText(number + "\n" + "\n" + "\n" + getString(R.string.string_last_called) + "\n" + formattedTime);
+            remText.setText(number + "\n\n\n" + getString(R.string.last_called) + "\n" + formattedTime);
         }
         buttonCancel.setImageResource(R.drawable.ic_send_black_24dp);
 
@@ -243,6 +243,6 @@ public class MissedCallDialog extends Activity {
         if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
-        } else Messages.toast(getApplicationContext(), getString(R.string.must_click_message));
+        } else Messages.toast(getApplicationContext(), getString(R.string.select_one_of_item));
     }
 }

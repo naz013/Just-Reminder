@@ -202,7 +202,7 @@ public class QuickAddReminder extends AppCompatActivity {
     private void saveDateTask() {
         String text = task_text.getText().toString().trim();
         if (text.matches("")) {
-            task_text.setError(getString(R.string.empty_field_error));
+            task_text.setError(getString(R.string.must_be_not_empty));
             return;
         }
         String type = Constants.TYPE_REMINDER;

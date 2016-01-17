@@ -41,7 +41,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.export_settings_block);
+            ab.setTitle(R.string.export_and_sync);
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
@@ -154,7 +154,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 Dialogues.selectCalendar(getActivity(), list);
             } else {
                 Toast.makeText(getActivity(),
-                        getActivity().getString(R.string.no_google_calendars_found), Toast.LENGTH_LONG).show();
+                        getActivity().getString(R.string.no_calendars_found), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -178,7 +178,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 exportToCalendarChange();
                 break;
             case R.id.eventDuration:
-                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration), this);
                 break;
             case R.id.selectCalendar:
                 ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
@@ -199,7 +199,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 prefsChange();
                 break;
             case R.id.syncInterval:
-                Dialogues.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.auto_sync_interval);
+                Dialogues.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.interval);
                 break;
         }
     }

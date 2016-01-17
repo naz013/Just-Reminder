@@ -37,7 +37,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.location_settings);
+            ab.setTitle(R.string.location);
         }
 
         TextView mapType = (TextView) rootView.findViewById(R.id.mapType);
@@ -83,7 +83,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
         super.onResume();
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        radiusPrefs.setValueText(sPrefs.loadInt(Prefs.LOCATION_RADIUS) + getString(R.string.meter));
+        radiusPrefs.setValueText(String.valueOf(sPrefs.loadInt(Prefs.LOCATION_RADIUS)));
     }
 
     @Override

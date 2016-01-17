@@ -61,7 +61,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) view.findViewById(R.id.emptyText);
-        emptyText.setText(getString(R.string.events_empty_text));
+        emptyText.setText(getString(R.string.no_events));
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
@@ -124,7 +124,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
             db.close();
             datas.remove(position);
             loaderAdapter();
-            Messages.toast(getActivity(), getString(R.string.swipe_delete));
+            Messages.toast(getActivity(), getString(R.string.deleted));
         }
     }
 }

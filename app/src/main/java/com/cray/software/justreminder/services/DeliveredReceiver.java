@@ -5,9 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.Messages;
-
 /**
  * Copyright 2015 Nazar Suhovich
  * <p/>
@@ -28,10 +25,10 @@ public class DeliveredReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         switch (getResultCode()) {
             case Activity.RESULT_OK:
-                Messages.toast(context, context.getString(R.string.message_delivered));
+                //Messages.toast(context, context.getString(R.string.message_delivered));
                 break;
             case Activity.RESULT_CANCELED:
-                Messages.toast(context, context.getString(R.string.message_not_delivered));
+                //Messages.toast(context, context.getString(R.string.message_not_delivered));
                 break;
         }
     }

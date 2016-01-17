@@ -576,20 +576,20 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     public void showDialog(){
-        final CharSequence[] items = {getString(R.string.repeat_5_min),
-                getString(R.string.repeat_10_min),
-                getString(R.string.repeat_15_min),
-                getString(R.string.repeat_30_min),
-                getString(R.string.repeat_45_min),
-                getString(R.string.repeat_60_min),
-                getString(R.string.repeat_90_min),
-                getString(R.string.repeat_120_min),
-                getString(R.string.string_5_hours),
-                getString(R.string.string_1_day),
-                getString(R.string.string_2_days),
-                getString(R.string.string_1_week)};
+        final CharSequence[] items = {String.format(getString(R.string.x_minutes), 5),
+                String.format(getString(R.string.x_minutes), 10),
+                String.format(getString(R.string.x_minutes), 15),
+                String.format(getString(R.string.x_minutes), 30),
+                String.format(getString(R.string.x_minutes), 45),
+                String.format(getString(R.string.x_minutes), 60),
+                String.format(getString(R.string.x_minutes), 90),
+                String.format(getString(R.string.x_hours), 2),
+                String.format(getString(R.string.x_hours), 6),
+                String.format(getString(R.string.x_hours), 24),
+                String.format(getString(R.string.x_days), 2),
+                String.format(getString(R.string.x_days), 7)};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.time_dialog_title));
+        builder.setTitle(getString(R.string.choose_time));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 int x = 0;
@@ -610,7 +610,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 } else if (item == 7) {
                     x = 120;
                 } else if (item == 8) {
-                    x = 60 * 5;
+                    x = 60 * 6;
                 } else if (item == 9) {
                     x = 60 * 24;
                 } else if (item == 10) {
@@ -620,23 +620,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 }
 
                 Reminder.setDelay(ReminderDialog.this, id, x, true);
-
-                if (x < 100) {
-                    Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +
-                            x + " " + getString(R.string.repeat_toast_end));
-                }
-                if (x > 120 && x < 60 * 24) {
-                    Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +
-                            (x / 60) + " " + getString(R.string.string_hours));
-                }
-                if (x >= 60 * 24 && x < 60 * 24 * 7) {
-                    Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +
-                            (x / (60 * 24)) + " " + getString(R.string.string_days));
-                }
-                if (x == 60 * 24 * 7) {
-                    Messages.toast(ReminderDialog.this, getString(R.string.repeat_toast_start) + " " +
-                            1 + " " + getString(R.string.simple_week));
-                }
+                Messages.toast(ReminderDialog.this, getString(R.string.reminder_snoozed));
                 dialog.dismiss();
                 removeFlags();
                 finish();
@@ -708,7 +692,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             repeater.cancelAlarm(ReminderDialog.this, id);
             removeFlags();
         } else {
-            Messages.toast(ReminderDialog.this, getString(R.string.must_click_message));
+            Messages.toast(ReminderDialog.this, getString(R.string.select_one_of_item));
         }
     }
 
@@ -744,7 +728,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             finish();
         } else {
             showReminder(0);
-            remText.setText(getString(R.string.message_send_error));
+            remText.setText(getString(R.string.error_sending));
             buttonCall.setImageResource(R.drawable.ic_cached_black_24dp);
             if (buttonCall.getVisibility() == View.GONE) {
                 buttonCall.setVisibility(View.VISIBLE);

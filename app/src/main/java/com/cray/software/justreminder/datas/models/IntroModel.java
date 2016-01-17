@@ -17,12 +17,11 @@ package com.cray.software.justreminder.datas.models;
  */
 public class IntroModel {
 
-    private String title, description;
+    private String title;
     private int color, drawable;
 
-    public IntroModel(String title, String description, int drawable, int color) {
+    public IntroModel(String title, int drawable, int color) {
         this.title = title;
-        this.description = description;
         this.color = color;
         this.drawable = drawable;
     }
@@ -41,14 +40,6 @@ public class IntroModel {
 
     public void setDrawable(int drawable) {
         this.drawable = drawable;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getTitle() {

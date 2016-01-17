@@ -883,7 +883,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isArchived == 1) {
                 Reminder.delete(id, this);
                 Messages.toast(ReminderManager.this, getString(R.string.deleted));
-            } else Reminder.moveToTrash(id, this, null);
+            } else Reminder.moveToTrash(id, this);
             finish();
         }
         if (c != null) c.close();

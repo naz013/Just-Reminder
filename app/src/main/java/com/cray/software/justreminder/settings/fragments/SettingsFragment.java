@@ -21,11 +21,12 @@ public class SettingsFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String[] list = {getString(R.string.interface_block), getString(R.string.export_settings_block),
-                getString(R.string.calendar_fragment), getString(R.string.birthday_settings),
-                getString(R.string.notification_settings), getString(R.string.extra_settings_fragment), getString(R.string.location_settings),
-                getString(R.string.fragment_notes), getString(R.string.voice_block),
-                getString(R.string.other_settings)};
+        String[] list = {getString(R.string.general), getString(R.string.export_and_sync),
+                getString(R.string.calendar), getString(R.string.birthdays),
+                getString(R.string.notification), getString(R.string.additional),
+                getString(R.string.location), getString(R.string.notes),
+                getString(R.string.voice_control),
+                getString(R.string.other)};
 
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;

@@ -34,7 +34,7 @@ public class PermissionsList extends Activity{
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
-        dialogTitle.setText(getString(R.string.add_permission));
+        dialogTitle.setText(getString(R.string.allow_permission));
 
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);

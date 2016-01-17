@@ -35,7 +35,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.notification_settings);
+            ab.setTitle(R.string.birthday_notification);
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
@@ -179,11 +179,11 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
                     String fileNameS = fileName.substring(0, pos);
                     chooseSoundPrefs.setDetailText(fileNameS);
                 } else {
-                    chooseSoundPrefs.setDetailText(getResources().getString(R.string.sound_default));
+                    chooseSoundPrefs.setDetailText(getResources().getString(R.string.default_string));
                 }
             }
         } else {
-            chooseSoundPrefs.setDetailText(getResources().getString(R.string.sound_default));
+            chooseSoundPrefs.setDetailText(getResources().getString(R.string.default_string));
         }
     }
 
@@ -280,7 +280,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
         super.onDetach();
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.birthday_settings);
+            ab.setTitle(R.string.birthday_notification);
         }
     }
 

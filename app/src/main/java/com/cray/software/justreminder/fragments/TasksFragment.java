@@ -74,18 +74,18 @@ public class TasksFragment extends Fragment {
         TasksData db = new TasksData(activity);
         db.open();
         if (currentPos != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, getString(R.string.string_edit_task_list));
+            menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, R.string.edit_list);
             Cursor c = db.getTasksList(taskListDatum.get(currentPos).getTaskList().getListId());
             if (c != null && c.moveToFirst()) {
                 int def = c.getInt(c.getColumnIndex(TasksConstants.SYSTEM_DEFAULT));
                 if (def != 1) {
-                    menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task_list));
+                    menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_list));
                 }
             }
             if (c != null) {
                 c.close();
             }
-            menu.add(Menu.NONE, MENU_ITEM_CLEAR, 100, getString(R.string.string_delete_completed_tasks));
+            menu.add(Menu.NONE, MENU_ITEM_CLEAR, 100, R.string.delete_completed_tasks);
         }
         db.close();
         super.onCreateOptionsMenu(menu, inflater);
@@ -165,13 +165,13 @@ public class TasksFragment extends Fragment {
     }
 
     private void showDialog(){
-        final CharSequence[] items = {getString(R.string.string_default),
-                getString(R.string.sort_item_by_date_a_z),
-                getString(R.string.sort_item_by_date_z_a),
-                getString(R.string.string_active_first),
-                getString(R.string.string_completed_first)};
+        final CharSequence[] items = {getString(R.string.default_string),
+                getString(R.string.by_date_az),
+                getString(R.string.by_date_za),
+                getString(R.string.active_first),
+                getString(R.string.completed_first)};
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(getString(R.string.menu_order_by));
+        builder.setTitle(getString(R.string.order));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(activity);
@@ -197,16 +197,14 @@ public class TasksFragment extends Fragment {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(true);
-        String title = taskListDatum.get(currentPos).getTaskList().getTitle();
-        builder.setTitle(getString(R.string.string_delete_task_list) + " " + title);
-        builder.setMessage(getString(R.string.delete_task_list_question));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.delete_this_list));
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteList();
@@ -278,7 +276,7 @@ public class TasksFragment extends Fragment {
                 if (mCallbacks != null) {
                     ColorSetter mColor = new ColorSetter(activity);
                     if (i == 0) {
-                        mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
+                        mCallbacks.onTitleChanged(getString(R.string.all));
                         mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
                         mCallbacks.onListIdChanged(0);
                     } else {
@@ -308,7 +306,7 @@ public class TasksFragment extends Fragment {
         if (mCallbacks != null) {
             ColorSetter mColor = new ColorSetter(activity);
             if (pos == 0) {
-                mCallbacks.onTitleChanged(getString(R.string.string_all_tasks));
+                mCallbacks.onTitleChanged(getString(R.string.all));
                 mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
                 mCallbacks.onListIdChanged(0);
             } else {
@@ -327,7 +325,7 @@ public class TasksFragment extends Fragment {
         ArrayList<TaskList> lists = new ArrayList<>();
         lists.clear();
         map.clear();
-        lists.add(new TaskList(getString(R.string.string_all_tasks), 0, GTasksHelper.TASKS_ALL, 25));
+        lists.add(new TaskList(getString(R.string.all), 0, GTasksHelper.TASKS_ALL, 25));
         TasksData db = new TasksData(activity);
         db.open();
         Cursor c = db.getTasksLists();

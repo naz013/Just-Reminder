@@ -276,7 +276,7 @@ public class LogInActivity extends Activity {
                         startActivity(intent);
                     }
                 })
-                .setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }

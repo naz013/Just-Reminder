@@ -108,9 +108,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         TextView widgetTitle = (TextView) findViewById(R.id.widgetTitle);
 
         List<String> spinnerArray = new ArrayList<>();
-        spinnerArray.add(getString(R.string.led_color_white));
-        spinnerArray.add(getString(R.string.color_transparent));
-        spinnerArray.add(getString(R.string.color_black));
+        spinnerArray.add(getString(R.string.white));
+        spinnerArray.add(getString(R.string.transparent));
+        spinnerArray.add(getString(R.string.black));
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, spinnerArray);

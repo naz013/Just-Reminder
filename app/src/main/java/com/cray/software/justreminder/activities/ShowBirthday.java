@@ -157,7 +157,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             contactPhoto.setVisibility(View.GONE);
         }
 
-        String years = TimeUtil.getYears(birthDate) + " " + getString(R.string.years_string);
+        String years =  String.format(getString(R.string.x_years), TimeUtil.getYears(birthDate));
 
         TextView userName = (TextView) findViewById(R.id.userName);
         userName.setTypeface(typeface);
@@ -325,7 +325,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);
             removeFlags();
         } else {
-            Messages.toast(getApplicationContext(), getString(R.string.must_click_message));
+            Messages.toast(getApplicationContext(), getString(R.string.select_one_of_item));
         }
     }
 

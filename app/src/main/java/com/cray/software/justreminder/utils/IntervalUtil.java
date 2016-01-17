@@ -85,33 +85,21 @@ public class IntervalUtil {
         if (tmp > 1000) {
             code /= day;
             if (code == Intervals.REPEAT_CODE_ONCE) {
-                interval = mContext.getString(R.string.interval_zero);
+                interval = "0";
             } else if (code == Intervals.INTERVAL_WEEK) {
-                interval = mContext.getString(R.string.string_week);
+                interval = String.format(mContext.getString(R.string.xW), 1);
             } else if (code == Intervals.INTERVAL_TWO_WEEKS) {
-                interval = mContext.getString(R.string.repeat_code_two_weeks);
+                interval = String.format(mContext.getString(R.string.xW), 2);
             } else if (code == Intervals.INTERVAL_THREE_WEEKS) {
-                interval = mContext.getString(R.string.repeat_code_three_weeks);
-            } else if (code == Intervals.INTERVAL_MONTH) {
-                interval = mContext.getString(R.string.string__month);
-            } else if (code == Intervals.INTERVAL_TWO_MONTH) {
-                interval = mContext.getString(R.string.string_two_month);
-            } else if (code == Intervals.INTERVAL_THREE_MONTH) {
-                interval = mContext.getString(R.string.string_three_month);
-            } else if (code == Intervals.INTERVAL_FOUR_MONTH) {
-                interval = mContext.getString(R.string.string_four_month);
-            } else if (code == Intervals.INTERVAL_FIVE_MONTH) {
-                interval = mContext.getString(R.string.string_five_month);
-            } else if (code == Intervals.INTERVAL_HALF_YEAR) {
-                interval = mContext.getString(R.string.string_six_month);
-            } else if (code == Intervals.INTERVAL_YEAR) {
-                interval = mContext.getString(R.string.string_year);
+                interval = String.format(mContext.getString(R.string.xW), 3);
+            } else if (code == Intervals.INTERVAL_FOUR_WEEKS) {
+                interval = String.format(mContext.getString(R.string.xW), 4);
             } else {
-                interval = "" + code + mContext.getString(R.string.character_d);
+                interval = String.format(mContext.getString(R.string.xD), code);
             }
         } else {
-            if (tmp == 0) return mContext.getString(R.string.interval_zero);
-            else return tmp + mContext.getString(R.string.string_minute);
+            if (tmp == 0) return "0";
+            else return String.format(mContext.getString(R.string.x_min), tmp);
         }
         return interval;
     }

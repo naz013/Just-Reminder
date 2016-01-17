@@ -32,7 +32,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 public class IntroFragment extends Fragment {
 
     private static final String ARG_TITLE = "title";
-    private static final String ARG_DESC = "desc";
     private static final String ARG_DRAWABLE = "drawable";
     private static final String ARG_BG_COLOR = "bg_color";
     private static final String ARG_TITLE_COLOR = "title_color";
@@ -43,7 +42,6 @@ public class IntroFragment extends Fragment {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, model.getTitle());
-        args.putString(ARG_DESC, model.getDescription());
         args.putInt(ARG_DRAWABLE, model.getDrawable());
         args.putInt(ARG_BG_COLOR, model.getColor());
         sampleSlide.setArguments(args);
@@ -51,12 +49,11 @@ public class IntroFragment extends Fragment {
         return sampleSlide;
     }
 
-    public static IntroFragment newInstance(String title, String description, int imageDrawable, int bgColor) {
+    public static IntroFragment newInstance(String title, int imageDrawable, int bgColor) {
         IntroFragment sampleSlide = new IntroFragment();
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        args.putString(ARG_DESC, description);
         args.putInt(ARG_DRAWABLE, imageDrawable);
         args.putInt(ARG_BG_COLOR, bgColor);
         sampleSlide.setArguments(args);
@@ -64,11 +61,10 @@ public class IntroFragment extends Fragment {
         return sampleSlide;
     }
 
-    public static IntroFragment newInstance(String title, String description, int imageDrawable, int bgColor, int titleColor, int descColor) {
+    public static IntroFragment newInstance(String title, int imageDrawable, int bgColor, int titleColor, int descColor) {
         IntroFragment sampleSlide = new IntroFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        args.putString(ARG_DESC, description);
         args.putInt(ARG_DRAWABLE, imageDrawable);
         args.putInt(ARG_BG_COLOR, bgColor);
         args.putInt(ARG_TITLE_COLOR, titleColor);
@@ -91,7 +87,6 @@ public class IntroFragment extends Fragment {
         if (getArguments() != null && getArguments().size() != 0) {
             drawable = getArguments().getInt(ARG_DRAWABLE);
             title = getArguments().getString(ARG_TITLE);
-            description = getArguments().getString(ARG_DESC);
             bgColor = getArguments().getInt(ARG_BG_COLOR);
             titleColor = getArguments().containsKey(ARG_TITLE_COLOR) ? getArguments().getInt(ARG_TITLE_COLOR) : 0;
             descColor = getArguments().containsKey(ARG_DESC_COLOR) ? getArguments().getInt(ARG_DESC_COLOR) : 0;
@@ -110,7 +105,6 @@ public class IntroFragment extends Fragment {
         if (titleColor != 0) {
             t.setTextColor(titleColor);
         }
-        d.setText(description);
         if (descColor != 0) {
             d.setTextColor(descColor);
         }

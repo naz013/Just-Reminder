@@ -43,7 +43,7 @@ public final class ThanksDialog extends AppCompatActivity {
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayShowTitleEnabled(true);
-            bar.setTitle(getString(R.string.thanks_settings_title));
+            bar.setTitle(getString(R.string.open_source_licenses));
             if (code == 1) {
                 bar.setTitle(getString(R.string.permissions));
             }

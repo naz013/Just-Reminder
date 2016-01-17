@@ -33,8 +33,8 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        builder.setContentTitle(mContext.getString(R.string.sync_start_message));
-        builder.setContentText(mContext.getString(R.string.loading_wait));
+        builder.setContentTitle(mContext.getString(R.string.notes));
+        builder.setContentText(mContext.getString(R.string.syncing_notes));
         builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(2, builder.build());
@@ -75,7 +75,7 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentTitle(mContext.getString(R.string.sync_end_message));
+        builder.setContentTitle(mContext.getString(R.string.done));
         builder.setSmallIcon(R.drawable.ic_done_white_24dp);
         if (Module.isPro()){
             builder.setContentText(mContext.getString(R.string.app_name_pro));

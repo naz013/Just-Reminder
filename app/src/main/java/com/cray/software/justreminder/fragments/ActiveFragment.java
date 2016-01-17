@@ -219,7 +219,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 android.R.layout.select_dialog_item);
         DataBase db = new DataBase(getActivity());
         db.open();
-        arrayAdapter.add(getString(R.string.simple_all));
+        arrayAdapter.add(getString(R.string.all));
         Cursor c = db.queryCategories();
         if (c != null && c.moveToFirst()){
             do {
@@ -232,7 +232,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.string_select_category));
+        builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -273,14 +273,14 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.string_select_category));
+        builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 String catId = ids.get(which);
                 if (oldUuId.matches(catId)) {
-                    Messages.toast(getActivity(), R.string.you_have_select_same_group);
+                    Messages.toast(getActivity(), getString(R.string.same_group));
                     return;
                 }
                 Reminder.setNewGroup(getActivity(), id, catId);
@@ -349,7 +349,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onItemLongClicked(final int position, final View view) {
         final CharSequence[] items = {getString(R.string.open), getString(R.string.edit),
-                getString(R.string.change_group), getString(R.string.move_to_archive)};
+                getString(R.string.change_group), getString(R.string.move_to_trash)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
@@ -366,7 +366,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                         changeGroup(item1.getGroupId(), item1.getId());
                         break;
                     case 3:
-                        Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
+                        Reminder.moveToTrash(item1.getId(), getActivity());
                         loaderAdapter(null);
                         break;
                 }

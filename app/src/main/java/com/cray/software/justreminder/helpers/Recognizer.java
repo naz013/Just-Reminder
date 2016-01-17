@@ -3010,10 +3010,6 @@ public class Recognizer {
                         .putExtra("names", names)
                         .putExtra("dates", dates)
                         .putExtra("years", years));
-            } else {
-                Toast.makeText(mContext, mContext.getString(R.string.birthdays_string_first) + " " +
-                        days + " " + mContext.getString(R.string.birthdays_string_second),
-                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -3097,7 +3093,7 @@ public class Recognizer {
         db.linkToReminder(id, remId);
         db.close();
         new UpdatesHelper(mContext).updateNotesWidget();
-        Toast.makeText(mContext, mContext.getString(R.string.note_saved_toast), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }
 
     private void messageTask(String keyStr, boolean isWidget) {
@@ -3440,7 +3436,7 @@ public class Recognizer {
                     .putExtra("ids", id)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
         } else {
-            Toast.makeText(mContext, mContext.getString(R.string.reminder_saved_title), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
         }
     }
 

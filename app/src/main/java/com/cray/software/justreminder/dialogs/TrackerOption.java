@@ -30,7 +30,7 @@ public class TrackerOption extends Activity {
         sPrefs = new SharedPrefs(TrackerOption.this);
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(sPrefs.loadInt(Prefs.TRACK_DISTANCE) + getString(R.string.meter));
+        radiusValue.setText(String.format(getString(R.string.radius_x_meters), sPrefs.loadInt(Prefs.TRACK_DISTANCE)));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(99);
@@ -38,7 +38,7 @@ public class TrackerOption extends Activity {
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                radiusValue.setText((i + 1) + getString(R.string.meter));
+                radiusValue.setText(String.format(getString(R.string.radius_x_meters), (i + 1)));
             }
 
             @Override
@@ -53,7 +53,7 @@ public class TrackerOption extends Activity {
         });
 
         timeValue = (TextView) findViewById(R.id.timeValue);
-        timeValue.setText(sPrefs.loadInt(Prefs.TRACK_TIME) + getString(R.string.seconds_string));
+        timeValue.setText(String.format(getString(R.string.x_seconds), sPrefs.loadInt(Prefs.TRACK_TIME)));
 
         timeBar = (SeekBar) findViewById(R.id.timeBar);
         timeBar.setMax(29);
@@ -61,7 +61,7 @@ public class TrackerOption extends Activity {
         timeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                timeValue.setText((i + 1) + getString(R.string.seconds_string));
+                timeValue.setText(String.format(getString(R.string.x_seconds), (i + 1)));
             }
 
             @Override

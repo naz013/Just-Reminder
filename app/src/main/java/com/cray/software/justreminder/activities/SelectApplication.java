@@ -41,7 +41,7 @@ public class SelectApplication extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        toolbar.setTitle(getString(R.string.select_application_title));
+        toolbar.setTitle(R.string.choose_application);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 

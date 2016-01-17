@@ -49,12 +49,12 @@ public class ReminderUtils {
         TasksData data = new TasksData(context);
         data.open();
         long localId = data.addTask(summary, null, 0, false, startTime,
-                null, null, context.getString(R.string.string_task_from_just_reminder), null, null, null, 0,
+                null, null, context.getString(R.string.from_reminder), null, null, null, 0,
                 mId, null, GTasksHelper.TASKS_NEED_ACTION, false);
         data.close();
 
         new TaskAsync(context, summary, null, null, TasksConstants.INSERT_TASK, startTime,
-                context.getString(R.string.string_task_from_just_reminder), localId).execute();
+                context.getString(R.string.from_reminder), localId).execute();
     }
 
     /**
@@ -139,34 +139,34 @@ public class ReminderUtils {
         String res;
         StringBuilder sb = new StringBuilder();
         if (repCode.get(0) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_monday));
+            sb.append(context.getString(R.string.mon));
             sb.append(",");
         }
         if (repCode.get(1) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_tuesday));
+            sb.append(context.getString(R.string.tue));
             sb.append(",");
         }
         if (repCode.get(2) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_wednesday));
+            sb.append(context.getString(R.string.wed));
             sb.append(",");
         }
         if (repCode.get(3) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_thursday));
+            sb.append(context.getString(R.string.thu));
             sb.append(",");
         }
         if (repCode.get(4) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_friday));
+            sb.append(context.getString(R.string.fri));
             sb.append(",");
         }
         if (repCode.get(5) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_saturday));
+            sb.append(context.getString(R.string.sat));
             sb.append(",");
         }
         if (repCode.get(6) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.weekday_sunday));
+            sb.append(context.getString(R.string.sun));
         }
         if (isAllChecked(repCode)){
-            res = context.getString(R.string.interval_day);
+            res = context.getString(R.string.everyday);
         } else res = sb.toString();
         return res;
     }
@@ -193,32 +193,32 @@ public class ReminderUtils {
         if (type.startsWith(Constants.TYPE_MONTHDAY_CALL) || type.matches(Constants.TYPE_WEEKDAY_CALL) ||
                 type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                 type.matches(Constants.TYPE_LOCATION_OUT_CALL)){
-            String init = context.getString(R.string.reminder_make_call);
+            String init = context.getString(R.string.make_call);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE) || type.matches(Constants.TYPE_WEEKDAY_MESSAGE) ||
                 type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                 type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-            String init = context.getString(R.string.reminder_send_message);
+            String init = context.getString(R.string.message);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SKYPE)){
-            String init = context.getString(R.string.skype_call_type_title);
+            String init = context.getString(R.string.skype_call);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SKYPE_CHAT)){
-            String init = context.getString(R.string.skype_chat_type_title);
+            String init = context.getString(R.string.skype_chat);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SKYPE_VIDEO)){
-            String init = context.getString(R.string.skype_video_type_title);
+            String init = context.getString(R.string.video_call);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_APPLICATION)){
-            String init = context.getString(R.string.reminder_type_application);
+            String init = context.getString(R.string.application);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)){
-            String init = context.getString(R.string.reminder_type_open_link);
+            String init = context.getString(R.string.open_link);
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
             res = context.getString(R.string.shopping_list);
         } else {
-            String init = context.getString(R.string.reminder_type);
+            String init = context.getString(R.string.reminder);
             res = init + " (" + getType(context, type) + ")";
         }
         return res;
@@ -233,17 +233,17 @@ public class ReminderUtils {
     public static String getType(Context context, String type){
         String res;
         if (type.startsWith(Constants.TYPE_MONTHDAY)){
-            res = context.getString(R.string.string_by_day_of_month);
+            res = context.getString(R.string.day_of_month);
         } else if (type.startsWith(Constants.TYPE_WEEKDAY)){
-            res = context.getString(R.string.by_weekdays_title);
+            res = context.getString(R.string.alarm);
         } else if (type.startsWith(Constants.TYPE_LOCATION)){
-            res = context.getString(R.string.by_location_title);
+            res = context.getString(R.string.location);
         } else if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-            res = context.getString(R.string.string_place_out);
+            res = context.getString(R.string.place_out);
         } else if (type.matches(Constants.TYPE_TIME)){
-            res = context.getString(R.string.after_time_title);
+            res = context.getString(R.string.timer);
         } else {
-            res = context.getString(R.string.by_date_title);
+            res = context.getString(R.string.by_date);
         }
         return res;
     }

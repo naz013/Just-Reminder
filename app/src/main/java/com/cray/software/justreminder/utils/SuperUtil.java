@@ -61,33 +61,6 @@ public class SuperUtil {
     }
 
     /**
-     * Get path to file from URI.
-     * @param context application context.
-     * @param uri uri.
-     * @return path string
-     */
-    public static String getPath(Context context, Uri uri) {
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                // Eat it
-            }
-            if (cursor != null) cursor.close();
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-        return null;
-    }
-
-    /**
      * Concatenate many string to single.
      * @param strings string to concatenate.
      * @return concatenated string
@@ -114,7 +87,7 @@ public class SuperUtil {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                pd = ProgressDialog.show(activity, null, activity.getString(R.string.loading_applications_message), true);
+                pd = ProgressDialog.show(activity, null, activity.getString(R.string.please_wait), true);
             }
 
             @Override
@@ -157,7 +130,7 @@ public class SuperUtil {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                pd = ProgressDialog.show(activity, null, activity.getString(R.string.load_contats), true);
+                pd = ProgressDialog.show(activity, null, activity.getString(R.string.please_wait), true);
             }
 
             @Override
@@ -211,7 +184,6 @@ public class SuperUtil {
 
     /**
      * Get time for timer.
-     * @param context application context.
      * @param timeString human readable time string.
      * @return time in milliseconds.
      */
@@ -241,11 +213,11 @@ public class SuperUtil {
         if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.voice_say_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.say_something));
         try {
             activity.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e){
-            Messages.toast(activity, activity.getString(R.string.recognizer_not_found_error_message));
+            Messages.toast(activity, activity.getString(R.string.no_recognizer_found));
         }
     }
 

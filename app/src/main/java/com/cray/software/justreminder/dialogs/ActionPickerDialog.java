@@ -49,20 +49,17 @@ public class ActionPickerDialog extends Activity {
         addBirth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!new SharedPrefs(ActionPickerDialog.this).loadBoolean(Prefs.BIRTHDAY_REMINDER))
-                    Messages.toast(ActionPickerDialog.this, getString(R.string.calendar_birthday_info));
-                else {
-                    startActivity(new Intent(ActionPickerDialog.this, AddBirthday.class)
-                            .putExtra("date", receivedDate));
-                    finish();
-                }
+                new SharedPrefs(ActionPickerDialog.this).saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
+                startActivity(new Intent(ActionPickerDialog.this, AddBirthday.class)
+                        .putExtra("date", receivedDate));
+                finish();
             }
         });
 
         addBirth.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Messages.toast(ActionPickerDialog.this, R.string.new_birthday);
+                Messages.toast(ActionPickerDialog.this, R.string.add_birthday);
                 return false;
             }
         });
@@ -70,7 +67,7 @@ public class ActionPickerDialog extends Activity {
         addEvent.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Messages.toast(ActionPickerDialog.this, R.string.new_reminder);
+                Messages.toast(ActionPickerDialog.this, R.string.add_reminder);
                 return false;
             }
         });

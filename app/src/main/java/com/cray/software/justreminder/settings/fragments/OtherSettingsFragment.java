@@ -32,7 +32,7 @@ public class OtherSettingsFragment extends Fragment {
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.other_settings);
+            ab.setTitle(R.string.other);
         }
 
         TextView about = (TextView) rootView.findViewById(R.id.about);

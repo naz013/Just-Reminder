@@ -60,7 +60,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getString(R.string.message_list_empty_text));
+        emptyText.setText(getString(R.string.no_messages));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -135,7 +135,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
         if (mCallbacks != null) {
-            mCallbacks.showSnackbar(R.string.string_template_deleted);
+            mCallbacks.showSnackbar(R.string.deleted);
         }
         loadTemplates();
     }

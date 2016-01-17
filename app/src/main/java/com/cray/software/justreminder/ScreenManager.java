@@ -163,7 +163,7 @@ public class ScreenManager extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setTitle(R.string.drawer_active_reminder);
+        toolbar.setTitle(R.string.tasks);
         mTitle = getTitle().toString();
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
@@ -286,7 +286,7 @@ public class ScreenManager extends AppCompatActivity
                             }, 150);
 
                         } else {
-                            showSnackbar(R.string.tasks_connection_warming);
+                            showSnackbar(getString(R.string.can_not_connect));
                         }
                     }
                 });
@@ -534,27 +534,27 @@ public class ScreenManager extends AppCompatActivity
     public void onSectionAttached(String tag) {
         if(tag != null) {
             if (tag.matches(FRAGMENT_ACTIVE)) {
-                mTitle = getString(R.string.drawer_active_reminder);
+                mTitle = getString(R.string.tasks);
             } else if (tag.matches(FRAGMENT_ARCHIVE)) {
-                mTitle = getString(R.string.drawer_archive_reminder);
+                mTitle = getString(R.string.trash);
             } else if (tag.matches(ACTION_CALENDAR)) {
-                mTitle = getString(R.string.calendar_fragment);
+                mTitle = getString(R.string.calendar);
             } else if (tag.matches(FRAGMENT_EVENTS)) {
-                mTitle = getString(R.string.birthdays_dialog_title);
+                mTitle = getString(R.string.events);
             } else if (tag.matches(FRAGMENT_NOTE)) {
-                mTitle = getString(R.string.fragment_notes);
+                mTitle = getString(R.string.notes);
             } else if (tag.matches(FRAGMENT_GROUPS)) {
-                mTitle = getString(R.string.string_manage_categories);
+                mTitle = getString(R.string.groups);
             } else if (tag.matches(FRAGMENT_PLACES)) {
-                mTitle = getString(R.string.settings_places);
+                mTitle = getString(R.string.places);
             } else if (tag.matches(FRAGMENT_TEMPLATES)) {
-                mTitle = getString(R.string.settings_sms_templates_title);
+                mTitle = getString(R.string.messages);
             } else if (tag.matches(FRAGMENT_LOCATIONS)) {
-                mTitle = getString(R.string.geo_fragment);
+                mTitle = getString(R.string.directions);
             } else if (tag.matches(FRAGMENT_BACKUPS)) {
-                mTitle = getString(R.string.manage_backup_title);
+                mTitle = getString(R.string.backup_files);
             }
-            if (mTitle == null) mTitle = getString(R.string.drawer_active_reminder);
+            if (mTitle == null) mTitle = getString(R.string.tasks);
             if (toolbar != null) toolbar.setTitle(mTitle);
         }
     }
@@ -632,21 +632,22 @@ public class ScreenManager extends AppCompatActivity
         loadEvents();
         calendarView.populateData();
         mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
-        mTitle = getString(R.string.calendar_fragment);
+        mTitle = getString(R.string.calendar);
         toolbar.setTitle(mTitle);
         invalidateOptionsMenu();
     }
 
     protected Dialog marketDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.buy_pro_string))
-                .setMessage(getString(R.string.pro_explanation_1) + "\n" +
-                        getString(R.string.pro_explanation_2) + "\n" +
-                        getString(R.string.pro_explanation_4) + "\n" +
-                        getString(R.string.pro_explanation_5) + "\n" +
-                        getString(R.string.pro_explanation_7) + "\n" +
-                        getString(R.string.pro_explanation_6))
-                .setPositiveButton(getString(R.string.dialog_button_buy), new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.buy_pro))
+                .setMessage(getString(R.string.pro_advantages) + "\n" +
+                        getString(R.string.different_settings_for_birthdays) + "\n" +
+                        getString(R.string._led_notification_) + "\n" +
+                        getString(R.string.led_color_for_each_reminder) + "\n" +
+                        getString(R.string.styles_for_marker) + "\n" +
+                        getString(R.string.option_for_image_blurring) + "\n" +
+                        getString(R.string.additional_app_themes))
+                .setPositiveButton(R.string.buy, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -654,7 +655,7 @@ public class ScreenManager extends AppCompatActivity
                         startActivity(intent);
                     }
                 })
-                .setNegativeButton(getString(R.string.button_close), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
@@ -808,10 +809,8 @@ public class ScreenManager extends AppCompatActivity
 
     protected Dialog thanksDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.thank_dialog_title))
-                .setMessage((getString(R.string.thank_dialog_message) + " " +
-                        getString(R.string.thank_dialog_greeting)))
-                .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+                .setMessage(R.string.thank_you_for_buying_pro)
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         new SharedPrefs(ScreenManager.this)
@@ -825,7 +824,7 @@ public class ScreenManager extends AppCompatActivity
     private void saveNote() {
         final String note = quickNote.getText().toString();
         if (note.matches("")) {
-            quickNote.setError(getString(R.string.empty_field_error));
+            quickNote.setError(getString(R.string.must_be_not_empty));
             return;
         }
         Calendar calendar1 = Calendar.getInstance();
@@ -975,7 +974,7 @@ public class ScreenManager extends AppCompatActivity
             return;
         }
         this.doubleBackToExitPressedOnce = true;
-        Messages.toast(ScreenManager.this, getString(R.string.press_again));
+        Messages.toast(ScreenManager.this, getString(R.string.press_again_to_exit));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -993,8 +992,7 @@ public class ScreenManager extends AppCompatActivity
             protected void onPreExecute() {
                 progressDlg = new ProgressDialog(ScreenManager.this, ProgressDialog.STYLE_SPINNER);
                 progressDlg.setMax(100);
-                progressDlg.setTitle(getString(R.string.connecting_dialog_title));
-                progressDlg.setMessage(getString(R.string.application_verifying_text));
+                progressDlg.setMessage(getString(R.string.trying_to_log_in));
                 progressDlg.setCancelable(false);
                 progressDlg.setIndeterminate(false);
                 progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {

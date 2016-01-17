@@ -144,7 +144,7 @@ public class ActionView extends LinearLayout {
     }
 
     public void showError(){
-        numberView.setError(activity.getString(R.string.empty_field_error));
+        numberView.setError(" ");
     }
 
     public int getType(){

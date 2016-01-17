@@ -38,7 +38,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.interface_block);
+            ab.setTitle(R.string.general);
         }
 
         getActivity().getIntent().setAction("General attached");

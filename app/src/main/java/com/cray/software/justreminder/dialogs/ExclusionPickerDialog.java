@@ -53,14 +53,14 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         fromHour = calendar.get(Calendar.HOUR_OF_DAY);
         fromMinute = calendar.get(Calendar.MINUTE);
 
-        from.setText(getString(R.string.from_) + " " + TimeUtil.getTime(calendar.getTime(), true));
+        from.setText(getString(R.string.from) + " " + TimeUtil.getTime(calendar.getTime(), true));
 
         calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_HOUR * 3);
 
         toHour = calendar.get(Calendar.HOUR_OF_DAY);
         toMinute = calendar.get(Calendar.MINUTE);
 
-        to.setText(getString(R.string.to_) + " "  + TimeUtil.getTime(calendar.getTime(), true));
+        to.setText(getString(R.string.to) + " "  + TimeUtil.getTime(calendar.getTime(), true));
         from.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +192,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                from.setText(getString(R.string.from_) + " " + TimeUtil.getTime(calendar.getTime(), true));
+                from.setText(getString(R.string.from) + " " + TimeUtil.getTime(calendar.getTime(), true));
             }
         }, fromHour, fromMinute, true);
     }
@@ -207,7 +207,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
-                to.setText(getString(R.string.to_) + " "  + TimeUtil.getTime(calendar.getTime(), true));
+                to.setText(getString(R.string.to) + " "  + TimeUtil.getTime(calendar.getTime(), true));
             }
         }, toHour, toMinute, true);
     }

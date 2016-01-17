@@ -42,16 +42,16 @@ public class CalendarStyle extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.theme_title));
+        toolbar.setTitle(getString(R.string.theme));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         Intent intent = getIntent();
         i = intent.getIntExtra("type", 1);
 
-        if (i == 2) toolbar.setTitle(getString(R.string.birthdays_color_title));
-        else if (i == 3) toolbar.setTitle(getString(R.string.reminders_color_title));
-        else toolbar.setTitle(getString(R.string.current_color_title));
+        if (i == 2) toolbar.setTitle(getString(R.string.birthdays_color));
+        else if (i == 3) toolbar.setTitle(getString(R.string.reminders_color));
+        else toolbar.setTitle(getString(R.string.today_color));
 
         red = (ImageButton) findViewById(R.id.red_checkbox);
         purple = (ImageButton) findViewById(R.id.violet_checkbox);

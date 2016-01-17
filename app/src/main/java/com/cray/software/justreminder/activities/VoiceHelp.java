@@ -26,7 +26,7 @@ public class VoiceHelp extends Activity {
         super.onCreate(savedInstanceState);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(getString(R.string.voice_help_title));
+        alert.setTitle(getString(R.string.help));
 
         WebView wv = new WebView(this);
         String localeCheck = Locale.getDefault().toString().toLowerCase();
@@ -50,7 +50,7 @@ public class VoiceHelp extends Activity {
 
         alert.setView(wv);
         alert.setCancelable(false);
-        alert.setNegativeButton(getString(R.string.button_close), 
+        alert.setNegativeButton(getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, final int id) {

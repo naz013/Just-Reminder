@@ -61,7 +61,7 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/make_call"
+                    android:text="@string/skype_call"
                     android:textSize="@dimen/create_text_size_normal"
                     android:id="@+id/skypeCall" />
 
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/create_text_size_normal"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/message"
+                    android:text="@string/skype_chat"
                     android:id="@+id/skypeChat" />
             </RadioGroup>
 

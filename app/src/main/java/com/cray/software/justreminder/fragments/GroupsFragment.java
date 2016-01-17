@@ -128,7 +128,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             if (s != null) s.close();
             db.close();
             if (mCallbacks != null) {
-                mCallbacks.showSnackbar(R.string.group_deleted);
+                mCallbacks.showSnackbar(R.string.deleted);
             }
             loadCategories();
         }
@@ -166,21 +166,21 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     }
 
     private void changeColor(final long id) {
-        CharSequence[] items = {getString(R.string.led_color_red), getString(R.string.color_purple),
-                getString(R.string.led_color_green), getString(R.string.led_color_green_light),
-                getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
-                getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                getString(R.string.color_cyan), getString(R.string.led_color_pink),
-                getString(R.string.color_dark_green), getString(R.string.color_amber)};
+        CharSequence[] items = {getString(R.string.red), getString(R.string.purple),
+                getString(R.string.green), getString(R.string.green_light),
+                getString(R.string.blue), getString(R.string.blue_light),
+                getString(R.string.yellow), getString(R.string.orange),
+                getString(R.string.cyan), getString(R.string.pink),
+                getString(R.string.teal), getString(R.string.amber)};
         if (Module.isPro()){
-            items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
-                    getString(R.string.led_color_green), getString(R.string.led_color_green_light),
-                    getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
-                    getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                    getString(R.string.color_cyan), getString(R.string.led_color_pink),
-                    getString(R.string.color_dark_green), getString(R.string.color_amber),
-                    getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
-                    getString(R.string.color_lime), getString(R.string.color_indigo)};
+            items = new CharSequence[]{getString(R.string.red), getString(R.string.purple),
+                    getString(R.string.green), getString(R.string.green_light),
+                    getString(R.string.blue), getString(R.string.blue_light),
+                    getString(R.string.yellow), getString(R.string.orange),
+                    getString(R.string.cyan), getString(R.string.pink),
+                    getString(R.string.teal), getString(R.string.amber),
+                    getString(R.string.dark_purple), getString(R.string.dark_orange),
+                    getString(R.string.lime), getString(R.string.indigo)};
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {

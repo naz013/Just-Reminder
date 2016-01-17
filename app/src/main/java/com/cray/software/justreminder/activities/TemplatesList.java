@@ -54,7 +54,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.settings_sms_templates_title));
+        toolbar.setTitle(getString(R.string.messages));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -62,7 +62,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) findViewById(R.id.emptyText);
-        emptyText.setText(getString(R.string.message_list_empty_text));
+        emptyText.setText(R.string.no_messages);
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
         if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -120,7 +120,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
-        Messages.toast(this, getString(R.string.string_template_deleted));
+        Messages.toast(this, getString(R.string.deleted));
         loadTemplates();
     }
 

@@ -31,11 +31,11 @@ public class VoiceWidgetDialog extends Activity {
         if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_say_something));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.say_something));
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
         } catch (ActivityNotFoundException e){
-            Messages.toast(getApplicationContext(), getString(R.string.recognizer_not_found_error_message));
+            Messages.toast(getApplicationContext(), getString(R.string.no_recognizer_found));
             finish();
         }
     }

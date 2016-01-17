@@ -17,7 +17,7 @@ public class ChangeDialog extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(getString(R.string.changes_settings_title));
+        alert.setTitle(getString(R.string.changes));
 
         WebView wv = new WebView(this);
         String url = "file:///android_asset/files/change_log.html";
@@ -32,7 +32,7 @@ public class ChangeDialog extends Activity {
 
         alert.setView(wv);
         alert.setCancelable(false);
-        alert.setNegativeButton(getString(R.string.button_close), new DialogInterface.OnClickListener() {
+        alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();

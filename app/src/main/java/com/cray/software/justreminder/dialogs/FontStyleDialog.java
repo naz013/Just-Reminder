@@ -53,7 +53,7 @@ public class FontStyleDialog extends Activity{
         musicList.setAdapter(adapter);
 
         TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
-        dialogTitle.setText(getString(R.string.font_style_dialog_title));
+        dialogTitle.setText(getString(R.string.font_style));
 
         TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +66,7 @@ public class FontStyleDialog extends Activity{
                     setResult(RESULT_OK, intent);
                     finish();
                 } else {
-                    Messages.toast(FontStyleDialog.this, getString(R.string.select_item_warming));
+                    Messages.toast(FontStyleDialog.this, getString(R.string.select_one_of_item));
                 }
             }
         });

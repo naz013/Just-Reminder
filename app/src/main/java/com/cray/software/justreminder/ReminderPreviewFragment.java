@@ -184,10 +184,10 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         if (item != null) {
             if (item.getCompleted() == 1) {
                 statusSwitch.setChecked(false);
-                statusText.setText(getString(R.string.simple_disabled));
+                statusText.setText(R.string.disabled);
             } else {
                 statusSwitch.setChecked(true);
-                statusText.setText(getString(R.string.simple_enabled));
+                statusText.setText(R.string.enabled4);
             }
             task.setText(item.getTitle());
             type.setText(ReminderUtils.getTypeString(this, item.getType()));
@@ -322,7 +322,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         int ids = item.getItemId();
 
         if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ReminderPreviewFragment.this, null);
+            Reminder.moveToTrash(id, ReminderPreviewFragment.this);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else {
@@ -392,7 +392,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         } while (hour != -1);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.string_select_time));
+        builder.setTitle(R.string.choose_time);
         builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 Reminder.copy(id, list.get(item), ReminderPreviewFragment.this, null);

@@ -39,7 +39,7 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.fragment_notes);
+            ab.setTitle(R.string.notes);
         }
 
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
@@ -155,10 +155,10 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
                 deleteChange();
                 break;
             case R.id.noteReminderTime:
-                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.QUICK_NOTE_REMINDER_TIME, getString(R.string.note_reminder_time_dialog), this);
+                Dialogues.dialogWithSeek(getActivity(), 120, Prefs.QUICK_NOTE_REMINDER_TIME, getString(R.string.time), this);
                 break;
             case R.id.textSize:
-                Dialogues.dialogWithSeek(getActivity(), 18, Prefs.TEXT_SIZE, getString(R.string.text_size_dialog_title), this);
+                Dialogues.dialogWithSeek(getActivity(), 18, Prefs.TEXT_SIZE, getString(R.string.text_size), this);
                 break;
         }
     }
@@ -179,8 +179,8 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
             this.encrypt = encrypt;
             pd = new ProgressDialog(context);
             pd.setCancelable(false);
-            if (encrypt) pd.setMessage(tContext.getString(R.string.encrypting_notes));
-            else pd.setMessage(tContext.getString(R.string.decrypting_notes_title));
+            if (encrypt) pd.setMessage(context.getString(R.string.encrypting));
+            else pd.setMessage(context.getString(R.string.decrypting));
         }
 
         @Override

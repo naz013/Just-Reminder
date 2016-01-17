@@ -193,7 +193,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int ids = item.getItemId();
         if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ShoppingListPreview.this, null);
+            Reminder.moveToTrash(id, ShoppingListPreview.this);
             ViewUtils.zoomOut(mFab, 350);
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override

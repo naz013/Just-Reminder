@@ -95,7 +95,7 @@ public class BirthdaysVoiceList extends Activity{
 
             userText.setText(names.get(position));
             dateText.setText(dates.get(position));
-            yearsText.setText(years.get(position) + " " + getString(R.string.years_string));
+            yearsText.setText(String.format(getString(R.string.x_years), years.get(position)));
 
             return convertView;
         }

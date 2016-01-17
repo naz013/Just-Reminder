@@ -37,7 +37,7 @@ public class TargetRadius extends Activity {
         i = intent.getIntExtra("item", 0);
         radiusValue = (TextView) findViewById(R.id.radiusValue);
         progressInt = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-        radiusValue.setText(progressInt + getString(R.string.meter));
+        radiusValue.setText(String.format(getString(R.string.radius_x_meters), progressInt));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setProgress(progressInt);
@@ -45,7 +45,7 @@ public class TargetRadius extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 progressInt = i;
-                radiusValue.setText(progressInt + getString(R.string.meter));
+                radiusValue.setText(String.format(getString(R.string.radius_x_meters), progressInt));
             }
 
             @Override

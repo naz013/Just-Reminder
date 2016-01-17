@@ -2,10 +2,7 @@ package com.cray.software.justreminder.activities;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -24,14 +21,12 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 public class QuickSMS extends Activity {
 
-    private TextView buttonSend;
     private ListView messagesList;
     private String number;
     private ColorSetter cs = new ColorSetter(QuickSMS.this);
@@ -62,7 +57,7 @@ public class QuickSMS extends Activity {
 
         messagesList = (ListView) findViewById(R.id.messagesList);
 
-        buttonSend = (TextView) findViewById(R.id.buttonSend);
+        TextView buttonSend = (TextView) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,49 +113,6 @@ public class QuickSMS extends Activity {
 
         PendingIntent deliveredPI = PendingIntent.getBroadcast(QuickSMS.this,
                 0, new Intent(DELIVERED), 0);
-
-        BroadcastReceiver sentReceiver;
-        registerReceiver(sentReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK:
-                        removeFlags();
-                        finish();
-                        break;
-                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                        buttonSend.setText(getString(R.string.dialog_button_retry));
-                        break;
-                    case SmsManager.RESULT_ERROR_NO_SERVICE:
-                        buttonSend.setText(getString(R.string.dialog_button_retry));
-                        break;
-                    case SmsManager.RESULT_ERROR_NULL_PDU:
-                        buttonSend.setText(getString(R.string.dialog_button_retry));
-                        break;
-                    case SmsManager.RESULT_ERROR_RADIO_OFF:
-                        buttonSend.setText(getString(R.string.dialog_button_retry));
-                        break;
-
-                }
-            }
-        }, new IntentFilter(SENT));
-
-        // ---when the SMS has been delivered---
-        BroadcastReceiver deliveredReceiver;
-        registerReceiver( deliveredReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context arg0, Intent arg1) {
-                switch (getResultCode()) {
-                    case Activity.RESULT_OK:
-                        Messages.toast(QuickSMS.this, "SMS delivered");
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Messages.toast(QuickSMS.this, "SMS not delivered");
-                        break;
-                }
-            }
-        }, new IntentFilter(DELIVERED));
 
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(number, null, message, sentPI, deliveredPI);

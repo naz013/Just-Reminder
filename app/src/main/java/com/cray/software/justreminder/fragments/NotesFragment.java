@@ -79,14 +79,14 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         MenuItem item = menu.findItem(R.id.action_list);
         if (item != null){
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
-            item.setTitle(!enableGrid ? getActivity().getString(R.string.show_grid) : getActivity().getString(R.string.show_list));
+            item.setTitle(!enableGrid ? getActivity().getString(R.string.grid_view) : getActivity().getString(R.string.list_view));
         }
         NotesBase db = new NotesBase(getActivity());
         if (!db.isOpen()) {
             db.open();
         }
         if (db.getCount() != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all_notes));
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all));
         }
         db.close();
         super.onCreateOptionsMenu(menu, inflater);
@@ -129,7 +129,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getActivity().getString(R.string.no_notes_text));
+        emptyText.setText(getActivity().getString(R.string.no_notes));
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
@@ -178,12 +178,12 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void showDialog(){
-        final CharSequence[] items = {getString(R.string.sort_item_by_date_a_z),
-                getString(R.string.sort_item_by_date_z_a),
-                getString(R.string.sort_name_a_z),
-                getString(R.string.sort_name_z_a)};
+        final CharSequence[] items = {getActivity().getString(R.string.by_date_az),
+                getActivity().getString(R.string.by_date_za),
+                getActivity().getString(R.string.name_az),
+                getActivity().getString(R.string.name_za)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.menu_order_by));
+        builder.setTitle(getString(R.string.order));
         builder.setItems(items, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 SharedPrefs prefs = new SharedPrefs(getActivity());
@@ -236,15 +236,14 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(true);
-        builder.setTitle(getString(R.string.delete_all_notes));
-        builder.setMessage(getString(R.string.delete_all_dialog_message));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.delete_all_notes);
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -310,7 +309,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
-        final CharSequence[] items = {getString(R.string.open), getString(R.string.share_note_title),
+        final CharSequence[] items = {getString(R.string.open), getString(R.string.share),
                 getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -323,12 +322,12 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                         break;
                     case 1:
                         if (NoteModel.shareNote(id, getActivity())){
-                            Messages.toast(getActivity(), R.string.message_note_shared);
+                            Messages.toast(getActivity(), getActivity().getString(R.string.sent));
                         } else {
                             if (mCallbacks != null) {
-                                mCallbacks.showSnackbar(R.string.error_sharing_note);
+                                mCallbacks.showSnackbar(R.string.error_sending);
                             } else {
-                                Messages.toast(getActivity(), R.string.error_sharing_note);
+                                Messages.toast(getActivity(), R.string.error_sending);
                             }
                         }
                         break;
@@ -351,21 +350,21 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void selectColor(final long id) {
-        CharSequence[] items = {getString(R.string.led_color_red), getString(R.string.color_purple),
-                getString(R.string.led_color_green), getString(R.string.led_color_green_light),
-                getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
-                getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                getString(R.string.color_cyan), getString(R.string.led_color_pink),
-                getString(R.string.color_dark_green), getString(R.string.color_amber)};
+        CharSequence[] items = {getString(R.string.red), getString(R.string.purple),
+                getString(R.string.green), getString(R.string.green_light),
+                getString(R.string.blue), getString(R.string.blue_light),
+                getString(R.string.yellow), getString(R.string.orange),
+                getString(R.string.cyan), getString(R.string.pink),
+                getString(R.string.teal), getString(R.string.amber)};
         if (Module.isPro()){
-            items = new CharSequence[]{getString(R.string.led_color_red), getString(R.string.color_purple),
-                    getString(R.string.led_color_green), getString(R.string.led_color_green_light),
-                    getString(R.string.led_color_blue), getString(R.string.led_color_blue_light),
-                    getString(R.string.led_color_yellow), getString(R.string.led_color_orange),
-                    getString(R.string.color_cyan), getString(R.string.led_color_pink),
-                    getString(R.string.color_dark_green), getString(R.string.color_amber),
-                    getString(R.string.color_deep_purple), getString(R.string.color_deep_orange),
-                    getString(R.string.color_lime), getString(R.string.color_indigo)};
+            items = new CharSequence[]{getString(R.string.red), getString(R.string.purple),
+                    getString(R.string.green), getString(R.string.green_light),
+                    getString(R.string.blue), getString(R.string.blue_light),
+                    getString(R.string.yellow), getString(R.string.orange),
+                    getString(R.string.cyan), getString(R.string.pink),
+                    getString(R.string.teal), getString(R.string.amber),
+                    getString(R.string.dark_purple), getString(R.string.dark_orange),
+                    getString(R.string.lime), getString(R.string.indigo)};
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(items, new DialogInterface.OnClickListener() {

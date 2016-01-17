@@ -20,8 +20,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
@@ -49,7 +49,7 @@ public class ContactsList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        toolbar.setTitle(getString(R.string.contact_dialog_title));
+        toolbar.setTitle(getString(R.string.contacts));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -107,7 +107,6 @@ public class ContactsList extends AppCompatActivity {
                             }
                             // build and show a simple dialog that allows the user to select a number
                             AlertDialog.Builder builder = new AlertDialog.Builder(ContactsList.this);
-                            builder.setTitle(getString(R.string.select_phone_number_title));
                             builder.setItems(numbers, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int item) {

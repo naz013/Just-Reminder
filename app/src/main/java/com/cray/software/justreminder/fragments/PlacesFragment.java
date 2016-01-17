@@ -60,7 +60,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getActivity().getString(R.string.empty_places_list_text));
+        emptyText.setText(getActivity().getString(R.string.no_places));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
@@ -134,7 +134,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
             db.deletePlace(id);
             db.close();
             if (mCallbacks != null) {
-                mCallbacks.showSnackbar(R.string.delete_place_toast);
+                mCallbacks.showSnackbar(R.string.deleted);
             }
             loadPlaces();
         }

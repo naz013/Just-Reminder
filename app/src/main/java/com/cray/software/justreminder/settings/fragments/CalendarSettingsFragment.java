@@ -39,7 +39,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){
-            ab.setTitle(R.string.calendar_fragment);
+            ab.setTitle(R.string.calendar);
         }
 
         sPrefs = new SharedPrefs(getActivity());

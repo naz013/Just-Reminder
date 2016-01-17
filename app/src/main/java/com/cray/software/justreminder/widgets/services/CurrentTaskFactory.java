@@ -138,7 +138,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                         String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                         long i = 0;
-                        data.add(new CalendarModel(mContext.getString(R.string.birthday_text), name, i, birthday, "", 0, 1));
+                        data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", 0, 1));
                     } while (cursor.moveToNext());
                 }
                 if (cursor != null) {

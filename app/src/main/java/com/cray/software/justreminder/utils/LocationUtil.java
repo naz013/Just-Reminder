@@ -52,7 +52,7 @@ public class LocationUtil {
      * @param context application context.
      */
     public static void showLocationAlert(final Context context, ActionCallbacks callbacks){
-        callbacks.showSnackbar(R.string.gps_text, R.string.action_settings, new View.OnClickListener() {
+        callbacks.showSnackbar(R.string.gps_not_enabled, R.string.action_settings, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);

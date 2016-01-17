@@ -165,7 +165,7 @@ public class TaskListManager extends AppCompatActivity {
         sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
         String listName = editField.getText().toString();
         if (listName.matches("")) {
-            editField.setError(getString(R.string.empty_field_error));
+            editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
         TasksData data = new TasksData(TaskListManager.this);
@@ -225,15 +225,14 @@ public class TaskListManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
-        builder.setTitle(getString(R.string.string_delete_task_list));
-        builder.setMessage(getString(R.string.delete_task_list_question));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.delete_this_list);
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteList();
@@ -279,7 +278,7 @@ public class TaskListManager extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
         if (id != 0 && sysDef != 1) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.string_delete_task_list));
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, R.string.delete_list);
         }
         return true;
     }
