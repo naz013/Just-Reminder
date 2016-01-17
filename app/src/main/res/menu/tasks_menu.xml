@@ -5,15 +5,15 @@
     <item android:id="@+id/action_add_list"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="never"
-        android:title="@string/string_add_task_list"/>
+        android:title="@string/add_list"/>
 
     <item android:id="@+id/action_sync"
         android:icon="@drawable/ic_cached_white_24dp"
         app:showAsAction="never"
-        android:title="@string/sync_title"/>
+        android:title="@string/sync"/>
 
     <item android:id="@+id/action_order"
-        android:title="@string/menu_order_by"
+        android:title="@string/order"
         android:icon="@drawable/ic_sort_white_24dp"
         app:showAsAction="never" />
 

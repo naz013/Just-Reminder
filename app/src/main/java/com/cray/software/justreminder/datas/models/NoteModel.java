@@ -144,7 +144,7 @@ public class NoteModel {
         new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
-        if (callbacks != null) callbacks.showSnackbar(R.string.note_deleted);
+        if (callbacks != null) callbacks.showSnackbar(context.getString(R.string.note_deleted));
         else Messages.toast(context, R.string.note_deleted);
     }
 

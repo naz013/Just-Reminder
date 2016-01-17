@@ -106,7 +106,7 @@ public class LogInActivity extends Activity {
         checkBox.setChecked(true);
         skipButton = (TextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
-        skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.string_local_sync), ")"));
+        skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.local_sync), ")"));
         progressMesage = (TextView) findViewById(R.id.progressMesage);
         progress = (CircularProgress) findViewById(R.id.progress);
         progress.setVisibility(View.INVISIBLE);
@@ -251,9 +251,8 @@ public class LogInActivity extends Activity {
 
     protected Dialog checkDialog() {
         return new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.other_version_dialog_title))
-                .setMessage(getString(R.string.other_version_dialog_text))
-                .setPositiveButton(getString(R.string.dialog_button_open), new DialogInterface.OnClickListener() {
+                .setTitle(R.string.other_version_detected)
+                .setPositiveButton(R.string.open, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i;
                         PackageManager manager = getPackageManager();
@@ -266,7 +265,7 @@ public class LogInActivity extends Activity {
                         startActivity(i);
                     }
                 })
-                .setNegativeButton(getString(R.string.dialog_button_delete), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         if (Module.isPro()) {
@@ -277,7 +276,7 @@ public class LogInActivity extends Activity {
                         startActivity(intent);
                     }
                 })
-                .setNeutralButton(getString(R.string.button_close), new DialogInterface.OnClickListener() {
+                .setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
@@ -292,7 +291,7 @@ public class LogInActivity extends Activity {
             @Override
             protected void onPreExecute() {
                 progress.setVisibility(View.VISIBLE);
-                progressMesage.setText(getString(R.string.string_try_to_log_in));
+                progressMesage.setText(R.string.trying_to_log_in);
             }
 
             @Override
@@ -335,7 +334,6 @@ public class LogInActivity extends Activity {
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
             sPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
-            progressMesage.setText(getString(R.string.string_successfully_logged));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
@@ -361,7 +359,6 @@ public class LogInActivity extends Activity {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
-            progressMesage.setText(getString(R.string.string_successfully_logged));
         }
     }
 
@@ -403,7 +400,7 @@ public class LogInActivity extends Activity {
             DB.open();
             IOHelper ioHelper = new IOHelper(mContext);
 
-            publishProgress(getString(R.string.string_getting_groups));
+            publishProgress(getString(R.string.syncing_groups));
             ioHelper.restoreGroup(false);
 
             Cursor cat = DB.queryCategories();
@@ -431,16 +428,16 @@ public class LogInActivity extends Activity {
             DB.close();
 
             //import reminders
-            publishProgress(getString(R.string.string_getting_reminders));
+            publishProgress(getString(R.string.syncing_reminders));
             ioHelper.restoreReminder(false);
 
             //import notes
-            publishProgress(getString(R.string.string_getting_notes));
+            publishProgress(getString(R.string.syncing_notes));
             ioHelper.restoreNote(false);
 
             //import birthdays
             if (isChecked) {
-                publishProgress(getString(R.string.string_getting_birthdays));
+                publishProgress(getString(R.string.syncing_birthdays));
                 ioHelper.restoreBirthday(false);
             }
             return null;
@@ -470,7 +467,7 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
-            mText.setText(getString(R.string.simple_done));
+            mText.setText(R.string.done);
             startActivity(new Intent(LogInActivity.this, ScreenManager.class));
             finish();
         }
@@ -514,7 +511,7 @@ public class LogInActivity extends Activity {
 
             IOHelper ioHelper = new IOHelper(mContext);
 
-            publishProgress(getString(R.string.string_getting_groups));
+            publishProgress(getString(R.string.syncing_groups));
             ioHelper.restoreGroup(true);
 
             Cursor cat = DB.queryCategories();
@@ -542,16 +539,16 @@ public class LogInActivity extends Activity {
             DB.close();
 
             //import reminders
-            publishProgress(getString(R.string.string_getting_reminders));
+            publishProgress(getString(R.string.syncing_reminders));
             ioHelper.restoreReminder(true);
 
             //import notes
-            publishProgress(getString(R.string.string_getting_notes));
+            publishProgress(getString(R.string.syncing_notes));
             ioHelper.restoreNote(true);
 
             //import birthdays
             if (isChecked) {
-                publishProgress(getString(R.string.string_getting_birthdays));
+                publishProgress(getString(R.string.syncing_birthdays));
                 ioHelper.restoreBirthday(true);
             }
 
@@ -567,7 +564,7 @@ public class LogInActivity extends Activity {
             TasksData data = new TasksData(ctx);
             data.open();
             if (lists != null && lists.size() > 0) {
-                publishProgress(getString(R.string.string_getting_google_tasks));
+                publishProgress(getString(R.string.syncing_google_tasks));
                 for (TaskList item : lists.getItems()) {
                     DateTime dateTime = item.getUpdated();
                     String listId = item.getId();
@@ -690,7 +687,7 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
             }
             mProgress.setVisibility(View.INVISIBLE);
-            mText.setText(getString(R.string.simple_done));
+            mText.setText(getString(R.string.done));
             startActivity(new Intent(LogInActivity.this, ScreenManager.class));
             finish();
         }

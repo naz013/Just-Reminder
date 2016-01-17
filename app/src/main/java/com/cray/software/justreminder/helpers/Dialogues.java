@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.FileExplore;
-import com.cray.software.justreminder.async.LoadSounds;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -61,10 +60,10 @@ public class Dialogues {
     public static void imageDialog(final Activity context, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.background_image));
+        builder.setTitle(context.getString(R.string.background));
         String[] types = new String[]{context.getString(R.string.none),
                 context.getString(R.string.default_string),
-                context.getString(R.string.custom_image)};
+                context.getString(R.string.choose_file)};
 
         SharedPrefs prefs = new SharedPrefs(context);
 
@@ -99,13 +98,13 @@ public class Dialogues {
                             intent.addCategory(Intent.CATEGORY_OPENABLE);
                             intent.setType("image/*");
                         }
-                        Intent chooser = Intent.createChooser(intent, context.getString(R.string.choose_picture_title));
+                        Intent chooser = Intent.createChooser(intent, context.getString(R.string.image));
                         context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                     }
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -122,7 +121,7 @@ public class Dialogues {
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         intent.setType("image/*");
                     }
-                    Intent chooser = Intent.createChooser(intent, context.getString(R.string.choose_picture_title));
+                    Intent chooser = Intent.createChooser(intent, context.getString(R.string.image));
                     context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                 }
             }
@@ -146,7 +145,7 @@ public class Dialogues {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.string_select_category));
+        builder.setTitle(R.string.choose_group);
         builder.setSingleChoiceItems(new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
             @Override
@@ -206,7 +205,7 @@ public class Dialogues {
             }
         });
         builder.setView(layout);
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -225,10 +224,10 @@ public class Dialogues {
     public static void orientationDialog(final Context context, DialogInterface.OnDismissListener listener){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.screen_orientation_title));
-        String[] types = new String[]{context.getString(R.string.screen_auto),
-                context.getString(R.string.screen_portrait),
-                context.getString(R.string.screen_landscape)};
+        builder.setTitle(context.getString(R.string.screen_orientation));
+        String[] types = new String[]{context.getString(R.string.auto),
+                context.getString(R.string.portrait),
+                context.getString(R.string.landscape)};
 
         SharedPrefs prefs = new SharedPrefs(context);
 
@@ -259,7 +258,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -280,10 +279,9 @@ public class Dialogues {
                                   final DialogInterface.OnDismissListener listener, final int requestCode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.sound_type_dialog_title));
-        String[] types = new String[]{context.getString(R.string.sound_default),
-                context.getString(R.string.sound_custom),
-                context.getString(R.string.select_file)};
+        builder.setTitle(context.getString(R.string.melody));
+        String[] types = new String[]{context.getString(R.string.default_string),
+                context.getString(R.string.choose_file)};
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
@@ -303,10 +301,6 @@ public class Dialogues {
                     SharedPrefs prefs = new SharedPrefs(context);
                     if (which == 0) {
                         prefs.saveBoolean(prefsToSave, false);
-                    } else if (which == 1) {
-                        prefs.saveBoolean(prefsToSave, true);
-                        dialog.dismiss();
-                        new LoadSounds(context, prefsToSave, listener).execute();
                     } else {
                         prefs.saveBoolean(prefsToSave, true);
                         dialog.dismiss();
@@ -315,58 +309,9 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SharedPrefs prefs = new SharedPrefs(context);
-                if (!prefs.loadBoolean(prefsToSave)) {
-                    dialog.dismiss();
-                } else {
-                    dialog.dismiss();
-                    new LoadSounds(context, prefsToSave, listener).execute();
-                }
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    /**
-     * AlertDialog for selecting melody for event.
-     * @param context application context.
-     * @param prefsToSave Preference key to save result.
-     * @param names list of melody file names.
-     * @param folders list of path for each file name.
-     * @param listener action listener for dialog.
-     */
-    public static void customMelody(final Context context, final String prefsToSave, ArrayList<String> names,
-                                    final ArrayList<String> folders, DialogInterface.OnDismissListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(false);
-        builder.setTitle(context.getString(R.string.sounds_dialog_title));
-        final String newPrefs;
-        if (prefsToSave.matches(Prefs.CUSTOM_SOUND)) newPrefs = Prefs.CUSTOM_SOUND_FILE;
-        else newPrefs = Prefs.BIRTHDAY_CUSTOM_SOUND_FILE;
-
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                android.R.layout.simple_list_item_single_choice, names);
-
-        final Sound sound = new Sound(context);
-
-        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    sound.play(folders.get(which));
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.savePrefs(newPrefs, folders.get(which));
-                }
-            }
-        });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                sound.stop();
                 dialog.dismiss();
             }
         });
@@ -383,7 +328,7 @@ public class Dialogues {
     public static void selectCalendar(final Context context, final ArrayList<CalendarManager.CalendarItem> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
-        builder.setTitle(context.getString(R.string.select_calendar_settings_title));
+        builder.setTitle(context.getString(R.string.choose_calendar));
 
         ArrayList<String> spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
@@ -408,7 +353,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -425,7 +370,7 @@ public class Dialogues {
     public static void language(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
-        builder.setTitle(context.getString(R.string.select_language_title));
+        builder.setTitle(context.getString(R.string.language));
         final ArrayList<String> locales = new ArrayList<>();
         locales.clear();
 
@@ -437,23 +382,23 @@ public class Dialogues {
             uk = 0;
             ru = 2;
             en = 1;
-            locales.add(context.getString(R.string.language_ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
-            locales.add(context.getString(R.string.language_english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.language_russian) + " (" + Constants.LANGUAGE_RU + ")");
+            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
+            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
+            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
         } else if (localeCheck.startsWith("ru")) {
             uk = 2;
             ru = 0;
             en = 1;
-            locales.add(context.getString(R.string.language_russian) + " (" + Constants.LANGUAGE_RU + ")");
-            locales.add(context.getString(R.string.language_english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.language_ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
+            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
+            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
+            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
         } else {
             uk = 1;
             ru = 2;
             en = 0;
-            locales.add(context.getString(R.string.language_english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.language_ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
-            locales.add(context.getString(R.string.language_russian) + " (" + Constants.LANGUAGE_RU + ")");
+            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
+            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
+            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
         }
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
@@ -500,7 +445,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -518,86 +463,29 @@ public class Dialogues {
     public static void ledColor(final Context context, final String prefsToSave) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
-        builder.setTitle(context.getString(R.string.select_led_color_title));
-        String[] colors = new String[]{context.getString(R.string.led_color_white),
-                context.getString(R.string.led_color_red),
-                context.getString(R.string.led_color_green),
-                context.getString(R.string.led_color_blue),
-                context.getString(R.string.led_color_orange),
-                context.getString(R.string.led_color_yellow),
-                context.getString(R.string.led_color_pink),
-                context.getString(R.string.led_color_green_light),
-                context.getString(R.string.led_color_blue_light)};
+        builder.setTitle(context.getString(R.string.led_color));
+
+        String[] colors = new String[LED.NUM_OF_LEDS];
+        for (int i = 0; i < LED.NUM_OF_LEDS; i++) {
+            colors[i] = LED.getTitle(context, i);
+        }
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, colors);
 
         SharedPrefs prefs = new SharedPrefs(context);
-        int position;
-        int color = prefs.loadInt(prefsToSave);
-        switch (color){
-            case LED.WHITE:
-                position = 0;
-                break;
-            case LED.RED:
-                position = 1;
-                break;
-            case LED.GREEN:
-                position = 2;
-                break;
-            case LED.BLUE:
-                position = 3;
-                break;
-            case LED.ORANGE:
-                position = 4;
-                break;
-            case LED.YELLOW:
-                position = 5;
-                break;
-            case LED.PINK:
-                position = 6;
-                break;
-            case LED.GREEN_LIGHT:
-                position = 7;
-                break;
-            case LED.BLUE_LIGHT:
-                position = 8;
-                break;
-            default:
-                position = 0;
-                break;
-        }
+        int position = prefs.loadInt(prefsToSave);
 
         builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
-                    if (which == 0) {
-                        prefs.saveInt(prefsToSave, LED.WHITE);
-                    } else if (which == 1) {
-                        prefs.saveInt(prefsToSave, LED.RED);
-                    } else if (which == 2) {
-                        prefs.saveInt(prefsToSave, LED.GREEN);
-                    } else if (which == 3) {
-                        prefs.saveInt(prefsToSave, LED.BLUE);
-                    } else if (which == 4) {
-                        prefs.saveInt(prefsToSave, LED.ORANGE);
-                    } else if (which == 5) {
-                        prefs.saveInt(prefsToSave, LED.YELLOW);
-                    } else if (which == 6) {
-                        prefs.saveInt(prefsToSave, LED.PINK);
-                    } else if (which == 7) {
-                        prefs.saveInt(prefsToSave, LED.GREEN_LIGHT);
-                    } else if (which == 8) {
-                        prefs.saveInt(prefsToSave, LED.BLUE_LIGHT);
-                    } else {
-                        prefs.saveInt(prefsToSave, LED.BLUE);
-                    }
+                    prefs.saveInt(prefsToSave, which);
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -615,17 +503,17 @@ public class Dialogues {
     public static void ttsLocale(final Context context, final String prefsToSave) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
-        builder.setTitle(context.getString(R.string.select_language_title));
+        builder.setTitle(context.getString(R.string.language));
         ArrayList<String> names = new ArrayList<>();
-        names.add(context.getString(R.string.locale_english));
-        names.add(context.getString(R.string.locale_french));
-        names.add(context.getString(R.string.locale_german));
-        names.add(context.getString(R.string.locale_italian));
-        names.add(context.getString(R.string.locale_japanese));
-        names.add(context.getString(R.string.locale_korean));
-        names.add(context.getString(R.string.locale_polish));
-        names.add(context.getString(R.string.locale_russian));
-        names.add(context.getString(R.string.locale_spanish));
+        names.add(context.getString(R.string.english));
+        names.add(context.getString(R.string.french));
+        names.add(context.getString(R.string.german));
+        names.add(context.getString(R.string.italian));
+        names.add(context.getString(R.string.japanese));
+        names.add(context.getString(R.string.korean));
+        names.add(context.getString(R.string.polish));
+        names.add(context.getString(R.string.russian));
+        names.add(context.getString(R.string.spanish));
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, names);
@@ -662,7 +550,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -679,7 +567,7 @@ public class Dialogues {
     public static void mapType(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.map_type_title));
+        builder.setTitle(context.getString(R.string.map_type));
 
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.map_types,
                 android.R.layout.simple_list_item_single_choice);
@@ -708,7 +596,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -725,9 +613,9 @@ public class Dialogues {
     public static void firstDay(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.first_day_dialog_title));
-        String[] items = {context.getString(R.string.start_day_sunday),
-                context.getString(R.string.start_day_monday)};
+        builder.setTitle(context.getString(R.string.first_day));
+        String[] items = {context.getString(R.string.sunday),
+                context.getString(R.string.monday)};
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, items);
@@ -745,7 +633,7 @@ public class Dialogues {
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -813,7 +701,7 @@ public class Dialogues {
                 else new EventsCheckAlarm().setAlarm(context);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -841,9 +729,8 @@ public class Dialogues {
     public static void cleanFolders(final Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
-        builder.setTitle(context.getString(R.string.settings_clean_title));
-        builder.setMessage(context.getString(R.string.clean_dialog_message));
-        builder.setNeutralButton(context.getString(R.string.clean_dialog_button_local), new DialogInterface.OnClickListener() {
+        builder.setTitle(context.getString(R.string.clean));
+        builder.setNeutralButton(R.string.local, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (SyncHelper.isSdPresent()) {
@@ -853,13 +740,13 @@ public class Dialogues {
                 }
             }
         });
-        builder.setNegativeButton(context.getString(R.string.button_close), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(context.getString(R.string.clean_dialog_button_full), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.all, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (SyncHelper.isSdPresent()) {

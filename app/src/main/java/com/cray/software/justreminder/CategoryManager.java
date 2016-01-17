@@ -122,7 +122,7 @@ public class CategoryManager extends AppCompatActivity {
     private void saveCategory(){
         String text = editField.getText().toString().trim();
         if (text.length() == 0) {
-            editField.setError(getString(R.string.empty_field_error));
+            editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
         DataBase db = new DataBase(CategoryManager.this);

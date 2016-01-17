@@ -5,13 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.cray.software.justreminder.app.MainActivity" >
     <item android:id="@+id/action_month"
-        android:title="@string/simple_month"
+        android:title="@string/month"
         app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/action_day"
         android:title="5"
         app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/action_voice"
-        android:title="@string/voice_block"
+        android:title="@string/voice_control"
         android:icon="@drawable/ic_mic_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>

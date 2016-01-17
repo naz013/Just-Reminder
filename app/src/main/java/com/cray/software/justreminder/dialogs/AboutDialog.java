@@ -39,7 +39,7 @@ public class AboutDialog extends Activity {
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             String version = pInfo.versionName;
-            appVersion.setText(getString(R.string.app_version_strings) + " " + version + " (" + Configs.CODENAME + ")");
+            appVersion.setText(version + " (" + Configs.CODENAME + ")");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

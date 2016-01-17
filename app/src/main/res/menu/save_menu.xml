@@ -5,6 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.cray.software.justreminder.app.MainActivity" >
     <item android:id="@+id/action_add"
-        android:title="@string/save_dialog_button"
+        android:title="@string/save"
         app:showAsAction="ifRoom|withText" />
 </menu>

@@ -458,7 +458,7 @@
         <receiver
             android:name=".widgets.AddReminderWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/add_reminder_widget_label">
+            android:label="@string/add_reminder">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -470,7 +470,7 @@
         <receiver
             android:name=".widgets.VoiceWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/voice_widget_title">
+            android:label="@string/voice_control">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -482,7 +482,7 @@
         <receiver
             android:name=".widgets.AddBirthdayWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/add_birthday_widget_label">
+            android:label="@string/add_birthday">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -494,7 +494,7 @@
         <receiver
             android:name=".widgets.QuickReminderWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/quick_reminder_label">
+            android:label="@string/add_reminder">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -564,7 +564,7 @@
         <receiver
             android:name=".widgets.CurrentTaskWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/current_widget_label">
+            android:label="@string/active_reminders">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="justreminder.LOCATION_CHANGED" />
@@ -582,7 +582,7 @@
         <receiver
             android:name=".widgets.CurrentNotesWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/notes_widget_title">
+            android:label="@string/notes">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -599,7 +599,7 @@
         <receiver
             android:name=".widgets.TasksWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/tasks_widget_title">
+            android:label="@string/google_tasks">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -625,7 +625,7 @@
         <receiver
             android:name=".widgets.CalendarWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/calendar_widget_name">
+            android:label="@string/calendar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

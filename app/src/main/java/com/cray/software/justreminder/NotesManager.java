@@ -387,7 +387,7 @@ public class NotesManager extends AppCompatActivity {
         SyncHelper sHelp = new SyncHelper(NotesManager.this);
         String note = taskField.getText().toString();
         if (note.matches("")) {
-            taskField.setError(getString(R.string.empty_field_error));
+            taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
 
@@ -411,7 +411,7 @@ public class NotesManager extends AppCompatActivity {
 
     private void sendMail(File file){
         if (!file.exists() || !file.canRead()) {
-            Messages.toast(this, getString(R.string.attach_error_message));
+            Messages.toast(this, getString(R.string.error_sending));
             finish();
             return;
         }
@@ -458,7 +458,7 @@ public class NotesManager extends AppCompatActivity {
     private void saveNote() {
         String note = taskField.getText().toString();
         if (note.matches("")) {
-            taskField.setError(getString(R.string.empty_field_error));
+            taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
 
@@ -528,15 +528,14 @@ public class NotesManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
-        builder.setTitle(getString(R.string.delete_note_dialog_title));
-        builder.setMessage(getString(R.string.delete_note_dialog_message));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.delete_this_note));
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -564,16 +563,16 @@ public class NotesManager extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.create_note, menu);
         if (id != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_menu_option));
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete));
         }
         return true;
     }
 
     private void getImage(){
         AlertDialog.Builder builder = new AlertDialog.Builder(NotesManager.this);
-        builder.setTitle(getString(R.string.image_dialog_title));
-        builder.setItems(new CharSequence[] {getString(R.string.image_dialog_gallery),
-                        getString(R.string.image_dialog_camera)},
+        builder.setTitle(getString(R.string.image));
+        builder.setItems(new CharSequence[] {getString(R.string.gallery),
+                        getString(R.string.take_a_shot)},
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -581,7 +580,7 @@ public class NotesManager extends AppCompatActivity {
                             case 0:
                                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                                 intent.setType("image/*");
-                                Intent chooser = Intent.createChooser(intent, getString(R.string.choose_picture_title));
+                                Intent chooser = Intent.createChooser(intent, getString(R.string.image));
                                 startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                                 break;
                             case 1:

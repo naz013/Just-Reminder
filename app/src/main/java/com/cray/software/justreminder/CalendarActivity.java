@@ -67,7 +67,7 @@ public class CalendarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         title = (TextView) findViewById(R.id.title);
-        title.setText(getString(R.string.calendar_fragment));
+        title.setText(getString(R.string.calendar));
 
         ImageButton voiceButton = (ImageButton) findViewById(R.id.voiceButton);
         voiceButton.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +224,7 @@ public class CalendarActivity extends AppCompatActivity {
         if (data.size() > 0) dateMills = data.get(0).getDate();
 
         currentEvent.setClickable(false);
-        title.setText(getString(R.string.birthdays_dialog_title));
+        title.setText(R.string.events);
     }
 
     @Override

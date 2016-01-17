@@ -5,7 +5,7 @@
     tools:context="com.cray.software.justreminder.app.MainActivity" >
 
     <item android:id="@+id/action_scan"
-        android:title="@string/string_scan_for_new_files"
+        android:title="@string/scan"
         android:icon="@drawable/ic_cached_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>

@@ -5,17 +5,17 @@
     tools:context="com.cray.software.justreminder.app.MainActivity" >
 
     <item android:id="@+id/action_list"
-        android:title="@string/show_grid"
+        android:title="@string/grid_view"
         android:icon="@drawable/ic_view_quilt_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_sync"
-        android:title="@string/sync_title"
+        android:title="@string/sync"
         android:icon="@drawable/ic_cached_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_order"
-        android:title="@string/menu_order_by"
+        android:title="@string/order"
         android:icon="@drawable/ic_sort_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>

@@ -174,6 +174,8 @@ public class Constants {
     
     public static final String NONE = "none";
     public static final String DEFAULT = "defaut";
+    public static final int REQUEST_CODE_VOLUME = 213;
+    public static final String SELECTED_VOLUME = "selected_volume";
 
     public class ContactConstants{
         public static final String COLUMN_ID = "_id";

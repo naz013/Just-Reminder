@@ -5,17 +5,17 @@
     tools:context=".ScreenManager">
 
     <item android:id="@+id/action_voice"
-        android:title="@string/voice_block"
+        android:title="@string/voice_control"
         android:icon="@drawable/ic_mic_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_refresh"
-        android:title="@string/sync_title"
+        android:title="@string/sync"
         android:icon="@drawable/ic_cached_white_24dp"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_filter"
-        android:title="@string/simple_filter"
+        android:title="@string/filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
         app:showAsAction="never" />
 

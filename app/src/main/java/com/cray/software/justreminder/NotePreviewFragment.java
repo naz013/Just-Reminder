@@ -387,7 +387,7 @@ public class NotePreviewFragment extends AppCompatActivity {
 
     private void shareNote(){
         if (!NoteModel.shareNote(mParam1, this)) {
-            Messages.toast(this, getString(R.string.attach_error_message));
+            Messages.toast(this, getString(R.string.error_sending));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else {
@@ -434,15 +434,14 @@ public class NotePreviewFragment extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
-        builder.setTitle(getString(R.string.delete_note_dialog_title));
-        builder.setMessage(getString(R.string.delete_note_dialog_message));
-        builder.setNegativeButton(getString(R.string.import_dialog_button_no), new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.delete_this_note);
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(getString(R.string.import_dialog_button_yes), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteNote();

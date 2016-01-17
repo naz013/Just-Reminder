@@ -85,7 +85,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.ActionCallbacks;
+import com.cray.software.justreminder.interfaces.ActionCallbacksExtended;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.json.JsonAction;
 import com.cray.software.justreminder.json.JsonExclusion;
@@ -131,7 +131,8 @@ import java.util.List;
 public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
         AdapterView.OnItemSelectedListener, View.OnTouchListener, CompoundButton.OnCheckedChangeListener,
         MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener,
-        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener, ActionCallbacks {
+        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener,
+        ActionCallbacksExtended {
 
     /**
      * Date reminder type variables.
@@ -218,6 +219,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private RadioButton currentCheck, mapCheck;
     private MapFragment mapOut;
     private ActionView actionViewLocationOut;
+    private SeekBar pointRadius;
 
     /**
      * Shopping list reminder type variables.
@@ -292,6 +294,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private JsonModel item;
     private Handler handler = new Handler();
     private GeocoderTask task;
+    private int volume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -589,26 +592,26 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             String message = "";
             switch (v.getId()){
                 case R.id.extraAuto:
-                    message = getString(R.string.silent_sms_explanation);
-                    if (isApplicationAttached()) message = getString(R.string.auto_launch_explanation);
+                    message = getString(R.string.enable_sending_sms_automatically);
+                    if (isApplicationAttached()) message = getString(R.string.launch_application);
                     break;
                 case R.id.extraLimit:
-                    message = getString(R.string.repeat_limit_explanation);
+                    message = getString(R.string.repeat_limit);
                     break;
                 case R.id.extraVibration:
-                    message = getString(R.string.vibration_explanation);
+                    message = getString(R.string.vibrate);
                     break;
                 case R.id.extraVoice:
-                    message = getString(R.string.settings_tts_explanation);
+                    message = getString(R.string.voice_notification);
                     break;
                 case R.id.extraWake:
-                    message = getString(R.string.wake_explanation);
+                    message = getString(R.string.turn_on_screen);
                     break;
                 case R.id.extraUnlock:
-                    message = getString(R.string.settings_unlock_explanation);
+                    message = getString(R.string.unlock_screen);
                     break;
                 case R.id.extraRepeat:
-                    message = getString(R.string.repeat_explanation);
+                    message = getString(R.string.repeat_notification);
                     break;
             }
             Messages.toast(ReminderManager.this, message);
@@ -838,28 +841,28 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         ArrayList<SpinnerItem> navSpinner = new ArrayList<>();
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
-            navSpinner.add(new SpinnerItem(getString(R.string.by_date_title), R.drawable.ic_event_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_weekdays_title), R.drawable.ic_alarm_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.make_call_title), R.drawable.ic_call_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_textsms_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_location_title), R.drawable.ic_place_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.skype_reminder_type), R.drawable.skype_icon_white));
-            navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.by_date), R.drawable.ic_event_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_access_time_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.alarm), R.drawable.ic_alarm_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.make_call), R.drawable.ic_call_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.skype), R.drawable.skype_icon_white));
+            navSpinner.add(new SpinnerItem(getString(R.string.launch_application), R.drawable.ic_launch_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_white_24dp));
         } else {
-            navSpinner.add(new SpinnerItem(getString(R.string.by_date_title), R.drawable.ic_event_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.after_time_title), R.drawable.ic_access_time_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_weekdays_title), R.drawable.ic_alarm_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.make_call_title), R.drawable.ic_call_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.send_message_title), R.drawable.ic_textsms_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.by_location_title), R.drawable.ic_place_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.skype_reminder_type), R.drawable.skype_icon));
-            navSpinner.add(new SpinnerItem(getString(R.string.launch_application_reminder_type), R.drawable.ic_launch_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_by_day_of_month), R.drawable.ic_event_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.string_place_out), R.drawable.ic_beenhere_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.by_date), R.drawable.ic_event_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_access_time_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.alarm), R.drawable.ic_alarm_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.make_call), R.drawable.ic_call_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.skype), R.drawable.skype_icon));
+            navSpinner.add(new SpinnerItem(getString(R.string.launch_application), R.drawable.ic_launch_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_black_24dp));
         }
 
@@ -879,7 +882,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int isArchived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
             if (isArchived == 1) {
                 Reminder.delete(id, this);
-                Messages.toast(ReminderManager.this, getString(R.string.string_deleted));
+                Messages.toast(ReminderManager.this, getString(R.string.deleted));
             } else Reminder.moveToTrash(id, this, null);
             finish();
         }
@@ -962,7 +965,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show simple date reminder creation layout.
      */
     private void attachDateReminder(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
         ViewUtils.fadeInAnimation(by_date_layout);
@@ -1040,7 +1043,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show by day of month reminder creation layout.
      */
     private void attachMonthDay(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
         ViewUtils.fadeInAnimation(monthDayLayout);
@@ -1174,7 +1177,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show alarm clock reminder type creation layout.
      */
     private void attachWeekDayReminder(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         cSetter = new ColorSetter(ReminderManager.this);
 
@@ -1290,7 +1293,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show timer reminder type creation layout.
      */
     private void attachTimeReminder(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         cSetter = new ColorSetter(ReminderManager.this);
         LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
@@ -1352,7 +1355,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             public void onClick(View v) {
                 if (exclusion != null){
                     exclusion = null;
-                    selectExclusion.setText(getString(R.string.select_exclusion));
+                    selectExclusion.setText(getString(R.string.exclusion));
                     exclusionClear.setVisibility(View.INVISIBLE);
                 }
             }
@@ -1443,7 +1446,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show Skype reminder type creation layout.
      */
     private void attachSkype(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
         ViewUtils.fadeInAnimation(skype_layout);
@@ -1461,8 +1464,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) taskField.setHint(getString(R.string.message_field_hint));
-                else taskField.setHint(getString(R.string.tast_hint));
+                if (b) taskField.setHint(getString(R.string.message));
+                else taskField.setHint(getString(R.string.remind_me));
             }
         });
 
@@ -1514,7 +1517,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show application reminder type creation layout.
      */
     private void attachApplication(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
         ViewUtils.fadeInAnimation(application_layout);
@@ -1622,7 +1625,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show call reminder type creation layout.
      */
     private void attachCall(){
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
         ViewUtils.fadeInAnimation(call_layout);
@@ -1680,7 +1683,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show message reminder type creation layout.
      */
     private void attachMessage(){
-        taskField.setHint(getString(R.string.message_field_hint));
+        taskField.setHint(getString(R.string.message));
 
         LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
         ViewUtils.fadeInAnimation(message_layout);
@@ -1768,7 +1771,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show location reminder type creation layout.
      */
     private void attachLocation() {
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
         ViewUtils.fadeInAnimation(geolocationlayout);
@@ -1905,7 +1908,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show location out reminder type creation layout.
      */
     private void attachLocationOut() {
-        taskField.setHint(getString(R.string.tast_hint));
+        taskField.setHint(getString(R.string.remind_me));
 
         LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
         ViewUtils.fadeInAnimation(locationOutLayout);
@@ -1955,11 +1958,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapCheck.setOnCheckedChangeListener(this);
         currentCheck.setChecked(true);
 
-        SeekBar pointRadius = (SeekBar) findViewById(R.id.pointRadius);
+        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
         pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                radiusMark.setText(String.format(getString(R.string.string_selected_radius), progress));
+                radiusMark.setText(String.format(getString(R.string.radius_x_meters), progress));
             }
 
             @Override
@@ -2090,7 +2093,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
                     String task = shopEdit.getText().toString().trim();
                     if (task.matches("")) {
-                        shopEdit.setError(getString(R.string.empty_task));
+                        shopEdit.setError(getString(R.string.must_be_not_empty));
                         return false;
                     } else {
                         shoppingLists.addItem(new ShoppingList(task));
@@ -2111,7 +2114,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             public void onClick(View v) {
                 String task = shopEdit.getText().toString().trim();
                 if (task.matches("")) {
-                    shopEdit.setError(getString(R.string.empty_task));
+                    shopEdit.setError(getString(R.string.must_be_not_empty));
                     return;
                 }
 
@@ -2214,7 +2217,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else {
             if (!Reminder.isUuId(this, uuId)) remControl.save(item);
             else {
-                Messages.snackbar(mFab, getString(R.string.same_uuid_error));
+                Messages.snackbar(mFab, getString(R.string.same_reminder_also_present));
                 return;
             }
         }
@@ -2383,7 +2386,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             ArrayList<JsonShopping> jsonShoppings = new ArrayList<>();
             if (isShoppingAttached()){
                 if (shoppingLists.getCount() == 0) {
-                    Messages.snackbar(mFab, getString(R.string.no_tasks_warming));
+                    Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
                     return null;
                 } else {
                     for (ShoppingList shoppingList : shoppingLists.getData()) {
@@ -2403,14 +2406,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 weekdays = IntervalUtil.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
                         thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
                 if (!IntervalUtil.isWeekday(weekdays)) {
-                    Messages.snackbar(mFab, getString(R.string.weekday_nothing_checked));
+                    Messages.snackbar(mFab, getString(R.string.you_dont_select_any_day));
                     return null;
                 }
             }
             String task = taskField.getText().toString().trim();
             if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)) {
                 if (task.matches("")) {
-                    Messages.snackbar(mFab, getString(R.string.empty_field_error));
+                    Messages.snackbar(mFab, getString(R.string.must_be_not_empty));
                     return null;
                 }
             }
@@ -2424,13 +2427,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (application.isChecked()) {
                     number = selectedPackage;
                     if (number == null) {
-                        Messages.snackbar(mFab, getString(R.string.dont_selected_application_message));
+                        Messages.snackbar(mFab, getString(R.string.you_dont_select_application));
                         return null;
                     }
                 } else if (browser.isChecked()) {
                     number = browseLink.getText().toString().trim();
-                    if (number.matches("") || number.matches(".*https?://"))
+                    if (number.matches("") || number.matches(".*https?://")) {
+                        Messages.snackbar(mFab, getString(R.string.you_dont_insert_link));
                         return null;
+                    }
                     if (!number.startsWith("http://") && !number.startsWith("https://"))
                         number = "http://" + number;
 
@@ -2452,7 +2457,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     isNull = false;
                 }
                 if (isNull) {
-                    Messages.snackbar(mFab, getString(R.string.point_warning));
+                    Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
                     return null;
                 }
                 if (isLocationAttached() && !attackDelay.isChecked()) {
@@ -2479,7 +2484,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (isTimeReminderAttached()) {
                 timeAfter = SuperUtil.getAfterTime(timeString);
                 if (timeAfter == 0) {
-                    Messages.snackbar(mFab, getString(R.string.string_timer_warming));
+                    Messages.snackbar(mFab, getString(R.string.you_dont_insert_timer_time));
                     return null;
                 }
                 Calendar c = Calendar.getInstance();
@@ -2695,7 +2700,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private boolean checkNumber(String number){
         if (number == null || number.matches("")) {
-            Messages.snackbar(mFab, getString(R.string.empty_field_error));
+            Messages.snackbar(mFab, getString(R.string.must_be_not_empty));
             return false;
         } else return true;
     }
@@ -2744,7 +2749,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 String dayStr;
                 if (myDay > 28) {
                     myDay = 28;
-                    Messages.snackbar(mFab, getString(R.string.string_max_day_message));
+                    Messages.snackbar(mFab, getString(R.string.max_day_supported));
                 }
 
                 if (myDay < 10) dayStr = "0" + myDay;
@@ -3111,7 +3116,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 melody = data.getStringExtra(Constants.FILE_PICKED);
                 if (melody != null) {
                     File musicFile = new File(melody);
-                    Messages.snackbar(mFab, getString(R.string.selected_melody_string) + musicFile.getName());
+                    Messages.snackbar(mFab, String.format(getString(R.string.melody) + " %s", musicFile.getName()));
                 }
             }
         }
@@ -3120,9 +3125,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (resultCode == RESULT_OK){
                 radius = data.getIntExtra(Constants.SELECTED_RADIUS, -1);
                 if (radius != -1) {
-                    Messages.snackbar(mFab, getString(R.string.selected_radius_string) + radius + " " + getString(R.string.meter));
-                    if (isLocationAttached()) map.recreateMarker(radius);
-                    if (isLocationOutAttached()) mapOut.recreateMarker(radius);
+                    String str = String.format(getString(R.string.radius_x_meters), radius);
+                    showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            radius = -1;
+                            if (isLocationAttached()) map.recreateMarker(radius);
+                            if (isLocationOutAttached()) mapOut.recreateMarker(radius);
+                        }
+                    });
+                    if (isLocationAttached()) {
+                        map.recreateMarker(radius);
+                    }
+                    if (isLocationOutAttached()) {
+                        mapOut.recreateMarker(radius);
+                        pointRadius.setProgress(radius);
+                    }
                 }
             }
         }
@@ -3137,36 +3155,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (requestCode == Constants.REQUEST_CODE_SELECTED_COLOR) {
             if (resultCode == RESULT_OK){
                 int position = data.getIntExtra(Constants.SELECTED_LED_COLOR, -1);
-                String selColor = null;
-                if (position == 0) {
-                    ledColor = LED.WHITE;
-                    selColor = getString(R.string.led_color_white);
-                } else if (position == 1) {
-                    ledColor = LED.RED;
-                    selColor = getString(R.string.led_color_red);
-                } else if (position == 2) {
-                    ledColor = LED.GREEN;
-                    selColor = getString(R.string.led_color_green);
-                } else if (position == 3) {
-                    ledColor = LED.BLUE;
-                    selColor = getString(R.string.led_color_blue);
-                } else if (position == 4) {
-                    ledColor = LED.ORANGE;
-                    selColor = getString(R.string.led_color_orange);
-                } else if (position == 5) {
-                    ledColor = LED.YELLOW;
-                    selColor = getString(R.string.led_color_yellow);
-                } else if (position == 6) {
-                    ledColor = LED.PINK;
-                    selColor = getString(R.string.led_color_pink);
-                } else if (position == 7) {
-                    ledColor = LED.GREEN_LIGHT;
-                    selColor = getString(R.string.led_color_green_light);
-                } else if (position == 8) {
-                    ledColor = LED.BLUE_LIGHT;
-                    selColor = getString(R.string.led_color_blue_light);
-                }
-                Messages.snackbar(mFab, getString(R.string.string_selected_led_color) + " " + selColor);
+                String selColor = LED.getTitle(this, position);
+                ledColor = LED.getLED(position);
+
+                String str = String.format(getString(R.string.led_color) + " %s", selColor);
+                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ledColor = -1;
+                    }
+                });
             }
         }
 
@@ -3183,6 +3181,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 applicationName.setText(title);
             }
         }
+
+        if (requestCode == Constants.REQUEST_CODE_VOLUME) {
+            if (resultCode == RESULT_OK){
+                volume = data.getIntExtra(Constants.SELECTED_VOLUME, -1);
+
+                String str = String.format(getString(R.string.selected_loudness_x_for_reminder), volume);
+                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        volume = -1;
+                    }
+                });
+            }
+        }
     }
 
     /**
@@ -3193,13 +3205,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (jsonObject != null) {
             JsonExclusion recurrence = new JsonExclusion(jsonObject);
             if (recurrence.getHours() != null) {
-                selectExclusion.setText(getString(R.string.excluded_hours) + " " + recurrence.getHours().toString());
+                selectExclusion.setText(String.format(getString(R.string.excluded_hours_x), recurrence.getHours().toString()));
                 exclusionClear.setVisibility(View.VISIBLE);
             } else {
                 String fromHour = recurrence.getFromHour();
                 String toHour = recurrence.getToHour();
                 if (fromHour != null && toHour != null) {
-                    selectExclusion.setText(getString(R.string.from_) + " " + fromHour + " " + getString(R.string.to_) + " " + toHour);
+                    selectExclusion.setText(String.format(getString(R.string.excluded_time_from_x_to_x), fromHour, toHour));
                     exclusionClear.setVisibility(View.VISIBLE);
                 }
             }
@@ -3218,7 +3230,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             menu.getItem(2).setVisible(true);
         }
         if (id != 0) {
-            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_menu_option));
+            menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete));
         }
         return true;
     }
@@ -3314,13 +3326,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onActionChange(boolean b) {
-        if (!b) taskField.setHint(getString(R.string.tast_hint));
+        if (!b) taskField.setHint(getString(R.string.remind_me));
     }
 
     @Override
     public void onTypeChange(boolean type) {
-        if (type) taskField.setHint(getString(R.string.message_field_hint));
-        else taskField.setHint(getString(R.string.tast_hint));
+        if (type) taskField.setHint(getString(R.string.message));
+        else taskField.setHint(getString(R.string.remind_me));
         isMessage = type;
         invalidateButtons();
     }
@@ -3335,6 +3347,19 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void showSnackbar(int message) {
         Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(String message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    @Override
+    public void showSnackbar(String message, int actionTitle, View.OnClickListener listener) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+                .setAction(actionTitle, listener)
                 .show();
     }
 

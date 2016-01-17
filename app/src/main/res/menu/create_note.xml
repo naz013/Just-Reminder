@@ -5,27 +5,27 @@
     tools:context="com.cray.software.justreminder.app.MainActivity" >
 
     <item android:id="@+id/action_color"
-        android:title="@string/select_color_title"
+        android:title="@string/color"
         android:icon="@drawable/ic_palette_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_image"
-        android:title="@string/select_image_title"
+        android:title="@string/image"
         android:icon="@drawable/ic_insert_photo_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_reminder"
-        android:title="@string/add_reminder_dialog_title"
+        android:title="@string/add_reminder"
         android:icon="@drawable/ic_alarm_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_font"
-        android:title="@string/font_style_dialog_title"
+        android:title="@string/font_style"
         android:icon="@drawable/ic_text_format_white_24dp"
         app:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_share"
-        android:title="@string/share_note_title"
+        android:title="@string/share"
         android:icon="@drawable/ic_share_white_24dp"
         app:showAsAction="ifRoom" />
 </menu>
