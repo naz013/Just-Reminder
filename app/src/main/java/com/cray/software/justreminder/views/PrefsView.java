@@ -38,7 +38,6 @@ public class PrefsView extends RelativeLayout {
     TextView title;
     TextView detail;
     TextView prefsValue;
-    TextView proMask;
     View dividerTop, dividerBottom, prefsView;
     
     boolean isChecked;
@@ -65,7 +64,6 @@ public class PrefsView extends RelativeLayout {
         title = (TextView) findViewById(R.id.prefsPrimaryText);
         detail = (TextView) findViewById(R.id.prefsSecondaryText);
         prefsValue = (TextView) findViewById(R.id.prefsValue);
-        proMask = (TextView) findViewById(R.id.proMask);
         checkBox = (CheckBox) findViewById(R.id.prefsCheck);
 
         dividerTop = findViewById(R.id.dividerTop);
@@ -105,7 +103,6 @@ public class PrefsView extends RelativeLayout {
             setValueText(valueText);
             setViewResource(res);
         }
-        setProMask(false);
         setChecked(isChecked());
     }
 
@@ -134,7 +131,12 @@ public class PrefsView extends RelativeLayout {
     }
 
     public void setDetailText(String text) {
+        if (text == null){
+            detail.setVisibility(GONE);
+            return;
+        }
         detail.setText(text);
+        detail.setVisibility(VISIBLE);
     }
 
     public void setValueText(String text) {
@@ -144,14 +146,6 @@ public class PrefsView extends RelativeLayout {
     public void setViewResource(@DrawableRes int resource) {
         if (resource != 0) {
             prefsView.setBackgroundResource(resource);
-        }
-    }
-    
-    public void setProMask(boolean mask) {
-        if (mask) {
-            proMask.setVisibility(VISIBLE);
-        } else {
-            proMask.setVisibility(GONE);
         }
     }
 

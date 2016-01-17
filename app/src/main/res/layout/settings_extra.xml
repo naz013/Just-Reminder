@@ -18,7 +18,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/missedPrefs"
             app:prefs_primary_text="@string/settings_missed_call_title"
-            app:prefs_secondary_text="@string/settings_missed_call_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -28,7 +27,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/missedTimePrefs"
             app:prefs_primary_text="@string/settings_missed_time_title"
-            app:prefs_secondary_text="@string/settings_missed_time_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="none"
             app:prefs_divider_bottom="true"/>
@@ -68,7 +66,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/followReminderPrefs"
             app:prefs_primary_text="@string/settings_follow_reminder_title"
-            app:prefs_secondary_text="@string/settings_follow_reminder_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="false"/>

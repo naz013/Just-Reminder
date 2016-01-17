@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/notificationOptionPrefs"
         app:prefs_primary_text="@string/disable_notif_title"
-        app:prefs_secondary_text="@string/disable_notif_description"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>

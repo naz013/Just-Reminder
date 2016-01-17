@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/exportToCalendarPrefs"
         app:prefs_primary_text="@string/event_export_title"
-        app:prefs_secondary_text="@string/event_export_explanation"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -67,7 +66,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/exportToStockPrefs"
         app:prefs_primary_text="@string/export_to_calendar_settings"
-        app:prefs_secondary_text="@string/export_to_calendar_settings_explanation"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -77,7 +75,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/autoBackupPrefs"
         app:prefs_primary_text="@string/auto_backup_title"
-        app:prefs_secondary_text="@string/auto_backup_explanation"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
@@ -147,7 +144,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/syncSettingsPrefs"
         app:prefs_primary_text="@string/settings_backup_title"
-        app:prefs_secondary_text="@string/settings_backup_explanation"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="false"/>

@@ -17,7 +17,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/encryptNotePrefs"
             app:prefs_primary_text="@string/settings_encrypt_title"
-            app:prefs_secondary_text="@string/settings_encrypt_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -27,7 +26,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/backupNotePrefs"
             app:prefs_primary_text="@string/settings_backup_note_title"
-            app:prefs_secondary_text="@string/settings_backup_note_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>

@@ -63,11 +63,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         if (Module.isPro()) {
             blurPrefs.setOnClickListener(this);
             blurPrefs.setChecked(sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR));
-            blurPrefs.setEnabled(true);
-            blurPrefs.setProMask(false);
+            blurPrefs.setVisibility(View.VISIBLE);
         } else {
-            blurPrefs.setEnabled(false);
-            blurPrefs.setProMask(true);
+            blurPrefs.setVisibility(View.GONE);
         }
 
         notificationDismissPrefs = (PrefsView) rootView.findViewById(R.id.notificationDismissPrefs);

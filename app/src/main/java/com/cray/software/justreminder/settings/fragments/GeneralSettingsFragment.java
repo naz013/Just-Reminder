@@ -28,7 +28,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private ActionBar ab;
     
     private PrefsView use24TimePrefs, useDarkStylePrefs, themeColorPrefs,
-            smartFoldPrefs, wearEnablePrefs, extendedButtonPrefs, itemPreviewPrefs;
+            smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,10 +62,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearEnablePrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
         wearEnablePrefs.setOnClickListener(this);
 
-        extendedButtonPrefs = (PrefsView) rootView.findViewById(R.id.extendedButtonPrefs);
-        extendedButtonPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXTENDED_BUTTON));
-        extendedButtonPrefs.setOnClickListener(this);
-
         itemPreviewPrefs = (PrefsView) rootView.findViewById(R.id.itemPreviewPrefs);
         itemPreviewPrefs.setChecked(sPrefs.loadBoolean(Prefs.ITEM_PREVIEW));
         itemPreviewPrefs.setOnClickListener(this);
@@ -86,18 +82,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         } else {
             sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
             itemPreviewPrefs.setChecked(true);
-        }
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
-    }
-
-    private void extendedChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (extendedButtonPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, false);
-            extendedButtonPrefs.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, true);
-            extendedButtonPrefs.setChecked(true);
         }
         sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
     }
@@ -190,9 +174,6 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.smartFoldPrefs:
                 smartFoldChange();
-                break;
-            case R.id.extendedButtonPrefs:
-                extendedChange();
                 break;
             case R.id.itemPreviewPrefs:
                 itemPreviewChange();

@@ -51,7 +51,6 @@
             android:id="@+id/blurPrefs"
             app:prefs_primary_text="@string/blur"
             app:prefs_type="check"
-            app:prefs_secondary_text="@string/check_to_enable_background_image_blurring"
             app:prefs_divider_top="true"
             app:prefs_divider_bottom="false"/>
     
@@ -93,7 +92,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/statusIconPrefs"
             app:prefs_primary_text="@string/status_icon_title"
-            app:prefs_secondary_text="@string/status_icon_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="false"/>
@@ -115,7 +113,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/vibrationOptionPrefs"
             app:prefs_primary_text="@string/vibration_title"
-            app:prefs_secondary_text="@string/vibration_explanation"
             app:prefs_divider_top="true"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -125,7 +122,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/infiniteVibrateOptionPrefs"
             app:prefs_primary_text="@string/infinite_vibrate_title"
-            app:prefs_secondary_text="@string/infinite_vibrate_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -135,7 +131,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/soundOptionPrefs"
             app:prefs_primary_text="@string/sound_title"
-            app:prefs_secondary_text="@string/sound_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -145,7 +140,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/infiniteSoundOptionPrefs"
             app:prefs_primary_text="@string/infinite_title"
-            app:prefs_secondary_text="@string/infinite_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -215,7 +209,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/wakeScreenOptionPrefs"
             app:prefs_primary_text="@string/wake_title"
-            app:prefs_secondary_text="@string/wake_explanation"
             app:prefs_divider_top="true"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -225,7 +218,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/unlockScreenPrefs"
             app:prefs_primary_text="@string/settings_unlock_title"
-            app:prefs_secondary_text="@string/settings_unlock_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -275,7 +267,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/chooseLedColorPrefs"
             app:prefs_primary_text="@string/led_color_title"
-            app:prefs_secondary_text="@string/led_color_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="none"
             app:prefs_divider_bottom="true"/>
@@ -285,7 +276,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/repeatNotificationOptionPrefs"
             app:prefs_primary_text="@string/repeat_title"
-            app:prefs_secondary_text="@string/repeat_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -295,7 +285,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/repeatIntervalPrefs"
             app:prefs_primary_text="@string/repeat_interval_title"
-            app:prefs_secondary_text="@string/repeat_interval_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="text"
             app:prefs_divider_bottom="false"/>

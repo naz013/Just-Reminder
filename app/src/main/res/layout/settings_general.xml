@@ -17,7 +17,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/use24TimePrefs"
             app:prefs_primary_text="@string/settings_24_hour_title"
-            app:prefs_secondary_text="@string/settings_24_hour_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -27,7 +26,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/useDarkStylePrefs"
             app:prefs_primary_text="@string/settings_dark_theme_title"
-            app:prefs_secondary_text="@string/settings_dark_theme_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
@@ -37,7 +35,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/themeColorPrefs"
             app:prefs_primary_text="@string/theme_title"
-            app:prefs_secondary_text="@string/theme_descr"
             app:prefs_divider_top="false"
             app:prefs_type="view"
             app:prefs_divider_bottom="true"/>
@@ -77,17 +74,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/wearEnablePrefs"
             app:prefs_primary_text="@string/wear_title"
-            app:prefs_secondary_text="@string/wear_explanation"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
-    
-        <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/extendedButtonPrefs"
-            app:prefs_primary_text="@string/settings_extended_button_title"
-            app:prefs_secondary_text="@string/settings_extended_button_explanation"
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>

@@ -18,7 +18,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/autoLanguagePrefs"
         app:prefs_primary_text="@string/auto_language_title"
-        app:prefs_secondary_text="@string/auto_language_explanation"
         app:prefs_divider_top="false"
         app:prefs_type="check"
         app:prefs_divider_bottom="true"/>
