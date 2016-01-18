@@ -32,6 +32,7 @@ import com.cray.software.justreminder.datas.models.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -277,14 +278,16 @@ public class TasksFragment extends Fragment {
                     ColorSetter mColor = new ColorSetter(activity);
                     if (i == 0) {
                         mCallbacks.onTitleChanged(getString(R.string.all));
-                        mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
+                        mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary()),
+                                ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark()),
+                                ViewUtils.getColor(getActivity(), mColor.colorAccent()));
                         mCallbacks.onListIdChanged(0);
                     } else {
                         TaskList taskList = taskListDatum.get(i).getTaskList();
                         mCallbacks.onTitleChanged(taskList.getTitle());
                         int tmp = taskList.getColor();
                         mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
-                                mColor.colorAccent(tmp));
+                                ViewUtils.getColor(getActivity(), mColor.colorAccent(tmp)));
                         long idS = taskList.getId();
                         mCallbacks.onListIdChanged(idS);
                     }
@@ -307,14 +310,17 @@ public class TasksFragment extends Fragment {
             ColorSetter mColor = new ColorSetter(activity);
             if (pos == 0) {
                 mCallbacks.onTitleChanged(getString(R.string.all));
-                mCallbacks.onUiChanged(mColor.colorPrimary(), mColor.colorPrimaryDark(), mColor.colorAccent());
+                mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary()),
+                        ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark()),
+                        ViewUtils.getColor(getActivity(), mColor.colorAccent()));
                 mCallbacks.onListIdChanged(0);
             } else {
                 TaskList taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
-                mCallbacks.onUiChanged(mColor.colorPrimary(tmp), mColor.colorPrimaryDark(tmp),
-                        mColor.colorAccent(tmp));
+                mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary(tmp)),
+                        ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark(tmp)),
+                        ViewUtils.getColor(getActivity(), mColor.colorAccent(tmp)));
                 long idS = taskList.getId();
                 mCallbacks.onListIdChanged(idS);
             }

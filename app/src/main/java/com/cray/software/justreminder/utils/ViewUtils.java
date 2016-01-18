@@ -2,6 +2,7 @@ package com.cray.software.justreminder.utils;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -9,6 +10,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -34,8 +36,14 @@ public class ViewUtils {
                 new int[] {android.R.attr.state_pressed},
                 new int[] {android.R.attr.state_focused}, new int[] {}
         };
-        int colorP = getColor(context, colorPressed);
-        int colorN = getColor(context, colorNormal);
+        int colorP = colorPressed;
+        int colorN = colorNormal;
+        try {
+            colorP = getColor(context, colorPressed);
+            colorN = getColor(context, colorNormal);
+        } catch (Resources.NotFoundException e) {
+            Log.d("ResourceNotFound", "Use default");
+        }
         int colors[] = {colorP, colorN, colorN};
         return new ColorStateList(states, colors);
     }

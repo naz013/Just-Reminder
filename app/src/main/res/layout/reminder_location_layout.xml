@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:visibility="visible"
     android:id="@+id/geolocationlayout">
@@ -90,6 +91,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/create_margin"
                     android:id="@+id/actionViewLocation"/>
+
+                <com.cray.software.justreminder.views.ExtraView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:has_action="false"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_marginBottom="88dp"
+                    android:id="@+id/locationExtra"/>
             </LinearLayout>
         </ScrollView>
 

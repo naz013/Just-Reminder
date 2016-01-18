@@ -725,8 +725,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             ib.setId(i + ColorSetter.NUM_OF_MARKERS);
             ib.setOnClickListener(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                    QuickReturnUtils.dp2px(getActivity(), 35),
+                    QuickReturnUtils.dp2px(getActivity(), 35));
             int px = QuickReturnUtils.dp2px(getActivity(), 2);
             params.setMargins(px, px, px, px);
             ib.setLayoutParams(params);

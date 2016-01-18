@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
@@ -19,6 +21,7 @@ public class SelectVolume extends Activity {
     private SharedPrefs sPrefs;
     private boolean isDark;
     private ImageView volumeImage;
+    private int volume, code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,8 @@ public class SelectVolume extends Activity {
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.volume_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        code = getIntent().getIntExtra("int", 0);
 
         sPrefs = new SharedPrefs(SelectVolume.this);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
@@ -44,9 +49,13 @@ public class SelectVolume extends Activity {
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (code == 1) {
+                    volume = i;
+                } else {
+                    sPrefs.saveInt(Prefs.VOLUME, i);
+                }
                 radiusValue.setText(String.valueOf(i));
                 setValue(i);
-                sPrefs.saveInt(Prefs.VOLUME, i);
             }
 
             @Override
@@ -64,6 +73,11 @@ public class SelectVolume extends Activity {
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (code == 1) {
+                    Intent intent = new Intent();
+                    intent.putExtra(Constants.SELECTED_VOLUME, volume);
+                    setResult(RESULT_OK, intent);
+                }
                 finish();
             }
         });

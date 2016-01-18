@@ -7,7 +7,10 @@
 
     <item android:id="@+id/action_custom_melody"
         android:title="@string/melody"
-        android:icon="@drawable/ic_music_note_white_24dp"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_volume"
+        android:title="@string/loudness"
         app:showAsAction="never" />
 
     <item android:id="@+id/action_custom_radius"
@@ -17,6 +20,11 @@
 
     <item android:id="@+id/action_custom_color"
         android:title="@string/led_color"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_limit"
+        android:title="@string/repeat_limit"
         android:visible="false"
         app:showAsAction="never" />
 

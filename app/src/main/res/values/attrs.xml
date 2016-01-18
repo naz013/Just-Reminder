@@ -17,6 +17,10 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="ExtraView">
+        <attr name="has_action" format="boolean"/>
+    </declare-styleable>
+
     <declare-styleable name="DateTimeView">
         <attr name="date_text_size" format="dimension"/>
         <attr name="time_text_size" format="dimension"/>
@@ -107,15 +111,5 @@
         <attr name="floating_edit_text_error_color" format="color"/>
         <attr name="floating_edit_text_underline_height" format="dimension"/>
         <attr name="floating_edit_text_underline_highlighted_height" format="dimension"/>
-    </declare-styleable>
-
-    <!-- CircleButton Attribute -->
-    <declare-styleable name="CircleButton">
-        <attr name="circle_icon" format="reference"/>
-        <attr name="circle_color" format="color"/>
-        <attr name="circle_shadow_radius" format="float"/>
-        <attr name="circle_shadow_offset_x" format="float"/>
-        <attr name="circle_shadow_offset_y" format="float"/>
-        <attr name="circle_shadow_color" format="color"/>
     </declare-styleable>
 </resources>

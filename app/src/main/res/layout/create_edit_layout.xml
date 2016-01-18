@@ -46,87 +46,6 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:id="@+id/extraHolder">
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:scrollbars="none"
-                android:id="@+id/extraScroll">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraVibration"
-                        android:src="@drawable/ic_vibration_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraUnlock"
-                        android:src="@drawable/ic_screen_lock_portrait_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraVoice"
-                        android:src="@drawable/ic_multitrack_audio_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraWake"
-                        android:src="@drawable/ic_brightness_high_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraRepeat"
-                        android:src="@drawable/ic_refresh_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraAuto"
-                        android:src="@drawable/ic_textsms_black_24dp"/>
-
-                    <ImageButton
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_below="@+id/extraScroll"
-                        android:id="@+id/extraLimit"
-                        android:src="@drawable/ic_block_black_24dp"/>
-
-                </LinearLayout>
-
-            </ScrollView>
-
-            <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_below="@+id/extraScroll"
-                android:id="@+id/extraSwitch"
-                android:src="@drawable/ic_expand_more_black_24dp"/>
-
-        </RelativeLayout>
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -143,7 +62,7 @@
                 android:id="@+id/repeatSeek"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:max="100"/>
+                android:max="101"/>
 
         </FrameLayout>
 

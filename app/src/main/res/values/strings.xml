@@ -108,9 +108,11 @@
     <string name="infinite_sound">Infinite sound (repeating)</string>
     <string name="turn_on_screen">Turn on screen</string>
     <string name="melody">Melody</string>
+    <string name="melody_x">"Melody %s"</string>
     <string name="voice_notification">Voice notification (TTS)</string>
     <string name="language">Language</string>
     <string name="led_notification">LED notification</string>
+    <string name="led_color_x">"LED color %s"</string>
     <string name="led_color">LED color</string>
     <string name="remind_at">Remind at</string>
     <string name="days_to_birthday">Days to birthday</string>
@@ -330,7 +332,7 @@
     <string name="turn_screen_off_to_see_led_light">Turn screen off to LED light</string>
     <string name="select_one_of_item">Select one of item!</string>
     <string name="selected_loudness_x_for_reminder">"Selected loudness %s for reminder"</string>
-    <string name="excluded_hours_x">Excluded hours %</string>
+    <string name="excluded_hours_x">"Excluded hours %s"</string>
     <string name="excluded_time_from_x_to_x" formatted="false">"Excluded time from %s to %s"</string>
     <string name="sunday">Sunday</string>
     <string name="monday">Monday</string>
@@ -394,14 +396,14 @@
     <string name="events_found">event(s) found</string>
     <string name="no_files">No files</string>
     <string name="not_music_file">Not music file</string>
-    <string name="x_minutes">%s minutes</string>
-    <string name="x_hours">%s hours</string>
+    <string name="x_minutes">"%s minutes"</string>
+    <string name="x_hours">"%s hours"</string>
     <string name="last_called">Last called</string>
     <string name="missed_call">Missed call</string>
-    <string name="x_years">%s years</string>
-    <string name="left_characters_x">Left characters %s</string>
+    <string name="x_years">"%s years"</string>
+    <string name="left_characters_x">"Left characters %s"</string>
     <string name="retry">Retry</string>
-    <string name="x_days">%s days</string>
+    <string name="x_days">"%s days"</string>
     <string name="reminder_snoozed">Reminder snoozed</string>
     <string name="choose_application">Choose application</string>
     <string name="flexible">Flexible</string>
@@ -430,7 +432,7 @@
     <string name="write_calendar">Write calendar</string>
     <string name="read_external_storage">Read memory card</string>
     <string name="write_external_storage">Write to a memory card</string>
-    <string name="x_seconds">%s seconds</string>
+    <string name="x_seconds">"%s seconds"</string>
     <string name="say_something">Say something</string>
     <string name="no_recognizer_found">Speech recognition system not found!</string>
     <string name="same_group">Same group!</string>
@@ -439,8 +441,8 @@
     <string name="retrieving_data">Retrieving data...</string>
     <string name="all_files_removed">All files removed</string>
     <string name="deleting">Deleting...</string>
-    <string name="used_x">Used %s</string>
-    <string name="available_x">Available %s</string>
+    <string name="used_x">"Used %s"</string>
+    <string name="available_x">"Available %s"</string>
     <string name="change_color">Change color</string>
     <string name="list_view">List view</string>
     <string name="by_date_az">By date (A-Z)</string>
@@ -469,9 +471,10 @@
     <string name="general">General</string>
     <string name="encrypting">Encrypting...</string>
     <string name="decrypting">Decrypting...</string>
-    <string name="xW">%sW</string>
-    <string name="xD">%sD</string>
-    <string name="x_min">%s min</string>
+    <string name="xW">"%sW"</string>
+    <string name="xD">"%sD"</string>
+    <string name="x_min">"%s min"</string>
     <string name="gps_not_enabled">GPS not enabled!</string>
     <string name="moved_to_trash">Moved to trash</string>
+    <string name="no_limits">No limits</string>
 </resources>

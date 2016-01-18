@@ -300,8 +300,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="88dp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -324,6 +323,15 @@
                     android:layout_alignParentRight="true"/>
 
             </RelativeLayout>
+
+            <com.cray.software.justreminder.views.ExtraView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:has_action="false"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginBottom="88dp"
+                android:id="@+id/timeExtra"/>
 
         </LinearLayout>
 

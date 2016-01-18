@@ -416,11 +416,11 @@ public class ScreenManager extends AppCompatActivity
     @Override
     public void onUiChanged(int colorPrimary, int colorPrimaryDark, int colorAccent) {
         if (colorPrimary != 0){
-            toolbar.setBackgroundColor(ViewUtils.getColor(this, colorPrimary));
+            toolbar.setBackgroundColor(colorPrimary);
         }
         if (colorPrimaryDark != 0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().setStatusBarColor(ViewUtils.getColor(this, colorPrimaryDark));
+                getWindow().setStatusBarColor(colorPrimaryDark);
             }
         }
         if (colorPrimary != 0 && colorAccent != 0) {

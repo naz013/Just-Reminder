@@ -89,5 +89,8 @@
     <dimen name="add_birthday_text_size_primary">20sp</dimen>
 
     <dimen name="create_imagebutton_size_ext">60dp</dimen>
+    <dimen name="extra_text_size">20sp</dimen>
+    <dimen name="extra_height">50dp</dimen>
+    <dimen name="extra_padding_left">25dp</dimen>
 
 </resources>

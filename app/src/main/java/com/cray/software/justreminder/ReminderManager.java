@@ -75,6 +75,7 @@ import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.dialogs.LedColor;
+import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -115,6 +116,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
+import com.cray.software.justreminder.views.ExtraView;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
 import com.google.android.gms.maps.model.LatLng;
@@ -140,12 +142,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private CheckBox dateTaskExport;
     private CheckBox dateExport;
 
+
+    private ExtraView dateExtra, timeExtra, weekExtra, applicationExtra, callExtra,
+            monthExtra, locationExtra, locationOutExtra, messageExtra, skypeExtra;
+
     /**
      * Weekday reminder type variables.
      */
     private TextView weekTimeField;
     private CheckBox weekExport;
-    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
+            fridayCheck, saturdayCheck, sundayCheck;
     private CheckBox weekTaskExport;
     private ActionView actionViewWeek;
 
@@ -234,10 +241,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     /**
      * Extra options views.
      */
-    private ScrollView extraScroll;
-    private ImageButton extraVibration, extraUnlock, extraVoice, extraWake, extraRepeat, extraAuto,
-            extraLimit, extraSwitch;
-    private RelativeLayout extraHolder;
     private FrameLayout repeatFrame;
     private TextView repeatLabel;
 
@@ -286,7 +289,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
-    private boolean isCalendar = false, isStock = false, isDark = false;
+    private boolean isCalendar = false, isStock = false, isDark = false, isExtra = false;
     private boolean isMessage = false;
     private boolean isDelayed = false;
 
@@ -310,6 +313,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isExtra = sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -332,6 +336,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                             case R.id.action_custom_color:
                                 chooseLEDColor();
                                 return true;
+                            case R.id.action_volume:
+                                selectVolume();
+                                return true;
+                            case R.id.action_limit:
+                                showLimit();
+                                return true;
                             case MENU_ITEM_DELETE:
                                 deleteReminder();
                                 return true;
@@ -342,28 +352,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         toolbar.setOnTouchListener(this);
 
-        extraHolder = (RelativeLayout) findViewById(R.id.extraHolder);
-        extraScroll = (ScrollView) findViewById(R.id.extraScroll);
-        extraVibration = (ImageButton) findViewById(R.id.extraVibration);
-        extraVoice = (ImageButton) findViewById(R.id.extraVoice);
-        extraUnlock = (ImageButton) findViewById(R.id.extraUnlock);
-        extraWake = (ImageButton) findViewById(R.id.extraWake);
-        extraRepeat = (ImageButton) findViewById(R.id.extraRepeat);
-        extraAuto = (ImageButton) findViewById(R.id.extraAuto);
-        extraSwitch = (ImageButton) findViewById(R.id.extraSwitch);
-        extraLimit = (ImageButton) findViewById(R.id.extraLimit);
-        colorifyButtons();
-
-        extraScroll.setVisibility(View.GONE);
-        extraHolder.setVisibility(View.GONE);
-
-        extraSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchOptions();
-            }
-        });
-
         repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
         repeatFrame.setBackgroundResource(cSetter.getCardDrawableStyle());
         repeatLabel = (TextView) findViewById(R.id.repeatLabel);
@@ -373,8 +361,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                repeats = progress + 1;
-                repeatLabel.setText(String.valueOf(progress + 1));
+                if (progress == 0) {
+                    repeats = -1;
+                    repeatLabel.setText(R.string.no_limits);
+                } else {
+                    repeats = progress;
+                    repeatLabel.setText(String.valueOf(progress));
+                }
             }
 
             @Override
@@ -394,22 +387,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }, 500);
             }
         });
-
-        extraUnlock.setOnClickListener(clickListener);
-        extraVibration.setOnClickListener(clickListener);
-        extraVoice.setOnClickListener(clickListener);
-        extraWake.setOnClickListener(clickListener);
-        extraRepeat.setOnClickListener(clickListener);
-        extraAuto.setOnClickListener(clickListener);
-        extraLimit.setOnClickListener(clickListener);
-
-        extraUnlock.setOnLongClickListener(longClickListener);
-        extraVibration.setOnLongClickListener(longClickListener);
-        extraVoice.setOnLongClickListener(longClickListener);
-        extraWake.setOnLongClickListener(longClickListener);
-        extraRepeat.setOnLongClickListener(longClickListener);
-        extraAuto.setOnLongClickListener(longClickListener);
-        extraLimit.setOnLongClickListener(longClickListener);
 
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
         spinner = (Spinner) findViewById(R.id.navSpinner);
@@ -519,6 +496,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         clearViews();
     }
 
+    private void selectVolume() {
+        Intent i = new Intent(ReminderManager.this, SelectVolume.class).putExtra("int", 1);
+        startActivityForResult(i, Constants.REQUEST_CODE_VOLUME);
+    }
+
     private void readReminder() {
         if (item != null) {
             type = item.getType();
@@ -582,62 +564,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    /**
-     * Long click listener for extra options buttons.
-     * Show toast with button action explanation.
-     */
-    private View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            String message = "";
-            switch (v.getId()){
-                case R.id.extraAuto:
-                    message = getString(R.string.enable_sending_sms_automatically);
-                    if (isApplicationAttached()) message = getString(R.string.launch_application);
-                    break;
-                case R.id.extraLimit:
-                    message = getString(R.string.repeat_limit);
-                    break;
-                case R.id.extraVibration:
-                    message = getString(R.string.vibrate);
-                    break;
-                case R.id.extraVoice:
-                    message = getString(R.string.voice_notification);
-                    break;
-                case R.id.extraWake:
-                    message = getString(R.string.turn_on_screen);
-                    break;
-                case R.id.extraUnlock:
-                    message = getString(R.string.unlock_screen);
-                    break;
-                case R.id.extraRepeat:
-                    message = getString(R.string.repeat_notification);
-                    break;
-            }
-            Messages.toast(ReminderManager.this, message);
-            addHandler();
-            return false;
-        }
-    };
-
-    /**
-     * Extra options button click listener.
-     * Switch button state (selected/don't selected).
-     */
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            boolean is = !v.isSelected();
-            v.setSelected(is);
-            addHandler();
-            if (v.getId() == R.id.extraLimit){
-                if (is){
-                    ViewUtils.fadeInAnimation(repeatFrame);
-                    handler.postDelayed(seek, 3000);
-                }
-            }
-        }
-    };
+    private void showLimit() {
+        ViewUtils.fadeInAnimation(repeatFrame);
+        handler.postDelayed(seek, 3000);
+    }
 
     /**
      * Select contact button click listener.
@@ -654,14 +584,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     };
 
     /**
-     * Delayed handler for hiding extra options container.
-     */
-    private void addHandler(){
-        handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable, 5000);
-    }
-
-    /**
      * Runnable for hiding repeat limit seekbar.
      */
     private Runnable seek = new Runnable() {
@@ -670,20 +592,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (repeatFrame.getVisibility() == View.VISIBLE) {
                 ViewUtils.fadeOutAnimation(repeatFrame);
                 repeats = -1;
-                extraLimit.setSelected(false);
-            }
-        }
-    };
-
-    /**
-     * Runnable for hiding extra options container.
-     */
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (isOptionsVisible()) {
-                ViewUtils.hideReveal(extraScroll);
-                switchIcon();
             }
         }
     };
@@ -692,108 +600,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show extra button depending on reminder type.
      */
     private void invalidateButtons(){
-        if (isShoppingAttached()){
-            if (extraHolder.getVisibility() == View.VISIBLE)
-                ViewUtils.hideOver(extraHolder);
-        } else {
-            if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ViewUtils.showOver(extraHolder);
-                    }
-                }, 750);
-            } else extraHolder.setVisibility(View.GONE);
-            if (notificationRepeat == 1) extraRepeat.setSelected(true);
-            else extraRepeat.setSelected(false);
-
-            if (isLocationAttached() || isLocationOutAttached()) {
-                extraLimit.setEnabled(false);
-            } else {
-                extraLimit.setEnabled(true);
-                if (repeats > 0) extraLimit.setSelected(true);
-                else extraLimit.setSelected(false);
+        if (isExtra) {
+            if (isWeekDayReminderAttached()) {
+                if (isMessage) weekExtra.updateView(true);
+                else weekExtra.updateView(false);
             }
-
-            if (isMessageAttached() || isApplicationAttached() ||
-                    ((isWeekDayReminderAttached() || isMonthDayAttached() || isLocationAttached() ||
-                            isLocationOutAttached()) && isMessage)) {
-                extraAuto.setEnabled(true);
-                if (auto == 1) extraAuto.setSelected(true);
-                else extraAuto.setSelected(false);
-            } else extraAuto.setEnabled(false);
-
-            if (vibration == 1) extraVibration.setSelected(true);
-            else extraVibration.setSelected(false);
-
-            if (voice == 1) extraVoice.setSelected(true);
-            else extraVoice.setSelected(false);
-
-            if (wake == 1) extraWake.setSelected(true);
-            else extraWake.setSelected(false);
-
-            if (unlock == 1) extraUnlock.setSelected(true);
-            else extraUnlock.setSelected(false);
-        }
-    }
-
-    /**
-     * Set extra option button image depending on dark or light theme.
-     */
-    private void colorifyButtons() {
-        if (isDark){
-            extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
-            extraLimit.setImageResource(R.drawable.button_limit_light);
-            extraVoice.setImageResource(R.drawable.button_voice_light);
-            extraVibration.setImageResource(R.drawable.button_vibration_light);
-            extraRepeat.setImageResource(R.drawable.button_repeat_light);
-            extraAuto.setImageResource(R.drawable.button_auto_light);
-            extraUnlock.setImageResource(R.drawable.button_unlock_light);
-            extraWake.setImageResource(R.drawable.button_wake_light);
-        } else {
-            extraSwitch.setImageResource(R.drawable.ic_expand_more_black_24dp);
-            extraLimit.setImageResource(R.drawable.button_limit_dark);
-            extraVoice.setImageResource(R.drawable.button_voice_dark);
-            extraVibration.setImageResource(R.drawable.button_vibration_dark);
-            extraRepeat.setImageResource(R.drawable.button_repeat_dark);
-            extraAuto.setImageResource(R.drawable.button_auto_dark);
-            extraUnlock.setImageResource(R.drawable.button_unlock_dark);
-            extraWake.setImageResource(R.drawable.button_wake_dark);
-        }
-    }
-
-    /**
-     * Check if extra options button container is visible.
-     * @return Boolean
-     */
-    private boolean isOptionsVisible(){
-        return extraScroll.getVisibility() == View.VISIBLE;
-    }
-
-    /**
-     * Show/hide extra container.
-     */
-    private void switchOptions(){
-        if (isOptionsVisible()) {
-            ViewUtils.hideReveal(extraScroll);
-            handler.removeCallbacks(runnable);
-        } else {
-            ViewUtils.showReveal(extraScroll);
-            addHandler();
-        }
-        switchIcon();
-    }
-
-    /**
-     * Set image to extra container show/hide button.
-     */
-    private void switchIcon() {
-        if (isOptionsVisible()) {
-            if (isDark) extraSwitch.setImageResource(R.drawable.ic_expand_less_white_24dp);
-            else extraSwitch.setImageResource(R.drawable.ic_expand_less_black_24dp);
-        } else {
-            if (isDark) extraSwitch.setImageResource(R.drawable.ic_expand_more_white_24dp);
-            else extraSwitch.setImageResource(R.drawable.ic_expand_more_black_24dp);
+            if (isMonthDayAttached()) {
+                if (isMessage) monthExtra.updateView(true);
+                else monthExtra.updateView(false);
+            }
+            if (isApplicationAttached()) applicationExtra.setType(getType());
+            if (isLocationAttached()) {
+                if (isMessage) locationExtra.updateView(true);
+                else locationExtra.updateView(false);
+            }
+            if (isLocationOutAttached()) {
+                if (isMessage) locationOutExtra.updateView(true);
+                else locationOutExtra.updateView(false);
+            }
         }
     }
 
@@ -990,8 +814,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatView.setListener(this);
         repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             eventTime = item.getEventTime();
@@ -1007,8 +829,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             taskField.setText(text);
             dateView.setDateTime(updateCalendar(eventTime, true));
             repeatView.setProgress(repeatCode);
-            invalidateButtons();
         }
+
+        dateExtra = (ExtraView) findViewById(R.id.dateExtra);
+        dateExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) dateExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     private Date updateTime(long millis, boolean deny) {
@@ -1087,8 +913,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         actionViewMonth.setListener(this);
         actionViewMonth.setActivity(this);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1112,8 +936,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             else dayStr = String.valueOf(myDay);
             monthDayField.setText(dayStr);
 
-            invalidateButtons();
-
             if (type.matches(Constants.TYPE_MONTHDAY)){
                 actionViewMonth.setAction(false);
                 dayCheck.setChecked(true);
@@ -1136,6 +958,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
         }
+
+        monthExtra = (ExtraView) findViewById(R.id.monthExtra);
+        monthExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) monthExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     @Override
@@ -1221,8 +1048,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         actionViewWeek.setListener(this);
         actionViewWeek.setActivity(this);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
@@ -1241,7 +1066,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             taskField.setText(text);
 
             setCheckForDays(weekdays);
-            invalidateButtons();
 
             if (type.matches(Constants.TYPE_WEEKDAY))
                 actionViewWeek.setAction(false);
@@ -1253,6 +1077,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 else actionViewWeek.setType(ActionView.TYPE_MESSAGE);
             }
         }
+
+        weekExtra = (ExtraView) findViewById(R.id.weekExtra);
+        weekExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) weekExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1400,8 +1229,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatViewTime.setListener(this);
         repeatViewTime.setMax(120);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             JsonExport jsonExport = item.getExport();
@@ -1422,8 +1249,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             repeatViewTime.setProgress(repeat);
             taskField.setText(text);
-            invalidateButtons();
         }
+
+        timeExtra = (ExtraView) findViewById(R.id.timeExtra);
+        timeExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) timeExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1485,8 +1316,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatViewSkype.setListener(this);
         repeatViewSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1508,9 +1337,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             skypeUser.setText(number);
             dateViewSkype.setDateTime(updateCalendar(eventTime, true));
             repeatViewSkype.setProgress(repeatCode);
-
-            invalidateButtons();
         }
+
+        skypeExtra = (ExtraView) findViewById(R.id.skypeExtra);
+        skypeExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) skypeExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1577,8 +1409,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatViewApp.setListener(this);
         repeatViewApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1617,8 +1447,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             dateViewApp.setDateTime(updateCalendar(eventTime, true));
             repeatViewApp.setProgress(repeatCode);
-            invalidateButtons();
         }
+
+        applicationExtra = (ExtraView) findViewById(R.id.applicationExtra);
+        applicationExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) applicationExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1656,8 +1490,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatViewCall.setListener(this);
         repeatViewCall.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1675,8 +1507,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             phoneNumber.setText(number);
             dateViewCall.setDateTime(updateCalendar(eventTime, true));
             repeatViewCall.setProgress(repeatCode);
-            invalidateButtons();
         }
+
+        callExtra = (ExtraView) findViewById(R.id.callExtra);
+        callExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) callExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1714,8 +1550,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         repeatViewMessage.setListener(this);
         repeatViewMessage.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1734,8 +1568,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             messageNumber.setText(number);
             dateViewMessage.setDateTime(updateCalendar(eventTime, true));
             repeatViewMessage.setProgress(repeatCode);
-            invalidateButtons();
         }
+
+        messageExtra = (ExtraView) findViewById(R.id.messageExtra);
+        messageExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) messageExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     @Override
@@ -1870,8 +1708,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateViewLocation.setListener(this);
         dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1898,10 +1734,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             taskField.setText(text);
-            invalidateButtons();
             if (map != null)
                 map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
         }
+
+        locationExtra = (ExtraView) findViewById(R.id.locationExtra);
+        locationExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) locationExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -1992,8 +1832,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
         }
 
-        invalidateButtons();
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -2025,8 +1863,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
             mapCheck.setChecked(true);
-            invalidateButtons();
         }
+
+        locationOutExtra = (ExtraView) findViewById(R.id.locationOutExtra);
+        locationOutExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) locationOutExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
     }
 
     /**
@@ -2050,7 +1892,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         dateViewShopping = (DateTimeView) findViewById(R.id.dateViewShopping);
         dateViewShopping.setListener(this);
-        dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
         ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
         shopTimeIcon.setOnClickListener(new View.OnClickListener() {
@@ -2105,10 +1946,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
         ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
-        if (isDark)
-            addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else
-            addButton.setImageResource(R.drawable.ic_add_black_24dp);
+        if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
+        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2398,6 +2237,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         jsonShoppings.add(new JsonShopping(title, status, uuid, time, deleted));
                     }
                 }
+                if (!isShoppingReminder) {
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                }
             }
 
 
@@ -2445,6 +2291,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             Double latitude = 0.0;
             Double longitude = 0.0;
+            int style = -1;
             if (isLocationAttached() || isLocationOutAttached()) {
                 if (!LocationUtil.checkLocationEnable(this)) {
                     LocationUtil.showLocationAlert(this, this);
@@ -2460,19 +2307,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
                     return null;
                 }
-                if (isLocationAttached() && !attackDelay.isChecked()) {
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
+                if (isLocationAttached()) {
+                    if (!attackDelay.isChecked()) {
+                        myDay = 0;
+                        myMonth = 0;
+                        myYear = 0;
+                        myHour = 0;
+                        myMinute = 0;
+                    }
+                    style = map.getMarkerStyle();
                 }
-                if (isLocationOutAttached() && !attachDelayOut.isChecked()) {
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
+                if (isLocationOutAttached()) {
+                    if (!attachDelayOut.isChecked()) {
+                        myDay = 0;
+                        myMonth = 0;
+                        myYear = 0;
+                        myHour = 0;
+                        myMinute = 0;
+                    }
+                    style = mapOut.getMarkerStyle();
                 }
 
                 latitude = dest.latitude;
@@ -2514,16 +2367,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int wake = getWake();
             int unlock = getUnlock();
             int auto = getAuto();
-            long limit = getLimit();
-            if (repeat == 0) limit = -1;
+            if (repeat == 0) repeats = -1;
 
             JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
             JsonLed jsonLed = new JsonLed(ledColor, ledColor == -1 ? 0 : 1);
-            JsonMelody jsonMelody = new JsonMelody(melody, -1);
-            JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, limit, weekdays, timeAfter);
+            JsonMelody jsonMelody = new JsonMelody(melody, volume);
+            JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
             JsonAction jsonAction = new JsonAction(type, number, auto);
             JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
-            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
+            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, style);
 
             Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
             Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
@@ -2535,28 +2387,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
-     * Get repeat limit for reminder.
-     * @return Long
-     */
-    private long getLimit() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraLimit.isEnabled()) {
-                if (extraLimit.isSelected()) return repeats;
-                else return -1;
-            } else return -1;
-        } else return -1;
-    }
-
-    /**
      * Get auto action for reminder.
      * @return Integer
      */
     private int getAuto() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraAuto.isEnabled()) {
-                if (extraAuto.isSelected()) return 1;
-                else return 0;
-            } else return -1;
+        if (isExtra) {
+            if (isMessageAttached()) return messageExtra.getAuto();
+            else if (isApplicationAttached()) return applicationExtra.getAuto();
+            else if (isMonthDayAttached() && isMessage) return monthExtra.getAuto();
+            else if (isWeekDayReminderAttached() && isMessage) return weekExtra.getAuto();
+            else if (isLocationAttached() && isMessage) return locationExtra.getAuto();
+            else if (isLocationOutAttached() && isMessage) return locationOutExtra.getAuto();
+            else return -1;
         } else return -1;
     }
 
@@ -2565,9 +2407,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getUnlock() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraUnlock.isSelected()) return 1;
-            else return 0;
+        if (isExtra) {
+            if (getExtraView() != null) return getExtraView().getUnlock();
+            else return -1;
         } else return -1;
     }
 
@@ -2576,9 +2418,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getWake() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraWake.isSelected()) return 1;
-            else return 0;
+        if (isExtra) {
+            if (getExtraView() != null) return getExtraView().getAwake();
+            else return -1;
         } else return -1;
     }
 
@@ -2587,11 +2429,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getNotification() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (isOptionsVisible() && extraRepeat.isEnabled()) {
-                if (extraRepeat.isSelected()) return 1;
-                else return 0;
-            } else return -1;
+        if (isExtra) {
+            if (getExtraView() != null) return getExtraView().getRepeat();
+            else return -1;
         } else return -1;
     }
 
@@ -2600,9 +2440,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getVoice() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraVoice.isSelected()) return 1;
-            else return 0;
+        if (isExtra) {
+            if (getExtraView() != null) return getExtraView().getVoice();
+            else return -1;
         } else return -1;
     }
 
@@ -2611,10 +2451,24 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getVibro() {
-        if (sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS)) {
-            if (extraVibration.isSelected()) return 1;
-            else return 0;
+        if (isExtra) {
+            if (getExtraView() != null) return getExtraView().getVibrate();
+            else return -1;
         } else return -1;
+    }
+
+    private ExtraView getExtraView() {
+        if (isApplicationAttached()) return applicationExtra;
+        else if (isCallAttached()) return callExtra;
+        else if (isDateReminderAttached()) return dateExtra;
+        else if (isMonthDayAttached()) return monthExtra;
+        else if (isLocationAttached()) return locationExtra;
+        else if (isLocationOutAttached()) return locationOutExtra;
+        else if (isMessageAttached()) return messageExtra;
+        else if (isSkypeAttached()) return skypeExtra;
+        else if (isTimeReminderAttached()) return timeExtra;
+        else if (isWeekDayReminderAttached()) return weekExtra;
+        else return null;
     }
 
     /**
@@ -3037,6 +2891,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
         sPrefs.saveInt(Prefs.LAST_USED_REMINDER, position);
         invalidateOptionsMenu();
+        if (getExtraView() != null)
+            getExtraView().setCallbacksExtended(this);
     }
 
     @Override
@@ -3116,7 +2972,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 melody = data.getStringExtra(Constants.FILE_PICKED);
                 if (melody != null) {
                     File musicFile = new File(melody);
-                    Messages.snackbar(mFab, String.format(getString(R.string.melody) + " %s", musicFile.getName()));
+                    Messages.snackbar(mFab, String.format(getString(R.string.melody_x), musicFile.getName()));
                 }
             }
         }
@@ -3158,7 +3014,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 String selColor = LED.getTitle(this, position);
                 ledColor = LED.getLED(position);
 
-                String str = String.format(getString(R.string.led_color) + " %s", selColor);
+                String str = String.format(getString(R.string.led_color_x), selColor);
                 showSnackbar(str, R.string.cancel, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -3223,11 +3079,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.create_menu, menu);
         if (isLocationAttached()){
-            menu.getItem(1).setVisible(true);
+            menu.getItem(2).setVisible(true);
+        }
+        if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()){
+            menu.getItem(4).setVisible(false);
+        } else {
+            menu.getItem(4).setVisible(true);
         }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
-            menu.getItem(2).setVisible(true);
+            menu.getItem(3).setVisible(true);
         }
         if (id != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete));
@@ -3239,6 +3100,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
+        }
+        if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()){
+            menu.getItem(4).setVisible(false);
+        } else {
+            menu.getItem(4).setVisible(true);
         }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
