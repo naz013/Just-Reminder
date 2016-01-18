@@ -473,4 +473,5 @@
     <string name="xD">%sD</string>
     <string name="x_min">%s min</string>
     <string name="gps_not_enabled">GPS not enabled!</string>
+    <string name="moved_to_trash">Moved to trash</string>
 </resources>

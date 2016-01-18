@@ -322,7 +322,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         int ids = item.getItemId();
 
         if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ReminderPreviewFragment.this);
+            Reminder.moveToTrash(id, ReminderPreviewFragment.this, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else {
@@ -361,6 +361,8 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         int hour = 0;
         int minute = 0;
         list = new ArrayList<>();

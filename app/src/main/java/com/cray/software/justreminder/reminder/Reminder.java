@@ -36,6 +36,7 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Helper class for interaction with reminders.
@@ -232,21 +233,31 @@ public class Reminder {
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
             String categoryId = c.getString(c.getColumnIndex(NextBase.CATEGORY));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(time);
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            calendar.setTimeInMillis(eventTime);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            eventTime = calendar.getTimeInMillis();
 
             JsonParser jsonParser = new JsonParser(json);
             JsonModel jsonModel = jsonParser.parse();
             JsonExport jsonExport = jsonModel.getExport();
             int exp = jsonExport.getCalendar();
             int code = jsonExport.getgTasks();
-            jsonModel.setEventTime(time);
-            jsonModel.setStartTime(time);
+            jsonModel.setEventTime(eventTime);
+            jsonModel.setStartTime(eventTime);
             jsonParser.toJsonString(jsonModel);
 
             String uuID = SyncHelper.generateID();
-            long idN = db.insertReminder(summary, type, time, uuID, categoryId, jsonParser.toJsonString());
+            long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jsonParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){
-                if (time > 0){
+                if (eventTime > 0){
                     new PositionDelayReceiver().setDelay(context, idN);
                 } else {
                     if (!SuperUtil.isServiceRunning(context, GeolocationService.class)) {
@@ -254,10 +265,19 @@ public class Reminder {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
                 }
+            } else if (type.contains(Constants.TYPE_MONTHDAY) ||
+                    type.contains(Constants.TYPE_WEEKDAY)) {
+                JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+                long nextTime = new TimeCount(context).generateDateTime(type,
+                        jsonRecurrence.getMonthday(), time, 0,
+                        jsonRecurrence.getWeekdays(), 0, 0);
+                db.updateReminderTime(idN, nextTime);
+                jsonModel.setEventTime(nextTime);
+                db.setJson(idN, new JsonParser().toJsonString(jsonModel));
+                new AlarmReceiver().enableReminder(context, idN);
             } else {
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
                 boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-
                 if (exp == 1 && isCalendar || isStock)
                     ReminderUtils.exportToCalendar(context, summary, time, idN, isCalendar, isStock);
                 if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
@@ -311,12 +331,13 @@ public class Reminder {
      * @param id reminder identifier.
      * @param context application context.
      */
-    public static void moveToTrash(long id, Context context){
+    public static void moveToTrash(long id, Context context, ActionCallbacks callbacks){
         NextBase db = new NextBase(context);
         if (!db.isOpen()) db.open();
         db.toArchive(id);
         db.close();
         disable(context, id);
+        if (callbacks != null) callbacks.showSnackbar(R.string.moved_to_trash);
     }
 
     /**

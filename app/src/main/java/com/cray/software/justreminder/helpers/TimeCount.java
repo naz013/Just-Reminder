@@ -207,7 +207,6 @@ public class TimeCount {
         long currTime = System.currentTimeMillis();
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(currTime);
-        int mDay = cc.get(Calendar.DAY_OF_WEEK);
         cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cc.set(Calendar.MINUTE, minuteOfHour);
         cc.set(Calendar.SECOND, 0);
@@ -215,33 +214,35 @@ public class TimeCount {
         long mTime = cc.getTimeInMillis();
         boolean isZeroSupport = false;
         if (mTime > currTime || delay > 0) isZeroSupport = true;
-        long newDbTime = 0;
         if (weekdays != null) {
-            int charDay;
-            int delta = 7;
-            for (int i = 0; i < 7; i++){
-                if (weekdays.get(i) == Constants.DAY_CHECKED){
-                    if (i == 6) charDay = 1;
-                    else charDay = i + 2;
-                    int mDelta = charDay - mDay;
-                    if (mDelta > 0) {
-                        if (mDelta < delta) {
+            while (mTime < currTime) {
+                int charDay;
+                int delta = 7;
+                int mDay = cc.get(Calendar.DAY_OF_WEEK);
+                for (int i = 0; i < 7; i++) {
+                    if (weekdays.get(i) == Constants.DAY_CHECKED) {
+                        if (i == 6) charDay = 1;
+                        else charDay = i + 2;
+                        int mDelta = charDay - mDay;
+                        if (mDelta > 0) {
+                            if (mDelta < delta) {
+                                delta = mDelta;
+                            }
+                        } else if (mDelta < 0) {
+                            mDelta = 7 + mDelta;
+                            if (mDelta < delta) {
+                                delta = mDelta;
+                            }
+                        } else if (mDelta == 0 && isZeroSupport) {
                             delta = mDelta;
                         }
-                    } else if (mDelta < 0){
-                        mDelta = 7 + mDelta;
-                        if (mDelta < delta) {
-                            delta = mDelta;
-                        }
-                    } else if (mDelta == 0 && isZeroSupport){
-                        delta = mDelta;
                     }
                 }
+                cc.setTimeInMillis(mTime + (delta * DAY));
+                mTime = cc.getTimeInMillis();
             }
-
-            newDbTime = mTime + (delta * DAY);
         }
-        return newDbTime + (delay * MINUTE);
+        return mTime + (delay * MINUTE);
     }
 
     public boolean isCurrent(long startTime) {

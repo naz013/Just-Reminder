@@ -190,7 +190,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
                 if (item == 1) {
                     Reminder.delete(item1.getId(), getActivity());
                     if (mCallbacks != null) {
-                        mCallbacks.showSnackbar(R.string.delete);
+                        mCallbacks.showSnackbar(R.string.deleted);
                     }
                     loaderAdapter();
                 }

@@ -366,7 +366,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                         changeGroup(item1.getGroupId(), item1.getId());
                         break;
                     case 3:
-                        Reminder.moveToTrash(item1.getId(), getActivity());
+                        Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
                         loaderAdapter(null);
                         break;
                 }
