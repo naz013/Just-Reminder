@@ -3182,7 +3182,7 @@ public class Recognizer {
         DB.close();
 
         JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
-        JsonAction jsonAction = new JsonAction(type, number, -1);
+        JsonAction jsonAction = new JsonAction(type, number, -1, null);
         JsonModel jsonModel = new JsonModel(summary, type,
                 categoryId, uuID, due, due, null, jsonAction, jsonExport);
         long id = new DateType(mContext, type).save(jsonModel);

@@ -217,6 +217,8 @@ public class ReminderUtils {
             res = init + " (" + getType(context, type) + ")";
         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
             res = context.getString(R.string.shopping_list);
+        } else if (type.matches(Constants.TYPE_MAIL)){
+            res = context.getString(R.string.e_mail);
         } else {
             String init = context.getString(R.string.reminder);
             res = init + " (" + getType(context, type) + ")";

@@ -11,7 +11,6 @@ public class Constants {
     public static final String COLUMN_YEAR = "year";
     public static final String COLUMN_HOUR = "hour";
     public static final String COLUMN_MINUTE = "minute";
-    public static final String COLUMN_SECONDS = "seconds";
     public static final String COLUMN_REMIND_TIME = "remind_time";
     public static final String COLUMN_REPEAT = "repeat";
     public static final String COLUMN_REMINDERS_COUNT = "reminders_count";
@@ -21,7 +20,6 @@ public class Constants {
     public static final String COLUMN_DELAY = "tech_lint";
     public static final String COLUMN_TECH_VAR = "tech_var";
     public static final String COLUMN_WEEKDAYS = "tech_lvar";
-    public static final String COLUMN_IS_DONE = "done";
     public static final String COLUMN_EXPORT_TO_CALENDAR = "export_calendar";
     public static final String COLUMN_CUSTOM_MELODY = "custom_melody";
     public static final String COLUMN_CUSTOM_RADIUS = "custom_radius";
@@ -88,7 +86,6 @@ public class Constants {
     public final static String SELECTED_CONTACT_NAME = "selected_name";
     public final static String SELECTED_CONTACT_ARRAY = "contactNames";
     public final static String SELECTED_FONT_STYLE = "selected_style";
-    public final static String SELECTED_MELODY = "selected_melody";
     public final static String SELECTED_RADIUS = "selected_radius";
     public final static String SELECTED_LED_COLOR = "selected_led_color";
     public final static String SELECTED_APPLICATION = "selected_application";
@@ -110,8 +107,6 @@ public class Constants {
     public final static String DIR_BIRTHDAY_SD_GDRIVE_TMP = "tmp_gdrive_birthdays";
     public final static String DIR_SD_BOX_TMP = "tmp_box";
     public final static String DIR_NOTES_SD_BOX_TMP = "tmp_box_notes";
-    public final static String DIR_GROUP_SD_BOX_TMP = "tmp_box_group";
-    public final static String DIR_BIRTHDAY_SD_BOX_TMP = "tmp_box_birthdays";
 
     public static final String EDIT_ID = "edit_id";
     public static final String EDIT_PATH = "edit_path";
@@ -120,9 +115,6 @@ public class Constants {
     public static final int DAY_CHECKED = 1;
     public static final String DAY_CHECK = "1";
     public static final int DAY_UNCHECKED = 0;
-    public static final String NOTHING_CHECKED = "0000000";
-    public static final String ALL_CHECKED = "1111111";
-
     // Reminder types
     public static final String TYPE_REMINDER = "reminder";
     public static final String TYPE_MONTHDAY = "day_of_month";
@@ -140,7 +132,6 @@ public class Constants {
     public static final String TYPE_LOCATION_OUT = "out_location";
     public static final String TYPE_LOCATION_OUT_CALL = "out_location_call";
     public static final String TYPE_LOCATION_OUT_MESSAGE = "out_location_message";
-    public static final String TYPE_LOCATION_CHAIN = "chain_location";
     public static final String TYPE_LOCATION_CALL = "location_call";
     public static final String TYPE_LOCATION_MESSAGE = "location_message";
     public static final String TYPE_WEEKDAY = "weekday";
@@ -201,16 +192,5 @@ public class Constants {
         public static final String COLUMN_LOCATION_VAR = "var";
         public static final String COLUMN_LOCATION_VAR1 = "var1";
         public static final String COLUMN_LOCATION_VAR2 = "var2";
-    }
-
-    public class FilesConstants {
-        public static final String FILE_TYPE_LOCAL = "type_local";
-        public static final String FILE_TYPE_DROPBOX = "type_dropbox";
-        public static final String FILE_TYPE_GDRIVE = "type_gdrive";
-
-        public static final String COLUMN_FILE_NAME = "file_name";
-        public static final String COLUMN_FILE_TYPE = "file_type";
-        public static final String COLUMN_FILE_LOCATION = "file_location";
-        public static final String COLUMN_FILE_LAST_EDIT = "file_last_edit";
     }
 }

@@ -477,4 +477,7 @@
     <string name="gps_not_enabled">GPS not enabled!</string>
     <string name="moved_to_trash">Moved to trash</string>
     <string name="no_limits">No limits</string>
+    <string name="e_mail">E-mail</string>
+    <string name="subject">Subject</string>
+    <string name="email_is_incorrect">E-mail is incorrect!</string>
 </resources>

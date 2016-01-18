@@ -144,7 +144,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
 
     private ExtraView dateExtra, timeExtra, weekExtra, applicationExtra, callExtra,
-            monthExtra, locationExtra, locationOutExtra, messageExtra, skypeExtra;
+            monthExtra, locationExtra, locationOutExtra, messageExtra, skypeExtra, mailExtra;
 
     /**
      * Weekday reminder type variables.
@@ -177,6 +177,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private FloatingEditText messageNumber;
     private CheckBox messageExport;
     private CheckBox messageTaskExport;
+
+    /**
+     * Mail reminder variables.
+     */
+    private EditText mail, subject;
+    private CheckBox mailExport;
+    private CheckBox mailTaskExport;
 
     /**
      * Time reminder variables.
@@ -559,6 +566,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             spinner.setSelection(9);
         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)){
             spinner.setSelection(10);
+        } else if (type.matches(Constants.TYPE_MAIL)){
+            spinner.setSelection(11);
         } else {
             spinner.setSelection(0);
         }
@@ -636,6 +645,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.monthDayLayout).setVisibility(View.GONE);
         findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
+        findViewById(R.id.mailLayout).setVisibility(View.GONE);
 
         map = new MapFragment();
         map.setListener(this);
@@ -676,6 +686,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.e_mail), R.drawable.ic_email_white_24dp));
         } else {
             navSpinner.add(new SpinnerItem(getString(R.string.by_date), R.drawable.ic_event_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_access_time_black_24dp));
@@ -688,6 +699,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.e_mail), R.drawable.ic_email_black_24dp));
         }
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
@@ -762,6 +774,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (spinner.getSelectedItemPosition() == 8 && type.startsWith(Constants.TYPE_MONTHDAY)) is = true;
         if (spinner.getSelectedItemPosition() == 9 && type.startsWith(Constants.TYPE_LOCATION_OUT)) is = true;
         if (spinner.getSelectedItemPosition() == 10 && type.matches(Constants.TYPE_SHOPPING_LIST)) is = true;
+        if (spinner.getSelectedItemPosition() == 11 && type.matches(Constants.TYPE_MAIL)) is = true;
         return is;
     }
 
@@ -882,8 +895,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         monthDayField.setOnClickListener(dateClick);
 
         monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             monthDayExport.setVisibility(View.VISIBLE);
 
         monthDayTaskExport = (CheckBox) findViewById(R.id.monthDayTaskExport);
@@ -1016,8 +1028,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         remControl = dateType;
 
         weekExport = (CheckBox) findViewById(R.id.weekExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             weekExport.setVisibility(View.VISIBLE);
 
         weekTaskExport = (CheckBox) findViewById(R.id.weekTaskExport);
@@ -1133,8 +1144,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         remControl = dateType;
 
         timeExport = (CheckBox) findViewById(R.id.timeExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             timeExport.setVisibility(View.VISIBLE);
 
         timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
@@ -1301,8 +1311,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         skypeExport = (CheckBox) findViewById(R.id.skypeExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             skypeExport.setVisibility(View.VISIBLE);
 
         skypeTaskExport = (CheckBox) findViewById(R.id.skypeTaskExport);
@@ -1394,8 +1403,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         appExport = (CheckBox) findViewById(R.id.appExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             appExport.setVisibility(View.VISIBLE);
 
         appTaskExport = (CheckBox) findViewById(R.id.appTaskExport);
@@ -1475,8 +1483,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
 
         callExport = (CheckBox) findViewById(R.id.callExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             callExport.setVisibility(View.VISIBLE);
 
         callTaskExport = (CheckBox) findViewById(R.id.callTaskExport);
@@ -1535,8 +1542,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
 
         messageExport = (CheckBox) findViewById(R.id.messageExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
+        if (isCalendar || isStock)
             messageExport.setVisibility(View.VISIBLE);
 
         messageTaskExport = (CheckBox) findViewById(R.id.messageTaskExport);
@@ -1573,6 +1579,70 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         messageExtra = (ExtraView) findViewById(R.id.messageExtra);
         messageExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
         if (isExtra) messageExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
+    }
+
+    /**
+     * Show mail reminder type creation layout.
+     */
+    private void attachMail(){
+        taskField.setHint(getString(R.string.message));
+
+        LinearLayout mailLayout = (LinearLayout) findViewById(R.id.mailLayout);
+        ViewUtils.fadeInAnimation(mailLayout);
+
+        DateType dateType = new DateType(this, Constants.TYPE_MAIL);
+        dateType.inflateView(R.id.mailLayout);
+        remControl = dateType;
+
+        /*ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
+        addMessageNumberButton.setOnClickListener(contactClick);
+        ViewUtils.setImage(addMessageNumberButton, isDark);*/
+
+        mail = (EditText) findViewById(R.id.mail);
+        subject = (EditText) findViewById(R.id.subject);
+
+        mailExport = (CheckBox) findViewById(R.id.mailExport);
+        if (isCalendar || isStock)
+            mailExport.setVisibility(View.VISIBLE);
+
+        mailTaskExport = (CheckBox) findViewById(R.id.mailTaskExport);
+        if (gtx.isLinked()) mailTaskExport.setVisibility(View.VISIBLE);
+
+        DateTimeView dateViewMail = (DateTimeView) findViewById(R.id.dateViewMail);
+        dateViewMail.setListener(this);
+        dateViewMail.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+
+        RepeatView repeatViewMail = (RepeatView) findViewById(R.id.repeatViewMail);
+        repeatViewMail.setListener(this);
+        repeatViewMail.setMax(Configs.REPEAT_SEEKBAR_MAX);
+
+        if (item != null && isSame()) {
+            String text = item.getSummary();
+            JsonAction jsonAction = item.getAction();
+            String mailContact = jsonAction.getTarget();
+            String subjectT = jsonAction.getSubject();
+            JsonExport jsonExport = item.getExport();
+            int exp = jsonExport.getCalendar();
+            int expTasks = jsonExport.getgTasks();
+            repeatCode = item.getRecurrence().getRepeat();
+            eventTime = item.getStartTime();
+
+            if (exp == 1) messageExport.setChecked(true);
+
+            if (expTasks == Constants.SYNC_GTASKS_ONLY)
+                messageTaskExport.setChecked(true);
+
+            taskField.setText(text);
+            mail.setText(mailContact);
+            subject.setText(subjectT);
+            dateViewMail.setDateTime(updateCalendar(eventTime, true));
+            repeatViewMail.setProgress(repeatCode);
+        }
+
+        mailExtra = (ExtraView) findViewById(R.id.mailExtra);
+        mailExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
+        if (isExtra) mailExtra.setVisibility(View.VISIBLE);
         invalidateButtons();
     }
 
@@ -2146,6 +2216,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
+     * Check if mail reminder type layout visible.
+     * @return Boolean
+     */
+    private boolean isMailAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_MAIL);
+    }
+
+    /**
      * Check if monthDay reminder type layout visible.
      * @return Boolean
      */
@@ -2287,6 +2366,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
                 }
             }
+
+            String subjectString = null;
+            if (isMailAttached()) {
+                String email = mail.getText().toString().trim();
+                if (email.matches("") || !email.matches(".*@.*..*")) {
+                    Messages.snackbar(mFab, getString(R.string.email_is_incorrect));
+                } else number = email;
+
+                subjectString = subject.getText().toString().trim();
+            }
+
             String uuId = SyncHelper.generateID();
 
             Double latitude = 0.0;
@@ -2373,7 +2463,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             JsonLed jsonLed = new JsonLed(ledColor, ledColor == -1 ? 0 : 1);
             JsonMelody jsonMelody = new JsonMelody(melody, volume);
             JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
-            JsonAction jsonAction = new JsonAction(type, number, auto);
+            JsonAction jsonAction = new JsonAction(type, number, auto, subjectString);
             JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
             JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, style);
 
@@ -2468,6 +2558,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         else if (isSkypeAttached()) return skypeExtra;
         else if (isTimeReminderAttached()) return timeExtra;
         else if (isWeekDayReminderAttached()) return weekExtra;
+        else if (isMailAttached()) return mailExtra;
         else return null;
     }
 
@@ -2485,6 +2576,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             else if (isSkypeAttached()) return skypeExport.isChecked() ? 1 : 0;
             else if (isApplicationAttached()) return appExport.isChecked() ? 1 : 0;
             else if (isDateReminderAttached()) return dateExport.isChecked() ? 1 : 0;
+            else if (isMailAttached()) return mailExport.isChecked() ? 1 : 0;
             else return 0;
         } else return 0;
     }
@@ -2510,6 +2602,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return ReminderUtils.getSyncCode(timeTaskExport);
         } else if (isDateReminderAttached()){
             return ReminderUtils.getSyncCode(dateTaskExport);
+        } else if (isMailAttached()){
+            return ReminderUtils.getSyncCode(mailTaskExport);
         } else return 0;
     }
 
@@ -2519,7 +2613,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private long getRepeat() {
         if (isSkypeAttached() || isApplicationAttached() || isDateReminderAttached() ||
-                isTimeReminderAttached() || isCallAttached() || isMessageAttached()){
+                isTimeReminderAttached() || isCallAttached() || isMessageAttached() ||
+                isMailAttached()){
             return repeatCode;
         } else {
             return 0;
@@ -2887,6 +2982,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case 10:
                 detachCurrentView();
                 attachShoppingList();
+                break;
+            case 11:
+                detachCurrentView();
+                attachMail();
                 break;
         }
         sPrefs.saveInt(Prefs.LAST_USED_REMINDER, position);

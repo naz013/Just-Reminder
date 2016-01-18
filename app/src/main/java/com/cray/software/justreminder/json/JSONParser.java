@@ -1,7 +1,5 @@
 package com.cray.software.justreminder.json;
 
-import android.util.Log;
-
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -203,7 +201,7 @@ public class JsonParser {
         jsonModel.setStartTime(due);
         jsonModel.setUuId(uuID);
 
-        JsonAction jsonAction = new JsonAction(type, number, auto);
+        JsonAction jsonAction = new JsonAction(type, number, auto, null);
         jsonModel.setAction(jsonAction);
 
         JsonExport jsonExport = new JsonExport(0, 0, null);

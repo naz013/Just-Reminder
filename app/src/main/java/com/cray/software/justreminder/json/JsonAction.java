@@ -25,10 +25,11 @@ public class JsonAction {
      * JSON keys.
      */
     private static final String TYPE = "_type";
+    private static final String SUBJECT = "subject";
     private static final String TARGET = "target";
     private static final String AUTO = "_auto";
 
-    private String type, target;
+    private String type, target, subject;
     private int auto;
 
     /**
@@ -59,13 +60,15 @@ public class JsonAction {
         setAuto(-1);
         setTarget(null);
         setType(null);
+        setSubject(null);
     }
 
-    public JsonAction(String type, String target, int auto){
+    public JsonAction(String type, String target, int auto, String subject){
         jsonObject = new JSONObject();
         setAuto(auto);
         setTarget(target);
         setType(type);
+        setSubject(subject);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -79,6 +82,13 @@ public class JsonAction {
         if (jsonObject.has(TARGET)){
             try {
                 target = jsonObject.getString(TARGET);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(SUBJECT)){
+            try {
+                subject = jsonObject.getString(SUBJECT);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -127,6 +137,15 @@ public class JsonAction {
         }
     }
 
+    public void setSubject(String subject) {
+        this.subject = subject;
+        try {
+            jsonObject.put(SUBJECT, subject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setType(String type) {
         this.type = type;
         try {
@@ -143,6 +162,10 @@ public class JsonAction {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getSubject() {
+        return subject;
     }
 
     public String getType() {

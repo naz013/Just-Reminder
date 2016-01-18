@@ -797,15 +797,15 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void actionDelete(int position){
-        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_DROPBOX)){
+        if (provider.getWhere().matches(Constants.DIR_SD_DBX_TMP)){
             deleteFile(provider.getItem(position).getFilePath());
             reloadDropbox();
         }
-        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_GDRIVE)){
+        if (provider.getWhere().matches(Constants.DIR_SD_GDRIVE_TMP)){
             deleteGoogleFile(provider.getItem(position).getFilePath());
             reloadGoogle();
         }
-        if (provider.getWhere().matches(Constants.FilesConstants.FILE_TYPE_LOCAL)){
+        if (provider.getWhere().matches(Constants.DIR_SD)){
             deleteLocalFile(provider.getItem(position).getFilePath());
             reloadLocal();
         }

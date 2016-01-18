@@ -84,7 +84,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private long count, limit;
     private long repeaCode;
     private int isMelody;
-    private String melody, number, name, task, reminderType;
+    private String melody, number, name, task, reminderType, subject;
     private boolean isExtra = false;
     private int currVolume;
 
@@ -124,6 +124,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             reminderType = item.getType();
             JsonAction jsonAction = item.getAction();
             number = jsonAction.getTarget();
+            subject = jsonAction.getSubject();
             JsonMelody jsonMelody = item.getMelody();
             melody = jsonMelody.getMelodyPath();
             JsonRecurrence jsonRecurrence = item.getRecurrence();
@@ -259,6 +260,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 buttonDelay.setVisibility(View.GONE);
                 buttonDelayFor.setVisibility(View.GONE);
             }
+        } else if (type.matches(Constants.TYPE_MAIL)) {
+            remText.setText(subject + "\n" + number + "\n" + task);
+            buttonCall.setVisibility(View.VISIBLE);
+            buttonCall.setImageResource(R.drawable.ic_send_black_24dp);
         } else if (type.matches(Constants.TYPE_APPLICATION)) {
             PackageManager packageManager = getPackageManager();
             ApplicationInfo applicationInfo = null;
@@ -369,6 +374,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     Telephony.skypeChat(number, ReminderDialog.this);
                 } else if (type.contains(Constants.TYPE_APPLICATION)){
                     openApplication(number);
+                } else if (type.matches(Constants.TYPE_MAIL)){
+                    Telephony.sendMail(ReminderDialog.this, number, subject, task);
                 } else {
                     Telephony.makeCall(number, ReminderDialog.this);
                 }

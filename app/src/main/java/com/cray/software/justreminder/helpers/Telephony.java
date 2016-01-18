@@ -21,9 +21,25 @@ public class Telephony {
     public static void sendMail(File file, Context context){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "NoteModel");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
         Uri uri = Uri.fromFile(file);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(Intent.createChooser(intent, "Send email..."));
+    }
+
+    /**
+     * Open email client for sending new mail.
+     * @param context application context.
+     * @param email email to send.
+     * @param subject mail subject.
+     * @param message mail text.
+     */
+    public static void sendMail(Context context, String email, String subject, String message){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
         context.startActivity(Intent.createChooser(intent, "Send email..."));
     }
 

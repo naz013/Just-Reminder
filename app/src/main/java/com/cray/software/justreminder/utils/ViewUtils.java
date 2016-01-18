@@ -131,6 +131,8 @@ public class ViewUtils {
             icon = R.drawable.ic_public_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_SHOPPING_LIST)) {
             icon = R.drawable.ic_shopping_cart_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_MAIL)) {
+            icon = R.drawable.ic_email_white_24dp;
         } else {
             icon = R.drawable.ic_event_white_24dp;
         }

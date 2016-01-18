@@ -308,7 +308,7 @@ public class SplashScreen extends Activity{
                     parser.setShopping(list);
                 }
 
-                JsonAction jsonAction = new JsonAction(type, number, auto);
+                JsonAction jsonAction = new JsonAction(type, number, auto, null);
                 parser.setAction(jsonAction);
 
                 JsonExport jsonExport = new JsonExport(expTasks, exp, null);

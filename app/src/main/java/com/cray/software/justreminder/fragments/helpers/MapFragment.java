@@ -702,7 +702,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             searchCard.setVisibility(View.GONE);
         }
 
-        if (!isStyles) {
+        if (!isStyles || !Module.isPro()) {
             markersCard.setVisibility(View.GONE);
         }
 
