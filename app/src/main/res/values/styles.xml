@@ -396,7 +396,7 @@
         <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-    
+
     <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox"></style>
 
     <style name="Transparent" parent="@android:style/Theme.NoTitleBar">

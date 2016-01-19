@@ -1,4 +1,20 @@
-package com.cray.software.justreminder;
+/*
+ * Copyright 2016 Nazar Suhovich
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.cray.software.justreminder.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,18 +34,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.ImagePreview;
+import com.cray.software.justreminder.NotesManager;
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
@@ -40,8 +55,8 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -52,41 +67,37 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class NotePreviewFragment extends AppCompatActivity {
+public class NotePreview extends AppCompatActivity {
 
     private long remId;
     private ColorSetter cSetter;
-    private Toolbar toolbar;
     private long mParam1;
     private Bitmap img;
     private byte[] imageByte;
-    private float prevPercent;
 
-    private ScrollView scrollContent;
+    private Toolbar toolbar;
     private LinearLayout reminderContainer, buttonContainer;
     private ImageView imageView;
     private TextView noteText, reminderTime;
     private FloatingActionButton mFab;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(NotePreviewFragment.this);
+        cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
-        setContentView(R.layout.fragment_note_preview);
+        setContentView(R.layout.activity_note_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
+
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setTitle("");
         toolbar.setOnMenuItemClickListener(
@@ -113,105 +124,18 @@ public class NotePreviewFragment extends AppCompatActivity {
         mParam1 = getIntent().getLongExtra(Constants.EDIT_ID, 0);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        scrollContent = (ScrollView) findViewById(R.id.scrollContent);
-        scrollContent.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-
-            @Override
-            public void onScrollChanged() {
-                int scrollY = scrollContent.getScrollY();
-                if (imageByte != null) {
-                    toolbar.getBackground().setAlpha(getAlphaforActionBar(scrollY));
-                } else {
-                    toolbar.getBackground().setAlpha(255);
-                }
-                float percent = getCurrentPercent(scrollY);
-                if (percent >= 60.0 && prevPercent < 60.0){
-                    ViewUtils.hide(NotePreviewFragment.this, mFab);
-                }
-                if (percent <= 75.0 && prevPercent > 75.0){
-                    ViewUtils.show(NotePreviewFragment.this, mFab);
-                }
-                prevPercent = percent;
-            }
-
-            private float getCurrentPercent(int scrollY){
-                int maxDist = QuickReturnUtils.dp2px(NotePreviewFragment.this, 200);
-                return (((float)scrollY / (float)maxDist) * 100.0f);
-            }
-
-            private int getAlphaforActionBar(int scrollY) {
-                int minDist = 0, maxDist = QuickReturnUtils.dp2px(NotePreviewFragment.this, 200);
-                if (scrollY > maxDist) {
-                    return 255;
-                } else if (scrollY<minDist) {
-                    return 0;
-                } else {
-                    return (int)  ((255.0 / maxDist) * scrollY);
-                }
-            }
-        });
-
         reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
         reminderContainer.setVisibility(View.GONE);
         buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
         buttonContainer.setVisibility(View.GONE);
 
         imageView = (ImageView) findViewById(R.id.imageView);
+        if (Module.isLollipop()) imageView.setTransitionName("image");
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageByte != null) {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    Bitmap _bitmapScaled = img;
-                    _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-
-                    byte[] image = bytes.toByteArray();
-                    if (image == null) {
-                        return;
-                    }
-
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-                    boolean isDirectory = false;
-                    if (!sdPathDr.exists()) {
-                        isDirectory = sdPathDr.mkdirs();
-                    }
-                    if (isDirectory) {
-                        String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
-                        File f = new File(sdPathDr
-                                + File.separator + fileName);
-                        boolean isFile = false;
-                        try {
-                            isFile = f.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (isFile) {
-                            FileOutputStream fo = null;
-                            try {
-                                fo = new FileOutputStream(f);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                            if (fo != null) {
-                                try {
-                                    fo.write(image);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    fo.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                startActivity(new Intent(NotePreviewFragment.this, ImagePreview.class)
-                                        .putExtra("image", f.toString()));
-                            }
-                        }
-                    }
-                }
+                openImage();
             }
         });
         noteText = (TextView) findViewById(R.id.noteText);
@@ -223,7 +147,6 @@ public class NotePreviewFragment extends AppCompatActivity {
                     ViewUtils.collapse(buttonContainer);
                 } else {
                     ViewUtils.expand(buttonContainer);
-                    scrollContent.fullScroll(View.FOCUS_DOWN);
                 }
             }
         });
@@ -234,7 +157,7 @@ public class NotePreviewFragment extends AppCompatActivity {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(NotePreviewFragment.this, NotesManager.class)
+                startActivity(new Intent(NotePreview.this, NotesManager.class)
                         .putExtra(Constants.EDIT_ID, mParam1));
             }
         });
@@ -244,7 +167,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (remId != 0) {
-                    Reminder.edit(remId, NotePreviewFragment.this);
+                    Reminder.edit(remId, NotePreview.this);
                 }
             }
         });
@@ -253,7 +176,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (remId != 0) {
-                    Reminder.delete(remId, NotePreviewFragment.this);
+                    Reminder.delete(remId, NotePreview.this);
                 }
             }
         });
@@ -261,9 +184,64 @@ public class NotePreviewFragment extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViewUtils.show(NotePreviewFragment.this, mFab);
+                ViewUtils.show(NotePreview.this, mFab);
             }
         }, 500);
+    }
+
+    private void openImage() {
+        if (imageByte != null) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            Bitmap _bitmapScaled = img;
+            _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+            byte[] image = bytes.toByteArray();
+            if (image == null) {
+                return;
+            }
+
+            File sdPath = Environment.getExternalStorageDirectory();
+            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
+            boolean isDirectory = false;
+            if (!sdPathDr.exists()) {
+                isDirectory = sdPathDr.mkdirs();
+            }
+            if (isDirectory) {
+                String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
+                File f = new File(sdPathDr
+                        + File.separator + fileName);
+                boolean isFile = false;
+                try {
+                    isFile = f.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (isFile) {
+                    FileOutputStream fo = null;
+                    try {
+                        fo = new FileOutputStream(f);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if (fo != null) {
+                        try {
+                            fo.write(image);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            fo.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        startActivity(new Intent(NotePreview.this, ImagePreview.class)
+                                .putExtra("image", f.toString()));
+                    }
+                }
+            }
+        }
     }
 
     private void moveToStatus() {
@@ -272,7 +250,7 @@ public class NotePreviewFragment extends AppCompatActivity {
             base.open();
         }
         Cursor c = base.getNote(mParam1);
-        SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
+        SharedPrefs sPrefs = new SharedPrefs(NotePreview.this);
         if (c != null && c.moveToFirst()){
             new Notifier(this)
                     .showNoteNotification((sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT) ?
@@ -312,18 +290,19 @@ public class NotePreviewFragment extends AppCompatActivity {
     }
 
     private void loadData(){
-        NotesBase base = new NotesBase(NotePreviewFragment.this);
+        NotesBase base = new NotesBase(NotePreview.this);
         base.open();
         imageByte = null;
         img = null;
         Cursor c = base.getNote(mParam1);
         if (c != null && c.moveToFirst()){
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-            SharedPrefs sPrefs = new SharedPrefs(NotePreviewFragment.this);
+            SharedPrefs sPrefs = new SharedPrefs(NotePreview.this);
             if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
                 note = SyncHelper.decrypt(note);
             }
             noteText.setText(note);
+            toolbar.setTitle(note);
             int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
             int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
             remId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
@@ -334,35 +313,23 @@ public class NotePreviewFragment extends AppCompatActivity {
             }
 
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(color), cSetter.colorAccent(color)));
-            RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-            paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreviewFragment.this, 28)),
-                    QuickReturnUtils.dp2px(NotePreviewFragment.this, 16), 0);
 
+            int noteColor = cSetter.getNoteColor(color);
             if (imageByte != null){
                 Bitmap imgB = BitmapFactory.decodeByteArray(imageByte, 0,
                         imageByte.length);
                 img = imgB;
                 imageView.setImageBitmap(imgB);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = QuickReturnUtils.dp2px(this, 256);
-                imageView.setLayoutParams(params);
-                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
-                toolbar.getBackground().setAlpha(0);
+                toolbar.setBackgroundColor(noteColor);
+                //toolbar.getBackground().setAlpha(50);
             } else {
-                imageView.setBackgroundColor(cSetter.getNoteColor(color));
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = QuickReturnUtils.dp2px(this, 256);
-                imageView.setLayoutParams(params);
-                imageView.setVisibility(View.INVISIBLE);
-                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
-                toolbar.getBackground().setAlpha(255);
+                imageView.setBackgroundColor(noteColor);
+                toolbar.setBackgroundColor(noteColor);
+                //toolbar.getBackground().setAlpha(255);
             }
 
             if (remId != 0){
-                NextBase dataBase = new NextBase(NotePreviewFragment.this);
+                NextBase dataBase = new NextBase(NotePreview.this);
                 dataBase.open();
                 Cursor r = dataBase.getReminder(remId);
                 if (r != null && r.moveToFirst()){

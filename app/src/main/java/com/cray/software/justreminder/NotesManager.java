@@ -374,10 +374,10 @@ public class NotesManager extends AppCompatActivity {
         }
 
         taskField.setTypeface(cSetter.getTypeface(style));
-        toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.getNoteLightColor(color)));
+        toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
         layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.getNoteDarkColor(color)));
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
         }
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
                 cSetter.colorPrimaryDark(color)));
@@ -636,7 +636,7 @@ public class NotesManager extends AppCompatActivity {
                     layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
                     toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.getNoteDarkColor(color)));
+                        getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
                     }
                     mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
                             cSetter.colorPrimaryDark(color)));

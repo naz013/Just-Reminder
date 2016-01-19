@@ -82,14 +82,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NotePreviewFragment"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ReminderPreviewFragment"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
@@ -642,7 +634,9 @@
             android:name=".widgets.services.CalendarMonthService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name=".services.CallReceiver" android:enabled="true"
+        <receiver
+            android:name=".services.CallReceiver"
+            android:enabled="true"
             android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -681,7 +675,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.ImagePreview"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -697,8 +690,8 @@
         <activity
             android:name=".ShoppingListPreview"
             android:theme="@style/HomeWhite.Blue" />
-
-        <activity android:name=".activities.FileExplore"
+        <activity
+            android:name=".activities.FileExplore"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -708,7 +701,11 @@
 
         <service
             android:name=".services.BirthdayPermanentService"
-            android:enabled="true"/>
+            android:enabled="true" />
+
+        <activity
+            android:name=".activities.NotePreview"
+            android:theme="@style/HomeWhite.Blue"/>
     </application>
 
 </manifest>

@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.activities.NotePreview;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -558,7 +559,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                         @Override
                         public void onClick(View v) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                Intent intent = new Intent(mContext, NotePreviewFragment.class);
+                                Intent intent = new Intent(mContext, NotePreview.class);
                                 intent.putExtra(Constants.EDIT_ID, reminderNote.getNoteId());
                                 String transitionName = "image";
                                 ActivityOptionsCompat options =
@@ -567,7 +568,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                                 mContext.startActivity(intent, options.toBundle());
                             } else {
                                 mContext.startActivity(
-                                        new Intent(mContext, NotePreviewFragment.class)
+                                        new Intent(mContext, NotePreview.class)
                                                 .putExtra(Constants.EDIT_ID, reminderNote.getNoteId()));
                             }
                         }
@@ -581,7 +582,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                             @Override
                             public void onClick(View v) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Intent intent = new Intent(mContext, NotePreviewFragment.class);
+                                    Intent intent = new Intent(mContext, NotePreview.class);
                                     intent.putExtra(Constants.EDIT_ID, reminderNote.getNoteId());
                                     String transitionName = "image";
                                     ActivityOptionsCompat options =
@@ -590,7 +591,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                                     mContext.startActivity(intent, options.toBundle());
                                 } else {
                                     mContext.startActivity(
-                                            new Intent(mContext, NotePreviewFragment.class)
+                                            new Intent(mContext, NotePreview.class)
                                                     .putExtra(Constants.EDIT_ID, reminderNote.getNoteId()));
                                 }
                             }

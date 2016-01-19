@@ -25,21 +25,21 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.activities.NotePreview;
 import com.cray.software.justreminder.adapters.NoteRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncNotes;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.NotePreviewFragment;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
@@ -273,7 +273,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private void previewNote(long id, View view){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(getActivity(), NotePreviewFragment.class);
+            Intent intent = new Intent(getActivity(), NotePreview.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "image";
             ActivityOptionsCompat options =
@@ -282,7 +282,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             getActivity().startActivity(intent, options.toBundle());
         } else {
             getActivity().startActivity(
-                    new Intent(getActivity(), NotePreviewFragment.class)
+                    new Intent(getActivity(), NotePreview.class)
                             .putExtra(Constants.EDIT_ID, id));
         }
     }
