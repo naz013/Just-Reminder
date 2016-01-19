@@ -259,6 +259,7 @@ public class ReminderDataProvider {
         if (c != null && c.moveToNext()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
             String categoryId = c.getString(c.getColumnIndex(NextBase.CATEGORY));
             int archived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
             int completed = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));

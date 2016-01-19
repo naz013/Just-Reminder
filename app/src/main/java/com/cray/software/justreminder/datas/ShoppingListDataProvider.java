@@ -18,6 +18,7 @@ public class ShoppingListDataProvider {
     private Context mContext;
     private long remId;
     private int flag;
+    boolean hidden;
 
     public ShoppingListDataProvider(Context mContext){
         data = new ArrayList<>();
@@ -31,9 +32,10 @@ public class ShoppingListDataProvider {
         load();
     }
 
-    public ShoppingListDataProvider(List<JsonShopping> data){
+    public ShoppingListDataProvider(List<JsonShopping> data, boolean hidden){
         this.data = new ArrayList<>();
         loadFromList(data);
+        this.hidden = hidden;
     }
 
     public void setFlag(int flag) {
@@ -113,8 +115,16 @@ public class ShoppingListDataProvider {
         data = new ArrayList<>();
         data.clear();
         for (JsonShopping item : jsonShoppings) {
-            data.add(new ShoppingList(item.getSummary(), item.getStatus(),
-                    item.getUuId(), item.getDeleted(), item.getDateTime()));
+            if (!hidden) {
+                int deleted = item.getDeleted();
+                if (deleted == 0) {
+                    data.add(new ShoppingList(item.getSummary(), item.getStatus(),
+                            item.getUuId(), deleted, item.getDateTime()));
+                }
+            } else {
+                data.add(new ShoppingList(item.getSummary(), item.getStatus(),
+                        item.getUuId(), item.getDeleted(), item.getDateTime()));
+            }
         }
     }
 

@@ -26,10 +26,9 @@
     tools:context="com.cray.software.justreminder.activities.ShopsPreview"
     tools:showIn="@layout/activity_shops_preview">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -37,6 +36,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="@dimen/reminder_preview_margin_top"
             android:layout_marginRight="88dp"
+            android:layout_alignParentTop="true"
             android:layout_height="wrap_content">
 
             <android.support.v7.widget.SwitchCompat
@@ -65,6 +65,7 @@
             android:layout_height="wrap_content"
             android:text="@string/show_hidden"
             android:layout_marginLeft="15dp"
+            android:layout_below="@+id/reminderContainer"
             android:layout_marginTop="@dimen/reminder_preview_margin_top"
             android:layout_marginRight="88dp"
             android:id="@+id/showHidden"/>
@@ -73,15 +74,10 @@
             android:id="@+id/todoList"
             android:layout_width="match_parent"
             android:overScrollMode="never"
-            android:visibility="visible"
-            android:minHeight="56dp"
             android:layout_marginTop="15dp"
-            android:divider="@android:color/transparent"
+            android:minHeight="56dp"
+            android:layout_below="@+id/showHidden"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:focusable="false"
-            android:layout_below="@+id/reminderContainer"
-            android:choiceMode="singleChoice"
-            android:fastScrollEnabled="true"/>
-    </LinearLayout>
+            android:clipToPadding="false"/>
+    </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

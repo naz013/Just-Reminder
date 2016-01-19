@@ -22,10 +22,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,12 +43,15 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JsonShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.WrapLayoutManager;
+
+import java.util.List;
 
 public class ShopsPreview extends AppCompatActivity {
 
@@ -66,6 +69,7 @@ public class ShopsPreview extends AppCompatActivity {
 
     private long id;
     private boolean isHidden = false;
+    List<JsonShopping> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,6 @@ public class ShopsPreview extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle("");
         if (Module.isLollipop()) toolbar.setTransitionName("toolbar");
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
@@ -141,18 +144,20 @@ public class ShopsPreview extends AppCompatActivity {
                 ViewUtils.zoom(mFab, 350);
             }
         }, 500);
+        loadUi();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
+        loadUi();
     }
 
     private void loadUi() {
         ReminderModel item = ReminderDataProvider.getItem(this, id);
         if (item != null) {
-            toolbar.setTitle(item.getTitle());
+            String title = item.getTitle();
+            Log.d(Constants.LOG_TAG, title);
             long due = item.getDue();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -178,11 +183,16 @@ public class ShopsPreview extends AppCompatActivity {
             }
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
                     cSetter.colorAccent(catColor)));
-        }
+
+            list = item.getShoppings();
+            toolbar.setTitle(title);
+            Log.d(Constants.LOG_TAG, "List size - " + list.size());
+            loadData();
+        } else closeScreen();
     }
 
     private void loadData() {
-        provider = new ShoppingListDataProvider(this, id, isHidden ? ShoppingList.DELETED : ShoppingList.ACTIVE);
+        provider = new ShoppingListDataProvider(list, isHidden);
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
@@ -203,7 +213,6 @@ public class ShopsPreview extends AppCompatActivity {
             }
         });
         todoList.setAdapter(shoppingAdapter);
-        loadUi();
     }
 
     @Override
@@ -218,17 +227,7 @@ public class ShopsPreview extends AppCompatActivity {
         int ids = item.getItemId();
         if (ids == R.id.action_delete) {
             Reminder.moveToTrash(id, ShopsPreview.this, null);
-            ViewUtils.zoomOut(mFab, 350);
-            new android.os.Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        finishAfterTransition();
-                    } else {
-                        finish();
-                    }
-                }
-            }, 350);
+            closeScreen();
             return true;
         }
         if (ids == android.R.id.home){

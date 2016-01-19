@@ -5,6 +5,9 @@ import com.cray.software.justreminder.json.JsonMelody;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JsonShopping;
+
+import java.util.List;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -26,6 +29,7 @@ public class ReminderModel {
     private int completed, archived, catColor, viewType, radius;
     private long due, id, repeat;
     private double[] place;
+    private List<JsonShopping> shoppings;
 
     public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed, int viewType) {
         this.id = id;
@@ -53,6 +57,12 @@ public class ReminderModel {
 
         JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
         repeat = jsonRecurrence.getRepeat();
+
+        this.shoppings = jsonModel.getShoppings();
+    }
+
+    public List<JsonShopping> getShoppings() {
+        return shoppings;
     }
 
     public String getMelody() {

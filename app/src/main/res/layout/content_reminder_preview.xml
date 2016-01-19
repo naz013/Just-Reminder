@@ -68,6 +68,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/time"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>

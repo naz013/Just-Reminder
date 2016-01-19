@@ -2062,7 +2062,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (id != 0) {
                 shoppingLists = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
             } else {
-                shoppingLists = new ShoppingListDataProvider(item.getShoppings());
+                shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
             }
             shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
                 @Override
