@@ -82,14 +82,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ReminderPreviewFragment"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.Help"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
@@ -705,6 +697,9 @@
 
         <activity
             android:name=".activities.NotePreview"
+            android:theme="@style/HomeWhite.Blue" />
+        <activity
+            android:name=".activities.ReminderPreview"
             android:theme="@style/HomeWhite.Blue"/>
     </application>
 

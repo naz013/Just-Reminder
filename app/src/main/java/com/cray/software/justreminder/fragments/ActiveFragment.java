@@ -23,22 +23,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.ShoppingListPreview;
+import com.cray.software.justreminder.activities.ReminderPreview;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncTask;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.ReminderPreviewFragment;
-import com.cray.software.justreminder.ShoppingListPreview;
 
 import java.util.ArrayList;
 
@@ -299,7 +299,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      */
     private void previewReminder(final View view, final long id, final String type){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(getActivity(), ReminderPreviewFragment.class);
+            Intent intent = new Intent(getActivity(), ReminderPreview.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "toolbar";
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
@@ -318,7 +318,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                                 .putExtra(Constants.EDIT_ID, id));
             } else {
                 getActivity().startActivity(
-                        new Intent(getActivity(), ReminderPreviewFragment.class)
+                        new Intent(getActivity(), ReminderPreview.class)
                                 .putExtra(Constants.EDIT_ID, id));
             }
         }

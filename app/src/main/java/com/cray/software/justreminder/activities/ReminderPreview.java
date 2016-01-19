@@ -1,6 +1,21 @@
-package com.cray.software.justreminder;
+/*
+ * Copyright 2016 Nazar Suhovich
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import android.app.Activity;
+package com.cray.software.justreminder.activities;
+
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,6 +29,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -30,7 +47,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.NotePreview;
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -46,12 +64,12 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
@@ -69,11 +87,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ReminderPreviewFragment extends AppCompatActivity implements ActionCallbacks {
+public class ReminderPreview extends AppCompatActivity implements ActionCallbacks {
 
     private SharedPrefs sPrefs;
 
-    private TextView task, statusText, time, location, group, type, number, repeat, melody;
+    private TextView statusText, time, location, group, type, number, repeat, melody;
     private SwitchCompat statusSwitch;
     private LinearLayout tasksContainer, notesContainer, mapContainer, background;
     private TextView listColor, taskText, taskNote, taskDate, noteText;
@@ -81,7 +99,9 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
     private ImageView imageView;
     private CircularProgress progress;
     private Toolbar toolbar;
+    private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionButton mFab;
+    private AppBarLayout appBarLayout;
 
     private long id;
     private ArrayList<Long> list;
@@ -94,12 +114,14 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
-        setContentView(R.layout.activity_reminder_preview_fragment);
+        setContentView(R.layout.activity_reminder_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setTitle("");
 
@@ -111,17 +133,11 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
-
-        RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        paramsR.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        paramsR.addRule(RelativeLayout.BELOW, R.id.toolbar);
-        paramsR.setMargins(QuickReturnUtils.dp2px(this, 16), -(QuickReturnUtils.dp2px(this, 20)), 0, 0);
-
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (id != 0) {
-                    Reminder.edit(id, ReminderPreviewFragment.this);
+                    Reminder.edit(id, ReminderPreview.this);
                 }
             }
         });
@@ -130,19 +146,18 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
     }
 
     private void initViews() {
-        task = (TextView) findViewById(R.id.task);
-
         RelativeLayout switchWrapper = (RelativeLayout) findViewById(R.id.switchWrapper);
         switchWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Reminder.toggle(id, ReminderPreviewFragment.this, ReminderPreviewFragment.this);
+                Reminder.toggle(id, ReminderPreview.this, ReminderPreview.this);
                 loadInfo();
             }
         });
 
         statusText = (TextView) findViewById(R.id.statusText);
         statusSwitch = (SwitchCompat) findViewById(R.id.statusSwitch);
+        if (Module.isLollipop()) statusSwitch.setTransitionName("toolbar");
 
         time = (TextView) findViewById(R.id.time);
         location = (TextView) findViewById(R.id.location);
@@ -190,7 +205,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                 statusSwitch.setChecked(true);
                 statusText.setText(R.string.enabled4);
             }
-            task.setText(item.getTitle());
+            toolbar.setTitle(item.getTitle());
             type.setText(ReminderUtils.getTypeString(this, item.getType()));
             group.setText(CategoryModel.getCategoryTitle(this, item.getGroupId()));
 
@@ -281,7 +296,10 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
 
             int catColor = item.getCatColor();
             ColorSetter setter = new ColorSetter(this);
-            toolbar.setBackgroundColor(ViewUtils.getColor(this, setter.getCategoryColor(catColor)));
+            int mColor = ViewUtils.getColor(this, setter.getCategoryColor(catColor));
+            toolbar.setBackgroundColor(mColor);
+            toolbarLayout.setBackgroundColor(mColor);
+            appBarLayout.setBackgroundColor(mColor);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
             }
@@ -323,7 +341,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         int ids = item.getItemId();
 
         if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ReminderPreviewFragment.this, null);
+            Reminder.moveToTrash(id, ReminderPreview.this, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAfterTransition();
             } else {
@@ -398,7 +416,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
         builder.setTitle(R.string.choose_time);
         builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                Reminder.copy(id, list.get(item), ReminderPreviewFragment.this, null);
+                Reminder.copy(id, list.get(item), ReminderPreview.this, null);
                 dialog.dismiss();
             }
         });
@@ -558,19 +576,7 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                     noteText.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                Intent intent = new Intent(mContext, NotePreview.class);
-                                intent.putExtra(Constants.EDIT_ID, reminderNote.getNoteId());
-                                String transitionName = "image";
-                                ActivityOptionsCompat options =
-                                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, imageView,
-                                                transitionName);
-                                mContext.startActivity(intent, options.toBundle());
-                            } else {
-                                mContext.startActivity(
-                                        new Intent(mContext, NotePreview.class)
-                                                .putExtra(Constants.EDIT_ID, reminderNote.getNoteId()));
-                            }
+                            openNote(reminderNote.getNoteId());
                         }
                     });
                     byte[] image = reminderNote.getImage();
@@ -581,24 +587,27 @@ public class ReminderPreviewFragment extends AppCompatActivity implements Action
                         imageView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    Intent intent = new Intent(mContext, NotePreview.class);
-                                    intent.putExtra(Constants.EDIT_ID, reminderNote.getNoteId());
-                                    String transitionName = "image";
-                                    ActivityOptionsCompat options =
-                                            ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, imageView,
-                                                    transitionName);
-                                    mContext.startActivity(intent, options.toBundle());
-                                } else {
-                                    mContext.startActivity(
-                                            new Intent(mContext, NotePreview.class)
-                                                    .putExtra(Constants.EDIT_ID, reminderNote.getNoteId()));
-                                }
+                                openNote(reminderNote.getNoteId());
                             }
                         });
                     } else imageView.setVisibility(View.GONE);
                 }
             }
+        }
+    }
+
+    private void openNote(long id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(this, NotePreview.class);
+            intent.putExtra(Constants.EDIT_ID, id);
+            String transitionName = "image";
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView,
+                            transitionName);
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(new Intent(this, NotePreview.class)
+                            .putExtra(Constants.EDIT_ID, id));
         }
     }
 }

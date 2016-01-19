@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 Nazar Suhovich
+  ~ <p/>
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~ <p/>
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ <p/>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.cray.software.justreminder.activities.ReminderPreview"
+    android:id="@+id/windowBackground"
+    tools:showIn="@layout/activity_reminder_preview">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="88dp"
+                android:id="@+id/switchWrapper">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/statusSwitch"
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp"
+                    android:paddingLeft="35dp"
+                    android:id="@+id/statusText"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/statusSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="5dp"
+                    android:clickable="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/time"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_access_time_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/location"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_navigation_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/group"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_local_offer_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/type"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_assignment_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/number"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_account_circle_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/melody"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_music_note_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/repeat"
+                android:textSize="18sp"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:drawableLeft="@drawable/ic_refresh_black_24dp"
+                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/mapContainer"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:orientation="vertical">
+
+                <fragment
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:clickable="true"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasksContainer"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/task"
+                    android:paddingTop="30dp"
+                    android:textAllCaps="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/background"
+                    android:clickable="true"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="5dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/bluePrimary"
+                        android:id="@+id/listColor"/>
+
+                    <CheckBox
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/checkDone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="0.4"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/taskText"
+                            android:singleLine="true"
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:id="@+id/taskNote"
+                            android:singleLine="true"
+                            android:textSize="15sp"
+                            android:layout_marginTop="3dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/taskDate"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:layout_margin="4dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.7"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notesContainer"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="@string/notes"
+                    android:paddingTop="30dp"
+                    android:textAllCaps="true"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="256dp"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/imageView"
+                    android:minHeight="?attr/actionBarSize"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/noteText"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    <com.cray.software.justreminder.views.CircularProgress
+        android:layout_gravity="center"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:id="@+id/progress"
+        app:circular_progress_color="?attr/colorPrimaryDark"
+        app:circular_progress_size="Small"/>
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
