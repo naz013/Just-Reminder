@@ -1,7 +1,25 @@
-package com.cray.software.justreminder;
+/*
+ * Copyright 2016 Nazar Suhovich
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.cray.software.justreminder.activities;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +34,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -24,18 +43,21 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.cray.software.justreminder.views.WrapLayoutManager;
 
-public class ShoppingListPreview extends AppCompatActivity {
+public class ShopsPreview extends AppCompatActivity {
 
-    private TextView shopTitle, time;
+    private TextView time;
     private RecyclerView todoList;
     private Toolbar toolbar;
+    private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionButton mFab;
+    private AppBarLayout appBarLayout;
     private RelativeLayout reminderContainer;
     private SwitchCompat reminderSwitch;
 
@@ -53,14 +75,16 @@ public class ShoppingListPreview extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
-        setContentView(R.layout.activity_shopping_preview);
+        setContentView(R.layout.activity_shops_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         toolbar.setTitle("");
+        if (Module.isLollipop()) toolbar.setTransitionName("toolbar");
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
@@ -68,13 +92,12 @@ public class ShoppingListPreview extends AppCompatActivity {
         reminderSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Reminder.toggle(id, ShoppingListPreview.this, null);
+                Reminder.toggle(id, ShopsPreview.this, null);
                 loadData();
             }
         });
         reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
 
-        shopTitle = (TextView) findViewById(R.id.shopTitle);
         time = (TextView) findViewById(R.id.time);
         if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
@@ -94,7 +117,9 @@ public class ShoppingListPreview extends AppCompatActivity {
         });
 
         todoList = (RecyclerView) findViewById(R.id.todoList);
-        todoList.setLayoutManager(new LinearLayoutManager(this));
+        todoList.setLayoutManager(new WrapLayoutManager(this));
+        todoList.setNestedScrollingEnabled(false);
+        todoList.setHasFixedSize(false);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
@@ -103,23 +128,17 @@ public class ShoppingListPreview extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (id != 0) {
-                    Reminder.edit(id, ShoppingListPreview.this);
+                    Reminder.edit(id, ShopsPreview.this);
                 }
             }
         });
 
-        RelativeLayout wrapper = (RelativeLayout) findViewById(R.id.windowBackground);
-        wrapper.setBackgroundColor(cSetter.getBackgroundStyle());
-
-        RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-        paramsR.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        paramsR.addRule(RelativeLayout.BELOW, R.id.toolbar);
-        paramsR.setMargins(QuickReturnUtils.dp2px(this, 16), -(QuickReturnUtils.dp2px(this, 20)), 0, 0);
+        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-               ViewUtils.zoom(mFab, 350);
+                ViewUtils.zoom(mFab, 350);
             }
         }, 500);
     }
@@ -133,7 +152,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     private void loadUi() {
         ReminderModel item = ReminderDataProvider.getItem(this, id);
         if (item != null) {
-            shopTitle.setText(item.getTitle());
+            toolbar.setTitle(item.getTitle());
             long due = item.getDue();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -149,7 +168,11 @@ public class ShoppingListPreview extends AppCompatActivity {
             }
 
             int catColor = item.getCatColor();
-            toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.getCategoryColor(catColor)));
+            int mColor = ViewUtils.getColor(this, cSetter.getCategoryColor(catColor));
+            toolbar.setBackgroundColor(mColor);
+            toolbarLayout.setBackgroundColor(mColor);
+            toolbarLayout.setContentScrimColor(mColor);
+            appBarLayout.setBackgroundColor(mColor);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(catColor));
             }
@@ -163,19 +186,19 @@ public class ShoppingListPreview extends AppCompatActivity {
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList.switchItem(ShoppingListPreview.this, id, isChecked, provider.getItem(position).getUuId());
+                ShoppingList.switchItem(ShopsPreview.this, id, isChecked, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemDelete(int position) {
-                ShoppingList.hideItem(ShoppingListPreview.this, id, provider.getItem(position).getUuId());
+                ShoppingList.hideItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemChange(int position) {
-                ShoppingList.showItem(ShoppingListPreview.this, id, provider.getItem(position).getUuId());
+                ShoppingList.showItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
         });
@@ -185,7 +208,8 @@ public class ShoppingListPreview extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_delete, menu);
+        getMenuInflater().inflate(R.menu.menu_reminder_preview, menu);
+        menu.getItem(0).setVisible(false);
         return true;
     }
 
@@ -193,7 +217,7 @@ public class ShoppingListPreview extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int ids = item.getItemId();
         if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ShoppingListPreview.this, null);
+            Reminder.moveToTrash(id, ShopsPreview.this, null);
             ViewUtils.zoomOut(mFab, 350);
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
@@ -208,23 +232,12 @@ public class ShoppingListPreview extends AppCompatActivity {
             return true;
         }
         if (ids == android.R.id.home){
-            ViewUtils.zoomOut(mFab, 350);
-            new android.os.Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        finishAfterTransition();
-                    } else {
-                        finish();
-                    }
-                }
-            }, 350);
+            closeScreen();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
+    private void closeScreen() {
         ViewUtils.zoomOut(mFab, 350);
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -236,5 +249,10 @@ public class ShoppingListPreview extends AppCompatActivity {
                 }
             }
         }, 350);
+    }
+
+    @Override
+    public void onBackPressed() {
+        closeScreen();
     }
 }

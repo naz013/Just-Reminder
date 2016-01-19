@@ -680,9 +680,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ShoppingListPreview"
-            android:theme="@style/HomeWhite.Blue" />
-        <activity
             android:name=".activities.FileExplore"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
@@ -700,7 +697,10 @@
             android:theme="@style/HomeWhite.Blue" />
         <activity
             android:name=".activities.ReminderPreview"
-            android:theme="@style/HomeWhite.Blue"/>
+            android:theme="@style/HomeWhite.Blue" />
+        <activity
+            android:name=".activities.ShopsPreview"
+            android:theme="@style/HomeWhite.Blue"></activity>
     </application>
 
 </manifest>

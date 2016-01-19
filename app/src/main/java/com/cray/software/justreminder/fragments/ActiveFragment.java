@@ -24,8 +24,8 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.ShoppingListPreview;
 import com.cray.software.justreminder.activities.ReminderPreview;
+import com.cray.software.justreminder.activities.ShopsPreview;
 import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;
@@ -303,7 +303,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "toolbar";
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                intent = new Intent(getActivity(), ShoppingListPreview.class);
+                intent = new Intent(getActivity(), ShopsPreview.class);
                 intent.putExtra(Constants.EDIT_ID, id);
                 transitionName = "toolbar";
             }
@@ -314,7 +314,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         } else {
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                 getActivity().startActivity(
-                        new Intent(getActivity(), ShoppingListPreview.class)
+                        new Intent(getActivity(), ShopsPreview.class)
                                 .putExtra(Constants.EDIT_ID, id));
             } else {
                 getActivity().startActivity(

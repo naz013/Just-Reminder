@@ -77,6 +77,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/location"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_navigation_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -86,6 +88,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/group"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_local_offer_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -95,6 +99,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/type"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_assignment_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -104,6 +110,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/number"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_account_circle_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -113,6 +121,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/melody"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_music_note_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -122,6 +132,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/repeat"
                 android:textSize="18sp"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_refresh_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
@@ -131,6 +143,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/mapContainer"
                 android:visibility="gone"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:orientation="vertical">
 
@@ -148,6 +162,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tasksContainer"
                 android:visibility="gone"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:orientation="vertical">
 
@@ -231,6 +247,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/notesContainer"
                 android:visibility="gone"
+                android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:orientation="vertical">
 

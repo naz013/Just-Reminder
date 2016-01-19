@@ -299,6 +299,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             int mColor = ViewUtils.getColor(this, setter.getCategoryColor(catColor));
             toolbar.setBackgroundColor(mColor);
             toolbarLayout.setBackgroundColor(mColor);
+            toolbarLayout.setContentScrimColor(mColor);
             appBarLayout.setBackgroundColor(mColor);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
