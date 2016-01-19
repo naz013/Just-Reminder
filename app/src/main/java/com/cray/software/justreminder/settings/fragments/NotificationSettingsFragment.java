@@ -30,14 +30,15 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    private TextView locale;
+    private TextView locale, volume;
     
     private PrefsView blurPrefs, notificationDismissPrefs, permanentNotificationPrefs, 
             statusIconPrefs, vibrationOptionPrefs, infiniteVibrateOptionPrefs, 
             soundOptionPrefs, infiniteSoundOptionPrefs, ttsPrefs, wakeScreenOptionPrefs, 
             unlockScreenPrefs, silentSMSOptionPrefs, autoLaunchPrefs, ledPrefs, 
             repeatNotificationOptionPrefs, extraNotificationPrefs, repeatIntervalPrefs, 
-            chooseSoundPrefs, delayForPrefs, chooseLedColorPrefs;
+            chooseSoundPrefs, delayForPrefs, chooseLedColorPrefs, streamPrefs, systemPrefs,
+            increasePrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -124,6 +125,17 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         extraNotificationPrefs.setOnClickListener(this);
         extraNotificationPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS));
 
+        systemPrefs = (PrefsView) rootView.findViewById(R.id.systemPrefs);
+        systemPrefs.setOnClickListener(this);
+        systemPrefs.setChecked(sPrefs.loadBoolean(Prefs.SYSTEM_VOLUME));
+
+        streamPrefs = (PrefsView) rootView.findViewById(R.id.streamPrefs);
+        streamPrefs.setOnClickListener(this);
+
+        increasePrefs = (PrefsView) rootView.findViewById(R.id.increasePrefs);
+        increasePrefs.setOnClickListener(this);
+        increasePrefs.setChecked(sPrefs.loadBoolean(Prefs.INCREASING_VOLUME));
+
         repeatIntervalPrefs = (PrefsView) rootView.findViewById(R.id.repeatIntervalPrefs);
         repeatIntervalPrefs.setOnClickListener(this);
 
@@ -135,7 +147,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         delayForPrefs = (PrefsView) rootView.findViewById(R.id.delayForPrefs);
         delayForPrefs.setOnClickListener(this);
 
-        TextView volume = (TextView) rootView.findViewById(R.id.volume);
+        volume = (TextView) rootView.findViewById(R.id.volume);
         volume.setOnClickListener(this);
 
         locale = (TextView) rootView.findViewById(R.id.locale);
@@ -158,6 +170,8 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         checkTTS();
 
         checkIcon();
+
+        checkSystem();
 
         if (Module.isPro()){
             ledPrefs.setOnClickListener(this);
@@ -189,6 +203,40 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         } else {
             sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, true);
             extraNotificationPrefs.setChecked(true);
+        }
+    }
+
+    private void increaseChange() {
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (increasePrefs.isChecked()){
+            sPrefs.saveBoolean(Prefs.INCREASING_VOLUME, false);
+            increasePrefs.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.INCREASING_VOLUME, true);
+            increasePrefs.setChecked(true);
+        }
+        checkSystem();
+    }
+
+    private void systemChange() {
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (systemPrefs.isChecked()){
+            sPrefs.saveBoolean(Prefs.SYSTEM_VOLUME, false);
+            systemPrefs.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.SYSTEM_VOLUME, true);
+            systemPrefs.setChecked(true);
+        }
+        checkSystem();
+    }
+
+    private void checkSystem(){
+        if (!systemPrefs.isChecked()){
+            volume.setEnabled(true);
+            streamPrefs.setEnabled(false);
+        } else {
+            volume.setEnabled(false);
+            streamPrefs.setEnabled(true);
         }
     }
 
@@ -480,6 +528,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             case R.id.blurPrefs:
                 blurChange();
                 break;
+            case R.id.increasePrefs:
+                increaseChange();
+                break;
             case R.id.vibrationOptionPrefs:
                 vibrationChange();
                 break;
@@ -491,6 +542,12 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 break;
             case R.id.chooseSoundPrefs:
                 Dialogues.melodyType(getActivity(), Prefs.CUSTOM_SOUND, this, 201);
+                break;
+            case R.id.systemPrefs:
+                systemChange();
+                break;
+            case R.id.streamPrefs:
+                Dialogues.streamDialog(getActivity());
                 break;
             case R.id.infiniteVibrateOptionPrefs:
                 infiniteVibrationChange();

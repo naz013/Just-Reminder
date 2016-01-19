@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -41,26 +42,67 @@ import java.util.Calendar;
 public class MissedCallDialog extends Activity {
     private MissedCallAlarm alarm = new MissedCallAlarm();
     private long id;
-    private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(MissedCallDialog.this);
     private Notifier notifier = new Notifier(MissedCallDialog.this);
+
     private String number;
+
     private int currVolume;
+    private int streamVol;
+    private int mVolume;
+    private int mStream;
+
+    private Handler handler = new Handler();
+
+    /**
+     * Runnable for increasing volume in stream.
+     */
+    private Runnable increaseVolume = new Runnable() {
+        @Override
+        public void run() {
+            if (mVolume < streamVol) {
+                mVolume++;
+                handler.postDelayed(increaseVolume, 750);
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                am.setStreamVolume(mStream, mVolume, 0);
+            } else handler.removeCallbacks(increaseVolume);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sPrefs = new SharedPrefs(MissedCallDialog.this);
+        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
+        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        if (systemVol) {
+            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            currVolume = am.getStreamVolume(mStream);
+            streamVol = currVolume;
+            mVolume = currVolume;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        } else {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mStream = 3;
+            currVolume = am.getStreamVolume(mStream);
+            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+            int maxVol = am.getStreamMaxVolume(mStream);
+            streamVol = (int) (maxVol * volPercent);
+            mVolume = streamVol;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        }
 
-        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int prefsVol = sPrefs.loadInt(Prefs.VOLUME);
-        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
-        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        int streamVol = (int) (maxVol * volPercent);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
-
-        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
+        boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -112,7 +154,7 @@ public class MissedCallDialog extends Activity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
         if (name != null && !name.matches("")) {
             remText.setText(SuperUtil.appendString(name, "\n", number, "\n\n\n\n", getString(R.string.last_called),
                     "\n", formattedTime));
@@ -199,8 +241,8 @@ public class MissedCallDialog extends Activity {
     }
 
     public void wakeScreen() {
-        sPrefs = new SharedPrefs(MissedCallDialog.this);
-        if (sPrefs.loadBoolean(Prefs.WAKE_STATUS)) {
+        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
+        if (prefs.loadBoolean(Prefs.WAKE_STATUS)) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn = pm.isScreenOn();
             if (!isScreenOn) {
@@ -233,8 +275,12 @@ public class MissedCallDialog extends Activity {
         super.onDestroy();
         notifier.recreatePermanent();
         removeFlags();
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
+        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
+        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        if (!systemVol) {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(mStream, currVolume, 0);
+        }
     }
 
     @Override

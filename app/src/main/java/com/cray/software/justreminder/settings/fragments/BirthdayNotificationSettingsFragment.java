@@ -31,7 +31,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.birthday_notification_settings_layout, container, false);
+        View rootView =  inflater.inflate(R.layout.settings_birthday_notification_layout, container, false);
 
         ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (ab != null){

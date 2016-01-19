@@ -13,6 +13,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
@@ -49,34 +50,76 @@ import java.util.Calendar;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
-public class ShowBirthday extends Activity implements View.OnClickListener, TextToSpeech.OnInitListener {
+public class ShowBirthday extends Activity implements View.OnClickListener,
+        TextToSpeech.OnInitListener {
 
     private long id;
-    private SharedPrefs sPrefs;
     private int contactId;
     private String name, number, birthDate;
     private ColorSetter cs = new ColorSetter(ShowBirthday.this);
     private Notifier notifier = new Notifier(ShowBirthday.this);
+
     private int currVolume;
+    private int streamVol;
+    private int mVolume;
+    private int mStream;
+
     private TextToSpeech tts;
 
     private static final int MY_DATA_CHECK_CODE = 111;
+
+    private Handler handler = new Handler();
+
+    /**
+     * Runnable for increasing volume in stream.
+     */
+    private Runnable increaseVolume = new Runnable() {
+        @Override
+        public void run() {
+            if (mVolume < streamVol) {
+                mVolume++;
+                handler.postDelayed(increaseVolume, 750);
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                am.setStreamVolume(mStream, mVolume, 0);
+            } else handler.removeCallbacks(increaseVolume);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        sPrefs = new SharedPrefs(ShowBirthday.this);
-
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int prefsVol = sPrefs.loadInt(Prefs.VOLUME);
-        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
-        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        int streamVol = (int) (maxVol * volPercent);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
+        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
+        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        if (systemVol) {
+            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            currVolume = am.getStreamVolume(mStream);
+            streamVol = currVolume;
+            mVolume = currVolume;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        } else {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mStream = 3;
+            currVolume = am.getStreamVolume(mStream);
+            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+            int maxVol = am.getStreamMaxVolume(mStream);
+            streamVol = (int) (maxVol * volPercent);
+            mVolume = streamVol;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        }
         
-        boolean isFull = sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE);
+        boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -89,13 +132,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         boolean isWake;
         if (Module.isPro()) {
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
-                isWake = sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
+            if (!prefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
+                isWake = prefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
             } else {
-                isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+                isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
             }
         } else {
-            isWake = sPrefs.loadBoolean(Prefs.WAKE_STATUS);
+            isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
         }
         if (isWake) {
             PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
@@ -179,8 +222,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
 
-        boolean isGlobal = sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
-        if (!isGlobal && sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
+        boolean isGlobal = prefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
+        if (!isGlobal && prefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
             try {
@@ -194,8 +237,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
     private void loadImage() {
         ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
         bgImage.setVisibility(View.GONE);
-        String imagePrefs = sPrefs.loadPrefs(Prefs.REMINDER_IMAGE);
-        boolean blur = sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
+        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
+        String imagePrefs = prefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        boolean blur = prefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -318,8 +362,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        sPrefs = new SharedPrefs(ShowBirthday.this);
-        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)){
+        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
+        if (prefs.loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, id);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);
@@ -331,10 +375,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
     @Override
     protected void onDestroy() {
-        removeFlags();
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
         super.onDestroy();
+        removeFlags();
+        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
+        if (!prefs.loadBoolean(Prefs.SYSTEM_VOLUME)) {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(mStream, currVolume, 0);
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -355,7 +402,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener, Text
 
     @Override
     public void onInit(int status) {
-        sPrefs = new SharedPrefs(ShowBirthday.this);
         if (status == TextToSpeech.SUCCESS) {
             int result = tts.setLanguage(new Language().getLocale(ShowBirthday.this, true));
             if (result == TextToSpeech.LANG_MISSING_DATA ||

@@ -52,6 +52,40 @@ public class Dialogues {
         void onCategory(String catId, String title);
     }
 
+    public static void streamDialog(final Activity context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(true);
+        builder.setTitle(context.getString(R.string.sound_stream));
+        String[] types = new String[]{context.getString(R.string.music),
+                context.getString(R.string.alarm),
+                context.getString(R.string.notification)};
+
+        SharedPrefs prefs = new SharedPrefs(context);
+
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                android.R.layout.simple_list_item_single_choice, types);
+
+        int stream = prefs.loadInt(Prefs.SOUND_STREAM);
+        builder.setSingleChoiceItems(adapter, stream - 3, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which != -1) {
+                    dialog.dismiss();
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    prefs.saveInt(Prefs.SOUND_STREAM, which + 3);
+                }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     /**
      * AlertDialog for selecting application screen orientation.
      * @param context application context.

@@ -19,6 +19,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
@@ -86,7 +87,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private int isMelody;
     private String melody, number, name, task, reminderType, subject;
     private boolean isExtra = false;
+
     private int currVolume;
+    private int streamVol;
+    private int mVolume;
+    private int mStream;
 
     private Type reminder;
     private JsonModel item;
@@ -96,6 +101,22 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private ColorSetter cs = new ColorSetter(ReminderDialog.this);
     private Notifier notifier = new Notifier(ReminderDialog.this);
     private TextToSpeech tts;
+    private Handler handler = new Handler();
+
+    /**
+     * Runnable for increasing volume in stream.
+     */
+    private Runnable increaseVolume = new Runnable() {
+        @Override
+        public void run() {
+            if (mVolume < streamVol) {
+                mVolume++;
+                handler.postDelayed(increaseVolume, 750);
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                am.setStreamVolume(mStream, mVolume, 0);
+            } else handler.removeCallbacks(increaseVolume);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,14 +124,34 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         Log.d("----ON_REMINDER-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
 
         SharedPrefs prefs = new SharedPrefs(ReminderDialog.this);
-
-        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        currVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int prefsVol = prefs.loadInt(Prefs.VOLUME);
-        float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
-        int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        int streamVol = (int) (maxVol * volPercent);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, streamVol, 0);
+        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        if (systemVol) {
+            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            currVolume = am.getStreamVolume(mStream);
+            streamVol = currVolume;
+            mVolume = currVolume;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        } else {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mStream = 3;
+            currVolume = am.getStreamVolume(mStream);
+            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
+            int maxVol = am.getStreamMaxVolume(mStream);
+            streamVol = (int) (maxVol * volPercent);
+            mVolume = streamVol;
+            if (increasing) {
+                mVolume = 0;
+                handler.postDelayed(increaseVolume, 750);
+            }
+            am.setStreamVolume(mStream, mVolume, 0);
+        }
 
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
@@ -686,8 +727,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
         notifier.recreatePermanent();
         removeFlags();
-        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, currVolume, 0);
+        if (!new SharedPrefs(this).loadBoolean(Prefs.SYSTEM_VOLUME)) {
+            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(mStream, currVolume, 0);
+        }
     }
 
     @Override

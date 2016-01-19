@@ -6,6 +6,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import com.cray.software.justreminder.constants.Prefs;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -136,7 +138,14 @@ public class Sound {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        SharedPrefs prefs = new SharedPrefs(mContext);
+        boolean isSystem = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        if (isSystem) {
+            int stream = prefs.loadInt(Prefs.SOUND_STREAM);
+            mMediaPlayer.setAudioStreamType(stream);
+        } else mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -166,7 +175,12 @@ public class Sound {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        SharedPrefs prefs = new SharedPrefs(mContext);
+        boolean isSystem = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        if (isSystem) {
+            int stream = prefs.loadInt(Prefs.SOUND_STREAM);
+            mMediaPlayer.setAudioStreamType(stream);
+        } else mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setLooping(looping);
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override

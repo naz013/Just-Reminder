@@ -136,6 +136,7 @@ public class SplashScreen extends Activity{
             uiEd.putInt(Prefs.MISSED_CALL_TIME, 10);
             uiEd.putInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
             uiEd.putInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, 6);
+            uiEd.putInt(Prefs.SOUND_STREAM, 5);
             uiEd.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
             uiEd.putBoolean(Prefs.RATE_SHOW, false);
             uiEd.putBoolean(Prefs.IS_CREATE_SHOWN, false);
@@ -170,6 +171,8 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Prefs.BIRTHDAY_PERMANENT, false);
             uiEd.putBoolean(Prefs.REMINDER_CHANGED, false);
             uiEd.putBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
+            uiEd.putBoolean(Prefs.SYSTEM_VOLUME, false);
+            uiEd.putBoolean(Prefs.INCREASING_VOLUME, false);
 
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
@@ -458,6 +461,10 @@ public class SplashScreen extends Activity{
         if (!sPrefs.isString(Prefs.MISSED_CALL_TIME)){
             sPrefs.saveInt(Prefs.MISSED_CALL_TIME, 10);
         }
+        if (!sPrefs.isString(Prefs.SOUND_STREAM)){
+            sPrefs.saveInt(Prefs.SOUND_STREAM, 5);
+        }
+
         if (!sPrefs.isString(Prefs.RATE_SHOW)){
             sPrefs.saveBoolean(Prefs.RATE_SHOW, false);
         }
@@ -562,6 +569,12 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.REMINDER_CHANGED)){
             sPrefs.saveBoolean(Prefs.REMINDER_CHANGED, false);
+        }
+        if (!sPrefs.isString(Prefs.SYSTEM_VOLUME)){
+            sPrefs.saveBoolean(Prefs.SYSTEM_VOLUME, false);
+        }
+        if (!sPrefs.isString(Prefs.INCREASING_VOLUME)){
+            sPrefs.saveBoolean(Prefs.INCREASING_VOLUME, false);
         }
 
         if (Module.isPro()) {

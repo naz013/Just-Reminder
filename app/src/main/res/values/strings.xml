@@ -480,4 +480,8 @@
     <string name="e_mail">E-mail</string>
     <string name="subject">Subject</string>
     <string name="email_is_incorrect">E-mail is incorrect!</string>
+    <string name="system_loudness">System loudness</string>
+    <string name="sound_stream">Sound stream</string>
+    <string name="music">Music</string>
+    <string name="increasing_loudness">Increasing loudness</string>
 </resources>
