@@ -673,6 +673,24 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         places = (ImageButton) view.findViewById(R.id.places);
         backButton = (ImageButton) view.findViewById(R.id.backButton);
 
+        if (isDark) {
+            cardClear.setImageResource(R.drawable.ic_clear_white_24dp);
+            zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+            layers.setImageResource(R.drawable.ic_layers_white_24dp);
+            myLocation.setImageResource(R.drawable.ic_my_location_white_24dp);
+            markers.setImageResource(R.drawable.ic_palette_white_24dp);
+            places.setImageResource(R.drawable.ic_directions_white_24dp);
+            backButton.setImageResource(R.drawable.ic_keyboard_arrow_left_white_24dp);
+        } else {
+            cardClear.setImageResource(R.drawable.ic_clear_black_24dp);
+            zoomOut.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
+            layers.setImageResource(R.drawable.ic_layers_black_24dp);
+            myLocation.setImageResource(R.drawable.ic_my_location_black_24dp);
+            markers.setImageResource(R.drawable.ic_palette_black_24dp);
+            places.setImageResource(R.drawable.ic_directions_black_24dp);
+            backButton.setImageResource(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        }
+
         cardClear.setOnClickListener(this);
         zoomOut.setOnClickListener(this);
         layers.setOnClickListener(this);
@@ -919,9 +937,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             listener.onZoomClick(isFullscreen);
         }
         if (isFullscreen) {
-            zoomOut.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
+            if (isDark) zoomOut.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
+            else zoomOut.setImageResource(R.drawable.ic_arrow_downward_black_24dp);
         } else {
-            zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+            if (isDark) zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+            else zoomOut.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
         }
     }
 

@@ -1,46 +1,29 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.database.Cursor;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.adapters.MarkersCursorAdapter;
-import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.datas.models.MarkerModel;
-import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
-import com.cray.software.justreminder.utils.ViewUtils;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.reminder.Reminder;
 
-import java.util.ArrayList;
-import java.util.Random;
+public class GeolocationFragment extends Fragment implements SimpleListener {
 
-public class GeolocationFragment extends Fragment {
-
-    private ListView geoTasks;
-    private GoogleMap googleMap;
-    private MarkersCursorAdapter markersCursorAdapter;
-
-    private boolean onCreate = false;
+    private PlaceDataProvider provider;
+    private MapFragment fragment;
 
     private NavigationCallbacks mCallbacks;
 
@@ -63,22 +46,30 @@ public class GeolocationFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
-        googleMap = ((SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.markersMap)).getMap();
-        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        fragment = MapFragment.newInstance(false, true, false, false, false, false,
+                new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME));
+        fragment.setAdapter(loadPlaces());
 
-        geoTasks = (ListView) rootView.findViewById(R.id.geoTasks);
-        geoTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                MarkerModel item = (MarkerModel) markersCursorAdapter.getItem(position);
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(item.getPosition(), 13));
-            }
-        });
-
-        loadMarkers();
-        onCreate = true;
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
         return rootView;
+    }
+
+    private PlaceRecyclerAdapter loadPlaces(){
+        provider = new PlaceDataProvider(getActivity(), false);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider, true);
+        adapter.setEventListener(this);
+        return adapter;
+    }
+
+    private void editPlace(int position){
+        Reminder.edit(provider.getItem(position).getId(), getActivity());
+    }
+
+    private void moveToPlace(int position){
+        fragment.moveCamera(provider.getItem(position).getPosition());
     }
 
     @Override
@@ -101,69 +92,27 @@ public class GeolocationFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (!onCreate) {
-            loadMarkers();
-        }
-        onCreate = false;
+        loadPlaces();
     }
 
-    private void loadMarkers(){
-        googleMap.clear();
-        NextBase db = new NextBase(getActivity());
-        if (!db.isOpen()) db.open();
-        Cursor c = db.queryAllLocations();
-        Random random = new Random();
-        ArrayList<MarkerModel> list = new ArrayList<>();
-        if (c != null && c.moveToFirst()){
-            ColorSetter cSetter = new ColorSetter(getActivity());
-            do {
-                String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                long id = c.getLong(c.getColumnIndex(NextBase._ID));
-
-                JsonPlace jsonPlace = new JsonParser(json).getPlace();
-
-                double latitude = jsonPlace.getLatitude();
-                double longitude = jsonPlace.getLongitude();
-                int radius = jsonPlace.getRadius();
-                if (radius == -1) {
-                    radius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
-                }
-
-                if (type.contains(Constants.TYPE_LOCATION)) {
-                    int rand = random.nextInt(16 - 2) + 1;
-                    LatLng pos = new LatLng(latitude, longitude);
-                    list.add(new MarkerModel(task, pos, rand, id));
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(pos)
-                            .title(task)
-                            .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(rand)))
-                            .draggable(false));
-                    if (radius != -1) {
-                        int[] circleColors = cSetter.getMarkerRadiusStyle(rand);
-                        googleMap.addCircle(new CircleOptions()
-                                .center(pos)
-                                .radius(radius)
-                                .strokeWidth(3f)
-                                .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                                .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
-                    }
-                }
-            } while (c.moveToNext());
-        }
-        loaderAdapter(list);
-        if (c != null) c.close();
-        db.close();
+    @Override
+    public void onItemClicked(int position, View view) {
+        moveToPlace(position);
     }
 
-    public void loaderAdapter(ArrayList<MarkerModel> list){
-        if (list.size() > 0) {
-            markersCursorAdapter = new MarkersCursorAdapter(getActivity(), list);
-            geoTasks.setAdapter(markersCursorAdapter);
-            geoTasks.setVisibility(View.VISIBLE);
-        } else {
-            geoTasks.setVisibility(View.GONE);
-        }
+    @Override
+    public void onItemLongClicked(final int position, View view) {
+        final CharSequence[] items = {getString(R.string.edit)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (item == 0) {
+                    editPlace(position);
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

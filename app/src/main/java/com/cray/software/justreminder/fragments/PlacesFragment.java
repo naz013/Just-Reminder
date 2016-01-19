@@ -102,10 +102,10 @@ public class PlacesFragment extends Fragment implements SimpleListener {
 
     private void loadPlaces(){
         new SharedPrefs(getActivity()).saveBoolean(Prefs.PLACE_CHANGED, false);
-        provider = new PlaceDataProvider(getActivity());
+        provider = new PlaceDataProvider(getActivity(), true);
         reloadView();
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider, false);
         adapter.setEventListener(this);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(adapter);

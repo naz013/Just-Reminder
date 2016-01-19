@@ -28,11 +28,12 @@ public class MarkerModel {
         this.id = id;
     }
 
-    public MarkerModel(String title, LatLng position, int icon, long id){
+    public MarkerModel(String title, LatLng position, int icon, long id, int radius){
         this.position = position;
         this.title = title;
         this.icon = icon;
         this.id = id;
+        this.radius = radius;
     }
 
     public int getRadius() {

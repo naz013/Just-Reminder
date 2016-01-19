@@ -4,8 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.MarkerModel;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonPlace;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +20,14 @@ public class PlaceDataProvider {
     private List<MarkerModel> data;
     private Context mContext;
 
-    public PlaceDataProvider(Context mContext){
+    public PlaceDataProvider(Context mContext, boolean list){
         data = new ArrayList<>();
         this.mContext = mContext;
-        load();
+        if (list) {
+            loadPlaces();
+        } else {
+            loadReminders();
+        }
     }
 
     public List<MarkerModel> getData(){
@@ -48,6 +58,56 @@ public class PlaceDataProvider {
         }
 
         return data.get(index);
+    }
+
+    private void loadReminders() {
+        data.clear();
+        NextBase db = new NextBase(mContext);
+        int mRadius = new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS);
+        db.open();
+        Cursor c = db.queryAllLocations();
+        if (c != null && c.moveToNext()) {
+            do {
+                String text = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                long id = c.getLong(c.getColumnIndex(NextBase._ID));
+                String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
+                int isArch = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
+                if (isArch == 0 && isDone == 0) {
+                    JsonPlace jsonPlace = new JsonParser(json).getPlace();
+                    double latitude = jsonPlace.getLatitude();
+                    double longitude = jsonPlace.getLongitude();
+                    int style = jsonPlace.getMarker();
+                    int radius = jsonPlace.getRadius();
+                    if (radius == -1) {
+                        radius = mRadius;
+                    }
+                    data.add(new MarkerModel(text, new LatLng(latitude, longitude), style, id, radius));
+                }
+            } while (c.moveToNext());
+        }
+        if (c != null) {
+            c.close();
+        }
+        db.close();
+    }
+
+    public void loadPlaces() {
+        data.clear();
+        DataBase db = new DataBase(mContext);
+        db.open();
+        Cursor c = db.queryPlaces();
+        if (c != null && c.moveToNext()) {
+            do {
+                String text = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
+                long id = c.getLong(c.getColumnIndex(Constants.LocationConstants.COLUMN_ID));
+                data.add(new MarkerModel(text, id));
+            } while (c.moveToNext());
+        }
+        if (c != null) {
+            c.close();
+        }
+        db.close();
     }
 
     public void load() {

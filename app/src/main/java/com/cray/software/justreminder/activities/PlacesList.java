@@ -98,9 +98,9 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void loadPlaces(){
-        provider = new PlaceDataProvider(this);
+        provider = new PlaceDataProvider(this, true);
         reloadView();
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(this, provider);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(this, provider, false);
         adapter.setEventListener(this);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
