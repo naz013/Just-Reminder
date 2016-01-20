@@ -56,9 +56,9 @@
     <dimen name="follow_button_text_size">15sp</dimen>
     <dimen name="follow_text_size_normal">18sp</dimen>
     <dimen name="follow_margin_top">5dp</dimen>
-    <dimen name="reminder_margin_top">5dp</dimen>
+    <dimen name="reminder_margin_top">10dp</dimen>
     <dimen name="reminder_text_size_normal">20sp</dimen>
-    <dimen name="reminder_photo_size">220dp</dimen>
+    <dimen name="reminder_photo_size">150dp</dimen>
     <dimen name="times_margin">10dp</dimen>
     <dimen name="create_text_size_small">15sp</dimen>
     <dimen name="create_toggle_margin_left">5dp</dimen>

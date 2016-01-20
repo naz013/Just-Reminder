@@ -72,7 +72,7 @@ public class QuickSMS extends Activity {
         });
         buttonSend.setTypeface(typeface);
 
-        String name = Contacts.getContactNameFromNumber(number, QuickSMS.this);
+        String name = Contacts.getNameFromNumber(number, QuickSMS.this);
 
         TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
         contactInfo.setTypeface(typeface);

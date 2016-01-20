@@ -204,7 +204,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             if (contact.matches("")) {
                 birthName.setError(getString(R.string.must_be_not_empty));
             } else {
-                int contactId = Contacts.getContactIDFromNumber(number, AddBirthday.this);
+                int contactId = Contacts.getIdFromNumber(number, AddBirthday.this);
                 if (number != null) {
                     db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, number);
                 } else
@@ -220,7 +220,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 if (contact.matches("")) {
                     birthName.setError(getString(R.string.must_be_not_empty));
                 } else {
-                    int id = Contacts.getContactIDFromNumber(number, AddBirthday.this);
+                    int id = Contacts.getIdFromNumber(number, AddBirthday.this);
                     if (number != null) {
                         db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, number, uuId);
                     } else

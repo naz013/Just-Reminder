@@ -135,7 +135,7 @@ public class VoiceResult extends Activity {
         if (type.startsWith(Constants.TYPE_MONTHDAY)) {
             if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {
@@ -143,7 +143,7 @@ public class VoiceResult extends Activity {
                 }
             } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {
@@ -162,7 +162,7 @@ public class VoiceResult extends Activity {
         } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
             if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {
@@ -170,7 +170,7 @@ public class VoiceResult extends Activity {
                 }
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {
@@ -189,7 +189,7 @@ public class VoiceResult extends Activity {
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                     type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {
@@ -198,7 +198,7 @@ public class VoiceResult extends Activity {
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                     type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                 reminder_phone.setText(number);
-                String name = Contacts.getContactNameFromNumber(number, this);
+                String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
                     reminder_contact_name.setText(name);
                 } else {

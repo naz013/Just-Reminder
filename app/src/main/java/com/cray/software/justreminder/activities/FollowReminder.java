@@ -87,7 +87,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         Intent i = getIntent();
         long receivedDate = i.getLongExtra(Constants.SELECTED_RADIUS, 0);
         number = i.getStringExtra(Constants.SELECTED_CONTACT_NUMBER);
-        String name = Contacts.getContactNameFromNumber(number, FollowReminder.this);
+        String name = Contacts.getNameFromNumber(number, FollowReminder.this);
 
         Calendar c = Calendar.getInstance();
         if (receivedDate != 0) {

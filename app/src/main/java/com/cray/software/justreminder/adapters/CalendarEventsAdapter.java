@@ -180,7 +180,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             holder.eventText.setText(item.getName());
 
             if (!number.matches("0")) {
-                String contactName = Contacts.getContactNameFromNumber(number, mContext);
+                String contactName = Contacts.getNameFromNumber(number, mContext);
                 holder.eventNumber.setText(SuperUtil.appendString(number, "\n", contactName));
             } else {
                 holder.eventNumber.setText("");

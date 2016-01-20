@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
@@ -226,8 +227,16 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             getWindow().setStatusBarColor(cs.getStatusBarStyle());
         }
 
+        CardView card = (CardView) findViewById(R.id.card);
+        card.setCardBackgroundColor(cs.getCardStyle());
+        if (Module.isLollipop()) card.setCardElevation(Configs.CARD_ELEVATION_REMINDER);
+
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
+        LinearLayout container = (LinearLayout) findViewById(R.id.container);
+        LinearLayout subjectContainer = (LinearLayout) findViewById(R.id.subjectContainer);
         single_container.setVisibility(View.VISIBLE);
+        container.setVisibility(View.GONE);
+        subjectContainer.setVisibility(View.GONE);
 
         loadImage();
 
@@ -257,41 +266,56 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         todoList.setVisibility(View.GONE);
 
         remText = (TextView) findViewById(R.id.remText);
+        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
+        TextView subjectView = (TextView) findViewById(R.id.subjectView);
+        TextView messageView = (TextView) findViewById(R.id.messageView);
         remText.setText("");
+
         String type = getType();
         if (type.contains(Constants.TYPE_CALL) || type.matches(Constants.TYPE_SKYPE) ||
                 type.matches(Constants.TYPE_SKYPE_VIDEO)) {
             if (!type.startsWith(Constants.TYPE_SKYPE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
-                long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
+                long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
                 Bitmap photo = Contacts.getPhoto(this, conID);
                 if (photo != null) {
                     contactPhoto.setImageBitmap(photo);
                 } else {
                     contactPhoto.setVisibility(View.GONE);
                 }
-                name = Contacts.getContactNameFromNumber(number, ReminderDialog.this);
+                name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
-                remText.setText(task + "\n" + name + "\n" + number);
+                remText.setText(R.string.make_call);
+                contactInfo.setText(name + "\n" + number);
+                messageView.setText(task);
             } else {
-                remText.setText(task + "\n" + number);
+                if (type.matches(Constants.TYPE_SKYPE_VIDEO))
+                    remText.setText(R.string.video_call);
+                else remText.setText(R.string.skype_call);
+                contactInfo.setText(number);
+                messageView.setText(task);
             }
+            container.setVisibility(View.VISIBLE);
         } else if (type.contains(Constants.TYPE_MESSAGE) ||
                 type.matches(Constants.TYPE_SKYPE_CHAT)) {
             if (type.contains(Constants.TYPE_MESSAGE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
-                long conID = Contacts.getContactIDFromNumber(number, ReminderDialog.this);
+                long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
                 Bitmap photo = Contacts.getPhoto(this, conID);
                 if (photo != null) {
                     contactPhoto.setImageBitmap(photo);
                 } else {
                     contactPhoto.setVisibility(View.GONE);
                 }
-                name = Contacts.getContactNameFromNumber(number, ReminderDialog.this);
+                name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
-                remText.setText(task + "\n" + name + "\n" + number);
+                remText.setText(R.string.send_sms);
+                contactInfo.setText(name + "\n" + number);
+                messageView.setText(task);
             } else {
-                remText.setText(task + "\n" + number);
+                remText.setText(R.string.skype_chat);
+                contactInfo.setText(number);
+                messageView.setText(task);
             }
             if (!silentSMS) {
                 buttonCall.setVisibility(View.VISIBLE);
@@ -301,10 +325,30 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 buttonDelay.setVisibility(View.GONE);
                 buttonDelayFor.setVisibility(View.GONE);
             }
+            container.setVisibility(View.VISIBLE);
         } else if (type.matches(Constants.TYPE_MAIL)) {
-            remText.setText(subject + "\n" + number + "\n" + task);
             buttonCall.setVisibility(View.VISIBLE);
             buttonCall.setImageResource(R.drawable.ic_send_black_24dp);
+            remText.setText(R.string.e_mail);
+            int conID = Contacts.getIdFromMail(number, this);
+            if (conID != 0) {
+                Bitmap photo = Contacts.getPhoto(this, conID);
+                if (photo != null) {
+                    contactPhoto.setImageBitmap(photo);
+                } else {
+                    contactPhoto.setVisibility(View.GONE);
+                }
+                name = Contacts.getNameFromMail(number, ReminderDialog.this);
+                if (name == null) name = "";
+                contactInfo.setText(name + "\n" + number);
+            } else {
+                contactInfo.setText(number);
+            }
+
+            messageView.setText(task);
+            subjectView.setText(subject);
+            container.setVisibility(View.VISIBLE);
+            subjectContainer.setVisibility(View.VISIBLE);
         } else if (type.matches(Constants.TYPE_APPLICATION)) {
             PackageManager packageManager = getPackageManager();
             ApplicationInfo applicationInfo = null;

@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.CardView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,8 +32,8 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.MissedCallAlarm;
-import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
@@ -40,6 +41,7 @@ import com.cray.software.justreminder.views.RoundImageView;
 import java.util.Calendar;
 
 public class MissedCallDialog extends Activity {
+
     private MissedCallAlarm alarm = new MissedCallAlarm();
     private long id;
     private ColorSetter cs = new ColorSetter(MissedCallDialog.this);
@@ -126,10 +128,16 @@ public class MissedCallDialog extends Activity {
         number = res.getStringExtra("number");
         long time = res.getLongExtra("time", 0);
 
-        String name = Contacts.getContactNameFromNumber(number, MissedCallDialog.this);
+        CardView card = (CardView) findViewById(R.id.card);
+        card.setCardBackgroundColor(cs.getCardStyle());
+        if (Module.isLollipop()) card.setCardElevation(Configs.CARD_ELEVATION_REMINDER);
 
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
+        LinearLayout container = (LinearLayout) findViewById(R.id.container);
+        LinearLayout subjectContainer = (LinearLayout) findViewById(R.id.subjectContainer);
         single_container.setVisibility(View.VISIBLE);
+        container.setVisibility(View.GONE);
+        subjectContainer.setVisibility(View.GONE);
 
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         FloatingActionButton buttonEdit = (FloatingActionButton) findViewById(R.id.buttonEdit);
@@ -151,16 +159,34 @@ public class MissedCallDialog extends Activity {
         buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
 
         TextView remText = (TextView) findViewById(R.id.remText);
+        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
+        TextView actionDirect = (TextView) findViewById(R.id.actionDirect);
+        TextView messageView = (TextView) findViewById(R.id.messageView);
+        TextView someView = (TextView) findViewById(R.id.someView);
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
                 prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
-        if (name != null && !name.matches("")) {
-            remText.setText(SuperUtil.appendString(name, "\n", number, "\n\n\n\n", getString(R.string.last_called),
-                    "\n", formattedTime));
-        } else {
-            remText.setText(number + "\n\n\n" + getString(R.string.last_called) + "\n" + formattedTime);
+
+        String name = Contacts.getNameFromNumber(number, MissedCallDialog.this);
+
+        if (number != null) {
+            long conID = Contacts.getIdFromNumber(number, MissedCallDialog.this);
+            Bitmap photo = Contacts.getPhoto(this, conID);
+            if (photo != null) {
+                contactPhoto.setImageBitmap(photo);
+            } else {
+                contactPhoto.setVisibility(View.GONE);
+            }
+            if (name == null) name = "";
+            remText.setText(R.string.missed_call);
+            contactInfo.setText(name + "\n" + number);
+            actionDirect.setText(R.string.from);
+            someView.setText(R.string.last_called);
+            messageView.setText(formattedTime);
         }
+
         buttonCancel.setImageResource(R.drawable.ic_send_black_24dp);
 
         contactPhoto.setVisibility(View.VISIBLE);

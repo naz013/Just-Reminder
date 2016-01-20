@@ -179,7 +179,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
 
             String task = item.getName();
-            if (task == null || task.matches("")) task = Contacts.getContactNameFromNumber(
+            if (task == null || task.matches("")) task = Contacts.getNameFromNumber(
                     item.getNumber(), mContext);
             rView.setTextViewText(R.id.taskText, task);
             rView.setTextColor(R.id.taskText, itemTextColor);

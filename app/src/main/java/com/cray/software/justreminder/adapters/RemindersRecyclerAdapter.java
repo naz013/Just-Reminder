@@ -234,7 +234,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             if (type.startsWith(Constants.TYPE_MONTHDAY)) {
                 if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {
@@ -242,7 +242,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     }
                 } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {
@@ -261,7 +261,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
                 if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {
@@ -269,7 +269,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     }
                 } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {
@@ -288,7 +288,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
                         type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {
@@ -297,7 +297,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                         type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getContactNameFromNumber(number, mContext);
+                    String name = Contacts.getNameFromNumber(number, mContext);
                     if (name != null) {
                         holder.reminder_contact_name.setText(name);
                     } else {

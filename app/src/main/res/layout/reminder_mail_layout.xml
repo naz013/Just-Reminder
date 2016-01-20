@@ -71,7 +71,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/subject"
+                android:hint="@string/message"
                 android:textSize="@dimen/create_text_size_normal"
                 android:padding="10dp"
                 android:ems="10"

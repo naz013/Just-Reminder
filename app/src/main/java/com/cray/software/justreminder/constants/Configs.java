@@ -41,4 +41,5 @@ public class Configs {
      * Application CardView elevation value.
      */
     public static final float CARD_ELEVATION = 5f;
+    public static final float CARD_ELEVATION_REMINDER = 10f;
 }

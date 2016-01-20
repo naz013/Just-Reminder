@@ -1586,7 +1586,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Show mail reminder type creation layout.
      */
     private void attachMail(){
-        taskField.setHint(getString(R.string.message));
+        taskField.setHint(getString(R.string.subject));
 
         LinearLayout mailLayout = (LinearLayout) findViewById(R.id.mailLayout);
         ViewUtils.fadeInAnimation(mailLayout);
@@ -2336,9 +2336,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
             }
             String task = taskField.getText().toString().trim();
-            if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)) {
+            if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)
+                    && !type.contains(Constants.TYPE_MAIL)) {
                 if (task.matches("")) {
-                    Messages.snackbar(mFab, getString(R.string.must_be_not_empty));
+                    Messages.snackbar(mFab, "");
                     return null;
                 }
             }
@@ -2374,7 +2375,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     Messages.snackbar(mFab, getString(R.string.email_is_incorrect));
                 } else number = email;
 
-                subjectString = subject.getText().toString().trim();
+                String subString = subject.getText().toString().trim();
+                if (subString.matches("")) {
+                    showSnackbar(getString(R.string.you_dont_insert_any_message));
+                    return null;
+                }
+                subjectString = task;
+                task = subString;
             }
 
             String uuId = SyncHelper.generateID();
@@ -2649,7 +2656,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private boolean checkNumber(String number){
         if (number == null || number.matches("")) {
-            Messages.snackbar(mFab, getString(R.string.must_be_not_empty));
+            Messages.snackbar(mFab, getString(R.string.you_dont_insert_number));
             return false;
         } else return true;
     }
