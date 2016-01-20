@@ -17,6 +17,8 @@ import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JsonShopping;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -123,13 +125,12 @@ public class SyncHelper {
                 String mail = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_MAIL));
                 int conId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
                 JSONObject jObjectData = new JSONObject();
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME),
-                        title != null ? encrypt(title) : encrypt(" "));
+                if (title != null) title = encrypt(title);
+                else title = encrypt(" ");
+                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME), title);
                 jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY), encrypt(date));
                 jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER),
                         number != null ? encrypt(number) : encrypt(" "));
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_UUID),
-                        uuID != null ? encrypt(uuID) : encrypt(generateID()));
                 jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL),
                         mail != null ? encrypt(mail) : encrypt(" "));
                 jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID),
@@ -171,8 +172,9 @@ public class SyncHelper {
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
                 String uuID = c.getString(c.getColumnIndex(NextBase.UUID));
                 int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
+                int isArchived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
 
-                if (isDone == 0) {
+                if (isDone == 0 && isArchived == 0) {
                     if (isSdPresent()) {
                         File sdPath = Environment.getExternalStorageDirectory();
                         File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
@@ -414,7 +416,6 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
             style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
         }
-        int encrypt = jsonObj.getInt(Constants.COLUMN_ENCRYPTED);
         byte[] image = null;
         if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
             image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
@@ -539,42 +540,6 @@ public class SyncHelper {
     }
 
     /**
-     * Get flag is note is encrypted from file or object.
-     * @param file note file.
-     * @param object JSON object.
-     * @return Encrypt flag
-     */
-    @Deprecated
-    public int getEncrypt(File file, JSONObject object){
-        int data = 0;
-        if (object != null){
-            try {
-                data = getNoteEncrypt(object);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (isSdPresent()) {
-                if (file != null) {
-                    String jsonText = readFile(file.toString());
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = new JSONObject(jsonText);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        data = getNoteEncrypt(jsonObj);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return data;
-    }
-
-    /**
      * Get attached to note image from file or JSON object.
      * @param file note file.
      * @param object JSON object.
@@ -657,17 +622,6 @@ public class SyncHelper {
     }
 
     /**
-     * Get note encrypt flag from JSON object.
-     * @param jsonObj JSON object.
-     * @return Note encryption flag
-     * @throws JSONException
-     */
-    @Deprecated
-    private int getNoteEncrypt(JSONObject jsonObj) throws JSONException {
-        return jsonObj.getInt(Constants.COLUMN_ENCRYPTED);
-    }
-
-    /**
      * Get note attached image from JSON object.
      * @param jsonObj JSON object.
      * @return Note image byte array
@@ -717,28 +671,51 @@ public class SyncHelper {
      * @throws JSONException
      */
     private void reminderObject(JSONObject jsonObj) throws JSONException {
-        String type = null;
-        if (!jsonObj.isNull(Constants.COLUMN_TYPE)) {
-            type = jsonObj.getString(Constants.COLUMN_TYPE);
-        }
-
-        String uuID = null;
-        if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
-            uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
-        }
-
-        if (type == null) return;
-
         JsonModel jsonModel = new JsonParser(jsonObj).parse();
+        String uuID = jsonModel.getUuId();
+        String type = jsonModel.getType();
         if (!Reminder.isUuId(mContext, uuID)) {
             if (type.contains(Constants.TYPE_LOCATION)){
-                new DateType(mContext, type).save(jsonModel);
-            } else {
                 new LocationType(mContext, type).save(jsonModel);
+            } else {
+                if (type.startsWith(Constants.TYPE_WEEKDAY) ||
+                        type.startsWith(Constants.TYPE_MONTHDAY)) {
+                    JsonRecurrence jr = jsonModel.getRecurrence();
+                    long time = new TimeCount(mContext).generateDateTime(type, jr.getMonthday(),
+                            jsonModel.getEventTime(), jr.getRepeat(), jr.getWeekdays(), 0, 0);
+                    jsonModel.setEventTime(time);
+                    jsonModel.setStartTime(time);
+                    new DateType(mContext, type).save(jsonModel);
+                } else {
+                    if (jsonModel.getEventTime() > System.currentTimeMillis()) {
+                        new DateType(mContext, type).save(jsonModel);
+                    }
+                }
             }
         } else {
             if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
-                // TODO: 13.01.2016 Add function for merging shop items.
+                NextBase db = new NextBase(mContext);
+                db.open();
+                Cursor c = db.getReminder(uuID);
+                if (c != null && c.moveToFirst()) {
+                    String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                    JsonParser parser = new JsonParser(json);
+                    JsonModel model = parser.parse();
+                    ArrayList<String> uuIds = parser.getShoppingKeys();
+                    List<JsonShopping> shoppings = jsonModel.getShoppings();
+                    if (shoppings != null) {
+                        for (JsonShopping item : shoppings) {
+                            if (!uuIds.contains(item.getUuId())) {
+                                model.setShopping(item);
+                            }
+                        }
+                    }
+                    new DateType(mContext, type).save(jsonModel);
+                } else {
+                    new DateType(mContext, type).save(jsonModel);
+                }
+                if (c != null) c.close();
+                db.close();
             }
         }
     }
@@ -863,17 +840,19 @@ public class SyncHelper {
             } else {
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
-                File[] files = sdPathDr.listFiles();
-                if (files != null && files.length > 0) {
-                    for (File file1 : files) {
-                        String fileName = file1.getName();
-                        int pos = fileName.lastIndexOf(".");
-                        String fileLoc = sdPathDr + "/" + fileName;
-                        String fileNameS = fileName.substring(0, pos);
-                        if (!namesPass.contains(fileNameS)) {
-                            String jsonText = readFile(fileLoc);
-                            JSONObject jsonObj = new JSONObject(jsonText);
-                            birthdayObject(jsonObj);
+                if (sdPathDr.exists()) {
+                    File[] files = sdPathDr.listFiles();
+                    if (files != null && files.length > 0) {
+                        for (File file1 : files) {
+                            String fileName = file1.getName();
+                            int pos = fileName.lastIndexOf(".");
+                            String fileLoc = sdPathDr + "/" + fileName;
+                            String fileNameS = fileName.substring(0, pos);
+                            if (!namesPass.contains(fileNameS)) {
+                                String jsonText = readFile(fileLoc);
+                                JSONObject jsonObj = new JSONObject(jsonText);
+                                birthdayObject(jsonObj);
+                            }
                         }
                     }
                 }

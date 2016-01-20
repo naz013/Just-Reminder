@@ -24,30 +24,36 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
     private SyncListener mListener;
+    private boolean quiet = false;
 
-    public SyncTask(Context context, SyncListener mListener){
+    public SyncTask(Context context, SyncListener mListener, boolean quiet){
         this.mContext = context;
-        builder = new NotificationCompat.Builder(context);
         this.mListener = mListener;
+        this.quiet = quiet;
+        builder = new NotificationCompat.Builder(context);
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        builder.setContentTitle(Module.isPro() ? mContext.getString(R.string.app_name_pro) :
-                mContext.getString(R.string.app_name));
-        builder.setContentText(mContext.getString(R.string.sync));
-        builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
-        mNotifyMgr.notify(2, builder.build());
+        if (!quiet) {
+            builder.setContentTitle(Module.isPro() ? mContext.getString(R.string.app_name_pro) :
+                    mContext.getString(R.string.app_name));
+            builder.setContentText(mContext.getString(R.string.sync));
+            builder.setSmallIcon(R.drawable.ic_cached_white_24dp);
+            mNotifyMgr = NotificationManagerCompat.from(mContext);
+            mNotifyMgr.notify(2, builder.build());
+        }
     }
 
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        builder.setContentTitle(values[0]);
-        builder.setWhen(System.currentTimeMillis());
-        mNotifyMgr.notify(2, builder.build());
+        if (!quiet) {
+            builder.setContentTitle(values[0]);
+            builder.setWhen(System.currentTimeMillis());
+            mNotifyMgr.notify(2, builder.build());
+        }
     }
 
     @Override
@@ -56,8 +62,8 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         db.open();
         IOHelper ioHelper = new IOHelper(mContext);
 
-        ioHelper.backupGroup(true);
         ioHelper.restoreGroup(true);
+        ioHelper.backupGroup(true);
 
         Cursor cat = db.queryCategories();
         if (cat == null || cat.getCount() == 0) {
@@ -98,7 +104,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         //export & import birthdays
         if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
-            ioHelper.restoreBirthday(true);
+            ioHelper.restoreBirthday(true, true);
             ioHelper.backupBirthday(true);
         }
         return true;
@@ -107,19 +113,26 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentTitle(mContext.getString(R.string.done));
-        builder.setSmallIcon(R.drawable.ic_done_white_24dp);
-        if (Module.isPro()) {
-            builder.setContentText(mContext.getString(R.string.app_name_pro));
-        } else builder.setContentText(mContext.getString(R.string.app_name));
-        builder.setWhen(System.currentTimeMillis());
-        mNotifyMgr.notify(2, builder.build());
-        if (mContext != null) {
-            new UpdatesHelper(mContext).updateWidget();
-            new UpdatesHelper(mContext).updateNotesWidget();
-        }
-        if (mListener != null && mContext != null) {
-            mListener.endExecution(aVoid);
+        if (!quiet) {
+            builder.setContentTitle(mContext.getString(R.string.done));
+            builder.setSmallIcon(R.drawable.ic_done_white_24dp);
+            if (Module.isPro()) {
+                builder.setContentText(mContext.getString(R.string.app_name_pro));
+            } else builder.setContentText(mContext.getString(R.string.app_name));
+            builder.setWhen(System.currentTimeMillis());
+            mNotifyMgr.notify(2, builder.build());
+            if (mContext != null) {
+                new UpdatesHelper(mContext).updateWidget();
+                new UpdatesHelper(mContext).updateNotesWidget();
+            }
+            if (mListener != null && mContext != null) {
+                mListener.endExecution(aVoid);
+            }
+        } else {
+            if (mContext != null) {
+                new UpdatesHelper(mContext).updateWidget();
+                new UpdatesHelper(mContext).updateNotesWidget();
+            }
         }
     }
 }

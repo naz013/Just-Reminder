@@ -136,14 +136,17 @@ public class Type {
      * @param id reminder identifier.
      */
     protected void exportToServices(JsonModel item, long id){
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-        boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        JsonExport jsonExport = item.getExport();
-        if (jsonExport.getCalendar() == 1) ReminderUtils.exportToCalendar(mContext,
-                item.getSummary(), item.getEventTime(), id, calendar, stock);
-        if (jsonExport.getgTasks() == Constants.SYNC_GTASKS_ONLY)
-            ReminderUtils.exportToTasks(mContext, item.getSummary(), item.getEventTime(), id);
+        long due = item.getEventTime();
+        if (due > 0) {
+            SharedPrefs prefs = new SharedPrefs(mContext);
+            boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+            boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+            JsonExport jsonExport = item.getExport();
+            if (jsonExport.getCalendar() == 1) ReminderUtils.exportToCalendar(mContext,
+                    item.getSummary(), due, id, calendar, stock);
+            if (jsonExport.getgTasks() == Constants.SYNC_GTASKS_ONLY)
+                ReminderUtils.exportToTasks(mContext, item.getSummary(), due, id);
+        }
     }
 
     /**

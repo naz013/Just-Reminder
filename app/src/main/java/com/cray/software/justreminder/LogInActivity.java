@@ -438,7 +438,7 @@ public class LogInActivity extends Activity {
             //import birthdays
             if (isChecked) {
                 publishProgress(getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(false);
+                ioHelper.restoreBirthday(false, false);
             }
             return null;
         }
@@ -549,7 +549,7 @@ public class LogInActivity extends Activity {
             //import birthdays
             if (isChecked) {
                 publishProgress(getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(true);
+                ioHelper.restoreBirthday(true, false);
             }
 
             //getting Google Tasks

@@ -6,9 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.cray.software.justreminder.async.AutoSyncTask;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.util.Calendar;
 
@@ -21,7 +21,7 @@ public class AutoSyncAlarm extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, AutoSyncAlarm.class);
         context.startService(service);
-        new AutoSyncTask(context).execute();
+        new SyncTask(context, null, true).execute();
     }
 
     public void setAlarm(Context context){

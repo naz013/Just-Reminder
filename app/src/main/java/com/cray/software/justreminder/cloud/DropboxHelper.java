@@ -379,7 +379,7 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             try {
-                mDBApi.delete(dbxBirthFolder + name + FileConfig.FILE_NAME_BIRTHDAY);
+                mDBApi.delete(dbxBirthFolder + name);
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
@@ -571,7 +571,7 @@ public class DropboxHelper {
     /**
      * Download on SD Card all birthday backup files found on Dropbox.
      */
-    public void downloadBirthday() {
+    public void downloadBirthday(boolean deleteFile) {
         startSession();
         if (isLinked()) {
             try {
@@ -608,6 +608,8 @@ public class DropboxHelper {
                         } catch (DropboxException e1) {
                             e1.printStackTrace();
                         }
+
+                        if (deleteFile) deleteBirthday(fileName);
                         //restore tmp files after downloading
                         try {
                             new SyncHelper(mContext).birthdayFromJson(localFile.toString(), fileName);

@@ -232,16 +232,16 @@ public class IOHelper {
      * Restore all birthdays from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreBirthday(boolean isCloud){
+    public void restoreBirthday(boolean isCloud, boolean deleteFile){
         try {
             new SyncHelper(mContext).birthdayFromJson(null, null);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(mContext).downloadBirthday();
+            new DropboxHelper(mContext).downloadBirthday(deleteFile);
             try {
-                new GDriveHelper(mContext).downloadBirthday();
+                new GDriveHelper(mContext).downloadBirthday(deleteFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

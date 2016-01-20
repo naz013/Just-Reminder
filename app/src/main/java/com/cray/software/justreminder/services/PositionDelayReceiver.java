@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.utils.SuperUtil;
 
 public class PositionDelayReceiver extends BroadcastReceiver {
 
@@ -16,7 +17,10 @@ public class PositionDelayReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startService(new Intent(context, GeolocationService.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        if (!SuperUtil.isServiceRunning(context, GeolocationService.class)) {
+            context.startService(new Intent(context, GeolocationService.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 
     public void setDelay(Context context, long id) {

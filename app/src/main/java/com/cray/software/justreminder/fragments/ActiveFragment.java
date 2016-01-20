@@ -107,7 +107,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                new SyncTask(getActivity(), this).execute();
+                new SyncTask(getActivity(), this, false).execute();
                 break;
             case R.id.action_voice:
                 if (mCallbacks != null) {

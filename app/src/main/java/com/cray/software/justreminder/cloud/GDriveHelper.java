@@ -443,7 +443,7 @@ public class GDriveHelper {
      * Download on SD Card all birthday backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadBirthday() throws IOException {
+    public void downloadBirthday(boolean deleteFile) throws IOException {
         if (isLinked()) {
             prefs = new SharedPrefs(mContext);
             authorize();
@@ -487,6 +487,8 @@ public class GDriveHelper {
                                 new MediaHttpDownloader(m_transport, m_client.getRequestFactory().getInitializer());
                         downloader.setDirectDownloadEnabled(true);
                         downloader.download(new GenericUrl(f.getDownloadUrl()), out);
+
+                        if (deleteFile) deleteBirthday(title);
                         try {
                             new SyncHelper(mContext).birthdayFromJson(file.toString(), title);
                         } catch (IOException | JSONException e1) {

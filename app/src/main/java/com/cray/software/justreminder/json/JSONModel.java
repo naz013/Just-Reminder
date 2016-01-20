@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -277,5 +278,13 @@ public class JsonModel {
 
     public void setExport(JsonExport export) {
         this.export = export;
+    }
+
+    public void setShopping(JsonShopping shopping) {
+        if (shoppings != null) shoppings.add(shopping);
+        else {
+            shoppings = new ArrayList<>();
+            shoppings.add(shopping);
+        }
     }
 }
