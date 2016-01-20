@@ -186,7 +186,23 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         mapContainer = (LinearLayout) findViewById(R.id.mapContainer);
         mapContainer.setVisibility(View.GONE);
 
-        setDrawables();
+        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
+            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
+            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
+            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
+            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_white_24dp, 0, 0, 0);
+            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_white_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_white_24dp, 0, 0, 0);
+        } else {
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);
+            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_black_24dp, 0, 0, 0);
+            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_black_24dp, 0, 0, 0);
+            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_black_24dp, 0, 0, 0);
+            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_black_24dp, 0, 0, 0);
+            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_black_24dp, 0, 0, 0);
+            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_black_24dp, 0, 0, 0);
+        }
     }
 
     @Override
@@ -273,24 +289,25 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             }
 
             String melodyStr = item.getMelody();
-            Uri soundUri;
+            File file;
             if (melodyStr != null && !melodyStr.matches("")) {
-                File sound = new File(melodyStr);
-                soundUri = Uri.fromFile(sound);
+                file = new File(melodyStr);
             } else {
+                Uri soundUri;
                 if (new SharedPrefs(this).loadBoolean(Prefs.CUSTOM_SOUND)) {
                     String path = new SharedPrefs(this).loadPrefs(Prefs.CUSTOM_SOUND_FILE);
                     if (path != null) {
-                        File sound = new File(path);
-                        soundUri = Uri.fromFile(sound);
+                        file = new File(path);
                     } else {
                         soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        file = new File(soundUri.getPath());
                     }
                 } else {
                     soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    file = new File(soundUri.getPath());
                 }
             }
-            File file = new File(soundUri.getPath());
+
             melodyStr = file.getName();
             melody.setText(melodyStr);
 
@@ -308,26 +325,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     setter.colorAccent(catColor)));
 
             new LoadOtherData(this, progress, id).execute();
-        }
-    }
-
-    private void setDrawables() {
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
-            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
-            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
-            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
-            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
-            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_white_24dp, 0, 0, 0);
-            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_white_24dp, 0, 0, 0);
-            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_white_24dp, 0, 0, 0);
-        } else {
-            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);
-            type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_black_24dp, 0, 0, 0);
-            group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_black_24dp, 0, 0, 0);
-            location.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_black_24dp, 0, 0, 0);
-            number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_account_circle_black_24dp, 0, 0, 0);
-            repeat.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_refresh_black_24dp, 0, 0, 0);
-            melody.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_music_note_black_24dp, 0, 0, 0);
         }
     }
 
@@ -387,7 +384,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         int minute = 0;
         list = new ArrayList<>();
         ArrayList<String> time = new ArrayList<>();
-
+        boolean is24 = new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT);
         do {
             if (hour == 23 && minute == 30) {
                 hour = -1;
@@ -396,19 +393,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 hour = calendar.get(Calendar.HOUR_OF_DAY);
                 minute = calendar.get(Calendar.MINUTE);
                 list.add(tmp);
-                String hourStr;
-                if (hour < 10) {
-                    hourStr = "0" + hour;
-                } else {
-                    hourStr = String.valueOf(hour);
-                }
-                String minuteStr;
-                if (minute < 10) {
-                    minuteStr = "0" + minute;
-                } else {
-                    minuteStr = String.valueOf(minute);
-                }
-                time.add(hourStr + ":" + minuteStr);
+                time.add(TimeUtil.getTime(calendar.getTime(), is24));
                 calendar.setTimeInMillis(tmp + AlarmManager.INTERVAL_HALF_HOUR);
             }
         } while (hour != -1);
@@ -496,6 +481,14 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 reminderNote.setTaskIdentifier(taskId);
             }
             if (c != null) c.close();
+
+            c = data.getTasksList(reminderNote.getTaskListId());
+            if (c != null && c.moveToFirst()) {
+                reminderNote.setColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)));
+            } else {
+                reminderNote.setColor(8);
+            }
+            if (c != null) c.close();
             data.close();
             return reminderNote;
         }
@@ -509,18 +502,8 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     tasksContainer.setVisibility(View.VISIBLE);
                     taskText.setText(reminderNote.getTaskTitle());
                     String mNote = reminderNote.getTaskNote();
-                    TasksData data = new TasksData(mContext);
-                    data.open();
-                    Cursor c = data.getTasksList(reminderNote.getTaskListId());
-                    if (c != null && c.moveToFirst()) {
-                        listColor.setBackgroundColor(
-                                new ColorSetter(mContext)
-                                        .getNoteColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR))));
-                    } else {
-                        listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(8));
-                    }
-                    if (c != null) c.close();
-                    data.close();
+                    listColor.setBackgroundColor(new ColorSetter(mContext)
+                            .getNoteColor(reminderNote.getColor()));
 
                     if (mNote != null && !mNote.matches("")) {
                         taskNote.setText(mNote);

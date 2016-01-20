@@ -19,26 +19,20 @@ package com.cray.software.justreminder.datas.models;
 public class ReminderNote {
     private String noteText;
     private byte[] image;
+    private int color;
     private String taskTitle, taskNote, taskStatus, taskListId, taskIdentifier;
     private long taskDate;
     private long noteId, taskId;
 
-    public ReminderNote(String noteText, byte[] image, String taskTitle, String taskNote,
-                        String taskStatus, long taskDate, long taskId, long noteId, String taskListId, String taskIdentifier){
-        this.noteText = noteText;
-        this.image = image;
-        this.taskTitle = taskTitle;
-        this.taskStatus = taskStatus;
-        this.taskDate = taskDate;
-        this.taskNote = taskNote;
-        this.taskId = taskId;
-        this.noteId = noteId;
-        this.taskListId = taskListId;
-        this.taskIdentifier = taskIdentifier;
+    public ReminderNote(){
     }
 
-    public ReminderNote(){
+    public void setColor(int color) {
+        this.color = color;
+    }
 
+    public int getColor() {
+        return color;
     }
 
     public String getTaskIdentifier(){

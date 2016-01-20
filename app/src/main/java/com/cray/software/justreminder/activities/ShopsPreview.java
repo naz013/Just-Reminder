@@ -25,7 +25,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +43,6 @@ import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JsonShopping;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -87,7 +85,6 @@ public class ShopsPreview extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        if (Module.isLollipop()) toolbar.setTransitionName("toolbar");
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
@@ -96,7 +93,7 @@ public class ShopsPreview extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Reminder.toggle(id, ShopsPreview.this, null);
-                loadData();
+                loadUi();
             }
         });
         reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
@@ -115,7 +112,7 @@ public class ShopsPreview extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isHidden = isChecked;
-                loadData();
+                loadUi();
             }
         });
 
@@ -144,7 +141,6 @@ public class ShopsPreview extends AppCompatActivity {
                 ViewUtils.zoom(mFab, 350);
             }
         }, 500);
-        loadUi();
     }
 
     @Override
@@ -157,7 +153,7 @@ public class ShopsPreview extends AppCompatActivity {
         ReminderModel item = ReminderDataProvider.getItem(this, id);
         if (item != null) {
             String title = item.getTitle();
-            Log.d(Constants.LOG_TAG, title);
+            toolbar.setTitle(title);
             long due = item.getDue();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
@@ -185,34 +181,28 @@ public class ShopsPreview extends AppCompatActivity {
                     cSetter.colorAccent(catColor)));
 
             list = item.getShoppings();
-            toolbar.setTitle(title);
-            Log.d(Constants.LOG_TAG, "List size - " + list.size());
-            loadData();
+            provider = new ShoppingListDataProvider(list, isHidden);
+            TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
+                @Override
+                public void onItemCheck(int position, boolean isChecked) {
+                    ShoppingList.switchItem(ShopsPreview.this, id, isChecked, provider.getItem(position).getUuId());
+                    loadUi();
+                }
+
+                @Override
+                public void onItemDelete(int position) {
+                    ShoppingList.hideItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
+                    loadUi();
+                }
+
+                @Override
+                public void onItemChange(int position) {
+                    ShoppingList.showItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
+                    loadUi();
+                }
+            });
+            todoList.setAdapter(shoppingAdapter);
         } else closeScreen();
-    }
-
-    private void loadData() {
-        provider = new ShoppingListDataProvider(list, isHidden);
-        TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
-            @Override
-            public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList.switchItem(ShopsPreview.this, id, isChecked, provider.getItem(position).getUuId());
-                loadData();
-            }
-
-            @Override
-            public void onItemDelete(int position) {
-                ShoppingList.hideItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
-                loadData();
-            }
-
-            @Override
-            public void onItemChange(int position) {
-                ShoppingList.showItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
-                loadData();
-            }
-        });
-        todoList.setAdapter(shoppingAdapter);
     }
 
     @Override

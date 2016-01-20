@@ -32,9 +32,9 @@ public class ShoppingListDataProvider {
         load();
     }
 
-    public ShoppingListDataProvider(List<JsonShopping> data, boolean hidden){
+    public ShoppingListDataProvider(List<JsonShopping> datas, boolean hidden){
         this.data = new ArrayList<>();
-        loadFromList(data);
+        loadFromList(datas);
         this.hidden = hidden;
     }
 
@@ -117,7 +117,7 @@ public class ShoppingListDataProvider {
         for (JsonShopping item : jsonShoppings) {
             if (!hidden) {
                 int deleted = item.getDeleted();
-                if (deleted == 0) {
+                if (deleted != 0) {
                     data.add(new ShoppingList(item.getSummary(), item.getStatus(),
                             item.getUuId(), deleted, item.getDateTime()));
                 }

@@ -69,7 +69,7 @@ public class Constants {
     public static final String SCREEN_PORTRAIT = "portrait";
     public static final String SCREEN_LANDSCAPE = "landscape";
 
-    public static final String LOG_TAG = "JustRem";
+    public static final String LOG_TAG = "Reminder";
     public static final String ITEM_ID_INTENT = "itemId";
     public static final String ITEM_CODE_INTENT = "item_code";
 

@@ -26,12 +26,13 @@ import java.util.List;
  */
 public class ReminderModel {
     private String title, type, uuId, number, groupId, exclusion, melody;
-    private int completed, archived, catColor, viewType, radius;
+    private int completed, archived, catColor, viewType, radius, marker;
     private long due, id, repeat;
     private double[] place;
     private List<JsonShopping> shoppings;
 
-    public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed, int viewType) {
+    public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed,
+                         int viewType) {
         this.id = id;
         this.catColor = catColor;
         this.archived = archived;
@@ -54,11 +55,16 @@ public class ReminderModel {
         JsonPlace jsonPlace = jsonModel.getPlace();
         this.radius = jsonPlace.getRadius();
         this.place = new double[]{jsonPlace.getLatitude(), jsonPlace.getLongitude()};
+        this.marker = jsonPlace.getMarker();
 
         JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
         repeat = jsonRecurrence.getRepeat();
 
         this.shoppings = jsonModel.getShoppings();
+    }
+
+    public int getMarker() {
+        return marker;
     }
 
     public List<JsonShopping> getShoppings() {

@@ -307,8 +307,8 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
     }
 
     private boolean isMelody(String file){
-        return file.endsWith(".mp3") || file.endsWith(".ogg") 
-                || file.endsWith(".m4a") || file.endsWith(".flac");
+        return file != null && (file.endsWith(".mp3") || file.endsWith(".ogg")
+                || file.endsWith(".m4a") || file.endsWith(".flac"));
     }
 
     private int getDirectoryIcon(){
@@ -323,8 +323,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                setResult(RESULT_CANCELED);
-                finish();
+                exit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -333,12 +332,13 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
-        if (isMelody(chosenFile)) {
-            stop();
-        } else {
-            setResult(RESULT_CANCELED);
-            finish();
-        }
+        exit();
+    }
+
+    private void exit() {
+        if (isMelody(chosenFile)) stop();
+        setResult(RESULT_CANCELED);
+        finish();
     }
 
     @Override
