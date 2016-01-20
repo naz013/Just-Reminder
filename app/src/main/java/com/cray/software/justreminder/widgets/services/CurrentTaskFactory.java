@@ -100,7 +100,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         time = TimeUtil.getTime(calendar1.getTime(), is24);
                     } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
                         viewType = 2;
-                        map.put(id, new ShoppingListDataProvider(mContext, id, ShoppingList.ACTIVE).getData());
+                        map.put(id, new ShoppingListDataProvider(jsonModel.getShoppings(), false).getData());
                     } else {
                         String[] dT = mCount.getNextDateTime(eventTime);
                         date = dT[0];

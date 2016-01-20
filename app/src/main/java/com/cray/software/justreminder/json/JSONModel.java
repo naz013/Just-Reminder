@@ -21,7 +21,7 @@ import java.util.List;
 public class JsonModel {
 
     private List<JsonPlace> places;
-    private List<JsonShopping> shoppings;
+    private ArrayList<JsonShopping> shoppings;
     private JsonExclusion exclusion;
     private JsonLed led;
     private JsonMelody melody;
@@ -79,7 +79,7 @@ public class JsonModel {
                      JsonExclusion jsonExclusion, JsonLed jsonLed, JsonMelody jsonMelody,
                      JsonRecurrence jsonRecurrence, JsonAction jsonAction, JsonExport jsonExport,
                      JsonPlace jsonPlace, List<String> tags, List<JsonPlace> places,
-                     List<JsonShopping> shoppings) {
+                     ArrayList<JsonShopping> shoppings) {
         this.summary = summary;
         this.type = type;
         this.category = category;
@@ -156,7 +156,7 @@ public class JsonModel {
         return places;
     }
 
-    public List<JsonShopping> getShoppings() {
+    public ArrayList<JsonShopping> getShoppings() {
         return shoppings;
     }
 
@@ -232,7 +232,7 @@ public class JsonModel {
         this.type = type;
     }
 
-    public void setShoppings(List<JsonShopping> shoppings) {
+    public void setShoppings(ArrayList<JsonShopping> shoppings) {
         this.shoppings = shoppings;
     }
 

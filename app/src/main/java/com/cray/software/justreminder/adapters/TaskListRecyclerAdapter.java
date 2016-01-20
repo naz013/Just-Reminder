@@ -109,9 +109,9 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        final ShoppingList item = provider.getItem(position);
+        final ShoppingList item = provider.getItem(holder.getAdapterPosition());
         String title = item.getTitle();
 
         int isChecked = item.isChecked();
@@ -140,7 +140,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
-                        listener.onItemDelete(position);
+                        listener.onItemDelete(holder.getAdapterPosition());
                     }
                 }
             });
@@ -149,7 +149,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
                 @Override
                 public void onClick(View v) {
                     if (listener != null && item.getStatus() == ShoppingList.DELETED) {
-                        listener.onItemChange(position);
+                        listener.onItemChange(holder.getAdapterPosition());
                     }
                 }
             });
@@ -158,7 +158,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (listener != null) {
-                        listener.onItemCheck(position, isChecked);
+                        listener.onItemCheck(holder.getAdapterPosition(), isChecked);
                     }
                 }
             });

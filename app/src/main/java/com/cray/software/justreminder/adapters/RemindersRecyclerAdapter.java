@@ -308,7 +308,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.todoList.setFocusable(false);
             holder.todoList.removeAllViewsInLayout();
 
-            ShoppingListDataProvider provider = new ShoppingListDataProvider(mContext, item.getId(), ShoppingList.ACTIVE);
+            ShoppingListDataProvider provider = new ShoppingListDataProvider(item.getShoppings(), false);
             int count = 0;
             for (ShoppingList list : provider.getData()){
                 View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);

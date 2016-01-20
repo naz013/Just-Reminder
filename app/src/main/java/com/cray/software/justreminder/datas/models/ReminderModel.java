@@ -30,7 +30,7 @@ public class ReminderModel {
     private int completed, archived, catColor, viewType, radius, marker;
     private long due, id, repeat;
     private double[] place;
-    private List<JsonShopping> shoppings;
+    private ArrayList<JsonShopping> shoppings;
     private ArrayList<Integer> weekdays;
 
     public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed,
@@ -74,7 +74,7 @@ public class ReminderModel {
         return marker;
     }
 
-    public List<JsonShopping> getShoppings() {
+    public ArrayList<JsonShopping> getShoppings() {
         return shoppings;
     }
 

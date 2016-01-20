@@ -10,7 +10,6 @@ import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonShopping;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -74,7 +73,7 @@ public class ShoppingList {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             JsonParser jsonParser = new JsonParser(json);
             JsonModel jsonModel = jsonParser.parse();
-            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
             for (JsonShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setStatus(checked ? 1 : 0);
@@ -103,7 +102,7 @@ public class ShoppingList {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             JsonParser jsonParser = new JsonParser(json);
             JsonModel jsonModel = jsonParser.parse();
-            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
             for (JsonShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setDeleted(DELETED);
@@ -132,7 +131,7 @@ public class ShoppingList {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             JsonParser jsonParser = new JsonParser(json);
             JsonModel jsonModel = jsonParser.parse();
-            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
             for (JsonShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setDeleted(ACTIVE);
@@ -162,7 +161,7 @@ public class ShoppingList {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             JsonParser jsonParser = new JsonParser(json);
             JsonModel jsonModel = jsonParser.parse();
-            List<JsonShopping> shoppings = jsonModel.getShoppings();
+            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
             for (int i = 0; i < shoppings.size(); i++) {
                 if (shoppings.get(i).getUuId().matches(uuId)) {
                     shoppings.remove(i);

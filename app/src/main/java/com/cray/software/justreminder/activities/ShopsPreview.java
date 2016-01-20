@@ -49,7 +49,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.WrapLayoutManager;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class ShopsPreview extends AppCompatActivity {
 
@@ -67,7 +67,7 @@ public class ShopsPreview extends AppCompatActivity {
 
     private long id;
     private boolean isHidden = false;
-    List<JsonShopping> list;
+    private ArrayList<JsonShopping> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

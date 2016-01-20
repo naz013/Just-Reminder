@@ -59,15 +59,21 @@ public class JsonParser {
     public static final String TYPE = "reminder_type";
     public static final String SHOPPING = "shopping";
 
+
+    public static final String VERSION = "1.0";
+    public static final String VERSION_KEY = "v_key";
+
     private JSONObject jsonObject;
 
     public JsonParser() {
         jsonObject = new JSONObject();
+        setVersion();
     }
 
     public JsonParser(String jsonObject) {
         try {
             this.jsonObject = new JSONObject(jsonObject);
+            setVersion();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -76,6 +82,17 @@ public class JsonParser {
     public JsonParser(JSONObject jsonObject) {
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
+            setVersion();
+        }
+    }
+
+    private void setVersion() {
+        if (jsonObject != null) {
+            try {
+                jsonObject.put(VERSION_KEY, VERSION);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -234,7 +251,7 @@ public class JsonParser {
         jsonModel.setRecurrence(jsonRecurrence);
 
         if (jsonObject.has("shopping_list")) {
-            List<JsonShopping> list = new ArrayList<>();
+            ArrayList<JsonShopping> list = new ArrayList<>();
             JSONObject listObject = jsonObject.getJSONObject("shopping_list");
             ArrayList<ShoppingList> arrayList = new ArrayList<>();
             Iterator<?> keys = listObject.keys();
@@ -529,10 +546,10 @@ public class JsonParser {
         return null;
     }
 
-    public List<JsonShopping> getShoppings() {
+    public ArrayList<JsonShopping> getShoppings() {
         if (jsonObject.has(SHOPPING)) {
             try {
-                List<JsonShopping> places = new ArrayList<>();
+                ArrayList<JsonShopping> places = new ArrayList<>();
                 JSONObject object = jsonObject.getJSONObject(SHOPPING);
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {

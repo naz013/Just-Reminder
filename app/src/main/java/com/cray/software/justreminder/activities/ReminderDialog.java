@@ -555,7 +555,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void loadData() {
-        provider = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
+        provider = new ShoppingListDataProvider(item.getShoppings(), false);
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {

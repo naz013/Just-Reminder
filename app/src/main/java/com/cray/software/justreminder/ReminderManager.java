@@ -244,6 +244,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private TextView shoppingNoTime;
     private RelativeLayout shoppingTimeContainer;
     private DateTimeView dateViewShopping;
+    private RecyclerView todoList;
 
     /**
      * Extra options views.
@@ -1954,7 +1955,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.shoppingLayout);
         remControl = dateType;
 
-        RecyclerView todoList = (RecyclerView) findViewById(R.id.todoList);
+        todoList = (RecyclerView) findViewById(R.id.todoList);
+        todoList.setLayoutManager(new LinearLayoutManager(this));
         CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
         cardContainer.setCardBackgroundColor(cSetter.getCardStyle());
 
@@ -2034,57 +2036,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         shoppingLists = new ShoppingListDataProvider(this);
-        shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
-            @Override
-            public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked() == 1) item.setIsChecked(0);
-                else item.setIsChecked(1);
-                shoppingAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemDelete(int position) {
-                shoppingLists.removeItem(position);
-                shoppingAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemChange(int position) {
-
-            }
-        });
-        todoList.setLayoutManager(new LinearLayoutManager(this));
-        todoList.setAdapter(shoppingAdapter);
+        loadShoppings();
         invalidateButtons();
         if (item != null && isSame()){
             shoppingLists.clear();
-            if (id != 0) {
-                shoppingLists = new ShoppingListDataProvider(this, id, ShoppingList.ACTIVE);
-            } else {
-                shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
-            }
-            shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
-                @Override
-                public void onItemCheck(int position, boolean isChecked) {
-                    ShoppingList item = shoppingLists.getItem(position);
-                    if (item.isChecked() == 1) item.setIsChecked(0);
-                    else item.setIsChecked(1);
-                    shoppingAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onItemDelete(int position) {
-                    shoppingLists.removeItem(position);
-                    shoppingAdapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onItemChange(int position) {
-
-                }
-            });
-            todoList.setAdapter(shoppingAdapter);
+            shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
+            loadShoppings();
 
             invalidateButtons();
             eventTime = item.getStartTime();
@@ -2106,6 +2063,33 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             taskField.setText(item.getSummary());
         }
+    }
+
+    private void loadShoppings() {
+        shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
+            @Override
+            public void onItemCheck(int position, boolean isChecked) {
+                ShoppingList item = shoppingLists.getItem(position);
+                if (item.isChecked() == 1) item.setIsChecked(0);
+                else item.setIsChecked(1);
+                loadShoppings();
+            }
+
+            @Override
+            public void onItemDelete(int position) {
+                shoppingLists.removeItem(position);
+                loadShoppings();
+            }
+
+            @Override
+            public void onItemChange(int position) {
+                ShoppingList item = shoppingLists.getItem(position);
+                if (item.getStatus() == 1) item.setStatus(0);
+                else item.setStatus(1);
+                loadShoppings();
+            }
+        });
+        todoList.setAdapter(shoppingAdapter);
     }
 
     /**

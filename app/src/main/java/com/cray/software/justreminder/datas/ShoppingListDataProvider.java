@@ -5,37 +5,26 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonShopping;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ShoppingListDataProvider {
     private ArrayList<ShoppingList> data;
     private Context mContext;
-    private long remId;
     private int flag;
-    boolean hidden;
+    private boolean hidden;
 
     public ShoppingListDataProvider(Context mContext){
         data = new ArrayList<>();
         this.mContext = mContext;
     }
 
-    public ShoppingListDataProvider(Context mContext, long remId, int flag){
-        this.mContext = mContext;
-        this.remId = remId;
-        this.flag = flag;
-        load();
-    }
-
-    public ShoppingListDataProvider(List<JsonShopping> datas, boolean hidden){
+    public ShoppingListDataProvider(ArrayList<JsonShopping> datas, boolean hidden){
         this.data = new ArrayList<>();
-        loadFromList(datas);
         this.hidden = hidden;
+        loadFromList(datas);
     }
 
     public void setFlag(int flag) {
@@ -111,13 +100,13 @@ public class ShoppingListDataProvider {
         return data;
     }
 
-    public void loadFromList(List<JsonShopping> jsonShoppings) {
+    public void loadFromList(ArrayList<JsonShopping> jsonShoppings) {
         data = new ArrayList<>();
         data.clear();
         for (JsonShopping item : jsonShoppings) {
             if (!hidden) {
                 int deleted = item.getDeleted();
-                if (deleted != 0) {
+                if (deleted == ShoppingList.ACTIVE) {
                     data.add(new ShoppingList(item.getSummary(), item.getStatus(),
                             item.getUuId(), deleted, item.getDateTime()));
                 }
@@ -126,25 +115,5 @@ public class ShoppingListDataProvider {
                         item.getUuId(), item.getDeleted(), item.getDateTime()));
             }
         }
-    }
-
-    public void load() {
-        data = new ArrayList<>();
-        data.clear();
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminder(remId);
-        if (c != null && c.moveToFirst()){
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                List<JsonShopping> jsonShoppings = new JsonParser(json).getShoppings();
-                for (JsonShopping item : jsonShoppings) {
-                    data.add(new ShoppingList(item.getSummary(), item.getStatus(),
-                            item.getUuId(), item.getDeleted(), item.getDateTime()));
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
     }
 }
