@@ -252,10 +252,11 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
                 LatLng pos = new LatLng(lat, lon);
                 ColorSetter cs = new ColorSetter(this);
+                int marker = item.getMarker();
                 map.addMarker(new MarkerOptions()
                         .position(pos)
                         .title(item.getTitle())
-                        .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle()))
+                        .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle(marker)))
                         .draggable(false));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
                 int radius = item.getRadius();
@@ -263,7 +264,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
                 }
                 if (radius != -1) {
-                    int[] circleColors = cs.getMarkerRadiusStyle();
+                    int[] circleColors = cs.getMarkerRadiusStyle(marker);
                     map.addCircle(new CircleOptions()
                             .center(pos)
                             .radius(radius)

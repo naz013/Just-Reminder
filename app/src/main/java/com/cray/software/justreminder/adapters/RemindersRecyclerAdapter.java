@@ -25,7 +25,6 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -33,26 +32,27 @@ import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+
+import java.util.ArrayList;
 
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder> {
 
     private Context mContext;
     private TimeCount mCount;
     private ColorSetter cs;
-    private ReminderDataProvider provider;
+    private ArrayList<ReminderModel> list;
     private RecyclerListener mEventListener;
-    private boolean isDark;
     private boolean is24;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
-        this.provider = provider;
+        list = provider.getData();
         SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
-        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         setHasStableIds(true);
     }
@@ -61,14 +61,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             View.OnLongClickListener {
 
         public TextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
-                repeatInterval, reminder_contact_name, listHeader;
+                repeatInterval, listHeader;
         public SwitchCompat check;
-        public ImageView taskIcon, leftTimeIcon;
         public CardView itemCard;
 
         public TextView shoppingTitle, shoppingTime;
         public LinearLayout todoList;
-        public LinearLayout subBackground, titleContainer;
+        public LinearLayout subBackground, titleContainer, endContainer;
         public RelativeLayout reminderContainer;
 
         public ViewHolder(View v) {
@@ -78,7 +77,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             listHeader = (TextView) v.findViewById(R.id.listHeader);
             check = (SwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
-            taskIcon = (ImageView) v.findViewById(R.id.taskIcon);
             taskDate = (TextView) v.findViewById(R.id.taskDate);
             taskDate.setText("");
             reminder_type = (TextView) v.findViewById(R.id.reminder_type);
@@ -87,10 +85,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             reminder_phone.setText("");
             repeatInterval = (TextView) v.findViewById(R.id.repeatInterval);
             repeatInterval.setText("");
-            reminder_contact_name = (TextView) v.findViewById(R.id.reminder_contact_name);
-            reminder_contact_name.setText("");
-            leftTimeIcon = (ImageView) v.findViewById(R.id.leftTime);
-            leftTimeIcon.setVisibility(View.VISIBLE);
 
             taskTitle = (TextView) v.findViewById(R.id.taskText);
             shoppingTime = (TextView) v.findViewById(R.id.shoppingTime);
@@ -102,6 +96,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
 
+            endContainer = (LinearLayout) v.findViewById(R.id.endContainer);
             todoList = (LinearLayout) v.findViewById(R.id.todoList);
             todoList.setVisibility(View.VISIBLE);
             subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
@@ -120,14 +115,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 }
             });
 
-            repeatInterval.setBackgroundResource(isDark ? R.drawable.round_view_white :
-                    R.drawable.round_view_black);
+            reminderContainer.setBackgroundColor(cs.getCardStyle());
         }
 
         @Override
         public void onClick(View v) {
             View view = itemCard;
-            if (provider.getItem(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
+            if (list.get(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
                 view = check;
             }
             if (mEventListener != null) {
@@ -151,13 +145,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 .inflate(R.layout.list_item_card, parent, false);
 
         // create ViewHolder
-        ViewHolder vh = new ViewHolder(itemLayoutView);
-        return vh;
+        return new ViewHolder(itemLayoutView);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final ReminderModel item = provider.getItem(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final ReminderModel item = list.get(holder.getAdapterPosition());
         String title = item.getTitle();
         String type = item.getType();
         String number = item.getNumber();
@@ -171,9 +164,10 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         int categoryColor = item.getCatColor();
 
         String simpleDate = TimeUtil.getSimpleDate(due);
+        holder.itemCard.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(categoryColor)));
 
         if (archived == 1){
-            if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))) {
+            if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(list.get(position - 1).getDue()))) {
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due == 0){
@@ -189,17 +183,17 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.listHeader.setVisibility(View.VISIBLE);
             }
         } else {
-            if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == 0){
+            if (isDone == 1 && position > 0 && list.get(position - 1).getCompleted() == 0){
                 simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 1 && position > 0 && provider.getItem(position - 1).getCompleted() == 1){
+            } else if (isDone == 1 && position > 0 && list.get(position - 1).getCompleted() == 1){
                 holder.listHeader.setVisibility(View.GONE);
             } else if (isDone == 1 && position == 0){
                 simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(provider.getItem(position - 1).getDue()))){
+            } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(list.get(position - 1).getDue()))){
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
@@ -220,152 +214,67 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             holder.reminderContainer.setVisibility(View.VISIBLE);
             holder.subBackground.setVisibility(View.GONE);
 
-            holder.taskTitle.setText("");
-            holder.reminder_contact_name.setText("");
-            holder.taskDate.setText("");
-            holder.reminder_type.setText("");
-            holder.reminder_phone.setText("");
-            holder.repeatInterval.setText("");
-
-            holder.taskIcon.setImageDrawable(ViewUtils.getDrawable(mContext, cs.getCategoryIndicator(categoryColor)));
             holder.taskTitle.setText(title);
             holder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
-
-            if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                if (type.startsWith(Constants.TYPE_MONTHDAY_CALL)) {
+            holder.reminder_phone.setVisibility(View.VISIBLE);
+            if (type.contains(Constants.TYPE_CALL) || type.contains(Constants.TYPE_MESSAGE)) {
+                String name = Contacts.getNameFromNumber(number, mContext);
+                if (name == null) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
-                } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
+                } else {
+                    holder.reminder_phone.setText(name + "(" + number + ")");
+                }
+            } else if (type.matches(Constants.TYPE_APPLICATION)) {
+                PackageManager packageManager = mContext.getPackageManager();
+                ApplicationInfo applicationInfo = null;
+                try {
+                    applicationInfo = packageManager.getApplicationInfo(number, 0);
+                } catch (final PackageManager.NameNotFoundException ignored) {
+                }
+                final String name = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
+                holder.reminder_phone.setText(name + "/" + number);
+            } else if (type.matches(Constants.TYPE_MAIL)) {
+                String name = Contacts.getNameFromMail(number, mContext);
+                if (name == null) {
                     holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
+                } else {
+                    holder.reminder_phone.setText(name + "(" + number + ")");
                 }
-
-                holder.leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
-                holder.repeatInterval.setVisibility(View.GONE);
-                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
-
-                if (isDone == 0) {
-                    holder.leftTime.setText(mCount.getRemaining(due));
-                }
-            } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
-                    holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
-                } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
-                    holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
-                }
-
-                holder.leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
-                holder.repeatInterval.setVisibility(View.GONE);
-                if (isDone == 0) {
-                    holder.leftTime.setText(mCount.getRemaining(due));
-                }
-                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
+            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+                holder.reminder_phone.setText(number);
             } else {
-                if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL) ||
-                        type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
-                    holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
-                } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                        type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
-                    holder.reminder_phone.setText(number);
-                    String name = Contacts.getNameFromNumber(number, mContext);
-                    if (name != null) {
-                        holder.reminder_contact_name.setText(name);
-                    } else {
-                        holder.reminder_contact_name.setText("");
-                    }
-                } else if (type.startsWith(Constants.TYPE_SKYPE)) {
-                    holder.reminder_phone.setText(number);
-                    holder.reminder_contact_name.setText(number);
-                } else if (type.matches(Constants.TYPE_APPLICATION)) {
-                    PackageManager packageManager = mContext.getPackageManager();
-                    ApplicationInfo applicationInfo = null;
-                    try {
-                        applicationInfo = packageManager.getApplicationInfo(number, 0);
-                    } catch (final PackageManager.NameNotFoundException ignored) {
-                    }
-                    final String name = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
-                    holder.reminder_phone.setText(number);
-                    holder.reminder_contact_name.setText(name);
-                } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-                    holder.reminder_phone.setText(number);
-                    holder.reminder_contact_name.setText(number);
-                }
+                holder.reminder_phone.setVisibility(View.GONE);
+            }
 
-                if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
-                        type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
-                        type.startsWith(Constants.TYPE_APPLICATION)) {
-                    holder.leftTimeIcon.setImageDrawable(mCount.
-                            getDifference(due));
-                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
-                } else if (type.matches(Constants.TYPE_TIME)) {
-                    holder.leftTimeIcon.setImageDrawable(mCount.
-                            getDifference(due));
-                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
-                } else {
-                    if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                        holder.leftTimeIcon.setVisibility(View.GONE);
-                        holder.repeatInterval.setVisibility(View.GONE);
-                    } else {
-                        holder.leftTimeIcon.setVisibility(View.GONE);
-                        holder.repeatInterval.setText("0");
-                    }
-                }
+            if (type.contains(Constants.TYPE_LOCATION)) {
+                holder.taskDate.setText(String.format("%.5f", lat) + "\n" + String.format("%.5f", lon));
+                holder.endContainer.setVisibility(View.GONE);
+            } else {
+                holder.endContainer.setVisibility(View.VISIBLE);
+                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
+                if (isDone == 0) {
+                    holder.leftTime.setText(mCount.getRemaining(due));
+                } else holder.leftTime.setText("");
 
-                if (lat != 0.0 || lon != 0.0) {
-                    holder.taskDate.setText(String.format("%.5f", lat) + "\n" + String.format("%.5f", lon));
-                    holder.leftTime.setVisibility(View.GONE);
+                if (type.startsWith(Constants.TYPE_MONTHDAY)) {
+                    holder.repeatInterval.setText(String.format(mContext.getString(R.string.xM), 1));
+                } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
+                    holder.repeatInterval.setText(ReminderUtils.getRepeatString(mContext, item.getWeekdays()));
                 } else {
-                    if (isDone == 0) {
-                        holder.leftTime.setText(mCount.getRemaining(due));
-                    }
-                    holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
+                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
                 }
             }
 
             if (type.matches(Constants.TYPE_TIME) && archived == 0){
                 if (exclusion != null){
                     if (new Recurrence(exclusion).isRange()){
-                        holder.leftTimeIcon.setVisibility(View.GONE);
                         holder.taskDate.setText(R.string.paused);
-                    } else {
-                        holder.leftTimeIcon.setVisibility(View.VISIBLE);
                     }
                 }
             }
 
             if (isDone == 1) {
-                holder.leftTimeIcon.setImageDrawable(ViewUtils.getDrawable(mContext, R.drawable.drawable_grey));
-                holder.leftTime.setVisibility(View.GONE);
+                holder.leftTime.setText("");
                 holder.check.setChecked(false);
             } else {
                 holder.check.setChecked(true);
@@ -373,8 +282,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             if (archived > 0) {
                 holder.check.setVisibility(View.GONE);
-                holder.leftTime.setVisibility(View.GONE);
-                holder.leftTimeIcon.setVisibility(View.GONE);
+                holder.leftTime.setText("");
             }
         } else {
             if (due > 0){
@@ -386,8 +294,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             holder.reminderContainer.setVisibility(View.GONE);
             holder.subBackground.setVisibility(View.VISIBLE);
-
-            holder.itemCard.setCardBackgroundColor(ViewUtils.getColor(mContext, cs.getCategoryColor(categoryColor)));
 
             holder.shoppingTitle.setText(title);
 
@@ -412,7 +318,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                     @Override
                     public void onClick(View v) {
                         if (mEventListener != null) {
-                            mEventListener.onItemClicked(position, holder.subBackground);
+                            mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
                         }
                     }
                 });
@@ -441,21 +347,17 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public int getItemViewType(int position) {
-        return provider.getItem(position).getViewType();
+        return list.get(position).getViewType();
     }
 
     @Override
     public long getItemId(int position) {
-        return provider.getItem(position).getId();
+        return list.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getCount();
-    }
-
-    public RecyclerListener getEventListener() {
-        return mEventListener;
+        return list.size();
     }
 
     public void setEventListener(RecyclerListener eventListener) {

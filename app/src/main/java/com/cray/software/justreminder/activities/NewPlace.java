@@ -12,20 +12,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 public class NewPlace extends AppCompatActivity implements MapListener {
 
     private ColorSetter cs = new ColorSetter(NewPlace.this);
     private EditText placeName;
+    private MapFragment googleMap;
+
     private SharedPrefs sPrefs = new SharedPrefs(NewPlace.this);
 
     private LatLng place;
@@ -37,7 +38,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
+            getWindow().setStatusBarColor(cs.getColor(cs.colorPrimaryDark()));
         }
         setContentView(R.layout.new_place_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
@@ -52,17 +53,17 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
         placeName = (EditText) findViewById(R.id.placeName);
-        MapFragment googleMap = MapFragment.newInstance(false, false, false, false,
+        googleMap = MapFragment.newInstance(false, false, false, false,
                 sPrefs.loadInt(Prefs.MARKER_STYLE), sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         googleMap.setListener(this);
-        int radius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-        googleMap.setMarkerRadius(radius);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, googleMap)
                 .addToBackStack(null)
                 .commit();
+    }
 
+    private void loadPlace() {
         if (id != 0){
             DataBase db = new DataBase(NewPlace.this);
             db.open();
@@ -71,12 +72,12 @@ public class NewPlace extends AppCompatActivity implements MapListener {
                 String text = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-                googleMap.addMarker(new LatLng(latitude, longitude), text, true, true, radius);
+                googleMap.addMarker(new LatLng(latitude, longitude), text, true, true, -1);
                 placeName.setText(text);
             }
             if (c != null) c.close();
             db.close();
-        }
+        } else finish();
     }
 
     private void addPlace(){
@@ -105,6 +106,12 @@ public class NewPlace extends AppCompatActivity implements MapListener {
         } else {
             Toast.makeText(NewPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadPlace();
     }
 
     @Override

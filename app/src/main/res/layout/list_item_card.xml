@@ -32,14 +32,15 @@
         android:layout_marginRight="5dp"
         android:foreground="?android:attr/selectableItemBackground"
         card_view:cardCornerRadius="3dp"
+        card_view:contentPadding="1dp"
         card_view:cardUseCompatPadding="true"
         android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:id="@+id/reminderContainer"
+            android:padding="8dp"
             android:focusable="false">
 
             <android.support.v7.widget.SwitchCompat
@@ -62,127 +63,71 @@
 
                 <TextView
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:text="Type"
+                    android:id="@+id/reminder_type"/>
+
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:singleLine="true"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="5dp"
                     android:focusable="false"
                     android:text="Task"
                     android:gravity="center_vertical"
                     android:id="@+id/taskText" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    android:layout_weight="0.75"
                     android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/reminder_phone" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:singleLine="true"
-                        android:layout_weight="1"
-                        android:text="Type"
-                        android:id="@+id/reminder_type"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:singleLine="true"
-                        android:focusable="false"
-                        android:layout_weight="0.75"
-                        android:layout_marginLeft="10dp"
-                        android:text="22 Dec 2015 10:40"
-                        android:id="@+id/taskDate" />
-
-                </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    android:layout_marginTop="5dp"
+                    android:text="22 Dec 2015 10:40"
+                    android:id="@+id/taskDate" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:gravity="center_vertical"
+                    android:id="@+id/endContainer"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:gravity="left"
                         android:focusable="false"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center"
-                            android:scaleType="center"
-                            android:focusable="false"
-                            android:src="@drawable/circle_blue"
-                            android:id="@+id/taskIcon" />
-
-                        <TextView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:textSize="15sp"
-                            android:layout_marginLeft="5dp"
-                            android:gravity="center"
-                            android:focusable="false"
-                            android:id="@+id/repeatInterval"
-                            android:background="@drawable/round_view_black"/>
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_marginLeft="5dp"
-                            android:gravity="center"
-                            android:focusable="false"
-                            android:visibility="visible"
-                            android:id="@+id/leftTime"
-                            android:src="@drawable/drawable_blue"/>
-
-                    </LinearLayout>
+                        android:id="@+id/repeatInterval"
+                        android:layout_weight="1"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="visible"
                         android:singleLine="true"
-                        android:layout_weight="0.75"
+                        android:layout_weight="1"
                         android:focusable="false"
+                        android:textStyle="italic"
+                        android:gravity="right"
                         android:layout_marginLeft="10dp"
                         android:id="@+id/remainingTime"
                         android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:focusable="false"
-                        android:layout_weight="1"
-                        android:layout_marginTop="5dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:id="@+id/reminder_contact_name"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:singleLine="true"
-                        android:focusable="false"
-                        android:layout_weight="0.75"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="5dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:gravity="center_vertical"
-                        android:id="@+id/reminder_phone" />
 
                 </LinearLayout>
             </LinearLayout>

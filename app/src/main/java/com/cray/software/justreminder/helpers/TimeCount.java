@@ -43,38 +43,6 @@ public class TimeCount {
     }
 
     /**
-     * Get drawable indicator based on time difference.
-     * @param time target time.
-     * @return Drawable
-     */
-    public Drawable getDifference(long time){
-        Drawable color;
-        if (time == 0) {
-            color = getDrawable(R.color.material_divider);
-        } else {
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(System.currentTimeMillis());
-            long currTime = cal.getTimeInMillis();
-
-            long diff = time - currTime;
-            if (isBetween(diff, 0, MINUTE * 5)) {
-                color = getDrawable(R.drawable.drawable_red);
-            } else if (isBetween(diff, MINUTE * 5, HOUR)) {
-                color = getDrawable(R.drawable.drawable_yellow);
-            } else if (isBetween(diff, HOUR, HALF_DAY)) {
-                color = getDrawable(R.drawable.drawable_green);
-            } else if (isBetween(diff, HALF_DAY, DAY)) {
-                color = getDrawable(R.drawable.drawable_blue);
-            } else if ((diff > DAY)) {
-                color = getDrawable(R.drawable.drawable_indigo);
-            } else {
-                color = getDrawable(R.drawable.drawable_grey);
-            }
-        }
-        return color;
-    }
-
-    /**
      * Get next date and time for milliseconds.
      * @param timeLong time in milliseconds.
      * @return [0 - date] [1 - time]
@@ -250,17 +218,6 @@ public class TimeCount {
         cc.setTimeInMillis(System.currentTimeMillis());
         long currentTome = cc.getTimeInMillis();
         return startTime < currentTome;
-    }
-
-    /**
-     * Check if number is between two values.
-     * @param value target.
-     * @param min min number.
-     * @param max max number.
-     * @return boolean
-     */
-    private boolean isBetween(long value, long min, long max){
-        return ((value > min) && (value < max));
     }
 
     /**

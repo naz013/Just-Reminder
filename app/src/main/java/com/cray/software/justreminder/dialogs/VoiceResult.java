@@ -66,9 +66,9 @@ public class VoiceResult extends Activity {
         });
 
         TextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
-                repeatInterval, reminder_contact_name;
+                repeatInterval;
         SwitchCompat check;
-        ImageView taskIcon, leftTimeIcon;
+        ImageView taskIcon;
         CardView itemCard;
 
         RelativeLayout reminderContainer;
@@ -86,10 +86,6 @@ public class VoiceResult extends Activity {
         reminder_phone.setText("");
         repeatInterval = (TextView) findViewById(R.id.repeatInterval);
         repeatInterval.setText("");
-        reminder_contact_name = (TextView) findViewById(R.id.reminder_contact_name);
-        reminder_contact_name.setText("");
-        leftTimeIcon = (ImageView) findViewById(R.id.leftTime);
-        leftTimeIcon.setVisibility(View.VISIBLE);
 
         taskTitle = (TextView) findViewById(R.id.taskText);
         taskTitle.setText("");
@@ -100,9 +96,7 @@ public class VoiceResult extends Activity {
         }
 
         SharedPrefs prefs = new SharedPrefs(VoiceResult.this);
-        boolean mDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-        repeatInterval.setBackgroundResource(mDark ? R.drawable.round_view_white : R.drawable.round_view_black);
 
         ReminderModel model = ReminderDataProvider.getItem(this, id);
         String title = model.getTitle();
@@ -122,7 +116,6 @@ public class VoiceResult extends Activity {
         TimeCount mCount = new TimeCount(this);
 
         taskTitle.setText("");
-        reminder_contact_name.setText("");
         taskDate.setText("");
         reminder_type.setText("");
         reminder_phone.setText("");
@@ -137,22 +130,16 @@ public class VoiceResult extends Activity {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             } else if (type.startsWith(Constants.TYPE_MONTHDAY_MESSAGE)) {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             }
 
-            leftTimeIcon.setImageDrawable(mCount.
-                    getDifference(due));
             repeatInterval.setVisibility(View.GONE);
             taskDate.setText(TimeUtil.getFullDateTime(due, is24));
 
@@ -164,22 +151,15 @@ public class VoiceResult extends Activity {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             } else if (type.matches(Constants.TYPE_WEEKDAY_MESSAGE)) {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             }
-
-            leftTimeIcon.setImageDrawable(mCount.
-                    getDifference(due));
             repeatInterval.setVisibility(View.GONE);
             if (isDone == 0) {
                 leftTime.setText(mCount.getRemaining(due));
@@ -191,22 +171,17 @@ public class VoiceResult extends Activity {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE) ||
                     type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
                 reminder_phone.setText(number);
                 String name = Contacts.getNameFromNumber(number, this);
                 if (name != null) {
-                    reminder_contact_name.setText(name);
-                } else {
-                    reminder_contact_name.setText("");
+                    reminder_phone.setText(name + "(" + number + ")");
                 }
             } else if (type.startsWith(Constants.TYPE_SKYPE)) {
                 reminder_phone.setText(number);
-                reminder_contact_name.setText(number);
             } else if (type.matches(Constants.TYPE_APPLICATION)) {
                 PackageManager packageManager = getPackageManager();
                 ApplicationInfo applicationInfo = null;
@@ -216,29 +191,21 @@ public class VoiceResult extends Activity {
                 }
                 final String name = (String) ((applicationInfo != null) ?
                         packageManager.getApplicationLabel(applicationInfo) : "???");
-                reminder_phone.setText(number);
-                reminder_contact_name.setText(name);
+                reminder_phone.setText(name + "/" + number);
             } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
                 reminder_phone.setText(number);
-                reminder_contact_name.setText(number);
             }
 
             if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_MESSAGE) ||
                     type.matches(Constants.TYPE_REMINDER) || type.startsWith(Constants.TYPE_SKYPE) ||
                     type.startsWith(Constants.TYPE_APPLICATION)) {
-                leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
                 repeatInterval.setText(repeat);
             } else if (type.matches(Constants.TYPE_TIME)) {
-                leftTimeIcon.setImageDrawable(mCount.
-                        getDifference(due));
                 repeatInterval.setText(repeat);
             } else {
                 if (type.startsWith(Constants.TYPE_LOCATION) || type.startsWith(Constants.TYPE_LOCATION_OUT)) {
-                    leftTimeIcon.setVisibility(View.GONE);
                     repeatInterval.setVisibility(View.GONE);
                 } else {
-                    leftTimeIcon.setVisibility(View.GONE);
                     repeatInterval.setText("0");
                 }
             }
@@ -256,11 +223,8 @@ public class VoiceResult extends Activity {
 
         if (type.matches(Constants.TYPE_TIME) && archived == 0){
             if (exclusion != null){
-                if (new Recurrence(exclusion).isRange()){
-                    leftTimeIcon.setVisibility(View.GONE);
+                if (new Recurrence(exclusion).isRange()) {
                     taskDate.setText(R.string.paused);
-                } else {
-                    leftTimeIcon.setVisibility(View.VISIBLE);
                 }
             }
         }

@@ -3,7 +3,6 @@ package com.cray.software.justreminder.reminder;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -23,14 +22,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import hirondelle.date4j.DateTime;
 
 public class ReminderDataProvider {
-    private List<ReminderModel> data;
+    private ArrayList<ReminderModel> data;
     private Context mContext;
     public static final int VIEW_REMINDER = 15666;
     public static final int VIEW_SHOPPING_LIST = 15667;
@@ -50,7 +48,7 @@ public class ReminderDataProvider {
         load();
     }
 
-    public List<ReminderModel> getData(){
+    public ArrayList<ReminderModel> getData(){
         return data;
     }
 

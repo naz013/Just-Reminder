@@ -7,6 +7,7 @@ import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.json.JsonShopping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class ReminderModel {
     private long due, id, repeat;
     private double[] place;
     private List<JsonShopping> shoppings;
+    private ArrayList<Integer> weekdays;
 
     public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed,
                          int viewType) {
@@ -59,8 +61,13 @@ public class ReminderModel {
 
         JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
         repeat = jsonRecurrence.getRepeat();
+        weekdays = jsonRecurrence.getWeekdays();
 
         this.shoppings = jsonModel.getShoppings();
+    }
+
+    public ArrayList<Integer> getWeekdays() {
+        return weekdays;
     }
 
     public int getMarker() {
