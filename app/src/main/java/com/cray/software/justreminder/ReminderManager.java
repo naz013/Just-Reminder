@@ -36,8 +36,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -457,9 +455,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down);
-                toolbar.startAnimation(slide);
-                toolbar.setVisibility(View.VISIBLE);
+                ViewUtils.slideInDown(ReminderManager.this, toolbar);
             }
         }, 500);
 
@@ -3224,11 +3220,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mLocList != null) mLocationManager.removeUpdates(mLocList);
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
-        super.onDestroy();
     }
 
     private LocationManager mLocationManager;

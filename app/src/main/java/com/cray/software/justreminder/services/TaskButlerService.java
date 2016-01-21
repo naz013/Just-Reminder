@@ -14,11 +14,10 @@ public class TaskButlerService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        //get all active reminders
         AlarmReceiver alarm = new AlarmReceiver();
         NextBase db = new NextBase(getApplicationContext());
         db.open();
-        Cursor c = db.queryGroup();
+        Cursor c = db.getReminders();
         if (c != null && c.moveToFirst()){
             do {
                 long rowId = c.getLong(c.getColumnIndex(NextBase._ID));

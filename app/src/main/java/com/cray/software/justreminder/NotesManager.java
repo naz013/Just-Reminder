@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -584,8 +585,10 @@ public class NotesManager extends AppCompatActivity {
                                 startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                                 break;
                             case 1:
-                                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(cameraIntent, Constants.ACTION_REQUEST_CAMERA);
+                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                                    startActivityForResult(cameraIntent, Constants.ACTION_REQUEST_CAMERA);
+                                }
                                 break;
                             default:
                                 break;
@@ -619,13 +622,14 @@ public class NotesManager extends AppCompatActivity {
                     }
                     break;
                 case Constants.ACTION_REQUEST_CAMERA:
-                    Bitmap cameraImage = (Bitmap) data.getExtras().get("data");
-                    img = cameraImage;
-                    if (cameraImage != null){
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    img = imageBitmap;
+                    if (imageBitmap != null){
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        cameraImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                         image = outputStream.toByteArray();
-                        noteImage.setImageBitmap(cameraImage);
+                        noteImage.setImageBitmap(imageBitmap);
                         if (!isImageAttached()) {
                             ViewUtils.expand(imageContainer);
                         }

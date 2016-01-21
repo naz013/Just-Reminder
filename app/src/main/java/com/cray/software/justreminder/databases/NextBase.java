@@ -69,7 +69,6 @@ public class NextBase {
 
     public class DBHelper extends SQLiteOpenHelper {
 
-
         public DBHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
@@ -241,14 +240,27 @@ public class NextBase {
                 new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
     }
 
-    public Cursor queryGroup(String category) throws SQLException {
+    public Cursor getByKey(String key) throws SQLException {
+        openGuard();
+        return db.query(TABLE_NAME, null, JSON + " LIKE ?",
+                new String[] {"%"+ key + "%" }, null, null, null);
+    }
+
+    public Cursor getReminders(String category) throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'"
                 + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
-    public Cursor queryGroup() throws SQLException {
+    public Cursor getReminders(long to) throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
+        return db.query(TABLE_NAME, null, EVENT_TIME + "<='" + to + "'"
+                + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+    }
+
+    public Cursor getReminders() throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_LIST  + "='" + 0 + "'", null, null, null, order);
@@ -258,12 +270,6 @@ public class NextBase {
         openGuard();
         String order = EVENT_TIME + " ASC";
         return db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
-    }
-
-    public Cursor getReminders() throws SQLException {
-        openGuard();
-        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getActiveReminders() throws SQLException {

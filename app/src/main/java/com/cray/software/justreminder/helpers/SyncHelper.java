@@ -166,7 +166,7 @@ public class SyncHelper {
     public void reminderToJson() throws JSONException, IOException {
         NextBase db = new NextBase(mContext);
         db.open();
-        Cursor c = db.queryGroup();
+        Cursor c = db.getReminders();
         if (c != null && c.moveToFirst()){
             do {
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));

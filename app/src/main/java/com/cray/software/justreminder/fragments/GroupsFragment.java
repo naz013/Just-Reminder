@@ -236,7 +236,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
             }
             NextBase db = new NextBase(mContext);
             db.open();
-            Cursor c = db.queryGroup(uuId);
+            Cursor c = db.getReminders(uuId);
             if (c != null && c.moveToFirst()){
                 do {
                     String remUUId = c.getString(c.getColumnIndex(NextBase.UUID));

@@ -55,6 +55,7 @@
                         android:visibility="visible"
                         android:src="@drawable/current_widget_preview"
                         android:scaleType="centerCrop"
+                        android:minHeight="350dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
                         android:id="@+id/noteImage"/>

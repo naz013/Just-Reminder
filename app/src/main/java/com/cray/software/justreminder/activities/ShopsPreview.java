@@ -138,7 +138,7 @@ public class ShopsPreview extends AppCompatActivity {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ViewUtils.zoom(mFab, 350);
+                mFab.show();
             }
         }, 500);
     }
@@ -227,7 +227,7 @@ public class ShopsPreview extends AppCompatActivity {
     }
 
     private void closeScreen() {
-        ViewUtils.zoomOut(mFab, 350);
+        mFab.hide();
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -34,6 +34,7 @@ public class ReminderDataProvider {
     public static final int VIEW_SHOPPING_LIST = 15667;
     private boolean isArchive = false;
     private String categoryId = null;
+    private long time = 0;
 
     public ReminderDataProvider(Context mContext){
         data = new ArrayList<>();
@@ -45,6 +46,15 @@ public class ReminderDataProvider {
         this.mContext = mContext;
         this.isArchive = isArchive;
         this.categoryId = categoryId;
+        load();
+    }
+
+    public ReminderDataProvider(Context mContext, long time){
+        data = new ArrayList<>();
+        this.mContext = mContext;
+        this.isArchive = false;
+        this.categoryId = null;
+        this.time = time;
         load();
     }
 
@@ -84,7 +94,8 @@ public class ReminderDataProvider {
         db.open();
         Map<String, Integer> map = getCategories(mContext);
         Cursor c = isArchive ? db.getArchivedReminders() : db.getReminders();
-        if (categoryId != null) c = db.queryGroup(categoryId);
+        if (categoryId != null) c = db.getReminders(categoryId);
+        if (time > 0) c = db.getReminders(time);
         if (c != null && c.moveToNext()){
             do {
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));

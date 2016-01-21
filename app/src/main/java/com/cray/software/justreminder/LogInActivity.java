@@ -413,7 +413,7 @@ public class LogInActivity extends Activity {
 
                 NextBase db = new NextBase(mContext);
                 db.open();
-                Cursor c = db.queryGroup();
+                Cursor c = db.getReminders();
                 if (c != null && c.moveToFirst()){
                     do {
                         db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
@@ -524,7 +524,7 @@ public class LogInActivity extends Activity {
 
                 NextBase db = new NextBase(mContext);
                 db.open();
-                Cursor c = db.queryGroup();
+                Cursor c = db.getReminders();
                 if (c != null && c.moveToFirst()){
                     do {
                         db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);

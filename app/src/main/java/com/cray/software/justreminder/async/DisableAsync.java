@@ -23,7 +23,7 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         NextBase db = new NextBase(mContext);
         db.open();
-        Cursor c = db.queryGroup();
+        Cursor c = db.getReminders();
         if (c != null && c.moveToFirst()){
             boolean res = false;
             do {

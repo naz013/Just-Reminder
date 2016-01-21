@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -34,13 +35,15 @@ import java.util.Calendar;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class DateTimeView extends RelativeLayout implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class DateTimeView extends RelativeLayout implements
+        DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private TextView date;
     private TextView time;
     private long mills;
     private Context mContext;
     private OnSelectListener listener;
+    private AttributeSet attrs;
 
     public DateTimeView(Context context) {
         super(context);
@@ -58,8 +61,13 @@ public class DateTimeView extends RelativeLayout implements DatePickerDialog.OnD
     }
 
     private void init(Context context, AttributeSet attrs) {
+        this.attrs = attrs;
+
         View.inflate(context, R.layout.date_time_view_layout, this);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        setLayoutParams(params);
         date = (TextView) findViewById(R.id.dateField);
         time = (TextView) findViewById(R.id.timeField);
 

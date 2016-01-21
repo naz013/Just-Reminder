@@ -7,14 +7,16 @@
         android:id="@+id/currentList"
         android:layout_width="match_parent"
         android:visibility="visible"
+        android:layout_below="@+id/filterLayout"
         android:layout_height="match_parent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/emptyItem"
         android:visibility="visible"
         android:gravity="center"
+        android:layout_below="@+id/filterLayout"
         android:layout_centerVertical="true"
         android:orientation="vertical" >
 
@@ -32,6 +34,47 @@
             android:text="@string/no_events"
             android:gravity="center|top"
             android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:visibility="gone"
+        android:id="@+id/filterLayout"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:id="@+id/dateStart"
+                android:text="12 Jan 2016"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:id="@+id/dateEnd"
+                android:text="15 Jan 2016"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:id="@+id/dateSeek"
+            android:max="58"/>
 
     </LinearLayout>
 </RelativeLayout>

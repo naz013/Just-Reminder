@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
@@ -34,28 +37,29 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.utils.TimeUtil;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
 /**
  * Show all active reminders.
  */
-public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener {
+public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
 
     /**
-     * Recycler view field.
+     * Views.
      */
     private RecyclerView currentList;
-
-    /**
-     * Containers.
-     */
     private LinearLayout emptyItem;
+    private LinearLayout filterLayout;
+    private TextView dateEnd;
 
     /**
      * Reminder data provider for recycler view.
@@ -76,6 +80,19 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      * Navigation drawer callbacks.
      */
     private NavigationCallbacks mCallbacks;
+
+    private Handler handler = new Handler();
+    /**
+     * Runnable for hiding repeat limit seekbar.
+     */
+    private Runnable seek = new Runnable() {
+        @Override
+        public void run() {
+            if (filterLayout.getVisibility() == View.VISIBLE) {
+                ViewUtils.collapse(filterLayout);
+            }
+        }
+    };
 
     /**
      * Fragment default instance.
@@ -120,6 +137,15 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             case R.id.action_exit:
                 getActivity().finish();
                 break;
+            case R.id.action_search:
+                if (filterLayout.getVisibility() == View.VISIBLE) {
+                    ViewUtils.collapse(filterLayout);
+                    handler.removeCallbacks(seek);
+                } else {
+                    ViewUtils.expand(filterLayout);
+                    handler.postDelayed(seek, 2000);
+                }
+                break;
             default:
                 break;
         }
@@ -132,6 +158,16 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         SharedPrefs prefs = new SharedPrefs(getActivity());
+
+        filterLayout = (LinearLayout) rootView.findViewById(R.id.filterLayout);
+        TextView dateStart = (TextView) rootView.findViewById(R.id.dateStart);
+        dateEnd = (TextView) rootView.findViewById(R.id.dateEnd);
+        SeekBar dateSeek = (SeekBar) rootView.findViewById(R.id.dateSeek);
+
+        dateStart.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
+        dateEnd.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
+
+        dateSeek.setOnSeekBarChangeListener(this);
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
@@ -147,7 +183,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
 
-        loaderAdapter(lastId);
+        loaderAdapter(lastId, 0);
         return rootView;
     }
 
@@ -172,7 +208,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void onResume() {
         super.onResume();
         if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
-            loaderAdapter(lastId);
+            loaderAdapter(lastId, 0);
         }
     }
 
@@ -180,10 +216,11 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      * Load data to recycler view.
      * @param groupId group identifier.
      */
-    public void loaderAdapter(final String groupId){
+    public void loaderAdapter(final String groupId, long time){
         lastId = groupId;
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        provider = new ReminderDataProvider(getActivity(), false, groupId);
+        if (time > 0) provider = new ReminderDataProvider(getActivity(), time);
+        else provider = new ReminderDataProvider(getActivity(), false, groupId);
         reloadView();
         RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
@@ -237,10 +274,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    loaderAdapter(null);
+                    loaderAdapter(null, 0);
                 } else {
                     String catId = ids.get(which - 1);
-                    loaderAdapter(catId);
+                    loaderAdapter(catId, 0);
                 }
             }
         });
@@ -284,7 +321,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                     return;
                 }
                 Reminder.setNewGroup(getActivity(), id, catId);
-                loaderAdapter(lastId);
+                loaderAdapter(lastId, 0);
             }
         });
         AlertDialog alert = builder.create();
@@ -327,7 +364,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onItemSwitched(final int position, final View switchCompat) {
         Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
-        loaderAdapter(lastId);
+        loaderAdapter(lastId, 0);
     }
 
     @Override
@@ -341,7 +378,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 previewReminder(view, item.getId(), item.getType());
             } else {
                 Reminder.toggle(item.getId(), getActivity(), mCallbacks);
-                loaderAdapter(lastId);
+                loaderAdapter(lastId, 0);
             }
         }
     }
@@ -367,7 +404,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                         break;
                     case 3:
                         Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
-                        loaderAdapter(null);
+                        loaderAdapter(null, 0);
                         break;
                 }
             }
@@ -379,7 +416,25 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void endExecution(final boolean result) {
         if (getActivity() != null) {
-            loaderAdapter(lastId);
+            loaderAdapter(lastId, 0);
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        long start = System.currentTimeMillis();
+        long target = start + (progress * TimeCount.DAY);
+        dateEnd.setText(TimeUtil.getSimpleDate(target));
+        loaderAdapter(null, target);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        handler.removeCallbacks(seek);
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        handler.postDelayed(seek, 2000);
     }
 }

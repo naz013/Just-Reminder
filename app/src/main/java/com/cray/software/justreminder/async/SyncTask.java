@@ -74,7 +74,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             db.addCategory("Personal", time, SyncHelper.generateID(), 0);
             NextBase nextBase = new NextBase(mContext);
             nextBase.open();
-            Cursor c = nextBase.queryGroup();
+            Cursor c = nextBase.getReminders();
             if (c != null && c.moveToFirst()) {
                 do {
                     nextBase.setGroup(c.getLong(c.getColumnIndex(Constants.COLUMN_ID)), defUiID);
