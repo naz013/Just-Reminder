@@ -41,7 +41,7 @@ public class Permissions {
     public static final String READ_EXTERNAL = Manifest.permission.READ_EXTERNAL_STORAGE;
 
     public static final String ACCESS_FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    public static final String ACCESS_COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    public static final String ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
 
     public static final String READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
     public static final String CALL_PHONE = Manifest.permission.CALL_PHONE;

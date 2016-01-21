@@ -460,7 +460,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             ColorSetter coloring = new ColorSetter(getActivity());
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
-            config.setMaskColor(coloring.colorAccent());
+            config.setMaskColor(coloring.getColor(coloring.colorAccent()));
             config.setContentTextColor(coloring.getColor(R.color.whitePrimary));
             config.setDismissTextColor(coloring.getColor(R.color.whitePrimary));
 
@@ -513,6 +513,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         cSetter = new ColorSetter(getActivity());
 
         markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
+        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         map = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map)).getMap();
@@ -776,7 +777,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         PackageManager.PERMISSION_GRANTED) {
             Permissions.requestPermission(getActivity(), 205,
                     Permissions.ACCESS_FINE_LOCATION,
-                    Permissions.ACCESS_COURSE_LOCATION);
+                    Permissions.ACCESS_COARSE_LOCATION);
         } else {
             map.setMyLocationEnabled(true);
         }

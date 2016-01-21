@@ -1001,11 +1001,23 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case R.id.mapCheck:
                 if (mapCheck.isChecked()) {
                     currentCheck.setChecked(false);
-                    ViewUtils.fadeOutAnimation(specsContainerOut);
-                    ViewUtils.fadeInAnimation(mapContainerOut);
-                    if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+                    toggleMap();
+                    removeUpdates();
                 }
                 break;
+        }
+    }
+
+    private void removeUpdates() {
+        if (mLocList != null) {
+            if (Permissions.checkPermission(ReminderManager.this,
+                    Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
+                mLocationManager.removeUpdates(mLocList);
+            } else {
+                Permissions.requestPermission(ReminderManager.this, 201,
+                        Permissions.ACCESS_FINE_LOCATION,
+                        Permissions.ACCESS_COARSE_LOCATION);
+            }
         }
     }
 
@@ -1695,8 +1707,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ViewUtils.expand(delayLayout);
-                else ViewUtils.collapse(delayLayout);
+                if (isChecked) delayLayout.setVisibility(View.VISIBLE);
+                else delayLayout.setVisibility(View.GONE);
             }
         });
 
@@ -1722,8 +1734,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainer);
-                ViewUtils.fadeInAnimation(mapContainer);
+                toggleMap();
             }
         });
 
@@ -1775,6 +1786,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateViewLocation.setListener(this);
         dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis(), false));
 
+        if (curPlace != null) {
+            if (map != null) {
+                map.addMarker(curPlace, null, true, true, radius);
+                toggleMap();
+            }
+        }
+
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
@@ -1801,14 +1819,51 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
 
             taskField.setText(text);
-            if (map != null)
+            if (map != null) {
                 map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
+                toggleMap();
+            }
         }
 
         locationExtra = (ExtraView) findViewById(R.id.locationExtra);
         locationExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
         if (isExtra) locationExtra.setVisibility(View.VISIBLE);
         invalidateButtons();
+    }
+
+    private boolean isMapVisible() {
+        if (isLocationAttached()) {
+            return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
+        }
+        return isLocationOutAttached() && mapContainerOut != null &&
+                mapContainerOut.getVisibility() == View.VISIBLE;
+    }
+
+    private void toggleMap() {
+        if (isLocationAttached()) {
+            if (isMapVisible()) {
+                ViewUtils.fadeOutAnimation(mapContainer);
+                ViewUtils.fadeInAnimation(specsContainer);
+            } else {
+                ViewUtils.fadeOutAnimation(specsContainer);
+                ViewUtils.fadeInAnimation(mapContainer);
+                if (map != null) {
+                    map.showShowcase();
+                }
+            }
+        }
+        if (isLocationOutAttached()) {
+            if (isMapVisible()) {
+                ViewUtils.fadeOutAnimation(mapContainerOut);
+                ViewUtils.fadeInAnimation(specsContainerOut);
+            } else {
+                ViewUtils.fadeOutAnimation(specsContainerOut);
+                ViewUtils.fadeInAnimation(mapContainerOut);
+                if (mapOut != null) {
+                    mapOut.showShowcase();
+                }
+            }
+        }
     }
 
     /**
@@ -1834,8 +1889,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) ViewUtils.expand(delayLayoutOut);
-                else ViewUtils.collapse(delayLayoutOut);
+                if (isChecked) attachDelayOut.setVisibility(View.VISIBLE);
+                else attachDelayOut.setVisibility(View.GONE);
             }
         });
 
@@ -1850,8 +1905,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ViewUtils.fadeOutAnimation(specsContainerOut);
-                ViewUtils.fadeInAnimation(mapContainerOut);
+                if (mapCheck.isChecked()) {
+                    toggleMap();
+                }
                 mapCheck.setChecked(true);
             }
         });
@@ -2913,12 +2969,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this,
                             Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
-                            Permissions.SEND_SMS, Permissions.ACCESS_COURSE_LOCATION,
+                            Permissions.SEND_SMS, Permissions.ACCESS_COARSE_LOCATION,
                             Permissions.READ_CONTACTS)) {
                         attachLocation();
                     } else {
                         Permissions.requestPermission(ReminderManager.this, 105,
-                                Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_COARSE_LOCATION,
                                 Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
                                 Permissions.SEND_SMS, Permissions.READ_CONTACTS);
                     }
@@ -2955,12 +3011,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this,
                             Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
-                            Permissions.SEND_SMS, Permissions.ACCESS_COURSE_LOCATION,
+                            Permissions.SEND_SMS, Permissions.ACCESS_COARSE_LOCATION,
                             Permissions.READ_CONTACTS)) {
                         attachLocationOut();
                     } else {
                         Permissions.requestPermission(ReminderManager.this, 106,
-                                Permissions.ACCESS_COURSE_LOCATION,
+                                Permissions.ACCESS_COARSE_LOCATION,
                                 Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
                                 Permissions.SEND_SMS, Permissions.READ_CONTACTS);
                     }
@@ -3221,7 +3277,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mLocList != null) mLocationManager.removeUpdates(mLocList);
+        removeUpdates();
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);

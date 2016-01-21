@@ -54,8 +54,8 @@ public class PermissionsList extends Activity{
 
     private void load(){
         list.clear();
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_COURSE_LOCATION))
-            list.add(new Item(getString(R.string.course_location), Permissions.ACCESS_COURSE_LOCATION));
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_COARSE_LOCATION))
+            list.add(new Item(getString(R.string.course_location), Permissions.ACCESS_COARSE_LOCATION));
 
         if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_FINE_LOCATION))
             list.add(new Item(getString(R.string.fine_location), Permissions.ACCESS_FINE_LOCATION));
