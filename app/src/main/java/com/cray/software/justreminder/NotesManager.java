@@ -264,7 +264,7 @@ public class NotesManager extends AppCompatActivity {
         mFab.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                ViewUtils.hide(NotesManager.this, mFab);
+                mFab.hide();
                 return false;
             }
         });
@@ -458,7 +458,7 @@ public class NotesManager extends AppCompatActivity {
 
     private void saveNote() {
         String note = taskField.getText().toString();
-        if (note.matches("")) {
+        if (note.matches("") && image == null) {
             taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
@@ -729,16 +729,16 @@ public class NotesManager extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
-        super.onDestroy();
     }
 
     @Override
     public void onBackPressed() {
         if (mFab.getVisibility() == View.GONE){
-            ViewUtils.show(NotesManager.this, mFab);
+            mFab.show();
             return;
         }
 

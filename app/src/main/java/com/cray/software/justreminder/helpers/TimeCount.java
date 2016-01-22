@@ -230,25 +230,25 @@ public class TimeCount {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
-        if (weekDay == Calendar.MONDAY) {
+        if (weekDay == Calendar.SUNDAY){
             res = repeat.get(0) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.TUESDAY){
+        if (weekDay == Calendar.MONDAY) {
             res = repeat.get(1) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.WEDNESDAY){
+        if (weekDay == Calendar.TUESDAY){
             res = repeat.get(2) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.THURSDAY){
+        if (weekDay == Calendar.WEDNESDAY){
             res = repeat.get(3) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.FRIDAY){
+        if (weekDay == Calendar.THURSDAY){
             res = repeat.get(4) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.SATURDAY){
+        if (weekDay == Calendar.FRIDAY){
             res = repeat.get(5) == Constants.DAY_CHECKED;
         }
-        if (weekDay == Calendar.SUNDAY){
+        if (weekDay == Calendar.SATURDAY){
             res = repeat.get(6) == Constants.DAY_CHECKED;
         }
         return res;

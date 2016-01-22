@@ -9,11 +9,13 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
+import com.hexrain.flextcal.Events;
 import com.hexrain.flextcal.FlextHelper;
 
 import java.text.ParseException;
@@ -33,12 +35,23 @@ public class ReminderDataProvider {
     public static final int VIEW_REMINDER = 15666;
     public static final int VIEW_SHOPPING_LIST = 15667;
     private boolean isArchive = false;
+    private boolean isReminder = false;
+    private boolean isFeature = false;
     private String categoryId = null;
     private long time = 0;
+
+    private HashMap<DateTime, Events> map = new HashMap<>();
 
     public ReminderDataProvider(Context mContext){
         data = new ArrayList<>();
         this.mContext = mContext;
+    }
+
+    public ReminderDataProvider(Context mContext, boolean isReminder, boolean isFeature){
+        this.mContext = mContext;
+        this.isReminder = isReminder;
+        this.isFeature = isFeature;
+        map = new HashMap<>();
     }
 
     public ReminderDataProvider(Context mContext, boolean isArchive, String categoryId){
@@ -118,6 +131,138 @@ public class ReminderDataProvider {
         }
         if (c != null) c.close();
         db.close();
+    }
+
+    private void setEvent(long eventTime, String summary, int color) {
+        DateTime key = FlextHelper.convertToDateTime(eventTime);
+        if (map.containsKey(key)) {
+            Events events = map.get(key);
+            events.addEvent(summary, color);
+            map.put(key, events);
+        } else {
+            Events events = new Events(summary, color);
+            map.put(key, events);
+        }
+    }
+
+    public HashMap<DateTime, Events> getEvents() {
+        ColorSetter cs = new ColorSetter(mContext);
+        int bColor = cs.getColor(cs.colorBirthdayCalendar());
+
+        if (isReminder) {
+            int rColor = cs.getColor(cs.colorReminderCalendar());
+            NextBase db = new NextBase(mContext);
+            db.open();
+            Cursor c = db.getActiveReminders();
+            if (c != null && c.moveToNext()){
+                do {
+                    String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                    String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
+                    String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+                    long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
+
+                    if (!mType.contains(Constants.TYPE_LOCATION)) {
+                        JsonModel jsonModel = new JsonParser(json).parse();
+                        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+                        long repeatTime = jsonRecurrence.getRepeat();
+                        long limit = jsonRecurrence.getLimit();
+                        long count = jsonModel.getCount();
+                        int myDay = jsonRecurrence.getMonthday();
+                        boolean isLimited = limit > 0;
+
+                        if (eventTime > 0) {
+                            setEvent(eventTime, summary, rColor);
+                        }
+
+                        if (isFeature) {
+                            Calendar calendar1 = Calendar.getInstance();
+                            calendar1.setTimeInMillis(eventTime);
+                            if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                                long days = 0;
+                                long max = Configs.MAX_DAYS_COUNT;
+                                if (isLimited) max = limit - count;
+                                ArrayList<Integer> list = jsonRecurrence.getWeekdays();
+                                do {
+                                    calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
+                                            AlarmManager.INTERVAL_DAY);
+                                    eventTime = calendar1.getTimeInMillis();
+                                    int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
+                                    if (list.get(weekDay - 1) == 1 && eventTime > 0) {
+                                        days++;
+                                        setEvent(eventTime, summary, rColor);
+                                    }
+                                } while (days < max);
+                            } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                                long days = 0;
+                                long max = Configs.MAX_DAYS_COUNT;
+                                if (isLimited) max = limit - count;
+                                do {
+                                    eventTime = TimeCount.getNextMonthDayTime(myDay,
+                                            calendar1.getTimeInMillis() + TimeCount.DAY);
+                                    calendar1.setTimeInMillis(eventTime);
+                                    if (eventTime > 0) {
+                                        days++;
+                                        setEvent(eventTime, summary, rColor);
+                                    }
+                                } while (days < max);
+                            } else {
+                                long days = 0;
+                                long max = Configs.MAX_DAYS_COUNT;
+                                if (isLimited) max = limit - count;
+                                do {
+                                    calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
+                                    eventTime = calendar1.getTimeInMillis();
+                                    if (eventTime > 0) {
+                                        days++;
+                                        setEvent(eventTime, summary, rColor);
+                                    }
+                                } while (days < max);
+
+                            }
+                        }
+                    }
+                } while (c.moveToNext());
+            }
+            if (c != null) c.close();
+            db.close();
+        }
+
+        DataBase db = new DataBase(mContext);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        db.open();
+        Cursor c = db.getBirthdays();
+        if (c != null && c.moveToFirst()){
+            do {
+                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
+                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
+                Date date = null;
+                try {
+                    date = format.parse(birthday);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                int year = calendar.get(Calendar.YEAR);
+                if (date != null) {
+                    try {
+                        calendar.setTime(date);
+                    } catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+                    int i = -1;
+                    while (i < 2) {
+                        calendar.set(Calendar.YEAR, year + i);
+                        setEvent(calendar.getTimeInMillis(), name, bColor);
+                        i++;
+                    }
+                }
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        db.close();
+
+        return map;
     }
 
     public static HashMap<DateTime, String> getReminders(Context context, boolean isFeature) {

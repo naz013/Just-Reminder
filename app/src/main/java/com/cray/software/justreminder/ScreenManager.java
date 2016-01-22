@@ -95,11 +95,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
-
-import hirondelle.date4j.DateTime;
 
 public class ScreenManager extends AppCompatActivity
         implements NavigationCallbacks {
@@ -625,12 +622,10 @@ public class ScreenManager extends AppCompatActivity
             calendarView.clearSelectedDates();
         }
 
-        if (mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR)) {
-            loadReminders();
-        }
+        boolean isReminder = mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
+        boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        calendarView.setEvents(new ReminderDataProvider(this, isReminder, isFeature).getEvents());
 
-        loadEvents();
-        calendarView.populateData();
         mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
         mTitle = getString(R.string.calendar);
         toolbar.setTitle(mTitle);
@@ -704,9 +699,7 @@ public class ScreenManager extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         SharedPrefs sPrefs = new SharedPrefs(this);
-        if (sPrefs.loadBoolean(Prefs.UI_CHANGED)) {
-            recreate();
-        }
+        if (sPrefs.loadBoolean(Prefs.UI_CHANGED)) recreate();
 
         setRequestedOrientation(cSetter.getRequestOrientation());
         showRate();
@@ -720,13 +713,9 @@ public class ScreenManager extends AppCompatActivity
         }
 
         if (mTag != null) onItemSelected(mTag);
-
-        if (sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)){
+        if (sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION))
             new Notifier(this).recreatePermanent();
-        }
-
         isChangesShown();
-
         new DelayedAsync(this, null).execute();
     }
 
@@ -734,24 +723,6 @@ public class ScreenManager extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         new UpdatesHelper(this).updateWidget();
-    }
-
-    private void loadReminders() {
-        mPrefs = new SharedPrefs(this);
-        boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        HashMap<DateTime, String> dates = ReminderDataProvider.getReminders(this, isFeature);
-        calendarView.setBackgroundForOne(ViewUtils.getColor(this, cSetter.colorReminderCalendar()));
-        if (calendarView != null) {
-            calendarView.setTextForEventOne(dates);
-        }
-    }
-
-    private void loadEvents(){
-        HashMap<DateTime, String> dates = ReminderDataProvider.getBirthdays(this);
-        calendarView.setBackgroundForTwo(ViewUtils.getColor(this, cSetter.colorBirthdayCalendar()));
-        if (calendarView != null) {
-            calendarView.setTextForEventTwo(dates);
-        }
     }
 
     private void showChanges() {
