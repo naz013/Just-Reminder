@@ -43,8 +43,8 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected boolean isDark = false;
 	protected SharedPreferences prefs;
 
-    protected int backgroundForEventOne = -1, backgroundForEventTwo = -1, backgroundForToday = -1;
-    protected HashMap<DateTime, FlextData> textMapForEvents;
+    protected int backgroundForToday = -1;
+    protected HashMap<DateTime, Events> textMapForEvents;
 
 	/**
 	 * caldroidData belongs to Caldroid
@@ -174,11 +174,9 @@ public class FlextGridAdapter extends BaseAdapter {
 		sixWeeksInCalendar = (Boolean) caldroidData.get(FlextCal.SIX_WEEKS_IN_CALENDAR);
 
         backgroundForToday = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TODAY_);
-		backgroundForEventOne = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_ONE_);
-		backgroundForEventTwo = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TWO_);
 
-        textMapForEvents = (HashMap<DateTime, FlextData>) caldroidData
-                .get(FlextCal._TEXT_FOR_EVENTS_);
+        textMapForEvents = (HashMap<DateTime, Events>) caldroidData
+                .get(FlextCal._EVENTS_);
 
 		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year,
 				startDayOfWeek, sixWeeksInCalendar);
@@ -198,8 +196,17 @@ public class FlextGridAdapter extends BaseAdapter {
 		if (textMapForEvents != null) {
 			// Set it
 			if (textMapForEvents.containsKey(dateTime)) {
-				task1.setText(textMapForEvents.get(dateTime).getTask());
-				task2.setText(textMapForEvents.get(dateTime).getBirth());
+				Events events = textMapForEvents.get(dateTime);
+				if (events.hasNext()) {
+					Events.Event event = events.getNext();
+					task1.setText(event.getTask());
+					task1.setBackgroundColor(event.getColor());
+				}
+				if (events.hasNext()) {
+					Events.Event event = events.getLast();
+					task2.setText(event.getTask());
+					task2.setBackgroundColor(event.getColor());
+				}
 			}
 		}
 	}
@@ -283,8 +290,6 @@ public class FlextGridAdapter extends BaseAdapter {
         TextView cellView = (TextView) view.findViewById(R.id.textView);
         TextView task1 = (TextView) view.findViewById(R.id.task1);
         TextView task2 = (TextView) view.findViewById(R.id.task2);
-		if (backgroundForEventOne != -1) task1.setTextColor(backgroundForEventOne);
-		if (backgroundForEventTwo != -1) task2.setTextColor(backgroundForEventTwo);
 		customizeTextView(position, cellView, task1, task2);
 		return view;
 	}

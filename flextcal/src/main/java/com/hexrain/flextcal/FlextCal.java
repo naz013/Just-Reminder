@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
@@ -35,10 +34,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
 
 import hirondelle.date4j.DateTime;
 
@@ -132,9 +128,7 @@ public class FlextCal extends Fragment {
     public final static String _MIN_DATE_TIME = "_minDateTime";
     public final static String _MAX_DATE_TIME = "_maxDateTime";
     public final static String _BACKGROUND_FOR_TODAY_ = "_backgroundForToday";
-    public final static String _BACKGROUND_FOR_ONE_ = "_backgroundForOne";
-    public final static String _BACKGROUND_FOR_TWO_ = "_backgroundForTwo";
-    public final static String _TEXT_FOR_EVENTS_ = "_taskForEvents";
+    public final static String _EVENTS_ = "_events";
 
     /**
      * datePagerAdapters hold 4 adapters, meant to be reused
@@ -161,8 +155,8 @@ public class FlextCal extends Fragment {
      */
     protected HashMap<String, Object> extraData = new HashMap<>();
 
-    @ColorInt protected int backgroundForToday = 0, bgForEventOne = 0, bgForEventTwo = 0;
-    protected HashMap<DateTime, FlextData> textMapForEvents = new HashMap<>();
+    @ColorInt protected int backgroundForToday = 0;
+    protected HashMap<DateTime, Events> eventsMap = new HashMap<>();
 
     protected int startDayOfWeek = SUNDAY;
 
@@ -257,9 +251,7 @@ public class FlextCal extends Fragment {
 
         // Extra maps
         caldroidData.put(_BACKGROUND_FOR_TODAY_, backgroundForToday);
-        caldroidData.put(_BACKGROUND_FOR_ONE_, bgForEventOne);
-        caldroidData.put(_BACKGROUND_FOR_TWO_, bgForEventTwo);
-        caldroidData.put(_TEXT_FOR_EVENTS_, textMapForEvents);
+        caldroidData.put(_EVENTS_, eventsMap);
 
         return caldroidData;
     }
@@ -289,44 +281,8 @@ public class FlextCal extends Fragment {
         this.backgroundForToday = backgroundForToday;
     }
 
-    public void setBackgroundForOne(int backgroundForOne){
-        this.bgForEventOne = backgroundForOne;
-    }
-
-    public void setBackgroundForTwo(int backgroundForTwo){
-        this.bgForEventTwo = backgroundForTwo;
-    }
-
-    private Map<DateTime, String> eventsOneList = new HashMap<>();
-    private Map<DateTime, String> eventsTwoList = new HashMap<>();
-    private Set<DateTime> set = new TreeSet<>();
-
-    public void setTextForEventOne(Map<DateTime, String> map){
-        this.eventsOneList = map;
-    }
-
-    public void setTextForEventTwo(Map<DateTime, String> map){
-        this.eventsTwoList = map;
-    }
-
-    public void populateData(){
-        if (textMapForEvents != null) textMapForEvents.clear();
-        if (eventsOneList != null) {
-            for (DateTime time : eventsOneList.keySet()){
-                set.add(time);
-            }
-        }
-        if (eventsTwoList != null) {
-            for (DateTime time : eventsTwoList.keySet()){
-                set.add(time);
-            }
-        }
-        for (DateTime time : set){
-            FlextData item = new FlextData();
-            if (eventsOneList.containsKey(time)) item.setTask(eventsOneList.get(time));
-            if (eventsTwoList.containsKey(time)) item.setBirth(eventsTwoList.get(time));
-            textMapForEvents.put(time, item);
-        }
+    public void setEvents(HashMap<DateTime, Events> eventsMap) {
+        this.eventsMap = eventsMap;
     }
 
     /**
@@ -1095,6 +1051,7 @@ public class FlextCal extends Fragment {
 
             if (position == currentPage) {
                 // Refresh current adapter
+
                 currentAdapter.setAdapterDateTime(currentDateTime);
                 currentAdapter.notifyDataSetChanged();
 
@@ -1119,6 +1076,7 @@ public class FlextCal extends Fragment {
                 nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
                         0, 0, 0, DateTime.DayOverflow.LastDay));
                 nextAdapter.notifyDataSetChanged();
+
             }
             // Swipe left
             else {

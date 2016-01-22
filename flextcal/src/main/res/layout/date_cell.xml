@@ -16,6 +16,7 @@
             android:singleLine="true"
             android:id="@+id/task1"
             android:padding="1dp"
+            android:textColor="@color/colorWhite"
             android:textSize="@dimen/row_text_size"/>
 
         <TextView
@@ -25,6 +26,7 @@
             android:gravity="center|left"
             android:singleLine="true"
             android:id="@+id/task2"
+            android:textColor="@color/colorWhite"
             android:padding="1dp"
             android:textSize="@dimen/row_text_size"/>
 
