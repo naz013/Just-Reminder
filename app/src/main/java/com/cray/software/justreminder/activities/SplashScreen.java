@@ -37,6 +37,7 @@ import com.cray.software.justreminder.json.JsonPlace;
 import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.json.JsonShopping;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -274,9 +275,7 @@ public class SplashScreen extends Activity{
 
                 ArrayList<Integer> listW = new ArrayList<>();
                 if (weekdays != null) {
-                    for (char c1 : weekdays.toCharArray()) {
-                        listW.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
-                    }
+                    listW = ReminderUtils.getRepeatArray(weekdays);
                 }
 
                 due = new TimeCount(SplashScreen.this)
@@ -296,7 +295,7 @@ public class SplashScreen extends Activity{
                 parser.setSummary(text);
                 parser.setType(type);
                 parser.setEventTime(due);
-                parser.setStartDate(due);
+                parser.setStartTime(due);
                 parser.setUuid(uuId);
 
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){

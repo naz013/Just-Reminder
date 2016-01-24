@@ -3,6 +3,7 @@ package com.cray.software.justreminder.reminder;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -124,7 +125,7 @@ public class ReminderDataProvider {
                 int catColor = 0;
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-                //Log.d(Constants.LOG_TAG, "Json ---- " + json);
+                Log.d(Constants.LOG_TAG, "Json ---- " + json);
                 JsonModel jsonModel = new JsonParser(json).parse();
                 data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());

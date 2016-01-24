@@ -46,6 +46,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     private ArrayList<ReminderModel> list;
     private RecyclerListener mEventListener;
     private boolean is24;
+    private boolean isDark;
 
     public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
         this.mContext = context;
@@ -54,6 +55,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         setHasStableIds(true);
     }
 
@@ -116,6 +118,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             });
 
             reminderContainer.setBackgroundColor(cs.getCardStyle());
+            subBackground.setBackgroundColor(cs.getCardStyle());
         }
 
         @Override
@@ -297,7 +300,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             holder.shoppingTitle.setText(title);
 
-            holder.shoppingTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
+            //holder.shoppingTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
             if (title.matches("")) {
                 holder.titleContainer.setVisibility(View.GONE);
             } else {
@@ -322,12 +325,14 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                         }
                     }
                 });
-                textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
+                //textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
                 if (list.isChecked() == 1) {
-                    checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
+                    if (isDark) checkView.setImageResource(R.drawable.ic_check_box_white_24dp);
+                    else checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    checkView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                    if (isDark) checkView.setImageResource(R.drawable.ic_check_box_outline_blank_white_24dp);
+                    else checkView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
                     textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
                 count++;

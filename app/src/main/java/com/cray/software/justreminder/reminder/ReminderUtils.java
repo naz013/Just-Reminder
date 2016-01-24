@@ -12,7 +12,6 @@ import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,28 +90,6 @@ public class ReminderUtils {
         if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECK))res.add(1);
         else res.add(0);
         return res;
-    }
-
-    /**
-     * Get time in milliseconds for weekday reminder type.
-     * @param hour hour.
-     * @param minute MINUTE.
-     * @param weekdays weekdays string.
-     * @return time in mills.
-     */
-    public static long getWeekTime(int hour, int minute, ArrayList<Integer> weekdays){
-        return TimeCount.getNextWeekdayTime(hour, minute, weekdays, 0);
-    }
-
-    /**
-     * Get time in milliseconds for MonthDay reminder type.
-     * @param hour hour.
-     * @param minute MINUTE.
-     * @param day day (if 0 get time for last day in month).
-     * @return time in mills.
-     */
-    public static long getMonthTime(int hour, int minute, int day){
-        return TimeCount.getNextMonthDayTime(hour, minute, day, 0);
     }
 
     /**

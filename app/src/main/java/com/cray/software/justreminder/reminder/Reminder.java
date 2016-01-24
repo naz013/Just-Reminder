@@ -85,24 +85,24 @@ public class Reminder {
             String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
             int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
-            JsonModel jsonModel = new JsonParser(json).parse();
-            JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+            JsonParser parser = new JsonParser(json);
+            JsonRecurrence jsonRecurrence = parser.getRecurrence();
             long repeat = jsonRecurrence.getRepeat();
             long limit = jsonRecurrence.getLimit();
-            long count = jsonModel.getCount() + 1;
+            long count = parser.getCount() + 1;
             long eventTime = new TimeCount(context).generateDateTime(type,
-                    jsonRecurrence.getMonthday(), jsonModel.getStartTime(),
+                    jsonRecurrence.getMonthday(), parser.getStartTime(),
                     repeat, jsonRecurrence.getWeekdays(), count, delay);
-            jsonModel.setEventTime(eventTime);
+            parser.setEventTime(eventTime);
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
                     !type.contains(Constants.TYPE_MONTHDAY)){
                 disableReminder(id, context);
             } else {
-                jsonModel.setCount(count);
+                parser.setCount(count);
                 db.updateReminderTime(id, eventTime);
-                db.setJson(id, new JsonParser().toJsonString(jsonModel));
-                int exp = jsonModel.getExport().getCalendar();
+                db.setJson(id, parser.toJsonString());
+                int exp = parser.getExport().getCalendar();
                 SharedPrefs sPrefs = new SharedPrefs(context);
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
                 boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
@@ -171,26 +171,26 @@ public class Reminder {
                 }
             } else if(type.matches(Constants.TYPE_TIME)) {
                 db.setUnDone(id);
-                JsonModel jsonModel = new JsonParser(json).parse();
-                long newTime = System.currentTimeMillis() + jsonModel.getRecurrence().getAfter();
-                jsonModel.setEventTime(newTime);
-                jsonModel.setStartTime(newTime);
-                jsonModel.setCount(0);
+                JsonParser parser = new JsonParser(json);
+                long newTime = System.currentTimeMillis() + parser.getRecurrence().getAfter();
+                parser.setEventTime(newTime);
+                parser.setStartTime(newTime);
+                parser.setCount(0);
                 db.updateReminderTime(id, newTime);
-                db.setJson(id, new JsonParser().toJsonString(jsonModel));
+                db.setJson(id, parser.toJsonString());
                 new AlarmReceiver().enableReminder(context, id);
                 res = true;
             } else if (type.contains(Constants.TYPE_MONTHDAY) ||
                     type.contains(Constants.TYPE_WEEKDAY)) {
                 db.setUnDone(id);
-                JsonModel jsonModel = new JsonParser(json).parse();
-                JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+                JsonParser parser = new JsonParser(json);
+                JsonRecurrence jsonRecurrence = parser.getRecurrence();
                 long nextTime = new TimeCount(context).generateDateTime(type,
                         jsonRecurrence.getMonthday(), eventTime, 0,
                         jsonRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(id, nextTime);
-                jsonModel.setEventTime(nextTime);
-                db.setJson(id, new JsonParser().toJsonString(jsonModel));
+                parser.setEventTime(nextTime);
+                db.setJson(id, parser.toJsonString());
                 new AlarmReceiver().enableReminder(context, id);
                 res = true;
             } else {

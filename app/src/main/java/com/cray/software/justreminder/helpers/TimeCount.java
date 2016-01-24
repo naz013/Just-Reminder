@@ -1,13 +1,11 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -87,7 +85,6 @@ public class TimeCount {
     public long generateDateTime(String type, int dayOfMonth, long startTime, long repeat,
                                       ArrayList<Integer> weekdays, long count, int delay){
         long dateTime;
-        if (startTime > System.currentTimeMillis()) return startTime;
         if (startTime == 0) {
             dateTime = 0;
         } else {
@@ -104,14 +101,6 @@ public class TimeCount {
             }
         }
         return dateTime;
-    }
-
-    public long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay) {
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(startTime);
-        int hourOfDay = cc.get(Calendar.HOUR_OF_DAY);
-        int minuteOfHour = cc.get(Calendar.MINUTE);
-        return getNextWeekdayTime(hourOfDay, minuteOfHour, weekdays, delay);
     }
 
     /**
@@ -132,8 +121,10 @@ public class TimeCount {
             result = String.format(mContext.getString(R.string.x_hours), (days * 24) + hours);
         } else if (difference > MINUTE){
             result = String.format(mContext.getString(R.string.x_minutes), (hours * 60) + min);
-        } else {
+        } else if (difference > 0){
             result = mContext.getString(R.string.less_than_minute);
+        } else {
+            result = mContext.getString(R.string.overdue);
         }
         return result;
     }
@@ -155,53 +146,31 @@ public class TimeCount {
 
     /**
      * Count next due time for weekday reminder type.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
+     * @param startTime next event time start point.
      * @param weekdays weekday string.
      * @param delay delay for reminder.
      * @return Due time in milliseconds.
      */
-    public static long getNextWeekdayTime(int hourOfDay, int minuteOfHour,
-                                          ArrayList<Integer> weekdays, int delay){
-        long currTime = System.currentTimeMillis();
+    public static long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay){
         Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(currTime);
-        cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cc.set(Calendar.MINUTE, minuteOfHour);
+        cc.setTimeInMillis(startTime);
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
-        long mTime = cc.getTimeInMillis();
-        boolean isZeroSupport = false;
-        if (mTime > currTime || delay > 0) isZeroSupport = true;
-        if (weekdays != null) {
-            while (mTime < currTime) {
-                int charDay;
-                int delta = 7;
+        if (delay > 0) {
+            return startTime + (delay * MINUTE);
+        } else {
+            while (true) {
                 int mDay = cc.get(Calendar.DAY_OF_WEEK);
-                for (int i = 0; i < 7; i++) {
-                    if (weekdays.get(i) == Constants.DAY_CHECKED) {
-                        if (i == 6) charDay = 1;
-                        else charDay = i + 2;
-                        int mDelta = charDay - mDay;
-                        if (mDelta > 0) {
-                            if (mDelta < delta) {
-                                delta = mDelta;
-                            }
-                        } else if (mDelta < 0) {
-                            mDelta = 7 + mDelta;
-                            if (mDelta < delta) {
-                                delta = mDelta;
-                            }
-                        } else if (mDelta == 0 && isZeroSupport) {
-                            delta = mDelta;
-                        }
+                if (weekdays.get(mDay - 1) == 1) {
+                    if (cc.getTimeInMillis() > System.currentTimeMillis()) {
+                        break;
                     }
                 }
-                cc.setTimeInMillis(mTime + (delta * DAY));
-                mTime = cc.getTimeInMillis();
+                cc.setTimeInMillis(cc.getTimeInMillis() + DAY);
             }
+
+            return cc.getTimeInMillis();
         }
-        return mTime + (delay * MINUTE);
     }
 
     public boolean isCurrent(long startTime) {

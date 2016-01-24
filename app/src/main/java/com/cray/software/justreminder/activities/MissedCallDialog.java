@@ -238,6 +238,7 @@ public class MissedCallDialog extends Activity {
     private void removeMissed() {
         alarm.cancelAlarm(getApplicationContext(), id);
         notifier.discardNotification(id);
+        handler.removeCallbacks(increaseVolume);
         DataBase db = new DataBase(MissedCallDialog.this);
         db.open();
         db.deleteMissedCall(id);

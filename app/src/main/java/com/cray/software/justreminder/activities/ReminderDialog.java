@@ -599,6 +599,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         if (i == 1) {
             removeFlags();
         }
+        handler.removeCallbacks(increaseVolume);
         new RepeatNotificationReceiver().cancelAlarm(ReminderDialog.this, id);
         notifier.discardNotification(id);
     }

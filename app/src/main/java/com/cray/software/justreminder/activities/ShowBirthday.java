@@ -300,11 +300,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonOk:
-                notifier.discardNotification();
                 updateBirthday();
                 break;
             case R.id.buttonCall:
-                notifier.discardNotification();
                 if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
                     Telephony.makeCall(number, ShowBirthday.this);
                     updateBirthday();
@@ -313,7 +311,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                 }
                 break;
             case R.id.buttonSend:
-                notifier.discardNotification();
                 if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
                     Telephony.sendSms(number, ShowBirthday.this);
                     updateBirthday();
@@ -333,7 +330,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         db.setShown(id, String.valueOf(year));
         db.close();
         removeFlags();
+        handler.removeCallbacks(increaseVolume);
         notifier.recreatePermanent();
+        notifier.discardNotification();
         finish();
     }
 
