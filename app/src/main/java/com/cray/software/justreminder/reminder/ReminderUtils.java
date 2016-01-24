@@ -7,9 +7,11 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 
 import java.util.ArrayList;
@@ -138,33 +140,43 @@ public class ReminderUtils {
     public static String getRepeatString(Context context, ArrayList<Integer> repCode){
         String res;
         StringBuilder sb = new StringBuilder();
-        if (repCode.get(0) == Constants.DAY_CHECKED){
+        SharedPrefs prefs = new SharedPrefs(context);
+        int first = prefs.loadInt(Prefs.START_DAY);
+        if (first == 0) {
+            if (repCode.get(0) == Constants.DAY_CHECKED){
+                sb.append(context.getString(R.string.sun));
+            }
+        }
+        if (repCode.get(1) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.mon));
             sb.append(",");
         }
-        if (repCode.get(1) == Constants.DAY_CHECKED){
+        if (repCode.get(2) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.tue));
             sb.append(",");
         }
-        if (repCode.get(2) == Constants.DAY_CHECKED){
+        if (repCode.get(3) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.wed));
             sb.append(",");
         }
-        if (repCode.get(3) == Constants.DAY_CHECKED){
+        if (repCode.get(4) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.thu));
             sb.append(",");
         }
-        if (repCode.get(4) == Constants.DAY_CHECKED){
+        if (repCode.get(5) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.fri));
             sb.append(",");
         }
-        if (repCode.get(5) == Constants.DAY_CHECKED){
+        if (repCode.get(6) == Constants.DAY_CHECKED){
             sb.append(context.getString(R.string.sat));
             sb.append(",");
         }
-        if (repCode.get(6) == Constants.DAY_CHECKED){
-            sb.append(context.getString(R.string.sun));
+        if (first == 1) {
+            if (repCode.get(0) == Constants.DAY_CHECKED){
+                sb.append(context.getString(R.string.sun));
+            }
         }
+
         if (isAllChecked(repCode)){
             res = context.getString(R.string.everyday);
         } else res = sb.toString();

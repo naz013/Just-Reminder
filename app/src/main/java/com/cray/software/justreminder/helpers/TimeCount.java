@@ -34,15 +34,6 @@ public class TimeCount {
     }
 
     /**
-     * Get drawable from resource.
-     * @param resource resource.
-     * @return Drawable
-     */
-    private Drawable getDrawable(int resource){
-        return ViewUtils.getDrawable(mContext, resource);
-    }
-
-    /**
      * Get next date and time for milliseconds.
      * @param timeLong time in milliseconds.
      * @return [0 - date] [1 - time]
