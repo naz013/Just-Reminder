@@ -2,7 +2,7 @@
 
     <style name="menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/whitePrimary</item>
         <item name="android:textSize">16sp</item>
     </style>
 
@@ -236,7 +236,7 @@
     </style>
 
     <style name="MyTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/whitePrimary</item>
     </style>
 
     <style name="HomeWhiteDialog" parent="Theme.AppCompat.Light.Dialog">

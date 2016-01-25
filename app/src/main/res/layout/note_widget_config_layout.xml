@@ -227,7 +227,7 @@
                         android:layout_weight="1"
                         android:id="@+id/widgetTitle"
                         android:layout_gravity="left|center"
-                        android:textColor="@color/colorWhite"/>
+                        android:textColor="@color/whitePrimary"/>
 
                     <ImageButton
                         android:layout_width="match_parent"

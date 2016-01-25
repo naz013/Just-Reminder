@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:textSize="@dimen/create_text_size_secondary"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/whitePrimary"
                 android:gravity="center_vertical"
                 android:visibility="visible"
                 android:id="@+id/title"

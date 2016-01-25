@@ -19,6 +19,7 @@ import com.cray.software.justreminder.json.JsonRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 
+import org.dmfs.rfc5545.recur.Freq;
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.dmfs.rfc5545.recur.RecurrenceRule;
 
@@ -95,12 +96,12 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
                             try {
                                 RecurrenceRule rule = new RecurrenceRule(rrule);
                                 int interval = rule.getInterval();
-                                RecurrenceRule.Freq freq = rule.getFreq();
-                                if (freq == RecurrenceRule.Freq.HOURLY || freq == RecurrenceRule.Freq.MINUTELY || freq == RecurrenceRule.Freq.SECONDLY) {
+                                Freq freq = rule.getFreq();
+                                if (freq == Freq.HOURLY || freq == Freq.MINUTELY || freq == Freq.SECONDLY) {
                                 } else {
-                                    if (freq == RecurrenceRule.Freq.WEEKLY) repeat = interval * 7;
-                                    else if (freq == RecurrenceRule.Freq.MONTHLY) repeat = interval * 30;
-                                    else if (freq == RecurrenceRule.Freq.YEARLY) repeat = interval * 365;
+                                    if (freq == Freq.WEEKLY) repeat = interval * 7;
+                                    else if (freq == Freq.MONTHLY) repeat = interval * 30;
+                                    else if (freq == Freq.YEARLY) repeat = interval * 365;
                                     else repeat = interval;
                                 }
                             } catch (InvalidRecurrenceRuleException e) {

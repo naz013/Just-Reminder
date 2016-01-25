@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="lib-recur-0.9.2">
+  <library name="lib-recur-0.9.3">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/libs/lib-recur-0.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/app/libs/lib-recur-0.9.3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

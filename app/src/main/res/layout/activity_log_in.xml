@@ -34,7 +34,7 @@
         android:layout_gravity="center"
         widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
         widget:paper_color="@color/bluePrimary"
-        widget:paper_text_color="@color/colorWhite"
+        widget:paper_text_color="@color/whitePrimary"
         android:id="@+id/connectDropbox"
         android:layout_marginTop="@dimen/log_in_button_margin_top"
         widget:paper_text_size="@dimen/log_in_button_text_size"

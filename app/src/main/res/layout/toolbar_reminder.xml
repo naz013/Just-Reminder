@@ -29,7 +29,7 @@
 
             <com.cray.software.justreminder.views.FloatingEditText
                 app:floating_edit_text_highlighted_color="?attr/colorAccent"
-                app:floating_edit_text_color="@color/colorWhite"
+                app:floating_edit_text_color="@color/whitePrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/task_message"
@@ -64,7 +64,7 @@
             android:id="@+id/category"
             android:textSize="18sp"
             android:padding="2dp"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/whitePrimary"
             android:drawableLeft="@drawable/ic_local_offer_white_24dp"
             android:drawablePadding="30dp"
             android:textStyle="bold"

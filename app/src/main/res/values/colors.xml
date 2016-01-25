@@ -8,6 +8,7 @@
     <color name="material_grey_dialog">#424242</color>
     <color name="material_white">#fafafa</color>
     <color name="material_divider">#b6b6b6</color>
+    <color name="grey_x">#555555</color>
 
     <color name="black_overlay">#66000000</color>
 

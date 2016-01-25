@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -27,7 +26,6 @@ import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,11 +49,6 @@ public class FlextCal extends Fragment {
      */
     public static int SUNDAY = 1;
     public static int MONDAY = 2;
-    public static int TUESDAY = 3;
-    public static int WEDNESDAY = 4;
-    public static int THURSDAY = 5;
-    public static int FRIDAY = 6;
-    public static int SATURDAY = 7;
 
     /**
      * Flags to display month
@@ -63,19 +56,7 @@ public class FlextCal extends Fragment {
     private static final int MONTH_YEAR_FLAG = DateUtils.FORMAT_SHOW_DATE
             | DateUtils.FORMAT_NO_MONTH_DAY | DateUtils.FORMAT_SHOW_YEAR;
 
-    /**
-     * To customize the selected background drawable and text color
-     */
-    public static int selectedBackgroundDrawable = -1;
-    public static int selectedTextColor = Color.BLACK;
-
     public final static int NUMBER_OF_PAGES = 4;
-
-    /**
-     * To customize the disabled background drawable and text color
-     */
-    public static int disabledBackgroundDrawable = -1;
-    public static int disabledTextColor = Color.GRAY;
 
     /**
      * First day of month time
@@ -139,9 +120,6 @@ public class FlextCal extends Fragment {
      * Declare views
      */
     private TextView monthTitleTextView;
-    private GridView weekdayGridView;
-    private InfiniteViewPager dateViewPager;
-    private DatePageChangeListener pageChangeListener;
     private ArrayList<DateGridFragment> fragments;
     private KenBurnsView image;
 
@@ -174,10 +152,6 @@ public class FlextCal extends Fragment {
      */
     private FlextListener caldroidListener;
 
-    public FlextListener getCaldroidListener() {
-        return caldroidListener;
-    }
-
     /**
      * Meant to be subclassed. User who wants to provide custom view, need to
      * provide custom adapter here
@@ -198,40 +172,10 @@ public class FlextCal extends Fragment {
     }
 
     /**
-     * For client to customize the weekDayGridView
-     *
-     * @return
-     */
-    public GridView getWeekdayGridView() {
-        return weekdayGridView;
-    }
-
-    /**
      * For client to access array of rotating fragments
      */
     public ArrayList<DateGridFragment> getFragments() {
         return fragments;
-    }
-
-    /**
-     * To let client customize month title textview
-     */
-    public TextView getMonthTitleTextView() {
-        return monthTitleTextView;
-    }
-
-    public void setMonthTitleTextView(TextView monthTitleTextView) {
-        this.monthTitleTextView = monthTitleTextView;
-    }
-
-    /**
-     * Get 4 adapters of the date grid views. Useful to set custom data and
-     * refresh date grid view
-     *
-     * @return
-     */
-    public ArrayList<FlextGridAdapter> getDatePagerAdapters() {
-        return datePagerAdapters;
     }
 
     /**
@@ -257,24 +201,6 @@ public class FlextCal extends Fragment {
     }
 
     /**
-     * Extra data is data belong to Client
-     *
-     * @return
-     */
-    public HashMap<String, Object> getExtraData() {
-        return extraData;
-    }
-
-    /**
-     * Client can set custom data in this HashMap
-     *
-     * @param extraData
-     */
-    public void setExtraData(HashMap<String, Object> extraData) {
-        this.extraData = extraData;
-    }
-
-    /**
      * Set backgroundForDateMap
      */
     public void setBackgroundForToday(@ColorInt int backgroundForToday){
@@ -294,139 +220,6 @@ public class FlextCal extends Fragment {
         this.caldroidListener = caldroidListener;
     }
 
-    /**
-     * Get current saved sates of the Caldroid. Useful for handling rotation
-     */
-    public Bundle getSavedStates() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(MONTH, month);
-        bundle.putInt(YEAR, year);
-
-        if (selectedDates != null && selectedDates.size() > 0) {
-            bundle.putStringArrayList(SELECTED_DATES,
-                    FlextHelper.convertToStringList(selectedDates));
-        }
-
-        if (disableDates != null && disableDates.size() > 0) {
-            bundle.putStringArrayList(DISABLE_DATES,
-                    FlextHelper.convertToStringList(disableDates));
-        }
-
-        if (minDateTime != null) {
-            bundle.putString(MIN_DATE, minDateTime.format("YYYY-MM-DD"));
-        }
-
-        if (maxDateTime != null) {
-            bundle.putString(MAX_DATE, maxDateTime.format("YYYY-MM-DD"));
-        }
-
-        bundle.putBoolean(SHOW_NAVIGATION_ARROWS, showNavigationArrows);
-        bundle.putBoolean(ENABLE_SWIPE, enableSwipe);
-        bundle.putBoolean(ENABLE_IMAGES, enableImage);
-        bundle.putInt(START_DAY_OF_WEEK, startDayOfWeek);
-        bundle.putBoolean(SIX_WEEKS_IN_CALENDAR, sixWeeksInCalendar);
-
-        return bundle;
-    }
-
-    /**
-     * Save current state to bundle outState
-     *
-     * @param outState
-     * @param key
-     */
-    public void saveStatesToKey(Bundle outState, String key) {
-        outState.putBundle(key, getSavedStates());
-    }
-
-    /**
-     * Restore current states from savedInstanceState
-     *
-     * @param savedInstanceState
-     * @param key
-     */
-    public void restoreStatesFromKey(Bundle savedInstanceState, String key) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(key)) {
-            Bundle caldroidSavedState = savedInstanceState.getBundle(key);
-            setArguments(caldroidSavedState);
-        }
-    }
-
-    /**
-     * Get current virtual position of the month being viewed
-     */
-    public int getCurrentVirtualPosition() {
-        int currentPage = dateViewPager.getCurrentItem();
-        return pageChangeListener.getCurrent(currentPage);
-    }
-
-    /**
-     * Move calendar to the specified date
-     *
-     * @param date
-     */
-    public void moveToDate(Date date) {
-        moveToDateTime(FlextHelper.convertDateToDateTime(date));
-    }
-
-    /**
-     * Move calendar to specified dateTime, with animation
-     *
-     * @param dateTime
-     */
-    public void moveToDateTime(DateTime dateTime) {
-
-        DateTime firstOfMonth = new DateTime(year, month, 1, 0, 0, 0, 0);
-        DateTime lastOfMonth = firstOfMonth.getEndOfMonth();
-
-        // To create a swipe effect
-        // Do nothing if the dateTime is in current month
-
-        // Calendar swipe left when dateTime is in the past
-        if (dateTime.lt(firstOfMonth)) {
-            // Get next month of dateTime. When swipe left, month will
-            // decrease
-            DateTime firstDayNextMonth = dateTime.plus(0, 1, 0, 0, 0, 0, 0,
-                    DateTime.DayOverflow.LastDay);
-
-            // Refresh adapters
-            pageChangeListener.setCurrentDateTime(firstDayNextMonth);
-            int currentItem = dateViewPager.getCurrentItem();
-            pageChangeListener.refreshAdapters(currentItem);
-
-            // Swipe left
-            dateViewPager.setCurrentItem(currentItem - 1);
-        }
-
-        // Calendar swipe right when dateTime is in the future
-        else if (dateTime.gt(lastOfMonth)) {
-            // Get last month of dateTime. When swipe right, the month will
-            // increase
-            DateTime firstDayLastMonth = dateTime.minus(0, 1, 0, 0, 0, 0, 0,
-                    DateTime.DayOverflow.LastDay);
-
-            // Refresh adapters
-            pageChangeListener.setCurrentDateTime(firstDayLastMonth);
-            int currentItem = dateViewPager.getCurrentItem();
-            pageChangeListener.refreshAdapters(currentItem);
-
-            // Swipe right
-            dateViewPager.setCurrentItem(currentItem + 1);
-        }
-
-    }
-
-    /**
-     * Set month and year for the calendar. This is to avoid naive
-     * implementation of manipulating month and year. All dates within same
-     * month/year give same result
-     *
-     * @param date
-     */
-    public void setCalendarDate(Date date) {
-        setCalendarDateTime(FlextHelper.convertDateToDateTime(date));
-    }
-
     public void setCalendarDateTime(DateTime dateTime) {
         month = dateTime.getMonth();
         year = dateTime.getYear();
@@ -440,131 +233,11 @@ public class FlextCal extends Fragment {
     }
 
     /**
-     * Set calendar to previous month
-     */
-    public void prevMonth() {
-        dateViewPager.setCurrentItem(pageChangeListener.getCurrentPage() - 1);
-    }
-
-    /**
-     * Set calendar to next month
-     */
-    public void nextMonth() {
-        dateViewPager.setCurrentItem(pageChangeListener.getCurrentPage() + 1);
-    }
-
-    /**
-     * Clear all disable dates. Notice this does not refresh the calendar, need
-     * to explicitly call refreshView()
-     */
-    public void clearDisableDates() {
-        disableDates.clear();
-    }
-
-    /**
-     * Set disableDates from ArrayList of Date
-     *
-     * @param disableDateList
-     */
-    public void setDisableDates(ArrayList<Date> disableDateList) {
-        disableDates.clear();
-        if (disableDateList == null || disableDateList.size() == 0) {
-            return;
-        }
-
-        for (Date date : disableDateList) {
-            DateTime dateTime = FlextHelper.convertDateToDateTime(date);
-            disableDates.add(dateTime);
-        }
-
-    }
-
-    /**
-     * Set disableDates from ArrayList of String. By default, the date formatter
-     * is yyyy-MM-dd. For e.g 2013-12-24
-     *
-     * @param disableDateStrings
-     */
-    public void setDisableDatesFromString(ArrayList<String> disableDateStrings) {
-        setDisableDatesFromString(disableDateStrings, null);
-    }
-
-    /**
-     * Set disableDates from ArrayList of String with custom date format. For
-     * example, if the date string is 06-Jan-2013, use date format dd-MMM-yyyy.
-     * This method will refresh the calendar, it's not necessary to call
-     * refreshView()
-     *
-     * @param disableDateStrings
-     * @param dateFormat
-     */
-    public void setDisableDatesFromString(ArrayList<String> disableDateStrings,
-                                          String dateFormat) {
-        disableDates.clear();
-        if (disableDateStrings == null) {
-            return;
-        }
-
-        for (String dateString : disableDateStrings) {
-            DateTime dateTime = FlextHelper.getDateTimeFromString(
-                    dateString, dateFormat);
-            disableDates.add(dateTime);
-        }
-    }
-
-    /**
      * To clear selectedDates. This method does not refresh view, need to
      * explicitly call refreshView()
      */
     public void clearSelectedDates() {
         selectedDates.clear();
-    }
-
-    /**
-     * Select the dates from fromDate to toDate. By default the background color
-     * is holo_blue_light, and the text color is black. You can customize the
-     * background by changing CaldroidFragment.selectedBackgroundDrawable, and
-     * change the text color CaldroidFragment.selectedTextColor before call this
-     * method. This method does not refresh view, need to call refreshView()
-     *
-     * @param fromDate
-     * @param toDate
-     */
-    public void setSelectedDates(Date fromDate, Date toDate) {
-        // Ensure fromDate is before toDate
-        if (fromDate == null || toDate == null || fromDate.after(toDate)) {
-            return;
-        }
-
-        selectedDates.clear();
-
-        DateTime fromDateTime = FlextHelper.convertDateToDateTime(fromDate);
-        DateTime toDateTime = FlextHelper.convertDateToDateTime(toDate);
-
-        DateTime dateTime = fromDateTime;
-        while (dateTime.lt(toDateTime)) {
-            selectedDates.add(dateTime);
-            dateTime = dateTime.plusDays(1);
-        }
-        selectedDates.add(toDateTime);
-    }
-
-    /**
-     * Convenient method to select dates from String
-     *
-     * @param fromDateString
-     * @param toDateString
-     * @param dateFormat
-     * @throws ParseException
-     */
-    public void setSelectedDateStrings(String fromDateString,
-                                       String toDateString, String dateFormat) throws ParseException {
-
-        Date fromDate = FlextHelper.getDateFromString(fromDateString,
-                dateFormat);
-        Date toDate = FlextHelper
-                .getDateFromString(toDateString, dateFormat);
-        setSelectedDates(fromDate, toDate);
     }
 
     protected ArrayList<String> getDaysOfWeek() {
@@ -681,7 +354,7 @@ public class FlextCal extends Fragment {
         monthTitleTextView.setText(monthTitle);
 
         if (image != null && enableImage) {
-            ImageCheck check = new ImageCheck(getActivity());
+            ImageCheck check = new ImageCheck();
             if (check.isImage(month)){
                 Picasso.with(getActivity()).load(new File(check.getImage(month))).into(image);
             } else {
@@ -800,7 +473,7 @@ public class FlextCal extends Fragment {
         DateTime currentDateTime = new DateTime(year, month, 1, 0, 0, 0, 0);
 
         // Set to pageChangeListener
-        pageChangeListener = new DatePageChangeListener();
+        DatePageChangeListener pageChangeListener = new DatePageChangeListener();
         pageChangeListener.setCurrentDateTime(currentDateTime);
 
         // Setup adapters for the grid views
@@ -842,7 +515,7 @@ public class FlextCal extends Fragment {
         // Setup InfiniteViewPager and InfinitePagerAdapter. The
         // InfinitePagerAdapter is responsible
         // for reuse the fragments
-        dateViewPager = (InfiniteViewPager) view
+        InfiniteViewPager dateViewPager = (InfiniteViewPager) view
                 .findViewById(R.id.months_infinite_pager);
 
         // Set enable swipe
@@ -900,8 +573,6 @@ public class FlextCal extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -939,7 +610,7 @@ public class FlextCal extends Fragment {
 
         monthTitleTextView = (TextView) view.findViewById(R.id.monthYear);
 
-        weekdayGridView = (GridView) view.findViewById(R.id.weekday_gridview);
+        GridView weekdayGridView = (GridView) view.findViewById(R.id.weekday_gridview);
         WeekdayArrayAdapter weekdaysAdapter = getNewWeekdayAdapter();
         weekdayGridView.setAdapter(weekdaysAdapter);
 
@@ -961,40 +632,9 @@ public class FlextCal extends Fragment {
         private DateTime currentDateTime;
         private ArrayList<FlextGridAdapter> flextGridAdapters;
 
-        /**
-         * Return currentPage of the dateViewPager
-         *
-         * @return
-         */
-        public int getCurrentPage() {
-            return currentPage;
-        }
-
-        public void setCurrentPage(int currentPage) {
-            this.currentPage = currentPage;
-        }
-
-        /**
-         * Return currentDateTime of the selected page
-         *
-         * @return
-         */
-        public DateTime getCurrentDateTime() {
-            return currentDateTime;
-        }
-
         public void setCurrentDateTime(DateTime dateTime) {
             this.currentDateTime = dateTime;
             setCalendarDateTime(currentDateTime);
-        }
-
-        /**
-         * Return 4 adapters
-         *
-         * @return
-         */
-        public ArrayList<FlextGridAdapter> getFlextGridAdapters() {
-            return flextGridAdapters;
         }
 
         public void setFlextGridAdapters(

@@ -38,7 +38,7 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
     public LoadAsync(Context context, int month){
         this.context = context;
         this.month = month;
-        imageCheck = new ImageCheck(context);
+        imageCheck = new ImageCheck();
     }
 
     @Override
@@ -59,10 +59,11 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
 
                 File image = new File(sdPathDr, imageCheck.getImageName(month));
                 try {
-                    image.createNewFile();
-                    FileOutputStream ostream = new FileOutputStream(image);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                    ostream.close();
+                    if (image.createNewFile()) {
+                        FileOutputStream ostream = new FileOutputStream(image);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+                        ostream.close();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

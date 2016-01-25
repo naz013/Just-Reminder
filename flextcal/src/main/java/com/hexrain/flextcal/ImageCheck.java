@@ -1,6 +1,5 @@
 package com.hexrain.flextcal;
 
-import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
@@ -23,10 +22,7 @@ import java.io.File;
  */
 public class ImageCheck {
 
-    private Context context;
-
-    public ImageCheck(Context context){
-        this.context = context;
+    public ImageCheck(){
     }
 
     public String getImage(int month){

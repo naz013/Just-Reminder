@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="rfc5545-datetime-0.2.1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/app/libs/rfc5545-datetime-0.2.1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

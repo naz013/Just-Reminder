@@ -625,6 +625,7 @@ public class ScreenManager extends AppCompatActivity
         boolean isReminder = mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
         boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         calendarView.setEvents(new ReminderDataProvider(this, isReminder, isFeature).getEvents());
+        replace(calendarView, mTag);
 
         mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
         mTitle = getString(R.string.calendar);

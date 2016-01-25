@@ -22,7 +22,7 @@
             android:id="@+id/task_text"
             android:textSize="@dimen/create_text_size_secondary"
             android:hint="@string/remind_me"
-            android:textColorHint="@color/colorWhite"
+            android:textColorHint="@color/whitePrimary"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"

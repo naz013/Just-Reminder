@@ -46,7 +46,7 @@
                 android:id="@+id/widgetTitle"
                 android:gravity="center|left"
                 android:paddingLeft="15dp"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/whitePrimary"
                 android:textSize="18sp"
                 android:text="@string/notes"
                 android:singleLine="true"

@@ -32,21 +32,11 @@ public class FlextHelper {
     public static SimpleDateFormat yyyyMMddFormat = new SimpleDateFormat(
             "yyyy-MM-dd", Locale.ENGLISH);
 
-    public static SimpleDateFormat MMMFormat = new SimpleDateFormat(
-            "MMM", Locale.getDefault());
-
-    public static SimpleDateFormat keyFormat = new SimpleDateFormat(
-            "yyyyMMdd", Locale.getDefault());
-
     public FlextHelper(){
     }
 
     public static boolean is21(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    public static String generateKey(Date date){
-        return keyFormat.format(date);
     }
 
     /**

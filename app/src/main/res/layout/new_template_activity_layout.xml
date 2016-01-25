@@ -24,7 +24,7 @@
             android:id="@+id/placeName"
             android:textSize="@dimen/create_text_size_secondary"
             android:hint="@string/title"
-            android:textColorHint="@color/colorWhite"
+            android:textColorHint="@color/whitePrimary"
             android:maxLength="120"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"

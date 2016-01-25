@@ -61,10 +61,6 @@ public class DateGridFragment extends Fragment {
 
 		gridView = (GridView) v.findViewById(R.id.calendar_gridview);
 
-        //gridView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-		// Client normally needs to provide the adapter and onItemClickListener
-		// before the fragment is attached to avoid complex crash due to
-		// fragment life cycles
 		if (gridAdapter != null) {
 			gridView.setAdapter(gridAdapter);
 		}

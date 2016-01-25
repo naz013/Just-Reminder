@@ -39,14 +39,13 @@ import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
+import org.dmfs.rfc5545.recur.Freq;
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
 import org.dmfs.rfc5545.recur.RecurrenceRule;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-
-import static org.dmfs.rfc5545.recur.RecurrenceRule.Freq;
 
 public class EventsImport extends AppCompatActivity implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener {
