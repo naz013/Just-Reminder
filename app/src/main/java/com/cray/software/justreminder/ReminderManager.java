@@ -1110,32 +1110,32 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void setCheckForDays(ArrayList<Integer> weekdays){
         if (weekdays.get(0) == Constants.DAY_CHECKED)
+            sundayCheck.setChecked(true);
+        else sundayCheck.setChecked(false);
+
+        if (weekdays.get(1) == Constants.DAY_CHECKED)
             mondayCheck.setChecked(true);
         else mondayCheck.setChecked(false);
 
-        if (weekdays.get(1) == Constants.DAY_CHECKED)
+        if (weekdays.get(2) == Constants.DAY_CHECKED)
             tuesdayCheck.setChecked(true);
         else tuesdayCheck.setChecked(false);
 
-        if (weekdays.get(2) == Constants.DAY_CHECKED)
+        if (weekdays.get(3) == Constants.DAY_CHECKED)
             wednesdayCheck.setChecked(true);
         else wednesdayCheck.setChecked(false);
 
-        if (weekdays.get(3) == Constants.DAY_CHECKED)
+        if (weekdays.get(4) == Constants.DAY_CHECKED)
             thursdayCheck.setChecked(true);
         else thursdayCheck.setChecked(false);
 
-        if (weekdays.get(4) == Constants.DAY_CHECKED)
+        if (weekdays.get(5) == Constants.DAY_CHECKED)
             fridayCheck.setChecked(true);
         else fridayCheck.setChecked(false);
 
-        if (weekdays.get(5) == Constants.DAY_CHECKED)
+        if (weekdays.get(6) == Constants.DAY_CHECKED)
             saturdayCheck.setChecked(true);
         else saturdayCheck.setChecked(false);
-
-        if (weekdays.get(6) == Constants.DAY_CHECKED)
-            sundayCheck.setChecked(true);
-        else sundayCheck.setChecked(false);
     }
 
     /**

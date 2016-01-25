@@ -201,14 +201,14 @@
         </activity>
 
         <receiver android:name=".services.AlarmReceiver" />
-        <receiver android:name=".services.BirthdayCheckAlarm" />
-        <receiver android:name=".services.AutoSyncAlarm" />
-        <receiver android:name=".services.EventsCheckAlarm" />
-        <receiver android:name=".services.PositionDelayReceiver" />
-        <receiver android:name=".services.DelayReceiver" />
-        <receiver android:name=".services.BirthdayAlarm" />
-        <receiver android:name=".services.BirthdayPermanentAlarm" />
-        <receiver android:name=".services.RepeatNotificationReceiver" />
+        <receiver android:name=".services.BirthdayCheckAlarm"/>
+        <receiver android:name=".services.AutoSyncAlarm"/>
+        <receiver android:name=".services.EventsCheckAlarm"/>
+        <receiver android:name=".services.PositionDelayReceiver"/>
+        <receiver android:name=".services.DelayReceiver"/>
+        <receiver android:name=".services.BirthdayAlarm"/>
+        <receiver android:name=".services.BirthdayPermanentAlarm"/>
+        <receiver android:name=".services.RepeatNotificationReceiver"/>
         <receiver android:name=".services.JustBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

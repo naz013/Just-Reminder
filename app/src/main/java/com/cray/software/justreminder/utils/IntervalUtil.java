@@ -46,20 +46,13 @@ public class IntervalUtil {
     public static ArrayList<Integer> getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
                                    boolean sat, boolean sun){
         ArrayList<Integer> sb = new ArrayList<>();
-        if (sun) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (mon) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (tue) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (wed) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (thu) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (fri) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
-        if (sat) sb.add(Constants.DAY_CHECKED);
-        else sb.add(Constants.DAY_UNCHECKED);
+        sb.add(sun ? 1 : 0);
+        sb.add(mon ? 1 : 0);
+        sb.add(tue ? 1 : 0);
+        sb.add(wed ? 1 : 0);
+        sb.add(thu ? 1 : 0);
+        sb.add(fri ? 1 : 0);
+        sb.add(sat ? 1 : 0);
         return sb;
     }
 

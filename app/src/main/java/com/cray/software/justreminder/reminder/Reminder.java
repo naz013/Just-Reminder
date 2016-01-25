@@ -90,15 +90,29 @@ public class Reminder {
             long repeat = jsonRecurrence.getRepeat();
             long limit = jsonRecurrence.getLimit();
             long count = parser.getCount() + 1;
-            long eventTime = new TimeCount(context).generateDateTime(type,
-                    jsonRecurrence.getMonthday(), parser.getStartTime(),
-                    repeat, jsonRecurrence.getWeekdays(), count, delay);
-            parser.setEventTime(eventTime);
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
                     !type.contains(Constants.TYPE_MONTHDAY)){
                 disableReminder(id, context);
             } else {
+                long eventTime = new TimeCount(context).generateDateTime(type,
+                        jsonRecurrence.getMonthday(), parser.getStartTime(),
+                        repeat, jsonRecurrence.getWeekdays(), count, delay);
+
+                if (type.startsWith(Constants.TYPE_MONTHDAY) || type.startsWith(Constants.TYPE_WEEKDAY)) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(eventTime);
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+                    eventTime = new TimeCount(context).generateDateTime(type,
+                            jsonRecurrence.getMonthday(), calendar.getTimeInMillis(),
+                            repeat, jsonRecurrence.getWeekdays(), count, delay);
+                }
+
+                parser.setEventTime(eventTime);
                 parser.setCount(count);
                 db.updateReminderTime(id, eventTime);
                 db.setJson(id, parser.toJsonString());
@@ -185,8 +199,15 @@ public class Reminder {
                 db.setUnDone(id);
                 JsonParser parser = new JsonParser(json);
                 JsonRecurrence jsonRecurrence = parser.getRecurrence();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(eventTime);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
                 long nextTime = new TimeCount(context).generateDateTime(type,
-                        jsonRecurrence.getMonthday(), eventTime, 0,
+                        jsonRecurrence.getMonthday(), calendar.getTimeInMillis(), 0,
                         jsonRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(id, nextTime);
                 parser.setEventTime(nextTime);

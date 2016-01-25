@@ -2,13 +2,13 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
@@ -20,11 +20,12 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.util.Calendar;
 
-public class RepeatNotificationReceiver extends BroadcastReceiver {
+public class RepeatNotificationReceiver extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -60,7 +61,12 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
+        if (Module.isMarshmallow())
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
+        else
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
     }
 
     public void cancelAlarm(Context context, long id) {
@@ -111,17 +117,7 @@ public class RepeatNotificationReceiver extends BroadcastReceiver {
         } else builder.setContentText(ctx.getString(R.string.app_name));
 
         if (type != null) {
-            if (type.matches(Constants.TYPE_CALL) || type.matches(Constants.TYPE_LOCATION_CALL)) {
-                builder.setSmallIcon(R.drawable.ic_call_white_24dp);
-            } else if (type.matches(Constants.TYPE_MESSAGE) || type.matches(Constants.TYPE_LOCATION_MESSAGE)) {
-                builder.setSmallIcon(R.drawable.ic_textsms_white_24dp);
-            } else if (type.matches(Constants.TYPE_LOCATION)) {
-                builder.setSmallIcon(R.drawable.ic_navigation_white_24dp);
-            } else if (type.matches(Constants.TYPE_TIME)) {
-                builder.setSmallIcon(R.drawable.ic_alarm_white_24dp);
-            } else {
-                builder.setSmallIcon(R.drawable.ic_event_white_24dp);
-            }
+            builder.setSmallIcon(ViewUtils.getIcon(type));
         } else {
             builder.setSmallIcon(R.drawable.ic_event_white_24dp);
         }

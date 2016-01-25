@@ -2,15 +2,16 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
 
-public class PositionDelayReceiver extends BroadcastReceiver {
+public class PositionDelayReceiver extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -34,12 +35,14 @@ public class PositionDelayReceiver extends BroadcastReceiver {
             startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
         }
         if (c != null) c.close();
+        db.close();
+
         Intent intent = new Intent(context, PositionDelayReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, 0);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, startTime, alarmIntent);
-        db.close();
+        if (Module.isMarshmallow()) alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, startTime, alarmIntent);
+        else alarmMgr.set(AlarmManager.RTC_WAKEUP, startTime, alarmIntent);
     }
 
     public void cancelDelay(Context context, long id) {

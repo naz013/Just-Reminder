@@ -2,11 +2,11 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -16,6 +16,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
@@ -24,7 +25,7 @@ import org.dmfs.rfc5545.recur.RecurrenceRule;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class EventsCheckAlarm extends BroadcastReceiver {
+public class EventsCheckAlarm extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -44,7 +45,9 @@ public class EventsCheckAlarm extends BroadcastReceiver {
         calendar.setTimeInMillis(System.currentTimeMillis());
         SharedPrefs prefs = new SharedPrefs(context);
         int interval = prefs.loadInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL);
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+        if (Module.isMarshmallow()) alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_HOUR * interval, alarmIntent);
+        else alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_HOUR * interval, alarmIntent);
     }
 

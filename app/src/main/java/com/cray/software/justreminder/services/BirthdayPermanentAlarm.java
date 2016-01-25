@@ -2,17 +2,18 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.modules.Module;
 
 import java.util.Calendar;
 
-public class BirthdayPermanentAlarm extends BroadcastReceiver {
+public class BirthdayPermanentAlarm extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -39,8 +40,13 @@ public class BirthdayPermanentAlarm extends BroadcastReceiver {
         calendar.set(Calendar.MILLISECOND, 0);
         long time = calendar.getTimeInMillis();
         if (currTime > time) calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        if (Module.isMarshmallow()) {
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+        } else {
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+        }
     }
 
     public void cancelAlarm(Context context) {

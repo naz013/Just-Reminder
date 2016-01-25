@@ -2,10 +2,10 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.cray.software.justreminder.activities.ReminderDialog;
@@ -17,6 +17,7 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JsonModel;
 import com.cray.software.justreminder.json.JsonParser;
 import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -24,7 +25,7 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
 
@@ -97,12 +98,24 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         if (code == 1) {
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, AlarmManager.INTERVAL_DAY, alarmIntent);
+            if (Module.isMarshmallow()) {
+                alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, due, AlarmManager.INTERVAL_DAY, alarmIntent);
+            } else {
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, AlarmManager.INTERVAL_DAY, alarmIntent);
+            }
         } else {
             if (repeat > 0) {
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
+                if (Module.isMarshmallow()) {
+                    alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
+                } else {
+                    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
+                }
             } else {
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
+                if (Module.isMarshmallow()) {
+                    alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
+                } else {
+                    alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
+                }
             }
         }
     }

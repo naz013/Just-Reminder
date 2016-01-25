@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -56,15 +57,19 @@ public class TimeCount {
     public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
                                   int minute, int seconds, ArrayList<Integer> weekdays, long after) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, dayOfMonth, hour, minute, seconds);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
         if (type.startsWith(Constants.TYPE_WEEKDAY)){
             return getNextWeekdayTime(calendar.getTimeInMillis(), weekdays, 0);
         } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             if (type.endsWith("_last"))
                 return getLastMonthDayTime(calendar.getTimeInMillis());
             else
                 return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis());
         } else {
+            calendar.set(year, month, dayOfMonth, hour, minute, seconds);
             if (type.matches(Constants.TYPE_TIME))
                 return System.currentTimeMillis() + after;
 
@@ -112,21 +117,29 @@ public class TimeCount {
         long difference = eventTime - System.currentTimeMillis();
         long days = (difference / (DAY));
         long hours = ((difference - (DAY * days)) / (HOUR));
-        long min = (difference - (DAY * days) - (HOUR * hours)) / (MINUTE);
+        long minutes = (difference - (DAY * days) - (HOUR * hours)) / (MINUTE);
         hours = (hours < 0 ? -hours : hours);
-        String result;
+        StringBuilder result = new StringBuilder();
         if (difference > DAY){
-            result = String.format(mContext.getString(R.string.x_days), days);
+            result.append(String.format(mContext.getString(R.string.x_days), days));
+            if (hours > 1) {
+                result.append(mContext.getString(R.string.and));
+                result.append(String.format(mContext.getString(R.string.x_hours), hours));
+            }
         } else if (difference > HOUR){
-            result = String.format(mContext.getString(R.string.x_hours), (days * 24) + hours);
+            result.append(String.format(mContext.getString(R.string.x_hours), (days * 24) + hours));
+            if (minutes > 1) {
+                result.append(mContext.getString(R.string.and));
+                result.append(String.format(mContext.getString(R.string.x_minutes), minutes));
+            }
         } else if (difference > MINUTE){
-            result = String.format(mContext.getString(R.string.x_minutes), (hours * 60) + min);
+            result.append(String.format(mContext.getString(R.string.x_minutes), (hours * 60) + minutes));
         } else if (difference > 0){
-            result = mContext.getString(R.string.less_than_minute);
+            result.append(mContext.getString(R.string.less_than_minute));
         } else {
-            result = mContext.getString(R.string.overdue);
+            result.append(mContext.getString(R.string.overdue));
         }
-        return result;
+        return result.toString();
     }
 
     /**
@@ -162,6 +175,8 @@ public class TimeCount {
             while (true) {
                 int mDay = cc.get(Calendar.DAY_OF_WEEK);
                 if (weekdays.get(mDay - 1) == 1) {
+                    Log.d(Constants.LOG_TAG, "Day " + mDay);
+                    Log.d(Constants.LOG_TAG, "Date " + TimeUtil.getFullDateTime(cc.getTimeInMillis(), true));
                     if (cc.getTimeInMillis() > System.currentTimeMillis()) {
                         break;
                     }
@@ -215,26 +230,6 @@ public class TimeCount {
     }
 
     /**
-     * Get next due time for MonthDay reminder type.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param dayOfMonth day.
-     * @param delay delay for reminder.
-     * @return Due time in milliseconds.
-     */
-    public static long getNextMonthDayTime(int hourOfDay, int minuteOfHour, int dayOfMonth, int delay){
-        if (dayOfMonth == 0){
-            return getLastMonthDayTime(hourOfDay, minuteOfHour, delay);
-        }
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cc.set(Calendar.MINUTE, minuteOfHour);
-        long mTime = getNextMonthDayTime(dayOfMonth, cc.getTimeInMillis());
-        return mTime + (delay * MINUTE);
-    }
-
-    /**
      * Get next due time for MonthDay reminder type starts from selected date and time.
      * @param dayOfMonth day.
      * @param fromTime start time.
@@ -275,22 +270,6 @@ public class TimeCount {
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();
-    }
-
-    /**
-     * Get next due time for next last day of month.
-     * @param hourOfDay hour.
-     * @param minuteOfHour minute.
-     * @param delay delay for reminder.
-     * @return Due time in milliseconds.
-     */
-    public static long getLastMonthDayTime(int hourOfDay, int minuteOfHour, int delay){
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        cc.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cc.set(Calendar.MINUTE, minuteOfHour);
-        long mTime = getLastMonthDayTime(cc.getTimeInMillis());
-        return mTime + (delay * MINUTE);
     }
 
     /**

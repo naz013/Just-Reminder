@@ -229,6 +229,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
                 String repeatStr = IntervalUtil.getInterval(this, item.getRepeat());
+                if (item.getType().startsWith(Constants.TYPE_WEEKDAY)) {
+                    repeatStr = ReminderUtils.getRepeatString(this, item.getWeekdays());
+                }
                 if (repeatStr != null) {
                     repeat.setText(repeatStr);
                 } else {

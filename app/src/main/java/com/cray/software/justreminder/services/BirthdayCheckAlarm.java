@@ -2,15 +2,16 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.cray.software.justreminder.async.CheckBirthdaysAsync;
+import com.cray.software.justreminder.modules.Module;
 
 import java.util.Calendar;
 
-public class BirthdayCheckAlarm extends BroadcastReceiver {
+public class BirthdayCheckAlarm extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -35,8 +36,13 @@ public class BirthdayCheckAlarm extends BroadcastReceiver {
         calendar.set(Calendar.MILLISECOND, 0);
         long time = calendar.getTimeInMillis();
         if (currTime > time) calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 1);
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        if (Module.isMarshmallow()) {
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+        } else {
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+        }
     }
 
     public void cancelAlarm(Context context) {

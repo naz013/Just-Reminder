@@ -2,18 +2,19 @@ package com.cray.software.justreminder.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.modules.Module;
 
 import java.util.Calendar;
 
-public class DelayReceiver extends BroadcastReceiver {
+public class DelayReceiver extends WakefulBroadcastReceiver {
 
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
@@ -40,7 +41,11 @@ public class DelayReceiver extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + (min * inTime), alarmIntent);
+        if (Module.isMarshmallow())
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis() + (min * inTime), alarmIntent);
+        else alarmMgr.set(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis() + (min * inTime), alarmIntent);
     }
 
     public void setAlarm(Context context, long id, int time) {
@@ -52,7 +57,10 @@ public class DelayReceiver extends BroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + (min * time), alarmIntent);
+        if (Module.isMarshmallow())
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis() + (min * time), alarmIntent);
+        else alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + (min * time), alarmIntent);
     }
 
     public void cancelAlarm(Context context, long id) {

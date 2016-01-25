@@ -138,9 +138,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
             android:visibility="gone"
             android:id="@+id/subBackground"
             android:focusable="false">
@@ -189,8 +186,6 @@
                 android:id="@+id/shoppingTime"
                 android:textSize="18sp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/blackPrimary"
-                android:drawableLeft="@drawable/ic_alarm_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"/>
 
         </LinearLayout>

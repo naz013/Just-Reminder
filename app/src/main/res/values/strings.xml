@@ -487,4 +487,6 @@
     <string name="you_dont_insert_number">You don\'t insert number!</string>
     <string name="you_dont_insert_any_message">You don\'t insert any message!</string>
     <string name="xM">%sM</string>
+    <string name="overdue">Overdue</string>
+    <string name="and"><![CDATA[" & "]]></string>
 </resources>

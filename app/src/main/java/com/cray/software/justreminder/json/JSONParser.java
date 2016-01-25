@@ -281,70 +281,32 @@ public class JsonParser {
     }
 
     public String toJsonString(JsonModel model) {
-        try {
-            setUuid(model.getUuId());
-            setSummary(model.getSummary());
-            jsonObject.put(TYPE, model.getType());
-            jsonObject.put(EVENT_TIME, model.getEventTime());
-            jsonObject.put(START_DATE, model.getStartTime());
-            jsonObject.put(COUNT, model.getCount());
-            jsonObject.put(VIBRATION, model.getVibrate());
-            jsonObject.put(NOTIFICATION_REPEAT, model.getNotificationRepeat());
-            jsonObject.put(VOICE_NOTIFICATION, model.getVoice());
-            jsonObject.put(AWAKE_SCREEN, model.getAwake());
-            jsonObject.put(UNLOCK_SCREEN, model.getUnlock());
-            jsonObject.put(CATEGORY, model.getCategory());
-            if (model.getExport() != null) {
-                jsonObject.put(EXPORT, model.getExport().getJsonObject());
-            }
-
-            if (model.getPlace() != null) {
-                jsonObject.put(PLACE, model.getPlace().getJsonObject());
-            }
-
-            if (model.getTags() != null && model.getTags().size() > 0) {
-                JSONArray array = new JSONArray();
-                for (String tag : model.getTags()) {
-                    array.put(tag);
-                }
-                jsonObject.put(TAGS, array);
-            }
-            if (model.getRecurrence() != null) {
-                jsonObject.put(RECURRENCE, model.getRecurrence().getJsonObject());
-            }
-            if (model.getMelody() != null) {
-                jsonObject.put(MELODY, model.getMelody().getJsonObject());
-            }
-            if (model.getExclusion() != null) {
-                jsonObject.put(EXCLUSION, model.getExclusion().getJsonObject());
-            }
-            if (model.getLed() != null) {
-                jsonObject.put(LED, model.getLed().getJsonObject());
-            }
-            if (model.getAction() != null) {
-                jsonObject.put(ACTION, model.getAction().getJsonObject());
-            }
-            if (model.getPlaces() != null && model.getPlaces().size() > 0) {
-                JSONArray array = new JSONArray();
-                for (JsonPlace place : model.getPlaces()) {
-                    array.put(place.getJsonObject());
-                }
-                jsonObject.put(PLACES, array);
-            }
-            if (model.getShoppings() != null && model.getShoppings().size() > 0) {
-                JSONObject array = new JSONObject();
-                for (JsonShopping shopping : model.getShoppings()) {
-                    array.put(shopping.getUuId(), shopping.getJsonObject());
-                }
-                jsonObject.put(SHOPPING, array);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        setUuid(model.getUuId());
+        setSummary(model.getSummary());
+        setType(model.getType());
+        setCategory(model.getCategory());
+        setEventTime(model.getEventTime());
+        setStartTime(model.getStartTime());
+        setCount(model.getCount());
+        setVibration(model.getVibrate());
+        setNotificationRepeat(model.getNotificationRepeat());
+        setVoiceNotification(model.getVoice());
+        setAwakeScreen(model.getAwake());
+        setUnlockScreen(model.getUnlock());
+        setExport(model.getExport());
+        setPlace(model.getPlace());
+        setPlaces(model.getPlaces());
+        setTags(model.getTags());
+        setRecurrence(model.getRecurrence());
+        setMelody(model.getMelody());
+        setExclusion(model.getExclusion());
+        setLed(model.getLed());
+        setAction(model.getAction());
+        setShopping(model.getShoppings());
         return toJsonString();
     }
 
-    public void setStartDate(long startDate) {
+    public void setStartTime(long startDate) {
         try {
             jsonObject.put(START_DATE, startDate);
         } catch (JSONException e) {
@@ -441,14 +403,16 @@ public class JsonParser {
     }
 
     public void setTags(List<String> tags) {
-        JSONArray array = new JSONArray();
-        for (String tag : tags) {
-            array.put(tag);
-        }
-        try {
-            jsonObject.put(TAGS, array);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (tags != null) {
+            JSONArray array = new JSONArray();
+            for (String tag : tags) {
+                array.put(tag);
+            }
+            try {
+                jsonObject.put(TAGS, array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -501,31 +465,35 @@ public class JsonParser {
     }
 
     public void setPlaces(List<JsonPlace> list) {
-        JSONArray array = new JSONArray();
-        for (JsonPlace place : list) {
-            array.put(place.getJsonObject());
-        }
-        try {
-            jsonObject.put(PLACES, array);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (list != null) {
+            JSONArray array = new JSONArray();
+            for (JsonPlace place : list) {
+                array.put(place.getJsonObject());
+            }
+            try {
+                jsonObject.put(PLACES, array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void setShopping(List<JsonShopping> list) {
-        JSONObject array = new JSONObject();
-        try {
-            for (JsonShopping shopping : list) {
-                array.put(shopping.getUuId(), shopping.getJsonObject());
+        if (list != null) {
+            JSONObject array = new JSONObject();
+            try {
+                for (JsonShopping shopping : list) {
+                    array.put(shopping.getUuId(), shopping.getJsonObject());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            jsonObject.put(SHOPPING, array);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            try {
+                jsonObject.put(SHOPPING, array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
