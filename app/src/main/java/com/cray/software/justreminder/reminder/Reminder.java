@@ -22,10 +22,10 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
-import com.cray.software.justreminder.json.JsonExport;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -85,10 +85,10 @@ public class Reminder {
             String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
             int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
-            JsonParser parser = new JsonParser(json);
-            JsonRecurrence jsonRecurrence = parser.getRecurrence();
-            long repeat = jsonRecurrence.getRepeat();
-            long limit = jsonRecurrence.getLimit();
+            JParser parser = new JParser(json);
+            JRecurrence jRecurrence = parser.getRecurrence();
+            long repeat = jRecurrence.getRepeat();
+            long limit = jRecurrence.getLimit();
             long count = parser.getCount() + 1;
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
@@ -96,8 +96,8 @@ public class Reminder {
                 disableReminder(id, context);
             } else {
                 long eventTime = new TimeCount(context).generateDateTime(type,
-                        jsonRecurrence.getMonthday(), parser.getStartTime(),
-                        repeat, jsonRecurrence.getWeekdays(), count, delay);
+                        jRecurrence.getMonthday(), parser.getStartTime(),
+                        repeat, jRecurrence.getWeekdays(), count, delay);
 
                 if (type.startsWith(Constants.TYPE_MONTHDAY) || type.startsWith(Constants.TYPE_WEEKDAY)) {
                     Calendar calendar = Calendar.getInstance();
@@ -108,8 +108,8 @@ public class Reminder {
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
                     eventTime = new TimeCount(context).generateDateTime(type,
-                            jsonRecurrence.getMonthday(), calendar.getTimeInMillis(),
-                            repeat, jsonRecurrence.getWeekdays(), count, delay);
+                            jRecurrence.getMonthday(), calendar.getTimeInMillis(),
+                            repeat, jRecurrence.getWeekdays(), count, delay);
                 }
 
                 parser.setEventTime(eventTime);
@@ -185,7 +185,7 @@ public class Reminder {
                 }
             } else if(type.matches(Constants.TYPE_TIME)) {
                 db.setUnDone(id);
-                JsonParser parser = new JsonParser(json);
+                JParser parser = new JParser(json);
                 long newTime = System.currentTimeMillis() + parser.getRecurrence().getAfter();
                 parser.setEventTime(newTime);
                 parser.setStartTime(newTime);
@@ -197,8 +197,8 @@ public class Reminder {
             } else if (type.contains(Constants.TYPE_MONTHDAY) ||
                     type.contains(Constants.TYPE_WEEKDAY)) {
                 db.setUnDone(id);
-                JsonParser parser = new JsonParser(json);
-                JsonRecurrence jsonRecurrence = parser.getRecurrence();
+                JParser parser = new JParser(json);
+                JRecurrence jRecurrence = parser.getRecurrence();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(eventTime);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -207,8 +207,8 @@ public class Reminder {
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, minute);
                 long nextTime = new TimeCount(context).generateDateTime(type,
-                        jsonRecurrence.getMonthday(), calendar.getTimeInMillis(), 0,
-                        jsonRecurrence.getWeekdays(), 0, 0);
+                        jRecurrence.getMonthday(), calendar.getTimeInMillis(), 0,
+                        jRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(id, nextTime);
                 parser.setEventTime(nextTime);
                 db.setJson(id, parser.toJsonString());
@@ -265,17 +265,17 @@ public class Reminder {
             calendar.set(Calendar.MINUTE, minute);
             eventTime = calendar.getTimeInMillis();
 
-            JsonParser jsonParser = new JsonParser(json);
-            JsonModel jsonModel = jsonParser.parse();
-            JsonExport jsonExport = jsonModel.getExport();
-            int exp = jsonExport.getCalendar();
-            int code = jsonExport.getgTasks();
-            jsonModel.setEventTime(eventTime);
-            jsonModel.setStartTime(eventTime);
-            jsonParser.toJsonString(jsonModel);
+            JParser jParser = new JParser(json);
+            JModel jModel = jParser.parse();
+            JExport jExport = jModel.getExport();
+            int exp = jExport.getCalendar();
+            int code = jExport.getgTasks();
+            jModel.setEventTime(eventTime);
+            jModel.setStartTime(eventTime);
+            jParser.toJsonString(jModel);
 
             String uuID = SyncHelper.generateID();
-            long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jsonParser.toJsonString());
+            long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){
                 if (eventTime > 0){
@@ -288,13 +288,13 @@ public class Reminder {
                 }
             } else if (type.contains(Constants.TYPE_MONTHDAY) ||
                     type.contains(Constants.TYPE_WEEKDAY)) {
-                JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
+                JRecurrence jRecurrence = jModel.getRecurrence();
                 long nextTime = new TimeCount(context).generateDateTime(type,
-                        jsonRecurrence.getMonthday(), time, 0,
-                        jsonRecurrence.getWeekdays(), 0, 0);
+                        jRecurrence.getMonthday(), time, 0,
+                        jRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(idN, nextTime);
-                jsonModel.setEventTime(nextTime);
-                db.setJson(idN, new JsonParser().toJsonString(jsonModel));
+                jModel.setEventTime(nextTime);
+                db.setJson(idN, new JParser().toJsonString(jModel));
                 new AlarmReceiver().enableReminder(context, idN);
             } else {
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
@@ -405,7 +405,7 @@ public class Reminder {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonParser parser = new JsonParser(json);
+            JParser parser = new JParser(json);
             long count = parser.getCount();
             parser.setCount(count + 1);
             db.updateCount(id, parser.toJsonString());

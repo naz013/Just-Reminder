@@ -86,16 +86,16 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.ActionCallbacksExtended;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.json.JsonAction;
-import com.cray.software.justreminder.json.JsonExclusion;
-import com.cray.software.justreminder.json.JsonExport;
-import com.cray.software.justreminder.json.JsonLed;
-import com.cray.software.justreminder.json.JsonMelody;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
-import com.cray.software.justreminder.json.JsonRecurrence;
-import com.cray.software.justreminder.json.JsonShopping;
+import com.cray.software.justreminder.json.JAction;
+import com.cray.software.justreminder.json.JExclusion;
+import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JLed;
+import com.cray.software.justreminder.json.JMelody;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
@@ -300,7 +300,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private boolean isDelayed = false;
 
     private Type remControl = new Type(this);
-    private JsonModel item;
+    private JModel item;
     private Handler handler = new Handler();
     private GeocoderTask task;
     private int volume;
@@ -488,7 +488,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         } else if (filePath != null) {
             File file = new File(filePath);
             if (file.exists()) {
-                item = new JsonParser(SyncHelper.readFile(filePath)).parse();
+                item = new JParser(SyncHelper.readFile(filePath)).parse();
                 uuId = item.getUuId();
                 readReminder();
             } else {
@@ -828,9 +828,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             String text = item.getSummary();
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
 
             if (exp == 1) dateExport.setChecked(true);
             if (expTasks == Constants.SYNC_GTASKS_ONLY)
@@ -925,9 +925,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
 
             eventTime = item.getStartTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -1072,9 +1072,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             String text = item.getSummary();
             ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             eventTime = item.getEventTime();
 
             if (exp == 1) weekExport.setChecked(true);
@@ -1250,12 +1250,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (item != null && isSame()) {
             String text = item.getSummary();
-            JsonExport jsonExport = item.getExport();
-            int  exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
-            JsonRecurrence jsonRecurrence = item.getRecurrence();
-            long repeat = jsonRecurrence.getRepeat();
-            long afterTime = jsonRecurrence.getAfter();
+            JExport jExport = item.getExport();
+            int  exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
+            JRecurrence jRecurrence = item.getRecurrence();
+            long repeat = jRecurrence.getRepeat();
+            long afterTime = jRecurrence.getAfter();
             exclusion = item.getExclusion().toString();
 
             timeString = TimeUtil.generateAfterString(afterTime);
@@ -1337,9 +1337,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             repeatCode = item.getRecurrence().getRepeat();
             eventTime = item.getStartTime();
 
@@ -1429,9 +1429,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             repeatCode = item.getRecurrence().getRepeat();
             eventTime = item.getStartTime();
 
@@ -1509,9 +1509,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             repeatCode = item.getRecurrence().getRepeat();
             eventTime = item.getStartTime();
 
@@ -1568,9 +1568,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             repeatCode = item.getRecurrence().getRepeat();
             eventTime = item.getStartTime();
 
@@ -1628,12 +1628,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         if (item != null && isSame()) {
             String text = item.getSummary();
-            JsonAction jsonAction = item.getAction();
-            String mailContact = jsonAction.getTarget();
-            String subjectT = jsonAction.getSubject();
-            JsonExport jsonExport = item.getExport();
-            int exp = jsonExport.getCalendar();
-            int expTasks = jsonExport.getgTasks();
+            JAction jAction = item.getAction();
+            String mailContact = jAction.getTarget();
+            String subjectT = jAction.getSubject();
+            JExport jExport = item.getExport();
+            int exp = jExport.getCalendar();
+            int expTasks = jExport.getgTasks();
             repeatCode = item.getRecurrence().getRepeat();
             eventTime = item.getStartTime();
 
@@ -1796,11 +1796,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonPlace jsonPlace = item.getPlace();
-            double latitude = jsonPlace.getLatitude();
-            double longitude = jsonPlace.getLongitude();
+            JPlace jPlace = item.getPlace();
+            double latitude = jPlace.getLatitude();
+            double longitude = jPlace.getLongitude();
             eventTime = item.getStartTime();
-            radius = jsonPlace.getRadius();
+            radius = jPlace.getRadius();
 
             if (item != null && eventTime > 0) {
                 dateViewLocation.setDateTime(updateCalendar(eventTime, true));
@@ -1958,11 +1958,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (item != null && isSame()) {
             String text = item.getSummary();
             String number = item.getAction().getTarget();
-            JsonPlace jsonPlace = item.getPlace();
-            double latitude = jsonPlace.getLatitude();
-            double longitude = jsonPlace.getLongitude();
+            JPlace jPlace = item.getPlace();
+            double latitude = jPlace.getLatitude();
+            double longitude = jPlace.getLongitude();
             eventTime = item.getStartTime();
-            radius = jsonPlace.getRadius();
+            radius = jPlace.getRadius();
 
             if (item != null && eventTime > 0) {
                 dateViewLocationOut.setDateTime(updateCalendar(eventTime, true));
@@ -2156,7 +2156,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Save new or update current reminder.
      */
     private void save() {
-        JsonModel item = getData();
+        JModel item = getData();
         if (item == null) return;
         if (id != 0) remControl.save(id, item);
         else {
@@ -2334,10 +2334,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * Create reminder object.
      * @return Reminder object
      */
-    private JsonModel getData() {
+    private JModel getData() {
         String type = getType();
         if (type != null) {
-            ArrayList<JsonShopping> jsonShoppings = new ArrayList<>();
+            ArrayList<JShopping> jShoppings = new ArrayList<>();
             if (isShoppingAttached()){
                 if (shoppingLists.getCount() == 0) {
                     Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
@@ -2349,7 +2349,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         long time = shoppingList.getTime();
                         int status = shoppingList.getIsChecked();
                         int deleted = shoppingList.getStatus();
-                        jsonShoppings.add(new JsonShopping(title, status, uuid, time, deleted));
+                        jShoppings.add(new JShopping(title, status, uuid, time, deleted));
                     }
                 }
                 if (!isShoppingReminder) {
@@ -2502,20 +2502,20 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             int auto = getAuto();
             if (repeat == 0) repeats = -1;
 
-            JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
-            JsonLed jsonLed = new JsonLed(ledColor, ledColor == -1 ? 0 : 1);
-            JsonMelody jsonMelody = new JsonMelody(melody, volume);
-            JsonRecurrence jsonRecurrence = new JsonRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
-            JsonAction jsonAction = new JsonAction(type, number, auto, subjectString);
-            JsonExport jsonExport = new JsonExport(gTaskSync, calendarSync, null);
-            JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, style);
+            JExclusion jExclusion = new JExclusion(exclusion);
+            JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
+            JMelody jMelody = new JMelody(melody, volume);
+            JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
+            JAction jAction = new JAction(type, number, auto, subjectString);
+            JExport jExport = new JExport(gTaskSync, calendarSync, null);
+            JPlace jPlace = new JPlace(latitude, longitude, radius, style);
 
             Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
             Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
 
-            return new JsonModel(task, type, categoryId, uuId, startTime, startTime, 0, vibro,
-                    notification, voice, wake, unlock, jsonExclusion, jsonLed, jsonMelody,
-                    jsonRecurrence, jsonAction, jsonExport, jsonPlace, null, null, jsonShoppings);
+            return new JModel(task, type, categoryId, uuId, startTime, startTime, 0, vibro,
+                    notification, voice, wake, unlock, jExclusion, jLed, jMelody,
+                    jRecurrence, jAction, jExport, jPlace, null, null, jShoppings);
         } else return null;
     }
 
@@ -3201,7 +3201,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private void setExclusion(String jsonObject){
         if (jsonObject != null) {
-            JsonExclusion recurrence = new JsonExclusion(jsonObject);
+            JExclusion recurrence = new JExclusion(jsonObject);
             if (recurrence.getHours() != null) {
                 selectExclusion.setText(String.format(getString(R.string.excluded_hours_x), recurrence.getHours().toString()));
                 exclusionClear.setVisibility(View.VISIBLE);

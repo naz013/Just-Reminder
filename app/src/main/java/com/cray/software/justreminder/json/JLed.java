@@ -18,7 +18,7 @@ import org.json.JSONObject;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonLed {
+public class JLed {
 
     /**
      * JSON keys.
@@ -33,14 +33,14 @@ public class JsonLed {
      */
     private JSONObject jsonObject;
 
-    public JsonLed(JSONObject jsonObject){
+    public JLed(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             parse(jsonObject);
         }
     }
 
-    public JsonLed(String object){
+    public JLed(String object){
         if (object != null) {
             try {
                 jsonObject = new JSONObject(object);
@@ -51,13 +51,13 @@ public class JsonLed {
         }
     }
 
-    public JsonLed(){
+    public JLed(){
         jsonObject = new JSONObject();
         setColor(0);
         setStatus(-1);
     }
 
-    public JsonLed(int color, int status){
+    public JLed(int color, int status){
         jsonObject = new JSONObject();
         setColor(color);
         setStatus(status);

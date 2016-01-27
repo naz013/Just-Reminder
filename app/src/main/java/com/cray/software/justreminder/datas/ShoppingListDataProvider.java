@@ -6,7 +6,7 @@ import android.database.Cursor;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.json.JsonShopping;
+import com.cray.software.justreminder.json.JShopping;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ public class ShoppingListDataProvider {
         this.mContext = mContext;
     }
 
-    public ShoppingListDataProvider(ArrayList<JsonShopping> datas, boolean hidden){
+    public ShoppingListDataProvider(ArrayList<JShopping> datas, boolean hidden){
         this.data = new ArrayList<>();
         this.hidden = hidden;
         loadFromList(datas);
@@ -100,10 +100,10 @@ public class ShoppingListDataProvider {
         return data;
     }
 
-    public void loadFromList(ArrayList<JsonShopping> jsonShoppings) {
+    public void loadFromList(ArrayList<JShopping> jShoppings) {
         data = new ArrayList<>();
         data.clear();
-        for (JsonShopping item : jsonShoppings) {
+        for (JShopping item : jShoppings) {
             if (!hidden) {
                 int deleted = item.getDeleted();
                 if (deleted == ShoppingList.ACTIVE) {

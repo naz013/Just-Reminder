@@ -14,9 +14,9 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -37,7 +37,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
         if (code == 2) {
-            JsonModel reminder = new Type(context).getItem(id);
+            JModel reminder = new Type(context).getItem(id);
             String exclusion = reminder.getExclusion().toString();
             if (exclusion != null){
                 Recurrence helper = new Recurrence(exclusion);
@@ -48,7 +48,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                 }
             } else start(context, id);
         } else if (code == 1) {
-            JsonRecurrence reminder = new Type(context).getItem(id).getRecurrence();
+            JRecurrence reminder = new Type(context).getItem(id).getRecurrence();
             ArrayList<Integer> weekdays = reminder.getWeekdays();
             if (weekdays != null && weekdays.size() > 0) {
                 if (TimeCount.isDay(weekdays)) start(context, id);
@@ -81,7 +81,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
             due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            repeat = new JsonParser(json).getRecurrence().getRepeat();
+            repeat = new JParser(json).getRecurrence().getRepeat();
             if (type.matches(Constants.TYPE_TIME))
                 code = 2;
 

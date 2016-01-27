@@ -17,8 +17,8 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -41,9 +41,9 @@ public class RepeatNotificationReceiver extends WakefulBroadcastReceiver {
                 String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                 String type = c.getString(c.getColumnIndex(NextBase.TYPE));
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                JsonModel jsonModel = new JsonParser(json).parse();
-                String melody = jsonModel.getMelody().getMelodyPath();
-                int color = jsonModel.getLed().getColor();
+                JModel jModel = new JParser(json).parse();
+                String melody = jModel.getMelody().getMelodyPath();
+                int color = jModel.getLed().getColor();
                 showNotification(context, task, type, id, color, melody);
             }
             if (c != null) c.close();

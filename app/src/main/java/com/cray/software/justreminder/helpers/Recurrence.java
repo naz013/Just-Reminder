@@ -16,7 +16,7 @@
 
 package com.cray.software.justreminder.helpers;
 
-import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;
@@ -25,10 +25,10 @@ import java.util.List;
 
 public class Recurrence {
 
-    private JsonExclusion recurrence;
+    private JExclusion recurrence;
 
     public Recurrence(String jsonObject){
-        recurrence = new JsonExclusion(jsonObject);
+        recurrence = new JExclusion(jsonObject);
     }
 
     /**

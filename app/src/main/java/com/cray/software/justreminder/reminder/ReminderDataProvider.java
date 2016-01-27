@@ -12,9 +12,9 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.hexrain.flextcal.Events;
 import com.hexrain.flextcal.FlextHelper;
@@ -126,8 +126,8 @@ public class ReminderDataProvider {
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
                 Log.d(Constants.LOG_TAG, "Json ---- " + json);
-                JsonModel jsonModel = new JsonParser(json).parse();
-                data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
+                JModel jModel = new JParser(json).parse();
+                data.add(new ReminderModel(id, jModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -163,12 +163,12 @@ public class ReminderDataProvider {
                     long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
 
                     if (!mType.contains(Constants.TYPE_LOCATION)) {
-                        JsonModel jsonModel = new JsonParser(json).parse();
-                        JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
-                        long repeatTime = jsonRecurrence.getRepeat();
-                        long limit = jsonRecurrence.getLimit();
-                        long count = jsonModel.getCount();
-                        int myDay = jsonRecurrence.getMonthday();
+                        JModel jModel = new JParser(json).parse();
+                        JRecurrence jRecurrence = jModel.getRecurrence();
+                        long repeatTime = jRecurrence.getRepeat();
+                        long limit = jRecurrence.getLimit();
+                        long count = jModel.getCount();
+                        int myDay = jRecurrence.getMonthday();
                         boolean isLimited = limit > 0;
 
                         if (eventTime > 0) {
@@ -182,7 +182,7 @@ public class ReminderDataProvider {
                                 long days = 0;
                                 long max = Configs.MAX_DAYS_COUNT;
                                 if (isLimited) max = limit - count;
-                                ArrayList<Integer> list = jsonRecurrence.getWeekdays();
+                                ArrayList<Integer> list = jRecurrence.getWeekdays();
                                 do {
                                     calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
                                             AlarmManager.INTERVAL_DAY);
@@ -279,12 +279,12 @@ public class ReminderDataProvider {
                 long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
 
                 if (!mType.contains(Constants.TYPE_LOCATION)) {
-                    JsonModel jsonModel = new JsonParser(json).parse();
-                    JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
-                    long repeatTime = jsonRecurrence.getRepeat();
-                    long limit = jsonRecurrence.getLimit();
-                    long count = jsonModel.getCount();
-                    int myDay = jsonRecurrence.getMonthday();
+                    JModel jModel = new JParser(json).parse();
+                    JRecurrence jRecurrence = jModel.getRecurrence();
+                    long repeatTime = jRecurrence.getRepeat();
+                    long limit = jRecurrence.getLimit();
+                    long count = jModel.getCount();
+                    int myDay = jRecurrence.getMonthday();
                     boolean isLimited = limit > 0;
 
                     Calendar calendar1 = Calendar.getInstance();
@@ -298,7 +298,7 @@ public class ReminderDataProvider {
                             long days = 0;
                             long max = Configs.MAX_DAYS_COUNT;
                             if (isLimited) max = limit - count;
-                            ArrayList<Integer> list = jsonRecurrence.getWeekdays();
+                            ArrayList<Integer> list = jRecurrence.getWeekdays();
                             do {
                                 calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
                                         AlarmManager.INTERVAL_DAY);
@@ -425,8 +425,8 @@ public class ReminderDataProvider {
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-            JsonModel jsonModel = new JsonParser(json).parse();
-            item = new ReminderModel(id, jsonModel, catColor, archived, completed, viewType);
+            JModel jModel = new JParser(json).parse();
+            item = new ReminderModel(id, jModel, catColor, archived, completed, viewType);
         }
         if (c != null) c.close();
         db.close();

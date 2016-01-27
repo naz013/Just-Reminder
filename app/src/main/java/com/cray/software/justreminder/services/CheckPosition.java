@@ -16,8 +16,8 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.utils.LocationUtil;
 
 public class CheckPosition extends IntentService {
@@ -55,10 +55,10 @@ public class CheckPosition extends IntentService {
                 int shown = c.getInt(c.getColumnIndex(NextBase.NOTIFICATION_STATUS));
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
 
-                JsonPlace jsonPlace = new JsonParser(json).getPlace();
-                double lat = jsonPlace.getLatitude();
-                double lon = jsonPlace.getLongitude();
-                int radius = jsonPlace.getRadius();
+                JPlace jPlace = new JParser(json).getPlace();
+                double lat = jPlace.getLatitude();
+                double lon = jPlace.getLongitude();
+                int radius = jPlace.getRadius();
 
                 int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
                 if (radius == -1) radius = stockRadius;

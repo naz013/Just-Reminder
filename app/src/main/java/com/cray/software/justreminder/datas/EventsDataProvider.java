@@ -12,9 +12,9 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JRecurrence;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -154,14 +154,14 @@ public class EventsDataProvider {
                 if (map.containsKey(category)) color = map.get(category);
 
                 if (!mType.contains(Constants.TYPE_LOCATION)) {
-                    JsonModel jsonModel = new JsonParser(json).parse();
-                    JsonRecurrence jsonRecurrence = jsonModel.getRecurrence();
-                    long repeatTime = jsonRecurrence.getRepeat();
-                    long limit = jsonRecurrence.getLimit();
-                    long count = jsonModel.getCount();
-                    int myDay = jsonRecurrence.getMonthday();
+                    JModel jModel = new JParser(json).parse();
+                    JRecurrence jRecurrence = jModel.getRecurrence();
+                    long repeatTime = jRecurrence.getRepeat();
+                    long limit = jRecurrence.getLimit();
+                    long count = jModel.getCount();
+                    int myDay = jRecurrence.getMonthday();
                     boolean isLimited = limit > 0;
-                    String number = jsonModel.getAction().getTarget();
+                    String number = jModel.getAction().getTarget();
 
                     Calendar calendar1 = Calendar.getInstance();
                     calendar1.setTimeInMillis(eventTime);
@@ -179,7 +179,7 @@ public class EventsDataProvider {
                             long days = 0;
                             long max = Configs.MAX_DAYS_COUNT;
                             if (isLimited) max = limit - count;
-                            ArrayList<Integer> list = jsonRecurrence.getWeekdays();
+                            ArrayList<Integer> list = jRecurrence.getWeekdays();
                             do {
                                 calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
                                         AlarmManager.INTERVAL_DAY);

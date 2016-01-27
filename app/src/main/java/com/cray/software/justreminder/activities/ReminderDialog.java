@@ -51,11 +51,11 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
-import com.cray.software.justreminder.json.JsonAction;
-import com.cray.software.justreminder.json.JsonLed;
-import com.cray.software.justreminder.json.JsonMelody;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JAction;
+import com.cray.software.justreminder.json.JLed;
+import com.cray.software.justreminder.json.JMelody;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -95,7 +95,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private int mStream;
 
     private Type reminder;
-    private JsonModel item;
+    private JModel item;
 
     private ShoppingListDataProvider provider;
 
@@ -164,22 +164,22 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         if (item != null) {
             task = item.getSummary();
             reminderType = item.getType();
-            JsonAction jsonAction = item.getAction();
-            number = jsonAction.getTarget();
-            subject = jsonAction.getSubject();
-            JsonMelody jsonMelody = item.getMelody();
-            melody = jsonMelody.getMelodyPath();
-            JsonRecurrence jsonRecurrence = item.getRecurrence();
-            repeaCode = jsonRecurrence.getRepeat();
-            JsonLed jsonLed = item.getLed();
-            color = jsonLed.getColor();
+            JAction jAction = item.getAction();
+            number = jAction.getTarget();
+            subject = jAction.getSubject();
+            JMelody jMelody = item.getMelody();
+            melody = jMelody.getMelodyPath();
+            JRecurrence jRecurrence = item.getRecurrence();
+            repeaCode = jRecurrence.getRepeat();
+            JLed jLed = item.getLed();
+            color = jLed.getColor();
             vibration = item.getVibrate();
             voice = item.getVoice();
             notificationRepeat = item.getNotificationRepeat();
             wake = item.getAwake();
             unlock = item.getUnlock();
-            auto = jsonAction.getAuto();
-            limit = jsonRecurrence.getLimit();
+            auto = jAction.getAuto();
+            limit = jRecurrence.getLimit();
             count = item.getCount();
         } else {
             notifier.discardNotification(id);

@@ -19,32 +19,31 @@ package com.cray.software.justreminder.json;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonAction {
+public class JExport {
 
     /**
      * JSON keys.
      */
-    private static final String TYPE = "_type";
-    private static final String SUBJECT = "subject";
-    private static final String TARGET = "target";
-    private static final String AUTO = "_auto";
+    private static final String GTASKS = "g_tasks";
+    private static final String CALENDAR = "to_calendar";
+    private static final String CALENDAR_ID = "calendar_id";
 
-    private String type, target, subject;
-    private int auto;
+    private int gTasks, calendar;
+    private String calendarId;
 
     /**
      * JSON object.
      */
     private JSONObject jsonObject;
 
-    public JsonAction(JSONObject jsonObject){
+    public JExport(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             parse(jsonObject);
         }
     }
 
-    public JsonAction(String object){
+    public JExport(String object){
         if (object != null) {
             try {
                 jsonObject = new JSONObject(object);
@@ -55,47 +54,38 @@ public class JsonAction {
         }
     }
 
-    public JsonAction(){
+    public JExport(){
         jsonObject = new JSONObject();
-        setAuto(-1);
-        setTarget(null);
-        setType(null);
-        setSubject(null);
+        setGtasks(0);
+        setCalendar(0);
+        setCalendarId(null);
     }
 
-    public JsonAction(String type, String target, int auto, String subject){
+    public JExport(int gTasks, int calendar, String calendarId){
         jsonObject = new JSONObject();
-        setAuto(auto);
-        setTarget(target);
-        setType(type);
-        setSubject(subject);
+        setGtasks(gTasks);
+        setCalendar(calendar);
+        setCalendarId(calendarId);
     }
 
     private void parse(JSONObject jsonObject) {
-        if (jsonObject.has(TYPE)) {
+        if (jsonObject.has(CALENDAR_ID)) {
             try {
-                type = jsonObject.getString(TYPE);
+                calendarId = jsonObject.getString(CALENDAR_ID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(TARGET)){
+        if (jsonObject.has(GTASKS)){
             try {
-                target = jsonObject.getString(TARGET);
+                gTasks = jsonObject.getInt(GTASKS);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(SUBJECT)){
+        if (jsonObject.has(CALENDAR)){
             try {
-                subject = jsonObject.getString(SUBJECT);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        if (jsonObject.has(AUTO)){
-            try {
-                auto = jsonObject.getInt(AUTO);
+                calendar = jsonObject.getInt(CALENDAR);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -128,55 +118,42 @@ public class JsonAction {
         this.jsonObject = jsonObject;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setCalendar(int calendar) {
+        this.calendar = calendar;
         try {
-            jsonObject.put(TARGET, target);
+            jsonObject.put(CALENDAR, calendar);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setGtasks(int gTasks) {
+        this.gTasks = gTasks;
         try {
-            jsonObject.put(SUBJECT, subject);
+            jsonObject.put(GTASKS, gTasks);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setCalendarId(String calendarId) {
+        this.calendarId = calendarId;
         try {
-            jsonObject.put(TYPE, type);
+            jsonObject.put(CALENDAR_ID, calendarId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setAuto(int auto) {
-        this.auto = auto;
-        try {
-            jsonObject.put(AUTO, auto);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public String getCalendarId() {
+        return calendarId;
     }
 
-    public String getSubject() {
-        return subject;
+    public int getCalendar() {
+        return calendar;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public int getAuto() {
-        return auto;
+    public int getgTasks() {
+        return gTasks;
     }
 }

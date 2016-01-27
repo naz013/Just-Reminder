@@ -42,7 +42,7 @@ import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JsonShopping;
+import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -67,7 +67,7 @@ public class ShopsPreview extends AppCompatActivity {
 
     private long id;
     private boolean isHidden = false;
-    private ArrayList<JsonShopping> list;
+    private ArrayList<JShopping> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

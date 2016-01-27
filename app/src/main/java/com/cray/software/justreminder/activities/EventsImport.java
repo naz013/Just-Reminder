@@ -32,8 +32,8 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -305,10 +305,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             calendar.setTimeInMillis(dtStart);
                             if (dtStart >= currTime){
                                 eventsCount += 1;
-                                JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
-                                JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
-                                        dtStart, jsonRecurrence, null, null);
-                                long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
+                                JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
+                                JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                        dtStart, jRecurrence, null, null);
+                                long id = new DateType(context, Constants.TYPE_REMINDER).save(jModel);
                                 DB.addCalendarEvent(null, id, item.getId());
                             } else {
                                 if (repeat > 0) {
@@ -317,10 +317,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                         dtStart = calendar.getTimeInMillis();
                                     } while (dtStart < currTime);
                                     eventsCount += 1;
-                                    JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
-                                    JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
-                                            dtStart, jsonRecurrence, null, null);
-                                    long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
+                                    JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
+                                    JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                            dtStart, jRecurrence, null, null);
+                                    long id = new DateType(context, Constants.TYPE_REMINDER).save(jModel);
                                     DB.addCalendarEvent(null, id, item.getId());
                                 }
                             }

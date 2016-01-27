@@ -29,7 +29,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -293,9 +293,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         db.close();
 
         long due = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        JsonModel jsonModel = new JsonModel(text, type, categoryId,
+        JModel jModel = new JModel(text, type, categoryId,
                 SyncHelper.generateID(), due, due, null, null, null);
-        long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
+        long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(jModel);
         boolean cal = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         if (cal || stock) {

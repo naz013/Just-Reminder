@@ -23,9 +23,9 @@ import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.configs.CurrentTaskWidgetConfig;
@@ -72,18 +72,18 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                 long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
 
-                JsonModel jsonModel = new JsonParser(json).parse();
-                JsonPlace jsonPlace = jsonModel.getPlace();
+                JModel jModel = new JParser(json).parse();
+                JPlace jPlace = jModel.getPlace();
 
-                ArrayList<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
-                String exclusion = jsonModel.getExclusion().toString();
+                ArrayList<Integer> weekdays = jModel.getRecurrence().getWeekdays();
+                String exclusion = jModel.getExclusion().toString();
 
                 String time = "";
                 String date = "";
                 int viewType = 1;
                 if (mType.contains(Constants.TYPE_LOCATION)) {
-                    date = String.format("%.5f", jsonPlace.getLatitude());
-                    time = String.format("%.5f", jsonPlace.getLongitude());
+                    date = String.format("%.5f", jPlace.getLatitude());
+                    time = String.format("%.5f", jPlace.getLongitude());
                 } else {
                     boolean is24 = new SharedPrefs(mContext)
                             .loadBoolean(Prefs.IS_24_TIME_FORMAT);
@@ -100,7 +100,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                         time = TimeUtil.getTime(calendar1.getTime(), is24);
                     } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
                         viewType = 2;
-                        map.put(id, new ShoppingListDataProvider(jsonModel.getShoppings(), false).getData());
+                        map.put(id, new ShoppingListDataProvider(jModel.getShoppings(), false).getData());
                     } else {
                         String[] dT = mCount.getNextDateTime(eventTime);
                         date = dT[0];
@@ -114,7 +114,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                     }
                 }
 
-                data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
+                data.add(new CalendarModel(summary, jModel.getAction().getTarget(),
                         id, time, date, eventTime, viewType));
             } while (c.moveToNext());
         }

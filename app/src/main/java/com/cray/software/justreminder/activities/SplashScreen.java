@@ -27,15 +27,15 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JsonAction;
-import com.cray.software.justreminder.json.JsonExclusion;
-import com.cray.software.justreminder.json.JsonExport;
-import com.cray.software.justreminder.json.JsonLed;
-import com.cray.software.justreminder.json.JsonMelody;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
-import com.cray.software.justreminder.json.JsonRecurrence;
-import com.cray.software.justreminder.json.JsonShopping;
+import com.cray.software.justreminder.json.JAction;
+import com.cray.software.justreminder.json.JExclusion;
+import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JLed;
+import com.cray.software.justreminder.json.JMelody;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -284,7 +284,7 @@ public class SplashScreen extends Activity{
                     continue;
                 }
 
-                JsonParser parser = new JsonParser();
+                JParser parser = new JParser();
                 parser.setCategory(catId);
                 parser.setCount(count);
                 parser.setAwakeScreen(wake);
@@ -299,42 +299,42 @@ public class SplashScreen extends Activity{
                 parser.setUuid(uuId);
 
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                    List<JsonShopping> list = new ArrayList<>();
+                    List<JShopping> list = new ArrayList<>();
                     ArrayList<ShoppingList> shoppingLists =
                             ShoppingListDataProvider.load(SplashScreen.this, id);
                     for (ShoppingList item : shoppingLists){
-                        JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
+                        JShopping jShopping = new JShopping(item.getTitle(),
                                 item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
-                        list.add(jsonShopping);
+                        list.add(jShopping);
                     }
                     parser.setShopping(list);
                 }
 
-                JsonAction jsonAction = new JsonAction(type, number, auto, null);
-                parser.setAction(jsonAction);
+                JAction jAction = new JAction(type, number, auto, null);
+                parser.setAction(jAction);
 
-                JsonExport jsonExport = new JsonExport(expTasks, exp, null);
-                parser.setExport(jsonExport);
+                JExport jExport = new JExport(expTasks, exp, null);
+                parser.setExport(jExport);
 
-                JsonMelody jsonMelody = new JsonMelody(melody, -1);
-                parser.setMelody(jsonMelody);
+                JMelody jMelody = new JMelody(melody, -1);
+                parser.setMelody(jMelody);
 
                 int status = ledColor != -1 ? 1 : 0;
-                JsonLed jsonLed = new JsonLed(ledColor, status);
-                parser.setLed(jsonLed);
+                JLed jLed = new JLed(ledColor, status);
+                parser.setLed(jLed);
 
-                JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
-                parser.setPlace(jsonPlace);
+                JPlace jPlace = new JPlace(latitude, longitude, radius, -1);
+                parser.setPlace(jPlace);
 
-                JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
-                parser.setExclusion(jsonExclusion);
+                JExclusion jExclusion = new JExclusion(exclusion);
+                parser.setExclusion(jExclusion);
 
-                JsonRecurrence jsonRecurrence = new JsonRecurrence();
-                jsonRecurrence.setWeekdays(listW);
-                jsonRecurrence.setLimit(limit);
-                jsonRecurrence.setMonthday(myDay);
-                jsonRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);
-                parser.setRecurrence(jsonRecurrence);
+                JRecurrence jRecurrence = new JRecurrence();
+                jRecurrence.setWeekdays(listW);
+                jRecurrence.setLimit(limit);
+                jRecurrence.setMonthday(myDay);
+                jRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);
+                parser.setRecurrence(jRecurrence);
 
                 String json = parser.toJsonString();
 

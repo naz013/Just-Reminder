@@ -68,7 +68,7 @@ import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
-import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -903,9 +903,9 @@ public class ScreenManager extends AppCompatActivity
                 db.close();
                 long after = new SharedPrefs(ScreenManager.this).loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
                 long due = calendar1.getTimeInMillis() + after;
-                JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
+                JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
                         SyncHelper.generateID(), due, due, null, null, null);
-                long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jsonModel);
+                long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jModel);
                 NotesBase base = new NotesBase(ScreenManager.this);
                 base.open();
                 base.linkToReminder(noteId, remId);

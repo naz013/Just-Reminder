@@ -39,7 +39,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -432,9 +432,9 @@ public class TaskManager extends AppCompatActivity {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(myYear, myMonth, myDay, myHour, myMinute);
         long due = calendar.getTimeInMillis();
-        JsonModel jsonModel = new JsonModel(task, Constants.TYPE_REMINDER, categoryId,
+        JModel jModel = new JModel(task, Constants.TYPE_REMINDER, categoryId,
                 SyncHelper.generateID(), due, due, null, null, null);
-        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jsonModel);
+        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jModel);
     }
 
     private void deleteDialog() {

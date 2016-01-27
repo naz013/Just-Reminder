@@ -5,9 +5,9 @@ import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonShopping;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JShopping;
 
 import java.util.ArrayList;
 
@@ -71,19 +71,19 @@ public class ShoppingList {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonParser jsonParser = new JsonParser(json);
-            JsonModel jsonModel = jsonParser.parse();
-            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
-            for (JsonShopping shopping : shoppings) {
+            JParser jParser = new JParser(json);
+            JModel jModel = jParser.parse();
+            ArrayList<JShopping> shoppings = jModel.getShoppings();
+            for (JShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setStatus(checked ? 1 : 0);
                     break;
                 }
             }
 
-            jsonModel.setShoppings(shoppings);
-            jsonParser.toJsonString(jsonModel);
-            db.setJson(id, jsonParser.toJsonString());
+            jModel.setShoppings(shoppings);
+            jParser.toJsonString(jModel);
+            db.setJson(id, jParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -100,19 +100,19 @@ public class ShoppingList {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonParser jsonParser = new JsonParser(json);
-            JsonModel jsonModel = jsonParser.parse();
-            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
-            for (JsonShopping shopping : shoppings) {
+            JParser jParser = new JParser(json);
+            JModel jModel = jParser.parse();
+            ArrayList<JShopping> shoppings = jModel.getShoppings();
+            for (JShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setDeleted(DELETED);
                     break;
                 }
             }
 
-            jsonModel.setShoppings(shoppings);
-            jsonParser.toJsonString(jsonModel);
-            db.setJson(id, jsonParser.toJsonString());
+            jModel.setShoppings(shoppings);
+            jParser.toJsonString(jModel);
+            db.setJson(id, jParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -129,19 +129,19 @@ public class ShoppingList {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonParser jsonParser = new JsonParser(json);
-            JsonModel jsonModel = jsonParser.parse();
-            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
-            for (JsonShopping shopping : shoppings) {
+            JParser jParser = new JParser(json);
+            JModel jModel = jParser.parse();
+            ArrayList<JShopping> shoppings = jModel.getShoppings();
+            for (JShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
                     shopping.setDeleted(ACTIVE);
                     break;
                 }
             }
 
-            jsonModel.setShoppings(shoppings);
-            jsonParser.toJsonString(jsonModel);
-            db.setJson(id, jsonParser.toJsonString());
+            jModel.setShoppings(shoppings);
+            jParser.toJsonString(jModel);
+            db.setJson(id, jParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -159,18 +159,18 @@ public class ShoppingList {
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JsonParser jsonParser = new JsonParser(json);
-            JsonModel jsonModel = jsonParser.parse();
-            ArrayList<JsonShopping> shoppings = jsonModel.getShoppings();
+            JParser jParser = new JParser(json);
+            JModel jModel = jParser.parse();
+            ArrayList<JShopping> shoppings = jModel.getShoppings();
             for (int i = 0; i < shoppings.size(); i++) {
                 if (shoppings.get(i).getUuId().matches(uuId)) {
                     shoppings.remove(i);
                     break;
                 }
             }
-            jsonModel.setShoppings(shoppings);
-            jsonParser.toJsonString(jsonModel);
-            db.setJson(id, jsonParser.toJsonString());
+            jModel.setShoppings(shoppings);
+            jParser.toJsonString(jModel);
+            db.setJson(id, jParser.toJsonString());
         }
         if (c != null) c.close();
         db.close();
@@ -189,7 +189,7 @@ public class ShoppingList {
         Cursor c = db.getReminder(remId);
         if (c != null && c.moveToFirst()){
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            ids = new JsonParser(json).getShoppingKeys();
+            ids = new JParser(json).getShoppingKeys();
         }
         if (c != null) c.close();
         db.close();

@@ -31,8 +31,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -219,10 +219,10 @@ public class QuickAddReminder extends AppCompatActivity {
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
-        JsonModel jsonModel = new JsonModel(text, type, categoryId,
-                SyncHelper.generateID(), startTime, startTime, jsonRecurrence, null, null);
-        long remId = new DateType(QuickAddReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
+        JRecurrence jRecurrence = new JRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
+        JModel jModel = new JModel(text, type, categoryId,
+                SyncHelper.generateID(), startTime, startTime, jRecurrence, null, null);
+        long remId = new DateType(QuickAddReminder.this, Constants.TYPE_REMINDER).save(jModel);
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }

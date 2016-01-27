@@ -9,8 +9,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JsonParser;
-import com.cray.software.justreminder.json.JsonPlace;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -74,11 +74,11 @@ public class PlaceDataProvider {
                 int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
                 int isArch = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
                 if (isArch == 0 && isDone == 0) {
-                    JsonPlace jsonPlace = new JsonParser(json).getPlace();
-                    double latitude = jsonPlace.getLatitude();
-                    double longitude = jsonPlace.getLongitude();
-                    int style = jsonPlace.getMarker();
-                    int radius = jsonPlace.getRadius();
+                    JPlace jPlace = new JParser(json).getPlace();
+                    double latitude = jPlace.getLatitude();
+                    double longitude = jPlace.getLongitude();
+                    int style = jPlace.getMarker();
+                    int radius = jPlace.getRadius();
                     if (radius == -1) {
                         radius = mRadius;
                     }

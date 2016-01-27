@@ -1,7 +1,15 @@
 package com.cray.software.justreminder.json;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -18,35 +26,34 @@ import org.json.JSONObject;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonShopping {
+public class JRecurrence {
 
     /**
      * JSON keys.
      */
-    private static final String SUMMARY = "summary";
-    private static final String STATUS = "status_";
-    private static final String DELETED = "deleted_";
-    private static final String UUID = "uuid_s";
-    private static final String DATE = "date";
+    private static final String REPEAT = "repeat";
+    private static final String AFTER = "after";
+    private static final String WEEKDAYS = "weekdays";
+    private static final String MONTHDAY = "month_day";
+    private static final String LIMIT = "limit";
 
-    private int status, deleted;
-    private String summary;
-    private String uuId;
-    private long dateTime;
+    private int monthday;
+    private long repeat, limit, after;
+    private ArrayList<Integer> weekdays;
 
     /**
      * JSON object.
      */
     private JSONObject jsonObject;
 
-    public JsonShopping(JSONObject jsonObject){
+    public JRecurrence(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             parse(jsonObject);
         }
     }
 
-    public JsonShopping(String object){
+    public JRecurrence(String object){
         if (object != null) {
             try {
                 jsonObject = new JSONObject(object);
@@ -57,56 +64,58 @@ public class JsonShopping {
         }
     }
 
-    public JsonShopping(){
+    public JRecurrence(){
         jsonObject = new JSONObject();
-        setSummary(null);
-        setStatus(0);
-        setUuId(null);
-        setDateTime(0);
-        setDeleted(0);
+        setMonthday(0);
+        setRepeat(0);
+        setLimit(-1);
+        setWeekdays(null);
+        setAfter(0);
     }
 
-    public JsonShopping(String summary, int status, String uuId, long dateTime, int deleted){
+    public JRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays, long after){
         jsonObject = new JSONObject();
-        setSummary(summary);
-        setStatus(status);
-        setUuId(uuId);
-        setDateTime(dateTime);
-        setDeleted(deleted);
+        setMonthday(monthday);
+        setRepeat(repeat);
+        setLimit(limit);
+        setWeekdays(weekdays);
+        setAfter(after);
     }
 
     private void parse(JSONObject jsonObject) {
-        if (jsonObject.has(SUMMARY)) {
+        if (jsonObject.has(REPEAT)) {
             try {
-                summary = jsonObject.getString(SUMMARY);
+                repeat = jsonObject.getLong(REPEAT);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(STATUS)){
+        if (jsonObject.has(AFTER)) {
             try {
-                status = jsonObject.getInt(STATUS);
+                after = jsonObject.getLong(AFTER);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(DELETED)){
+        if (jsonObject.has(LIMIT)) {
             try {
-                deleted = jsonObject.getInt(DELETED);
+                limit = jsonObject.getLong(LIMIT);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(DATE)){
+        if (jsonObject.has(MONTHDAY)){
             try {
-                dateTime = jsonObject.getLong(DATE);
+                monthday = jsonObject.getInt(MONTHDAY);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(UUID)) {
+
+        if (jsonObject.has(WEEKDAYS)){
+            Type collectionType = new TypeToken<List<Integer>>() {}.getType();
             try {
-                uuId = jsonObject.getString(UUID);
+                weekdays = new Gson().fromJson(jsonObject.get(WEEKDAYS).toString(), collectionType);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -139,68 +148,72 @@ public class JsonShopping {
         this.jsonObject = jsonObject;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setLimit(long limit) {
+        this.limit = limit;
         try {
-            jsonObject.put(STATUS, status);
+            jsonObject.put(LIMIT, limit);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setDeleted(int deleted) {
-        this.deleted = deleted;
+    public void setMonthday(int monthday) {
+        this.monthday = monthday;
         try {
-            jsonObject.put(DELETED, deleted);
+            jsonObject.put(MONTHDAY, monthday);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setRepeat(long repeat) {
+        this.repeat = repeat;
         try {
-            jsonObject.put(SUMMARY, summary);
+            jsonObject.put(REPEAT, repeat);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setUuId(String uuId) {
-        this.uuId = uuId;
+    public void setAfter(long after) {
+        this.after = after;
         try {
-            jsonObject.put(UUID, uuId);
+            jsonObject.put(AFTER, after);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setDateTime(long dateTime) {
-        this.dateTime = dateTime;
-        try {
-            jsonObject.put(DATE, dateTime);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public void setWeekdays(ArrayList<Integer> weekdays) {
+        if (weekdays != null) {
+            this.weekdays = weekdays;
+            JSONArray jsonArray = new JSONArray();
+            for (int day : weekdays) jsonArray.put(day);
+            try {
+                jsonObject.put(WEEKDAYS, jsonArray);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public int getDeleted() {
-        return deleted;
+    public long getAfter() {
+        return after;
     }
 
-    public String getUuId() {
-        return uuId;
+    public ArrayList<Integer> getWeekdays() {
+        return weekdays;
     }
 
-    public long getDateTime() {
-        return dateTime;
+    public int getMonthday() {
+        return monthday;
     }
 
-    public int getStatus() {
-        return status;
+    public long getLimit() {
+        return limit;
     }
 
-    public String getSummary() {
-        return summary;
+    public long getRepeat() {
+        return repeat;
     }
 }

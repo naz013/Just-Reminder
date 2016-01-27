@@ -18,7 +18,7 @@ import android.widget.ToggleButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.json.JsonExclusion;
+import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -96,7 +96,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
 
     private void saveResult() {
         if (selectHours.isChecked()) {
-            JsonExclusion recurrence = new JsonExclusion();
+            JExclusion recurrence = new JExclusion();
             List<Integer> list = getSelectedList();
             if(list.size() == 0) {
                 Messages.toast(this, "You don't check any hours!");
@@ -109,7 +109,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             finish();
         }
         if (selectInterval.isChecked()) {
-            JsonExclusion recurrence = new JsonExclusion();
+            JExclusion recurrence = new JExclusion();
             recurrence.addExclusion(getHour(fromHour, fromMinute), getHour(toHour, toMinute));
             Intent i = new Intent();
             i.putExtra("excl", recurrence.toString());

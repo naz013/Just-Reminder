@@ -21,10 +21,10 @@ import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.dialogs.BirthdaysVoiceList;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceResult;
-import com.cray.software.justreminder.json.JsonAction;
-import com.cray.software.justreminder.json.JsonExport;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JAction;
+import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.settings.SettingsActivity;
@@ -1925,11 +1925,11 @@ public class Recognizer {
         String uuID = SyncHelper.generateID();
         sPrefs = new SharedPrefs(mContext);
         long due = ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, after);
-        JsonRecurrence jsonRecurrence = new JsonRecurrence(dayOfMonth, 0, -1, null, after);
-        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
-        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_TIME, categoryId, uuID, due,
-                due, jsonRecurrence, null, jsonExport);
-        long id = new DateType(mContext, Constants.TYPE_TIME).save(jsonModel);
+        JRecurrence jRecurrence = new JRecurrence(dayOfMonth, 0, -1, null, after);
+        JExport jExport = new JExport(0, export ? 1 : 0, null);
+        JModel jModel = new JModel(summary, Constants.TYPE_TIME, categoryId, uuID, due,
+                due, jRecurrence, null, jExport);
+        long id = new DateType(mContext, Constants.TYPE_TIME).save(jModel);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
             exportToCalendar(summary, due, id);
@@ -1955,11 +1955,11 @@ public class Recognizer {
         sPrefs = new SharedPrefs(mContext);
         if (repeat < 10000) repeat *= AlarmManager.INTERVAL_DAY;
         long due = ReminderUtils.getTime(dayOfMonth, monthOfYear, mYear, hourOfDay, minuteOfHour, 0);
-        JsonRecurrence jsonRecurrence = new JsonRecurrence(dayOfMonth, repeat, -1, null, 0);
-        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
-        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
-                due, jsonRecurrence, null, jsonExport);
-        long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
+        JRecurrence jRecurrence = new JRecurrence(dayOfMonth, repeat, -1, null, 0);
+        JExport jExport = new JExport(0, export ? 1 : 0, null);
+        JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
+                due, jRecurrence, null, jExport);
+        long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
             exportToCalendar(summary, due, id);
@@ -3085,10 +3085,10 @@ public class Recognizer {
             sPrefs = new SharedPrefs(mContext);
             long after = sPrefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
-            JsonRecurrence jsonRecurrence = new JsonRecurrence(0, 0, -1, null, after);
-            JsonModel jsonModel = new JsonModel(res, Constants.TYPE_REMINDER, categoryId,
-                    SyncHelper.generateID(), due, due, jsonRecurrence, null, null);
-            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
+            JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);
+            JModel jModel = new JModel(res, Constants.TYPE_REMINDER, categoryId,
+                    SyncHelper.generateID(), due, due, jRecurrence, null, null);
+            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
         }
         db.linkToReminder(id, remId);
         db.close();
@@ -3181,11 +3181,11 @@ public class Recognizer {
         if (cf != null) cf.close();
         DB.close();
 
-        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
-        JsonAction jsonAction = new JsonAction(type, number, -1, null);
-        JsonModel jsonModel = new JsonModel(summary, type,
-                categoryId, uuID, due, due, null, jsonAction, jsonExport);
-        long id = new DateType(mContext, type).save(jsonModel);
+        JExport jExport = new JExport(0, export ? 1 : 0, null);
+        JAction jAction = new JAction(type, number, -1, null);
+        JModel jModel = new JModel(summary, type,
+                categoryId, uuID, due, due, null, jAction, jExport);
+        long id = new DateType(mContext, type).save(jModel);
         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
             exportToCalendar(summary, due, id);
@@ -3297,11 +3297,11 @@ public class Recognizer {
                         ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
                         long due = new TimeCount(mContext).getNextWeekdayTime(calendar.getTimeInMillis(),
                                 list, 0);
-                        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, 0, -1, list, 0);
-                        JsonExport jsonExport = new JsonExport(0, export ? 1 : 0, null);
-                        JsonModel jsonModel = new JsonModel(res, Constants.TYPE_WEEKDAY, categoryId, uuID, due,
-                                due, jsonRecurrence, null, jsonExport);
-                        long id = new DateType(mContext, Constants.TYPE_WEEKDAY).save(jsonModel);
+                        JRecurrence jRecurrence = new JRecurrence(0, 0, -1, list, 0);
+                        JExport jExport = new JExport(0, export ? 1 : 0, null);
+                        JModel jModel = new JModel(res, Constants.TYPE_WEEKDAY, categoryId, uuID, due,
+                                due, jRecurrence, null, jExport);
+                        long id = new DateType(mContext, Constants.TYPE_WEEKDAY).save(jModel);
                         if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
                                 sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)) && export) {
                             exportToCalendar(res, due, id);

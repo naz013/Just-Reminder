@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class JsonExclusion {
+public class JExclusion {
 
     /**
      * JSON keys.
@@ -43,14 +43,14 @@ public class JsonExclusion {
      */
     private JSONObject jsonObject;
 
-    public JsonExclusion(JSONObject jsonObject){
+    public JExclusion(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             parse(jsonObject);
         }
     }
 
-    public JsonExclusion(String object){
+    public JExclusion(String object){
         if (object != null) {
             try {
                 jsonObject = new JSONObject(object);
@@ -61,13 +61,13 @@ public class JsonExclusion {
         }
     }
 
-    public JsonExclusion(){
+    public JExclusion(){
         jsonObject = new JSONObject();
         addExclusion(null, null);
         addExclusion(null);
     }
 
-    public JsonExclusion(String from, String to){
+    public JExclusion(String from, String to){
         jsonObject = new JSONObject();
         addExclusion(from, to);
     }

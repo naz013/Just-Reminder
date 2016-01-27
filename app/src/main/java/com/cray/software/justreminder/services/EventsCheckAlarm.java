@@ -14,8 +14,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JsonModel;
-import com.cray.software.justreminder.json.JsonRecurrence;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 
@@ -118,10 +118,10 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
                         if (cf != null) cf.close();
 
                         long due = item.getDtStart() + (repeat * AlarmManager.INTERVAL_DAY);
-                        JsonRecurrence jsonRecurrence = new JsonRecurrence(0, repeat, -1, null, 0);
-                        JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
-                                due, jsonRecurrence, null, null);
-                        long id = new DateType(context, Constants.TYPE_REMINDER).save(jsonModel);
+                        JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
+                        JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
+                                due, jRecurrence, null, null);
+                        long id = new DateType(context, Constants.TYPE_REMINDER).save(jModel);
                         db.addCalendarEvent(null, id, item.getId());
                     }
                 }

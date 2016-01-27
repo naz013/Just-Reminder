@@ -18,32 +18,30 @@ import org.json.JSONObject;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonPlace {
+public class JMelody {
 
     /**
      * JSON keys.
      */
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
-    private static final String MARKER = "marker";
-    private static final String RADIUS = "radius";
+    private static final String VOLUME = "melody";
+    private static final String PATH = "path";
 
-    private int radius, marker;
-    private double latitude, longitude;
+    private int volume;
+    private String melodyPath;
 
     /**
      * JSON object.
      */
     private JSONObject jsonObject;
 
-    public JsonPlace(JSONObject jsonObject){
+    public JMelody(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             parse(jsonObject);
         }
     }
 
-    public JsonPlace(String object){
+    public JMelody(String object){
         if (object != null) {
             try {
                 jsonObject = new JSONObject(object);
@@ -54,48 +52,29 @@ public class JsonPlace {
         }
     }
 
-    public JsonPlace(){
+    public JMelody(){
         jsonObject = new JSONObject();
-        setLatitude(0.0);
-        setLongitude(0.0);
-        setRadius(-1);
-        setMarker(-1);
+        setMelodyPath(null);
+        setVolume(-1);
     }
 
-    public JsonPlace(double latitude, double longitude, int radius, int marker){
+    public JMelody(String melodyPath, int volume){
         jsonObject = new JSONObject();
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setRadius(radius);
-        setMarker(marker);
+        setMelodyPath(melodyPath);
+        setVolume(volume);
     }
 
     private void parse(JSONObject jsonObject) {
-        if (jsonObject.has(MARKER)) {
+        if (jsonObject.has(VOLUME)) {
             try {
-                marker = jsonObject.getInt(MARKER);
+                volume = jsonObject.getInt(VOLUME);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        if (jsonObject.has(RADIUS)) {
+        if (jsonObject.has(PATH)){
             try {
-                radius = jsonObject.getInt(RADIUS);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        if (jsonObject.has(LATITUDE)){
-            try {
-                latitude = jsonObject.getDouble(LATITUDE);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (jsonObject.has(LONGITUDE)){
-            try {
-                longitude = jsonObject.getDouble(LONGITUDE);
+                melodyPath = jsonObject.getString(PATH);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -128,55 +107,29 @@ public class JsonPlace {
         this.jsonObject = jsonObject;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setMelodyPath(String melodyPath) {
+        this.melodyPath = melodyPath;
         try {
-            jsonObject.put(LATITUDE, latitude);
+            jsonObject.put(PATH, melodyPath);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setVolume(int volume) {
+        this.volume = volume;
         try {
-            jsonObject.put(LONGITUDE, longitude);
+            jsonObject.put(VOLUME, volume);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setMarker(int marker) {
-        this.marker = marker;
-        try {
-            jsonObject.put(MARKER, marker);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public int getVolume() {
+        return volume;
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
-        try {
-            jsonObject.put(RADIUS, radius);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public int getMarker() {
-        return marker;
+    public String getMelodyPath() {
+        return melodyPath;
     }
 }

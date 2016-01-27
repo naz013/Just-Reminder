@@ -31,7 +31,7 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonParser {
+public class JParser {
 
     /**
      * JSON keys.
@@ -65,12 +65,12 @@ public class JsonParser {
 
     private JSONObject jsonObject;
 
-    public JsonParser() {
+    public JParser() {
         jsonObject = new JSONObject();
         setVersion();
     }
 
-    public JsonParser(String jsonObject) {
+    public JParser(String jsonObject) {
         try {
             this.jsonObject = new JSONObject(jsonObject);
             setVersion();
@@ -79,7 +79,7 @@ public class JsonParser {
         }
     }
 
-    public JsonParser(JSONObject jsonObject) {
+    public JParser(JSONObject jsonObject) {
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
             setVersion();
@@ -96,7 +96,7 @@ public class JsonParser {
         }
     }
 
-    public JsonModel parse(){
+    public JModel parse(){
         if (jsonObject.has(Constants.COLUMN_TEXT)) {
             try {
                 return modelFromOld();
@@ -105,7 +105,7 @@ public class JsonParser {
             }
         } else {
             long start = System.currentTimeMillis();
-            JsonModel model = new JsonModel();
+            JModel model = new JModel();
             model.setAction(getAction());
             model.setExport(getExport());
             model.setSummary(getSummary());
@@ -133,7 +133,7 @@ public class JsonParser {
         }
     }
 
-    private JsonModel modelFromOld() throws JSONException {
+    private JModel modelFromOld() throws JSONException {
         long start = System.currentTimeMillis();
         String text = null;
         if (!jsonObject.isNull(Constants.COLUMN_TEXT)) {
@@ -204,54 +204,54 @@ public class JsonParser {
 
         long due = ReminderUtils.getTime(day, month, year, hour, minute, 0);
 
-        JsonModel jsonModel = new JsonModel();
-        jsonModel.setCategory(categoryId);
-        jsonModel.setCount(count);
-        jsonModel.setAwake(wake);
-        jsonModel.setUnlock(unlock);
-        jsonModel.setNotificationRepeat(notificationRepeat);
-        jsonModel.setVibrate(vibration);
-        jsonModel.setNotificationRepeat(voice);
-        jsonModel.setSummary(text);
-        jsonModel.setType(type);
-        jsonModel.setEventTime(due);
-        jsonModel.setStartTime(due);
-        jsonModel.setUuId(uuID);
+        JModel jModel = new JModel();
+        jModel.setCategory(categoryId);
+        jModel.setCount(count);
+        jModel.setAwake(wake);
+        jModel.setUnlock(unlock);
+        jModel.setNotificationRepeat(notificationRepeat);
+        jModel.setVibrate(vibration);
+        jModel.setNotificationRepeat(voice);
+        jModel.setSummary(text);
+        jModel.setType(type);
+        jModel.setEventTime(due);
+        jModel.setStartTime(due);
+        jModel.setUuId(uuID);
 
-        JsonAction jsonAction = new JsonAction(type, number, auto, null);
-        jsonModel.setAction(jsonAction);
+        JAction jAction = new JAction(type, number, auto, null);
+        jModel.setAction(jAction);
 
-        JsonExport jsonExport = new JsonExport(0, 0, null);
-        jsonModel.setExport(jsonExport);
+        JExport jExport = new JExport(0, 0, null);
+        jModel.setExport(jExport);
 
-        JsonMelody jsonMelody = new JsonMelody(melody, -1);
-        jsonModel.setMelody(jsonMelody);
+        JMelody jMelody = new JMelody(melody, -1);
+        jModel.setMelody(jMelody);
 
-        JsonLed jsonLed = new JsonLed(-1, 0);
-        jsonModel.setLed(jsonLed);
+        JLed jLed = new JLed(-1, 0);
+        jModel.setLed(jLed);
 
-        JsonPlace jsonPlace = new JsonPlace(latitude, longitude, radius, -1);
-        jsonModel.setPlace(jsonPlace);
+        JPlace jPlace = new JPlace(latitude, longitude, radius, -1);
+        jModel.setPlace(jPlace);
 
-        JsonExclusion jsonExclusion = new JsonExclusion(exclusion);
-        jsonModel.setExclusion(jsonExclusion);
+        JExclusion jExclusion = new JExclusion(exclusion);
+        jModel.setExclusion(jExclusion);
 
-        JsonRecurrence jsonRecurrence = new JsonRecurrence();
+        JRecurrence jRecurrence = new JRecurrence();
         if (weekdays != null) {
             ArrayList<Integer> list = new ArrayList<>();
             for (char c1 : weekdays.toCharArray()) {
                 list.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
             }
-            jsonRecurrence.setWeekdays(list);
+            jRecurrence.setWeekdays(list);
         }
-        jsonRecurrence.setLimit(limit);
-        jsonRecurrence.setMonthday(day);
-        jsonRecurrence.setRepeat(repeatCode * TimeCount.DAY);
-        jsonRecurrence.setAfter(repMinute);
-        jsonModel.setRecurrence(jsonRecurrence);
+        jRecurrence.setLimit(limit);
+        jRecurrence.setMonthday(day);
+        jRecurrence.setRepeat(repeatCode * TimeCount.DAY);
+        jRecurrence.setAfter(repMinute);
+        jModel.setRecurrence(jRecurrence);
 
         if (jsonObject.has("shopping_list")) {
-            ArrayList<JsonShopping> list = new ArrayList<>();
+            ArrayList<JShopping> list = new ArrayList<>();
             JSONObject listObject = jsonObject.getJSONObject("shopping_list");
             ArrayList<ShoppingList> arrayList = new ArrayList<>();
             Iterator<?> keys = listObject.keys();
@@ -270,17 +270,17 @@ public class JsonParser {
             }
 
             for (ShoppingList item : arrayList){
-                JsonShopping jsonShopping = new JsonShopping(item.getTitle(),
+                JShopping jShopping = new JShopping(item.getTitle(),
                         item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
-                list.add(jsonShopping);
+                list.add(jShopping);
             }
-            jsonModel.setShoppings(list);
+            jModel.setShoppings(list);
         }
         //Log.d("------TIME_F------", "Parsing time - " + (System.currentTimeMillis() - start));
-        return jsonModel;
+        return jModel;
     }
 
-    public String toJsonString(JsonModel model) {
+    public String toJsonString(JModel model) {
         setUuid(model.getUuId());
         setSummary(model.getSummary());
         setType(model.getType());
@@ -394,7 +394,7 @@ public class JsonParser {
         }
     }
 
-    public void setExport(JsonExport export) {
+    public void setExport(JExport export) {
         try {
             jsonObject.put(EXPORT, export.getJsonObject());
         } catch (JSONException e) {
@@ -416,7 +416,7 @@ public class JsonParser {
         }
     }
 
-    public void setRecurrence(JsonRecurrence recurrence) {
+    public void setRecurrence(JRecurrence recurrence) {
         try {
             jsonObject.put(RECURRENCE, recurrence.getJsonObject());
         } catch (JSONException e) {
@@ -424,7 +424,7 @@ public class JsonParser {
         }
     }
 
-    public void setMelody(JsonMelody melody) {
+    public void setMelody(JMelody melody) {
         try {
             jsonObject.put(MELODY, melody.getJsonObject());
         } catch (JSONException e) {
@@ -432,7 +432,7 @@ public class JsonParser {
         }
     }
 
-    public void setExclusion(JsonExclusion exclusion) {
+    public void setExclusion(JExclusion exclusion) {
         try {
             jsonObject.put(EXCLUSION, exclusion.getJsonObject());
         } catch (JSONException e) {
@@ -440,7 +440,7 @@ public class JsonParser {
         }
     }
 
-    public void setLed(JsonLed led) {
+    public void setLed(JLed led) {
         try {
             jsonObject.put(LED, led.getJsonObject());
         } catch (JSONException e) {
@@ -448,7 +448,7 @@ public class JsonParser {
         }
     }
 
-    public void setAction(JsonAction action) {
+    public void setAction(JAction action) {
         try {
             jsonObject.put(ACTION, action.getJsonObject());
         } catch (JSONException e) {
@@ -456,18 +456,18 @@ public class JsonParser {
         }
     }
 
-    public void setPlace(JsonPlace jsonPlace) {
+    public void setPlace(JPlace jPlace) {
         try {
-            jsonObject.put(PLACE, jsonPlace.getJsonObject());
+            jsonObject.put(PLACE, jPlace.getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void setPlaces(List<JsonPlace> list) {
+    public void setPlaces(List<JPlace> list) {
         if (list != null) {
             JSONArray array = new JSONArray();
-            for (JsonPlace place : list) {
+            for (JPlace place : list) {
                 array.put(place.getJsonObject());
             }
             try {
@@ -478,11 +478,11 @@ public class JsonParser {
         }
     }
 
-    public void setShopping(List<JsonShopping> list) {
+    public void setShopping(List<JShopping> list) {
         if (list != null) {
             JSONObject array = new JSONObject();
             try {
-                for (JsonShopping shopping : list) {
+                for (JShopping shopping : list) {
                     array.put(shopping.getUuId(), shopping.getJsonObject());
                 }
             } catch (JSONException e) {
@@ -514,15 +514,15 @@ public class JsonParser {
         return null;
     }
 
-    public ArrayList<JsonShopping> getShoppings() {
+    public ArrayList<JShopping> getShoppings() {
         if (jsonObject.has(SHOPPING)) {
             try {
-                ArrayList<JsonShopping> places = new ArrayList<>();
+                ArrayList<JShopping> places = new ArrayList<>();
                 JSONObject object = jsonObject.getJSONObject(SHOPPING);
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next();
-                    places.add(new JsonShopping(object.getJSONObject(key)));
+                    places.add(new JShopping(object.getJSONObject(key)));
                 }
                 return places;
             } catch (JSONException e) {
@@ -532,64 +532,64 @@ public class JsonParser {
         return null;
     }
 
-    public JsonRecurrence getRecurrence() {
+    public JRecurrence getRecurrence() {
         if (jsonObject.has(RECURRENCE)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(RECURRENCE);
-                return new JsonRecurrence(object);
+                return new JRecurrence(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonRecurrence();
+        return new JRecurrence();
     }
 
-    public JsonExport getExport() {
+    public JExport getExport() {
         if (jsonObject.has(EXPORT)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(EXPORT);
-                return new JsonExport(object);
+                return new JExport(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonExport();
+        return new JExport();
     }
 
-    public JsonPlace getPlace() {
+    public JPlace getPlace() {
         if (jsonObject.has(PLACE)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(PLACE);
-                return new JsonPlace(object);
+                return new JPlace(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonPlace();
+        return new JPlace();
     }
 
-    public JsonExclusion getExclusion() {
+    public JExclusion getExclusion() {
         if (jsonObject.has(EXCLUSION)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(EXCLUSION);
-                return new JsonExclusion(object);
+                return new JExclusion(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonExclusion();
+        return new JExclusion();
     }
 
-    public JsonLed getLed() {
+    public JLed getLed() {
         if (jsonObject.has(LED)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(LED);
-                return new JsonLed(object);
+                return new JLed(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonLed();
+        return new JLed();
     }
 
     public long getEventTime() {
@@ -679,15 +679,15 @@ public class JsonParser {
         return -1;
     }
 
-    public List<JsonPlace> getPlaces() {
+    public List<JPlace> getPlaces() {
         if (jsonObject.has(PLACES)) {
             try {
-                List<JsonPlace> places = new ArrayList<>();
+                List<JPlace> places = new ArrayList<>();
                 JSONObject object = jsonObject.getJSONObject(PLACES);
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next();
-                    places.add(new JsonPlace(object.getJSONObject(key)));
+                    places.add(new JPlace(object.getJSONObject(key)));
                 }
                 return places;
             } catch (JSONException e) {
@@ -730,16 +730,16 @@ public class JsonParser {
         return null;
     }
 
-    public JsonMelody getMelody() {
+    public JMelody getMelody() {
         if (jsonObject.has(MELODY)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(MELODY);
-                return new JsonMelody(object);
+                return new JMelody(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonMelody();
+        return new JMelody();
     }
 
     public int getNotificationRepeat() {
@@ -753,16 +753,16 @@ public class JsonParser {
         return -1;
     }
 
-    public JsonAction getAction() {
+    public JAction getAction() {
         if (jsonObject.has(ACTION)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(ACTION);
-                return new JsonAction(object);
+                return new JAction(object);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return new JsonAction();
+        return new JAction();
     }
 
     public List<String> getTags() {

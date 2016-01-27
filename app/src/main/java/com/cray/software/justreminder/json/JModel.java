@@ -18,17 +18,17 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class JsonModel {
+public class JModel {
 
-    private List<JsonPlace> places;
-    private ArrayList<JsonShopping> shoppings;
-    private JsonExclusion exclusion;
-    private JsonLed led;
-    private JsonMelody melody;
-    private JsonRecurrence recurrence;
-    private JsonAction action;
-    private JsonExport export;
-    private JsonPlace place;
+    private List<JPlace> places;
+    private ArrayList<JShopping> shoppings;
+    private JExclusion exclusion;
+    private JLed led;
+    private JMelody melody;
+    private JRecurrence recurrence;
+    private JAction action;
+    private JExport export;
+    private JPlace place;
     private List<String> tags;
     private String summary;
     private String type;
@@ -43,12 +43,12 @@ public class JsonModel {
     private int awake;
     private int unlock;
 
-    public JsonModel() {
+    public JModel() {
     }
 
-    public JsonModel(String summary, String type, String category, String uuId,
-                     long eventTime, long startTime, JsonRecurrence jsonRecurrence,
-                     JsonAction jsonAction, JsonExport jsonExport) {
+    public JModel(String summary, String type, String category, String uuId,
+                  long eventTime, long startTime, JRecurrence jRecurrence,
+                  JAction jAction, JExport jExport) {
         this.summary = summary;
         this.type = type;
         this.category = category;
@@ -64,22 +64,22 @@ public class JsonModel {
         this.exclusion = null;
         this.led = null;
         this.melody = null;
-        this.recurrence = jsonRecurrence;
-        this.action = jsonAction;
-        this.export = jsonExport;
+        this.recurrence = jRecurrence;
+        this.action = jAction;
+        this.export = jExport;
         this.place = null;
         this.tags = null;
         this.places = null;
         this.shoppings = null;
     }
 
-    public JsonModel(String summary, String type, String category, String uuId,
-                     long eventTime, long startTime, long count, int vibrate,
-                     int notificationRepeat, int voice, int awake, int unlock,
-                     JsonExclusion jsonExclusion, JsonLed jsonLed, JsonMelody jsonMelody,
-                     JsonRecurrence jsonRecurrence, JsonAction jsonAction, JsonExport jsonExport,
-                     JsonPlace jsonPlace, List<String> tags, List<JsonPlace> places,
-                     ArrayList<JsonShopping> shoppings) {
+    public JModel(String summary, String type, String category, String uuId,
+                  long eventTime, long startTime, long count, int vibrate,
+                  int notificationRepeat, int voice, int awake, int unlock,
+                  JExclusion jExclusion, JLed jLed, JMelody jMelody,
+                  JRecurrence jRecurrence, JAction jAction, JExport jExport,
+                  JPlace jPlace, List<String> tags, List<JPlace> places,
+                  ArrayList<JShopping> shoppings) {
         this.summary = summary;
         this.type = type;
         this.category = category;
@@ -92,13 +92,13 @@ public class JsonModel {
         this.voice = voice;
         this.awake = awake;
         this.unlock = unlock;
-        this.exclusion = jsonExclusion;
-        this.led = jsonLed;
-        this.melody = jsonMelody;
-        this.recurrence = jsonRecurrence;
-        this.action = jsonAction;
-        this.export = jsonExport;
-        this.place = jsonPlace;
+        this.exclusion = jExclusion;
+        this.led = jLed;
+        this.melody = jMelody;
+        this.recurrence = jRecurrence;
+        this.action = jAction;
+        this.export = jExport;
+        this.place = jPlace;
         this.tags = tags;
         this.places = places;
         this.shoppings = shoppings;
@@ -112,15 +112,15 @@ public class JsonModel {
         this.startTime = startTime;
     }
 
-    public JsonPlace getPlace() {
+    public JPlace getPlace() {
         return place;
     }
 
-    public void setPlace(JsonPlace place) {
+    public void setPlace(JPlace place) {
         this.place = place;
     }
 
-    public JsonExport getExport() {
+    public JExport getExport() {
         return export;
     }
 
@@ -132,31 +132,31 @@ public class JsonModel {
         return summary;
     }
 
-    public JsonAction getAction() {
+    public JAction getAction() {
         return action;
     }
 
-    public JsonExclusion getExclusion() {
+    public JExclusion getExclusion() {
         return exclusion;
     }
 
-    public JsonLed getLed() {
+    public JLed getLed() {
         return led;
     }
 
-    public JsonMelody getMelody() {
+    public JMelody getMelody() {
         return melody;
     }
 
-    public JsonRecurrence getRecurrence() {
+    public JRecurrence getRecurrence() {
         return recurrence;
     }
 
-    public List<JsonPlace> getPlaces() {
+    public List<JPlace> getPlaces() {
         return places;
     }
 
-    public ArrayList<JsonShopping> getShoppings() {
+    public ArrayList<JShopping> getShoppings() {
         return shoppings;
     }
 
@@ -200,7 +200,7 @@ public class JsonModel {
         return uuId;
     }
 
-    public void setExclusion(JsonExclusion exclusion) {
+    public void setExclusion(JExclusion exclusion) {
         this.exclusion = exclusion;
     }
 
@@ -208,23 +208,23 @@ public class JsonModel {
         this.summary = summary;
     }
 
-    public void setAction(JsonAction action) {
+    public void setAction(JAction action) {
         this.action = action;
     }
 
-    public void setLed(JsonLed led) {
+    public void setLed(JLed led) {
         this.led = led;
     }
 
-    public void setMelody(JsonMelody melody) {
+    public void setMelody(JMelody melody) {
         this.melody = melody;
     }
 
-    public void setPlaces(List<JsonPlace> places) {
+    public void setPlaces(List<JPlace> places) {
         this.places = places;
     }
 
-    public void setRecurrence(JsonRecurrence recurrence) {
+    public void setRecurrence(JRecurrence recurrence) {
         this.recurrence = recurrence;
     }
 
@@ -232,7 +232,7 @@ public class JsonModel {
         this.type = type;
     }
 
-    public void setShoppings(ArrayList<JsonShopping> shoppings) {
+    public void setShoppings(ArrayList<JShopping> shoppings) {
         this.shoppings = shoppings;
     }
 
@@ -276,11 +276,11 @@ public class JsonModel {
         this.voice = voice;
     }
 
-    public void setExport(JsonExport export) {
+    public void setExport(JExport export) {
         this.export = export;
     }
 
-    public void setShopping(JsonShopping shopping) {
+    public void setShopping(JShopping shopping) {
         if (shoppings != null) shoppings.add(shopping);
         else {
             shoppings = new ArrayList<>();
