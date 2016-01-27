@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -116,3 +115,5 @@ dependencies {
     compile project(':shared')
     wearApp project(':wear')
 }
+
+apply plugin: 'com.google.gms.google-services'
