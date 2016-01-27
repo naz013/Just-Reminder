@@ -26,19 +26,8 @@ public class FlextGridAdapter extends BaseAdapter {
 	protected int month;
 	protected int year;
 	protected Context context;
-	protected ArrayList<DateTime> disableDates;
-	protected ArrayList<DateTime> selectedDates;
-
-	// Use internally, to make the search for date faster instead of using
-	// indexOf methods on ArrayList
-	protected HashMap<DateTime, Integer> disableDatesMap = new HashMap<>();
-	protected HashMap<DateTime, Integer> selectedDatesMap = new HashMap<>();
-
-	protected DateTime minDateTime;
-	protected DateTime maxDateTime;
 	protected DateTime today;
 	protected int startDayOfWeek;
-	protected boolean sixWeeksInCalendar;
 	protected Resources resources;
 	protected boolean isDark = false;
 	protected SharedPreferences prefs;
@@ -50,57 +39,16 @@ public class FlextGridAdapter extends BaseAdapter {
 	 * caldroidData belongs to Caldroid
 	 */
 	protected HashMap<String, Object> caldroidData;
-	/**
-	 * extraData belongs to client
-	 */
-	protected HashMap<String, Object> extraData;
 
 	public void setAdapterDateTime(DateTime dateTime) {
 		this.month = dateTime.getMonth();
 		this.year = dateTime.getYear();
-		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year,
-				startDayOfWeek, sixWeeksInCalendar);
+		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year, startDayOfWeek);
 	}
 
 	// GETTERS AND SETTERS
 	public ArrayList<DateTime> getDatetimeList() {
 		return datetimeList;
-	}
-
-	public DateTime getMinDateTime() {
-		return minDateTime;
-	}
-
-	public void setMinDateTime(DateTime minDateTime) {
-		this.minDateTime = minDateTime;
-	}
-
-	public DateTime getMaxDateTime() {
-		return maxDateTime;
-	}
-
-	public void setMaxDateTime(DateTime maxDateTime) {
-		this.maxDateTime = maxDateTime;
-	}
-
-	public ArrayList<DateTime> getDisableDates() {
-		return disableDates;
-	}
-
-	public void setDisableDates(ArrayList<DateTime> disableDates) {
-		this.disableDates = disableDates;
-	}
-
-	public ArrayList<DateTime> getSelectedDates() {
-		return selectedDates;
-	}
-
-	public void setSelectedDates(ArrayList<DateTime> selectedDates) {
-		this.selectedDates = selectedDates;
-	}
-
-	public HashMap<String, Object> getCaldroidData() {
-		return caldroidData;
 	}
 
 	public void setCaldroidData(HashMap<String, Object> caldroidData) {
@@ -110,14 +58,6 @@ public class FlextGridAdapter extends BaseAdapter {
 		populateFromCaldroidData();
 	}
 
-	public HashMap<String, Object> getExtraData() {
-		return extraData;
-	}
-
-	public void setExtraData(HashMap<String, Object> extraData) {
-		this.extraData = extraData;
-	}
-
 	/**
 	 * Constructor
 	 * 
@@ -125,23 +65,17 @@ public class FlextGridAdapter extends BaseAdapter {
 	 * @param month
 	 * @param year
 	 * @param caldroidData
-	 * @param extraData
 	 */
 	public FlextGridAdapter(Context context, int month, int year,
-							HashMap<String, Object> caldroidData,
-							HashMap<String, Object> extraData) {
+							HashMap<String, Object> caldroidData, boolean isDark) {
 		super();
 		this.month = month;
 		this.year = year;
 		this.context = context;
 		this.caldroidData = caldroidData;
-		this.extraData = extraData;
 		this.resources = context.getResources();
+        this.isDark = isDark;
 
-        prefs = context.getSharedPreferences("ui_settings", Context.MODE_PRIVATE);
-        isDark = prefs.getBoolean("dark_theme", false);
-
-		// Get data from caldroidData
 		populateFromCaldroidData();
 	}
 
@@ -150,36 +84,12 @@ public class FlextGridAdapter extends BaseAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	private void populateFromCaldroidData() {
-		disableDates = (ArrayList<DateTime>) caldroidData
-				.get(FlextCal.DISABLE_DATES);
-		if (disableDates != null) {
-			disableDatesMap.clear();
-			for (DateTime dateTime : disableDates) {
-				disableDatesMap.put(dateTime, 1);
-			}
-		}
-
-		selectedDates = (ArrayList<DateTime>) caldroidData
-				.get(FlextCal.SELECTED_DATES);
-		if (selectedDates != null) {
-			selectedDatesMap.clear();
-			for (DateTime dateTime : selectedDates) {
-				selectedDatesMap.put(dateTime, 1);
-			}
-		}
-
-		minDateTime = (DateTime) caldroidData.get(FlextCal._MIN_DATE_TIME);
-		maxDateTime = (DateTime) caldroidData.get(FlextCal._MAX_DATE_TIME);
 		startDayOfWeek = (Integer) caldroidData.get(FlextCal.START_DAY_OF_WEEK);
-		sixWeeksInCalendar = (Boolean) caldroidData.get(FlextCal.SIX_WEEKS_IN_CALENDAR);
-
         backgroundForToday = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TODAY_);
-
         textMapForEvents = (HashMap<DateTime, Events>) caldroidData
                 .get(FlextCal._EVENTS_);
 
-		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year,
-				startDayOfWeek, sixWeeksInCalendar);
+		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year, startDayOfWeek);
 	}
 
 	protected DateTime getToday() {
@@ -189,10 +99,7 @@ public class FlextGridAdapter extends BaseAdapter {
 		return today;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void setCustomResources(DateTime dateTime, TextView task1, TextView task2) {
-		// Set custom background resource
-
 		if (textMapForEvents != null) {
 			// Set it
 			if (textMapForEvents.containsKey(dateTime)) {
@@ -207,6 +114,7 @@ public class FlextGridAdapter extends BaseAdapter {
 					task2.setText(event.getTask());
 					task2.setBackgroundColor(event.getColor());
 				}
+				events.mPosition = 0;
 			}
 		}
 	}
@@ -228,22 +136,11 @@ public class FlextGridAdapter extends BaseAdapter {
             cellView.setTextColor(resources.getColor(android.R.color.black));
         }
 
-		// Get dateTime of this cell
 		DateTime dateTime = this.datetimeList.get(position);
 
-		// Set color of the dates in previous / next month
 		boolean notCurrent = dateTime.getMonth() != month;
 		if (notCurrent) {
 			cellView.setTextColor(resources.getColor(android.R.color.darker_gray));
-		}
-
-		// Customize for selected dates
-		if (selectedDates != null && selectedDatesMap.containsKey(dateTime)) {
-			if (isDark) {
-				cellView.setTextColor(resources.getColor(android.R.color.white));
-			} else {
-				cellView.setTextColor(resources.getColor(android.R.color.black));
-			}
 		}
 
 		if (dateTime.equals(getToday())) {
@@ -256,9 +153,8 @@ public class FlextGridAdapter extends BaseAdapter {
 			cellView.setBackgroundResource(android.R.color.transparent);
 		}
 
-		cellView.setText("" + dateTime.getDay());
+		cellView.setText(String.valueOf(dateTime.getDay()));
 
-		// Set custom color if required
 		if (!notCurrent) setCustomResources(dateTime, task1, task2);
 	}
 

@@ -576,8 +576,8 @@ public class ScreenManager extends AppCompatActivity
         } else {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
-        args.putBoolean(FlextCal.SIX_WEEKS_IN_CALENDAR, true);
         args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
+        args.putBoolean(FlextCal.DARK_THEME, mPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(ViewUtils.getColor(this, cSetter.colorCurrentCalendar()));
         replace(calendarView, mTag);
@@ -619,7 +619,6 @@ public class ScreenManager extends AppCompatActivity
 
         if (calendarView != null) {
             calendarView.refreshView();
-            calendarView.clearSelectedDates();
         }
 
         boolean isReminder = mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);

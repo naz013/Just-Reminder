@@ -39,8 +39,7 @@ public class MonthPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		DateGridFragment fragment = getFragments().get(position);
-		return fragment;
+		return getFragments().get(position);
 	}
 
     @Override

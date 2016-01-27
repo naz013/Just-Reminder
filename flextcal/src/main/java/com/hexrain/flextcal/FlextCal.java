@@ -2,9 +2,6 @@ package com.hexrain.flextcal;
 
 
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -12,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +24,10 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -61,7 +59,7 @@ public class FlextCal extends Fragment {
     /**
      * First day of month time
      */
-    private Time firstMonthTime = new Time();
+    private GregorianCalendar firstMonthTime = new GregorianCalendar();
 
     /**
      * Reuse formatter to print "MMMM yyyy" format
@@ -73,48 +71,30 @@ public class FlextCal extends Fragment {
     protected int month = -1;
     protected int year = -1;
 
-    protected DateTime minDateTime;
-    protected DateTime maxDateTime;
-
-    private boolean sixWeeksInCalendar = true;
-
-    protected boolean enableSwipe = true;
-    protected boolean showNavigationArrows = true;
-    protected boolean enableClickOnDisabledDates = false;
     protected boolean enableImage = true;
+    protected boolean isDark = true;
 
     protected ArrayList<DateTime> dateInMonthsList;
-    protected ArrayList<DateTime> disableDates = new ArrayList<>();
-    protected ArrayList<DateTime> selectedDates = new ArrayList<>();
 
     /**
      * Initial params key
      */
     public final static String MONTH = "month";
     public final static String YEAR = "year";
-    public final static String SHOW_NAVIGATION_ARROWS = "showNavigationArrows";
-    public final static String DISABLE_DATES = "disableDates";
-    public final static String SELECTED_DATES = "selectedDates";
-    public final static String MIN_DATE = "minDate";
-    public final static String MAX_DATE = "maxDate";
-    public final static String ENABLE_SWIPE = "enableSwipe";
     public final static String START_DAY_OF_WEEK = "startDayOfWeek";
-    public final static String SIX_WEEKS_IN_CALENDAR = "sixWeeksInCalendar";
-    public final static String ENABLE_CLICK_ON_DISABLED_DATES = "enableClickOnDisabledDates";
     public final static String ENABLE_IMAGES = "enableImages";
+    public final static String DARK_THEME = "dark_theme";
 
     /**
      * For internal use
      */
-    public final static String _MIN_DATE_TIME = "_minDateTime";
-    public final static String _MAX_DATE_TIME = "_maxDateTime";
     public final static String _BACKGROUND_FOR_TODAY_ = "_backgroundForToday";
     public final static String _EVENTS_ = "_events";
 
     /**
      * datePagerAdapters hold 4 adapters, meant to be reused
      */
-    protected ArrayList<FlextGridAdapter> datePagerAdapters = new ArrayList<>();
+    protected FlextGridAdapter[] datePagerAdapters = new FlextGridAdapter[4];
 
     /**
      * Declare views
@@ -127,11 +107,6 @@ public class FlextCal extends Fragment {
      * caldroidData belongs to Caldroid
      */
     protected HashMap<String, Object> caldroidData = new HashMap<>();
-
-    /**
-     * extraData belongs to client
-     */
-    protected HashMap<String, Object> extraData = new HashMap<>();
 
     @ColorInt protected int backgroundForToday = 0;
     protected HashMap<DateTime, Events> eventsMap = new HashMap<>();
@@ -157,8 +132,7 @@ public class FlextCal extends Fragment {
      * provide custom adapter here
      */
     public FlextGridAdapter getNewDatesGridAdapter(int month, int year) {
-        return new FlextGridAdapter(getActivity(), month, year,
-                getCaldroidData(), extraData);
+        return new FlextGridAdapter(getActivity(), month, year, getCaldroidData(), isDark);
     }
 
     /**
@@ -181,19 +155,11 @@ public class FlextCal extends Fragment {
     /**
      * caldroidData return data belong to Caldroid
      *
-     * @return
+     * @return map of calendar objects
      */
     public HashMap<String, Object> getCaldroidData() {
         caldroidData.clear();
-        caldroidData.put(DISABLE_DATES, disableDates);
-        caldroidData.put(SELECTED_DATES, selectedDates);
-        caldroidData.put(_MIN_DATE_TIME, minDateTime);
-        caldroidData.put(_MAX_DATE_TIME, maxDateTime);
         caldroidData.put(START_DAY_OF_WEEK, startDayOfWeek);
-        caldroidData.put(SIX_WEEKS_IN_CALENDAR,
-                sixWeeksInCalendar);
-
-        // Extra maps
         caldroidData.put(_BACKGROUND_FOR_TODAY_, backgroundForToday);
         caldroidData.put(_EVENTS_, eventsMap);
 
@@ -214,7 +180,7 @@ public class FlextCal extends Fragment {
     /**
      * Set caldroid listener when user click on a date
      *
-     * @param caldroidListener
+     * @param caldroidListener calendar events listener
      */
     public void setCaldroidListener(FlextListener caldroidListener) {
         this.caldroidListener = caldroidListener;
@@ -230,14 +196,6 @@ public class FlextCal extends Fragment {
         }
 
         refreshView();
-    }
-
-    /**
-     * To clear selectedDates. This method does not refresh view, need to
-     * explicitly call refreshView()
-     */
-    public void clearSelectedDates() {
-        selectedDates.clear();
     }
 
     protected ArrayList<String> getDaysOfWeek() {
@@ -262,7 +220,7 @@ public class FlextCal extends Fragment {
      * Callback to listener when date is valid (not disable, not outside of
      * min/max date)
      *
-     * @return
+     * @return OnItemClick listener
      */
     private AdapterView.OnItemClickListener getDateItemClickListener() {
         if (dateItemClickListener == null) {
@@ -270,21 +228,8 @@ public class FlextCal extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                                         int position, long id) {
-
                     DateTime dateTime = dateInMonthsList.get(position);
-
                     if (caldroidListener != null) {
-                        if (!enableClickOnDisabledDates) {
-                            if ((minDateTime != null && dateTime
-                                    .lt(minDateTime))
-                                    || (maxDateTime != null && dateTime
-                                    .gt(maxDateTime))
-                                    || (disableDates != null && disableDates
-                                    .indexOf(dateTime) != -1)) {
-                                return;
-                            }
-                        }
-
                         Date date = FlextHelper
                                 .convertDateTimeToDate(dateTime);
                         caldroidListener.onClickDate(date, view);
@@ -300,7 +245,7 @@ public class FlextCal extends Fragment {
      * Callback to listener when date is valid (not disable, not outside of
      * min/max date)
      *
-     * @return
+     * @return OnItemLongClick listener
      */
     private AdapterView.OnItemLongClickListener getDateItemLongClickListener() {
         if (dateItemLongClickListener == null) {
@@ -308,20 +253,8 @@ public class FlextCal extends Fragment {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent,
                                                View view, int position, long id) {
-
                     DateTime dateTime = dateInMonthsList.get(position);
-
                     if (caldroidListener != null) {
-                        if (!enableClickOnDisabledDates) {
-                            if ((minDateTime != null && dateTime
-                                    .lt(minDateTime))
-                                    || (maxDateTime != null && dateTime
-                                    .gt(maxDateTime))
-                                    || (disableDates != null && disableDates
-                                    .indexOf(dateTime) != -1)) {
-                                return false;
-                            }
-                        }
                         Date date = FlextHelper
                                 .convertDateTimeToDate(dateTime);
                         caldroidListener.onLongClickDate(date, view);
@@ -340,10 +273,10 @@ public class FlextCal extends Fragment {
      */
     protected void refreshMonthTitleTextView() {
         // Refresh title view
-        firstMonthTime.year = year;
-        firstMonthTime.month = month - 1;
-        firstMonthTime.monthDay = 1;
-        long millis = firstMonthTime.toMillis(true);
+        firstMonthTime.set(Calendar.YEAR, year);
+        firstMonthTime.set(Calendar.MONTH, month - 1);
+        firstMonthTime.set(Calendar.DAY_OF_MONTH, 1);
+        long millis = firstMonthTime.getTimeInMillis();
 
         // This is the method used by the platform Calendar app to get a
         // correctly localized month name for display on a wall calendar
@@ -378,13 +311,7 @@ public class FlextCal extends Fragment {
 
         // Refresh the date grid views
         for (FlextGridAdapter adapter : datePagerAdapters) {
-            // Reset caldroid data
             adapter.setCaldroidData(getCaldroidData());
-
-            // Reset extra data
-            adapter.setExtraData(extraData);
-
-            // Refresh view
             adapter.notifyDataSetChanged();
         }
     }
@@ -407,60 +334,10 @@ public class FlextCal extends Fragment {
             if (startDayOfWeek > 7) {
                 startDayOfWeek = startDayOfWeek % 7;
             }
-
-            // Should show arrow
-            showNavigationArrows = args
-                    .getBoolean(SHOW_NAVIGATION_ARROWS, true);
-
-            // Should enable swipe to change month
-            enableSwipe = args.getBoolean(ENABLE_SWIPE, true);
             enableImage = args.getBoolean(ENABLE_IMAGES, true);
-
-            // Get sixWeeksInCalendar
-            sixWeeksInCalendar = args.getBoolean(SIX_WEEKS_IN_CALENDAR, true);
-
-            // Get clickable setting
-            enableClickOnDisabledDates = args.getBoolean(
-                    ENABLE_CLICK_ON_DISABLED_DATES, false);
-
-            // Get disable dates
-            ArrayList<String> disableDateStrings = args
-                    .getStringArrayList(DISABLE_DATES);
-            if (disableDateStrings != null && disableDateStrings.size() > 0) {
-                disableDates.clear();
-                for (String dateString : disableDateStrings) {
-                    DateTime dt = FlextHelper.getDateTimeFromString(
-                            dateString, "yyyy-MM-dd");
-                    disableDates.add(dt);
-                }
-            }
-
-            // Get selected dates
-            ArrayList<String> selectedDateStrings = args
-                    .getStringArrayList(SELECTED_DATES);
-            if (selectedDateStrings != null && selectedDateStrings.size() > 0) {
-                selectedDates.clear();
-                for (String dateString : selectedDateStrings) {
-                    DateTime dt = FlextHelper.getDateTimeFromString(
-                            dateString, "yyyy-MM-dd");
-                    selectedDates.add(dt);
-                }
-            }
-
-            // Get min date and max date
-            String minDateTimeString = args.getString(MIN_DATE);
-            if (minDateTimeString != null) {
-                minDateTime = FlextHelper.getDateTimeFromString(
-                        minDateTimeString, null);
-            }
-
-            String maxDateTimeString = args.getString(MAX_DATE);
-            if (maxDateTimeString != null) {
-                maxDateTime = FlextHelper.getDateTimeFromString(
-                        maxDateTimeString, null);
-            }
-
+            isDark = args.getBoolean(DARK_THEME, true);
         }
+
         if (month == -1 || year == -1) {
             DateTime dateTime = DateTime.today(TimeZone.getDefault());
             month = dateTime.getMonth();
@@ -502,11 +379,16 @@ public class FlextCal extends Fragment {
         FlextGridAdapter adapter3 = getNewDatesGridAdapter(
                 prevDateTime.getMonth(), prevDateTime.getYear());
 
+        datePagerAdapters = new FlextGridAdapter[4];
         // Add to the array of adapters
-        datePagerAdapters.add(adapter0);
-        datePagerAdapters.add(adapter1);
-        datePagerAdapters.add(adapter2);
-        datePagerAdapters.add(adapter3);
+        datePagerAdapters[0] = adapter0;
+        datePagerAdapters[0].notifyDataSetChanged();
+        datePagerAdapters[1] = adapter1;
+        datePagerAdapters[1].notifyDataSetChanged();
+        datePagerAdapters[2] = adapter2;
+        datePagerAdapters[2].notifyDataSetChanged();
+        datePagerAdapters[3] = adapter3;
+        datePagerAdapters[3].notifyDataSetChanged();
 
         // Set adapters to the pageChangeListener so it can refresh the adapter
         // when page change
@@ -519,10 +401,7 @@ public class FlextCal extends Fragment {
                 .findViewById(R.id.months_infinite_pager);
 
         // Set enable swipe
-        dateViewPager.setEnabled(enableSwipe);
-
-        // Set if viewpager wrap around particular month or all months (6 rows)
-        dateViewPager.setSixWeeksInCalendar(sixWeeksInCalendar);
+        dateViewPager.setEnabled(true);
 
         // Set the numberOfDaysInMonth to dateViewPager so it can calculate the
         // height correctly
@@ -539,7 +418,7 @@ public class FlextCal extends Fragment {
         fragments = pagerAdapter.getFragments();
         for (int i = 0; i < NUMBER_OF_PAGES; i++) {
             DateGridFragment dateGridFragment = fragments.get(i);
-            FlextGridAdapter adapter = datePagerAdapters.get(i);
+            FlextGridAdapter adapter = datePagerAdapters[i];
             dateGridFragment.setGridAdapter(adapter);
             dateGridFragment.setOnItemClickListener(getDateItemClickListener());
             dateGridFragment
@@ -554,7 +433,11 @@ public class FlextCal extends Fragment {
         dateViewPager.setAdapter(infinitePagerAdapter);
 
         // Setup pageChangeListener
-        dateViewPager.setOnPageChangeListener(pageChangeListener);
+        if (FlextHelper.is21()) {
+            dateViewPager.addOnPageChangeListener(pageChangeListener);
+        } else {
+            dateViewPager.setOnPageChangeListener(pageChangeListener);
+        }
     }
 
 
@@ -582,8 +465,6 @@ public class FlextCal extends Fragment {
         retrieveInitialArgs();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_flext_cal, container, false);
-        SharedPreferences prefs = getActivity().getSharedPreferences("ui_settings", Context.MODE_PRIVATE);
-        boolean isDark = prefs.getBoolean("dark_theme", false);
 
         CardView card = (CardView) view.findViewById(R.id.card);
         CardView pagerCard = (CardView) view.findViewById(R.id.pagerCard);
@@ -594,16 +475,17 @@ public class FlextCal extends Fragment {
             titleCard.setElevation(5f);
         }
 
-        Resources color = getActivity().getResources();
+        int gray = FlextHelper.getColor(getActivity(), R.color.grey_x);
+        int white = FlextHelper.getColor(getActivity(), R.color.colorWhite);
 
         if (isDark){
-            card.setCardBackgroundColor(color.getColor(R.color.grey_x));
-            pagerCard.setCardBackgroundColor(color.getColor(R.color.grey_x));
-            titleCard.setCardBackgroundColor(color.getColor(R.color.grey_x));
+            card.setCardBackgroundColor(gray);
+            pagerCard.setCardBackgroundColor(gray);
+            titleCard.setCardBackgroundColor(gray);
         } else {
-            card.setCardBackgroundColor(color.getColor(R.color.colorWhite));
-            pagerCard.setCardBackgroundColor(color.getColor(R.color.colorWhite));
-            titleCard.setCardBackgroundColor(color.getColor(R.color.colorWhite));
+            card.setCardBackgroundColor(white);
+            pagerCard.setCardBackgroundColor(white);
+            titleCard.setCardBackgroundColor(white);
         }
 
         image = (KenBurnsView) view.findViewById(R.id.imageView);
@@ -630,33 +512,42 @@ public class FlextCal extends Fragment {
     public class DatePageChangeListener implements ViewPager.OnPageChangeListener {
         private int currentPage = InfiniteViewPager.OFFSET;
         private DateTime currentDateTime;
-        private ArrayList<FlextGridAdapter> flextGridAdapters;
+        private FlextGridAdapter[] flextGridAdapters;
 
         public void setCurrentDateTime(DateTime dateTime) {
             this.currentDateTime = dateTime;
             setCalendarDateTime(currentDateTime);
         }
 
-        public void setFlextGridAdapters(
-                ArrayList<FlextGridAdapter> flextGridAdapters) {
+        public void setFlextGridAdapters(FlextGridAdapter[] flextGridAdapters) {
             this.flextGridAdapters = flextGridAdapters;
         }
 
         /**
          * Return virtual next position
          *
-         * @param position
-         * @return
+         * @param position position
+         * @return position
          */
         private int getNext(int position) {
             return (position + 1) % FlextCal.NUMBER_OF_PAGES;
         }
 
         /**
+         * Return virtual next 2 position
+         *
+         * @param position position
+         * @return position
+         */
+        private int getNext2(int position) {
+            return (position + 2) % FlextCal.NUMBER_OF_PAGES;
+        }
+
+        /**
          * Return virtual previous position
          *
-         * @param position
-         * @return
+         * @param position position
+         * @return position
          */
         private int getPrevious(int position) {
             return (position + 3) % FlextCal.NUMBER_OF_PAGES;
@@ -665,8 +556,8 @@ public class FlextCal extends Fragment {
         /**
          * Return virtual current position
          *
-         * @param position
-         * @return
+         * @param position position
+         * @return position
          */
         public int getCurrent(int position) {
             return position % FlextCal.NUMBER_OF_PAGES;
@@ -682,28 +573,28 @@ public class FlextCal extends Fragment {
 
         public void refreshAdapters(int position) {
             // Get adapters to refresh
-            FlextGridAdapter currentAdapter = flextGridAdapters
-                    .get(getCurrent(position));
-            FlextGridAdapter prevAdapter = flextGridAdapters
-                    .get(getPrevious(position));
-            FlextGridAdapter nextAdapter = flextGridAdapters
-                    .get(getNext(position));
+            FlextGridAdapter currentAdapter = flextGridAdapters[getCurrent(position)];
+            FlextGridAdapter prevAdapter = flextGridAdapters[getPrevious(position)];
+            FlextGridAdapter nextAdapter = flextGridAdapters[getNext(position)];
 
             if (position == currentPage) {
-                // Refresh current adapter
-
-                currentAdapter.setAdapterDateTime(currentDateTime);
-                currentAdapter.notifyDataSetChanged();
-
                 // Refresh previous adapter
-                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0,
-                        0, 0, 0, 0, DateTime.DayOverflow.LastDay));
+                prevAdapter = currentAdapter;
                 prevAdapter.notifyDataSetChanged();
 
-                // Refresh next adapter
-                nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
-                        0, 0, 0, DateTime.DayOverflow.LastDay));
+                // Refresh current adapter
+                currentAdapter = nextAdapter;
+                currentAdapter.notifyDataSetChanged();
+
+                nextAdapter = flextGridAdapters[getNext2(position)];
                 nextAdapter.notifyDataSetChanged();
+
+                // Refresh next adapter
+                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
+                next2.setAdapterDateTime(currentDateTime.plus(0, 2, 0, 0,
+                        0, 0, 0, DateTime.DayOverflow.LastDay));
+                next2.notifyDataSetChanged();
+
             }
             // Detect if swipe right or swipe left
             // Swipe right
@@ -712,11 +603,21 @@ public class FlextCal extends Fragment {
                 currentDateTime = currentDateTime.plus(0, 1, 0, 0, 0, 0, 0,
                         DateTime.DayOverflow.LastDay);
 
-                // Refresh the adapter of next gridview
-                nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
-                        0, 0, 0, DateTime.DayOverflow.LastDay));
+                prevAdapter = currentAdapter;
+                prevAdapter.notifyDataSetChanged();
+
+                // Refresh current adapter
+                currentAdapter = nextAdapter;
+                currentAdapter.notifyDataSetChanged();
+
+                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
+                nextAdapter = next2;
                 nextAdapter.notifyDataSetChanged();
 
+                // Refresh next adapter
+                next2.setAdapterDateTime(currentDateTime.plus(0, 2, 0, 0,
+                                0, 0, 0, DateTime.DayOverflow.LastDay));
+                next2.notifyDataSetChanged();
             }
             // Swipe left
             else {
@@ -724,9 +625,20 @@ public class FlextCal extends Fragment {
                 currentDateTime = currentDateTime.minus(0, 1, 0, 0, 0, 0, 0,
                         DateTime.DayOverflow.LastDay);
 
-                // Refresh the adapter of previous gridview
-                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0,
-                        0, 0, 0, 0, DateTime.DayOverflow.LastDay));
+                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
+                next2 = nextAdapter;
+                next2.notifyDataSetChanged();
+
+                nextAdapter = currentAdapter;
+                nextAdapter.notifyDataSetChanged();
+
+                // Refresh current adapter
+                currentAdapter = prevAdapter;
+                currentAdapter.notifyDataSetChanged();
+
+                prevAdapter = flextGridAdapters[getPrevious(position)];
+                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0, 0,
+                                0, 0, 0, DateTime.DayOverflow.LastDay));
                 prevAdapter.notifyDataSetChanged();
             }
 
@@ -745,8 +657,7 @@ public class FlextCal extends Fragment {
             setCalendarDateTime(currentDateTime);
 
             // Update all the dates inside current month
-            FlextGridAdapter currentAdapter = flextGridAdapters
-                    .get(position % FlextCal.NUMBER_OF_PAGES);
+            FlextGridAdapter currentAdapter = flextGridAdapters[(position % FlextCal.NUMBER_OF_PAGES)];
 
             // Refresh dateInMonthsList
             dateInMonthsList.clear();

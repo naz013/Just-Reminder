@@ -1,6 +1,8 @@
 package com.hexrain.flextcal;
 
+import android.content.Context;
 import android.os.Build;
+import android.support.annotation.ColorRes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,23 +37,38 @@ public class FlextHelper {
     public FlextHelper(){
     }
 
+    /**
+     * Check if application running on Android 5.0 and above.
+     * @return boolean
+     */
     public static boolean is21(){
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
+    /**
+     * Get color from resource.
+     * @param context application context.
+     * @param res resource identifier
+     * @return Color
+     */
+    public static int getColor(Context context, @ColorRes int res){
+        if (is21()) return context.getResources().getColor(res, null);
+        else return context.getResources().getColor(res);
     }
 
     /**
      * Retrieve all the dates for a given calendar month Include previous month,
      * current month and next month.
      *
-     * @param month
-     * @param year
+     * @param month month
+     * @param year year
      * @param startDayOfWeek
      *            : calendar can start from customized date instead of Sunday
-     * @return
+     * @return list of datetime objects
      */
     public static ArrayList<DateTime> getFullWeeks(int month, int year,
-                                                   int startDayOfWeek, boolean sixWeeksInCalendar) {
-        ArrayList<DateTime> datetimeList = new ArrayList<DateTime>();
+                                                   int startDayOfWeek) {
+        ArrayList<DateTime> datetimeList = new ArrayList<>();
 
         DateTime firstDateOfMonth = new DateTime(year, month, 1, 0, 0, 0, 0);
         DateTime lastDateOfMonth = firstDateOfMonth.plusDays(firstDateOfMonth
@@ -103,15 +120,13 @@ public class FlextHelper {
         }
 
         // Add more weeks to fill remaining rows
-        if (sixWeeksInCalendar) {
-            int size = datetimeList.size();
-            int row = size / 7;
-            int numOfDays = (6 - row) * 7;
-            DateTime lastDateTime = datetimeList.get(size - 1);
-            for (int i = 1; i <= numOfDays; i++) {
-                DateTime nextDateTime = lastDateTime.plusDays(i);
-                datetimeList.add(nextDateTime);
-            }
+        int size = datetimeList.size();
+        int row = size / 7;
+        int numOfDays = (6 - row) * 7;
+        DateTime lastDateTime = datetimeList.get(size - 1);
+        for (int i = 1; i <= numOfDays; i++) {
+            DateTime nextDateTime = lastDateTime.plusDays(i);
+            datetimeList.add(nextDateTime);
         }
 
         return datetimeList;
@@ -120,8 +135,8 @@ public class FlextHelper {
     /**
      * Get the DateTime from Date, with hour and min is 0
      *
-     * @param date
-     * @return
+     * @param date date
+     * @return date time object
      */
 
     public static DateTime convertDateToDateTime(Date date) {
@@ -155,9 +170,9 @@ public class FlextHelper {
     /**
      * Get the Date from String with custom format. Default format is yyyy-MM-dd
      *
-     * @param dateString
-     * @param dateFormat
-     * @return
+     * @param dateString date in string
+     * @param dateFormat date formatter string
+     * @return date
      * @throws ParseException
      */
     public static Date getDateFromString(String dateString, String dateFormat)
@@ -176,9 +191,9 @@ public class FlextHelper {
      * Get the DateTime from String with custom format. Default format is
      * yyyy-MM-dd
      *
-     * @param dateString
-     * @param dateFormat
-     * @return
+     * @param dateString date in string
+     * @param dateFormat date formatter string
+     * @return datetime
      */
     public static DateTime getDateTimeFromString(String dateString,
                                                  String dateFormat) {
@@ -191,15 +206,6 @@ public class FlextHelper {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static ArrayList<String> convertToStringList(
-            ArrayList<DateTime> dateTimes) {
-        ArrayList<String> list = new ArrayList<String>();
-        for (DateTime dateTime : dateTimes) {
-            list.add(dateTime.format("YYYY-MM-DD"));
-        }
-        return list;
     }
 
     public static DateTime convertToDateTime(long eventTime) {
