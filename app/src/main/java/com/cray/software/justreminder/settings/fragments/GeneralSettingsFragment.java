@@ -29,7 +29,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private ActionBar ab;
     
     private PrefsView use24TimePrefs, useDarkStylePrefs, themeColorPrefs,
-            smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs;
+            smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs, wearPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,9 +72,24 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         TextView screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
         screenOrientation.setOnClickListener(this);
 
+        wearPrefs = (PrefsView) rootView.findViewById(R.id.wearPrefs);
+        wearPrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_SERVICE));
+        wearPrefs.setOnClickListener(this);
+
         themeView();
         
         return rootView;
+    }
+
+    private void wearServiceChange() {
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (wearPrefs.isChecked()){
+            sPrefs.saveBoolean(Prefs.WEAR_SERVICE, false);
+            wearPrefs.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.WEAR_SERVICE, true);
+            wearPrefs.setChecked(true);
+        }
     }
 
     private void itemPreviewChange() {
@@ -180,6 +195,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.itemPreviewPrefs:
                 itemPreviewChange();
+                break;
+            case R.id.wearPrefs:
+                wearServiceChange();
                 break;
             case R.id.screenOrientation:
                 Dialogues.orientationDialog(getActivity(), this);

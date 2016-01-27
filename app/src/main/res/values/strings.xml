@@ -489,4 +489,6 @@
     <string name="xM">%sM</string>
     <string name="overdue">Overdue</string>
     <string name="and"><![CDATA[" & "]]></string>
+    <string name="android_wear_service">Wear service</string>
+    <string name="enable_service_if_you_want_">Enable this service if you want to manage reminders from watch</string>
 </resources>

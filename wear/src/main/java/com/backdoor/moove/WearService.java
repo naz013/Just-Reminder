@@ -2,6 +2,7 @@ package com.backdoor.moove;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.backdoor.shared.SharedConst;
 import com.google.android.gms.common.ConnectionResult;
@@ -69,7 +70,7 @@ public class WearService extends WearableListenerService implements
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 }

@@ -128,6 +128,7 @@ public class Constants {
     public static final String TYPE_MAIL = "e_mail";
     public static final String TYPE_SHOPPING_LIST = "shopping_list";
     public static final String TYPE_MESSAGE = "message";
+    public static final String TYPE_PLACES = "places_location";
     public static final String TYPE_LOCATION = "location";
     public static final String TYPE_LOCATION_OUT = "out_location";
     public static final String TYPE_LOCATION_OUT_CALL = "out_location_call";

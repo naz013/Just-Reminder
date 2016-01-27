@@ -111,6 +111,7 @@ public class Prefs {
     public final static String SYSTEM_VOLUME = "system_volume";
     public final static String SOUND_STREAM = "sound_stream";
     public final static String INCREASING_VOLUME = "increasing_volume";
+    public final static String WEAR_SERVICE = "wear_service";
 
     public final static String REMINDER_CHANGED = "reminder_changed";
     public final static String NOTE_CHANGED = "note_changed";

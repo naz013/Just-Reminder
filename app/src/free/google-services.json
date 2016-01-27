@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_id": "mythical-geode-603",
+    "project_number": "226701179860",
+    "name": "Just Reminder"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226701179860:android:72e0b884f45628b8",
+        "client_id": "android:com.cray.software.justreminder",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.cray.software.justreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226701179860-tg78pim5r2t10udfs2gag6s755kbho23.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cray.software.justreminder",
+            "certificate_hash": "954A08243AF9DDA10E5DAA1E24CDF752AB6E8F68"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-72206185-2"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

@@ -86,6 +86,16 @@
             app:prefs_secondary_text="@string/enable_reminder_preview"
             app:prefs_divider_top="false"
             app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
+
+        <com.cray.software.justreminder.views.PrefsView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/wearPrefs"
+            app:prefs_primary_text="@string/android_wear_service"
+            app:prefs_secondary_text="@string/enable_service_if_you_want_"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
             app:prefs_divider_bottom="false"/>
         
     </LinearLayout>
