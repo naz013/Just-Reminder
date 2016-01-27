@@ -51,7 +51,8 @@ import java.util.ArrayList;
 /**
  * Show all active reminders.
  */
-public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
+public class ActiveFragment extends Fragment implements
+        RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
 
     /**
      * Views.

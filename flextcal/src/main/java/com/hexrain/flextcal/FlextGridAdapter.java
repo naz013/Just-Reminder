@@ -107,12 +107,12 @@ public class FlextGridAdapter extends BaseAdapter {
 				if (events.hasNext()) {
 					Events.Event event = events.getNext();
 					task1.setText(event.getTask());
-					task1.setBackgroundColor(event.getColor());
+					task1.setTextColor(event.getColor());
 				}
 				if (events.hasNext()) {
 					Events.Event event = events.getLast();
 					task2.setText(event.getTask());
-					task2.setBackgroundColor(event.getColor());
+					task2.setTextColor(event.getColor());
 				}
 				events.mPosition = 0;
 			}
