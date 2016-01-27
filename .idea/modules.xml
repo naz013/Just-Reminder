@@ -6,6 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/flextcal/flextcal.iml" filepath="$PROJECT_DIR$/flextcal/flextcal.iml" />
       <module fileurl="file://$PROJECT_DIR$/just-reminder.iml" filepath="$PROJECT_DIR$/just-reminder.iml" />
       <module fileurl="file://$PROJECT_DIR$/photoPreview/photoPreview.iml" filepath="$PROJECT_DIR$/photoPreview/photoPreview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wear/wear.iml" filepath="$PROJECT_DIR$/wear/wear.iml" />
     </modules>
   </component>
 </project>

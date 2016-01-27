@@ -190,7 +190,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/increasePrefs"
             app:prefs_primary_text="@string/increasing_loudness"
-            app:prefs_divider_top="false"
+            app:prefs_divider_top="true"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
 

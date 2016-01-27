@@ -185,6 +185,7 @@
     <orderEntry type="library" exported="" name="google-http-client-1.21.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="lib-recur-0.9.3" level="project" />
+    <orderEntry type="module" module-name="shared" exported="" />
     <orderEntry type="module" module-name="flextcal" exported="" />
     <orderEntry type="module" module-name="photoPreview" exported="" />
   </component>

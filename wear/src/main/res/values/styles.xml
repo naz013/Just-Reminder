@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="HomeDark" parent="Theme.Wearable">
+        <item name="android:windowBackground">@color/themeBackground</item>
+    </style>
+</resources>

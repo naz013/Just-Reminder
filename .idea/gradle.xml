@@ -13,6 +13,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/flextcal" />
             <option value="$PROJECT_DIR$/photoPreview" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/wear" />
           </set>
         </option>
         <option name="myModules">
@@ -21,6 +23,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/flextcal" />
             <option value="$PROJECT_DIR$/photoPreview" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/wear" />
           </set>
         </option>
       </GradleProjectSettings>
