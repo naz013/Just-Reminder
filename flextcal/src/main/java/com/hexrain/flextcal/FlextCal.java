@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 Nazar Suhovich
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.hexrain.flextcal;
 
 
@@ -94,7 +110,7 @@ public class FlextCal extends Fragment {
     /**
      * datePagerAdapters hold 4 adapters, meant to be reused
      */
-    protected FlextGridAdapter[] datePagerAdapters = new FlextGridAdapter[4];
+    protected ArrayList<FlextGridAdapter> datePagerAdapters = new ArrayList<>();
 
     /**
      * Declare views
@@ -379,16 +395,11 @@ public class FlextCal extends Fragment {
         FlextGridAdapter adapter3 = getNewDatesGridAdapter(
                 prevDateTime.getMonth(), prevDateTime.getYear());
 
-        datePagerAdapters = new FlextGridAdapter[4];
         // Add to the array of adapters
-        datePagerAdapters[0] = adapter0;
-        datePagerAdapters[0].notifyDataSetChanged();
-        datePagerAdapters[1] = adapter1;
-        datePagerAdapters[1].notifyDataSetChanged();
-        datePagerAdapters[2] = adapter2;
-        datePagerAdapters[2].notifyDataSetChanged();
-        datePagerAdapters[3] = adapter3;
-        datePagerAdapters[3].notifyDataSetChanged();
+        datePagerAdapters.add(adapter0);
+        datePagerAdapters.add(adapter1);
+        datePagerAdapters.add(adapter2);
+        datePagerAdapters.add(adapter3);
 
         // Set adapters to the pageChangeListener so it can refresh the adapter
         // when page change
@@ -418,7 +429,7 @@ public class FlextCal extends Fragment {
         fragments = pagerAdapter.getFragments();
         for (int i = 0; i < NUMBER_OF_PAGES; i++) {
             DateGridFragment dateGridFragment = fragments.get(i);
-            FlextGridAdapter adapter = datePagerAdapters[i];
+            FlextGridAdapter adapter = datePagerAdapters.get(i);
             dateGridFragment.setGridAdapter(adapter);
             dateGridFragment.setOnItemClickListener(getDateItemClickListener());
             dateGridFragment
@@ -512,14 +523,14 @@ public class FlextCal extends Fragment {
     public class DatePageChangeListener implements ViewPager.OnPageChangeListener {
         private int currentPage = InfiniteViewPager.OFFSET;
         private DateTime currentDateTime;
-        private FlextGridAdapter[] flextGridAdapters;
+        private ArrayList<FlextGridAdapter> flextGridAdapters;
 
         public void setCurrentDateTime(DateTime dateTime) {
             this.currentDateTime = dateTime;
             setCalendarDateTime(currentDateTime);
         }
 
-        public void setFlextGridAdapters(FlextGridAdapter[] flextGridAdapters) {
+        public void setFlextGridAdapters(ArrayList<FlextGridAdapter> flextGridAdapters) {
             this.flextGridAdapters = flextGridAdapters;
         }
 
@@ -531,16 +542,6 @@ public class FlextCal extends Fragment {
          */
         private int getNext(int position) {
             return (position + 1) % FlextCal.NUMBER_OF_PAGES;
-        }
-
-        /**
-         * Return virtual next 2 position
-         *
-         * @param position position
-         * @return position
-         */
-        private int getNext2(int position) {
-            return (position + 2) % FlextCal.NUMBER_OF_PAGES;
         }
 
         /**
@@ -573,28 +574,27 @@ public class FlextCal extends Fragment {
 
         public void refreshAdapters(int position) {
             // Get adapters to refresh
-            FlextGridAdapter currentAdapter = flextGridAdapters[getCurrent(position)];
-            FlextGridAdapter prevAdapter = flextGridAdapters[getPrevious(position)];
-            FlextGridAdapter nextAdapter = flextGridAdapters[getNext(position)];
+            FlextGridAdapter currentAdapter = flextGridAdapters
+                    .get(getCurrent(position));
+            FlextGridAdapter prevAdapter = flextGridAdapters
+                    .get(getPrevious(position));
+            FlextGridAdapter nextAdapter = flextGridAdapters
+                    .get(getNext(position));
 
             if (position == currentPage) {
-                // Refresh previous adapter
-                prevAdapter = currentAdapter;
-                prevAdapter.notifyDataSetChanged();
-
                 // Refresh current adapter
-                currentAdapter = nextAdapter;
+                currentAdapter.setAdapterDateTime(currentDateTime);
                 currentAdapter.notifyDataSetChanged();
 
-                nextAdapter = flextGridAdapters[getNext2(position)];
-                nextAdapter.notifyDataSetChanged();
+                // Refresh previous adapter
+                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0,
+                        0, 0, 0, 0, DateTime.DayOverflow.LastDay));
+                prevAdapter.notifyDataSetChanged();
 
                 // Refresh next adapter
-                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
-                next2.setAdapterDateTime(currentDateTime.plus(0, 2, 0, 0,
+                nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
                         0, 0, 0, DateTime.DayOverflow.LastDay));
-                next2.notifyDataSetChanged();
-
+                nextAdapter.notifyDataSetChanged();
             }
             // Detect if swipe right or swipe left
             // Swipe right
@@ -603,21 +603,10 @@ public class FlextCal extends Fragment {
                 currentDateTime = currentDateTime.plus(0, 1, 0, 0, 0, 0, 0,
                         DateTime.DayOverflow.LastDay);
 
-                prevAdapter = currentAdapter;
-                prevAdapter.notifyDataSetChanged();
-
-                // Refresh current adapter
-                currentAdapter = nextAdapter;
-                currentAdapter.notifyDataSetChanged();
-
-                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
-                nextAdapter = next2;
+                // Refresh the adapter of next gridview
+                nextAdapter.setAdapterDateTime(currentDateTime.plus(0, 1, 0, 0,
+                        0, 0, 0, DateTime.DayOverflow.LastDay));
                 nextAdapter.notifyDataSetChanged();
-
-                // Refresh next adapter
-                next2.setAdapterDateTime(currentDateTime.plus(0, 2, 0, 0,
-                                0, 0, 0, DateTime.DayOverflow.LastDay));
-                next2.notifyDataSetChanged();
             }
             // Swipe left
             else {
@@ -625,20 +614,9 @@ public class FlextCal extends Fragment {
                 currentDateTime = currentDateTime.minus(0, 1, 0, 0, 0, 0, 0,
                         DateTime.DayOverflow.LastDay);
 
-                FlextGridAdapter next2 = flextGridAdapters[getNext2(position)];
-                next2 = nextAdapter;
-                next2.notifyDataSetChanged();
-
-                nextAdapter = currentAdapter;
-                nextAdapter.notifyDataSetChanged();
-
-                // Refresh current adapter
-                currentAdapter = prevAdapter;
-                currentAdapter.notifyDataSetChanged();
-
-                prevAdapter = flextGridAdapters[getPrevious(position)];
-                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0, 0,
-                                0, 0, 0, DateTime.DayOverflow.LastDay));
+                // Refresh the adapter of previous gridview
+                prevAdapter.setAdapterDateTime(currentDateTime.minus(0, 1, 0,
+                        0, 0, 0, 0, DateTime.DayOverflow.LastDay));
                 prevAdapter.notifyDataSetChanged();
             }
 
@@ -657,7 +635,7 @@ public class FlextCal extends Fragment {
             setCalendarDateTime(currentDateTime);
 
             // Update all the dates inside current month
-            FlextGridAdapter currentAdapter = flextGridAdapters[(position % FlextCal.NUMBER_OF_PAGES)];
+            FlextGridAdapter currentAdapter = flextGridAdapters.get((position % FlextCal.NUMBER_OF_PAGES));
 
             // Refresh dateInMonthsList
             dateInMonthsList.clear();
