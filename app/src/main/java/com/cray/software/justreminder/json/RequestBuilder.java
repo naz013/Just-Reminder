@@ -16,20 +16,22 @@
 
 package com.cray.software.justreminder.json;
 
-import android.content.Context;
-
-import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.modules.Module;
 
 public class RequestBuilder {
 
-    public static String getNearby(Context ctx, double lat, double lng, String name) {
-        String key = "&key=" + ctx.getString(R.string.api_key);
-        String params = "location=" + lat + "," + lng + "&radius=20000&name=" + name;
+    public static String getNearby(double lat, double lng, String name) {
+        String key = "";
+        if (Module.isPro()) key = "";
+        key = "&key=" + key;
+        String params = "location=" + lat + "," + lng + "&radius=35000&name=" + name;
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" + params + key;
     }
 
-    public static String getSearch(Context ctx, String name) {
-        String key = "&key=" + ctx.getString(R.string.api_key);
+    public static String getSearch(String name) {
+        String key = "";
+        if (Module.isPro()) key = "";
+        key = "&key=" + key;
         String req = name.replaceAll("\\s+", "+");
         String params = "query=" + req;
         String reguest = "https://maps.googleapis.com/maps/api/place/textsearch/json?" + params + key;

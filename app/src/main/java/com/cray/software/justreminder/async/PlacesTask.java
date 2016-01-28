@@ -39,10 +39,10 @@ import java.util.ArrayList;
 
 public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
 
-    ExecutionListener listener;
-    String request;
-    double lat, lng;
-    Context context;
+    private ExecutionListener listener;
+    private String request;
+    private double lat, lng;
+    private Context context;
 
     public PlacesTask(Context context, ExecutionListener listener, String request, double lat, double lng) {
         this.context = context;
@@ -55,9 +55,9 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
     @Override
     protected ArrayList<PlaceModel> doInBackground(Void... place) {
         String result = "";
-        String query = RequestBuilder.getSearch(context, request);
+        String query = RequestBuilder.getSearch(request);
         if (lat != 0.0 && lng != 0.0) {
-            query = RequestBuilder.getNearby(context, lat, lng, request);
+            query = RequestBuilder.getNearby(lat, lng, request);
         }
         Log.d(Constants.LOG_TAG, "Request " + query);
         try {
