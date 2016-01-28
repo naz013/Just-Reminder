@@ -233,6 +233,8 @@ public class ReminderUtils {
             res = context.getString(R.string.place_out);
         } else if (type.matches(Constants.TYPE_TIME)){
             res = context.getString(R.string.timer);
+        } else if (type.matches(Constants.TYPE_PLACES)){
+            res = context.getString(R.string.places);
         } else {
             res = context.getString(R.string.by_date);
         }

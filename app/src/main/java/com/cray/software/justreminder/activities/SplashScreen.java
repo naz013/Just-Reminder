@@ -45,7 +45,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -299,7 +298,7 @@ public class SplashScreen extends Activity{
                 parser.setUuid(uuId);
 
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                    List<JShopping> list = new ArrayList<>();
+                    ArrayList<JShopping> list = new ArrayList<>();
                     ArrayList<ShoppingList> shoppingLists =
                             ShoppingListDataProvider.load(SplashScreen.this, id);
                     for (ShoppingList item : shoppingLists){

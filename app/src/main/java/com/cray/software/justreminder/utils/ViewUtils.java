@@ -108,13 +108,9 @@ public class ViewUtils {
     @DrawableRes
     public static int getIcon(String typePrefs) {
         int icon;
-        if (typePrefs.matches(Constants.TYPE_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_CALL) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+        if (typePrefs.contains(Constants.TYPE_CALL)) {
             icon = R.drawable.ic_call_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_MESSAGE) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)) {
+        } else if (typePrefs.contains(Constants.TYPE_MESSAGE)) {
             icon = R.drawable.ic_textsms_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
                 typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
@@ -131,6 +127,8 @@ public class ViewUtils {
             icon = R.drawable.ic_shopping_cart_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_MAIL)) {
             icon = R.drawable.ic_email_white_24dp;
+        } else if (typePrefs.matches(Constants.TYPE_PLACES)) {
+            icon = R.drawable.ic_near_me_white_24dp;
         } else {
             icon = R.drawable.ic_event_white_24dp;
         }

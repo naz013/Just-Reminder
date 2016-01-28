@@ -1,5 +1,6 @@
 package com.cray.software.justreminder.datas.models;
 
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JMelody;
 import com.cray.software.justreminder.json.JModel;
@@ -57,6 +58,16 @@ public class ReminderModel {
         this.radius = jPlace.getRadius();
         this.place = new double[]{jPlace.getLatitude(), jPlace.getLongitude()};
         this.marker = jPlace.getMarker();
+
+        if (type.matches(Constants.TYPE_PLACES)) {
+            ArrayList<JPlace> list = jModel.getPlaces();
+            if (list != null && list.size() > 0) {
+                JPlace place = list.get(0);
+                this.radius = place.getRadius();
+                this.place = new double[]{place.getLatitude(), place.getLongitude()};
+                this.marker = place.getMarker();
+            }
+        }
 
         JRecurrence jRecurrence = jModel.getRecurrence();
         repeat = jRecurrence.getRepeat();

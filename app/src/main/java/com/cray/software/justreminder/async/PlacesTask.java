@@ -16,55 +16,79 @@
 
 package com.cray.software.justreminder.async;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.datas.models.PlaceModel;
+import com.cray.software.justreminder.interfaces.ExecutionListener;
+import com.cray.software.justreminder.json.JPlaceParser;
+import com.cray.software.justreminder.json.RequestBuilder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 
-public class PlacesTask extends AsyncTask<String, Void, String> {
+public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
 
-    @Override
-    protected String doInBackground(String... place) {
-        String data = "";
+    ExecutionListener listener;
+    String request;
+    double lat, lng;
+    Context context;
 
-        // Obtain browser key from https://code.google.com/apis/console
-        String key = "AIzaSyBT5ylfqo4HxCutWat1BLqZEgk1-F821Cw";
-        if (!Module.isPro()) key = "AIzaSyAJMFf-ZLV9k2Kmcd5KvlIRQgTZ8gHk_S8";
-
-        String input="";
-
-        try {
-            input = "input=" + URLEncoder.encode(place[0], "utf-8");
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
-        }
-
-        String types = "types=geocode";
-        String sensor = "sensor=false";
-        String parameters = input+"&"+types+"&"+sensor+"&key="+key;
-        String output = "json";
-        String url = "https://maps.googleapis.com/maps/api/place/autocomplete/"+output+"?"+parameters;
-
-        try {
-            data = downloadUrl(url);
-        } catch(Exception e) {
-            Log.d("Background Task",e.toString());
-        }
-        return data;
+    public PlacesTask(Context context, ExecutionListener listener, String request, double lat, double lng) {
+        this.context = context;
+        this.listener = listener;
+        this.request = request;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected ArrayList<PlaceModel> doInBackground(Void... place) {
+        String result = "";
+        String query = RequestBuilder.getSearch(context, request);
+        if (lat != 0.0 && lng != 0.0) {
+            query = RequestBuilder.getNearby(context, lat, lng, request);
+        }
+        Log.d(Constants.LOG_TAG, "Request " + query);
+        try {
+            result = downloadUrl(query);
+        } catch(Exception e) {
+            Log.d("Place Task", e.toString());
+        }
+        ArrayList<PlaceModel> places = new ArrayList<>();
+        if (result != null) {
+            Log.d(Constants.LOG_TAG, "Places " + result);
+            JPlaceParser parser = new JPlaceParser();
+            try {
+                JSONObject jObject = new JSONObject(result);
+                JSONArray jPlaces = jObject.getJSONArray("results");
+                if (jPlaces.length() > 0) {
+                    for (int i = 0; i < jPlaces.length(); i++) {
+                        JSONObject object = jPlaces.getJSONObject(i);
+                        places.add(parser.getDetails(object));
+                    }
+                }
+            } catch(Exception e) {
+                Log.d("Exception",e.toString());
+            }
+        }
+        return places;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<PlaceModel> result) {
         super.onPostExecute(result);
+        if (listener != null) listener.onFinish(result);
     }
 
     private String downloadUrl(String strUrl) throws IOException {

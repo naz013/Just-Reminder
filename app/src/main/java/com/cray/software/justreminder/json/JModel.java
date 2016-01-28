@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.json;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class JModel {
 
-    private List<JPlace> places;
+    private ArrayList<JPlace> places;
     private ArrayList<JShopping> shoppings;
     private JExclusion exclusion;
     private JLed led;
@@ -29,7 +28,7 @@ public class JModel {
     private JAction action;
     private JExport export;
     private JPlace place;
-    private List<String> tags;
+    private ArrayList<String> tags;
     private String summary;
     private String type;
     private String category;
@@ -78,7 +77,7 @@ public class JModel {
                   int notificationRepeat, int voice, int awake, int unlock,
                   JExclusion jExclusion, JLed jLed, JMelody jMelody,
                   JRecurrence jRecurrence, JAction jAction, JExport jExport,
-                  JPlace jPlace, List<String> tags, List<JPlace> places,
+                  JPlace jPlace, ArrayList<String> tags, ArrayList<JPlace> places,
                   ArrayList<JShopping> shoppings) {
         this.summary = summary;
         this.type = type;
@@ -152,7 +151,7 @@ public class JModel {
         return recurrence;
     }
 
-    public List<JPlace> getPlaces() {
+    public ArrayList<JPlace> getPlaces() {
         return places;
     }
 
@@ -180,7 +179,7 @@ public class JModel {
         return voice;
     }
 
-    public List<String> getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
@@ -220,7 +219,7 @@ public class JModel {
         this.melody = melody;
     }
 
-    public void setPlaces(List<JPlace> places) {
+    public void setPlaces(ArrayList<JPlace> places) {
         this.places = places;
     }
 
@@ -252,7 +251,7 @@ public class JModel {
         this.notificationRepeat = notificationRepeat;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 

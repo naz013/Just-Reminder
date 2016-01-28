@@ -464,7 +464,7 @@ public class JParser {
         }
     }
 
-    public void setPlaces(List<JPlace> list) {
+    public void setPlaces(ArrayList<JPlace> list) {
         if (list != null) {
             JSONArray array = new JSONArray();
             for (JPlace place : list) {
@@ -478,7 +478,7 @@ public class JParser {
         }
     }
 
-    public void setShopping(List<JShopping> list) {
+    public void setShopping(ArrayList<JShopping> list) {
         if (list != null) {
             JSONObject array = new JSONObject();
             try {
@@ -679,10 +679,10 @@ public class JParser {
         return -1;
     }
 
-    public List<JPlace> getPlaces() {
+    public ArrayList<JPlace> getPlaces() {
         if (jsonObject.has(PLACES)) {
             try {
-                List<JPlace> places = new ArrayList<>();
+                ArrayList<JPlace> places = new ArrayList<>();
                 JSONObject object = jsonObject.getJSONObject(PLACES);
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {
@@ -765,9 +765,9 @@ public class JParser {
         return new JAction();
     }
 
-    public List<String> getTags() {
+    public ArrayList<String> getTags() {
         if (jsonObject.has(TAGS)){
-            Type collectionType = new TypeToken<List<String>>() {}.getType();
+            Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
             try {
                 return new Gson().fromJson(jsonObject.get(TAGS).toString(), collectionType);
             } catch (JSONException e) {

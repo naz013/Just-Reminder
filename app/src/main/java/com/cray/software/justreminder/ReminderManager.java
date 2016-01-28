@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -20,6 +19,7 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -76,6 +76,7 @@ import com.cray.software.justreminder.dialogs.LedColor;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
+import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -125,6 +126,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 /**
  * Reminder creation activity.
  */
@@ -134,6 +138,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener,
         ActionCallbacksExtended {
 
+    private static final String HAS_SHOWCASE = "create_showcase";
     /**
      * Date reminder type variables.
      */
@@ -220,10 +225,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private AutoCompleteTextView searchField;
     private ActionView actionViewLocation;
 
-    /**
-     * LocationOut reminder type variables.
-     */
-    private LinearLayout delayLayoutOut;
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
     private TextView currentLocation, mapLocation, radiusMark;
@@ -244,6 +245,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private DateTimeView dateViewShopping;
     private RecyclerView todoList;
 
+    private PlacesMap placesMap;
+
     /**
      * Extra options views.
      */
@@ -259,6 +262,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private TextView category;
     private FloatingActionButton mFab;
     private LinearLayout navContainer;
+    private ImageButton insertVoice;
 
     /**
      * Reminder preferences flags.
@@ -413,7 +417,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-        ImageButton insertVoice = (ImageButton) findViewById(R.id.insertVoice);
+        insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -565,6 +569,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             spinner.setSelection(10);
         } else if (type.matches(Constants.TYPE_MAIL)){
             spinner.setSelection(11);
+        } else if (type.matches(Constants.TYPE_PLACES) && Module.isPro()){
+            spinner.setSelection(12);
         } else {
             spinner.setSelection(0);
         }
@@ -643,6 +649,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
         findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
         findViewById(R.id.mailLayout).setVisibility(View.GONE);
+        findViewById(R.id.placesLayout).setVisibility(View.GONE);
 
         map = new MapFragment();
         map.setListener(this);
@@ -654,11 +661,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
         mapOut.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
 
+        placesMap = new PlacesMap();
+        placesMap.setListener(this);
+        placesMap.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        placesMap.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
+
         addFragment(R.id.map, map);
         addFragment(R.id.mapOut, mapOut);
+        addFragment(R.id.mapPlace, placesMap);
     }
 
-    private void addFragment(int res, MapFragment fragment) {
+    private void addFragment(int res, Fragment fragment) {
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.add(res, fragment);
@@ -684,6 +697,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.e_mail), R.drawable.ic_email_white_24dp));
+            if (Module.isPro()) navSpinner.add(new SpinnerItem(getString(R.string.places), R.drawable.ic_near_me_white_24dp));
         } else {
             navSpinner.add(new SpinnerItem(getString(R.string.by_date), R.drawable.ic_event_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_access_time_black_24dp));
@@ -697,6 +711,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             navSpinner.add(new SpinnerItem(getString(R.string.place_out), R.drawable.ic_beenhere_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.shopping_list), R.drawable.ic_shopping_cart_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.e_mail), R.drawable.ic_email_black_24dp));
+            if (Module.isPro()) navSpinner.add(new SpinnerItem(getString(R.string.places), R.drawable.ic_near_me_black_24dp));
         }
 
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getApplicationContext(), navSpinner);
@@ -772,6 +787,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (spinner.getSelectedItemPosition() == 9 && type.startsWith(Constants.TYPE_LOCATION_OUT)) is = true;
         if (spinner.getSelectedItemPosition() == 10 && type.matches(Constants.TYPE_SHOPPING_LIST)) is = true;
         if (spinner.getSelectedItemPosition() == 11 && type.matches(Constants.TYPE_MAIL)) is = true;
+        if (spinner.getSelectedItemPosition() == 12 && type.matches(Constants.TYPE_PLACES)) is = true;
         return is;
     }
 
@@ -1665,10 +1681,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onBackClick() {
         if (isLocationAttached()) {
+            if (map.isFullscreen()) {
+                map.setFullscreen(false);
+                ViewUtils.expand(toolbar);
+            }
             ViewUtils.fadeOutAnimation(mapContainer);
             ViewUtils.fadeInAnimation(specsContainer);
         }
         if (isLocationOutAttached()) {
+            if (mapOut.isFullscreen()) {
+                mapOut.setFullscreen(false);
+                ViewUtils.collapse(toolbar);
+            }
             ViewUtils.fadeOutAnimation(mapContainerOut);
             ViewUtils.fadeInAnimation(specsContainerOut);
         }
@@ -1676,7 +1700,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onZoomClick(boolean isFull) {
-
+        if (isFull) {
+            ViewUtils.collapse(toolbar);
+        } else {
+            ViewUtils.expand(toolbar);
+        }
     }
 
     @Override
@@ -1879,7 +1907,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.locationOutLayout);
         remControl = dateType;
 
-        delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
+        /*
+      LocationOut reminder type variables.
+     */
+        LinearLayout delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
         delayLayoutOut.setVisibility(View.GONE);
@@ -1991,6 +2022,32 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         locationOutExtra = (ExtraView) findViewById(R.id.locationOutExtra);
         locationOutExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
         if (isExtra) locationOutExtra.setVisibility(View.VISIBLE);
+        invalidateButtons();
+    }
+
+    /**
+     * Show places reminder type creation layout.
+     */
+    private void attachPLaces() {
+        taskField.setHint(getString(R.string.remind_me));
+
+        LinearLayout placesLayout = (LinearLayout) findViewById(R.id.placesLayout);
+        ViewUtils.fadeInAnimation(placesLayout);
+
+        LocationType dateType = new LocationType(this, Constants.TYPE_PLACES);
+        dateType.inflateView(R.id.placesLayout);
+        remControl = dateType;
+
+        if (item != null && isSame()) {
+            String text = item.getSummary();
+            ArrayList<JPlace> list = item.getPlaces();
+            eventTime = item.getStartTime();
+
+            taskField.setText(text);
+            if (placesMap != null)
+                placesMap.addMarkers(list);
+        }
+        if (placesMap != null) placesMap.showShowcase();
         invalidateButtons();
     }
 
@@ -2279,6 +2336,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
+     * Check if places reminder type layout visible.
+     * @return Boolean
+     */
+    private boolean isPlacesAttached() {
+        return remControl.getType() != null &&
+                remControl.getType().matches(Constants.TYPE_PLACES);
+    }
+
+    /**
      * Get reminder type string.
      * @return String
      */
@@ -2465,6 +2531,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 longitude = dest.longitude;
             }
 
+            ArrayList<JPlace> places = new ArrayList<>();
+            if (isPlacesAttached()) {
+                places = placesMap.getPlaces();
+            }
+
             int mySeconds = 0;
             long timeAfter = 0;
             if (isTimeReminderAttached()) {
@@ -2515,7 +2586,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             return new JModel(task, type, categoryId, uuId, startTime, startTime, 0, vibro,
                     notification, voice, wake, unlock, jExclusion, jLed, jMelody,
-                    jRecurrence, jAction, jExport, jPlace, null, null, jShoppings);
+                    jRecurrence, jAction, jExport, jPlace, null, places, jShoppings);
         } else return null;
     }
 
@@ -2789,6 +2860,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public void onBackPressed() {
         if (map != null && !map.onBackPressed()) return;
         if (mapOut != null && !mapOut.onBackPressed()) return;
+        if (placesMap != null && !placesMap.onBackPressed()) return;
 
         if (mFab.getVisibility() == View.GONE){
             mFab.show();
@@ -2899,7 +2971,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             switchIt(current - 1);
         }
         if (0 == current){
-            spinner.setSelection(Configs.NUMBER_OF_REMINDERS);
+            spinner.setSelection(Module.isPro() ? Configs.NUMBER_OF_REMINDERS : Configs.NUMBER_OF_REMINDERS - 1);
             switchIt(Configs.NUMBER_OF_REMINDERS);
         }
     }
@@ -2913,7 +2985,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             spinner.setSelection(current + 1);
             switchIt(current + 1);
         }
-        if (current == Configs.NUMBER_OF_REMINDERS){
+        int max = Module.isPro() ? Configs.NUMBER_OF_REMINDERS : Configs.NUMBER_OF_REMINDERS - 1;
+        if (current == max){
             spinner.setSelection(0);
             switchIt(0);
         }
@@ -3030,6 +3103,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 detachCurrentView();
                 attachMail();
                 break;
+            case 12:
+                detachCurrentView();
+                if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
+                    if (Permissions.checkPermission(ReminderManager.this,
+                            Permissions.ACCESS_FINE_LOCATION, Permissions.ACCESS_COARSE_LOCATION)) {
+                        attachPLaces();
+                    } else {
+                        Permissions.requestPermission(ReminderManager.this, 121,
+                                Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
+                    }
+                } else spinner.setSelection(0);
+                break;
         }
         sPrefs.saveInt(Prefs.LAST_USED_REMINDER, position);
         invalidateOptionsMenu();
@@ -3076,6 +3161,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             case 114:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     attachMonthDay();
+                else spinner.setSelection(0);
+                break;
+            case 121:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    attachPLaces();
                 else spinner.setSelection(0);
                 break;
         }
@@ -3139,6 +3229,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         mapOut.recreateMarker(radius);
                         pointRadius.setProgress(radius);
                     }
+
+                    if (isPlacesAttached()) placesMap.recreateMarker(radius);
                 }
             }
         }
@@ -3223,7 +3315,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationAttached()){
             menu.getItem(2).setVisible(true);
         }
-        if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()){
+        if (isLocationAttached() || isLocationOutAttached()
+                || isShoppingAttached() || isPlacesAttached()){
             menu.getItem(4).setVisible(false);
         } else {
             menu.getItem(4).setVisible(true);
@@ -3243,7 +3336,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (isLocationAttached()){
             menu.getItem(1).setVisible(true);
         }
-        if (isLocationAttached() || isLocationOutAttached() || isShoppingAttached()){
+        if (isLocationAttached() || isLocationOutAttached()
+                || isShoppingAttached() || isPlacesAttached()){
             menu.getItem(4).setVisible(false);
         } else {
             menu.getItem(4).setVisible(true);
@@ -3258,20 +3352,35 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        if (isListFirstTime()){
-            // TODO: 17.01.2016 Add showcase.
-        }
+        showShowcase();
     }
 
-    private boolean isListFirstTime() {
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        boolean ranBefore = preferences.getBoolean("JustReminderBefore", false);
-        if (!ranBefore) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("JustReminderBefore", true);
-            editor.commit();
+    public void showShowcase() {
+        if (!new SharedPrefs(this).loadBoolean(HAS_SHOWCASE)) {
+            new SharedPrefs(this).saveBoolean(HAS_SHOWCASE, true);
+            ColorSetter coloring = new ColorSetter(this);
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(350);
+            config.setMaskColor(coloring.getColor(coloring.colorAccent()));
+            config.setContentTextColor(coloring.getColor(R.color.whitePrimary));
+            config.setDismissTextColor(coloring.getColor(R.color.whitePrimary));
+
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
+            sequence.setConfig(config);
+
+            sequence.addSequenceItem(spinner,
+                    getString(R.string.click_to_select_reminder_type),
+                    getString(R.string.got_it));
+
+            sequence.addSequenceItem(insertVoice,
+                    getString(R.string.to_insert_task_by_voice),
+                    getString(R.string.got_it));
+
+            sequence.addSequenceItem(category,
+                    getString(R.string.click_to_change_reminder_group),
+                    getString(R.string.got_it));
+            sequence.start();
         }
-        return !ranBefore;
     }
 
     @Override

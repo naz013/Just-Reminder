@@ -16,7 +16,7 @@
 
         <Spinner
             android:id="@+id/navSpinner"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:gravity="center|left"
             android:layout_gravity="center|left"
             android:layout_height="?attr/actionBarSize"/>
@@ -60,11 +60,12 @@
         </RelativeLayout>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/category"
             android:textSize="18sp"
             android:padding="2dp"
+            android:layout_gravity="left"
             android:textColor="@color/whitePrimary"
             android:drawableLeft="@drawable/ic_local_offer_white_24dp"
             android:drawablePadding="30dp"

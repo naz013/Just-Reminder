@@ -44,6 +44,7 @@
             <include layout="@layout/reminder_location_out_layout"/>
             <include layout="@layout/reminder_shopping_list_layout"/>
             <include layout="@layout/reminder_mail_layout"/>
+            <include layout="@layout/reminder_places_layout"/>
 
         </LinearLayout>
 

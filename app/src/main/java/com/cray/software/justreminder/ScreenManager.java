@@ -80,6 +80,8 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -144,7 +146,8 @@ public class ScreenManager extends AppCompatActivity
     private Context ctx = this;
     private Activity a = this;
     private Date eventsDate = null;
-    private FlextCal calendarView;
+
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +202,9 @@ public class ScreenManager extends AppCompatActivity
             onItemSelected(mPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
             mPrefs.saveBoolean(Prefs.UI_CHANGED, false);
         }
+
+        ReminderApp application = (ReminderApp) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     private void initButton() {
@@ -564,7 +570,7 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void showMonth(){
-        calendarView = new FlextCal();
+        FlextCal calendarView = new FlextCal();
         Bundle args = new Bundle();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
@@ -717,6 +723,9 @@ public class ScreenManager extends AppCompatActivity
             new Notifier(this).recreatePermanent();
         isChangesShown();
         new DelayedAsync(this, null).execute();
+
+        mTracker.setScreenName("Main activity");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

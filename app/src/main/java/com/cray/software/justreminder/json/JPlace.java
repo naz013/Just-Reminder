@@ -27,9 +27,13 @@ public class JPlace {
     private static final String LONGITUDE = "longitude";
     private static final String MARKER = "marker";
     private static final String RADIUS = "radius";
+    private static final String NAME = "name";
+    private static final String ID = "id";
+    private static final String ADDRESS = "address";
 
     private int radius, marker;
     private double latitude, longitude;
+    private String name, id, address;
 
     /**
      * JSON object.
@@ -60,6 +64,9 @@ public class JPlace {
         setLongitude(0.0);
         setRadius(-1);
         setMarker(-1);
+        setName(null);
+        setAddress(null);
+        setId(null);
     }
 
     public JPlace(double latitude, double longitude, int radius, int marker){
@@ -68,6 +75,20 @@ public class JPlace {
         setLongitude(longitude);
         setRadius(radius);
         setMarker(marker);
+        setName(null);
+        setAddress(null);
+        setId(null);
+    }
+
+    public JPlace(String name, double latitude, double longitude, String address, String id){
+        jsonObject = new JSONObject();
+        setName(name);
+        setAddress(address);
+        setId(id);
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setRadius(-1);
+        setMarker(-1);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -92,10 +113,30 @@ public class JPlace {
                 e.printStackTrace();
             }
         }
-
         if (jsonObject.has(LONGITUDE)){
             try {
                 longitude = jsonObject.getDouble(LONGITUDE);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(NAME)){
+            try {
+                name = jsonObject.getString(NAME);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(ADDRESS)){
+            try {
+                address = jsonObject.getString(ADDRESS);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(ID)){
+            try {
+                id = jsonObject.getString(ID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -162,6 +203,45 @@ public class JPlace {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        try {
+            jsonObject.put(NAME, name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+        try {
+            jsonObject.put(ADDRESS, address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setId(String id) {
+        this.id = id;
+        try {
+            jsonObject.put(ID, id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getRadius() {

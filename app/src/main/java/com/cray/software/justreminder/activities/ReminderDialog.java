@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ReminderApp;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -67,6 +68,8 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
@@ -103,6 +106,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private Notifier notifier = new Notifier(ReminderDialog.this);
     private TextToSpeech tts;
     private Handler handler = new Handler();
+
+    private Tracker mTracker;
 
     /**
      * Runnable for increasing volume in stream.
@@ -508,6 +513,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 e.printStackTrace();
             }
         }
+
+        ReminderApp application = (ReminderApp) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     private void loadImage() {
@@ -759,6 +767,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             notifier.discardMedia();
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("Reminder " + getType());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

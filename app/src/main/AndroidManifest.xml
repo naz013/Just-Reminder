@@ -43,7 +43,7 @@
         android:xlargeScreens="true" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".ReminderApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_title"

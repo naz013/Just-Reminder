@@ -34,7 +34,6 @@ import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
