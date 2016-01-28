@@ -663,7 +663,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
         placesMap = new PlacesMap();
         placesMap.setListener(this);
-        placesMap.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
+        placesMap.setRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
         placesMap.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
 
         addFragment(R.id.map, map);
@@ -2357,13 +2357,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         type = Constants.TYPE_LOCATION_OUT_CALL;
                     else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
                 } else type = Constants.TYPE_LOCATION_OUT;
-            } else {
+            } else if (remControl.getType().startsWith(Constants.TYPE_LOCATION)) {
                 if (actionViewLocation.hasAction()){
                     if (actionViewLocation.getType() == ActionView.TYPE_CALL)
                         type = Constants.TYPE_LOCATION_CALL;
                     else type = Constants.TYPE_LOCATION_MESSAGE;
                 } else type = Constants.TYPE_LOCATION;
-            }
+            } else type = remControl.getType();
         } else {
             if (isSkypeAttached()){
                 if (skypeCall.isChecked())type = Constants.TYPE_SKYPE;
@@ -2533,7 +2533,22 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             ArrayList<JPlace> places = new ArrayList<>();
             if (isPlacesAttached()) {
+                if (!LocationUtil.checkLocationEnable(this)) {
+                    LocationUtil.showLocationAlert(this, this);
+                    return null;
+                }
+
                 places = placesMap.getPlaces();
+                if (places == null || places.size() == 0) {
+                    Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
+                    return null;
+                }
+
+                myDay = 0;
+                myMonth = 0;
+                myYear = 0;
+                myHour = 0;
+                myMinute = 0;
             }
 
             int mySeconds = 0;

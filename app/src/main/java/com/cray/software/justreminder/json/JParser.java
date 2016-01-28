@@ -683,11 +683,12 @@ public class JParser {
         if (jsonObject.has(PLACES)) {
             try {
                 ArrayList<JPlace> places = new ArrayList<>();
-                JSONObject object = jsonObject.getJSONObject(PLACES);
-                Iterator<String> keys = object.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    places.add(new JPlace(object.getJSONObject(key)));
+                JSONArray array = jsonObject.getJSONArray(PLACES);
+                if (array.length() > 0) {
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        places.add(new JPlace(object));
+                    }
                 }
                 return places;
             } catch (JSONException e) {

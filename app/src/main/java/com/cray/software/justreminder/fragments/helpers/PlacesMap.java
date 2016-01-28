@@ -31,9 +31,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -100,7 +102,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     private boolean isZoom = true;
     private boolean isFullscreen = false;
     private boolean isDark = false;
-    private int markerRadius = -1;
+    private int mRadius = -1;
     private int markerStyle = -1;
     private double mLat, mLng;
 
@@ -158,10 +160,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     /**
      * Set radius for marker;
-     * @param markerRadius radius for drawing circle around marker
+     * @param mRadius radius for drawing circle around marker
      */
-    public void setMarkerRadius(int markerRadius) {
-        this.markerRadius = markerRadius;
+    public void setRadius(int mRadius) {
+        this.mRadius = mRadius;
     }
 
     /**
@@ -170,14 +172,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void setMarkerStyle(int markerStyle) {
         this.markerStyle = markerStyle;
-    }
-
-    /**
-     * Get currently used marker style.
-     * @return marker code.
-     */
-    public int getMarkerStyle() {
-        return markerStyle;
     }
 
     /**
@@ -190,9 +184,9 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius) {
         if (map != null) {
-            markerRadius = radius;
-            if (markerRadius == -1) {
-                markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+            mRadius = radius;
+            if (mRadius == -1) {
+                mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
             }
             if (clear) {
                 map.clear();
@@ -209,7 +203,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             float strokeWidth = 3f;
             map.addCircle(new CircleOptions()
                     .center(pos)
-                    .radius(markerRadius)
+                    .radius(mRadius)
                     .strokeWidth(strokeWidth)
                     .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
                     .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
@@ -224,9 +218,9 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * @param radius radius for a circle
      */
     public void recreateMarker(int radius) {
-        markerRadius = radius;
-        if (markerRadius == -1) {
-            markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+        mRadius = radius;
+        if (mRadius == -1) {
+            mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
         }
         if (map != null) {
             addMarkers();
@@ -251,7 +245,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public void addMarkers(ArrayList<JPlace> list) {
         map.clear();
         toModels(list);
-        addMarkers();
+        refreshAdapter(false);
     }
     /**
      * Move camera to coordinates with animation;
@@ -352,7 +346,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         final SharedPrefs prefs = new SharedPrefs(getActivity());
         cSetter = new ColorSetter(getActivity());
 
-        markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
+        mRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
 
         map = ((SupportMapFragment) getChildFragmentManager()
@@ -391,6 +385,15 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        cardSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    loadPlaces();
+                    return true;
+                } else return false;
             }
         });
 
@@ -510,6 +513,12 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         loadMarkers();
     }
 
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
+    }
+
     private void loadMarkers() {
         groupOne.removeAllViewsInLayout();
         groupTwo.removeAllViewsInLayout();
@@ -561,14 +570,21 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         }
     }
 
-    private void loadPlaces(String req){
+    private void loadPlaces(){
+        String req = cardSearch.getText().toString().trim();
+        if (req.matches("")) return;
+
+        hideKeyboard();
+
         if (placesTask != null && !placesTask.isCancelled()) {
             placesTask.cancel(true);
         }
 
         placesTask = new PlacesTask(getActivity(), this, req, mLat, mLng);
         placesTask.execute();
+    }
 
+    private void refreshAdapter(boolean show) {
         GooglePlacesAdapter placesAdapter = new GooglePlacesAdapter(getActivity(), spinnerArray);
         placesAdapter.setEventListener(new SimpleListener() {
             @Override
@@ -590,7 +606,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             placesList.setLayoutManager(new LinearLayoutManager(getActivity()));
             placesList.setAdapter(placesAdapter);
             addMarkers();
-            if (!isPlacesVisible()) ViewUtils.slideInUp(getActivity(), placesListCard);
+            if (!isPlacesVisible() && show) ViewUtils.slideInUp(getActivity(), placesListCard);
         } else {
             placesList.setVisibility(View.GONE);
             emptyItem.setVisibility(View.VISIBLE);
@@ -603,7 +619,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             for (PlaceModel model : spinnerArray) {
                 if (model.getSelected() == 1) {
                     places.add(new JPlace(model.getName(), model.getPosition().latitude,
-                            model.getPosition().longitude, model.getAddress(), model.getId()));
+                            model.getPosition().longitude, model.getAddress(), model.getId(),
+                            mRadius, markerStyle, model.getTypes()));
                 }
             }
         }
@@ -616,7 +633,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             for (JPlace model : list) {
                 spinnerArray.add(new PlaceModel(model.getName(), model.getId(),
                         null, model.getAddress(), new LatLng(model.getLatitude(),
-                        model.getLongitude()), null));
+                        model.getLongitude()), model.getTypes()));
             }
         }
     }
@@ -625,7 +642,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         map.clear();
         if (spinnerArray != null && spinnerArray.size() > 0) {
             for (PlaceModel model : spinnerArray) {
-                addMarker(model.getPosition(), model.getName(), false, false, markerRadius);
+                addMarker(model.getPosition(), model.getName(), false, false, mRadius);
             }
         }
     }
@@ -746,7 +763,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         switch (id) {
             case R.id.cardClear:
-                loadPlaces(cardSearch.getText().toString());
+                loadPlaces();
                 break;
             case R.id.mapZoom:
                 zoomClick();
@@ -785,6 +802,30 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         removeUpdates();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        removeUpdates();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        removeUpdates();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        removeUpdates();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        removeUpdates();
+    }
+
     private void removeUpdates() {
         if (mLocList != null) {
             if (Permissions.checkPermission(getActivity(),
@@ -801,7 +842,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     @Override
     public void onFinish(ArrayList<PlaceModel> places) {
         spinnerArray = places;
-        addMarkers();
+        if (spinnerArray.size() == 0)
+            Messages.toast(getActivity(), getActivity().getString(R.string.no_places_found));
+
+        if (spinnerArray != null && spinnerArray.size() > 1) {
+            spinnerArray.add(new PlaceModel(getActivity().getString(R.string.add_all), null, null, null, null, null));
+        }
+        refreshAdapter(true);
     }
 
     public class CurrentLocation implements LocationListener {
@@ -810,7 +857,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         public void onLocationChanged(Location location) {
             mLat = location.getLatitude();
             mLng = location.getLongitude();
-
         }
 
         @Override
@@ -830,14 +876,16 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void updateListener() {
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        SharedPrefs prefs = new SharedPrefs(getActivity());
-        long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-        int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
-        } else {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+        if (getActivity() != null) {
+            mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = new SharedPrefs(getActivity());
+            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
+            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
+            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+            }
         }
     }
 }

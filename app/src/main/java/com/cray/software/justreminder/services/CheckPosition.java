@@ -20,6 +20,8 @@ import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.utils.LocationUtil;
 
+import java.util.ArrayList;
+
 public class CheckPosition extends IntentService {
 
     public CheckPosition() {
@@ -55,62 +57,31 @@ public class CheckPosition extends IntentService {
                 int shown = c.getInt(c.getColumnIndex(NextBase.NOTIFICATION_STATUS));
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
 
-                JPlace jPlace = new JParser(json).getPlace();
-                double lat = jPlace.getLatitude();
-                double lon = jPlace.getLongitude();
-                int radius = jPlace.getRadius();
-
                 int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
-                if (radius == -1) radius = stockRadius;
                 if (isDone != 1) {
-                    if (startTime == 0) {
-                        Location locationB = new Location("point B");
-                        locationB.setLatitude(lat);
-                        locationB.setLongitude(lon);
-                        float distance = locationA.distanceTo(locationB);
-                        int roundedDistance = Math.round(distance);
-                        if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                            if (status == LocationUtil.ACTIVE){
-                                if (roundedDistance < radius) {
-                                    db.setLocationStatus(id, LocationUtil.LOCKED);
-                                }
-                            }
-                            if (status == LocationUtil.LOCKED){
-                                if (roundedDistance > radius) {
-                                    showReminder(id, task);
-                                } else {
-                                    if (isEnabled) {
-                                        showNotification(id, roundedDistance, shown, task);
-                                    }
-                                }
-                            }
-                        } else {
-                            if (roundedDistance <= radius) {
-                                if (status != LocationUtil.SHOWN) {
-                                    showReminder(id, task);
-                                }
-                            } else {
-                                if (isEnabled) {
-                                    showNotification(id, roundedDistance, shown, task);
-                                }
-                            }
-                        }
+                    if (type.matches(Constants.TYPE_PLACES)) {
+                        checkPlace(json, locationA, stockRadius, id);
                     } else {
-                        if (timeCount.isCurrent(startTime)) {
+                        JPlace jPlace = new JParser(json).getPlace();
+                        double lat = jPlace.getLatitude();
+                        double lon = jPlace.getLongitude();
+                        int radius = jPlace.getRadius();
+                        if (radius == -1) radius = stockRadius;
+                        if (startTime == 0) {
                             Location locationB = new Location("point B");
                             locationB.setLatitude(lat);
                             locationB.setLongitude(lon);
                             float distance = locationA.distanceTo(locationB);
                             int roundedDistance = Math.round(distance);
-                            if (type.startsWith(Constants.TYPE_LOCATION_OUT)){
-                                if (status == LocationUtil.ACTIVE){
-                                    if (roundedDistance <= radius) {
+                            if (type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                                if (status == LocationUtil.ACTIVE) {
+                                    if (roundedDistance < radius) {
                                         db.setLocationStatus(id, LocationUtil.LOCKED);
                                     }
                                 }
-                                if (status == LocationUtil.LOCKED){
+                                if (status == LocationUtil.LOCKED) {
                                     if (roundedDistance > radius) {
-                                        showReminder(id, task);
+                                        showReminder(id);
                                     } else {
                                         if (isEnabled) {
                                             showNotification(id, roundedDistance, shown, task);
@@ -120,11 +91,45 @@ public class CheckPosition extends IntentService {
                             } else {
                                 if (roundedDistance <= radius) {
                                     if (status != LocationUtil.SHOWN) {
-                                        showReminder(id, task);
+                                        showReminder(id);
                                     }
                                 } else {
                                     if (isEnabled) {
                                         showNotification(id, roundedDistance, shown, task);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (timeCount.isCurrent(startTime)) {
+                                Location locationB = new Location("point B");
+                                locationB.setLatitude(lat);
+                                locationB.setLongitude(lon);
+                                float distance = locationA.distanceTo(locationB);
+                                int roundedDistance = Math.round(distance);
+                                if (type.startsWith(Constants.TYPE_LOCATION_OUT)) {
+                                    if (status == LocationUtil.ACTIVE) {
+                                        if (roundedDistance <= radius) {
+                                            db.setLocationStatus(id, LocationUtil.LOCKED);
+                                        }
+                                    }
+                                    if (status == LocationUtil.LOCKED) {
+                                        if (roundedDistance > radius) {
+                                            showReminder(id);
+                                        } else {
+                                            if (isEnabled) {
+                                                showNotification(id, roundedDistance, shown, task);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    if (roundedDistance <= radius) {
+                                        if (status != LocationUtil.SHOWN) {
+                                            showReminder(id);
+                                        }
+                                    } else {
+                                        if (isEnabled) {
+                                            showNotification(id, roundedDistance, shown, task);
+                                        }
                                     }
                                 }
                             }
@@ -141,12 +146,29 @@ public class CheckPosition extends IntentService {
         db.close();
     }
 
-    private void showReminder(long id, String task){
+    private void checkPlace(String json, Location locationA, int stockRadius, long id) {
+        ArrayList<JPlace> list = new JParser(json).getPlaces();
+        if (list != null) {
+            for (JPlace jPlace : list) {
+                Location locationB = new Location("point B");
+                locationB.setLatitude(jPlace.getLatitude());
+                locationB.setLongitude(jPlace.getLongitude());
+                float distance = locationA.distanceTo(locationB);
+                int roundedDistance = Math.round(distance);
+                int radius = jPlace.getRadius();
+                if (radius == -1) radius = stockRadius;
+                if (roundedDistance <= radius) {
+                    showReminder(id);
+                }
+            }
+        }
+    }
+
+    private void showReminder(long id){
         NextBase db = new NextBase(getApplicationContext());
         db.open().setLocationStatus(id, LocationUtil.SHOWN);
         db.close();
         Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
-        resultIntent.putExtra("taskDialog", task);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication().startActivity(resultIntent);

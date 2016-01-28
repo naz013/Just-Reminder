@@ -18,23 +18,29 @@ package com.cray.software.justreminder.json;
 
 import com.cray.software.justreminder.modules.Module;
 
+import java.util.Locale;
+
 public class RequestBuilder {
 
     public static String getNearby(double lat, double lng, String name) {
-        String key = "";
-        if (Module.isPro()) key = "";
+        String key = "AIzaSyCMrJF6bn1Mt6n2uyLLLN85h-PGAtotT3Q";
+        if (Module.isPro()) key = "AIzaSyD80IRgaabOQoZ_mRP_RL36CJKeDO96yKw";
         key = "&key=" + key;
-        String params = "location=" + lat + "," + lng + "&radius=35000&name=" + name;
+        String req = name.replaceAll("\\s+", "+");
+        String params = "location=" + lat + "," + lng + req + "&language=" + "&radius=35000&name="  + getLocale();
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" + params + key;
     }
 
     public static String getSearch(String name) {
-        String key = "";
-        if (Module.isPro()) key = "";
+        String key = "AIzaSyCMrJF6bn1Mt6n2uyLLLN85h-PGAtotT3Q";
+        if (Module.isPro()) key = "AIzaSyD80IRgaabOQoZ_mRP_RL36CJKeDO96yKw";
         key = "&key=" + key;
         String req = name.replaceAll("\\s+", "+");
-        String params = "query=" + req;
-        String reguest = "https://maps.googleapis.com/maps/api/place/textsearch/json?" + params + key;
-        return reguest;
+        String params = "query=" + req + "&language=" + getLocale();
+        return "https://maps.googleapis.com/maps/api/place/textsearch/json?" + params + key;
+    }
+
+    private static String getLocale() {
+        return Locale.getDefault().getLanguage();
     }
 }

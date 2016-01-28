@@ -1,7 +1,14 @@
 package com.cray.software.justreminder.json;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -30,10 +37,12 @@ public class JPlace {
     private static final String NAME = "name";
     private static final String ID = "id";
     private static final String ADDRESS = "address";
+    private static final String TYPES = "types";
 
     private int radius, marker;
     private double latitude, longitude;
     private String name, id, address;
+    private ArrayList<String> types;
 
     /**
      * JSON object.
@@ -80,15 +89,30 @@ public class JPlace {
         setId(null);
     }
 
-    public JPlace(String name, double latitude, double longitude, String address, String id){
+    public JPlace(String name, double latitude, double longitude, String address,
+                  String id, ArrayList<String> types){
         jsonObject = new JSONObject();
         setName(name);
         setAddress(address);
         setId(id);
         setLatitude(latitude);
         setLongitude(longitude);
+        setTags(types);
         setRadius(-1);
         setMarker(-1);
+    }
+
+    public JPlace(String name, double latitude, double longitude, String address,
+                  String id, int radius, int marker, ArrayList<String> types){
+        jsonObject = new JSONObject();
+        setName(name);
+        setAddress(address);
+        setId(id);
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setRadius(radius);
+        setMarker(marker);
+        setTags(types);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -141,6 +165,14 @@ public class JPlace {
                 e.printStackTrace();
             }
         }
+        if (jsonObject.has(TYPES)){
+            Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
+            try {
+                types = new Gson().fromJson(jsonObject.get(TYPES).toString(), collectionType);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -167,6 +199,20 @@ public class JPlace {
      */
     public void setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
+    }
+
+    public void setTags(ArrayList<String> types) {
+        if (types != null) {
+            JSONArray array = new JSONArray();
+            for (String tag : types) {
+                array.put(tag);
+            }
+            try {
+                jsonObject.put(TYPES, array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setLatitude(double latitude) {
@@ -230,6 +276,10 @@ public class JPlace {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getTypes() {
+        return types;
     }
 
     public String getId() {

@@ -108,10 +108,20 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
 
         @Override
         public void onClick(final View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemClicked(getAdapterPosition(), listItem);
+
+            if (getAdapterPosition() == getLast() && getItemCount() > 1) {
+                for (PlaceModel item : array) item.setSelected(1);
+                notifyDataSetChanged();
+            } else {
+                if (mEventListener != null) {
+                    mEventListener.onItemClicked(getAdapterPosition(), listItem);
+                }
             }
         }
+    }
+
+    private int getLast() {
+        return getItemCount() - 1;
     }
 
     @Override
@@ -127,9 +137,16 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         PlaceModel item = array.get(position);
         holder.textView.setText(item.getName());
         holder.text2.setText(item.getAddress());
-        holder.placeIcon.setImageResource(getIcon(item.getTypes()));
+        int icon = getIcon(item.getTypes());
+        if (icon != 0) holder.placeIcon.setImageResource(icon);
         if (item.getSelected() == 1) holder.placeCheck.setChecked(true);
         else holder.placeCheck.setChecked(false);
+
+        if (position == getLast() && getItemCount() > 1) {
+            holder.placeCheck.setVisibility(View.GONE);
+            holder.placeIcon.setVisibility(View.GONE);
+            holder.text2.setText("");
+        }
     }
 
     @Override
@@ -148,6 +165,11 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
     }
 
     private int getIcon(ArrayList<String> tags) {
+        if (tags == null) {
+            if (isDark) return R.drawable.ic_place_white_24dp;
+            else return R.drawable.ic_place_black_24dp;
+        }
+
         StringBuilder sb = new StringBuilder();
         for (String t : tags) sb.append(t).append(",");
         String tag = sb.toString();
@@ -218,7 +240,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         } else if (tag.contains("movie_rental") || tag.contains("movie_theater")) {
             if (isDark) return R.drawable.ic_local_movies_white_24dp;
             else return R.drawable.ic_local_movies_black_24dp;
-        } else if (tag.contains("real_estate_agency")) {
+        } else if (tag.contains("real_estate_agency") || tag.contains("establishment")) {
             if (isDark) return R.drawable.ic_local_hotel_white_24dp;
             else return R.drawable.ic_local_hotel_black_24dp;
         } else if (tag.contains("clothing_store") || tag.contains("home_goods_store")

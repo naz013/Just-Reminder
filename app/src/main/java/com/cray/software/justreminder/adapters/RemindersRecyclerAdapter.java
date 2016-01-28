@@ -36,6 +36,7 @@ import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder> {
 
@@ -249,7 +250,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             }
 
             if (type.contains(Constants.TYPE_LOCATION)) {
-                holder.taskDate.setText(String.format("%.5f", lat) + "\n" + String.format("%.5f", lon));
+                holder.taskDate.setText(String.format(Locale.getDefault(), "%.5f %.5f (%d)", lat, lon, item.getTotalPlaces()));
                 holder.endContainer.setVisibility(View.GONE);
             } else {
                 holder.endContainer.setVisibility(View.VISIBLE);

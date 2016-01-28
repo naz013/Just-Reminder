@@ -495,4 +495,6 @@
     <string name="click_to_select_reminder_type">Click to select reminder type</string>
     <string name="to_insert_task_by_voice">To insert task by voice</string>
     <string name="click_to_change_reminder_group">Click to change reminder group</string>
+    <string name="add_all">Add all</string>
+    <string name="no_places_found">No places found!</string>
 </resources>

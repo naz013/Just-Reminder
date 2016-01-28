@@ -23,10 +23,11 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:id="@+id/placeIcon"
         android:scaleType="fitCenter"
+        android:padding="3dp"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:src="@drawable/ic_local_atm_black_24dp"/>

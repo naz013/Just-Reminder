@@ -27,7 +27,7 @@ import java.util.ArrayList;
  */
 public class ReminderModel {
     private String title, type, uuId, number, groupId, exclusion, melody;
-    private int completed, archived, catColor, viewType, radius, marker;
+    private int completed, archived, catColor, viewType, radius, marker, totalPlaces;
     private long due, id, repeat;
     private double[] place;
     private ArrayList<JShopping> shoppings;
@@ -62,6 +62,7 @@ public class ReminderModel {
         if (type.matches(Constants.TYPE_PLACES)) {
             ArrayList<JPlace> list = jModel.getPlaces();
             if (list != null && list.size() > 0) {
+                totalPlaces = list.size();
                 JPlace place = list.get(0);
                 this.radius = place.getRadius();
                 this.place = new double[]{place.getLatitude(), place.getLongitude()};
@@ -74,6 +75,10 @@ public class ReminderModel {
         weekdays = jRecurrence.getWeekdays();
 
         this.shoppings = jModel.getShoppings();
+    }
+
+    public int getTotalPlaces() {
+        return totalPlaces;
     }
 
     public ArrayList<Integer> getWeekdays() {

@@ -66,6 +66,7 @@ public class ActiveFragment extends Fragment implements
      * Reminder data provider for recycler view.
      */
     private ReminderDataProvider provider;
+    private RemindersRecyclerAdapter adapter;
 
     /**
      * List of group identifiers.
@@ -223,7 +224,7 @@ public class ActiveFragment extends Fragment implements
         if (time > 0) provider = new ReminderDataProvider(getActivity(), time);
         else provider = new ReminderDataProvider(getActivity(), false, groupId);
         reloadView();
-        RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
+        adapter = new RemindersRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
         currentList.setHasFixedSize(true);
         currentList.setItemAnimator(new DefaultItemAnimator());
@@ -364,8 +365,9 @@ public class ActiveFragment extends Fragment implements
 
     @Override
     public void onItemSwitched(final int position, final View switchCompat) {
-        Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
-        loaderAdapter(lastId, 0);
+        boolean is = Reminder.toggle(provider.getItem(position).getId(), getActivity(), mCallbacks);
+        if (is) loaderAdapter(lastId, 0);
+        else adapter.notifyItemChanged(position);
     }
 
     @Override
