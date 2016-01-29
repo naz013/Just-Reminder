@@ -309,7 +309,7 @@ public class SplashScreen extends Activity{
                     parser.setShopping(list);
                 }
 
-                JAction jAction = new JAction(type, number, auto, null);
+                JAction jAction = new JAction(type, number, auto, null, null);
                 parser.setAction(jAction);
 
                 JExport jExport = new JExport(expTasks, exp, null);

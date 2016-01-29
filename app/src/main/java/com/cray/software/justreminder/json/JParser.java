@@ -218,7 +218,7 @@ public class JParser {
         jModel.setStartTime(due);
         jModel.setUuId(uuID);
 
-        JAction jAction = new JAction(type, number, auto, null);
+        JAction jAction = new JAction(type, number, auto, null, null);
         jModel.setAction(jAction);
 
         JExport jExport = new JExport(0, 0, null);

@@ -246,7 +246,12 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             double lat = place[0];
             double lon = place[1];
             if (lat != 0.0 && lon != 0.0) {
-                location.setText(lat + "\n" + lon);
+                if (item.getType().matches(Constants.TYPE_PLACES))
+                    location.setText(String.format(Locale.getDefault(),
+                            "%.5f %.5f (%d)", lat, lon, item.getTotalPlaces()));
+                else {
+                    location.setText(lat + " " + lon);
+                }
                 mapContainer.setVisibility(View.VISIBLE);
                 location.setVisibility(View.VISIBLE);
                 GoogleMap map = ((SupportMapFragment) getSupportFragmentManager()

@@ -82,6 +82,33 @@
                 android:id="@+id/subject"
                 android:inputType="textEmailAddress" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin">
+
+                <ImageButton
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_attach_file_black_24dp"
+                    android:id="@+id/chooseFile"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:layout_toRightOf="@+id/chooseFile"
+                    android:id="@+id/fileName"
+                    android:paddingLeft="10dp"
+                    android:text="@string/no_files_attached"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
             <com.cray.software.justreminder.views.DateTimeView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

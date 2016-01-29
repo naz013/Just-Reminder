@@ -139,6 +139,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         ActionCallbacksExtended {
 
     private static final String HAS_SHOWCASE = "create_showcase";
+    private static final int FILE_REQUEST = 556;
     /**
      * Date reminder type variables.
      */
@@ -186,6 +187,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private EditText mail, subject;
     private CheckBox mailExport;
+    private TextView fileName;
     private CheckBox mailTaskExport;
 
     /**
@@ -285,6 +287,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private String categoryId;
     private String exclusion = null;
     private String uuId = null;
+    private String attachment = null;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = -1;
     private List<Address> foundPlaces;
@@ -1620,9 +1623,25 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.mailLayout);
         remControl = dateType;
 
-        /*ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
-        addMessageNumberButton.setOnClickListener(contactClick);
-        ViewUtils.setImage(addMessageNumberButton, isDark);*/
+        ImageButton chooseFile = (ImageButton) findViewById(R.id.chooseFile);
+        chooseFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
+                        .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
+            }
+        });
+        if (isDark) chooseFile.setImageResource(R.drawable.ic_attach_file_white_24dp);
+        else chooseFile.setImageResource(R.drawable.ic_attach_file_black_24dp);
+
+        fileName = (TextView) findViewById(R.id.fileName);
+        fileName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attachment = null;
+                showAttachment();
+            }
+        });
 
         mail = (EditText) findViewById(R.id.mail);
         subject = (EditText) findViewById(R.id.subject);
@@ -1647,6 +1666,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             JAction jAction = item.getAction();
             String mailContact = jAction.getTarget();
             String subjectT = jAction.getSubject();
+            attachment = jAction.getAttachment();
+
             JExport jExport = item.getExport();
             int exp = jExport.getCalendar();
             int expTasks = jExport.getgTasks();
@@ -1657,6 +1678,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
             if (expTasks == Constants.SYNC_GTASKS_ONLY)
                 messageTaskExport.setChecked(true);
+
+            showAttachment();
 
             taskField.setText(text);
             mail.setText(mailContact);
@@ -1669,6 +1692,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         mailExtra.setValues(vibration, voice, unlock, wake, notificationRepeat, auto);
         if (isExtra) mailExtra.setVisibility(View.VISIBLE);
         invalidateButtons();
+    }
+
+    private void showAttachment() {
+        if (attachment != null) {
+            File file = new File(attachment);
+            fileName.setText(file.getName());
+        } else fileName.setText(getString(R.string.no_files_attached));
     }
 
     @Override
@@ -2592,7 +2622,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
             JMelody jMelody = new JMelody(melody, volume);
             JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
-            JAction jAction = new JAction(type, number, auto, subjectString);
+            JAction jAction = new JAction(type, number, auto, subjectString, attachment);
             JExport jExport = new JExport(gTaskSync, calendarSync, null);
             JPlace jPlace = new JPlace(latitude, longitude, radius, style);
 
@@ -3220,6 +3250,17 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (melody != null) {
                     File musicFile = new File(melody);
                     Messages.snackbar(mFab, String.format(getString(R.string.melody_x), musicFile.getName()));
+                }
+            }
+        }
+
+        if (requestCode == FILE_REQUEST) {
+            if (resultCode == RESULT_OK){
+                attachment = data.getStringExtra(Constants.FILE_PICKED);
+                if (attachment != null) {
+                    File file = new File(attachment);
+                    showAttachment();
+                    Messages.snackbar(mFab, String.format(getString(R.string.file_x_attached), file.getName()));
                 }
             }
         }

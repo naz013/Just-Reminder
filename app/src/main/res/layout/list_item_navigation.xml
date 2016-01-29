@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/itemBg"
     android:foreground="?android:attr/selectableItemBackground"
-    android:padding="8dp" >
+    android:padding="6dp" >
 
     <ImageView android:id="@+id/imgIcon"
         android:layout_width="25dp"

@@ -27,9 +27,10 @@ public class JAction {
     private static final String TYPE = "_type";
     private static final String SUBJECT = "subject";
     private static final String TARGET = "target";
+    private static final String ATTACHMENT = "attachment";
     private static final String AUTO = "_auto";
 
-    private String type, target, subject;
+    private String type, target, subject, attachment;
     private int auto;
 
     /**
@@ -58,17 +59,15 @@ public class JAction {
     public JAction(){
         jsonObject = new JSONObject();
         setAuto(-1);
-        setTarget(null);
-        setType(null);
-        setSubject(null);
     }
 
-    public JAction(String type, String target, int auto, String subject){
+    public JAction(String type, String target, int auto, String subject, String attachment){
         jsonObject = new JSONObject();
         setAuto(auto);
         setTarget(target);
         setType(type);
         setSubject(subject);
+        setAttachment(attachment);
     }
 
     private void parse(JSONObject jsonObject) {
@@ -96,6 +95,13 @@ public class JAction {
         if (jsonObject.has(AUTO)){
             try {
                 auto = jsonObject.getInt(AUTO);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if (jsonObject.has(ATTACHMENT)){
+            try {
+                attachment = jsonObject.getString(ATTACHMENT);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -137,6 +143,15 @@ public class JAction {
         }
     }
 
+    public void setAttachment(String attachment) {
+        this.attachment = attachment;
+        try {
+            jsonObject.put(ATTACHMENT, attachment);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setSubject(String subject) {
         this.subject = subject;
         try {
@@ -162,6 +177,10 @@ public class JAction {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getAttachment() {
+        return attachment;
     }
 
     public String getSubject() {

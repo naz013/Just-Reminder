@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,8 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
 	private String chosenFile;
 	private String chosenPath;
 
+    private String filType;
+
 	private ListAdapter adapter;
     private Sound sound;
 
@@ -65,6 +68,9 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
         }
 		setContentView(R.layout.activity_file_chooser);
         setRequestedOrientation(cs.getRequestOrientation());
+
+        filType = getIntent().getStringExtra(Constants.FILE_TYPE);
+        if (filType == null) filType = "music";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,14 +153,22 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                 }
                 // File picked
                 else {
-                    if (isMelody(chosenFile)) {
-                        if (title.getVisibility() == View.VISIBLE){
-                            ViewUtils.hideFull(title);
-                            ViewUtils.show(buttonContainer);
-                        }
-                        play(false);
+                    Log.d(Constants.LOG_TAG, "File type " + filType);
+                    if (filType.matches("any")) {
+                        Intent intent = new Intent();
+                        intent.putExtra(Constants.FILE_PICKED, chosenPath);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     } else {
-                        Messages.toast(FileExplore.this, getString(R.string.not_music_file));
+                        if (isMelody(chosenFile)) {
+                            if (title.getVisibility() == View.VISIBLE) {
+                                ViewUtils.hideFull(title);
+                                ViewUtils.show(buttonContainer);
+                            }
+                            play(false);
+                        } else {
+                            Messages.toast(FileExplore.this, getString(R.string.not_music_file));
+                        }
                     }
                 }
             }

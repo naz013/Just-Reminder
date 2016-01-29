@@ -3182,7 +3182,7 @@ public class Recognizer {
         DB.close();
 
         JExport jExport = new JExport(0, export ? 1 : 0, null);
-        JAction jAction = new JAction(type, number, -1, null);
+        JAction jAction = new JAction(type, number, -1, null, null);
         JModel jModel = new JModel(summary, type,
                 categoryId, uuID, due, due, null, jAction, jExport);
         long id = new DateType(mContext, type).save(jModel);

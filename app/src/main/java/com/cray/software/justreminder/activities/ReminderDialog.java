@@ -89,7 +89,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private long count, limit;
     private long repeaCode;
     private int isMelody;
-    private String melody, number, name, task, reminderType, subject;
+    private String melody, number, name, task, reminderType, subject, attachment;
     private boolean isExtra = false;
 
     private int currVolume;
@@ -169,22 +169,29 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         if (item != null) {
             task = item.getSummary();
             reminderType = item.getType();
+
             JAction jAction = item.getAction();
             number = jAction.getTarget();
             subject = jAction.getSubject();
+            attachment = jAction.getAttachment();
+            auto = jAction.getAuto();
+
             JMelody jMelody = item.getMelody();
             melody = jMelody.getMelodyPath();
+
             JRecurrence jRecurrence = item.getRecurrence();
             repeaCode = jRecurrence.getRepeat();
+            limit = jRecurrence.getLimit();
+
             JLed jLed = item.getLed();
             color = jLed.getColor();
+
             vibration = item.getVibrate();
             voice = item.getVoice();
             notificationRepeat = item.getNotificationRepeat();
             wake = item.getAwake();
             unlock = item.getUnlock();
-            auto = jAction.getAuto();
-            limit = jRecurrence.getLimit();
+
             count = item.getCount();
         } else {
             notifier.discardNotification(id);
@@ -465,7 +472,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 } else if (type.contains(Constants.TYPE_APPLICATION)){
                     openApplication(number);
                 } else if (type.matches(Constants.TYPE_MAIL)){
-                    Telephony.sendMail(ReminderDialog.this, number, subject, task);
+                    Telephony.sendMail(ReminderDialog.this, number, subject, task, attachment);
                 } else {
                     Telephony.makeCall(number, ReminderDialog.this);
                 }

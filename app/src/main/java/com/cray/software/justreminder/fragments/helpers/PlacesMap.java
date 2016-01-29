@@ -411,7 +411,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         CardView zoomCard = (CardView) view.findViewById(R.id.zoomCard);
         CardView searchCard = (CardView) view.findViewById(R.id.searchCard);
-        CardView myCard = (CardView) view.findViewById(R.id.myCard);
         CardView layersCard = (CardView) view.findViewById(R.id.layersCard);
         CardView placesCard = (CardView) view.findViewById(R.id.placesCard);
         CardView backCard = (CardView) view.findViewById(R.id.backCard);
@@ -423,7 +422,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         zoomCard.setCardBackgroundColor(cSetter.getCardStyle());
         searchCard.setCardBackgroundColor(cSetter.getCardStyle());
-        myCard.setCardBackgroundColor(cSetter.getCardStyle());
         layersCard.setCardBackgroundColor(cSetter.getCardStyle());
         placesCard.setCardBackgroundColor(cSetter.getCardStyle());
         styleCard.setCardBackgroundColor(cSetter.getCardStyle());
@@ -438,7 +436,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (Module.isLollipop()) {
             zoomCard.setCardElevation(Configs.CARD_ELEVATION);
             searchCard.setCardElevation(Configs.CARD_ELEVATION);
-            myCard.setCardElevation(Configs.CARD_ELEVATION);
             layersContainer.setCardElevation(Configs.CARD_ELEVATION);
             layersCard.setCardElevation(Configs.CARD_ELEVATION);
             placesCard.setCardElevation(Configs.CARD_ELEVATION);
@@ -451,7 +448,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         int style = cSetter.getCardStyle();
         zoomCard.setCardBackgroundColor(style);
         searchCard.setCardBackgroundColor(style);
-        myCard.setCardBackgroundColor(style);
         layersContainer.setCardBackgroundColor(style);
         layersCard.setCardBackgroundColor(style);
         placesCard.setCardBackgroundColor(style);
@@ -463,7 +459,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         ImageButton cardClear = (ImageButton) view.findViewById(R.id.cardClear);
         zoomOut = (ImageButton) view.findViewById(R.id.mapZoom);
         ImageButton layers = (ImageButton) view.findViewById(R.id.layers);
-        ImageButton myLocation = (ImageButton) view.findViewById(R.id.myLocation);
         markers = (ImageButton) view.findViewById(R.id.markers);
         places = (ImageButton) view.findViewById(R.id.places);
         ImageButton backButton = (ImageButton) view.findViewById(R.id.backButton);
@@ -472,7 +467,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             cardClear.setImageResource(R.drawable.ic_search_white_24dp);
             zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
             layers.setImageResource(R.drawable.ic_layers_white_24dp);
-            myLocation.setImageResource(R.drawable.ic_my_location_white_24dp);
             markers.setImageResource(R.drawable.ic_palette_white_24dp);
             places.setImageResource(R.drawable.ic_directions_white_24dp);
             backButton.setImageResource(R.drawable.ic_keyboard_arrow_left_white_24dp);
@@ -480,7 +474,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             cardClear.setImageResource(R.drawable.ic_search_black_24dp);
             zoomOut.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
             layers.setImageResource(R.drawable.ic_layers_black_24dp);
-            myLocation.setImageResource(R.drawable.ic_my_location_black_24dp);
             markers.setImageResource(R.drawable.ic_palette_black_24dp);
             places.setImageResource(R.drawable.ic_directions_black_24dp);
             backButton.setImageResource(R.drawable.ic_keyboard_arrow_left_black_24dp);
@@ -489,7 +482,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         cardClear.setOnClickListener(this);
         zoomOut.setOnClickListener(this);
         layers.setOnClickListener(this);
-        myLocation.setOnClickListener(this);
         markers.setOnClickListener(this);
         places.setOnClickListener(this);
 
@@ -770,10 +762,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                 break;
             case R.id.layers:
                 toggleLayers();
-                break;
-            case R.id.myLocation:
-                hideLayers();
-                moveToMyLocation();
                 break;
             case R.id.typeNormal:
                 setMapType(GoogleMap.MAP_TYPE_NORMAL);

@@ -34,12 +34,17 @@ public class Telephony {
      * @param subject mail subject.
      * @param message mail text.
      */
-    public static void sendMail(Context context, String email, String subject, String message){
+    public static void sendMail(Context context, String email, String subject,
+                                String message, String filePath){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, message);
+        if (filePath != null) {
+            Uri uri = Uri.fromFile(new File(filePath));
+            if (uri != null) intent.putExtra(Intent.EXTRA_STREAM, uri);
+        }
         context.startActivity(Intent.createChooser(intent, "Send email..."));
     }
 
