@@ -487,6 +487,11 @@ public class ScreenManager extends AppCompatActivity
                 startActivity(intentS);
             } else if (tag.matches(VOICE_RECOGNIZER)) {
                 SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Voice control")
+                        .setAction("Main")
+                        .setLabel("Main")
+                        .build());
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
                 if (!new GTasksHelper(this).isLinked()) {
                     if (Permissions.checkPermission(ScreenManager.this,
@@ -643,6 +648,7 @@ public class ScreenManager extends AppCompatActivity
                 .setTitle(getString(R.string.buy_pro))
                 .setMessage(getString(R.string.pro_advantages) + "\n" +
                         getString(R.string.different_settings_for_birthdays) + "\n" +
+                        getString(R.string.additional_reminder) + "\n" +
                         getString(R.string._led_notification_) + "\n" +
                         getString(R.string.led_color_for_each_reminder) + "\n" +
                         getString(R.string.styles_for_marker) + "\n" +

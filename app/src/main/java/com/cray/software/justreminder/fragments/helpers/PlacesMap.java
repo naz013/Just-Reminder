@@ -742,6 +742,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     Messages.toast(getActivity(), R.string.cant_access_location_services);
                 }
                 break;
+            case 200:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    updateListener();
+                } else {
+                    Messages.toast(getActivity(), R.string.cant_access_location_services);
+                }
+                break;
         }
     }
 
@@ -869,10 +876,18 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             SharedPrefs prefs = new SharedPrefs(getActivity());
             long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
             int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-            if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+            if (Permissions.checkPermission(getActivity(),
+                    Permissions.ACCESS_COARSE_LOCATION,
+                    Permissions.ACCESS_FINE_LOCATION)) {
+                if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
+                } else {
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+                }
             } else {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
+                Permissions.requestPermission(getActivity(), 200,
+                        Permissions.ACCESS_COARSE_LOCATION,
+                        Permissions.ACCESS_FINE_LOCATION);
             }
         }
     }

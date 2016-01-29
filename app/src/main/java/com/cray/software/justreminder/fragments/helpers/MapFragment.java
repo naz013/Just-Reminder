@@ -412,21 +412,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    /**
-     * Move camera to user current coordinates with animation;
-     * @param animate animation flag
-     */
-    public void moveToMyLocation(boolean animate) {
-        if (map != null && map.getMyLocation() != null) {
-            double lat = map.getMyLocation().getLatitude();
-            double lon = map.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            if (animate) {
-                animate(pos);
-            }
-        }
-    }
-
     public boolean isFullscreen() {
         return isFullscreen;
     }

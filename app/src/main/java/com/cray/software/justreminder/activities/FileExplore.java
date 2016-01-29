@@ -95,6 +95,8 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
         selectButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
         playButton.setOnClickListener(this);
+
+        if (filType.matches("any")) title.setText(R.string.choose_file);
         
         sound = new Sound(this);
 
@@ -153,7 +155,6 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
                 }
                 // File picked
                 else {
-                    Log.d(Constants.LOG_TAG, "File type " + filType);
                     if (filType.matches("any")) {
                         Intent intent = new Intent();
                         intent.putExtra(Constants.FILE_PICKED, chosenPath);

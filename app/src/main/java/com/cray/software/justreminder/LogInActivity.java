@@ -150,13 +150,13 @@ public class LogInActivity extends Activity {
             public void onClick(View v) {
                 if (enabled) {
                     if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
-                            Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
+                            Permissions.ACCESS_FINE_LOCATION)) {
                         new LocalSync(LogInActivity.this, progress, progressMesage).execute();
                         enabled = false;
                     } else {
                         Permissions.requestPermission(LogInActivity.this, 101,
                                 Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
-                                Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
+                                Permissions.ACCESS_FINE_LOCATION);
                     }
                 }
             }
@@ -172,6 +172,7 @@ public class LogInActivity extends Activity {
                     new LocalSync(LogInActivity.this, progress, progressMesage).execute();
                     enabled = false;
                 } else {
+                    checkGroups();
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
                 }
@@ -181,6 +182,7 @@ public class LogInActivity extends Activity {
                     new ImportBirthdays(LogInActivity.this).execute();
                     enabled = false;
                 } else {
+                    checkGroups();
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
                 }
@@ -192,6 +194,7 @@ public class LogInActivity extends Activity {
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
                     enabled = false;
                 } else {
+                    checkGroups();
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
                 }
@@ -201,6 +204,7 @@ public class LogInActivity extends Activity {
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                     enabled = false;
                 } else {
+                    checkGroups();
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
                 }
@@ -221,14 +225,13 @@ public class LogInActivity extends Activity {
                 skipButton.setEnabled(false);
                 sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
-                        Permissions.WRITE_EXTERNAL, Permissions.ACCESS_COARSE_LOCATION,
-                        Permissions.ACCESS_FINE_LOCATION)) {
+                        Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                     new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 104,
                             Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
-                            Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
+                            Permissions.ACCESS_FINE_LOCATION);
                 }
             }
         } else {
@@ -237,14 +240,13 @@ public class LogInActivity extends Activity {
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
             if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
-                    Permissions.WRITE_EXTERNAL, Permissions.ACCESS_COARSE_LOCATION,
-                    Permissions.ACCESS_FINE_LOCATION)) {
+                    Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
                 enabled = false;
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
-                        Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION);
+                        Permissions.ACCESS_FINE_LOCATION);
             }
         }
     }
@@ -338,8 +340,9 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
-                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this,
+                    Permissions.READ_EXTERNAL,
+                    Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
@@ -352,8 +355,9 @@ public class LogInActivity extends Activity {
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
             sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL) &&
-                    Permissions.checkPermission(LogInActivity.this, Permissions.WRITE_EXTERNAL)) {
+            if (Permissions.checkPermission(LogInActivity.this,
+                    Permissions.READ_EXTERNAL,
+                    Permissions.WRITE_EXTERNAL)) {
                 new SyncTask(LogInActivity.this, progress, progressMesage).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
@@ -396,36 +400,12 @@ public class LogInActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             Looper.prepare();
-            DataBase DB = new DataBase(mContext);
-            DB.open();
             IOHelper ioHelper = new IOHelper(mContext);
 
             publishProgress(getString(R.string.syncing_groups));
             ioHelper.restoreGroup(false);
 
-            Cursor cat = DB.queryCategories();
-            if (cat == null || cat.getCount() == 0){
-                long time = System.currentTimeMillis();
-                String defUiID = SyncHelper.generateID();
-                DB.addCategory("General", time, defUiID, 5);
-                DB.addCategory("Work", time, SyncHelper.generateID(), 3);
-                DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-
-                NextBase db = new NextBase(mContext);
-                db.open();
-                Cursor c = db.getReminders();
-                if (c != null && c.moveToFirst()){
-                    do {
-                        db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
-                    } while (c.moveToNext());
-                }
-                if (c != null) {
-                    c.close();
-                }
-                db.close();
-            }
-            if (cat != null) cat.close();
-            DB.close();
+            checkGroups();
 
             //import reminders
             publishProgress(getString(R.string.syncing_reminders));
@@ -473,6 +453,34 @@ public class LogInActivity extends Activity {
         }
     }
 
+    private void checkGroups() {
+        DataBase DB = new DataBase(this);
+        DB.open();
+        Cursor cat = DB.queryCategories();
+        if (cat == null || cat.getCount() == 0){
+            long time = System.currentTimeMillis();
+            String defUiID = SyncHelper.generateID();
+            DB.addCategory("General", time, defUiID, 5);
+            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
+            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
+
+            NextBase db = new NextBase(this);
+            db.open();
+            Cursor c = db.getReminders();
+            if (c != null && c.moveToFirst()){
+                do {
+                    db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
+                } while (c.moveToNext());
+            }
+            if (c != null) {
+                c.close();
+            }
+            db.close();
+        }
+        if (cat != null) cat.close();
+        DB.close();
+    }
+
     public class SyncTask extends AsyncTask<Void, String, Void>{
 
         Context mContext;
@@ -506,37 +514,12 @@ public class LogInActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            DataBase DB = new DataBase(mContext);
-            DB.open();
-
             IOHelper ioHelper = new IOHelper(mContext);
 
             publishProgress(getString(R.string.syncing_groups));
             ioHelper.restoreGroup(true);
 
-            Cursor cat = DB.queryCategories();
-            if (cat == null || cat.getCount() == 0){
-                long time = System.currentTimeMillis();
-                String defUiID = SyncHelper.generateID();
-                DB.addCategory("General", time, defUiID, 5);
-                DB.addCategory("Work", time, SyncHelper.generateID(), 3);
-                DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-
-                NextBase db = new NextBase(mContext);
-                db.open();
-                Cursor c = db.getReminders();
-                if (c != null && c.moveToFirst()){
-                    do {
-                        db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
-                    } while (c.moveToNext());
-                }
-                if (c != null) {
-                    c.close();
-                }
-                db.close();
-            }
-            if (cat != null) cat.close();
-            DB.close();
+            checkGroups();
 
             //import reminders
             publishProgress(getString(R.string.syncing_reminders));

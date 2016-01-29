@@ -227,6 +227,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private AutoCompleteTextView searchField;
     private ActionView actionViewLocation;
 
+    /**
+     * Location out reminder variables.
+     */
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
     private TextView currentLocation, mapLocation, radiusMark;
@@ -341,8 +344,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                                 save();
                                 return true;
                             case R.id.action_custom_melody:
-                                startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
-                                        Constants.REQUEST_CODE_SELECTED_MELODY);
+                                if(Permissions.checkPermission(ReminderManager.this,
+                                        Permissions.READ_EXTERNAL)) {
+                                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
+                                            Constants.REQUEST_CODE_SELECTED_MELODY);
+                                } else {
+                                    Permissions.requestPermission(ReminderManager.this, 330,
+                                            Permissions.READ_EXTERNAL);
+                                }
                                 return true;
                             case R.id.action_custom_radius:
                                 selectRadius();
@@ -1576,8 +1585,13 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         chooseFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
-                        .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
+                if (Permissions.checkPermission(ReminderManager.this, Permissions.READ_EXTERNAL)) {
+                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
+                            .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
+                } else {
+                    Permissions.requestPermission(ReminderManager.this, 331,
+                            Permissions.READ_EXTERNAL);
+                }
             }
         });
         if (isDark) chooseFile.setImageResource(R.drawable.ic_attach_file_white_24dp);
@@ -1876,9 +1890,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         dateType.inflateView(R.id.locationOutLayout);
         remControl = dateType;
 
-        /*
-      LocationOut reminder type variables.
-     */
         LinearLayout delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
         specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
         mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
@@ -3049,6 +3060,18 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     attachPLaces();
                 else spinner.setSelection(0);
+                break;
+            case 330:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
+                            Constants.REQUEST_CODE_SELECTED_MELODY);
+                }
+                break;
+            case 331:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
+                            .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
+                }
                 break;
         }
     }

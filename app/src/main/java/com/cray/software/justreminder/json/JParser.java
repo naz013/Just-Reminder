@@ -97,14 +97,13 @@ public class JParser {
     }
 
     public JModel parse(){
-        if (jsonObject.has(Constants.COLUMN_TEXT)) {
+        if (!jsonObject.has(VERSION_KEY)) {
             try {
                 return modelFromOld();
             } catch (JSONException e) {
                 return null;
             }
         } else {
-            long start = System.currentTimeMillis();
             JModel model = new JModel();
             model.setAction(getAction());
             model.setExport(getExport());
@@ -128,13 +127,11 @@ public class JParser {
             model.setShoppings(getShoppings());
             model.setLed(getLed());
             model.setPlace(getPlace());
-            //Log.d("------TIME------", "Parsing time - " + (System.currentTimeMillis() - start));
             return model;
         }
     }
 
     private JModel modelFromOld() throws JSONException {
-        long start = System.currentTimeMillis();
         String text = null;
         if (!jsonObject.isNull(Constants.COLUMN_TEXT)) {
             text = jsonObject.getString(Constants.COLUMN_TEXT);
@@ -276,7 +273,6 @@ public class JParser {
             }
             jModel.setShoppings(list);
         }
-        //Log.d("------TIME_F------", "Parsing time - " + (System.currentTimeMillis() - start));
         return jModel;
     }
 

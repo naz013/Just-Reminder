@@ -108,12 +108,14 @@ public class IOHelper {
             File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
             if (sdPathDr.exists()) {
                 File[] files = sdPathDr.listFiles();
-                final int x = files.length;
-                if (x > 0) {
-                    try {
-                        new SyncHelper(mContext).groupFromJson(null, null);
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                if (files != null) {
+                    final int x = files.length;
+                    if (x > 0) {
+                        try {
+                            new SyncHelper(mContext).groupFromJson(null, null);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

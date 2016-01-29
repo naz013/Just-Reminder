@@ -2,9 +2,11 @@ package com.cray.software.justreminder.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -24,6 +26,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -186,7 +189,11 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 dateDialog();
                 break;
             case R.id.pickContact:
-                SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
+                if (Permissions.checkPermission(AddBirthday.this, Permissions.READ_CONTACTS)) {
+                    SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
+                } else {
+                    Permissions.requestPermission(AddBirthday.this, 101, Permissions.READ_CONTACTS);
+                }
                 break;
             default:
                 break;
@@ -256,6 +263,17 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 }
                 phone.setText(number);
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
+                }
+                break;
         }
     }
 
