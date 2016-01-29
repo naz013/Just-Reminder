@@ -31,7 +31,6 @@
     <dimen name="clouds_padding">50dp</dimen>
     <dimen name="clouds_text_size">30sp</dimen>
     <dimen name="clouds_margin_top">35dp</dimen>
-    <dimen name="clouds_text_size_secondary">25sp</dimen>
 
     <dimen name="contact_margin_top">30dp</dimen>
     <dimen name="contact_margin">50dp</dimen>
@@ -66,13 +65,11 @@
     <dimen name="log_in_skip_text_size">33sp</dimen>
     <dimen name="log_in_skip_margin_top">25dp</dimen>
     <dimen name="log_in_check_margin_top">25dp</dimen>
-    <dimen name="log_in_settings_margin_yop">20dp</dimen>
     <dimen name="log_in_button_height">69dp</dimen>
     <dimen name="log_in_button_text_size">31sp</dimen>
     <dimen name="log_in_button_margin_top">25dp</dimen>
     <dimen name="log_in_button_corner_radius">20dp</dimen>
     <dimen name="log_in_first_button_margin_top">50dp</dimen>
-    <dimen name="log_in_explanation_text_size">33sp</dimen>
     <dimen name="log_in_title_text_size">40sp</dimen>
     <dimen name="toolbar_elevation">3dp</dimen>
     <dimen name="dialog_toggle_size">32dp</dimen>

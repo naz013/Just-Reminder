@@ -402,7 +402,6 @@
     <string name="missed_call">Missed call</string>
     <string name="x_years">"%s years"</string>
     <string name="left_characters_x">"Left characters %s"</string>
-    <string name="retry">Retry</string>
     <string name="x_days">"%s days"</string>
     <string name="reminder_snoozed">Reminder snoozed</string>
     <string name="choose_application">Choose application</string>

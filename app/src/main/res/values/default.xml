@@ -24,12 +24,6 @@
     <dimen name="floating_edit_text_underline_height">1dp</dimen>
     <dimen name="floating_edit_text_underline_highlighted_height">2dp</dimen>
 
-    <dimen name="circle_button_width">72dp</dimen>
-    <dimen name="circle_button_height">72dp</dimen>
-    <color name="circle_button_color">#ff3f51b5</color>
-    <color name="circle_button_shadow_color">#ff000000</color>
-
-
     <!-- Simple calendar widget theme  -->
     <color name="simple_transparent_widget_color">#1affffff</color>
     <color name="simple_transparent_header_color">#1affffff</color>
