@@ -136,7 +136,7 @@ public class SuperUtil {
             @Override
             protected Void doInBackground(Void... params) {
                 Cursor cursor = activity.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
-                        null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+                        null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
                 contacts = new ArrayList<>();
                 contacts.clear();
                 if (cursor != null) {

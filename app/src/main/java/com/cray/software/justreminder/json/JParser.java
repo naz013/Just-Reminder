@@ -235,10 +235,7 @@ public class JParser {
 
         JRecurrence jRecurrence = new JRecurrence();
         if (weekdays != null) {
-            ArrayList<Integer> list = new ArrayList<>();
-            for (char c1 : weekdays.toCharArray()) {
-                list.add(String.valueOf(c1).matches(Constants.DAY_CHECK) ? 1 : 0);
-            }
+            ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
             jRecurrence.setWeekdays(list);
         }
         jRecurrence.setLimit(limit);

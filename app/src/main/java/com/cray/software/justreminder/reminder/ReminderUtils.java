@@ -75,19 +75,19 @@ public class ReminderUtils {
      */
     public static ArrayList<Integer> getRepeatArray(String weekdays){
         ArrayList<Integer> res = new ArrayList<>();
-        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(6)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(0)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(1)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(2)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(3)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(4)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
-        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECK))res.add(1);
+        if (Character.toString(weekdays.charAt(5)).matches(Constants.DAY_CHECK)) res.add(1);
         else res.add(0);
         return res;
     }
@@ -115,49 +115,49 @@ public class ReminderUtils {
      * @return get selected weekdays string.
      */
     public static String getRepeatString(Context context, ArrayList<Integer> repCode){
-        String res;
         StringBuilder sb = new StringBuilder();
         SharedPrefs prefs = new SharedPrefs(context);
         int first = prefs.loadInt(Prefs.START_DAY);
         if (first == 0) {
-            if (repCode.get(0) == Constants.DAY_CHECKED){
+            if (repCode.get(0) == Constants.DAY_CHECKED) {
+                sb.append(" ");
                 sb.append(context.getString(R.string.sun));
             }
         }
-        if (repCode.get(1) == Constants.DAY_CHECKED){
+        if (repCode.get(1) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.mon));
-            sb.append(",");
         }
-        if (repCode.get(2) == Constants.DAY_CHECKED){
+        if (repCode.get(2) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.tue));
-            sb.append(",");
         }
-        if (repCode.get(3) == Constants.DAY_CHECKED){
+        if (repCode.get(3) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.wed));
-            sb.append(",");
         }
-        if (repCode.get(4) == Constants.DAY_CHECKED){
+        if (repCode.get(4) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.thu));
-            sb.append(",");
         }
-        if (repCode.get(5) == Constants.DAY_CHECKED){
+        if (repCode.get(5) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.fri));
-            sb.append(",");
         }
-        if (repCode.get(6) == Constants.DAY_CHECKED){
+        if (repCode.get(6) == Constants.DAY_CHECKED) {
+            sb.append(" ");
             sb.append(context.getString(R.string.sat));
-            sb.append(",");
         }
         if (first == 1) {
-            if (repCode.get(0) == Constants.DAY_CHECKED){
+            if (repCode.get(0) == Constants.DAY_CHECKED) {
+                sb.append(" ");
                 sb.append(context.getString(R.string.sun));
             }
         }
 
         if (isAllChecked(repCode)){
-            res = context.getString(R.string.everyday);
-        } else res = sb.toString();
-        return res;
+            return context.getString(R.string.everyday);
+        } else return sb.toString();
     }
 
     public static boolean isAllChecked(ArrayList<Integer> repCode) {
