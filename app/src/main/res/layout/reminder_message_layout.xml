@@ -81,6 +81,7 @@
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
                 app:repeat_type_text="@string/days"
+                android:layout_marginBottom="80dp"
                 android:id="@+id/repeatViewMessage"/>
         </LinearLayout>
         </ScrollView>

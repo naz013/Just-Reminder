@@ -113,7 +113,7 @@ dependencies {
     compile project(':photoPreview')
     compile project(':flextcal')
     compile project(':shared')
-    wearApp project(':wear')
+    //wearApp project(':wear')
 }
 
 apply plugin: 'com.google.gms.google-services'

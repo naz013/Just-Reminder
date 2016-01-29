@@ -289,15 +289,6 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <com.cray.software.justreminder.views.RepeatView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                app:repeat_type_text="@string/minutes"
-                android:id="@+id/repeatViewTime"/>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -323,6 +314,17 @@
                     android:layout_alignParentRight="true"/>
 
             </RelativeLayout>
+
+            <com.cray.software.justreminder.views.RepeatView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                app:repeat_type_text="@string/minutes"
+                android:layout_marginBottom="80dp"
+                android:id="@+id/repeatViewTime"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

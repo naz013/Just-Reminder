@@ -33,7 +33,6 @@ public class ExtraPickerDialog extends Activity {
 
     CheckBox vibrationCheck, voiceCheck, wakeCheck, unlockCheck, repeatCheck, autoCheck;
     SwitchCompat extraSwitch;
-    boolean isAuto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class ExtraPickerDialog extends Activity {
         setContentView(R.layout.dialog_select_extra);
 
         Intent intent = getIntent();
-        isAuto = intent.getBooleanExtra("auto", false);
         int[] array = intent.getIntArrayExtra("prefs");
         String type = intent.getStringExtra("type");
 
@@ -65,9 +63,14 @@ public class ExtraPickerDialog extends Activity {
         unlockCheck = (CheckBox) findViewById(R.id.unlockCheck);
         repeatCheck = (CheckBox) findViewById(R.id.repeatCheck);
 
-        if (type.contains(Constants.TYPE_APPLICATION)) autoCheck.setText(R.string.launch_application);
+        if (type.contains(Constants.TYPE_MESSAGE))
+            autoCheck.setVisibility(View.VISIBLE);
+        else autoCheck.setVisibility(View.GONE);
 
-        if (!isAuto) autoCheck.setVisibility(View.GONE);
+        if (type.contains(Constants.TYPE_APPLICATION)) {
+            autoCheck.setText(R.string.launch_application);
+            autoCheck.setVisibility(View.VISIBLE);
+        }
 
         if (array != null) {
             if (array[0] == 1) voiceCheck.setChecked(true);
@@ -116,7 +119,7 @@ public class ExtraPickerDialog extends Activity {
         int unlock = unlockCheck.isChecked() ? 1 : 0;
         int repeat = repeatCheck.isChecked() ? 1 : 0;
         int auto = autoCheck.isChecked() ? 1 : 0;
-        if (!isAuto) auto = -1;
+        if (autoCheck.getVisibility() == View.GONE) auto = -1;
         if (!extraSwitch.isChecked()) return new int[]{-1, -1, -1, -1, -1, -1};
         else return new int[]{voice, vibro, wake, unlock, repeat, auto};
     }

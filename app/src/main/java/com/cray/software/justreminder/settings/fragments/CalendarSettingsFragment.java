@@ -29,7 +29,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     private SharedPrefs sPrefs;
     private ActionBar ab;
     
-    private PrefsView themeColorPrefs, selectedColorPrefs, reminderInCalendarPrefs, 
+    private PrefsView todayColorPrefs, birthdayColorPrefs, reminderInCalendarPrefs,
             reminderColorPrefs, featureRemindersPrefs, bgImagePrefs;
 
     @Override
@@ -49,11 +49,11 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         startDay.setOnClickListener(this);
         eventsImport.setOnClickListener(this);
 
-        themeColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
-        themeColorPrefs.setOnClickListener(this);
+        todayColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
+        todayColorPrefs.setOnClickListener(this);
 
-        selectedColorPrefs = (PrefsView) rootView.findViewById(R.id.selectedColorPrefs);
-        selectedColorPrefs.setOnClickListener(this);
+        birthdayColorPrefs = (PrefsView) rootView.findViewById(R.id.selectedColorPrefs);
+        birthdayColorPrefs.setOnClickListener(this);
 
         reminderInCalendarPrefs = (PrefsView) rootView.findViewById(R.id.reminderInCalendarPrefs);
         reminderInCalendarPrefs.setOnClickListener(this);
@@ -143,17 +143,17 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     private void reminderColor(){
-        themeColorPrefs.setViewResource(new ColorSetter(getActivity())
+        reminderColorPrefs.setViewResource(new ColorSetter(getActivity())
                 .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.REMINDER_COLOR)));
     }
 
     private void currentColor(){
-        themeColorPrefs.setViewResource(new ColorSetter(getActivity())
+        todayColorPrefs.setViewResource(new ColorSetter(getActivity())
                 .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.TODAY_COLOR)));
     }
 
     private void birthdayColor(){
-        selectedColorPrefs.setViewResource(new ColorSetter(getActivity())
+        birthdayColorPrefs.setViewResource(new ColorSetter(getActivity())
                 .getIndicator(new SharedPrefs(getActivity()).loadInt(Prefs.BIRTH_COLOR)));
     }
 

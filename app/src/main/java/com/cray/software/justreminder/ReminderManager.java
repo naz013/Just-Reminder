@@ -262,7 +262,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private TextView category;
     private FloatingActionButton mFab;
     private LinearLayout navContainer;
-    private ImageButton insertVoice;
+    private ImageButton insertVoice, changeExtra;
 
     /**
      * Reminder preferences flags.
@@ -282,6 +282,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private long id;
     private long eventTime;
     private long repeatCode = 0;
+    private int volume;
     private String categoryId;
     private String exclusion = null;
     private String uuId = null;
@@ -301,14 +302,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
     private boolean isCalendar = false, isStock = false, isDark = false;
-    private boolean isMessage = false;
     private boolean isDelayed = false;
 
     private Type remControl = new Type(this);
     private JModel item;
     private Handler handler = new Handler();
     private GeocoderTask task;
-    private int volume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -419,7 +418,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             }
         });
         insertVoice = (ImageButton) findViewById(R.id.insertVoice);
-        ImageButton changeExtra = (ImageButton) findViewById(R.id.changeExtra);
+        changeExtra = (ImageButton) findViewById(R.id.changeExtra);
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -430,7 +429,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
-                        .putExtra("auto", isMessage)
                         .putExtra("type", getType())
                         .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
                                 notificationRepeat, auto}),
@@ -3277,6 +3275,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                     getString(R.string.to_insert_task_by_voice),
                     getString(R.string.got_it));
 
+            sequence.addSequenceItem(changeExtra,
+                    getString(R.string.click_to_customize),
+                    getString(R.string.got_it));
+
             sequence.addSequenceItem(category,
                     getString(R.string.click_to_change_reminder_group),
                     getString(R.string.got_it));
@@ -3351,7 +3353,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     public void onTypeChange(boolean type) {
         if (type) taskField.setHint(getString(R.string.message));
         else taskField.setHint(getString(R.string.remind_me));
-        isMessage = type;
     }
 
     @Override
