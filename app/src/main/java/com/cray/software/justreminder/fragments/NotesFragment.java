@@ -34,8 +34,10 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.datas.models.NoteModel;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -309,12 +311,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
-        final CharSequence[] items = {getString(R.string.open), getString(R.string.share),
+        final String[] items = {getString(R.string.open), getString(R.string.share),
                 getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 long id = provider.getItem(position).getId();
                 switch (item){
                     case 0:
@@ -344,20 +345,18 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                         break;
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     private void selectColor(final long id) {
-        CharSequence[] items = {getString(R.string.red), getString(R.string.purple),
+        String[] items = {getString(R.string.red), getString(R.string.purple),
                 getString(R.string.green), getString(R.string.green_light),
                 getString(R.string.blue), getString(R.string.blue_light),
                 getString(R.string.yellow), getString(R.string.orange),
                 getString(R.string.cyan), getString(R.string.pink),
                 getString(R.string.teal), getString(R.string.amber)};
         if (Module.isPro()){
-            items = new CharSequence[]{getString(R.string.red), getString(R.string.purple),
+            items = new String[]{getString(R.string.red), getString(R.string.purple),
                     getString(R.string.green), getString(R.string.green_light),
                     getString(R.string.blue), getString(R.string.blue_light),
                     getString(R.string.yellow), getString(R.string.orange),
@@ -366,15 +365,12 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 NoteModel.setNewColor(getActivity(), id, item);
                 loaderAdapter();
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 }

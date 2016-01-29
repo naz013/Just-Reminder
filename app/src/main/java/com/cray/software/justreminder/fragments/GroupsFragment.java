@@ -1,9 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -31,8 +29,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
@@ -42,9 +42,7 @@ import java.io.File;
 public class GroupsFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
-
     private CategoryDataProvider provider;
-
     private NavigationCallbacks mCallbacks;
 
     public static GroupsFragment newInstance() {
@@ -142,11 +140,10 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        final String[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 switch (item){
                     case 0:
                         changeColor(provider.getItem(position).getId());
@@ -160,20 +157,18 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                         break;
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     private void changeColor(final long id) {
-        CharSequence[] items = {getString(R.string.red), getString(R.string.purple),
+        String[] items = {getString(R.string.red), getString(R.string.purple),
                 getString(R.string.green), getString(R.string.green_light),
                 getString(R.string.blue), getString(R.string.blue_light),
                 getString(R.string.yellow), getString(R.string.orange),
                 getString(R.string.cyan), getString(R.string.pink),
                 getString(R.string.teal), getString(R.string.amber)};
         if (Module.isPro()){
-            items = new CharSequence[]{getString(R.string.red), getString(R.string.purple),
+            items = new String[]{getString(R.string.red), getString(R.string.purple),
                     getString(R.string.green), getString(R.string.green_light),
                     getString(R.string.blue), getString(R.string.blue_light),
                     getString(R.string.yellow), getString(R.string.orange),
@@ -182,16 +177,13 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 CategoryModel.setNewIndicator(getActivity(), id, item);
                 loadCategories();
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     public class DeleteAsync extends AsyncTask<Void, Void, Void> {

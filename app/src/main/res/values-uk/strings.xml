@@ -516,4 +516,5 @@
     <string name="file_x_attached">"Файл: %s прикріплено"</string>
     <string name="click_to_customize">"Натисніть, щоб налаштувати нагадування (вібрація, увімкнути екран і т.д.)"</string>
     <string name="additional_reminder">Додатковий тип нагадування - Місця</string>
+    <string name="add_reminder_menu">Додати нагадування</string>
 </resources>

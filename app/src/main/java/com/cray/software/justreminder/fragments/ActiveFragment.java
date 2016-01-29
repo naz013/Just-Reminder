@@ -35,9 +35,11 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -388,12 +390,11 @@ public class ActiveFragment extends Fragment implements
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
-        final CharSequence[] items = {getString(R.string.open), getString(R.string.edit),
+        final String[] items = {getString(R.string.open), getString(R.string.edit),
                 getString(R.string.change_group), getString(R.string.move_to_trash)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 ReminderModel item1 = provider.getItem(position);
                 switch (item){
                     case 0:
@@ -411,9 +412,7 @@ public class ActiveFragment extends Fragment implements
                         break;
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     @Override

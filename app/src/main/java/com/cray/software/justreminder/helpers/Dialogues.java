@@ -22,6 +22,7 @@ import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
@@ -48,8 +49,16 @@ import java.util.Locale;
  */
 public class Dialogues {
 
-    public interface OnCategorySelectListener{
-        void onCategory(String catId, String title);
+    public static void showLCAM(Context context, final LCAMListener listener, String... actions) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setItems(actions, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.dismiss();
+                if (listener != null) listener.onAction(item);
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public static void streamDialog(final Activity context){
@@ -805,5 +814,9 @@ public class Dialogues {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public interface OnCategorySelectListener{
+        void onCategory(String catId, String title);
     }
 }

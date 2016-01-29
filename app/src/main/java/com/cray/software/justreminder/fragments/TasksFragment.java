@@ -166,7 +166,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void showDialog(){
-        final CharSequence[] items = {getString(R.string.default_string),
+        final String[] items = {getString(R.string.default_string),
                 getString(R.string.by_date_az),
                 getString(R.string.by_date_za),
                 getString(R.string.active_first),

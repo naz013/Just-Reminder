@@ -1,7 +1,5 @@
 package com.cray.software.justreminder.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +23,10 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -148,11 +148,10 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        final String[] items = {getString(R.string.edit), getString(R.string.delete)};
+        Dialogues.showLCAM(this, new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 if (item == 0) {
                     editTemplate(position);
                 }
@@ -160,8 +159,6 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
                     removeTemplate(position);
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 }

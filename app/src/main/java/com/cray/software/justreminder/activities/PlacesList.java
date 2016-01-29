@@ -1,7 +1,5 @@
 package com.cray.software.justreminder.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -27,9 +25,11 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -166,11 +166,10 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        final String[] items = {getString(R.string.edit), getString(R.string.delete)};
+        Dialogues.showLCAM(this, new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 if (item == 0) {
                     editPlace(position);
                 }
@@ -178,9 +177,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
                     deletePlace(position);
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     @Override

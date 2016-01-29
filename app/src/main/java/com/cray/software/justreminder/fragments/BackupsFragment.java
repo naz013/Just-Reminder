@@ -1,9 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -41,8 +39,10 @@ import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
@@ -820,11 +820,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        final String[] items = {getString(R.string.edit), getString(R.string.delete)};
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 if (item == 0) {
                     startActivity(new Intent(getActivity(),
                             ReminderManager.class).putExtra(Constants.EDIT_PATH,
@@ -834,9 +833,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     actionDelete(position);
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 
     public class Item {

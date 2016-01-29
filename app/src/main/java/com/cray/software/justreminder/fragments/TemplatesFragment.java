@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,24 +15,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.TemplateDataProvider;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.NewTemplate;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.TemplateDataProvider;
+import com.cray.software.justreminder.helpers.Dialogues;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.ScreenManager;
 
 public class TemplatesFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyItem;
-
     private TemplateDataProvider provider;
-
     private NavigationCallbacks mCallbacks;
 
     public static TemplatesFragment newInstance() {
@@ -147,11 +145,10 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemLongClicked(final int position, View view) {
-        final CharSequence[] items = {getString(R.string.edit), getString(R.string.delete)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
+        final String[] items = {getString(R.string.edit), getString(R.string.delete)};
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
                 if (item == 0) {
                     editTemplate(position);
                 }
@@ -159,8 +156,6 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
                     removeTemplate(position);
                 }
             }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
+        }, items);
     }
 }
