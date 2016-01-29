@@ -58,20 +58,37 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/category"
-            android:textSize="18sp"
-            android:padding="2dp"
-            android:layout_gravity="left"
-            android:textColor="@color/whitePrimary"
-            android:drawableLeft="@drawable/ic_local_offer_white_24dp"
-            android:drawablePadding="30dp"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/changeExtra"
+                android:layout_marginRight="10dp"
+                style="@style/Widget.AppCompat.ActionButton"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_tune_white_24dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/category"
+                android:textSize="18sp"
+                android:padding="2dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:layout_centerVertical="true"
+                android:layout_gravity="left"
+                android:textColor="@color/whitePrimary"
+                android:drawableLeft="@drawable/ic_local_offer_white_24dp"
+                android:drawablePadding="30dp"
+                android:layout_toRightOf="@+id/changeExtra"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
+
+        </RelativeLayout>
         </LinearLayout>
-
     </android.support.v7.widget.Toolbar>

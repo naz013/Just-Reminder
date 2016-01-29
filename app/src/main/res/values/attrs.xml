@@ -17,10 +17,6 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ExtraView">
-        <attr name="has_action" format="boolean"/>
-    </declare-styleable>
-
     <declare-styleable name="DateTimeView">
         <attr name="date_text_size" format="dimension"/>
         <attr name="time_text_size" format="dimension"/>

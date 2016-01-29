@@ -125,15 +125,6 @@
                 android:layout_marginRight="@dimen/create_margin"
                 app:repeat_type_text="@string/days"
                 android:id="@+id/repeatViewMail"/>
-
-            <com.cray.software.justreminder.views.ExtraView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:has_action="false"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/create_margin"
-                android:layout_marginBottom="88dp"
-                android:id="@+id/mailExtra"/>
         </LinearLayout>
         </ScrollView>
 </LinearLayout>

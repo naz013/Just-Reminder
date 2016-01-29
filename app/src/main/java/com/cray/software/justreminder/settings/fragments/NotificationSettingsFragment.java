@@ -36,7 +36,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             statusIconPrefs, vibrationOptionPrefs, infiniteVibrateOptionPrefs, 
             soundOptionPrefs, infiniteSoundOptionPrefs, ttsPrefs, wakeScreenOptionPrefs, 
             unlockScreenPrefs, silentSMSOptionPrefs, autoLaunchPrefs, ledPrefs, 
-            repeatNotificationOptionPrefs, extraNotificationPrefs, repeatIntervalPrefs, 
+            repeatNotificationOptionPrefs, repeatIntervalPrefs,
             chooseSoundPrefs, delayForPrefs, chooseLedColorPrefs, streamPrefs, systemPrefs,
             increasePrefs;
 
@@ -121,10 +121,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         repeatNotificationOptionPrefs.setOnClickListener(this);
         repeatNotificationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT));
 
-        extraNotificationPrefs = (PrefsView) rootView.findViewById(R.id.extraNotificationPrefs);
-        extraNotificationPrefs.setOnClickListener(this);
-        extraNotificationPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXTRA_OPTIONS));
-
         systemPrefs = (PrefsView) rootView.findViewById(R.id.systemPrefs);
         systemPrefs.setOnClickListener(this);
         systemPrefs.setChecked(sPrefs.loadBoolean(Prefs.SYSTEM_VOLUME));
@@ -193,17 +189,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         }
 
         return rootView;
-    }
-
-    private void extraChange() {
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (extraNotificationPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, false);
-            extraNotificationPrefs.setChecked(false);
-        } else {
-            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, true);
-            extraNotificationPrefs.setChecked(true);
-        }
     }
 
     private void increaseChange() {
@@ -590,9 +575,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
                 break;
             case R.id.ledPrefs:
                 ledChange();
-                break;
-            case  R.id.extraNotificationPrefs:
-                extraChange();
                 break;
         }
     }

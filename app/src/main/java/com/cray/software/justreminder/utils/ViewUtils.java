@@ -116,7 +116,7 @@ public class ViewUtils {
                 typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_TIME)) {
-            icon = R.drawable.ic_access_time_white_24dp;
+            icon = R.drawable.ic_timer_white_24dp;
         } else if (typePrefs.startsWith(Constants.TYPE_SKYPE)) {
             icon = R.drawable.skype_icon_white;
         } else if (typePrefs.matches(Constants.TYPE_APPLICATION)) {

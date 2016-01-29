@@ -60,8 +60,8 @@ public class Notifier {
      * @param itemId reminder identifier.
      * @param color LED lights color.
      */
-    public void showTTSNotification(final String task, String typePrefs, long itemId, int color,
-                                    boolean vibrate, boolean isExtra){
+    public void showTTSNotification(final String task, String typePrefs, long itemId,
+                                    int color, boolean vibrate){
         sPrefs = new SharedPrefs(mContext);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
@@ -111,9 +111,8 @@ public class Notifier {
             }
         }
 
-        boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
-        if (isExtra) isV = vibrate;
-        if (isV){
+
+        if (vibrate){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
@@ -172,8 +171,8 @@ public class Notifier {
      * @param melody reminder custom melody file.
      * @param color LED lights color.
      */
-    public void showReminder(final String task, String type, int i, long itemId, String melody,
-                             int color, boolean vibrate, boolean isExtra){
+    public void showReminder(final String task, String type, int i, long itemId,
+                             String melody, int color, boolean vibrate){
         sPrefs = new SharedPrefs(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
@@ -233,11 +232,7 @@ public class Notifier {
             }
         }
 
-        boolean isV = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
-        if (isExtra) {
-            isV = vibrate;
-        }
-        if (isV){
+        if (vibrate){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};

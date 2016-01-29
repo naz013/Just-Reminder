@@ -90,7 +90,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private long repeaCode;
     private int isMelody;
     private String melody, number, name, task, reminderType, subject, attachment;
-    private boolean isExtra = false;
 
     private int currVolume;
     private int streamVol;
@@ -199,8 +198,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
-        isExtra = prefs.loadBoolean(Prefs.EXTRA_OPTIONS);
-        if (isExtra) {
+        if (unlock != -1) {
             isFull = unlock == 1;
         }
         if (isFull) {
@@ -214,7 +212,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         boolean isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
-        if (isExtra) {
+        if (wake != -1) {
             isWake = wake == 1;
         }
         if (isWake) {
@@ -226,7 +224,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         boolean autoLaunch = prefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
         boolean silentSMS = prefs.loadBoolean(Prefs.SILENT_SMS);
-        if (isExtra) {
+        if (auto != -1) {
             autoLaunch = auto == 1;
             silentSMS = auto == 1;
         }
@@ -500,7 +498,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         boolean isRepeat = prefs.loadBoolean(Prefs.NOTIFICATION_REPEAT);
-        if (isExtra) {
+        if (notificationRepeat != -1) {
             isRepeat = notificationRepeat == 1;
         }
         if (isRepeat) {
@@ -508,7 +506,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         boolean isTTS = prefs.loadBoolean(Prefs.TTS);
-        if (isExtra) {
+        if (voice != -1) {
             isTTS = voice == 1;
         }
         if (isTTS) {
@@ -645,13 +643,15 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         if (isMelody == 1) {
             i = 0;
         }
-        if (isExtra) {
+        if (voice != -1) {
             isTTS = voice == 1;
         }
+        boolean isV = prefs.loadBoolean(Prefs.VIBRATION_STATUS);
+        if (vibration != -1) isV = vibration == 1;
         if (!isTTS) {
-            notifier.showReminder(task, type, i, id, melody, color, vibration == 1, isExtra);
+            notifier.showReminder(task, type, i, id, melody, color, isV);
         } else {
-            notifier.showTTSNotification(task, type, id, color, vibration == 1, isExtra);
+            notifier.showTTSNotification(task, type, id, color, isV);
         }
     }
 

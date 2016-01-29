@@ -93,7 +93,6 @@ public class Prefs {
     public static final String TTS = "tts_enabled";
     public static final String TTS_LOCALE = "tts_locale";
     public static final String LAST_USED_REMINDER = "last_reminder";
-    public static final String EXTENDED_BUTTON = "extended_button";
     public static final String ITEM_PREVIEW = "item_preview";
     public static final String THANKS_SHOWN = "thanks_shown";
     public static final String LAST_CALENDAR_VIEW = "last_calendar_view";
@@ -104,7 +103,6 @@ public class Prefs {
     public static final String EXPORT_SETTINGS = "export_settings";
     public final static String CUSTOM_SOUND = "custom_sound";
     public final static String CUSTOM_SOUND_FILE = "sound_file";
-    public final static String EXTRA_OPTIONS = "extra_options";
     public final static String BIRTHDAY_PERMANENT = "birthday_permanent";
     public final static String REMINDER_IMAGE = "reminder_image";
     public final static String REMINDER_IMAGE_BLUR = "reminder_image_blur";

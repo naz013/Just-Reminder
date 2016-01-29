@@ -164,10 +164,8 @@ public class SplashScreen extends Activity{
             uiEd.putBoolean(Prefs.QUICK_SMS, false);
             uiEd.putBoolean(Prefs.FOLLOW_REMINDER, false);
             uiEd.putBoolean(Prefs.TTS, false);
-            uiEd.putBoolean(Prefs.EXTENDED_BUTTON, true);
             uiEd.putBoolean(Prefs.ITEM_PREVIEW, true);
             uiEd.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
-            uiEd.putBoolean(Prefs.EXTRA_OPTIONS, false);
             uiEd.putBoolean(Prefs.BIRTHDAY_PERMANENT, false);
             uiEd.putBoolean(Prefs.REMINDER_CHANGED, false);
             uiEd.putBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
@@ -481,9 +479,6 @@ public class SplashScreen extends Activity{
         if (!sPrefs.isString(Prefs.REMINDERS_IN_CALENDAR)){
             sPrefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
         }
-        if (!sPrefs.isString(Prefs.EXTRA_OPTIONS)){
-            sPrefs.saveBoolean(Prefs.EXTRA_OPTIONS, false);
-        }
         if (!sPrefs.isString(Prefs.TTS)){
             sPrefs.saveBoolean(Prefs.TTS, false);
         }
@@ -507,9 +502,6 @@ public class SplashScreen extends Activity{
         }
         if (!sPrefs.isString(Prefs.SILENT_SMS)){
             sPrefs.saveBoolean(Prefs.SILENT_SMS, false);
-        }
-        if (!sPrefs.isString(Prefs.EXTENDED_BUTTON)){
-            sPrefs.saveBoolean(Prefs.EXTENDED_BUTTON, true);
         }
         if (!sPrefs.isString(Prefs.ITEM_PREVIEW)){
             sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
