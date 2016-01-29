@@ -118,6 +118,8 @@ import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -308,6 +310,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private JModel item;
     private Handler handler = new Handler();
     private GeocoderTask task;
+
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -513,6 +517,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
 
         clearViews();
+
+        ReminderApp application = (ReminderApp) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     private void selectVolume() {
@@ -3252,6 +3259,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     protected void onResume() {
         super.onResume();
         showShowcase();
+        mTracker.setScreenName("Create reminder screen");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     public void showShowcase() {

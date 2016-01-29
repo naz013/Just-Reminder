@@ -7,6 +7,7 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -709,6 +710,25 @@
         <activity
             android:name=".activities.ShopsPreview"
             android:theme="@style/HomeWhite.Blue"/>
+
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
     </application>
 
 </manifest>

@@ -1053,9 +1053,9 @@ public class ScreenManager extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        super.onStop();
         if (new SharedPrefs(this).loadBoolean(Prefs.EXPORT_SETTINGS)){
             new SharedPrefs(this).savePrefsBackup();
         }
-        super.onStop();
     }
 }

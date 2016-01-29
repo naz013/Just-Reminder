@@ -55,6 +55,8 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,6 +75,9 @@ import java.util.Random;
 
 
 public class NotesManager extends AppCompatActivity {
+
+    public static final int MENU_ITEM_DELETE = 12;
+
     private int myHour = 0;
     private int myMinute = 0;
     private int myYear = 0;
@@ -97,7 +102,7 @@ public class NotesManager extends AppCompatActivity {
     private FloatingEditText taskField;
     private FloatingActionButton mFab;
 
-    public static final int MENU_ITEM_DELETE = 12;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,6 +387,9 @@ public class NotesManager extends AppCompatActivity {
         }
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
                 cSetter.colorPrimaryDark(color)));
+
+        ReminderApp application = (ReminderApp) getApplication();
+        mTracker = application.getDefaultTracker();
     }
 
     private void shareNote() {
@@ -733,6 +741,13 @@ public class NotesManager extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mTracker.setScreenName("Create note screen");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
