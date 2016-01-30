@@ -30,7 +30,7 @@ public class TrackerOption extends Activity {
         sPrefs = new SharedPrefs(TrackerOption.this);
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.format(getString(R.string.radius_x_meters), sPrefs.loadInt(Prefs.TRACK_DISTANCE)));
+        radiusValue.setText(String.format(getString(R.string.x_meters), sPrefs.loadInt(Prefs.TRACK_DISTANCE)));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(99);
@@ -38,7 +38,7 @@ public class TrackerOption extends Activity {
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                radiusValue.setText(String.format(getString(R.string.radius_x_meters), (i + 1)));
+                radiusValue.setText(String.format(getString(R.string.x_meters), (i + 1)));
             }
 
             @Override

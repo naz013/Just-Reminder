@@ -219,8 +219,8 @@
     <string name="export_to_stock_calendar">Export to default calendar</string>
     <string name="automatically_backup">Automatically backup</string>
     <string name="cloud_services">Cloud services</string>
-    <string name="clean">Clean</string>
-    <string name="backup_settings">Backup settings</string>
+    <string name="clean">Clean data</string>
+    <string name="backup_settings">Create backup of settings</string>
     <string name="missed_call_reminder">Remind about missed calls</string>
     <string name="quick_sms">Quick SMS</string>
     <string name="show_quick_answer_window">Show quick answer window after call rejection</string>
@@ -272,7 +272,7 @@
     <string name="day">Day</string>
     <string name="evening">Evening</string>
     <string name="night">Night</string>
-    <string name="for_lower_battery_usage_set_bigger_values">For lower battery usage, set bigger values!</string>
+    <string name="for_lower_battery_usage_set_bigger_values">For lower battery usage, set higher values!</string>
     <string name="saved">Saved</string>
     <string name="month">Month</string>
     <string name="voice_control">Voice control</string>
@@ -336,7 +336,7 @@
     <string name="excluded_time_from_x_to_x" formatted="false">"Excluded time from %s to %s"</string>
     <string name="sunday">Sunday</string>
     <string name="monday">Monday</string>
-    <string name="local">Local</string>
+    <string name="local">Memory card</string>
     <string name="all">All</string>
     <string name="one_hour">1 hour</string>
     <string name="six_hours">6 hours</string>
@@ -501,4 +501,5 @@
     <string name="click_to_customize">Click to customize reminder (vibrate, awake screen etc.)</string>
     <string name="additional_reminder">Additional type of reminder - Places</string>
     <string name="add_reminder_menu">Add reminder</string>
+    <string name="x_meters">%s meters</string>
 </resources>

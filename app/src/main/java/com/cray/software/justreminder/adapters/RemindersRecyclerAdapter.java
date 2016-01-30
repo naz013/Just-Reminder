@@ -300,7 +300,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             holder.shoppingTitle.setText(title);
 
-            //holder.shoppingTitle.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
             if (title.matches("")) {
                 holder.titleContainer.setVisibility(View.GONE);
             } else {

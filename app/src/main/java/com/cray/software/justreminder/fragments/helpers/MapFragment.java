@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -597,6 +598,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         groupTwo = (LinearLayout) view.findViewById(R.id.groupTwo);
         groupThree = (LinearLayout) view.findViewById(R.id.groupThree);
         emptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
+
+        ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
+        if (isDark) {
+            emptyImage.setImageResource(R.drawable.ic_directions_white_24dp);
+        } else {
+            emptyImage.setImageResource(R.drawable.ic_directions_black_24dp);
+        }
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);
 
