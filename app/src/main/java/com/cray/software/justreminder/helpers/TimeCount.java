@@ -122,16 +122,16 @@ public class TimeCount {
         StringBuilder result = new StringBuilder();
         if (difference > DAY){
             result.append(String.format(mContext.getString(R.string.x_days), days));
-            if (hours > 1) {
+            /*if (hours > 1) {
                 result.append(mContext.getString(R.string.and));
                 result.append(String.format(mContext.getString(R.string.x_hours), hours));
-            }
+            }*/
         } else if (difference > HOUR){
             result.append(String.format(mContext.getString(R.string.x_hours), (days * 24) + hours));
-            if (minutes > 1) {
+            /*if (minutes > 1) {
                 result.append(mContext.getString(R.string.and));
                 result.append(String.format(mContext.getString(R.string.x_minutes), minutes));
-            }
+            }*/
         } else if (difference > MINUTE){
             result.append(String.format(mContext.getString(R.string.x_minutes), (hours * 60) + minutes));
         } else if (difference > 0){
