@@ -260,26 +260,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     /**
-     * Move camera to user current coordinates with animation;
-     */
-    public void moveToMyLocation() {
-        if (map != null && map.getMyLocation() != null) {
-            double lat = map.getMyLocation().getLatitude();
-            double lon = map.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            animate(pos);
-        }
-    }
-
-    public boolean isFullscreen() {
-        return isFullscreen;
-    }
-
-    public void setFullscreen(boolean fullscreen) {
-        isFullscreen = fullscreen;
-    }
-
-    /**
      * On back pressed interface for map;
      * @return boolean
      */
@@ -300,7 +280,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     public void showShowcase() {
         if (!new SharedPrefs(getActivity()).loadBoolean(HAS_SHOWCASE)) {
-            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
             ColorSetter coloring = new ColorSetter(getActivity());
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
@@ -323,6 +302,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     getActivity().getString(R.string.select_place_from_list),
                     getActivity().getString(R.string.got_it));
             sequence.start();
+            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
         }
     }
 

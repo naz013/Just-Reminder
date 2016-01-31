@@ -19,6 +19,7 @@ import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.maps.model.LatLng;
 
 public class NewPlace extends AppCompatActivity implements MapListener {
@@ -143,6 +144,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     @Override
     public void placeChanged(LatLng place) {
         this.place = place;
+        placeTitle = LocationUtil.getAddress(place.latitude, place.longitude);
     }
 
     @Override
@@ -153,10 +155,5 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     @Override
     public void onZoomClick(boolean isFull) {
 
-    }
-
-    @Override
-    public void placeName(String name) {
-        this.placeTitle = name;
     }
 }

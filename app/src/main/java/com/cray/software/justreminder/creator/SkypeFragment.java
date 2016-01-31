@@ -18,6 +18,7 @@ package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -56,6 +58,30 @@ public class SkypeFragment extends BaseFragment implements
 
     public String getType() {
         return type;
+    }
+
+    public static SkypeFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
+        SkypeFragment fragment = new SkypeFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
     }
 
     @Override
@@ -121,7 +147,8 @@ public class SkypeFragment extends BaseFragment implements
 
         DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);
         dateView.setListener(mCallbacks);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+        eventTime = System.currentTimeMillis();
+        dateView.setDateTime(updateCalendar(eventTime, false));
 
         CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
@@ -140,6 +167,7 @@ public class SkypeFragment extends BaseFragment implements
             int expTasks = jExport.getgTasks();
             number = item.getAction().getTarget();
             String type = item.getType();
+            eventTime = item.getEventTime();
 
             if (exp == 1) dateExport.setChecked(true);
             if (expTasks == Constants.SYNC_GTASKS_ONLY)

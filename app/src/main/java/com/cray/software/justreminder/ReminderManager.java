@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.location.Address;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,40 +16,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.activities.FileExplore;
-import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
-import com.cray.software.justreminder.async.GeocoderTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
@@ -62,22 +43,23 @@ import com.cray.software.justreminder.creator.ApplicationFragment;
 import com.cray.software.justreminder.creator.BaseFragment;
 import com.cray.software.justreminder.creator.CallFragment;
 import com.cray.software.justreminder.creator.DateFragment;
+import com.cray.software.justreminder.creator.LocationFragment;
 import com.cray.software.justreminder.creator.MailFragment;
 import com.cray.software.justreminder.creator.MessageFragment;
 import com.cray.software.justreminder.creator.MonthFragment;
+import com.cray.software.justreminder.creator.OutLocationFragment;
+import com.cray.software.justreminder.creator.PlacesFragment;
+import com.cray.software.justreminder.creator.ShoppingFragment;
 import com.cray.software.justreminder.creator.SkypeFragment;
 import com.cray.software.justreminder.creator.TimerFragment;
 import com.cray.software.justreminder.creator.WeekFragment;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.dialogs.ExtraPickerDialog;
 import com.cray.software.justreminder.dialogs.LedColor;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.TargetRadius;
-import com.cray.software.justreminder.fragments.helpers.MapFragment;
-import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -124,7 +106,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
@@ -133,50 +114,13 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
  * Reminder creation activity.
  */
 public class ReminderManager extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
-        CompoundButton.OnCheckedChangeListener, MapListener, GeocoderTask.GeocoderListener,
-        Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener,
+        MapListener, Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener,
         RepeatView.OnRepeatListener, ActionView.OnActionListener,
         ActionCallbacksExtended {
 
     private static final String HAS_SHOWCASE = "create_showcase";
     public static final int FILE_REQUEST = 556;
     public static final int REQUEST_EXTRA = 557;
-
-    /**
-     * Location reminder variables.
-     */
-    private LinearLayout delayLayout;
-    private CheckBox attackDelay;
-    private RelativeLayout mapContainer;
-    private ScrollView specsContainer;
-    private MapFragment map;
-    private AutoCompleteTextView searchField;
-    private ActionView actionViewLocation;
-
-    /**
-     * Location out reminder variables.
-     */
-    private RelativeLayout mapContainerOut;
-    private ScrollView specsContainerOut;
-    private TextView currentLocation, mapLocation, radiusMark;
-    private CheckBox attachDelayOut;
-    private RadioButton currentCheck, mapCheck;
-    private MapFragment mapOut;
-    private ActionView actionViewLocationOut;
-    private SeekBar pointRadius;
-
-    /**
-     * Shopping list reminder type variables.
-     */
-    private EditText shopEdit;
-    private TaskListRecyclerAdapter shoppingAdapter;
-    private ShoppingListDataProvider shoppingLists;
-    private TextView shoppingNoTime;
-    private RelativeLayout shoppingTimeContainer;
-    private DateTimeView dateViewShopping;
-    private RecyclerView todoList;
-
-    private PlacesMap placesMap;
 
     /**
      * Extra options views.
@@ -220,39 +164,33 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private String attachment = null;
     private String type, melody = null, selectedPackage = null;
     private int radius = -1, ledColor = -1;
-    private List<Address> foundPlaces;
-    private ArrayAdapter<String> adapter;
-    private ArrayList<String> namesList;
     private LatLng curPlace;
-    private boolean isShoppingReminder;
 
-    private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
     private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
     private boolean isCalendar = false, isStock = false, isDark = false;
-    private boolean isDelayed = false, hasTasks = false, isMessage, hasAction;
+    private boolean hasTasks = false, isMessage, hasAction;
 
     private Type remControl = new Type(this);
     private JModel item;
     private BaseFragment baseFragment;
 
     private Handler handler = new Handler();
-    private GeocoderTask task;
 
     private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(ReminderManager.this);
-        setTheme(cSetter.getStyle());
+        ColorSetter colorSetter = new ColorSetter(ReminderManager.this);
+        setTheme(colorSetter.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
+            getWindow().setStatusBarColor(ViewUtils.getColor(this, colorSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.create_edit_layout);
-        setRequestedOrientation(cSetter.getRequestOrientation());
+        setRequestedOrientation(colorSetter.getRequestOrientation());
 
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
@@ -303,7 +241,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 });
 
         repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
-        repeatFrame.setBackgroundResource(cSetter.getCardDrawableStyle());
+        repeatFrame.setBackgroundResource(colorSetter.getCardDrawableStyle());
         repeatLabel = (TextView) findViewById(R.id.repeatLabel);
         repeatLabel.setVisibility(View.GONE);
         repeatFrame.setVisibility(View.GONE);
@@ -349,7 +287,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (map != null) map.setMarkerTitle(s.toString());
+                baseFragment.setEventTask(s.toString());
             }
 
             @Override
@@ -384,7 +322,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             }
         });
 
-        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+        findViewById(R.id.windowBackground).setBackgroundColor(colorSetter.getBackgroundStyle());
 
         DataBase db = new DataBase(this);
         db.open();
@@ -547,9 +485,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     private void addFragment(int res, Fragment fragment) {
         FragmentManager fragMan = getSupportFragmentManager();
-        FragmentTransaction fragTransaction = fragMan.beginTransaction();
-        fragTransaction.replace(res, fragment);
-        fragTransaction.commitAllowingStateLoss();
+        FragmentTransaction ft = fragMan.beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.replace(res, fragment);
+        ft.commitAllowingStateLoss();
     }
 
     /**
@@ -671,30 +610,18 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = DateFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        DateFragment fragment = DateFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_REMINDER, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_REMINDER, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
-    }
-
-    private long updateCalendar(long millis, boolean deny) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(millis);
-        if (myYear > 0 && !deny) cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-        return cal.getTimeInMillis();
     }
 
     /**
@@ -703,48 +630,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = MonthFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        MonthFragment fragment = MonthFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_MONTHDAY, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_MONTHDAY, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
-        }
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()){
-            case R.id.currentCheck:
-                if (currentCheck.isChecked()) {
-                    mapCheck.setChecked(false);
-                    mLocList = new CurrentLocation();
-                    updateListener();
-                }
-                break;
-            case R.id.mapCheck:
-                if (mapCheck.isChecked()) {
-                    currentCheck.setChecked(false);
-                    toggleMap();
-                    removeUpdates();
-                }
-                break;
-        }
-    }
-
-    private void removeUpdates() {
-        if (mLocList != null) {
-            if (Permissions.checkPermission(ReminderManager.this,
-                    Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
-                mLocationManager.removeUpdates(mLocList);
-            } else {
-                Permissions.requestPermission(ReminderManager.this, 201,
-                        Permissions.ACCESS_FINE_LOCATION,
-                        Permissions.ACCESS_COARSE_LOCATION);
-            }
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -754,15 +650,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = WeekFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        WeekFragment fragment = WeekFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_WEEKDAY, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_WEEKDAY, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -772,16 +670,18 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = TimerFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        TimerFragment fragment = TimerFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_TIME, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_TIME, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
             exclusion = item.getExclusion().toString();
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -791,15 +691,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachSkype(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = SkypeFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        SkypeFragment fragment = SkypeFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_SKYPE, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_SKYPE, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -809,16 +711,18 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachApplication(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = ApplicationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        ApplicationFragment fragment = ApplicationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_APPLICATION, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_APPLICATION, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             selectedPackage = item.getAction().getTarget();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -828,15 +732,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachCall(){
         taskField.setHint(getString(R.string.remind_me));
 
-        baseFragment = CallFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        CallFragment fragment = CallFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_CALL, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_CALL, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -846,15 +752,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachMessage(){
         taskField.setHint(getString(R.string.message));
 
-        baseFragment = MessageFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        MessageFragment fragment = MessageFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_MESSAGE, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_MESSAGE, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -864,43 +772,28 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachMail(){
         taskField.setHint(getString(R.string.subject));
 
-        baseFragment = MailFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
-        addFragment(R.id.layoutContainer, baseFragment);
+        MailFragment fragment = MailFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        remControl = new DateType(this, Constants.TYPE_MAIL, baseFragment);
+        remControl = new DateType(this, Constants.TYPE_MAIL, fragment);
 
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
             taskField.setText(item.getAction().getSubject());
+            baseFragment.setEventTime(eventTime);
         }
     }
 
     @Override
     public void placeChanged(LatLng place) {
         curPlace = place;
-        if (isLocationOutAttached())
-            mapLocation.setText(LocationUtil.getAddress(place.latitude, place.longitude));
     }
 
     @Override
     public void onBackClick() {
-        if (isLocationAttached()) {
-            if (map.isFullscreen()) {
-                map.setFullscreen(false);
-                ViewUtils.expand(toolbar);
-            }
-            ViewUtils.fadeOutAnimation(mapContainer);
-            ViewUtils.fadeInAnimation(specsContainer);
-        }
-        if (isLocationOutAttached()) {
-            if (mapOut.isFullscreen()) {
-                mapOut.setFullscreen(false);
-                ViewUtils.collapse(toolbar);
-            }
-            ViewUtils.fadeOutAnimation(mapContainerOut);
-            ViewUtils.fadeInAnimation(specsContainerOut);
-        }
+        ViewUtils.expand(toolbar);
     }
 
     @Override
@@ -912,185 +805,25 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         }
     }
 
-    @Override
-    public void placeName(String name) {
-
-    }
-
     /**
      * Show location reminder type creation layout.
      */
     private void attachLocation() {
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout geolocationlayout = (LinearLayout) findViewById(R.id.geolocationlayout);
-        ViewUtils.fadeInAnimation(geolocationlayout);
+        LocationFragment fragment = LocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION);
-        dateType.inflateView(R.id.geolocationlayout);
-        remControl = dateType;
-
-        delayLayout = (LinearLayout) findViewById(R.id.delayLayout);
-        mapContainer = (RelativeLayout) findViewById(R.id.mapContainer);
-        specsContainer = (ScrollView) findViewById(R.id.specsContainer);
-        delayLayout.setVisibility(View.GONE);
-        mapContainer.setVisibility(View.GONE);
-
-        attackDelay = (CheckBox) findViewById(R.id.attackDelay);
-        attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) delayLayout.setVisibility(View.VISIBLE);
-                else delayLayout.setVisibility(View.GONE);
-            }
-        });
-
-        if (attackDelay.isChecked()) ViewUtils.expand(delayLayout);
-
-        ImageButton clearField = (ImageButton) findViewById(R.id.clearButton);
-        ImageButton mapButton = (ImageButton) findViewById(R.id.mapButton);
-
-        if (isDark){
-            clearField.setImageResource(R.drawable.ic_backspace_white_24dp);
-            mapButton.setImageResource(R.drawable.ic_map_white_24dp);
-        } else {
-            clearField.setImageResource(R.drawable.ic_backspace_black_24dp);
-            mapButton.setImageResource(R.drawable.ic_map_black_24dp);
-        }
-
-        clearField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchField.setText("");
-            }
-        });
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleMap();
-            }
-        });
-
-        searchField = (AutoCompleteTextView) findViewById(R.id.searchField);
-        searchField.setThreshold(3);
-        adapter = new ArrayAdapter<>(
-                ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
-        searchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled())
-                    task.cancel(true);
-                task = new GeocoderTask(ReminderManager.this, ReminderManager.this);
-                task.execute(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        searchField.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                curPlace = pos;
-                String title = taskField.getText().toString().trim();
-                if (title.matches(""))
-                    title = pos.toString();
-                if (map != null)
-                    map.addMarker(pos, title, true, true, radius);
-            }
-        });
-
-        actionViewLocation = (ActionView) findViewById(R.id.actionViewLocation);
-        actionViewLocation.setListener(this);
-        actionViewLocation.setActivity(this);
-
-        DateTimeView dateViewLocation = (DateTimeView) findViewById(R.id.dateViewLocation);
-        dateViewLocation.setListener(this);
-        dateViewLocation.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        if (curPlace != null) {
-            if (map != null) {
-                map.addMarker(curPlace, null, true, true, radius);
-                toggleMap();
-            }
-        }
+        remControl = new LocationType(this, Constants.TYPE_LOCATION, fragment);
 
         if (item != null && isSame()) {
             String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JPlace jPlace = item.getPlace();
-            double latitude = jPlace.getLatitude();
-            double longitude = jPlace.getLongitude();
             eventTime = item.getStartTime();
-            radius = jPlace.getRadius();
-
-            if (item != null && eventTime > 0) {
-                dateViewLocation.setDateTime(updateCalendar(eventTime, true));
-                attackDelay.setChecked(true);
-                isDelayed = true;
-            } else attackDelay.setChecked(false);
-
-            if (type.matches(Constants.TYPE_LOCATION_CALL) || type.matches(Constants.TYPE_LOCATION_MESSAGE)){
-                actionViewLocation.setAction(true);
-                actionViewLocation.setNumber(number);
-                if (type.matches(Constants.TYPE_LOCATION_CALL))
-                    actionViewLocation.setType(ActionView.TYPE_CALL);
-                else actionViewLocation.setType(ActionView.TYPE_MESSAGE);
-            } else {
-                actionViewLocation.setAction(false);
-            }
-
             taskField.setText(text);
-            if (map != null) {
-                map.addMarker(new LatLng(latitude, longitude), text, true, false, radius);
-                toggleMap();
-            }
-        }
-    }
-
-    private boolean isMapVisible() {
-        if (isLocationAttached()) {
-            return mapContainer != null && mapContainer.getVisibility() == View.VISIBLE;
-        }
-        return isLocationOutAttached() && mapContainerOut != null &&
-                mapContainerOut.getVisibility() == View.VISIBLE;
-    }
-
-    private void toggleMap() {
-        if (isLocationAttached()) {
-            if (isMapVisible()) {
-                ViewUtils.fadeOutAnimation(mapContainer);
-                ViewUtils.fadeInAnimation(specsContainer);
-            } else {
-                ViewUtils.fadeOutAnimation(specsContainer);
-                ViewUtils.fadeInAnimation(mapContainer);
-                if (map != null) {
-                    map.showShowcase();
-                }
-            }
-        }
-        if (isLocationOutAttached()) {
-            if (isMapVisible()) {
-                ViewUtils.fadeOutAnimation(mapContainerOut);
-                ViewUtils.fadeInAnimation(specsContainerOut);
-            } else {
-                ViewUtils.fadeOutAnimation(specsContainerOut);
-                ViewUtils.fadeInAnimation(mapContainerOut);
-                if (mapOut != null) {
-                    mapOut.showShowcase();
-                }
-            }
+            JPlace jPlace = item.getPlace();
+            radius = jPlace.getRadius();
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -1100,120 +833,19 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout locationOutLayout = (LinearLayout) findViewById(R.id.locationOutLayout);
-        ViewUtils.fadeInAnimation(locationOutLayout);
+        OutLocationFragment fragment = OutLocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        LocationType dateType = new LocationType(this, Constants.TYPE_LOCATION_OUT);
-        dateType.inflateView(R.id.locationOutLayout);
-        remControl = dateType;
-
-        LinearLayout delayLayoutOut = (LinearLayout) findViewById(R.id.delayLayoutOut);
-        specsContainerOut = (ScrollView) findViewById(R.id.specsContainerOut);
-        mapContainerOut = (RelativeLayout) findViewById(R.id.mapContainerOut);
-        delayLayoutOut.setVisibility(View.GONE);
-        mapContainerOut.setVisibility(View.GONE);
-
-        attachDelayOut = (CheckBox) findViewById(R.id.attachDelayOut);
-        attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) attachDelayOut.setVisibility(View.VISIBLE);
-                else attachDelayOut.setVisibility(View.GONE);
-            }
-        });
-
-        if (attachDelayOut.isChecked()) ViewUtils.expand(delayLayoutOut);
-
-        ImageButton mapButtonOut = (ImageButton) findViewById(R.id.mapButtonOut);
-        if (isDark)
-            mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
-        else
-            mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
-
-        mapButtonOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mapCheck.isChecked()) {
-                    toggleMap();
-                }
-                mapCheck.setChecked(true);
-            }
-        });
-        currentLocation = (TextView) findViewById(R.id.currentLocation);
-        mapLocation = (TextView) findViewById(R.id.mapLocation);
-        radiusMark = (TextView) findViewById(R.id.radiusMark);
-
-        currentCheck = (RadioButton) findViewById(R.id.currentCheck);
-        mapCheck = (RadioButton) findViewById(R.id.mapCheck);
-        currentCheck.setOnCheckedChangeListener(this);
-        mapCheck.setOnCheckedChangeListener(this);
-        currentCheck.setChecked(true);
-
-        pointRadius = (SeekBar) findViewById(R.id.pointRadius);
-        pointRadius.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                radiusMark.setText(String.format(getString(R.string.radius_x_meters), progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        if (pointRadius.getProgress() == 0)
-            pointRadius.setProgress(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-
-        actionViewLocationOut = (ActionView) findViewById(R.id.actionViewLocationOut);
-        actionViewLocationOut.setListener(this);
-        actionViewLocationOut.setActivity(this);
-
-        DateTimeView dateViewLocationOut = (DateTimeView) findViewById(R.id.dateViewLocationOut);
-        dateViewLocationOut.setListener(this);
-        dateViewLocationOut.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        if (curPlace != null) {
-            if (mapOut != null)
-                mapOut.addMarker(curPlace, null, true, true, radius);
-            mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
-        }
+        remControl = new LocationType(this, Constants.TYPE_LOCATION_OUT, fragment);
 
         if (item != null && isSame()) {
             String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JPlace jPlace = item.getPlace();
-            double latitude = jPlace.getLatitude();
-            double longitude = jPlace.getLongitude();
             eventTime = item.getStartTime();
-            radius = jPlace.getRadius();
-
-            if (item != null && eventTime > 0) {
-                dateViewLocationOut.setDateTime(updateCalendar(eventTime, true));
-                attachDelayOut.setChecked(true);
-                isDelayed = true;
-            } else attachDelayOut.setChecked(false);
-
-            if (type.matches(Constants.TYPE_LOCATION_OUT_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                actionViewLocationOut.setAction(true);
-                actionViewLocationOut.setNumber(number);
-                if (type.matches(Constants.TYPE_LOCATION_OUT_CALL))
-                    actionViewLocationOut.setType(ActionView.TYPE_CALL);
-                else
-                    actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
-            } else actionViewLocationOut.setAction(false);
-
             taskField.setText(text);
-            LatLng pos = new LatLng(latitude, longitude);
-            if (mapOut != null)
-                mapOut.addMarker(pos, text, true, true, radius);
-
-            mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
-            mapCheck.setChecked(true);
+            JPlace jPlace = item.getPlace();
+            radius = jPlace.getRadius();
+            baseFragment.setEventTime(eventTime);
         }
     }
 
@@ -1223,23 +855,18 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachPLaces() {
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout placesLayout = (LinearLayout) findViewById(R.id.placesLayout);
-        ViewUtils.fadeInAnimation(placesLayout);
+        PlacesFragment fragment = PlacesFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        LocationType dateType = new LocationType(this, Constants.TYPE_PLACES);
-        dateType.inflateView(R.id.placesLayout);
-        remControl = dateType;
+        remControl = new LocationType(this, Constants.TYPE_PLACES, fragment);
 
         if (item != null && isSame()) {
             String text = item.getSummary();
-            ArrayList<JPlace> list = item.getPlaces();
             eventTime = item.getStartTime();
-
             taskField.setText(text);
-            if (placesMap != null)
-                placesMap.addMarkers(list);
+            baseFragment.setEventTime(eventTime);
         }
-        if (placesMap != null) placesMap.showShowcase();
     }
 
     /**
@@ -1248,146 +875,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void attachShoppingList(){
         taskField.setHint(R.string.title);
 
-        RelativeLayout shoppingLayout = (RelativeLayout) findViewById(R.id.shoppingLayout);
-        ViewUtils.fadeInAnimation(shoppingLayout);
+        ShoppingFragment fragment = ShoppingFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        baseFragment = fragment;
+        addFragment(R.id.layoutContainer, fragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_SHOPPING_LIST);
-        dateType.inflateView(R.id.shoppingLayout);
-        remControl = dateType;
+        remControl = new DateType(this, Constants.TYPE_SHOPPING_LIST, fragment);
 
-        todoList = (RecyclerView) findViewById(R.id.todoList);
-        todoList.setLayoutManager(new LinearLayoutManager(this));
-        CardView cardContainer = (CardView) findViewById(R.id.cardContainer);
-        cardContainer.setCardBackgroundColor(cSetter.getCardStyle());
-
-        shoppingTimeContainer = (RelativeLayout) findViewById(R.id.shoppingTimeContainer);
-
-        dateViewShopping = (DateTimeView) findViewById(R.id.dateViewShopping);
-        dateViewShopping.setListener(this);
-
-        ImageView shopTimeIcon = (ImageView) findViewById(R.id.shopTimeIcon);
-        shopTimeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
-                    ViewUtils.hide(shoppingTimeContainer);
-                }
-                ViewUtils.show(shoppingNoTime);
-                myYear = 0;
-                myMonth = 0;
-                myDay = 0;
-                myHour = 0;
-                myMinute = 0;
-                isShoppingReminder = false;
-            }
-        });
-        if (isDark)
-            shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-        else
-            shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
-
-        shoppingNoTime  = (TextView) findViewById(R.id.shoppingNoTime);
-        shoppingNoTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
-                    ViewUtils.hide(shoppingNoTime);
-                }
-                ViewUtils.show(shoppingTimeContainer);
-                dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-                isShoppingReminder = true;
-            }
-        });
-
-        shopEdit = (EditText) findViewById(R.id.shopEdit);
-        shopEdit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    String task = shopEdit.getText().toString().trim();
-                    if (task.matches("")) {
-                        shopEdit.setError(getString(R.string.must_be_not_empty));
-                        return false;
-                    } else {
-                        shoppingLists.addItem(new ShoppingList(task));
-                        shoppingAdapter.notifyDataSetChanged();
-                        shopEdit.setText("");
-                        return true;
-                    }
-                } else return false;
-            }
-        });
-        ImageButton addButton = (ImageButton) findViewById(R.id.addButton);
-        if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
-        else addButton.setImageResource(R.drawable.ic_add_black_24dp);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String task = shopEdit.getText().toString().trim();
-                if (task.matches("")) {
-                    shopEdit.setError(getString(R.string.must_be_not_empty));
-                    return;
-                }
-
-                shoppingLists.addItem(new ShoppingList(task));
-                shoppingAdapter.notifyDataSetChanged();
-                shopEdit.setText("");
-            }
-        });
-
-        shoppingLists = new ShoppingListDataProvider(this);
-        loadShoppings();
-        if (item != null && isSame()){
-            shoppingLists.clear();
-            shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
-            loadShoppings();
-
-            eventTime = item.getStartTime();
-
-            if (eventTime > 0) {
-                dateViewShopping.setDateTime(updateCalendar(eventTime, true));
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
-                    ViewUtils.hide(shoppingNoTime);
-
-                ViewUtils.show(shoppingTimeContainer);
-                isShoppingReminder = true;
-            } else {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
-                    ViewUtils.hide(shoppingTimeContainer);
-
-                ViewUtils.show(shoppingNoTime);
-                isShoppingReminder = false;
-            }
-
+        if (item != null && isSame()) {
+            eventTime = item.getEventTime();
             taskField.setText(item.getSummary());
+            baseFragment.setEventTime(eventTime);
         }
-    }
-
-    private void loadShoppings() {
-        shoppingAdapter = new TaskListRecyclerAdapter(this, shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
-            @Override
-            public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList item = shoppingLists.getItem(position);
-                if (item.isChecked() == 1) item.setIsChecked(0);
-                else item.setIsChecked(1);
-                loadShoppings();
-            }
-
-            @Override
-            public void onItemDelete(int position) {
-                shoppingLists.removeItem(position);
-                loadShoppings();
-            }
-
-            @Override
-            public void onItemChange(int position) {
-                ShoppingList item = shoppingLists.getItem(position);
-                if (item.getStatus() == 1) item.setStatus(0);
-                else item.setStatus(1);
-                loadShoppings();
-            }
-        });
-        todoList.setAdapter(shoppingAdapter);
     }
 
     /**
@@ -1533,14 +1031,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         String type;
         if (remControl instanceof LocationType){
             if (remControl.getType().startsWith(Constants.TYPE_LOCATION_OUT)){
-                if (actionViewLocationOut.hasAction()){
-                    if (actionViewLocationOut.getType() == ActionView.TYPE_CALL)
+                if (hasAction){
+                    if (!isMessage)
                         type = Constants.TYPE_LOCATION_OUT_CALL;
                     else type = Constants.TYPE_LOCATION_OUT_MESSAGE;
                 } else type = Constants.TYPE_LOCATION_OUT;
             } else if (remControl.getType().startsWith(Constants.TYPE_LOCATION)) {
-                if (actionViewLocation.hasAction()){
-                    if (actionViewLocation.getType() == ActionView.TYPE_CALL)
+                if (hasAction){
+                    if (!isMessage)
                         type = Constants.TYPE_LOCATION_CALL;
                     else type = Constants.TYPE_LOCATION_MESSAGE;
                 } else type = Constants.TYPE_LOCATION;
@@ -1584,11 +1082,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
         ArrayList<JShopping> jShoppings = new ArrayList<>();
         if (isShoppingAttached()){
-            if (shoppingLists.getCount() == 0) {
+            ShoppingFragment fragment = (ShoppingFragment) baseFragment;
+            if (fragment.getCount() == 0) {
                 Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
                 return null;
             } else {
-                for (ShoppingList shoppingList : shoppingLists.getData()) {
+                for (ShoppingList shoppingList : fragment.getData()) {
                     String title = shoppingList.getTitle();
                     String uuid = shoppingList.getUuId();
                     long time = shoppingList.getTime();
@@ -1597,7 +1096,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                     jShoppings.add(new JShopping(title, status, uuid, time, deleted));
                 }
             }
-            if (!isShoppingReminder) {
+            if (!fragment.isShoppingReminder()) {
                 myDay = 0;
                 myMonth = 0;
                 myYear = 0;
@@ -1685,24 +1184,26 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return null;
             }
             if (isLocationAttached()) {
-                if (!attackDelay.isChecked()) {
+                LocationFragment fragment = (LocationFragment) baseFragment;
+                if (fragment.isDelayed()) {
                     myDay = 0;
                     myMonth = 0;
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
                 }
-                style = map.getMarkerStyle();
+                style = fragment.getMarker();
             }
             if (isLocationOutAttached()) {
-                if (!attachDelayOut.isChecked()) {
+                OutLocationFragment fragment = (OutLocationFragment) baseFragment;
+                if (fragment.isDelayed()) {
                     myDay = 0;
                     myMonth = 0;
                     myYear = 0;
                     myHour = 0;
                     myMinute = 0;
                 }
-                style = mapOut.getMarkerStyle();
+                style = fragment.getMarker();
             }
 
             latitude = dest.latitude;
@@ -1716,7 +1217,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return null;
             }
 
-            places = placesMap.getPlaces();
+            places = ((PlacesFragment) baseFragment).getPlaces();
             if (places == null || places.size() == 0) {
                 Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
                 return null;
@@ -1829,9 +1330,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onBackPressed() {
-        if (map != null && !map.onBackPressed()) return;
-        if (mapOut != null && !mapOut.onBackPressed()) return;
-        if (placesMap != null && !placesMap.onBackPressed()) return;
+        if (baseFragment.onBackPressed()) return;
 
         if (mFab.getVisibility() == View.GONE){
             mFab.show();
@@ -1854,8 +1353,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 String type = c.getString(c.getColumnIndex(NextBase.TYPE));
                 int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
                 int isArchive = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
+                eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 if (isDone != 1 && isArchive != 1) {
-                    if (type.contains(Constants.TYPE_LOCATION) && isDelayed)
+                    if (type.contains(Constants.TYPE_LOCATION) && eventTime > 0)
                         new PositionDelayReceiver().setDelay(ReminderManager.this, id);
                     else new AlarmReceiver().enableReminder(ReminderManager.this, id);
                 }
@@ -2065,11 +1565,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
                 if (isMonthDayAttached()) ((MonthFragment) baseFragment).setNumber(number);
 
-                if (isLocationAttached() && actionViewLocation.hasAction())
-                    actionViewLocation.setNumber(number);
+                if (isLocationAttached()) ((LocationFragment) baseFragment).setNumber(number);
 
-                if (isLocationOutAttached() && actionViewLocationOut.hasAction())
-                    actionViewLocationOut.setNumber(number);
+                if (isLocationOutAttached()) ((OutLocationFragment) baseFragment).setNumber(number);
             }
         }
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -2109,19 +1607,23 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                         @Override
                         public void onClick(View v) {
                             radius = -1;
-                            if (isLocationAttached()) map.recreateMarker(radius);
-                            if (isLocationOutAttached()) mapOut.recreateMarker(radius);
+                            if (isLocationAttached()) {
+                                ((LocationFragment) baseFragment).recreateMarkers(radius);
+                            }
+                            if (isLocationOutAttached()) {
+                                ((OutLocationFragment) baseFragment).recreateMarkers(radius);
+                            }
                         }
                     });
                     if (isLocationAttached()) {
-                        map.recreateMarker(radius);
+                        ((LocationFragment) baseFragment).recreateMarkers(radius);
                     }
                     if (isLocationOutAttached()) {
-                        mapOut.recreateMarker(radius);
-                        pointRadius.setProgress(radius);
+                        ((OutLocationFragment) baseFragment).recreateMarkers(radius);
+                        ((OutLocationFragment) baseFragment).setPointRadius(radius);
                     }
 
-                    if (isPlacesAttached()) placesMap.recreateMarker(radius);
+                    if (isPlacesAttached()) ((PlacesFragment) baseFragment).recreateMarkers(radius);
                 }
             }
         }
@@ -2275,34 +1777,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        removeUpdates();
         InputMethodManager imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(taskField.getWindowToken(), 0);
-    }
-
-    private LocationManager mLocationManager;
-    private LocationListener mLocList;
-
-    @Override
-    public void onAddressReceived(List<Address> addresses) {
-        foundPlaces = addresses;
-
-        namesList = new ArrayList<>();
-        namesList.clear();
-        for (Address selected:addresses){
-            String addressText = String.format("%s, %s%s",
-                    selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
-                    selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
-                    selected.getCountryName());
-            namesList.add(addressText);
-        }
-        adapter = new ArrayAdapter<>(
-                ReminderManager.this, android.R.layout.simple_dropdown_item_1line, namesList);
-        if (isLocationAttached()){
-            searchField.setAdapter(adapter);
-        }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -2367,51 +1844,5 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
                 .setAction(actionTitle, listener)
                 .show();
-    }
-
-    public class CurrentLocation implements LocationListener {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            double currentLat = location.getLatitude();
-            double currentLong = location.getLongitude();
-            curPlace = new LatLng(currentLat, currentLong);
-            String _Location = LocationUtil.getAddress(currentLat, currentLong);
-            String text = taskField.getText().toString().trim();
-            if (text.matches("")) text = _Location;
-            if (isLocationOutAttached()) {
-                currentLocation.setText(_Location);
-                if (mapOut != null) {
-                    mapOut.addMarker(new LatLng(currentLat, currentLong), text, true, true, radius);
-                }
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            updateListener();
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            updateListener();
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            updateListener();
-        }
-    }
-
-    private void updateListener() {
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-        long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-        int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
-        } else {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
-        }
     }
 }

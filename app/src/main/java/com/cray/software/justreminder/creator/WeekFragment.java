@@ -19,6 +19,7 @@ package com.cray.software.justreminder.creator;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -78,7 +80,31 @@ public class WeekFragment extends BaseFragment implements
         }
     };
 
+    public static WeekFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
+        WeekFragment fragment = new WeekFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
+
     public WeekFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
     }
 
     @Override

@@ -17,12 +17,13 @@
 package com.cray.software.justreminder.creator;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.fragments.helpers.MapFragment;
+import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -32,10 +33,13 @@ import java.util.Date;
 
 public class BaseFragment extends Fragment {
 
-    private final static String THEME = "theme";
-    private final static String STOCK = "stock";
-    private final static String CALENDAR = "calendar";
-    private final static String TASKS = "tasks";
+    protected final static String THEME = "theme";
+    protected final static String STOCK = "stock";
+    protected final static String CALENDAR = "calendar";
+    protected final static String TASKS = "tasks";
+
+    protected PlacesMap placesMap;
+    protected MapFragment mapFragment;
 
     protected JModel item;
     protected boolean isCalendar;
@@ -43,6 +47,7 @@ public class BaseFragment extends Fragment {
     protected String number;
     protected String message;
     protected String filePath;
+    protected String eventTask;
     protected ShoppingListDataProvider shoppingListDataProvider;
 
     protected boolean hasCalendar;
@@ -55,6 +60,11 @@ public class BaseFragment extends Fragment {
     protected int myYear = 0;
     protected int myMonth = 0;
     protected int myDay = 1;
+    protected long eventTime;
+
+    public void setEventTime(long eventTime) {
+        this.eventTime = eventTime;
+    }
 
     /**
      * Select contact button click listener.
@@ -69,6 +79,10 @@ public class BaseFragment extends Fragment {
             }
         }
     };
+
+    public void setEventTask(String eventTask) {
+        this.eventTask = eventTask;
+    }
 
     public String getNumber() {
         return number;
@@ -92,18 +106,6 @@ public class BaseFragment extends Fragment {
 
     public boolean getTasks() {
         return isTasks;
-    }
-
-    public static BaseFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                           boolean hasStock, boolean hasTasks) {
-        BaseFragment fragment = new BaseFragment();
-        Bundle args = new Bundle();
-        args.putBoolean(THEME, isDark);
-        args.putBoolean(CALENDAR, hasCalendar);
-        args.putBoolean(STOCK, hasStock);
-        args.putBoolean(TASKS, hasTasks);
-        fragment.setItem(item);
-        return fragment;
     }
 
     public BaseFragment() {
@@ -142,21 +144,16 @@ public class BaseFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            hasCalendar = args.getBoolean(CALENDAR);
-            hasStock = args.getBoolean(STOCK);
-            hasTasks = args.getBoolean(TASKS);
-            isDark = args.getBoolean(THEME);
-        }
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
+    }
+
+    public boolean onBackPressed() {
+        if (placesMap != null) {
+            return !placesMap.onBackPressed();
+        }
+        return mapFragment != null && !mapFragment.onBackPressed();
     }
 }

@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
@@ -53,6 +55,18 @@ public class ApplicationFragment extends BaseFragment implements
 
     private String type;
 
+    public static ApplicationFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                           boolean hasStock, boolean hasTasks) {
+        ApplicationFragment fragment = new ApplicationFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
+
     public ApplicationFragment() {
     }
 
@@ -69,6 +83,18 @@ public class ApplicationFragment extends BaseFragment implements
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
     }
 
     @Override
@@ -130,7 +156,8 @@ public class ApplicationFragment extends BaseFragment implements
 
         DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);
         dateView.setListener(mCallbacks);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+        eventTime = System.currentTimeMillis();
+        dateView.setDateTime(updateCalendar(eventTime, false));
 
         CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
@@ -149,6 +176,7 @@ public class ApplicationFragment extends BaseFragment implements
             int expTasks = jExport.getgTasks();
             number = item.getAction().getTarget();
             String type = item.getType();
+            eventTime = item.getEventTime();
 
             if (exp == 1) dateExport.setChecked(true);
             if (expTasks == Constants.SYNC_GTASKS_ONLY)
@@ -175,9 +203,10 @@ public class ApplicationFragment extends BaseFragment implements
             }
 
             phoneNumber.setText(number);
-            dateView.setDateTime(updateCalendar(item.getEventTime(), true));
+            dateView.setDateTime(updateCalendar(eventTime, true));
             repeatView.setProgress(item.getRecurrence().getRepeat());
         }
+
         return view;
     }
 

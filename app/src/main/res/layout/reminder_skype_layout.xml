@@ -52,36 +52,52 @@
                 android:id="@+id/phoneNumber"
                 android:inputType="textAutoComplete" />
 
-            <RadioGroup
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:id="@+id/skypeGroup"
-                android:layout_height="fill_parent">
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scrollbars="none"
+                android:overScrollMode="never"
+                android:layout_marginTop="@dimen/create_margin"
+                android:id="@+id/horizontalScrollView" >
 
-                <RadioButton
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skype_call"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:id="@+id/skypeCall" />
+                    android:layout_height="wrap_content">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:layout_marginLeft="15dp"
-                    android:text="@string/video_call"
-                    android:id="@+id/skypeVideo" />
+                    <RadioGroup
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:gravity="center"
+                        android:id="@+id/skypeGroup"
+                        android:layout_height="fill_parent">
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:layout_marginLeft="15dp"
-                    android:text="@string/skype_chat"
-                    android:id="@+id/skypeChat" />
-            </RadioGroup>
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/skype_call"
+                            android:textSize="@dimen/create_text_size_normal"
+                            android:id="@+id/skypeCall" />
+
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/create_text_size_normal"
+                            android:layout_marginLeft="15dp"
+                            android:text="@string/video_call"
+                            android:id="@+id/skypeVideo" />
+
+                        <RadioButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/create_text_size_normal"
+                            android:layout_marginLeft="15dp"
+                            android:text="@string/skype_chat"
+                            android:id="@+id/skypeChat" />
+                    </RadioGroup>
+                    </LinearLayout>
+                </HorizontalScrollView>
 
             <com.cray.software.justreminder.views.DateTimeView
                 android:layout_width="match_parent"

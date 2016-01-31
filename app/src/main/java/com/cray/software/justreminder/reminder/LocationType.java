@@ -2,6 +2,7 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -11,6 +12,13 @@ import com.cray.software.justreminder.utils.SuperUtil;
 public class LocationType extends Type {
 
     private Context mContext;
+
+    public LocationType(Context context, String type, Fragment fragment) {
+        super(context);
+        this.mContext = context;
+        setType(type);
+        inflateView(fragment);
+    }
 
     public LocationType(Context context, String type) {
         super(context);

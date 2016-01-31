@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -128,6 +127,10 @@ public class DateTimeView extends RelativeLayout implements
         if (mills == 0) {
             cal.setTimeInMillis(System.currentTimeMillis());
         }
+        if (listener != null) {
+            listener.onDateSelect(mills, cal.get(Calendar.DAY_OF_MONTH),
+                    cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
+        }
         date.setText(TimeUtil.getDate(cal.getTime()));
     }
 
@@ -140,6 +143,9 @@ public class DateTimeView extends RelativeLayout implements
         cal.setTimeInMillis(mills);
         if (mills == 0) {
             cal.setTimeInMillis(System.currentTimeMillis());
+        }
+        if (listener != null) {
+            listener.onTimeSelect(mills, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
         }
         time.setText(TimeUtil.getTime(cal.getTime(), new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
     }

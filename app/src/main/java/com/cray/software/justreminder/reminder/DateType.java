@@ -17,6 +17,12 @@ public class DateType extends Type {
         inflateView(fragment);
     }
 
+    public DateType(Context context, String type) {
+        super(context);
+        this.mContext = context;
+        setType(type);
+    }
+
     @Override
     public long save(JModel item) {
         long id = super.save(item);

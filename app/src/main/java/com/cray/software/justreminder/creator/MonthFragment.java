@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -83,6 +85,30 @@ public class MonthFragment extends BaseFragment implements
                     new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
         }
     };
+
+    public static MonthFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
+        MonthFragment fragment = new MonthFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
+    }
 
     public MonthFragment() {
     }

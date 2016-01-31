@@ -19,6 +19,7 @@ package com.cray.software.justreminder.creator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.RepeatView;
 
@@ -50,6 +52,18 @@ public class MailFragment extends BaseFragment implements
     private RepeatView.OnRepeatListener mRepeatCallbacks;
     private EditText mail, subject;
     private TextView fileName;
+
+    public static MailFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
+        MailFragment fragment = new MailFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
 
     public MailFragment() {
     }
@@ -67,6 +81,18 @@ public class MailFragment extends BaseFragment implements
     public void setFileName(String file) {
         filePath = file;
         showAttachment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
     }
 
     @Override
@@ -143,7 +169,8 @@ public class MailFragment extends BaseFragment implements
 
         DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);
         dateView.setListener(mCallbacks);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+        eventTime = System.currentTimeMillis();
+        dateView.setDateTime(updateCalendar(eventTime, false));
 
         CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock)

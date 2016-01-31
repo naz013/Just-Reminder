@@ -19,6 +19,7 @@ package com.cray.software.justreminder.creator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,16 +34,15 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.json.JExport;
+import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.RepeatView;
 
 public class TimerFragment extends BaseFragment implements
         CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
-    private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
 
     private TextView hoursView, minutesView, secondsView, selectExclusion;
@@ -75,7 +75,31 @@ public class TimerFragment extends BaseFragment implements
         }
     }
 
+    public static TimerFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
+        TimerFragment fragment = new TimerFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(THEME, isDark);
+        args.putBoolean(CALENDAR, hasCalendar);
+        args.putBoolean(STOCK, hasStock);
+        args.putBoolean(TASKS, hasTasks);
+        fragment.setItem(item);
+        return fragment;
+    }
+
     public TimerFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            hasCalendar = args.getBoolean(CALENDAR);
+            hasStock = args.getBoolean(STOCK);
+            hasTasks = args.getBoolean(TASKS);
+            isDark = args.getBoolean(THEME);
+        }
     }
 
     @Override
@@ -174,10 +198,6 @@ public class TimerFragment extends BaseFragment implements
             b0.setOnClickListener(this);
         }
 
-        DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);
-        dateView.setListener(mCallbacks);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
         CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock)
             dateExport.setVisibility(View.VISIBLE);
@@ -208,7 +228,6 @@ public class TimerFragment extends BaseFragment implements
             if (expTasks == Constants.SYNC_GTASKS_ONLY)
                 dateTaskExport.setChecked(true);
 
-            dateView.setDateTime(updateCalendar(item.getEventTime(), true));
             repeatView.setProgress(repeat);
         }
         return view;
@@ -234,7 +253,6 @@ public class TimerFragment extends BaseFragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallbacks = (DateTimeView.OnSelectListener) activity;
             mRepeatCallbacks = (RepeatView.OnRepeatListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement listeners.");
@@ -244,7 +262,6 @@ public class TimerFragment extends BaseFragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
         mRepeatCallbacks = null;
     }
 

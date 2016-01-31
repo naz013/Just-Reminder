@@ -442,7 +442,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     public void showShowcase() {
         if (!new SharedPrefs(getActivity()).loadBoolean(HAS_SHOWCASE) && isBack) {
-            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
             ColorSetter coloring = new ColorSetter(getActivity());
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
@@ -469,6 +468,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     getActivity().getString(R.string.select_place_from_list),
                     getActivity().getString(R.string.got_it));
             sequence.start();
+            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
         }
     }
 
@@ -581,9 +581,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
                 addMarker(pos, markerTitle, true, true, markerRadius);
-                if (listener != null) {
-                    listener.placeName(namesList.get(position));
-                }
             }
         });
 
