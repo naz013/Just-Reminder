@@ -27,6 +27,12 @@ public class CategoryModel {
         this.id = id;
     }
 
+    public CategoryModel(String title, String uuID, int color){
+        this.uuID = uuID;
+        this.title = title;
+        this.color = color;
+    }
+
     /**
      * Change group indicator color.
      * @param context application context.

@@ -14,7 +14,9 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.datas.models.BirthdayModel;
+import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
@@ -43,7 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -52,8 +53,6 @@ import java.util.UUID;
  * Helper class for creating backup files on SD Card.
  */
 public class SyncHelper {
-
-    private static final String SHOPPING_REMINDER_LIST = "shopping_list";
 
     private Context mContext;
 
@@ -433,40 +432,53 @@ public class SyncHelper {
         db.close();
     }
 
-    /**
-     * Get note content from file or JSON object.
-     * @param file note file.
-     * @param object JSON object.
-     * @return Note content
-     */
-    public ArrayList<String> getNote(File file, JSONObject object) {
-        ArrayList<String> data = new ArrayList<>();
-        data.clear();
-        if (object != null){
-            try {
-                data = getNoteString(object);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (isSdPresent()) {
-                if (file != null) {
-                    String jsonText = readFile(file.toString());
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = new JSONObject(jsonText);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        data = getNoteString(jsonObj);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+    public static NoteModel getNote(String filePath, String json) throws JSONException{
+        if (filePath != null) {
+            if (isSdPresent()){
+                String jsonText = readFile(filePath);
+                JSONObject jsonObj = new JSONObject(jsonText);
+                String note = null;
+                if (!jsonObj.isNull(Constants.COLUMN_NOTE)) {
+                    note = jsonObj.getString(Constants.COLUMN_NOTE);
                 }
+                String uuID = null;
+                if (!jsonObj.isNull(Constants.COLUMN_UUID)) {
+                    uuID = jsonObj.getString(Constants.COLUMN_UUID);
+                }
+                int color = jsonObj.getInt(Constants.COLUMN_COLOR);
+                int style = 5;
+                if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
+                    style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
+                }
+                byte[] image = null;
+                if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
+                    image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
+                }
+
+                return new NoteModel(note, color, style, image, uuID);
+            } else return null;
+        } else {
+            JSONObject jsonObj = new JSONObject(json);
+            String note = null;
+            if (!jsonObj.isNull(Constants.COLUMN_NOTE)) {
+                note = jsonObj.getString(Constants.COLUMN_NOTE);
             }
+            String uuID = null;
+            if (!jsonObj.isNull(Constants.COLUMN_UUID)) {
+                uuID = jsonObj.getString(Constants.COLUMN_UUID);
+            }
+            int color = jsonObj.getInt(Constants.COLUMN_COLOR);
+            int style = 5;
+            if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
+                style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
+            }
+            byte[] image = null;
+            if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
+                image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
+            }
+
+            return new NoteModel(note, color, style, image, uuID);
         }
-        return data;
     }
 
     /**
@@ -505,99 +517,6 @@ public class SyncHelper {
     }
 
     /**
-     * Get font style from file or JSON object.
-     * @param file note file.
-     * @param object JSON object.
-     * @return Font style code
-     */
-    public int getFontStyle(File file, JSONObject object){
-        int data = 5;
-        if (object != null){
-            try {
-                data = getNoteFontStyle(object);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (isSdPresent()) {
-                if (file != null) {
-                    String jsonText = readFile(file.toString());
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = new JSONObject(jsonText);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        data = getNoteFontStyle(jsonObj);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return data;
-    }
-
-    /**
-     * Get attached to note image from file or JSON object.
-     * @param file note file.
-     * @param object JSON object.
-     * @return Image byte array
-     */
-    public byte[] getImage(File file, JSONObject object){
-        byte[] data = null;
-        if (object != null){
-            try {
-                data = getNoteImage(object);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (isSdPresent()) {
-                if (file != null) {
-                    String jsonText = readFile(file.toString());
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = new JSONObject(jsonText);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        data = getNoteImage(jsonObj);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return data;
-    }
-
-    /**
-     * Get note content and unique identifier from JSON object.
-     * @param jsonObj JSON object.
-     * @return Note content and note unique identifier
-     * @throws JSONException
-     */
-    private ArrayList<String> getNoteString(JSONObject jsonObj) throws JSONException {
-        ArrayList<String> data = new ArrayList<>();
-        data.clear();
-        String note;
-        if (!jsonObj.isNull(Constants.COLUMN_NOTE)) {
-            note = jsonObj.getString(Constants.COLUMN_NOTE);
-            data.add(note);
-        }
-
-        String uuID;
-        if (!jsonObj.isNull(Constants.COLUMN_UUID)) {
-            uuID = jsonObj.getString(Constants.COLUMN_UUID);
-            data.add(uuID);
-        }
-        return data;
-    }
-
-    /**
      * Get note color from JSON object.
      * @param jsonObj JSON object.
      * @return Note color code
@@ -605,34 +524,6 @@ public class SyncHelper {
      */
     private int getNoteColor(JSONObject jsonObj) throws JSONException {
         return jsonObj.getInt(Constants.COLUMN_COLOR);
-    }
-
-    /**
-     * Get note font style from JSON object.
-     * @param jsonObj JSON object.
-     * @return Note font style code
-     * @throws JSONException
-     */
-    private int getNoteFontStyle(JSONObject jsonObj) throws JSONException {
-        int style = 5;
-        if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
-            style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
-        }
-        return style;
-    }
-
-    /**
-     * Get note attached image from JSON object.
-     * @param jsonObj JSON object.
-     * @return Note image byte array
-     * @throws JSONException
-     */
-    private byte[] getNoteImage(JSONObject jsonObj) throws JSONException {
-        byte[] image = null;
-        if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
-            image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
-        }
-        return image;
     }
 
     /**
@@ -808,6 +699,27 @@ public class SyncHelper {
         db.close();
     }
 
+    public static CategoryModel getGroup(String filePath) throws JSONException{
+        if (filePath != null) {
+            if (isSdPresent()) {
+                String jsonText = readFile(filePath);
+                JSONObject jsonObj = new JSONObject(jsonText);
+                String title = null;
+                if (!jsonObj.isNull(Constants.COLUMN_TEXT)) {
+                    title = jsonObj.getString(Constants.COLUMN_TEXT);
+                }
+                int color = jsonObj.getInt(Constants.COLUMN_COLOR);
+                long date = jsonObj.getLong(Constants.COLUMN_DATE_TIME);
+                String uuID = null;
+                if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
+                    uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
+                }
+
+                return new CategoryModel(title, uuID, color);
+            } else return null;
+        } else return null;
+    }
+
     /**
      * Restore birthday from JSON file to application.
      * @param file birthday file path.
@@ -886,11 +798,11 @@ public class SyncHelper {
         if (!jsonObj.isNull(key)) {
             number = decrypt(jsonObj.getString(key));
         }
-        String mail = null;
+        /*String mail = null;
         key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL);
         if (!jsonObj.isNull(key)) {
             mail = decrypt(jsonObj.getString(key));
-        }
+        }*/
         String uuID = null;
         key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_UUID);
         if (!jsonObj.isNull(key)) {
@@ -937,33 +849,39 @@ public class SyncHelper {
         db.close();
     }
 
-    public static ArrayList<ShoppingList> getList(String fileLoc){
-        String jsonText = readFile(fileLoc);
-        ArrayList<ShoppingList> list = new ArrayList<>();
-        try {
-            JSONObject jsonObj = new JSONObject(jsonText);
-            if (jsonObj.has(SHOPPING_REMINDER_LIST)){
-                JSONObject listObject = jsonObj.getJSONObject(SHOPPING_REMINDER_LIST);
-                Iterator<?> keys = listObject.keys();
-                while(keys.hasNext()) {
-                    String key = (String)keys.next();
-                    JSONObject item = (JSONObject) listObject.get(key);
-                    if (item != null) {
-                        String title = item.getString(Constants.COLUMN_TEXT);
-                        String uuId = item.getString(Constants.COLUMN_TECH_VAR);
-                        long time = item.getInt(Constants.COLUMN_DATE_TIME);
-                        int status = 1;
-                        if (item.has(Constants.COLUMN_EXTRA_1))
-                            status = item.getInt(Constants.COLUMN_EXTRA_1);
-                        int checked = item.getInt(Constants.COLUMN_ARCHIVED);
-                        list.add(new ShoppingList(title, checked, uuId, status, time));
-                    }
+    public static BirthdayModel getBirthday(String file) throws JSONException {
+        if (isSdPresent()){
+            if (file != null) {
+                String jsonText = readFile(file);
+                JSONObject jsonObj = new JSONObject(jsonText);
+                String name = null;
+                String key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME);
+                if (!jsonObj.isNull(key)) {
+                    name = decrypt(jsonObj.getString(key));
                 }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return list;
+                String date = null;
+                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY);
+                if (!jsonObj.isNull(key)) {
+                    date = decrypt(jsonObj.getString(key));
+                }
+                String number = null;
+                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER);
+                if (!jsonObj.isNull(key)) {
+                    number = decrypt(jsonObj.getString(key));
+                }
+                String id = null;
+                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID);
+                if (!jsonObj.isNull(key)) {
+                    id = decrypt(jsonObj.getString(key));
+                }
+                int conId = 0;
+                if (id != null) {
+                    conId = Integer.parseInt(id);
+                }
+
+                return new BirthdayModel(name, conId, date, number);
+            } else return null;
+        } else return null;
     }
 
     /**
@@ -984,10 +902,6 @@ public class SyncHelper {
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
-    public static String getSdCardPath() {
-        return Environment.getExternalStorageDirectory().toString();
-    }
-
     /**
      * Check for internet connection.
      * @param context application context.
@@ -1005,11 +919,7 @@ public class SyncHelper {
                 urlc.setRequestProperty("Connection", "close");
                 urlc.setConnectTimeout(1000); // mTimeout is in seconds
                 urlc.connect();
-                if (urlc.getResponseCode() == 200) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return urlc.getResponseCode() == 200;
             } catch (IOException e) {
                 Log.i("warning", "Error checking internet connection");
                 return false;

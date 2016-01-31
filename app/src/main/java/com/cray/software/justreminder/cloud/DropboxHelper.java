@@ -13,6 +13,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.android.AuthActivity;
@@ -627,25 +628,30 @@ public class DropboxHelper {
      * @return number of found backup files.
      */
     public int countFiles() {
-        int res = 0;
-        startSession();
-        if (isLinked()) {
-            try {
-                newEntry = mDBApi.metadata("/" + dbxFolder, 1000, null, true, null);
-            } catch (DropboxException e) {
-                e.printStackTrace();
+        if (SyncHelper.isSdPresent()) {
+            int count = 0;
+            File dir = MemoryUtil.getDRDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
             }
-            if (newEntry != null) {
-                for (DropboxAPI.Entry e : newEntry.contents) {
-                    if (!e.isDeleted) {
-                        String fileName = e.fileName();
-                        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
-                            res += 1;
-                        }
-                    }
-                }
+            dir = MemoryUtil.getDNDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
             }
-        }
-        return res;
+            dir = MemoryUtil.getDBDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+            dir = MemoryUtil.getDGroupsDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+
+            return count;
+        } else return 0;
     }
 }

@@ -6,12 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.FileConfig;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 
@@ -42,6 +46,8 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
      */
     private SimpleListener mEventListener;
 
+    private boolean isDark;
+
     /**
      * Adapter constructor.
      * @param context application context.
@@ -52,6 +58,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         this.list = list;
         cs = new ColorSetter(context);
         setHasStableIds(true);
+        isDark = new SharedPrefs(context).loadBoolean(Prefs.USE_DARK_THEME);
     }
 
     /**
@@ -69,6 +76,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
          * TextView fields
          */
         public TextView fileName, lastModified;
+        public ImageView fileIcon;
 
         /**
          * Ho;der constructor.
@@ -77,6 +85,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         public ViewHolder(final View v) {
             super(v);
             fileName = (TextView) v.findViewById(R.id.fileName);
+            fileIcon = (ImageView) v.findViewById(R.id.fileIcon);
             lastModified = (TextView) v.findViewById(R.id.lastModified);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
@@ -120,6 +129,26 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         final FileModel item = list.get(position);
         holder.lastModified.setText(item.getLastModified());
         holder.fileName.setText(item.getFileName());
+        holder.fileIcon.setImageResource(getIcon(item.getFileName()));
+    }
+
+    private int getIcon(String fileName) {
+        if (fileName.contains(FileConfig.FILE_NAME_REMINDER)) {
+            if (isDark) return R.drawable.ic_notifications_white_24dp;
+            else return R.drawable.ic_notifications_black_24dp;
+        } else if (fileName.contains(FileConfig.FILE_NAME_NOTE)) {
+            if (isDark) return R.drawable.ic_event_note_white_24dp;
+            else return R.drawable.ic_event_note_black_24dp;
+        } else if (fileName.contains(FileConfig.FILE_NAME_GROUP)) {
+            if (isDark) return R.drawable.ic_local_offer_white_24dp;
+            else return R.drawable.ic_local_offer_black_24dp;
+        } else if (fileName.contains(FileConfig.FILE_NAME_BIRTHDAY)) {
+            if (isDark) return R.drawable.ic_cake_white_24dp;
+            else return R.drawable.ic_cake_black_24dp;
+        } else {
+            if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
+            else return R.drawable.ic_insert_drive_file_black_24dp;
+        }
     }
 
     @Override

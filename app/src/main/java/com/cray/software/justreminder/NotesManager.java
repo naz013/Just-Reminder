@@ -59,7 +59,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -69,7 +68,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -276,6 +274,7 @@ public class NotesManager extends AppCompatActivity {
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(), cSetter.colorAccent()));
 
         Intent intent = getIntent();
+        String filePath = intent.getStringExtra(Constants.EDIT_PATH);
         Uri name = null;
         try {
             name = intent.getData();
@@ -335,48 +334,66 @@ public class NotesManager extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 String file = total.toString();
-                JSONObject object = null;
                 try {
-                    object = new JSONObject(file);
+                    NoteModel model = SyncHelper.getNote(null, file);
+                    if (model != null) {
+                        taskField.setText(SyncHelper.decrypt(model.getNote()));
+                        taskField.setSelection(taskField.getText().length());
+                        color = model.getColor();
+                        style = model.getStyle();
+                        byte[] imageByte = model.getImage();
+                        image = imageByte;
+                        if (imageByte != null) {
+                            img = BitmapFactory.decodeByteArray(imageByte, 0,
+                                    imageByte.length);
+                            noteImage.setImageBitmap(img);
+                            ViewUtils.expand(imageContainer);
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                SyncHelper helper = new SyncHelper(NotesManager.this);
-                ArrayList<String> data = helper.getNote(null, object);
-                String note = data.get(0);
-                note = SyncHelper.decrypt(note);
-                taskField.setText(note);
-                taskField.setSelection(taskField.getText().length());
-                color = helper.getColor(null, object);
-                style = helper.getFontStyle(null, object);
-                byte[] imageByte = helper.getImage(null, object);
-				image = imageByte;
-                if (imageByte != null){
-                    img = BitmapFactory.decodeByteArray(imageByte, 0,
-                            imageByte.length);
-                    noteImage.setImageBitmap(img);
-                    ViewUtils.expand(imageContainer);
-                }
             } else {
-                File file = new File(name.getPath());
-                SyncHelper helper = new SyncHelper(NotesManager.this);
-                ArrayList<String> data = helper.getNote(file, null);
-                String note = data.get(0);
-                note = SyncHelper.decrypt(note);
-                taskField.setText(note);
-                taskField.setSelection(taskField.getText().length());
-                color = helper.getColor(file, null);
-                style = helper.getFontStyle(file, null);
-                byte[] imageByte = helper.getImage(file, null);
-				image = imageByte;
-                if (imageByte != null){
-                    img = BitmapFactory.decodeByteArray(imageByte, 0,
-                            imageByte.length);
-                    noteImage.setImageBitmap(img);
-                    ViewUtils.expand(imageContainer);
+                try {
+                    NoteModel model = SyncHelper.getNote(name.getPath(), null);
+                    if (model != null) {
+                        taskField.setText(SyncHelper.decrypt(model.getNote()));
+                        taskField.setSelection(taskField.getText().length());
+                        color = model.getColor();
+                        style = model.getStyle();
+                        byte[] imageByte = model.getImage();
+                        image = imageByte;
+                        if (imageByte != null) {
+                            img = BitmapFactory.decodeByteArray(imageByte, 0,
+                                    imageByte.length);
+                            noteImage.setImageBitmap(img);
+                            ViewUtils.expand(imageContainer);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-
+        } else if (filePath != null) {
+            try {
+                NoteModel model = SyncHelper.getNote(filePath, null);
+                if (model != null) {
+                    taskField.setText(SyncHelper.decrypt(model.getNote()));
+                    taskField.setSelection(taskField.getText().length());
+                    color = model.getColor();
+                    style = model.getStyle();
+                    byte[] imageByte = model.getImage();
+                    image = imageByte;
+                    if (imageByte != null) {
+                        img = BitmapFactory.decodeByteArray(imageByte, 0,
+                                imageByte.length);
+                        noteImage.setImageBitmap(img);
+                        ViewUtils.expand(imageContainer);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         taskField.setTypeface(cSetter.getTypeface(style));

@@ -14,14 +14,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
+
+import org.json.JSONException;
 
 public class CategoryManager extends AppCompatActivity {
 
@@ -49,6 +52,7 @@ public class CategoryManager extends AppCompatActivity {
 
         Intent intent = getIntent();
         id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        String filePath = intent.getStringExtra(Constants.EDIT_PATH);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,6 +73,17 @@ public class CategoryManager extends AppCompatActivity {
             setColor(color);
             if (c != null) c.close();
             db.close();
+        } else if (filePath != null) {
+            try {
+                CategoryModel model = SyncHelper.getGroup(filePath);
+                if (model != null) {
+                    editField.setText(model.getTitle());
+                    color = model.getColor();
+                    setColor(color);
+                } else finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         initRadio();

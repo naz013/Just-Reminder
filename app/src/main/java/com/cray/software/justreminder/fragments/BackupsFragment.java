@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,9 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.CategoryManager;
+import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.cloud.AccountInfo;
 import com.cray.software.justreminder.cloud.DropboxHelper;
@@ -33,6 +35,7 @@ import com.cray.software.justreminder.cloud.DropboxQuota;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.FileDataProvider;
 import com.cray.software.justreminder.datas.models.FileModel;
@@ -48,6 +51,7 @@ import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
 
@@ -652,14 +656,29 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void showFilesCount() {
         if (SyncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            File[] files = sdPathDr.listFiles();
-            if (files != null) {
-                localCount.setText(String.valueOf(files.length));
-            } else {
-                localCount.setText("0");
+            int count = 0;
+            File dir = MemoryUtil.getRDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
             }
+            dir = MemoryUtil.getNDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+            dir = MemoryUtil.getBDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+            dir = MemoryUtil.getGroupsDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+
+            localCount.setText(String.valueOf(count));
         } else {
             localCount.setText("0");
         }
@@ -813,9 +832,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemClicked(int position, View view) {
-        startActivity(new Intent(getActivity(),
-                ReminderManager.class).putExtra(Constants.EDIT_PATH,
-                provider.getItem(position).getFilePath()));
+        editFile(position);
     }
 
     @Override
@@ -825,15 +842,35 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void onAction(int item) {
                 if (item == 0) {
-                    startActivity(new Intent(getActivity(),
-                            ReminderManager.class).putExtra(Constants.EDIT_PATH,
-                            provider.getItem(position).getFilePath()));
+                    editFile(position);
                 }
                 if (item == 1) {
                     actionDelete(position);
                 }
             }
         }, items);
+    }
+
+    private void editFile(int position) {
+        FileModel model = provider.getItem(position);
+        String fileName = model.getFileName();
+        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
+            startActivity(new Intent(getActivity(),
+                    ReminderManager.class).putExtra(Constants.EDIT_PATH,
+                    provider.getItem(position).getFilePath()));
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
+            startActivity(new Intent(getActivity(),
+                    NotesManager.class).putExtra(Constants.EDIT_PATH,
+                    provider.getItem(position).getFilePath()));
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
+            startActivity(new Intent(getActivity(),
+                    AddBirthday.class).putExtra(Constants.EDIT_PATH,
+                    provider.getItem(position).getFilePath()));
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
+            startActivity(new Intent(getActivity(),
+                    CategoryManager.class).putExtra(Constants.EDIT_PATH,
+                    provider.getItem(position).getFilePath()));
+        }
     }
 
     public class Item {

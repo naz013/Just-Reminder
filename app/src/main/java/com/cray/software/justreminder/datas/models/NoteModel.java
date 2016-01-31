@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 public class NoteModel {
 
-    private String note;
+    private String note, uuId;
     private int color, style;
     private byte[] image;
     private long id;
@@ -35,6 +35,18 @@ public class NoteModel {
         this.note = note;
         this.style = style;
         this.id = id;
+    }
+
+    public NoteModel(String note, int color, int style, byte[] image, String uuId){
+        this.color = color;
+        this.image = image;
+        this.note = note;
+        this.style = style;
+        this.uuId = uuId;
+    }
+
+    public String getUuId() {
+        return uuId;
     }
 
     public String getNote(){

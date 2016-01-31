@@ -16,12 +16,28 @@ package com.cray.software.justreminder.datas.models;
  * limitations under the License.
  */
 public class BirthdayModel {
-    private String name, age, date;
+    private String name, age, date, number;
+    private int conId;
 
     public BirthdayModel(String name, String age, String date){
         this.name = name;
         this.age = age;
         this.date = date;
+    }
+
+    public BirthdayModel(String name, int conId, String date, String number){
+        this.name = name;
+        this.conId = conId;
+        this.number = number;
+        this.date = date;
+    }
+
+    public int getConId() {
+        return conId;
+    }
+
+    public String getNumber() {
+        return number;
     }
 
     public String getDate() {

@@ -23,16 +23,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+
+import org.json.JSONException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -131,9 +134,10 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 
-        Intent i = getIntent();
-        id = i.getLongExtra("BDid", 0);
-        long receivedDate = i.getLongExtra("date", 0);
+        Intent intent = getIntent();
+        id = intent.getLongExtra("BDid", 0);
+        String filePath = intent.getStringExtra(Constants.EDIT_PATH);
+        long receivedDate = intent.getLongExtra("date", 0);
         if (id != 0) {
             DataBase db = new DataBase(AddBirthday.this);
             db.open();
@@ -169,6 +173,34 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             if (number != null) contactCheck.setChecked(true);
         } else if (receivedDate != 0) {
             calendar.setTimeInMillis(receivedDate);
+        } else if (filePath != null) {
+            try {
+                BirthdayModel model = SyncHelper.getBirthday(filePath);
+                if (model != null) {
+                    number = model.getNumber();
+                    Date date = null;
+                    try {
+                        date = format.parse(model.getDate());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if (date != null) {
+                        try {
+                            calendar.setTime(date);
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    birthName.setText(model.getName());
+                    if (number != null) phone.setText(number);
+
+                    toolbar.setTitle(R.string.edit_birthday);
+                    if (number != null) contactCheck.setChecked(true);
+                } else finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         myYear = calendar.get(Calendar.YEAR);

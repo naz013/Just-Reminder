@@ -18,10 +18,20 @@
         android:padding="8dp"
         android:focusable="false">
 
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/fileIcon"
+            android:scaleType="center"
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/fileIcon"
             android:orientation="vertical">
 
             <LinearLayout

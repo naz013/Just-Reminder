@@ -8,6 +8,7 @@ import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.FileContent;
@@ -58,7 +59,7 @@ public class GDriveHelper {
 
     /**
      * Check if user has already login to Google Drive from this application.
-     * @return
+     * @return return true if user was already logged.
      */
     public boolean isLinked(){
         prefs = new SharedPrefs(mContext);
@@ -75,36 +76,34 @@ public class GDriveHelper {
 
     /**
      * Count all backup files stored on Google Drive.
-     * @return
+     * @return number of files in local folder.
      */
     public int countFiles(){
-        authorize();
-        int i = 0;
-        Drive.Files.List request = null;
-        try {
-            request = driveService.files().list().setQ("mimeType = 'application/json'");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        do {
-            FileList files;
-            try {
-                files = request.execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-                break;
+        if (SyncHelper.isSdPresent()) {
+            int count = 0;
+            File dir = MemoryUtil.getGRDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
             }
-            ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
-            for (com.google.api.services.drive.model.File f : fileList) {
-                String fileTitle = f.getName();
+            dir = MemoryUtil.getGNDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+            dir = MemoryUtil.getGBDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
+            dir = MemoryUtil.getGGroupsDir();
+            if (dir != null && dir.exists()) {
+                File[] files = dir.listFiles();
+                if (files != null) count += files.length;
+            }
 
-                if (fileTitle.trim().endsWith(FileConfig.FILE_NAME_REMINDER)) {
-                    i += 1;
-                }
-            }
-            request.setPageToken(files.getNextPageToken());
-        } while (request.getPageToken() != null && request.getPageToken().length() >= 0);
-        return i;
+            return count;
+        } else return 0;
     }
 
     /**
