@@ -25,9 +25,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/skypeExport" />
+                android:id="@+id/dateExport" />
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -35,9 +35,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/skypeTaskExport" />
+                android:id="@+id/dateTaskExport" />
 
             <com.cray.software.justreminder.views.FloatingEditText
                 app:floating_edit_text_highlighted_color="?attr/colorAccent"
@@ -49,13 +49,14 @@
                 android:ems="10"
                 android:singleLine="true"
                 android:layout_gravity="center"
-                android:id="@+id/skypeUser"
+                android:id="@+id/phoneNumber"
                 android:inputType="textAutoComplete" />
 
             <RadioGroup
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:gravity="center"
+                android:id="@+id/skypeGroup"
                 android:layout_height="fill_parent">
 
                 <RadioButton
@@ -88,7 +89,7 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/dateViewSkype"/>
+                android:id="@+id/dateView"/>
 
             <com.cray.software.justreminder.views.RepeatView
                 android:layout_width="match_parent"
@@ -98,7 +99,7 @@
                 android:layout_marginRight="@dimen/create_margin"
                 app:repeat_type_text="@string/days"
                 android:layout_marginBottom="80dp"
-                android:id="@+id/repeatViewSkype"/>
+                android:id="@+id/repeatView"/>
 
             </LinearLayout>
         </ScrollView>

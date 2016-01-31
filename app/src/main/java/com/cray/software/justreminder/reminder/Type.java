@@ -2,6 +2,7 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -16,7 +17,7 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 public class Type {
 
     private Context mContext;
-    private int view;
+    private Fragment fragment;
     private String type;
 
     public Type(Context context){
@@ -26,10 +27,10 @@ public class Type {
 
     /**
      * Inflate layout file for reminder.
-     * @param view layout resource identifier.
+     * @param fragment fragment.
      */
-    public void inflateView(int view){
-        this.view = view;
+    public void inflateView(Fragment fragment){
+        this.fragment = fragment;
     }
 
     /**
@@ -77,8 +78,8 @@ public class Type {
      * Get reminder layout resource identifier.
      * @return reminder layout id
      */
-    public int getView(){
-        return view;
+    public Fragment getView(){
+        return fragment;
     }
 
     /**

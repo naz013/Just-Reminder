@@ -25,9 +25,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/messageExport" />
+                android:id="@+id/dateExport" />
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -35,13 +35,13 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/messageTaskExport" />
+                android:id="@+id/dateTaskExport" />
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/create_margin"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
@@ -50,9 +50,10 @@
                     android:layout_height="@dimen/create_imagebutton_size"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_person_add_black_24dp"
-                    android:id="@+id/addMessageNumberButton" />
+                    android:id="@+id/addNumberButton" />
 
                 <com.cray.software.justreminder.views.FloatingEditText
+                    app:floating_edit_text_highlighted_color="?attr/colorAccent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -62,7 +63,7 @@
                     android:ems="10"
                     android:singleLine="true"
                     android:layout_gravity="center"
-                    android:id="@+id/messageNumber"
+                    android:id="@+id/phoneNumber"
                     android:inputType="text|phone" />
             </LinearLayout>
 
@@ -72,7 +73,7 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/dateViewMessage"/>
+                android:id="@+id/dateView"/>
 
             <com.cray.software.justreminder.views.RepeatView
                 android:layout_width="match_parent"
@@ -82,7 +83,8 @@
                 android:layout_marginRight="@dimen/create_margin"
                 app:repeat_type_text="@string/days"
                 android:layout_marginBottom="80dp"
-                android:id="@+id/repeatViewMessage"/>
+                android:id="@+id/repeatView"/>
+
         </LinearLayout>
         </ScrollView>
 </LinearLayout>

@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.widget.CheckBox;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.async.TaskAsync;
@@ -60,11 +59,11 @@ public class ReminderUtils {
 
     /**
      * Generate sync code for reminder.
-     * @param tasks Checkbox.
+     * @param isCheck is checkbox is checked.
      * @return Sync code.
      */
-    public static int getSyncCode(CheckBox tasks){
-        if (tasks.isChecked()) return Constants.SYNC_GTASKS_ONLY;
+    public static int getSyncCode(boolean isCheck){
+        if (isCheck) return Constants.SYNC_GTASKS_ONLY;
         else return Constants.SYNC_NO;
     }
 

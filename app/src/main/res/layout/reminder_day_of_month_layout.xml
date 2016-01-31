@@ -25,9 +25,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/monthDayExport" />
+                android:id="@+id/dateExport" />
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -35,9 +35,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/monthDayTaskExport" />
+                android:id="@+id/dateTaskExport" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -50,7 +50,7 @@
                 android:layout_marginBottom="@dimen/create_margin"
                 android:background="?android:attr/selectableItemBackground"
                 android:ems="10"
-                android:id="@+id/monthDayTimeField" />
+                android:id="@+id/timeField" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginBottom="80dp"
-                android:id="@+id/actionViewMonth"/>
+                android:id="@+id/actionView"/>
             </LinearLayout>
     </ScrollView>
 

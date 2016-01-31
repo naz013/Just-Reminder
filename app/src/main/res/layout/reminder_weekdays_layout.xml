@@ -23,11 +23,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/weekExport" />
+                android:id="@+id/dateExport" />
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -35,11 +33,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/weekTaskExport" />
+                android:id="@+id/dateTaskExport" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -53,7 +49,7 @@
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginTop="@dimen/create_margin"
                 android:ems="10"
-                android:id="@+id/weekTimeField" />
+                android:id="@+id/timeField" />
 
             <HorizontalScrollView
                 android:layout_width="wrap_content"
@@ -151,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_margin"
-                android:id="@+id/actionViewWeek"/>
+                android:id="@+id/actionView"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

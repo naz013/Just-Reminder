@@ -1,6 +1,7 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -9,10 +10,11 @@ public class DateType extends Type {
 
     private Context mContext;
 
-    public DateType(Context context, String type) {
+    public DateType(Context context, String type, Fragment fragment) {
         super(context);
         this.mContext = context;
         setType(type);
+        inflateView(fragment);
     }
 
     @Override

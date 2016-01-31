@@ -25,9 +25,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/callExport" />
+                android:id="@+id/dateExport" />
 
             <CheckBox
                 android:layout_width="match_parent"
@@ -35,9 +35,9 @@
                 android:layout_gravity="center"
                 android:visibility="gone"
                 android:textSize="@dimen/checkbox_text_size"
-                android:layout_marginBottom="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/callTaskExport" />
+                android:id="@+id/dateTaskExport" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -73,7 +73,7 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/dateViewCall"/>
+                android:id="@+id/dateView"/>
 
             <com.cray.software.justreminder.views.RepeatView
                 android:layout_width="match_parent"
@@ -83,7 +83,7 @@
                 android:layout_marginRight="@dimen/create_margin"
                 app:repeat_type_text="@string/days"
                 android:layout_marginBottom="80dp"
-                android:id="@+id/repeatViewCall"/>
+                android:id="@+id/repeatView"/>
 
             </LinearLayout>
 

@@ -1,8 +1,5 @@
 package com.cray.software.justreminder;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -34,16 +31,13 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -55,23 +49,29 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.activities.FileExplore;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.async.GeocoderTask;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.creator.ApplicationFragment;
+import com.cray.software.justreminder.creator.BaseFragment;
+import com.cray.software.justreminder.creator.CallFragment;
+import com.cray.software.justreminder.creator.DateFragment;
+import com.cray.software.justreminder.creator.MailFragment;
+import com.cray.software.justreminder.creator.MessageFragment;
+import com.cray.software.justreminder.creator.MonthFragment;
+import com.cray.software.justreminder.creator.SkypeFragment;
+import com.cray.software.justreminder.creator.TimerFragment;
+import com.cray.software.justreminder.creator.WeekFragment;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.dialogs.ExtraPickerDialog;
 import com.cray.software.justreminder.dialogs.LedColor;
 import com.cray.software.justreminder.dialogs.SelectVolume;
@@ -102,13 +102,11 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
-import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -126,7 +124,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -135,86 +132,15 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 /**
  * Reminder creation activity.
  */
-public class ReminderManager extends AppCompatActivity implements View.OnClickListener,
-        AdapterView.OnItemSelectedListener, View.OnTouchListener, CompoundButton.OnCheckedChangeListener,
-        MapListener, GeocoderTask.GeocoderListener, Dialogues.OnCategorySelectListener,
-        DateTimeView.OnSelectListener, RepeatView.OnRepeatListener, ActionView.OnActionListener,
+public class ReminderManager extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
+        CompoundButton.OnCheckedChangeListener, MapListener, GeocoderTask.GeocoderListener,
+        Dialogues.OnCategorySelectListener, DateTimeView.OnSelectListener,
+        RepeatView.OnRepeatListener, ActionView.OnActionListener,
         ActionCallbacksExtended {
 
     private static final String HAS_SHOWCASE = "create_showcase";
-    private static final int FILE_REQUEST = 556;
-    private static final int REQUEST_EXTRA = 557;
-    /**
-     * Date reminder type variables.
-     */
-    private CheckBox dateTaskExport;
-    private CheckBox dateExport;
-
-    /**
-     * Weekday reminder type variables.
-     */
-    private TextView weekTimeField;
-    private CheckBox weekExport;
-    private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
-            fridayCheck, saturdayCheck, sundayCheck;
-    private CheckBox weekTaskExport;
-    private ActionView actionViewWeek;
-
-    /**
-     * Monthday reminder type variables.
-     */
-    private CheckBox monthDayExport, monthDayTaskExport;
-    private TextView monthDayField, monthDayTimeField;
-    private RadioButton dayCheck, lastCheck;
-    private ActionView actionViewMonth;
-
-    /**
-     * Call reminder variables.
-     */
-    private FloatingEditText phoneNumber;
-    private CheckBox callExport;
-    private CheckBox callTaskExport;
-
-    /**
-     * Message reminder variables.
-     */
-    private FloatingEditText messageNumber;
-    private CheckBox messageExport;
-    private CheckBox messageTaskExport;
-
-    /**
-     * Mail reminder variables.
-     */
-    private EditText mail, subject;
-    private CheckBox mailExport;
-    private TextView fileName;
-    private CheckBox mailTaskExport;
-
-    /**
-     * Time reminder variables.
-     */
-    private CheckBox timeExport;
-    private CheckBox timeTaskExport;
-    private TextView hoursView, minutesView, secondsView, selectExclusion;
-    private ImageButton deleteButton, exclusionClear;
-    private String timeString = "000000";
-
-    /**
-     * Application reminder type variables.
-     */
-    private CheckBox appExport, appTaskExport;
-    private EditText browseLink;
-    private RadioButton application, browser;
-    private TextView applicationName;
-    private RelativeLayout applicationLayout;
-
-    /**
-     * Skype reminder type variables.
-     */
-    private CheckBox skypeExport, skypeTaskExport;
-    private EditText skypeUser;
-    private RadioButton skypeCall;
-    private RadioButton skypeVideo;
+    public static final int FILE_REQUEST = 556;
+    public static final int REQUEST_EXTRA = 557;
 
     /**
      * Location reminder variables.
@@ -302,15 +228,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     private ColorSetter cSetter = new ColorSetter(ReminderManager.this);
     private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
-    private GTasksHelper gtx = new GTasksHelper(ReminderManager.this);
 
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
     private boolean isCalendar = false, isStock = false, isDark = false;
-    private boolean isDelayed = false;
+    private boolean isDelayed = false, hasTasks = false, isMessage, hasAction;
 
     private Type remControl = new Type(this);
     private JModel item;
+    private BaseFragment baseFragment;
+
     private Handler handler = new Handler();
     private GeocoderTask task;
 
@@ -330,6 +257,8 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+
+        hasTasks = new GTasksHelper(this).isLinked();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (Module.isLollipop()) toolbar.setElevation(R.dimen.toolbar_elevation);
@@ -372,8 +301,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         return true;
                     }
                 });
-
-        toolbar.setOnTouchListener(this);
 
         repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
         repeatFrame.setBackgroundResource(cSetter.getCardDrawableStyle());
@@ -458,7 +385,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         });
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-        findViewById(R.id.windowBackground).setOnTouchListener(this);
 
         DataBase db = new DataBase(this);
         db.open();
@@ -524,8 +450,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         }
-
-        clearViews();
 
         ReminderApp application = (ReminderApp) getApplication();
         mTracker = application.getDefaultTracker();
@@ -609,20 +533,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
-     * Select contact button click listener.
-     */
-    private View.OnClickListener contactClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (Permissions.checkPermission(ReminderManager.this, Permissions.READ_CONTACTS)) {
-                SuperUtil.selectContact(ReminderManager.this, Constants.REQUEST_CODE_CONTACTS);
-            } else {
-                Permissions.requestPermission(ReminderManager.this, 107, Permissions.READ_CONTACTS);
-            }
-        }
-    };
-
-    /**
      * Runnable for hiding repeat limit seekbar.
      */
     private Runnable seek = new Runnable() {
@@ -635,48 +545,10 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         }
     };
 
-    /**
-     * Hide all reminder types layouts.
-     */
-    private void clearViews() {
-        findViewById(R.id.by_date_layout).setVisibility(View.GONE);
-        findViewById(R.id.call_layout).setVisibility(View.GONE);
-        findViewById(R.id.weekday_layout).setVisibility(View.GONE);
-        findViewById(R.id.message_layout).setVisibility(View.GONE);
-        findViewById(R.id.after_time_layout).setVisibility(View.GONE);
-        findViewById(R.id.geolocationlayout).setVisibility(View.GONE);
-        findViewById(R.id.skype_layout).setVisibility(View.GONE);
-        findViewById(R.id.application_layout).setVisibility(View.GONE);
-        findViewById(R.id.monthDayLayout).setVisibility(View.GONE);
-        findViewById(R.id.locationOutLayout).setVisibility(View.GONE);
-        findViewById(R.id.shoppingLayout).setVisibility(View.GONE);
-        findViewById(R.id.mailLayout).setVisibility(View.GONE);
-        findViewById(R.id.placesLayout).setVisibility(View.GONE);
-
-        map = new MapFragment();
-        map.setListener(this);
-        map.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-        map.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
-
-        mapOut = new MapFragment();
-        mapOut.setListener(this);
-        mapOut.setMarkerRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-        mapOut.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
-
-        placesMap = new PlacesMap();
-        placesMap.setListener(this);
-        placesMap.setRadius(sPrefs.loadInt(Prefs.LOCATION_RADIUS));
-        placesMap.setMarkerStyle(sPrefs.loadInt(Prefs.MARKER_STYLE));
-
-        addFragment(R.id.map, map);
-        addFragment(R.id.mapOut, mapOut);
-        addFragment(R.id.mapPlace, placesMap);
-    }
-
     private void addFragment(int res, Fragment fragment) {
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
-        fragTransaction.add(res, fragment);
+        fragTransaction.replace(res, fragment);
         fragTransaction.commitAllowingStateLoss();
     }
 
@@ -794,84 +666,21 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
-     * Click listener for date fields.
-     */
-    private View.OnClickListener dateClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            dateDialog();
-        }
-    };
-
-    /**
-     * Click listener for time fields.
-     */
-    private View.OnClickListener timeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            timeDialog().show();
-        }
-    };
-
-    /**
      * Show simple date reminder creation layout.
      */
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout by_date_layout = (LinearLayout) findViewById(R.id.by_date_layout);
-        ViewUtils.fadeInAnimation(by_date_layout);
+        baseFragment = DateFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_REMINDER);
-        dateType.inflateView(R.id.by_date_layout);
-        remControl = dateType;
-
-        DateTimeView dateView = (DateTimeView) findViewById(R.id.dateView);
-        dateView.setListener(this);
-        dateView.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        dateExport = (CheckBox) findViewById(R.id.dateExport);
-        if ((sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR) ||
-                sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK)))
-            dateExport.setVisibility(View.VISIBLE);
-
-        dateTaskExport = (CheckBox) findViewById(R.id.dateTaskExport);
-        if (gtx.isLinked()) dateTaskExport.setVisibility(View.VISIBLE);
-
-        RepeatView repeatView = (RepeatView) findViewById(R.id.repeatView);
-        repeatView.setListener(this);
-        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_REMINDER, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
-
-            if (exp == 1) dateExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                dateTaskExport.setChecked(true);
-
-            taskField.setText(text);
-            dateView.setDateTime(updateCalendar(eventTime, true));
-            repeatView.setProgress(repeatCode);
+            taskField.setText(item.getSummary());
         }
-    }
-
-    private Date updateTime(long millis, boolean deny) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(millis);
-        if (myYear > 0 && !deny) cal.set(myYear, myMonth, myDay, myHour, myMinute);
-        else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
-        }
-        return cal.getTime();
     }
 
     private long updateCalendar(long millis, boolean deny) {
@@ -894,111 +703,21 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout monthDayLayout = (LinearLayout) findViewById(R.id.monthDayLayout);
-        ViewUtils.fadeInAnimation(monthDayLayout);
+        baseFragment = MonthFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_MONTHDAY);
-        dateType.inflateView(R.id.monthDayLayout);
-        remControl = dateType;
-
-        monthDayField = (TextView) findViewById(R.id.monthDayField);
-        monthDayField.setOnClickListener(dateClick);
-
-        monthDayExport = (CheckBox) findViewById(R.id.monthDayExport);
-        if (isCalendar || isStock)
-            monthDayExport.setVisibility(View.VISIBLE);
-
-        monthDayTaskExport = (CheckBox) findViewById(R.id.monthDayTaskExport);
-        if (gtx.isLinked()) monthDayTaskExport.setVisibility(View.VISIBLE);
-
-        monthDayTimeField = (TextView) findViewById(R.id.monthDayTimeField);
-        monthDayTimeField.setOnClickListener(timeClick);
-        monthDayTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        monthDayTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        String dayStr;
-        if (myDay > 28) myDay = 28;
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
-
-        monthDayField.setText(dayStr);
-        monthDayField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        dayCheck = (RadioButton) findViewById(R.id.dayCheck);
-        dayCheck.setChecked(true);
-        lastCheck = (RadioButton) findViewById(R.id.lastCheck);
-        dayCheck.setOnCheckedChangeListener(this);
-        lastCheck.setOnCheckedChangeListener(this);
-
-        actionViewMonth = (ActionView) findViewById(R.id.actionViewMonth);
-        actionViewMonth.setListener(this);
-        actionViewMonth.setActivity(this);
+        remControl = new DateType(this, Constants.TYPE_MONTHDAY, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
-
-            eventTime = item.getStartTime();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-
-            if (exp == 1) monthDayExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                monthDayTaskExport.setChecked(true);
-
-            taskField.setText(text);
-            monthDayTimeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
-                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-
-            if (myDay == 0) myDay = 1;
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
-            monthDayField.setText(dayStr);
-
-            if (type.matches(Constants.TYPE_MONTHDAY)){
-                actionViewMonth.setAction(false);
-                dayCheck.setChecked(true);
-            } else if (type.matches(Constants.TYPE_MONTHDAY_LAST)) {
-                actionViewMonth.setAction(false);
-                lastCheck.setChecked(true);
-            } else {
-                actionViewMonth.setAction(true);
-                actionViewMonth.setNumber(number);
-                if (type.matches(Constants.TYPE_MONTHDAY_CALL_LAST) ||
-                        type.matches(Constants.TYPE_MONTHDAY_MESSAGE_LAST)){
-                    lastCheck.setChecked(true);
-                } else {
-                    dayCheck.setChecked(true);
-                }
-                if (type.matches(Constants.TYPE_MONTHDAY_CALL)){
-                    actionViewMonth.setType(ActionView.TYPE_CALL);
-                } else {
-                    actionViewMonth.setType(ActionView.TYPE_MESSAGE);
-                }
-            }
+            taskField.setText(item.getSummary());
         }
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()){
-            case R.id.dayCheck:
-                if (dayCheck.isChecked()) {
-                    lastCheck.setChecked(false);
-                    ViewUtils.expand(monthDayField);
-                    myDay = 1;
-                }
-                break;
-            case R.id.lastCheck:
-                if (lastCheck.isChecked()) {
-                    dayCheck.setChecked(false);
-                    ViewUtils.collapse(monthDayField);
-                    myDay = 0;
-                }
-                break;
             case R.id.currentCheck:
                 if (currentCheck.isChecked()) {
                     mapCheck.setChecked(false);
@@ -1035,110 +754,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        cSetter = new ColorSetter(ReminderManager.this);
+        baseFragment = WeekFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        LinearLayout weekday_layout = (LinearLayout) findViewById(R.id.weekday_layout);
-        ViewUtils.fadeInAnimation(weekday_layout);
-
-        DateType dateType = new DateType(this, Constants.TYPE_WEEKDAY);
-        dateType.inflateView(R.id.weekday_layout);
-        remControl = dateType;
-
-        weekExport = (CheckBox) findViewById(R.id.weekExport);
-        if (isCalendar || isStock)
-            weekExport.setVisibility(View.VISIBLE);
-
-        weekTaskExport = (CheckBox) findViewById(R.id.weekTaskExport);
-        if (gtx.isLinked()) weekTaskExport.setVisibility(View.VISIBLE);
-
-        weekTimeField = (TextView) findViewById(R.id.weekTimeField);
-        weekTimeField.setOnClickListener(timeClick);
-        weekTimeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        weekTimeField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        mondayCheck = (ToggleButton) findViewById(R.id.mondayCheck);
-        tuesdayCheck = (ToggleButton) findViewById(R.id.tuesdayCheck);
-        wednesdayCheck = (ToggleButton) findViewById(R.id.wednesdayCheck);
-        thursdayCheck = (ToggleButton) findViewById(R.id.thursdayCheck);
-        fridayCheck = (ToggleButton) findViewById(R.id.fridayCheck);
-        saturdayCheck = (ToggleButton) findViewById(R.id.saturdayCheck);
-        sundayCheck = (ToggleButton) findViewById(R.id.sundayCheck);
-        mondayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        tuesdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        wednesdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        thursdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        fridayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        saturdayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-        sundayCheck.setBackgroundDrawable(cSetter.toggleDrawable());
-
-        actionViewWeek = (ActionView) findViewById(R.id.actionViewWeek);
-        actionViewWeek.setListener(this);
-        actionViewWeek.setActivity(this);
+        remControl = new DateType(this, Constants.TYPE_WEEKDAY, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
             eventTime = item.getEventTime();
-
-            if (exp == 1) weekExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                weekTaskExport.setChecked(true);
-
-            weekTimeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
-                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            taskField.setText(text);
-
-            setCheckForDays(weekdays);
-
-            if (type.matches(Constants.TYPE_WEEKDAY))
-                actionViewWeek.setAction(false);
-            else {
-                actionViewWeek.setAction(true);
-                actionViewWeek.setNumber(number);
-                if (type.matches(Constants.TYPE_WEEKDAY_CALL))
-                    actionViewWeek.setType(ActionView.TYPE_CALL);
-                else actionViewWeek.setType(ActionView.TYPE_MESSAGE);
-            }
+            repeatCode = item.getRecurrence().getRepeat();
+            taskField.setText(item.getSummary());
         }
-    }
-
-    /**
-     * Check days toggle buttons depends on weekday string.
-     * @param weekdays weekday string.
-     */
-    private void setCheckForDays(ArrayList<Integer> weekdays){
-        if (weekdays.get(0) == Constants.DAY_CHECKED)
-            sundayCheck.setChecked(true);
-        else sundayCheck.setChecked(false);
-
-        if (weekdays.get(1) == Constants.DAY_CHECKED)
-            mondayCheck.setChecked(true);
-        else mondayCheck.setChecked(false);
-
-        if (weekdays.get(2) == Constants.DAY_CHECKED)
-            tuesdayCheck.setChecked(true);
-        else tuesdayCheck.setChecked(false);
-
-        if (weekdays.get(3) == Constants.DAY_CHECKED)
-            wednesdayCheck.setChecked(true);
-        else wednesdayCheck.setChecked(false);
-
-        if (weekdays.get(4) == Constants.DAY_CHECKED)
-            thursdayCheck.setChecked(true);
-        else thursdayCheck.setChecked(false);
-
-        if (weekdays.get(5) == Constants.DAY_CHECKED)
-            fridayCheck.setChecked(true);
-        else fridayCheck.setChecked(false);
-
-        if (weekdays.get(6) == Constants.DAY_CHECKED)
-            saturdayCheck.setChecked(true);
-        else saturdayCheck.setChecked(false);
     }
 
     /**
@@ -1147,146 +772,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.remind_me));
 
-        cSetter = new ColorSetter(ReminderManager.this);
-        LinearLayout after_time_layout = (LinearLayout) findViewById(R.id.after_time_layout);
-        ViewUtils.fadeInAnimation(after_time_layout);
+        baseFragment = TimerFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_TIME);
-        dateType.inflateView(R.id.after_time_layout);
-        remControl = dateType;
-
-        timeExport = (CheckBox) findViewById(R.id.timeExport);
-        if (isCalendar || isStock)
-            timeExport.setVisibility(View.VISIBLE);
-
-        timeTaskExport = (CheckBox) findViewById(R.id.timeTaskExport);
-        if (gtx.isLinked()) timeTaskExport.setVisibility(View.VISIBLE);
-
-        hoursView = (TextView) findViewById(R.id.hoursView);
-        minutesView = (TextView) findViewById(R.id.minutesView);
-        secondsView = (TextView) findViewById(R.id.secondsView);
-        selectExclusion = (TextView) findViewById(R.id.selectExclusion);
-        ViewUtils.setTypeFont(this, hoursView, minutesView, secondsView, selectExclusion);
-        selectExclusion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(ReminderManager.this, ExclusionPickerDialog.class), 1111);
-            }
-        });
-
-        deleteButton = (ImageButton) findViewById(R.id.deleteButton);
-        exclusionClear = (ImageButton) findViewById(R.id.exclusionClear);
-        exclusionClear.setVisibility(View.INVISIBLE);
-        sPrefs = new SharedPrefs(this);
-        if (isDark) {
-            deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_white_24dp);
-        } else {
-            deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
-        }
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeString = timeString.substring(0, timeString.length() - 1);
-                timeString = "0" + timeString;
-                updateTimeView();
-            }
-        });
-        deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                timeString = "000000";
-                updateTimeView();
-                return true;
-            }
-        });
-        exclusionClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (exclusion != null){
-                    exclusion = null;
-                    selectExclusion.setText(getString(R.string.exclusion));
-                    exclusionClear.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        updateTimeView();
-
-        Button b1 = (Button) findViewById(R.id.b1);
-        Button b2 = (Button) findViewById(R.id.b2);
-        Button b3 = (Button) findViewById(R.id.b3);
-        Button b4 = (Button) findViewById(R.id.b4);
-        Button b5 = (Button) findViewById(R.id.b5);
-        Button b6 = (Button) findViewById(R.id.b6);
-        Button b7 = (Button) findViewById(R.id.b7);
-        Button b8 = (Button) findViewById(R.id.b8);
-        Button b9 = (Button) findViewById(R.id.b9);
-        Button b0 = (Button) findViewById(R.id.b0);
-        if (b1 != null) {
-            b1.setId(Integer.valueOf(101));
-            b2.setId(Integer.valueOf(102));
-            b3.setId(Integer.valueOf(103));
-            b4.setId(Integer.valueOf(104));
-            b5.setId(Integer.valueOf(105));
-            b6.setId(Integer.valueOf(106));
-            b7.setId(Integer.valueOf(107));
-            b8.setId(Integer.valueOf(108));
-            b9.setId(Integer.valueOf(109));
-            b0.setId(Integer.valueOf(100));
-            b1.setOnClickListener(this);
-            b2.setOnClickListener(this);
-            b3.setOnClickListener(this);
-            b4.setOnClickListener(this);
-            b5.setOnClickListener(this);
-            b6.setOnClickListener(this);
-            b7.setOnClickListener(this);
-            b8.setOnClickListener(this);
-            b9.setOnClickListener(this);
-            b0.setOnClickListener(this);
-        }
-
-        RepeatView repeatViewTime = (RepeatView) findViewById(R.id.repeatViewTime);
-        repeatViewTime.setListener(this);
-        repeatViewTime.setMax(120);
+        remControl = new DateType(this, Constants.TYPE_TIME, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            JExport jExport = item.getExport();
-            int  exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
-            JRecurrence jRecurrence = item.getRecurrence();
-            long repeat = jRecurrence.getRepeat();
-            long afterTime = jRecurrence.getAfter();
+            eventTime = item.getEventTime();
+            repeatCode = item.getRecurrence().getRepeat();
+            taskField.setText(item.getSummary());
             exclusion = item.getExclusion().toString();
-
-            timeString = TimeUtil.generateAfterString(afterTime);
-            updateTimeView();
-            setExclusion(exclusion);
-
-            if (exp == 1) timeExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                timeTaskExport.setChecked(true);
-
-            repeatViewTime.setProgress(repeat);
-            taskField.setText(text);
-        }
-    }
-
-    /**
-     * Set time in time view fields.
-     */
-    private void updateTimeView() {
-        if (timeString.matches("000000")) deleteButton.setEnabled(false);
-        else deleteButton.setEnabled(true);
-        if (timeString.length() == 6){
-            String hours = timeString.substring(0, 2);
-            String minutes = timeString.substring(2, 4);
-            String seconds = timeString.substring(4, 6);
-            hoursView.setText(hours);
-            minutesView.setText(minutes);
-            secondsView.setText(seconds);
         }
     }
 
@@ -1296,63 +791,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachSkype(){
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout skype_layout = (LinearLayout) findViewById(R.id.skype_layout);
-        ViewUtils.fadeInAnimation(skype_layout);
+        baseFragment = SkypeFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_SKYPE);
-        dateType.inflateView(R.id.skype_layout);
-        remControl = dateType;
-
-        skypeUser = (EditText) findViewById(R.id.skypeUser);
-
-        skypeCall = (RadioButton) findViewById(R.id.skypeCall);
-        skypeVideo = (RadioButton) findViewById(R.id.skypeVideo);
-        skypeCall.setChecked(true);
-        RadioButton skypeChat = (RadioButton) findViewById(R.id.skypeChat);
-        skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) taskField.setHint(getString(R.string.message));
-                else taskField.setHint(getString(R.string.remind_me));
-            }
-        });
-
-        skypeExport = (CheckBox) findViewById(R.id.skypeExport);
-        if (isCalendar || isStock)
-            skypeExport.setVisibility(View.VISIBLE);
-
-        skypeTaskExport = (CheckBox) findViewById(R.id.skypeTaskExport);
-        if (gtx.isLinked()) skypeTaskExport.setVisibility(View.VISIBLE);
-
-        DateTimeView dateViewSkype = (DateTimeView) findViewById(R.id.dateViewSkype);
-        dateViewSkype.setListener(this);
-        dateViewSkype.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        RepeatView repeatViewSkype = (RepeatView) findViewById(R.id.repeatViewSkype);
-        repeatViewSkype.setListener(this);
-        repeatViewSkype.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_SKYPE, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            eventTime = item.getStartTime();
-
-            if (exp == 1) skypeExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                skypeTaskExport.setChecked(true);
-
-            if(type.matches(Constants.TYPE_SKYPE)) skypeCall.setChecked(true);
-            if(type.matches(Constants.TYPE_SKYPE_VIDEO)) skypeVideo.setChecked(true);
-            if(type.matches(Constants.TYPE_SKYPE_CHAT)) skypeChat.setChecked(true);
-
-            taskField.setText(text);
-            skypeUser.setText(number);
-            dateViewSkype.setDateTime(updateCalendar(eventTime, true));
-            repeatViewSkype.setProgress(repeatCode);
+            taskField.setText(item.getSummary());
         }
     }
 
@@ -1362,100 +809,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachApplication(){
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout application_layout = (LinearLayout) findViewById(R.id.application_layout);
-        ViewUtils.fadeInAnimation(application_layout);
+        baseFragment = ApplicationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_APPLICATION);
-        dateType.inflateView(R.id.application_layout);
-        remControl = dateType;
-
-        browseLink = (EditText) findViewById(R.id.browseLink);
-        browseLink.setVisibility(View.GONE);
-        applicationLayout = (RelativeLayout) findViewById(R.id.applicationLayout);
-        applicationLayout.setVisibility(View.VISIBLE);
-        applicationName = (TextView) findViewById(R.id.applicationName);
-
-        ImageButton pickApplication = (ImageButton) findViewById(R.id.pickApplication);
-        pickApplication.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SuperUtil.selectApplication(ReminderManager.this, Constants.REQUEST_CODE_APPLICATION);
-            }
-        });
-
-        sPrefs = new SharedPrefs(ReminderManager.this);
-        if (isDark) pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
-        else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
-
-        application = (RadioButton) findViewById(R.id.application);
-        application.setChecked(true);
-        browser = (RadioButton) findViewById(R.id.browser);
-        application.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) {
-                    ViewUtils.collapse(applicationLayout);
-                    ViewUtils.expand(browseLink);
-                } else {
-                    ViewUtils.collapse(browseLink);
-                    ViewUtils.expand(applicationLayout);
-                }
-            }
-        });
-
-        appExport = (CheckBox) findViewById(R.id.appExport);
-        if (isCalendar || isStock)
-            appExport.setVisibility(View.VISIBLE);
-
-        appTaskExport = (CheckBox) findViewById(R.id.appTaskExport);
-        if (gtx.isLinked()) appTaskExport.setVisibility(View.VISIBLE);
-
-        DateTimeView dateViewApp = (DateTimeView) findViewById(R.id.dateViewApp);
-        dateViewApp.setListener(this);
-        dateViewApp.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        RepeatView repeatViewApp = (RepeatView) findViewById(R.id.repeatViewApp);
-        repeatViewApp.setListener(this);
-        repeatViewApp.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_APPLICATION, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            eventTime = item.getStartTime();
-
-            if (exp == 1) appExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                appTaskExport.setChecked(true);
-
-            if (type.matches(Constants.TYPE_APPLICATION)) {
-                application.setChecked(true);
-                selectedPackage = number;
-                PackageManager packageManager = getPackageManager();
-                ApplicationInfo applicationInfo = null;
-                try {
-                    applicationInfo = packageManager.getApplicationInfo(number, 0);
-                } catch (final PackageManager.NameNotFoundException ignored) {
-                    ignored.printStackTrace();
-                }
-
-                final String name = (String)((applicationInfo != null) ?
-                        packageManager.getApplicationLabel(applicationInfo) : "???");
-                applicationName.setText(name);
-
-            }
-            if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-                browser.setChecked(true);
-                browseLink.setText(number);
-            }
-
-            taskField.setText(text);
-
-            dateViewApp.setDateTime(updateCalendar(eventTime, true));
-            repeatViewApp.setProgress(repeatCode);
+            selectedPackage = item.getAction().getTarget();
+            taskField.setText(item.getSummary());
         }
     }
 
@@ -1465,51 +828,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachCall(){
         taskField.setHint(getString(R.string.remind_me));
 
-        LinearLayout call_layout = (LinearLayout) findViewById(R.id.call_layout);
-        ViewUtils.fadeInAnimation(call_layout);
+        baseFragment = CallFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_CALL);
-        dateType.inflateView(R.id.call_layout);
-        remControl = dateType;
-
-        ImageButton addNumberButton = (ImageButton) findViewById(R.id.addNumberButton);
-        addNumberButton.setOnClickListener(contactClick);
-        ViewUtils.setImage(addNumberButton, isDark);
-
-        phoneNumber = (FloatingEditText) findViewById(R.id.phoneNumber);
-
-        callExport = (CheckBox) findViewById(R.id.callExport);
-        if (isCalendar || isStock)
-            callExport.setVisibility(View.VISIBLE);
-
-        callTaskExport = (CheckBox) findViewById(R.id.callTaskExport);
-        if (gtx.isLinked()) callTaskExport.setVisibility(View.VISIBLE);
-
-        DateTimeView dateViewCall = (DateTimeView) findViewById(R.id.dateViewCall);
-        dateViewCall.setListener(this);
-        dateViewCall.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        RepeatView repeatViewCall = (RepeatView) findViewById(R.id.repeatViewCall);
-        repeatViewCall.setListener(this);
-        repeatViewCall.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_CALL, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            eventTime = item.getStartTime();
-
-            if (exp == 1) callExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                callTaskExport.setChecked(true);
-
-            taskField.setText(text);
-            phoneNumber.setText(number);
-            dateViewCall.setDateTime(updateCalendar(eventTime, true));
-            repeatViewCall.setProgress(repeatCode);
+            taskField.setText(item.getSummary());
         }
     }
 
@@ -1519,52 +846,15 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachMessage(){
         taskField.setHint(getString(R.string.message));
 
-        LinearLayout message_layout = (LinearLayout) findViewById(R.id.message_layout);
-        ViewUtils.fadeInAnimation(message_layout);
+        baseFragment = MessageFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_MESSAGE);
-        dateType.inflateView(R.id.message_layout);
-        remControl = dateType;
-
-        ImageButton addMessageNumberButton = (ImageButton) findViewById(R.id.addMessageNumberButton);
-        addMessageNumberButton.setOnClickListener(contactClick);
-        ViewUtils.setImage(addMessageNumberButton, isDark);
-
-        messageNumber = (FloatingEditText) findViewById(R.id.messageNumber);
-
-        messageExport = (CheckBox) findViewById(R.id.messageExport);
-        if (isCalendar || isStock)
-            messageExport.setVisibility(View.VISIBLE);
-
-        messageTaskExport = (CheckBox) findViewById(R.id.messageTaskExport);
-        if (gtx.isLinked()) messageTaskExport.setVisibility(View.VISIBLE);
-
-        DateTimeView dateViewMessage = (DateTimeView) findViewById(R.id.dateViewMessage);
-        dateViewMessage.setListener(this);
-        dateViewMessage.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        RepeatView repeatViewMessage = (RepeatView) findViewById(R.id.repeatViewMessage);
-        repeatViewMessage.setListener(this);
-        repeatViewMessage.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_MESSAGE, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            String number = item.getAction().getTarget();
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            eventTime = item.getStartTime();
-
-            if (exp == 1) messageExport.setChecked(true);
-
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                messageTaskExport.setChecked(true);
-
-            taskField.setText(text);
-            messageNumber.setText(number);
-            dateViewMessage.setDateTime(updateCalendar(eventTime, true));
-            repeatViewMessage.setProgress(repeatCode);
+            taskField.setText(item.getSummary());
         }
     }
 
@@ -1574,89 +864,16 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     private void attachMail(){
         taskField.setHint(getString(R.string.subject));
 
-        LinearLayout mailLayout = (LinearLayout) findViewById(R.id.mailLayout);
-        ViewUtils.fadeInAnimation(mailLayout);
+        baseFragment = MailFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        addFragment(R.id.layoutContainer, baseFragment);
 
-        DateType dateType = new DateType(this, Constants.TYPE_MAIL);
-        dateType.inflateView(R.id.mailLayout);
-        remControl = dateType;
-
-        ImageButton chooseFile = (ImageButton) findViewById(R.id.chooseFile);
-        chooseFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Permissions.checkPermission(ReminderManager.this, Permissions.READ_EXTERNAL)) {
-                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
-                            .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
-                } else {
-                    Permissions.requestPermission(ReminderManager.this, 331,
-                            Permissions.READ_EXTERNAL);
-                }
-            }
-        });
-        if (isDark) chooseFile.setImageResource(R.drawable.ic_attach_file_white_24dp);
-        else chooseFile.setImageResource(R.drawable.ic_attach_file_black_24dp);
-
-        fileName = (TextView) findViewById(R.id.fileName);
-        fileName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                attachment = null;
-                showAttachment();
-            }
-        });
-
-        mail = (EditText) findViewById(R.id.mail);
-        subject = (EditText) findViewById(R.id.subject);
-
-        mailExport = (CheckBox) findViewById(R.id.mailExport);
-        if (isCalendar || isStock)
-            mailExport.setVisibility(View.VISIBLE);
-
-        mailTaskExport = (CheckBox) findViewById(R.id.mailTaskExport);
-        if (gtx.isLinked()) mailTaskExport.setVisibility(View.VISIBLE);
-
-        DateTimeView dateViewMail = (DateTimeView) findViewById(R.id.dateViewMail);
-        dateViewMail.setListener(this);
-        dateViewMail.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-
-        RepeatView repeatViewMail = (RepeatView) findViewById(R.id.repeatViewMail);
-        repeatViewMail.setListener(this);
-        repeatViewMail.setMax(Configs.REPEAT_SEEKBAR_MAX);
+        remControl = new DateType(this, Constants.TYPE_MAIL, baseFragment);
 
         if (item != null && isSame()) {
-            String text = item.getSummary();
-            JAction jAction = item.getAction();
-            String mailContact = jAction.getTarget();
-            String subjectT = jAction.getSubject();
-            attachment = jAction.getAttachment();
-
-            JExport jExport = item.getExport();
-            int exp = jExport.getCalendar();
-            int expTasks = jExport.getgTasks();
+            eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
-            eventTime = item.getStartTime();
-
-            if (exp == 1) messageExport.setChecked(true);
-
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
-                messageTaskExport.setChecked(true);
-
-            showAttachment();
-
-            taskField.setText(text);
-            mail.setText(mailContact);
-            subject.setText(subjectT);
-            dateViewMail.setDateTime(updateCalendar(eventTime, true));
-            repeatViewMail.setProgress(repeatCode);
+            taskField.setText(item.getAction().getSubject());
         }
-    }
-
-    private void showAttachment() {
-        if (attachment != null) {
-            File file = new File(attachment);
-            fileName.setText(file.getName());
-        } else fileName.setText(getString(R.string.no_files_attached));
     }
 
     @Override
@@ -2174,14 +1391,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
-     * Hide currently attached layout.
-     */
-    private void detachCurrentView(){
-        if (remControl.getView() != 0)
-            ViewUtils.fadeOutAnimation(findViewById(remControl.getView()));
-    }
-
-    /**
      * Save new or update current reminder.
      */
     private void save() {
@@ -2338,29 +1547,26 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             } else type = remControl.getType();
         } else {
             if (isSkypeAttached()){
-                if (skypeCall.isChecked())type = Constants.TYPE_SKYPE;
-                else if (skypeVideo.isChecked())type = Constants.TYPE_SKYPE_VIDEO;
-                else type = Constants.TYPE_SKYPE_CHAT;
+                type = ((SkypeFragment) baseFragment).getType();
             } else if (isApplicationAttached()){
-                if (application.isChecked())type = Constants.TYPE_APPLICATION;
-                else type = Constants.TYPE_APPLICATION_BROWSER;
+                type = ((ApplicationFragment) baseFragment).getType();
             } else if (isWeekDayReminderAttached()){
-                if (actionViewWeek.hasAction()){
-                    if (actionViewWeek.getType() == ActionView.TYPE_CALL)
-                        type = Constants.TYPE_WEEKDAY_CALL;
+                if (hasAction){
+                    if (!isMessage) type = Constants.TYPE_WEEKDAY_CALL;
                     else type = Constants.TYPE_WEEKDAY_MESSAGE;
                 } else type = Constants.TYPE_WEEKDAY;
             } else if (isMonthDayAttached()) {
-                if (actionViewMonth.hasAction()){
-                    if (actionViewMonth.getType() == ActionView.TYPE_CALL){
-                        if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
+                MonthFragment fragment = (MonthFragment) baseFragment;
+                if (hasAction){
+                    if (!isMessage){
+                        if (fragment.isLast()) type = Constants.TYPE_MONTHDAY_CALL_LAST;
                         else type = Constants.TYPE_MONTHDAY_CALL;
                     } else {
-                        if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
+                        if (fragment.isLast()) type = Constants.TYPE_MONTHDAY_MESSAGE_LAST;
                         else type = Constants.TYPE_MONTHDAY_MESSAGE;
                     }
                 } else {
-                    if (lastCheck.isChecked()) type = Constants.TYPE_MONTHDAY_LAST;
+                    if (fragment.isLast()) type = Constants.TYPE_MONTHDAY_LAST;
                     else type = Constants.TYPE_MONTHDAY;
                 }
             } else type = remControl.getType();
@@ -2374,201 +1580,200 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private JModel getData() {
         String type = getType();
-        if (type != null) {
-            ArrayList<JShopping> jShoppings = new ArrayList<>();
-            if (isShoppingAttached()){
-                if (shoppingLists.getCount() == 0) {
-                    Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
-                    return null;
-                } else {
-                    for (ShoppingList shoppingList : shoppingLists.getData()) {
-                        String title = shoppingList.getTitle();
-                        String uuid = shoppingList.getUuId();
-                        long time = shoppingList.getTime();
-                        int status = shoppingList.getIsChecked();
-                        int deleted = shoppingList.getStatus();
-                        jShoppings.add(new JShopping(title, status, uuid, time, deleted));
-                    }
-                }
-                if (!isShoppingReminder) {
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
+        if (type == null) return null;
+
+        ArrayList<JShopping> jShoppings = new ArrayList<>();
+        if (isShoppingAttached()){
+            if (shoppingLists.getCount() == 0) {
+                Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
+                return null;
+            } else {
+                for (ShoppingList shoppingList : shoppingLists.getData()) {
+                    String title = shoppingList.getTitle();
+                    String uuid = shoppingList.getUuId();
+                    long time = shoppingList.getTime();
+                    int status = shoppingList.getIsChecked();
+                    int deleted = shoppingList.getStatus();
+                    jShoppings.add(new JShopping(title, status, uuid, time, deleted));
                 }
             }
-
-
-            ArrayList<Integer> weekdays = new ArrayList<>();
-            if (isWeekDayReminderAttached()) {
-                weekdays = IntervalUtil.getWeekRepeat(mondayCheck.isChecked(), tuesdayCheck.isChecked(), wednesdayCheck.isChecked(),
-                        thursdayCheck.isChecked(), fridayCheck.isChecked(), saturdayCheck.isChecked(), sundayCheck.isChecked());
-                if (!IntervalUtil.isWeekday(weekdays)) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_select_any_day));
-                    return null;
-                }
-            }
-            String task = taskField.getText().toString().trim();
-            if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)
-                    && !type.contains(Constants.TYPE_MAIL)) {
-                if (task.matches("")) {
-                    Messages.snackbar(mFab, "");
-                    return null;
-                }
-            }
-
-            String number = getNumber();
-            if (type.contains(Constants.TYPE_MESSAGE) || type.contains(Constants.TYPE_CALL)) {
-                if (!checkNumber(number)) return null;
-            }
-
-            if (isApplicationAttached()) {
-                if (application.isChecked()) {
-                    number = selectedPackage;
-                    if (number == null) {
-                        Messages.snackbar(mFab, getString(R.string.you_dont_select_application));
-                        return null;
-                    }
-                } else if (browser.isChecked()) {
-                    number = browseLink.getText().toString().trim();
-                    if (number.matches("") || number.matches(".*https?://")) {
-                        Messages.snackbar(mFab, getString(R.string.you_dont_insert_link));
-                        return null;
-                    }
-                    if (!number.startsWith("http://") && !number.startsWith("https://"))
-                        number = "http://" + number;
-
-                }
-            }
-
-            String subjectString = null;
-            if (isMailAttached()) {
-                String email = mail.getText().toString().trim();
-                if (email.matches("") || !email.matches(".*@.*..*")) {
-                    Messages.snackbar(mFab, getString(R.string.email_is_incorrect));
-                } else number = email;
-
-                String subString = subject.getText().toString().trim();
-                if (subString.matches("")) {
-                    showSnackbar(getString(R.string.you_dont_insert_any_message));
-                    return null;
-                }
-                subjectString = task;
-                task = subString;
-            }
-
-            String uuId = SyncHelper.generateID();
-
-            Double latitude = 0.0;
-            Double longitude = 0.0;
-            int style = -1;
-            if (isLocationAttached() || isLocationOutAttached()) {
-                if (!LocationUtil.checkLocationEnable(this)) {
-                    LocationUtil.showLocationAlert(this, this);
-                    return null;
-                }
-                LatLng dest = null;
-                boolean isNull = true;
-                if (curPlace != null) {
-                    dest = curPlace;
-                    isNull = false;
-                }
-                if (isNull) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
-                    return null;
-                }
-                if (isLocationAttached()) {
-                    if (!attackDelay.isChecked()) {
-                        myDay = 0;
-                        myMonth = 0;
-                        myYear = 0;
-                        myHour = 0;
-                        myMinute = 0;
-                    }
-                    style = map.getMarkerStyle();
-                }
-                if (isLocationOutAttached()) {
-                    if (!attachDelayOut.isChecked()) {
-                        myDay = 0;
-                        myMonth = 0;
-                        myYear = 0;
-                        myHour = 0;
-                        myMinute = 0;
-                    }
-                    style = mapOut.getMarkerStyle();
-                }
-
-                latitude = dest.latitude;
-                longitude = dest.longitude;
-            }
-
-            ArrayList<JPlace> places = new ArrayList<>();
-            if (isPlacesAttached()) {
-                if (!LocationUtil.checkLocationEnable(this)) {
-                    LocationUtil.showLocationAlert(this, this);
-                    return null;
-                }
-
-                places = placesMap.getPlaces();
-                if (places == null || places.size() == 0) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
-                    return null;
-                }
-
+            if (!isShoppingReminder) {
                 myDay = 0;
                 myMonth = 0;
                 myYear = 0;
                 myHour = 0;
                 myMinute = 0;
             }
+        }
 
-            int mySeconds = 0;
-            long timeAfter = 0;
-            if (isTimeReminderAttached()) {
-                timeAfter = SuperUtil.getAfterTime(timeString);
-                if (timeAfter == 0) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_insert_timer_time));
+
+        ArrayList<Integer> weekdays = new ArrayList<>();
+        if (isWeekDayReminderAttached()) {
+            weekdays = ((WeekFragment) baseFragment).getDays();
+            if (!IntervalUtil.isWeekday(weekdays)) {
+                Messages.snackbar(mFab, getString(R.string.you_dont_select_any_day));
+                return null;
+            }
+        }
+        String task = taskField.getText().toString().trim();
+        if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)
+                && !type.contains(Constants.TYPE_MAIL)) {
+            if (task.matches("")) {
+                Messages.snackbar(mFab, "");
+                return null;
+            }
+        }
+
+        String number = getNumber();
+        if (type.contains(Constants.TYPE_MESSAGE) || type.contains(Constants.TYPE_CALL)) {
+            if (!checkNumber(number)) return null;
+        }
+
+        if (isApplicationAttached()) {
+            if (type.matches(Constants.TYPE_APPLICATION)) {
+                number = selectedPackage;
+                if (number == null) {
+                    Messages.snackbar(mFab, getString(R.string.you_dont_select_application));
                     return null;
                 }
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(System.currentTimeMillis());
-                myYear = c.get(Calendar.YEAR);
-                myMonth = c.get(Calendar.MONTH);
-                myDay = c.get(Calendar.DAY_OF_MONTH);
-                myHour = c.get(Calendar.HOUR_OF_DAY);
-                myMinute = c.get(Calendar.MINUTE);
-                mySeconds = c.get(Calendar.SECOND);
+            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+                number = baseFragment.getNumber();
+                if (number.matches("") || number.matches(".*https?://")) {
+                    Messages.snackbar(mFab, getString(R.string.you_dont_insert_link));
+                    return null;
+                }
+                if (!number.startsWith("http://") && !number.startsWith("https://"))
+                    number = "http://" + number;
+
+            }
+        }
+
+        String subjectString = null;
+        if (isMailAttached()) {
+            String email = baseFragment.getNumber();
+            if (email.matches("") || !email.matches(".*@.*..*")) {
+                Messages.snackbar(mFab, getString(R.string.email_is_incorrect));
+            } else number = email;
+
+            String subString = baseFragment.getMessage();
+            if (subString.matches("")) {
+                showSnackbar(getString(R.string.you_dont_insert_any_message));
+                return null;
+            }
+            subjectString = task;
+            task = subString;
+        }
+
+        String uuId = SyncHelper.generateID();
+
+        Double latitude = 0.0;
+        Double longitude = 0.0;
+        int style = -1;
+        if (isLocationAttached() || isLocationOutAttached()) {
+            if (!LocationUtil.checkLocationEnable(this)) {
+                LocationUtil.showLocationAlert(this, this);
+                return null;
+            }
+            LatLng dest = null;
+            boolean isNull = true;
+            if (curPlace != null) {
+                dest = curPlace;
+                isNull = false;
+            }
+            if (isNull) {
+                Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
+                return null;
+            }
+            if (isLocationAttached()) {
+                if (!attackDelay.isChecked()) {
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                }
+                style = map.getMarkerStyle();
+            }
+            if (isLocationOutAttached()) {
+                if (!attachDelayOut.isChecked()) {
+                    myDay = 0;
+                    myMonth = 0;
+                    myYear = 0;
+                    myHour = 0;
+                    myMinute = 0;
+                }
+                style = mapOut.getMarkerStyle();
             }
 
-            long repeat = getRepeat();
-            int gTaskSync = getSyncCode();
+            latitude = dest.latitude;
+            longitude = dest.longitude;
+        }
 
-            int calendarSync = getExportCode();
-            if (isMonthDayAttached()) {
-                if (type.endsWith("_last")) myDay = 0;
+        ArrayList<JPlace> places = new ArrayList<>();
+        if (isPlacesAttached()) {
+            if (!LocationUtil.checkLocationEnable(this)) {
+                LocationUtil.showLocationAlert(this, this);
+                return null;
             }
 
-            long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
-                    myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
+            places = placesMap.getPlaces();
+            if (places == null || places.size() == 0) {
+                Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
+                return null;
+            }
 
-            if (repeat == 0) repeats = -1;
+            myDay = 0;
+            myMonth = 0;
+            myYear = 0;
+            myHour = 0;
+            myMinute = 0;
+        }
 
-            JExclusion jExclusion = new JExclusion(exclusion);
-            JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
-            JMelody jMelody = new JMelody(melody, volume);
-            JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
-            JAction jAction = new JAction(type, number, auto, subjectString, attachment);
-            JExport jExport = new JExport(gTaskSync, calendarSync, null);
-            JPlace jPlace = new JPlace(latitude, longitude, radius, style);
+        int mySeconds = 0;
+        long timeAfter = 0;
+        if (isTimeReminderAttached()) {
+            timeAfter = SuperUtil.getAfterTime(((TimerFragment) baseFragment).getTimeString());
+            if (timeAfter == 0) {
+                Messages.snackbar(mFab, getString(R.string.you_dont_insert_timer_time));
+                return null;
+            }
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+            myYear = c.get(Calendar.YEAR);
+            myMonth = c.get(Calendar.MONTH);
+            myDay = c.get(Calendar.DAY_OF_MONTH);
+            myHour = c.get(Calendar.HOUR_OF_DAY);
+            myMinute = c.get(Calendar.MINUTE);
+            mySeconds = c.get(Calendar.SECOND);
+        }
 
-            Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
-            Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
+        long repeat = getRepeat();
+        int gTaskSync = getSyncCode();
 
-            return new JModel(task, type, categoryId, uuId, startTime, startTime, 0, vibration,
-                    notificationRepeat, voice, wake, unlock, jExclusion, jLed, jMelody,
-                    jRecurrence, jAction, jExport, jPlace, null, places, jShoppings);
-        } else return null;
+        int calendarSync = getExportCode();
+        if (isMonthDayAttached()) {
+            if (type.endsWith("_last")) myDay = 0;
+        }
+
+        long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
+                myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
+
+        if (repeat == 0) repeats = -1;
+
+        JExclusion jExclusion = new JExclusion(exclusion);
+        JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
+        JMelody jMelody = new JMelody(melody, volume);
+        JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
+        JAction jAction = new JAction(type, number, auto, subjectString, attachment);
+        JExport jExport = new JExport(gTaskSync, calendarSync, null);
+        JPlace jPlace = new JPlace(latitude, longitude, radius, style);
+
+        Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
+        Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
+
+        return new JModel(task, type, categoryId, uuId, startTime, startTime, 0, vibration,
+                notificationRepeat, voice, wake, unlock, jExclusion, jLed, jMelody,
+                jRecurrence, jAction, jExport, jPlace, null, places, jShoppings);
     }
 
     /**
@@ -2577,16 +1782,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      */
     private int getExportCode() {
         if (isStock || isCalendar){
-            if (isMonthDayAttached()) return monthDayExport.isChecked() ? 1 : 0;
-            else if (isWeekDayReminderAttached()) return weekExport.isChecked() ? 1 : 0;
-            else if (isTimeReminderAttached()) return timeExport.isChecked() ? 1 : 0;
-            else if (isCallAttached()) return callExport.isChecked() ? 1 : 0;
-            else if (isMessageAttached()) return messageExport.isChecked() ? 1 : 0;
-            else if (isSkypeAttached()) return skypeExport.isChecked() ? 1 : 0;
-            else if (isApplicationAttached()) return appExport.isChecked() ? 1 : 0;
-            else if (isDateReminderAttached()) return dateExport.isChecked() ? 1 : 0;
-            else if (isMailAttached()) return mailExport.isChecked() ? 1 : 0;
-            else return 0;
+            return baseFragment.getCalendar() ? 1 : 0;
         } else return 0;
     }
 
@@ -2595,25 +1791,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return Integer
      */
     private int getSyncCode() {
-        if (isWeekDayReminderAttached()){
-            return ReminderUtils.getSyncCode(weekTaskExport);
-        } else if (isSkypeAttached()){
-            return ReminderUtils.getSyncCode(skypeTaskExport);
-        } else if (isApplicationAttached()){
-            return ReminderUtils.getSyncCode(appTaskExport);
-        } else if (isMonthDayAttached()){
-            return ReminderUtils.getSyncCode(monthDayTaskExport);
-        } else if (isCallAttached()){
-            return ReminderUtils.getSyncCode(callTaskExport);
-        } else if (isMessageAttached()){
-            return ReminderUtils.getSyncCode(messageTaskExport);
-        } else if (isTimeReminderAttached()){
-            return ReminderUtils.getSyncCode(timeTaskExport);
-        } else if (isDateReminderAttached()){
-            return ReminderUtils.getSyncCode(dateTaskExport);
-        } else if (isMailAttached()){
-            return ReminderUtils.getSyncCode(mailTaskExport);
-        } else return 0;
+        return baseFragment.getTasks() ? 1 : 0;
     }
 
     /**
@@ -2635,21 +1813,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
      * @return String
      */
     private String getNumber() {
-        if (isCallAttached()) {
-            return phoneNumber.getText().toString().trim();
-        } else if (isSkypeAttached()){
-            return skypeUser.getText().toString().trim();
-        } else if (isMessageAttached()){
-            return messageNumber.getText().toString().trim();
-        } else if (isLocationAttached() && actionViewLocation.hasAction()){
-            return actionViewLocation.getNumber();
-        } else if (isWeekDayReminderAttached() && actionViewWeek.hasAction()) {
-            return actionViewWeek.getNumber();
-        } else if (isMonthDayAttached() && actionViewMonth.hasAction()) {
-            return actionViewMonth.getNumber();
-        } else if (isLocationOutAttached() && actionViewLocationOut.hasAction()) {
-            return actionViewLocationOut.getNumber();
-        } else return null;
+        return baseFragment.getNumber();
     }
 
     /**
@@ -2662,94 +1826,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             return false;
         } else return true;
     }
-
-    @Override
-    public void onClick(View v) {
-        int ids = v.getId();
-        if (ids >= 100 && ids < 110){
-            String charS = String.valueOf(timeString.charAt(0));
-            if (charS.matches("0")){
-                timeString = timeString.substring(1, timeString.length());
-                timeString = timeString + String.valueOf(ids - 100);
-                updateTimeView();
-            }
-        }
-        switch (v.getId()){
-            case R.id.timeField:
-                timeDialog().show();
-                break;
-        }
-    }
-
-    /**
-     * Show date picker dialog.
-     */
-    protected void dateDialog() {
-        new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay).show();
-    }
-
-    /**
-     * Date selection callback.
-     */
-    DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(year, monthOfYear, dayOfMonth);
-
-            if (isMonthDayAttached()){
-                String dayStr;
-                if (myDay > 28) {
-                    myDay = 28;
-                    Messages.snackbar(mFab, getString(R.string.max_day_supported));
-                }
-
-                if (myDay < 10) dayStr = "0" + myDay;
-                else dayStr = String.valueOf(myDay);
-
-                monthDayField.setText(dayStr);
-            }
-        }
-    };
-
-    /**
-     * Create time picker dialog.
-     * @return Time picker dialog
-     */
-    protected Dialog timeDialog() {
-        return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
-    }
-
-    /**
-     * Time selection callback.
-     */
-    TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            myHour = hourOfDay;
-            myMinute = minute;
-
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            c.set(Calendar.MINUTE, minute);
-
-            String formattedTime = TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
-
-            if (isMonthDayAttached()){
-                monthDayTimeField.setText(formattedTime);
-            }
-            if (isWeekDayReminderAttached()){
-                weekTimeField.setText(formattedTime);
-            }
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -2801,92 +1877,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    private static final int MIN_DISTANCE = 40;
-    private float downX;
-    private float downY;
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        boolean isToolbar = v.getId() != R.id.windowBackground;
-        switch(event.getAction()){
-            case MotionEvent.ACTION_DOWN: {
-                downX = event.getX();
-                downY = event.getY();
-                return true;
-            }
-            case MotionEvent.ACTION_UP: {
-                float upX = event.getX();
-                float upY = event.getY();
-
-                float deltaX = downX - upX;
-                float deltaY = downY - upY;
-                if(Math.abs(deltaX) > Math.abs(deltaY)) {
-                    if(Math.abs(deltaX) > MIN_DISTANCE){
-                        if(deltaX < 0) { this.onRightSwipe(); return true; }
-                        if(deltaX > 0) { this.onLeftSwipe(); return true; }
-                    } else {
-                        return false; // We don't consume the event
-                    }
-                } else {
-                    if(Math.abs(deltaY) > MIN_DISTANCE && isToolbar){
-                        if(deltaY < 0) { this.onDownSwipe(); return true; }
-                        if(deltaY > 0) { this.onUpSwipe(); return true; }
-                    } else {
-                        return false; // We don't consume the event
-                    }
-                }
-
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Show toolbar.
-     */
-    private void onDownSwipe() {
-        if (navContainer.getVisibility() == View.GONE) ViewUtils.expand(navContainer);
-    }
-
-    /**
-     * Hide toolbar.
-     */
-    private void onUpSwipe() {
-        if (navContainer.getVisibility() == View.VISIBLE) ViewUtils.collapse(navContainer);
-    }
-
-    /**
-     * Switch to previous reminder type in list.
-     */
-    private void onLeftSwipe() {
-        int current = spinner.getSelectedItemPosition();
-        if (current > 0){
-            spinner.setSelection(current - 1);
-            switchIt(current - 1);
-        }
-        if (0 == current){
-            spinner.setSelection(Module.isPro() ? Configs.NUMBER_OF_REMINDERS : Configs.NUMBER_OF_REMINDERS - 1);
-            switchIt(Configs.NUMBER_OF_REMINDERS);
-        }
-    }
-
-    /**
-     * Switch to next reminder type in list.
-     */
-    private void onRightSwipe() {
-        int current = spinner.getSelectedItemPosition();
-        if (current < Configs.NUMBER_OF_REMINDERS){
-            spinner.setSelection(current + 1);
-            switchIt(current + 1);
-        }
-        int max = Module.isPro() ? Configs.NUMBER_OF_REMINDERS : Configs.NUMBER_OF_REMINDERS - 1;
-        if (current == max){
-            spinner.setSelection(0);
-            switchIt(0);
-        }
-    }
-
     /**
      * Show reminder layout.
      * @param position spinner position.
@@ -2896,11 +1886,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         selectedPackage = null;
         switch (position){
             case 0:
-                detachCurrentView();
                 attachDateReminder();
                 break;
             case 2:
-                detachCurrentView();
                 if (Permissions.checkPermission(ReminderManager.this,
                         Permissions.CALL_PHONE,
                         Permissions.SEND_SMS,
@@ -2913,11 +1901,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 1:
-                detachCurrentView();
                 attachTimeReminder();
                 break;
             case 3:
-                detachCurrentView();
                 if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE)) {
                     attachCall();
                 } else {
@@ -2925,7 +1911,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 4:
-                detachCurrentView();
                 if (Permissions.checkPermission(ReminderManager.this, Permissions.SEND_SMS)) {
                     attachMessage();
                 } else {
@@ -2933,7 +1918,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 5:
-                detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this,
                             Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
@@ -2949,7 +1933,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } else spinner.setSelection(0);
                 break;
             case 6:
-                detachCurrentView();
                 if (SuperUtil.isSkypeClientInstalled(ReminderManager.this)) {
                     attachSkype();
                 } else {
@@ -2958,11 +1941,9 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 7:
-                detachCurrentView();
                 attachApplication();
                 break;
             case 8:
-                detachCurrentView();
                 if (Permissions.checkPermission(ReminderManager.this,
                         Permissions.CALL_PHONE,
                         Permissions.SEND_SMS,
@@ -2975,7 +1956,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case 9:
-                detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this,
                             Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE,
@@ -2991,15 +1971,12 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } else spinner.setSelection(0);
                 break;
             case 10:
-                detachCurrentView();
                 attachShoppingList();
                 break;
             case 11:
-                detachCurrentView();
                 attachMail();
                 break;
             case 12:
-                detachCurrentView();
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this,
                             Permissions.ACCESS_FINE_LOCATION, Permissions.ACCESS_COARSE_LOCATION)) {
@@ -3082,13 +2059,11 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
             if (resultCode == RESULT_OK) {
                 //Use Data to get string
                 String number = data.getStringExtra(Constants.SELECTED_CONTACT_NUMBER);
-                if (isCallAttached()) phoneNumber.setText(number);
-                if (isMessageAttached()) messageNumber.setText(number);
-                if (isWeekDayReminderAttached() && actionViewWeek.hasAction())
-                    actionViewWeek.setNumber(number);
+                if (isCallAttached()) ((CallFragment) baseFragment).setNumber(number);
+                if (isMessageAttached()) ((MessageFragment) baseFragment).setNumber(number);
+                if (isWeekDayReminderAttached()) ((WeekFragment) baseFragment).setNumber(number);
 
-                if (isMonthDayAttached() && actionViewMonth.hasAction())
-                    actionViewMonth.setNumber(number);
+                if (isMonthDayAttached()) ((MonthFragment) baseFragment).setNumber(number);
 
                 if (isLocationAttached() && actionViewLocation.hasAction())
                     actionViewLocation.setNumber(number);
@@ -3119,7 +2094,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 attachment = data.getStringExtra(Constants.FILE_PICKED);
                 if (attachment != null) {
                     File file = new File(attachment);
-                    showAttachment();
+                    ((MailFragment) baseFragment).setFileName(file.getPath());
                     Messages.snackbar(mFab, String.format(getString(R.string.file_x_attached), file.getName()));
                 }
             }
@@ -3154,7 +2129,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
         if (requestCode == 1111) {
             if (resultCode == RESULT_OK){
                 exclusion = data.getStringExtra("excl");
-                setExclusion(exclusion);
+                ((TimerFragment) baseFragment).setExclusion(exclusion);
             }
         }
 
@@ -3197,7 +2172,7 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                 } catch (final PackageManager.NameNotFoundException ignored) {}
                 final String title = (String)((applicationInfo != null) ?
                         packageManager.getApplicationLabel(applicationInfo) : "???");
-                applicationName.setText(title);
+                ((ApplicationFragment) baseFragment).setApplication(title);
             }
         }
 
@@ -3212,27 +2187,6 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
                         volume = -1;
                     }
                 });
-            }
-        }
-    }
-
-    /**
-     * Set up exclusion for reminder.
-     * @param jsonObject json object string.
-     */
-    private void setExclusion(String jsonObject){
-        if (jsonObject != null) {
-            JExclusion recurrence = new JExclusion(jsonObject);
-            if (recurrence.getHours() != null) {
-                selectExclusion.setText(String.format(getString(R.string.excluded_hours_x), recurrence.getHours().toString()));
-                exclusionClear.setVisibility(View.VISIBLE);
-            } else {
-                String fromHour = recurrence.getFromHour();
-                String toHour = recurrence.getToHour();
-                if (fromHour != null && toHour != null) {
-                    selectExclusion.setText(String.format(getString(R.string.excluded_time_from_x_to_x), fromHour, toHour));
-                    exclusionClear.setVisibility(View.VISIBLE);
-                }
             }
         }
     }
@@ -3379,12 +2333,14 @@ public class ReminderManager extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onActionChange(boolean b) {
         if (!b) taskField.setHint(getString(R.string.remind_me));
+        hasAction = b;
     }
 
     @Override
     public void onTypeChange(boolean type) {
         if (type) taskField.setHint(getString(R.string.message));
         else taskField.setHint(getString(R.string.remind_me));
+        isMessage = type;
     }
 
     @Override
