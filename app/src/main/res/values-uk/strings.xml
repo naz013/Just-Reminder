@@ -518,4 +518,6 @@
     <string name="additional_reminder">Додатковий тип нагадування - Місця</string>
     <string name="add_reminder_menu">Додати нагадування</string>
     <string name="x_meters">%s метрів</string>
+    <string name="task_summary_is_empty">Завдання не може бути порожнім!</string>
+    <string name="exclusion_added">Exclusion added</string>
 </resources>

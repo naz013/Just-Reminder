@@ -104,7 +104,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -372,7 +371,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
         if (i != 0) Reminder.disableReminder(id, this);
 
-        spinner.setSelection(sPrefs.loadInt(Prefs.LAST_USED_REMINDER));
+        int selection = sPrefs.loadInt(Prefs.LAST_USED_REMINDER);
+        if (!Module.isPro() && selection == 12) selection = 0;
+        spinner.setSelection(selection);
 
         if (id != 0){
             item = remControl.getItem(id);
@@ -898,7 +899,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         else {
             if (!Reminder.isUuId(this, uuId)) remControl.save(item);
             else {
-                Messages.snackbar(mFab, getString(R.string.same_reminder_also_present));
+                showSnackbar(getString(R.string.same_reminder_also_present));
                 return;
             }
         }
@@ -1084,7 +1085,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isShoppingAttached()){
             ShoppingFragment fragment = (ShoppingFragment) baseFragment;
             if (fragment.getCount() == 0) {
-                Messages.snackbar(mFab, getString(R.string.shopping_list_is_empty));
+                showSnackbar(getString(R.string.shopping_list_is_empty));
                 return null;
             } else {
                 for (ShoppingList shoppingList : fragment.getData()) {
@@ -1110,7 +1111,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isWeekDayReminderAttached()) {
             weekdays = ((WeekFragment) baseFragment).getDays();
             if (!IntervalUtil.isWeekday(weekdays)) {
-                Messages.snackbar(mFab, getString(R.string.you_dont_select_any_day));
+                showSnackbar(getString(R.string.you_dont_select_any_day));
                 return null;
             }
         }
@@ -1118,7 +1119,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (!type.contains(Constants.TYPE_CALL) && !type.matches(Constants.TYPE_SHOPPING_LIST)
                 && !type.contains(Constants.TYPE_MAIL)) {
             if (task.matches("")) {
-                Messages.snackbar(mFab, "");
+                showSnackbar(getString(R.string.task_summary_is_empty));
                 return null;
             }
         }
@@ -1132,18 +1133,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (type.matches(Constants.TYPE_APPLICATION)) {
                 number = selectedPackage;
                 if (number == null) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_select_application));
+                    showSnackbar(getString(R.string.you_dont_select_application));
                     return null;
                 }
             } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
                 number = baseFragment.getNumber();
                 if (number.matches("") || number.matches(".*https?://")) {
-                    Messages.snackbar(mFab, getString(R.string.you_dont_insert_link));
+                    showSnackbar(getString(R.string.you_dont_insert_link));
                     return null;
                 }
                 if (!number.startsWith("http://") && !number.startsWith("https://"))
                     number = "http://" + number;
-
             }
         }
 
@@ -1151,7 +1151,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isMailAttached()) {
             String email = baseFragment.getNumber();
             if (email.matches("") || !email.matches(".*@.*..*")) {
-                Messages.snackbar(mFab, getString(R.string.email_is_incorrect));
+                showSnackbar(getString(R.string.email_is_incorrect));
             } else number = email;
 
             String subString = baseFragment.getMessage();
@@ -1180,7 +1180,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 isNull = false;
             }
             if (isNull) {
-                Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
+                showSnackbar(getString(R.string.you_dont_select_place));
                 return null;
             }
             if (isLocationAttached()) {
@@ -1219,7 +1219,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             places = ((PlacesFragment) baseFragment).getPlaces();
             if (places == null || places.size() == 0) {
-                Messages.snackbar(mFab, getString(R.string.you_dont_select_place));
+                Log.d(Constants.LOG_TAG, "No places");
+                showSnackbar(getString(R.string.you_dont_select_place));
                 return null;
             }
 
@@ -1235,7 +1236,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isTimeReminderAttached()) {
             timeAfter = SuperUtil.getAfterTime(((TimerFragment) baseFragment).getTimeString());
             if (timeAfter == 0) {
-                Messages.snackbar(mFab, getString(R.string.you_dont_insert_timer_time));
+                showSnackbar(getString(R.string.you_dont_insert_timer_time));
                 return null;
             }
             Calendar c = Calendar.getInstance();
@@ -1323,7 +1324,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private boolean checkNumber(String number){
         if (number == null || number.matches("")) {
-            Messages.snackbar(mFab, getString(R.string.you_dont_insert_number));
+            showSnackbar(getString(R.string.you_dont_insert_number));
             return false;
         } else return true;
     }
@@ -1582,7 +1583,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 melody = data.getStringExtra(Constants.FILE_PICKED);
                 if (melody != null) {
                     File musicFile = new File(melody);
-                    Messages.snackbar(mFab, String.format(getString(R.string.melody_x), musicFile.getName()));
+                    showSnackbar(String.format(getString(R.string.melody_x), musicFile.getName()),
+                            R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    melody = null;
+                                }
+                            });
                 }
             }
         }
@@ -1593,7 +1600,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 if (attachment != null) {
                     File file = new File(attachment);
                     ((MailFragment) baseFragment).setFileName(file.getPath());
-                    Messages.snackbar(mFab, String.format(getString(R.string.file_x_attached), file.getName()));
+                    showSnackbar(String.format(getString(R.string.file_x_attached), file.getName()),
+                            R.string.cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            attachment = null;
+                            ((MailFragment) baseFragment).setFileName(null);
+                        }
+                    });
                 }
             }
         }
@@ -1612,6 +1626,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                             }
                             if (isLocationOutAttached()) {
                                 ((OutLocationFragment) baseFragment).recreateMarkers(radius);
+                                ((OutLocationFragment) baseFragment).setPointRadius(radius);
                             }
                         }
                     });
@@ -1632,13 +1647,19 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (resultCode == RESULT_OK){
                 exclusion = data.getStringExtra("excl");
                 ((TimerFragment) baseFragment).setExclusion(exclusion);
+                showSnackbar(getString(R.string.exclusion_added), R.string.cancel, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                exclusion = null;
+                                ((TimerFragment) baseFragment).setExclusion(null);
+                            }
+                        });
             }
         }
 
         if (requestCode == REQUEST_EXTRA) {
             if (resultCode == RESULT_OK){
                 int[] array = data.getIntArrayExtra("prefs");
-                Log.d(Constants.LOG_TAG, Arrays.toString(array));
                 vibration = array[1];
                 voice = array[0];
                 wake = array[2];

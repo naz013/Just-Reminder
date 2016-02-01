@@ -95,7 +95,9 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     }
 
     public void setPointRadius(int pointRadius) {
-        this.pointRadius.setProgress(pointRadius);
+        if (pointRadius == -1) {
+            this.pointRadius.setProgress(new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS));
+        } else this.pointRadius.setProgress(pointRadius);
     }
 
     public boolean isDelayed() {

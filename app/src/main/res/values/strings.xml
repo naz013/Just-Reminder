@@ -502,4 +502,6 @@
     <string name="additional_reminder">Additional type of reminder - Places</string>
     <string name="add_reminder_menu">Add reminder</string>
     <string name="x_meters">%s meters</string>
+    <string name="task_summary_is_empty">Task summary is empty!</string>
+    <string name="exclusion_added">Exclusion added</string>
 </resources>

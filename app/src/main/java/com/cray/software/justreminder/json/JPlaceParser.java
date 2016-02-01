@@ -16,6 +16,9 @@
 
 package com.cray.software.justreminder.json;
 
+import android.util.Log;
+
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.datas.models.PlaceModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -43,6 +46,7 @@ public class JPlaceParser {
     public PlaceModel getDetails(JSONObject jsonObject) {
         PlaceModel model = new PlaceModel();
         try {
+            Log.d(Constants.LOG_TAG, "Details " + jsonObject.toString());
             if (jsonObject.has(NAME)) {
                 model.setName(jsonObject.getString(NAME));
             }

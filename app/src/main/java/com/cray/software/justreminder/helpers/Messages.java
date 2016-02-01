@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -22,7 +20,7 @@ import android.widget.Toast;
  */
 
 /**
- * Helper method for showing toast or snackbar messages.
+ * Helper method for showing toast messages.
  */
 public class Messages {
 
@@ -42,23 +40,5 @@ public class Messages {
      */
     public static void toast(Context context, int resId){
         Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Show message in snackbar.
-     * @param v snackbar container view.
-     * @param message message string.
-     */
-    public static void snackbar(View v, String message){
-        Snackbar.make(v, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Show message in snackbar.
-     * @param v snackbar container view.
-     * @param resId message string resource.
-     */
-    public static void snackbar(View v, int resId){
-        Snackbar.make(v, resId, Snackbar.LENGTH_SHORT).show();
     }
 }

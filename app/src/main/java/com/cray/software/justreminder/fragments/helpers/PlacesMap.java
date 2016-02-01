@@ -184,7 +184,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * @param radius radius for circle around marker
      */
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius) {
-        if (map != null) {
+        if (map != null && pos != null) {
+            if (pos.latitude == 0.0 && pos.longitude == 0.0) return;
             mRadius = radius;
             if (mRadius == -1) {
                 mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
@@ -560,7 +561,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             placesTask.cancel(true);
         }
 
-        placesTask = new PlacesTask(getActivity(), this, req, mLat, mLng);
+        placesTask = new PlacesTask(this, req, mLat, mLng);
         placesTask.execute();
     }
 
@@ -598,9 +599,11 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (spinnerArray != null && spinnerArray.size() > 0) {
             for (PlaceModel model : spinnerArray) {
                 if (model.getSelected() == 1) {
-                    places.add(new JPlace(model.getName(), model.getPosition().latitude,
-                            model.getPosition().longitude, model.getAddress(), model.getId(),
-                            mRadius, markerStyle, model.getTypes()));
+                    if (model.getPosition() != null) {
+                        places.add(new JPlace(model.getName(), model.getPosition().latitude,
+                                model.getPosition().longitude, model.getAddress(), model.getId(),
+                                mRadius, markerStyle, model.getTypes()));
+                    }
                 }
             }
         }

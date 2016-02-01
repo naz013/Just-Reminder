@@ -19,8 +19,8 @@
         android:text="@string/loudness" />
 
     <ImageView
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:id="@+id/volumeImage"
         android:layout_marginTop="15dp"

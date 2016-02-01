@@ -72,6 +72,10 @@ public class TimerFragment extends BaseFragment implements
                     exclusionClear.setVisibility(View.VISIBLE);
                 }
             }
+        } else {
+            exclusion = null;
+            selectExclusion.setText(getString(R.string.exclusion));
+            exclusionClear.setVisibility(View.INVISIBLE);
         }
     }
 

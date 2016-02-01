@@ -16,7 +16,6 @@
 
 package com.cray.software.justreminder.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -42,10 +41,8 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
     private ExecutionListener listener;
     private String request;
     private double lat, lng;
-    private Context context;
 
-    public PlacesTask(Context context, ExecutionListener listener, String request, double lat, double lng) {
-        this.context = context;
+    public PlacesTask(ExecutionListener listener, String request, double lat, double lng) {
         this.listener = listener;
         this.request = request;
         this.lat = lat;
@@ -67,7 +64,6 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
         }
         ArrayList<PlaceModel> places = new ArrayList<>();
         if (result != null) {
-            Log.d(Constants.LOG_TAG, "Places " + result);
             JPlaceParser parser = new JPlaceParser();
             try {
                 JSONObject jObject = new JSONObject(result);
