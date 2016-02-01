@@ -43,7 +43,6 @@ public class DropboxHelper {
     private String dbxBirthFolder = "Birthdays/";
 
     private DropboxAPI<AndroidAuthSession> mDBApi;
-    private DropboxAPI.DropboxFileInfo info;
     private DropboxAPI.Entry newEntry;
 
     public static final String APP_KEY = "4zi1d414h0v8sxe";
@@ -69,7 +68,7 @@ public class DropboxHelper {
 
     /**
      * Check if user has already connected to Dropbox from this application.
-     * @return
+     * @return Boolean
      */
     public boolean isLinked() {
         return mDBApi != null && mDBApi.getSession().isLinked();
@@ -77,7 +76,7 @@ public class DropboxHelper {
 
     /**
      * Get Dropbox user name.
-     * @return
+     * @return String user name
      */
     public String userName(){
         DropboxAPI.Account account = null;
@@ -91,7 +90,7 @@ public class DropboxHelper {
 
     /**
      * Get user all apace on Dropbox.
-     * @return
+     * @return Long - user quota
      */
     public long userQuota(){
         DropboxAPI.Account account = null;
@@ -283,10 +282,10 @@ public class DropboxHelper {
         startSession();
         if (isLinked()) {
             if (fileName != null) {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                String fileLoc = sdPathDr.toString();
-                File tmpFile = new File(fileLoc, fileName);
+                File dir = MemoryUtil.getRDir();
+                if (dir == null) return;
+
+                File tmpFile = new File(dir.toString(), fileName);
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(tmpFile);
@@ -374,7 +373,7 @@ public class DropboxHelper {
 
     /**
      * Delete birthday backup file from Dropbox folder.
-     * @param name
+     * @param name file name
      */
     public void deleteBirthday(String name){
         startSession();
@@ -431,39 +430,42 @@ public class DropboxHelper {
                 for (DropboxAPI.Entry e : newEntry.contents) {
                     if (!e.isDeleted) {
                         String fileName = e.fileName();
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File file = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        File localFile = new File(file + "/" + fileName);
-                        if (!localFile.exists()) {
-                            try {
-                                localFile.createNewFile(); //otherwise dropbox client will fail silently
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        FileOutputStream outputStream = null;
-                        try {
-                            outputStream = new FileOutputStream(localFile);
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
-                        try {
-                            info = mDBApi.getFile("/" + dbxFolder + fileName, null, outputStream, null);
-                        } catch (DropboxException e1) {
-                            e1.printStackTrace();
-                        }
-                        //restore tmp files after downloading
+                        File dir = MemoryUtil.getDRDir();
+                        if (dir == null) return;
+
+                        File localFile = new File(dir + "/" + fileName);
+                        String cloudFile = "/" + dbxFolder + fileName;
+                        downloadFile(localFile, cloudFile);
+
                         try {
                             new SyncHelper(mContext).reminderFromJson(localFile.toString());
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
                 }
             }
+        }
+    }
+
+    private void downloadFile(File localFile, String cloudFile) {
+        if (!localFile.exists()) {
+            try {
+                localFile.createNewFile(); //otherwise dropbox client will fail silently
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(localFile);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            mDBApi.getFile(cloudFile, null, outputStream, null);
+        } catch (DropboxException e1) {
+            e1.printStackTrace();
         }
     }
 
@@ -482,34 +484,16 @@ public class DropboxHelper {
                 for (DropboxAPI.Entry e : newEntry.contents) {
                     if (!e.isDeleted) {
                         String fileName = e.fileName();
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File file = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD_DBX_TMP);
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        File localFile = new File(file + "/" + fileName);
-                        if (!localFile.exists()) {
-                            try {
-                                localFile.createNewFile(); //otherwise dropbox client will fail silently
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        FileOutputStream outputStream = null;
-                        try {
-                            outputStream = new FileOutputStream(localFile);
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
-                        try {
-                            info = mDBApi.getFile("/" + dbxNoteFolder + fileName, null, outputStream, null);
-                        } catch (DropboxException e1) {
-                            e1.printStackTrace();
-                        }
-                        //restore tmp files after downloading
+                        File dir = MemoryUtil.getDNDir();
+                        if (dir == null) return;
+
+                        File localFile = new File(dir + "/" + fileName);
+                        String cloudFile = "/" + dbxNoteFolder + fileName;
+                        downloadFile(localFile, cloudFile);
+
                         try {
                             new SyncHelper(mContext).noteFromJson(localFile.toString(), fileName);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -533,34 +517,16 @@ public class DropboxHelper {
                 for (DropboxAPI.Entry e : newEntry.contents) {
                     if (!e.isDeleted) {
                         String fileName = e.fileName();
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File file = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD_DBX_TMP);
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        File localFile = new File(file + "/" + fileName);
-                        if (!localFile.exists()) {
-                            try {
-                                localFile.createNewFile(); //otherwise dropbox client will fail silently
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        FileOutputStream outputStream = null;
-                        try {
-                            outputStream = new FileOutputStream(localFile);
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
-                        try {
-                            info = mDBApi.getFile("/" + dbxGroupFolder + fileName, null, outputStream, null);
-                        } catch (DropboxException e1) {
-                            e1.printStackTrace();
-                        }
-                        //restore tmp files after downloading
+                        File dir = MemoryUtil.getDGroupsDir();
+                        if (dir == null) return;
+
+                        File localFile = new File(dir + "/" + fileName);
+                        String cloudFile = "/" + dbxGroupFolder + fileName;
+                        downloadFile(localFile, cloudFile);
+
                         try {
                             new SyncHelper(mContext).groupFromJson(localFile.toString(), fileName);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -584,37 +550,18 @@ public class DropboxHelper {
                 for (DropboxAPI.Entry e : newEntry.contents) {
                     if (!e.isDeleted) {
                         String fileName = e.fileName();
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File file = new File(sdPath.toString() + "/JustReminder/" +
-                                Constants.DIR_BIRTHDAY_SD_DBX_TMP);
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        File localFile = new File(file + "/" + fileName);
-                        if (!localFile.exists()) {
-                            try {
-                                localFile.createNewFile(); //otherwise dropbox client will fail silently
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
-                        FileOutputStream outputStream = null;
-                        try {
-                            outputStream = new FileOutputStream(localFile);
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        }
-                        try {
-                            info = mDBApi.getFile("/" + dbxBirthFolder + fileName, null, outputStream, null);
-                        } catch (DropboxException e1) {
-                            e1.printStackTrace();
-                        }
+                        File dir = MemoryUtil.getDBDir();
+                        if (dir == null) return;
+
+                        File localFile = new File(dir + "/" + fileName);
+                        String cloudFile = "/" + dbxBirthFolder + fileName;
+                        downloadFile(localFile, cloudFile);
 
                         if (deleteFile) deleteBirthday(fileName);
-                        //restore tmp files after downloading
+
                         try {
                             new SyncHelper(mContext).birthdayFromJson(localFile.toString(), fileName);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -628,30 +575,28 @@ public class DropboxHelper {
      * @return number of found backup files.
      */
     public int countFiles() {
-        if (SyncHelper.isSdPresent()) {
-            int count = 0;
-            File dir = MemoryUtil.getDRDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getDNDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getDBDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getDGroupsDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
+        int count = 0;
+        File dir = MemoryUtil.getDRDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getDNDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getDBDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getDGroupsDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
 
-            return count;
-        } else return 0;
+        return count;
     }
 }

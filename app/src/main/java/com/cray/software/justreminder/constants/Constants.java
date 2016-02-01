@@ -105,8 +105,6 @@ public class Constants {
     public final static String DIR_NOTES_SD_GDRIVE_TMP = "tmp_gdrive_notes";
     public final static String DIR_GROUP_SD_GDRIVE_TMP = "tmp_gdrive_group";
     public final static String DIR_BIRTHDAY_SD_GDRIVE_TMP = "tmp_gdrive_birthdays";
-    public final static String DIR_SD_BOX_TMP = "tmp_box";
-    public final static String DIR_NOTES_SD_BOX_TMP = "tmp_box_notes";
 
     public static final String EDIT_ID = "edit_id";
     public static final String EDIT_PATH = "edit_path";

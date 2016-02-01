@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,6 +25,7 @@ import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.io.File;
@@ -776,11 +776,8 @@ public class Dialogues {
         builder.setNeutralButton(R.string.local, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SyncHelper.isSdPresent()) {
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
-                    deleteRecursive(sdPathDr);
-                }
+                File dir = MemoryUtil.getParent();
+                deleteRecursive(dir);
             }
         });
         builder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -792,11 +789,8 @@ public class Dialogues {
         builder.setPositiveButton(R.string.all, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (SyncHelper.isSdPresent()) {
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/");
-                    deleteRecursive(sdPathDr);
-                }
+                File dir = MemoryUtil.getParent();
+                deleteRecursive(dir);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

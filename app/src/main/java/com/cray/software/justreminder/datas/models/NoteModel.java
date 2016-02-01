@@ -19,7 +19,6 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 
 public class NoteModel {
@@ -129,7 +128,7 @@ public class NoteModel {
                     res = true;
                     Telephony.sendMail(file, context);
                 }
-            } catch (JSONException | IOException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }

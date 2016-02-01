@@ -2,10 +2,9 @@ package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.utils.MemoryUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +54,7 @@ public class SharedPrefs {
     /**
      * Get Integer preference.
      * @param stringToLoad key.
-     * @return
+     * @return Integer
      */
     public int loadInt(String stringToLoad){
         prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
@@ -83,7 +82,7 @@ public class SharedPrefs {
     /**
      * Get Long preference.
      * @param stringToLoad key.
-     * @return
+     * @return Long
      */
     public long loadLong(String stringToLoad){
         prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
@@ -99,7 +98,7 @@ public class SharedPrefs {
     /**
      * Get String preference.
      * @param stringToLoad key.
-     * @return
+     * @return String
      */
     public String loadPrefs(String stringToLoad){
         String res;
@@ -116,7 +115,7 @@ public class SharedPrefs {
     /**
      * Check if preference exist.
      * @param checkString key.
-     * @return
+     * @return Boolean
      */
     public boolean isString(String checkString){
         prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
@@ -138,7 +137,7 @@ public class SharedPrefs {
     /**
      * Get Boolean preference.
      * @param stringToLoad key.
-     * @return
+     * @return Boolean
      */
     public boolean loadBoolean(String stringToLoad){
         prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
@@ -173,16 +172,10 @@ public class SharedPrefs {
      * Save copy of preferences on SD Card.
      */
     public void savePrefsBackup(){
-        if (SyncHelper.isSdPresent()){
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_PREFS);
-            if (!sdPathDr.exists()){
-                sdPathDr.mkdirs();
-            }
-            File prefs = new File(sdPathDr + "/prefs.xml");
-            if (prefs.exists()){
-                prefs.delete();
-            }
+        File dir = MemoryUtil.getPrefsDir();
+        if (dir != null) {
+            File prefs = new File(dir + "/prefs.xml");
+            if (prefs.exists()) prefs.delete();
             ObjectOutputStream output = null;
             try {
                 output = new ObjectOutputStream(new FileOutputStream(prefs));
@@ -211,9 +204,10 @@ public class SharedPrefs {
      * Get preferences from backup file on SD Card.
      */
     public void loadPrefsFromFile(){
-        File sdPath = Environment.getExternalStorageDirectory();
-        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_PREFS);
-        File prefs = new File(sdPathDr + "/prefs.xml");
+        File dir = MemoryUtil.getPrefsDir();
+        if (dir == null) return;
+
+        File prefs = new File(dir + "/prefs.xml");
         if (prefs.exists()) {
             ObjectInputStream input = null;
             try {

@@ -79,31 +79,29 @@ public class GDriveHelper {
      * @return number of files in local folder.
      */
     public int countFiles(){
-        if (SyncHelper.isSdPresent()) {
-            int count = 0;
-            File dir = MemoryUtil.getGRDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getGNDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getGBDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getGGroupsDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
+        int count = 0;
+        File dir = MemoryUtil.getGRDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getGNDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getGBDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getGGroupsDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
 
-            return count;
-        } else return 0;
+        return count;
     }
 
     /**
@@ -131,10 +129,11 @@ public class GDriveHelper {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
 
+                    deleteReminder(file.getName());
+
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
-                    deleteReminder(file.getName());
                 }
             }
         }
@@ -165,10 +164,11 @@ public class GDriveHelper {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
 
+                    deleteNote(file.getName());
+
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
-                    deleteNote(file.getName());
                 }
             }
         }
@@ -199,10 +199,11 @@ public class GDriveHelper {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
 
+                    deleteGroup(file.getName());
+
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
-                    deleteGroup(file.getName());
                 }
             }
         }
@@ -233,10 +234,11 @@ public class GDriveHelper {
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
 
+                    deleteBirthday(file.getName());
+
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
-                    deleteBirthday(file.getName());
                 }
             }
         }
@@ -288,7 +290,7 @@ public class GDriveHelper {
                         driveService.files().get(f.getId()).executeMediaAndDownloadTo(out);
                         try {
                             new SyncHelper(mContext).reminderFromJson(file.toString());
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -344,7 +346,7 @@ public class GDriveHelper {
                         driveService.files().get(f.getId()).executeMediaAndDownloadTo(out);
                         try {
                             new SyncHelper(mContext).noteFromJson(file.toString(), title);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -400,7 +402,7 @@ public class GDriveHelper {
                         driveService.files().get(f.getId()).executeMediaAndDownloadTo(out);
                         try {
                             new SyncHelper(mContext).groupFromJson(file.toString(), title);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -458,7 +460,7 @@ public class GDriveHelper {
                         if (deleteFile) deleteBirthday(title);
                         try {
                             new SyncHelper(mContext).birthdayFromJson(file.toString(), title);
-                        } catch (IOException | JSONException e1) {
+                        } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }

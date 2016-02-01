@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,6 +59,7 @@ import com.cray.software.justreminder.views.PaperButton;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class BackupsFragment extends Fragment implements AdapterView.OnItemSelectedListener, SimpleListener {
@@ -66,10 +68,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public static final int DROPBOX_INT = 121;
     public static final int GOOGLE_DRIVE_INT = 122;
 
-    private SharedPrefs sPrefs;
     private DropboxHelper dbx = new DropboxHelper(getActivity());
     private ProgressDialog pd;
-    private ColorSetter cSetter;
     private GDriveHelper gdx;
 
     private ArrayList<Item> navIds = new ArrayList<>();
@@ -134,9 +134,6 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.backup_manager_layout, container, false);
 
-        cSetter = new ColorSetter(getActivity());
-        sPrefs = new SharedPrefs(getActivity());
-
         typefaceMedium = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Medium.ttf");
         typefaceThin = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Thin.ttf");
 
@@ -171,42 +168,44 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onResume() {
         super.onResume();
-        dbx = new DropboxHelper(getActivity());
-        if (!dbx.isLinked()) {
-            if (dbx.checkLink()) {
-                setNavigation();
-            } else {
-                setNavigation();
-            }
-        }
-
-        sPrefs = new SharedPrefs(getActivity());
     }
 
     private void setNavigation(){
         navIds.clear();
-        sPrefs = new SharedPrefs(getActivity());
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        SharedPrefs prefs = new SharedPrefs(getActivity());
+        boolean isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local), R.drawable.ic_sd_storage_white_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local),
+                    R.drawable.ic_sd_storage_white_24dp), LOCAL_INT,
+                    R.drawable.ic_sd_storage_white_24dp));
         } else {
-            navIds.add(new Item(new SpinnerItem(getString(R.string.local), R.drawable.ic_sd_storage_black_24dp), LOCAL_INT, R.drawable.ic_sd_storage_white_24dp));
+            navIds.add(new Item(new SpinnerItem(getString(R.string.local),
+                    R.drawable.ic_sd_storage_black_24dp), LOCAL_INT,
+                    R.drawable.ic_sd_storage_white_24dp));
         }
         dbx = new DropboxHelper(getActivity());
         dbx.startSession();
         if (dbx.isLinked()){
             if (isDark) {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox), R.drawable.dropbox_icon_white), DROPBOX_INT, R.drawable.dropbox_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox),
+                        R.drawable.dropbox_icon_white), DROPBOX_INT,
+                        R.drawable.dropbox_icon_white));
             } else {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox), R.drawable.dropbox_icon), DROPBOX_INT, R.drawable.dropbox_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.dropbox),
+                        R.drawable.dropbox_icon), DROPBOX_INT,
+                        R.drawable.dropbox_icon_white));
             }
         }
         gdx = new GDriveHelper(getActivity());
         if (gdx.isLinked()) {
             if (isDark) {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive), R.drawable.gdrive_icon_white), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive),
+                        R.drawable.gdrive_icon_white),
+                        GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
             } else {
-                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive), R.drawable.gdrive_icon), GOOGLE_DRIVE_INT, R.drawable.gdrive_icon_white));
+                navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive),
+                        R.drawable.gdrive_icon), GOOGLE_DRIVE_INT,
+                        R.drawable.gdrive_icon_white));
             }
         }
 
@@ -230,9 +229,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         CardView card1 = (CardView) rootView.findViewById(R.id.card1);
         CardView card2 = (CardView) rootView.findViewById(R.id.card2);
         CardView card3 = (CardView) rootView.findViewById(R.id.card3);
-        card1.setCardBackgroundColor(cSetter.getCardStyle());
-        card2.setCardBackgroundColor(cSetter.getCardStyle());
-        card3.setCardBackgroundColor(cSetter.getCardStyle());
+        ColorSetter colorSetter = new ColorSetter(getActivity());
+        card1.setCardBackgroundColor(colorSetter.getCardStyle());
+        card2.setCardBackgroundColor(colorSetter.getCardStyle());
+        card3.setCardBackgroundColor(colorSetter.getCardStyle());
         if (Module.isLollipop()) {
             card3.setCardElevation(Configs.CARD_ELEVATION);
             card2.setCardElevation(Configs.CARD_ELEVATION);
@@ -283,6 +283,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         filesCloudList = (RecyclerView) rootView.findViewById(R.id.filesCloudList);
+        filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesCloudList.setItemAnimator(new DefaultItemAnimator());
+
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
         cloudContainer.setVisibility(View.GONE);
         loadDropboxList();
@@ -298,17 +301,14 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (list != null && list.size() > 0) {
                     for (FileModel model : list) {
                         File file1 = new File(model.getFilePath());
-                        if (file1.exists()) {
-                            file1.delete();
-                        }
+                        if (file1.exists()) file1.delete();
                     }
                 }
                 if (mCallbacks != null) {
                     mCallbacks.showSnackbar(getString(R.string.all_files_removed));
                 }
             } else {
-                file.delete();
-                if (mCallbacks != null) {
+                if (file.delete() && mCallbacks != null) {
                     mCallbacks.showSnackbar(R.string.deleted);
                 }
             }
@@ -331,9 +331,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         provider = new FileDataProvider(getActivity(), Constants.DIR_SD_DBX_TMP);
         adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
-        filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesCloudList.setAdapter(adapter);
-        filesCloudList.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void deleteFile(String filePath) {
@@ -381,9 +379,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         CardView card4 = (CardView) rootView.findViewById(R.id.card4);
         CardView card5 = (CardView) rootView.findViewById(R.id.card5);
         CardView card6 = (CardView) rootView.findViewById(R.id.card6);
-        card4.setCardBackgroundColor(cSetter.getCardStyle());
-        card5.setCardBackgroundColor(cSetter.getCardStyle());
-        card6.setCardBackgroundColor(cSetter.getCardStyle());
+        ColorSetter colorSetter = new ColorSetter(getActivity());
+        card4.setCardBackgroundColor(colorSetter.getCardStyle());
+        card5.setCardBackgroundColor(colorSetter.getCardStyle());
+        card6.setCardBackgroundColor(colorSetter.getCardStyle());
         if (Module.isLollipop()) {
             card4.setCardElevation(Configs.CARD_ELEVATION);
             card5.setCardElevation(Configs.CARD_ELEVATION);
@@ -432,6 +431,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         });
 
         filesGoogleList = (RecyclerView) rootView.findViewById(R.id.filesGoogleList);
+        filesGoogleList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesGoogleList.setItemAnimator(new DefaultItemAnimator());
+
         pd = ProgressDialog.show(getActivity(), null, getString(R.string.retrieving_data), false);
         googleContainer.setVisibility(View.GONE);
         loadGoogleInfo(pd);
@@ -452,9 +454,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         provider = new FileDataProvider(getActivity(), Constants.DIR_SD_GDRIVE_TMP);
         adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
-        filesGoogleList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesGoogleList.setAdapter(adapter);
-        filesGoogleList.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void deleteGoogleFile(String filePath) {
@@ -567,12 +567,12 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         usedSizeGraph.removeSlices();
                         PieSlice slice = new PieSlice();
                         slice.setTitle(String.format(getString(R.string.used_x), used));
-                        slice.setColor(getResources().getColor(R.color.redPrimary));
+                        slice.setColor(ViewUtils.getColor(getActivity(), R.color.redPrimary));
                         slice.setValue(used);
                         usedSizeGraph.addSlice(slice);
                         slice = new PieSlice();
                         slice.setTitle(String.format(getString(R.string.available_x), free));
-                        slice.setColor(getResources().getColor(R.color.greenPrimary));
+                        slice.setColor(ViewUtils.getColor(getActivity(), R.color.greenPrimary));
                         slice.setValue(free);
                         usedSizeGraph.addSlice(slice);
 
@@ -596,7 +596,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         localLayout.setVisibility(View.VISIBLE);
 
         CardView card7 = (CardView) rootView.findViewById(R.id.card7);
-        card7.setCardBackgroundColor(cSetter.getCardStyle());
+        ColorSetter colorSetter = new ColorSetter(getActivity());
+        card7.setCardBackgroundColor(colorSetter.getCardStyle());
         if (Module.isLollipop()) {
             card7.setCardElevation(Configs.CARD_ELEVATION);
         }
@@ -616,7 +617,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     ViewUtils.collapse(container);
                     ViewUtils.fadeInAnimation(filesList);
                 } else {
-                    reloadLocal();
+                    ViewUtils.fadeOutAnimation(filesList);
+                    ViewUtils.expand(container);
+                    showFilesCount();
                 }
             }
         });
@@ -629,66 +632,49 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList);
                     ViewUtils.expand(container);
-                    showFilesCount();
                 }
-                reloadLocal();
+                showFilesCount();
 
             }
         });
         showFilesCount();
         filesList = (RecyclerView) rootView.findViewById(R.id.filesList);
-    }
-
-    private void reloadLocal() {
-        ViewUtils.fadeOutAnimation(filesList);
-        ViewUtils.expand(container);
-        showFilesCount();
+        filesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesList.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void loadLocalList(){
         provider = new FileDataProvider(getActivity(), Constants.DIR_SD);
+        Log.d(Constants.LOG_TAG, "List size " + provider.getCount());
         adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
         adapter.setEventListener(this);
-        filesList.setLayoutManager(new LinearLayoutManager(getActivity()));
         filesList.setAdapter(adapter);
-        filesList.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void showFilesCount() {
-        if (SyncHelper.isSdPresent()) {
-            int count = 0;
-            File dir = MemoryUtil.getRDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getNDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getBDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-            dir = MemoryUtil.getGroupsDir();
-            if (dir != null && dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) count += files.length;
-            }
-
-            localCount.setText(String.valueOf(count));
-        } else {
-            localCount.setText("0");
+        int count = 0;
+        File dir = MemoryUtil.getRDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
         }
-    }
-
-    private void deleteLocalFile(String filePath) {
-        if (filePath != null) {
-            removeFilesInFolder(filePath);
-            loadLocalList();
+        dir = MemoryUtil.getNDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
         }
+        dir = MemoryUtil.getBDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+        dir = MemoryUtil.getGroupsDir();
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null) count += files.length;
+        }
+
+        localCount.setText(String.valueOf(count));
     }
 
     public static String humanReadableByteCount(long bytes, boolean si) {
@@ -698,7 +684,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return String.format(Locale.getDefault(), "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     private void clearForm(View rootView) {
@@ -825,8 +811,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             reloadGoogle();
         }
         if (provider.getWhere().matches(Constants.DIR_SD)){
-            deleteLocalFile(provider.getItem(position).getFilePath());
-            reloadLocal();
+            removeFilesInFolder(provider.getItem(position).getFilePath());
+            loadLocalList();
         }
     }
 

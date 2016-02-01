@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +35,7 @@ import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.MemoryUtil;
 
 import java.io.File;
 
@@ -198,24 +198,21 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
         @Override
         protected Void doInBackground(Void... params) {
-            if (SyncHelper.isSdPresent()) {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-                String exportFileName = uuId + FileConfig.FILE_NAME_GROUP;
-                File file = new File(sdPathDr, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-                sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD_DBX_TMP);
-                file = new File(sdPathDr, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-                sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD_GDRIVE_TMP);
-                file = new File(sdPathDr, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
+            File dir = MemoryUtil.getGroupsDir();
+            String exportFileName = uuId + FileConfig.FILE_NAME_GROUP;
+            File file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            dir = MemoryUtil.getDGroupsDir();
+            file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            dir = MemoryUtil.getGGroupsDir();
+            file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
             }
             boolean isInternet = SyncHelper.isConnected(getActivity());
             DropboxHelper dbx = new DropboxHelper(getActivity());
@@ -233,24 +230,21 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                 do {
                     String remUUId = c.getString(c.getColumnIndex(NextBase.UUID));
                     db.deleteReminder(c.getLong(c.getColumnIndex(NextBase._ID)));
-                    if (SyncHelper.isSdPresent()) {
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        String exportFileName = remUUId + FileConfig.FILE_NAME_REMINDER;
-                        File file = new File(sdPathDr, exportFileName);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-                        file = new File(sdPathDr, exportFileName);
-                        if (file.exists()) {
-                            file.delete();
-                        }
-                        sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-                        file = new File(sdPathDr, exportFileName);
-                        if (file.exists()) {
-                            file.delete();
-                        }
+                    dir = MemoryUtil.getRDir();
+                    exportFileName = remUUId + FileConfig.FILE_NAME_REMINDER;
+                    file = new File(dir, exportFileName);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    dir = MemoryUtil.getDRDir();
+                    file = new File(dir, exportFileName);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    dir = MemoryUtil.getGRDir();
+                    file = new File(dir, exportFileName);
+                    if (file.exists()) {
+                        file.delete();
                     }
                     if (dbx.isLinked() && isInternet) {
                         dbx.deleteReminder(remUUId);

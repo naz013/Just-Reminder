@@ -45,12 +45,12 @@ public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
         SyncHelper sHelp = new SyncHelper(mContext);
         try {
             sHelp.noteToJson();
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         try {
             sHelp.noteFromJson(null, null);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

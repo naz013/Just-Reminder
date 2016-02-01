@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 
@@ -24,6 +23,7 @@ import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.utils.MemoryUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,12 +63,20 @@ public class SyncHelper {
     public SyncHelper(){
     }
 
+    private void writeFile(File file, String data) throws IOException {
+        if (file.exists()) {
+            file.delete();
+        }
+        FileWriter fw = new FileWriter(file);
+        fw.write(data);
+        fw.close();
+    }
+
     /**
      * Creates backup files on SD Card for all groups.
      * @throws JSONException
-     * @throws IOException
      */
-    public void groupToJson() throws JSONException, IOException {
+    public void groupToJson() throws JSONException {
         DataBase dataBase = new DataBase(mContext);
         dataBase.open();
         Cursor c = dataBase.queryCategories();
@@ -84,22 +92,17 @@ public class SyncHelper {
                 jObjectData.put(Constants.COLUMN_DATE_TIME, date);
                 jObjectData.put(Constants.COLUMN_TECH_VAR, uuID);
 
-                if (isSdPresent()) {
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-                    if (!sdPathDr.exists()) {
-                        sdPathDr.mkdirs();
-                    }
+                File dir = MemoryUtil.getGroupsDir();
+                if (dir != null) {
                     String exportFileName = uuID + FileConfig.FILE_NAME_GROUP;
 
-                    File file = new File(sdPathDr, exportFileName);
-                    if (file.exists()) {
-                        file.delete();
+                    File file = new File(dir, exportFileName);
+                    try {
+                        writeFile(file, jObjectData.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    FileWriter  fw = new FileWriter(file);
-                    fw.write(jObjectData.toString());
-                    fw.close();
-                } else Log.i("reminder-info", "Couldn't find external storage!");
+                }
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -109,9 +112,8 @@ public class SyncHelper {
     /**
      * Creates backup files on SD Card for all birthdays.
      * @throws JSONException
-     * @throws IOException
      */
-    public void birthdayToJson() throws JSONException, IOException {
+    public void birthdayToJson() throws JSONException {
         DataBase dataBase = new DataBase(mContext);
         dataBase.open();
         Cursor c = dataBase.getBirthdays();
@@ -135,21 +137,16 @@ public class SyncHelper {
                 jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID),
                         encrypt(String.valueOf(conId)));
 
-                if (isSdPresent()) {
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
-                    if (!sdPathDr.exists()) {
-                        sdPathDr.mkdirs();
-                    }
+                File dir = MemoryUtil.getBDir();
+                if (dir != null) {
                     String exportFileName = uuID + FileConfig.FILE_NAME_BIRTHDAY;
 
-                    File file = new File(sdPathDr, exportFileName);
-                    if (file.exists()) {
-                        file.delete();
+                    File file = new File(dir, exportFileName);
+                    try {
+                        writeFile(file, jObjectData.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    FileWriter  fw = new FileWriter(file);
-                    fw.write(jObjectData.toString());
-                    fw.close();
                 } else Log.i("reminder-info", "Couldn't find external storage!");
             } while (c.moveToNext());
         }
@@ -160,9 +157,8 @@ public class SyncHelper {
     /**
      * Creates backup files on SD Card for all reminders.
      * @throws JSONException
-     * @throws IOException
      */
-    public void reminderToJson() throws JSONException, IOException {
+    public void reminderToJson() throws JSONException {
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminders();
@@ -172,23 +168,17 @@ public class SyncHelper {
                 String uuID = c.getString(c.getColumnIndex(NextBase.UUID));
                 int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
                 int isArchived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
-
                 if (isDone == 0 && isArchived == 0) {
-                    if (isSdPresent()) {
-                        File sdPath = Environment.getExternalStorageDirectory();
-                        File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                        if (!sdPathDr.exists()) {
-                            sdPathDr.mkdirs();
-                        }
+                    File dir = MemoryUtil.getRDir();
+                    if (dir != null) {
                         String exportFileName = uuID + FileConfig.FILE_NAME_REMINDER;
 
-                        File file = new File(sdPathDr, exportFileName);
-                        if (file.exists()) {
-                            file.delete();
+                        File file = new File(dir, exportFileName);
+                        try {
+                            writeFile(file, json);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        FileWriter fw = new FileWriter(file);
-                        fw.write(json);
-                        fw.close();
                     } else Log.i("reminder-info", "Couldn't find external storage!");
                 }
             } while (c.moveToNext());
@@ -207,10 +197,9 @@ public class SyncHelper {
      * @param style typeface style.
      * @return Note file
      * @throws JSONException
-     * @throws IOException
      */
     public File createNote(String note, String date, String uuID, int color, byte[] image,
-                           int style) throws JSONException, IOException {
+                           int style) throws JSONException {
         JSONObject jObjectData = new JSONObject();
         jObjectData.put(Constants.COLUMN_COLOR, style);
         jObjectData.put(Constants.COLUMN_FONT_STYLE, color);
@@ -226,21 +215,16 @@ public class SyncHelper {
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
         }
         File file = null;
-        if (isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_MAIL_SD);
-            if (!sdPathDr.exists()) {
-                sdPathDr.mkdirs();
-            }
+        File dir = MemoryUtil.getMailDir();
+        if (dir != null) {
             String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
 
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
+            file = new File(dir, exportFileName);
+            try {
+                writeFile(file, jObjectData.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            FileWriter  fw = new FileWriter(file);
-            fw.write(jObjectData.toString());
-            fw.close();
         } else Log.i("reminder-info", "Couldn't find external storage!");
         return file;
     }
@@ -248,9 +232,8 @@ public class SyncHelper {
     /**
      * Creates backup files on SD Card for all notes.
      * @throws JSONException
-     * @throws IOException
      */
-    public void noteToJson() throws JSONException, IOException {
+    public void noteToJson() throws JSONException {
         NotesBase db = new NotesBase(mContext);
         db.open();
         Cursor c = db.getNotes();
@@ -280,21 +263,16 @@ public class SyncHelper {
                     jObjectData.put(Constants.COLUMN_NOTE, encrypt(note));
                 }
 
-                if (isSdPresent()) {
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD);
-                    if (!sdPathDr.exists()) {
-                        sdPathDr.mkdirs();
-                    }
+                File dir = MemoryUtil.getNDir();
+                if (dir != null) {
                     String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
 
-                    File file = new File(sdPathDr, exportFileName);
-                    if (file.exists()) {
-                        file.delete();
+                    File file = new File(dir, exportFileName);
+                    try {
+                        writeFile(file, jObjectData.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    FileWriter  fw = new FileWriter(file);
-                    fw.write(jObjectData.toString());
-                    fw.close();
                 } else Log.i("reminder-info", "Couldn't find external storage!");
             } while (c.moveToNext());
         }
@@ -306,11 +284,11 @@ public class SyncHelper {
      * Restore note from JSON file to application.
      * @param file file path.
      * @param fileNameR file name.
-     * @throws IOException
      * @throws JSONException
      */
-    public void noteFromJson(String file, String fileNameR) throws IOException, JSONException {
-        if (isSdPresent()){
+    public void noteFromJson(String file, String fileNameR) throws JSONException {
+        File dir = MemoryUtil.getNDir();
+        if (dir != null) {
             NotesBase db = new NotesBase(mContext);
             db.open();
             List<String> namesPass = new ArrayList<>();
@@ -334,14 +312,12 @@ public class SyncHelper {
                     noteObject(jsonObj);
                 }
             } else {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD);
-                File[] files = sdPathDr.listFiles();
+                File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file1 : files) {
                         String fileName = file1.getName();
                         int pos = fileName.lastIndexOf(".");
-                        String fileLoc = sdPathDr + "/" + fileName;
+                        String fileLoc = dir + "/" + fileName;
                         String fileNameS = fileName.substring(0, pos);
                         if (!namesPass.contains(fileNameS)) {
                             String jsonText = readFile(fileLoc);
@@ -432,9 +408,9 @@ public class SyncHelper {
         db.close();
     }
 
-    public static NoteModel getNote(String filePath, String json) throws JSONException{
+    public static NoteModel getNote(String filePath, String json) throws JSONException {
         if (filePath != null) {
-            if (isSdPresent()){
+            if (MemoryUtil.isSdPresent()){
                 String jsonText = readFile(filePath);
                 JSONObject jsonObj = new JSONObject(jsonText);
                 String note = null;
@@ -496,7 +472,7 @@ public class SyncHelper {
                 e.printStackTrace();
             }
         } else {
-            if (isSdPresent()) {
+            if (MemoryUtil.isSdPresent()) {
                 if (file != null) {
                     String jsonText = readFile(file.toString());
                     JSONObject jsonObj = null;
@@ -530,23 +506,21 @@ public class SyncHelper {
      * Restore reminder from JSON file to database.
      * Application restore reminders only with actual date.
      * @param file reminder file path.
-     * @throws IOException
      * @throws JSONException
      */
-    public void reminderFromJson(String file) throws IOException, JSONException {
-        if (isSdPresent()){
+    public void reminderFromJson(String file) throws JSONException {
+        File dir = MemoryUtil.getRDir();
+        if (dir != null) {
             if (file != null){
                 String jsonText = readFile(file);
                 JSONObject jsonObj = new JSONObject(jsonText);
                 reminderObject(jsonObj);
             } else {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-                File[] files = sdPathDr.listFiles();
+                File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file1 : files) {
                         String fileName = file1.getName();
-                        String fileLoc = sdPathDr + "/" + fileName;
+                        String fileLoc = dir + "/" + fileName;
                         String jsonText = readFile(fileLoc);
                         JSONObject jsonObj = new JSONObject(jsonText);
                         reminderObject(jsonObj);
@@ -615,11 +589,11 @@ public class SyncHelper {
      * Restore group from JSON file to application.
      * @param file group file path.
      * @param fileNameR file name.
-     * @throws IOException
      * @throws JSONException
      */
-    public void groupFromJson(String file, String fileNameR) throws IOException, JSONException {
-        if (isSdPresent()){
+    public void groupFromJson(String file, String fileNameR) throws JSONException {
+        File dir = MemoryUtil.getGroupsDir();
+        if (dir != null) {
             DataBase db = new DataBase(mContext);
             db.open();
             List<String> namesPass = new ArrayList<>();
@@ -641,14 +615,12 @@ public class SyncHelper {
                     groupObject(jsonObj);
                 }
             } else {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-                File[] files = sdPathDr.listFiles();
+                File[] files = dir.listFiles();
                 if (files != null){
                     for (File file1 : files) {
                         String fileName = file1.getName();
                         int pos = fileName.lastIndexOf(".");
-                        String fileLoc = sdPathDr + "/" + fileName;
+                        String fileLoc = dir + "/" + fileName;
                         String fileNameS = fileName.substring(0, pos);
                         if (!namesPass.contains(fileNameS)) {
                             String jsonText = readFile(fileLoc);
@@ -699,9 +671,9 @@ public class SyncHelper {
         db.close();
     }
 
-    public static CategoryModel getGroup(String filePath) throws JSONException{
+    public static CategoryModel getGroup(String filePath) throws JSONException {
         if (filePath != null) {
-            if (isSdPresent()) {
+            if (MemoryUtil.isSdPresent()) {
                 String jsonText = readFile(filePath);
                 JSONObject jsonObj = new JSONObject(jsonText);
                 String title = null;
@@ -709,7 +681,7 @@ public class SyncHelper {
                     title = jsonObj.getString(Constants.COLUMN_TEXT);
                 }
                 int color = jsonObj.getInt(Constants.COLUMN_COLOR);
-                long date = jsonObj.getLong(Constants.COLUMN_DATE_TIME);
+                //long date = jsonObj.getLong(Constants.COLUMN_DATE_TIME);
                 String uuID = null;
                 if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
                     uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
@@ -724,11 +696,11 @@ public class SyncHelper {
      * Restore birthday from JSON file to application.
      * @param file birthday file path.
      * @param fileNameR file name.
-     * @throws IOException
      * @throws JSONException
      */
-    public void birthdayFromJson(String file, String fileNameR) throws IOException, JSONException {
-        if (isSdPresent()){
+    public void birthdayFromJson(String file, String fileNameR) throws JSONException {
+        File dir = MemoryUtil.getBDir();
+        if (dir != null) {
             DataBase db = new DataBase(mContext);
             db.open();
             List<String> namesPass = new ArrayList<>();
@@ -750,21 +722,17 @@ public class SyncHelper {
                     birthdayObject(jsonObj);
                 }
             } else {
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD);
-                if (sdPathDr.exists()) {
-                    File[] files = sdPathDr.listFiles();
-                    if (files != null && files.length > 0) {
-                        for (File file1 : files) {
-                            String fileName = file1.getName();
-                            int pos = fileName.lastIndexOf(".");
-                            String fileLoc = sdPathDr + "/" + fileName;
-                            String fileNameS = fileName.substring(0, pos);
-                            if (!namesPass.contains(fileNameS)) {
-                                String jsonText = readFile(fileLoc);
-                                JSONObject jsonObj = new JSONObject(jsonText);
-                                birthdayObject(jsonObj);
-                            }
+                File[] files = dir.listFiles();
+                if (files != null && files.length > 0) {
+                    for (File file1 : files) {
+                        String fileName = file1.getName();
+                        int pos = fileName.lastIndexOf(".");
+                        String fileLoc = dir + "/" + fileName;
+                        String fileNameS = fileName.substring(0, pos);
+                        if (!namesPass.contains(fileNameS)) {
+                            String jsonText = readFile(fileLoc);
+                            JSONObject jsonObj = new JSONObject(jsonText);
+                            birthdayObject(jsonObj);
                         }
                     }
                 }
@@ -850,7 +818,7 @@ public class SyncHelper {
     }
 
     public static BirthdayModel getBirthday(String file) throws JSONException {
-        if (isSdPresent()){
+        if (MemoryUtil.isSdPresent()){
             if (file != null) {
                 String jsonText = readFile(file);
                 JSONObject jsonObj = new JSONObject(jsonText);
@@ -890,16 +858,6 @@ public class SyncHelper {
      */
     public static String generateID(){
         return UUID.randomUUID().toString();
-    }
-
-    /**
-     * Check if device has SD Card.
-     * @return Boolean
-     */
-    public static boolean isSdPresent() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
     /**

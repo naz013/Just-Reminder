@@ -1,13 +1,12 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.utils.MemoryUtil;
 
 import org.json.JSONException;
 
@@ -32,29 +31,23 @@ public class IOHelper {
      * @param name file name.
      */
     public void deleteReminder(String name){
-        if (SyncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD);
-            String exportFileName = name + FileConfig.FILE_NAME_REMINDER;
-            File file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_DBX_TMP);
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
-            sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_BOX_TMP);
-            file = new File(sdPathDr, exportFileName);
-            if (file.exists()) {
-                file.delete();
-            }
+        String exportFileName = name + FileConfig.FILE_NAME_REMINDER;
+
+        File dir = MemoryUtil.getRDir();
+        if (dir != null) {
+            File file = new File(dir, exportFileName);
+            if (file.exists()) file.delete();
+        }
+
+        dir = MemoryUtil.getDRDir();
+        if (dir != null) {
+            File file = new File(dir, exportFileName);
+            if (file.exists()) file.delete();
+        }
+        dir = MemoryUtil.getGRDir();
+        if (dir != null) {
+            File file = new File(dir, exportFileName);
+            if (file.exists()) file.delete();
         }
         if (isConnected){
             new DropboxHelper(mContext).deleteReminder(name);
@@ -85,7 +78,7 @@ public class IOHelper {
     public void backupGroup(boolean isCloud){
         try {
             new SyncHelper(mContext).groupToJson();
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -103,17 +96,16 @@ public class IOHelper {
      * @param isCloud restore from cloud.
      */
     public void restoreGroup(boolean isCloud){
-        if (SyncHelper.isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.getAbsolutePath() + "/JustReminder/" + Constants.DIR_GROUP_SD);
-            if (sdPathDr.exists()) {
-                File[] files = sdPathDr.listFiles();
+        File dir = MemoryUtil.getGroupsDir();
+        if (dir != null) {
+            if (dir.exists()) {
+                File[] files = dir.listFiles();
                 if (files != null) {
                     final int x = files.length;
                     if (x > 0) {
                         try {
                             new SyncHelper(mContext).groupFromJson(null, null);
-                        } catch (IOException | JSONException e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -137,7 +129,7 @@ public class IOHelper {
     public void backupReminder(boolean isCloud){
         try {
             new SyncHelper(mContext).reminderToJson();
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -157,7 +149,7 @@ public class IOHelper {
     public void restoreReminder(boolean isCloud){
         try {
             new SyncHelper(mContext).reminderFromJson(null);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -177,7 +169,7 @@ public class IOHelper {
     public void backupNote(boolean isCloud){
         try {
             new SyncHelper(mContext).noteToJson();
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -197,7 +189,7 @@ public class IOHelper {
     public void restoreNote(boolean isCloud){
         try {
             new SyncHelper(mContext).noteFromJson(null, null);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -217,7 +209,7 @@ public class IOHelper {
     public void backupBirthday(boolean isCloud){
         try {
             new SyncHelper(mContext).birthdayToJson();
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
@@ -237,7 +229,7 @@ public class IOHelper {
     public void restoreBirthday(boolean isCloud, boolean deleteFile){
         try {
             new SyncHelper(mContext).birthdayFromJson(null, null);
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {

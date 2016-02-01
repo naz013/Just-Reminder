@@ -3,6 +3,7 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.FileModel;
@@ -37,7 +39,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     private ArrayList<FileModel> list;
 
     /**
-     * Recycler view action listerner.
+     * Recycler view action listener.
      */
     private SimpleListener mEventListener;
 
@@ -49,6 +51,8 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
      * @param list list of files in folder.
      */
     public FileRecyclerAdapter(final Context context, ArrayList<FileModel> list) {
+        this.list = new ArrayList<>();
+        this.list.clear();
         this.list = list;
         cs = new ColorSetter(context);
         setHasStableIds(true);
@@ -127,22 +131,26 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     }
 
     private int getIcon(String fileName) {
-        if (fileName.contains(FileConfig.FILE_NAME_REMINDER)) {
-            if (isDark) return R.drawable.ic_notifications_white_24dp;
-            else return R.drawable.ic_notifications_black_24dp;
-        } else if (fileName.contains(FileConfig.FILE_NAME_NOTE)) {
-            if (isDark) return R.drawable.ic_event_note_white_24dp;
-            else return R.drawable.ic_event_note_black_24dp;
-        } else if (fileName.contains(FileConfig.FILE_NAME_BIRTHDAY)) {
-            if (isDark) return R.drawable.ic_cake_white_24dp;
-            else return R.drawable.ic_cake_black_24dp;
-        } else if (fileName.contains(FileConfig.FILE_NAME_GROUP)) {
+        Log.d(Constants.LOG_TAG, "File " + fileName);
+        if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
             if (isDark) return R.drawable.ic_local_offer_white_24dp;
             else return R.drawable.ic_local_offer_black_24dp;
-        } else {
-            if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
-            else return R.drawable.ic_insert_drive_file_black_24dp;
         }
+        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
+            if (isDark) return R.drawable.ic_notifications_white_24dp;
+            else return R.drawable.ic_notifications_black_24dp;
+        }
+        if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
+            if (isDark) return R.drawable.ic_event_note_white_24dp;
+            else return R.drawable.ic_event_note_black_24dp;
+        }
+        if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
+            if (isDark) return R.drawable.ic_cake_white_24dp;
+            else return R.drawable.ic_cake_black_24dp;
+        }
+
+        if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
+        else return R.drawable.ic_insert_drive_file_black_24dp;
     }
 
     @Override

@@ -430,7 +430,7 @@ public class NotesManager extends AppCompatActivity {
         try {
             File file = sHelp.createNote(note, date, uuID, color, image, style);
             sendMail(file);
-        } catch (JSONException | IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
