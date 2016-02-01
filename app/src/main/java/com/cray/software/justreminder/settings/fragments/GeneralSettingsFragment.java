@@ -62,6 +62,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearEnablePrefs = (PrefsView) rootView.findViewById(R.id.wearEnablePrefs);
         wearEnablePrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
         wearEnablePrefs.setOnClickListener(this);
+
         if (Module.isJellyMR2()) wearEnablePrefs.setVisibility(View.VISIBLE);
         else wearEnablePrefs.setVisibility(View.GONE);
 
@@ -75,6 +76,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearPrefs = (PrefsView) rootView.findViewById(R.id.wearPrefs);
         wearPrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_SERVICE));
         wearPrefs.setOnClickListener(this);
+        if (Module.isJellyMR2()) wearPrefs.setVisibility(View.VISIBLE);
+        //else
+            wearPrefs.setVisibility(View.GONE);
 
         themeView();
         

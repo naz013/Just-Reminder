@@ -139,7 +139,7 @@
     <string name="contacts">"Контакти"</string>
     <string name="scan">"Сканування"</string>
     <string name="no_events">"Немає подій"</string>
-    <string name="custom">"Під замовлення"</string>
+    <string name="custom">"Налаштувати"</string>
     <string name="theme">"Тема"</string>
     <string name="text_color">"Колір тексту"</string>
     <string name="button_color">"Колір кнопки"</string>
@@ -519,5 +519,5 @@
     <string name="add_reminder_menu">Додати нагадування</string>
     <string name="x_meters">%s метрів</string>
     <string name="task_summary_is_empty">Завдання не може бути порожнім!</string>
-    <string name="exclusion_added">Exclusion added</string>
+    <string name="exclusion_added">Вийняток додано</string>
 </resources>

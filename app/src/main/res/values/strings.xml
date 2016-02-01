@@ -123,7 +123,7 @@
     <string name="contacts">Contacts</string>
     <string name="scan">Scan</string>
     <string name="no_events">No events</string>
-    <string name="custom">Custom</string>
+    <string name="custom">Customize</string>
     <string name="theme">Theme</string>
     <string name="text_color">Text color</string>
     <string name="button_color">Button color</string>
@@ -182,7 +182,7 @@
     <string name="rate">Rate</string>
     <string name="later">Later</string>
     <string name="never">Never</string>
-    <string name="no_application">No application</string>
+    <string name="no_application">No applications</string>
     <string name="url">Url...</string>
     <string name="application">Application</string>
     <string name="open_link">Open link</string>
@@ -193,7 +193,7 @@
     <string name="choose_location">Choose location</string>
     <string name="no_reminder">No reminder</string>
     <string name="video_call">Video call</string>
-    <string name="c">C</string>
+    <string name="c">S</string>
     <string name="m">M</string>
     <string name="h">H</string>
     <string name="minutes">minutes</string>
@@ -219,11 +219,11 @@
     <string name="export_to_stock_calendar">Export to default calendar</string>
     <string name="automatically_backup">Automatically backup</string>
     <string name="cloud_services">Cloud services</string>
-    <string name="clean">Clean data</string>
+    <string name="clean">Clear data</string>
     <string name="backup_settings">Create backup of settings</string>
     <string name="missed_call_reminder">Remind about missed calls</string>
     <string name="quick_sms">Quick SMS</string>
-    <string name="show_quick_answer_window">Show quick answer window after call rejection</string>
+    <string name="show_quick_answer_window">Show answer window after call rejection</string>
     <string name="after_call_reminder">Reminder after call</string>
     <string name="_24_hour_time_format">24 hour time format</string>
     <string name="dark_mode">Dark mode</string>
@@ -261,7 +261,7 @@
     <string name="personalization">Personalization</string>
     <string name="allow_customizing_notification">Allow customizing notification for each reminder</string>
     <string name="permissions">Permissions</string>
-    <string name="allow_permission">Allow permission</string>
+    <string name="allow_permission">Add permission</string>
     <string name="about">About</string>
     <string name="changes">Changes</string>
     <string name="open_source_licenses">Open source software</string>
