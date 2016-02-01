@@ -27,11 +27,6 @@ import java.util.ArrayList;
 public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapter.ViewHolder> {
 
     /**
-     * Application context.
-     */
-    private Context mContext;
-
-    /**
      * ColorSetter class field.
      */
     private ColorSetter cs;
@@ -54,7 +49,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
      * @param list list of files in folder.
      */
     public FileRecyclerAdapter(final Context context, ArrayList<FileModel> list) {
-        this.mContext = context;
         this.list = list;
         cs = new ColorSetter(context);
         setHasStableIds(true);
@@ -139,12 +133,12 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         } else if (fileName.contains(FileConfig.FILE_NAME_NOTE)) {
             if (isDark) return R.drawable.ic_event_note_white_24dp;
             else return R.drawable.ic_event_note_black_24dp;
-        } else if (fileName.contains(FileConfig.FILE_NAME_GROUP)) {
-            if (isDark) return R.drawable.ic_local_offer_white_24dp;
-            else return R.drawable.ic_local_offer_black_24dp;
         } else if (fileName.contains(FileConfig.FILE_NAME_BIRTHDAY)) {
             if (isDark) return R.drawable.ic_cake_white_24dp;
             else return R.drawable.ic_cake_black_24dp;
+        } else if (fileName.contains(FileConfig.FILE_NAME_GROUP)) {
+            if (isDark) return R.drawable.ic_local_offer_white_24dp;
+            else return R.drawable.ic_local_offer_black_24dp;
         } else {
             if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
             else return R.drawable.ic_insert_drive_file_black_24dp;
@@ -159,14 +153,6 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    /**
-     * Get current action listener.
-     * @return Action listener.
-     */
-    public SimpleListener getEventListener() {
-        return mEventListener;
     }
 
     /**
