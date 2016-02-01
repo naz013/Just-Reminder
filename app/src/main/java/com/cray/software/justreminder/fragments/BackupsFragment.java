@@ -274,7 +274,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeFilesInFolder(Constants.DIR_SD_DBX_TMP);
+                removeFilesInFolder(MemoryUtil.getDRDir().getPath());
+                removeFilesInFolder(MemoryUtil.getDNDir().getPath());
+                removeFilesInFolder(MemoryUtil.getDGroupsDir().getPath());
+                removeFilesInFolder(MemoryUtil.getDBDir().getPath());
                 if (cloudContainer.getVisibility() == View.GONE) {
                     isDropboxDeleted = true;
                 }
@@ -296,13 +299,9 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         File file = new File(folder);
         if (file.exists()) {
             if (file.isDirectory()) {
-                provider = new FileDataProvider(getActivity(), folder);
-                ArrayList<FileModel> list = provider.getData();
-                if (list != null && list.size() > 0) {
-                    for (FileModel model : list) {
-                        File file1 = new File(model.getFilePath());
-                        if (file1.exists()) file1.delete();
-                    }
+                File[] files = file.listFiles();
+                if (files != null) {
+                    for (File f : files) f.delete();
                 }
                 if (mCallbacks != null) {
                     mCallbacks.showSnackbar(getString(R.string.all_files_removed));
@@ -422,7 +421,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         googleDeleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeFilesInFolder(Constants.DIR_SD_GDRIVE_TMP);
+                removeFilesInFolder(MemoryUtil.getGRDir().getPath());
+                removeFilesInFolder(MemoryUtil.getGNDir().getPath());
+                removeFilesInFolder(MemoryUtil.getGGroupsDir().getPath());
+                removeFilesInFolder(MemoryUtil.getGBDir().getPath());
                 if (googleContainer.getVisibility() == View.GONE) {
                     isGoogleDeleted = true;
                 }
@@ -628,7 +630,10 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeFilesInFolder(Constants.DIR_SD);
+                removeFilesInFolder(MemoryUtil.getRDir().getPath());
+                removeFilesInFolder(MemoryUtil.getNDir().getPath());
+                removeFilesInFolder(MemoryUtil.getGroupsDir().getPath());
+                removeFilesInFolder(MemoryUtil.getBDir().getPath());
                 if (container.getVisibility() == View.GONE) {
                     ViewUtils.fadeOutAnimation(filesList);
                     ViewUtils.expand(container);
@@ -709,36 +714,24 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         return googleLayout.getVisibility() == View.VISIBLE;
     }
 
-    private void detachLocal(){
-        localLayout = (LinearLayout) rootView.findViewById(R.id.localLayout);
-        ViewUtils.collapse(localLayout);
-    }
-
-    private void detachDropbox(){
-        cloudLayout = (LinearLayout) rootView.findViewById(R.id.cloudLayout);
-        ViewUtils.collapse(cloudLayout);
-        usedSpace.setText("");
-        freeSpace.setText("");
-        cloudCount.setText("");
-    }
-
-    private void detachGoogleDrive(){
-        googleLayout = (LinearLayout) rootView.findViewById(R.id.googleLayout);
-        ViewUtils.collapse(googleLayout);
-        googleSpace.setText("");
-        googleFreeSpace.setText("");
-        googleCount.setText("");
-    }
-
     private void detachLayout(){
         if (isLocal()) {
-            detachLocal();
+            localLayout = (LinearLayout) rootView.findViewById(R.id.localLayout);
+            ViewUtils.collapse(localLayout);
         }
         if (isDropbox()) {
-            detachDropbox();
+            cloudLayout = (LinearLayout) rootView.findViewById(R.id.cloudLayout);
+            ViewUtils.collapse(cloudLayout);
+            usedSpace.setText("");
+            freeSpace.setText("");
+            cloudCount.setText("");
         }
         if (isGoogleDrive()) {
-            detachGoogleDrive();
+            googleLayout = (LinearLayout) rootView.findViewById(R.id.googleLayout);
+            ViewUtils.collapse(googleLayout);
+            googleSpace.setText("");
+            googleFreeSpace.setText("");
+            googleCount.setText("");
         }
     }
 
