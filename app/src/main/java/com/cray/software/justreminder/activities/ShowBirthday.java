@@ -200,7 +200,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             contactPhoto.setVisibility(View.GONE);
         }
 
-        String years =  String.format(getString(R.string.x_years), TimeUtil.getYears(birthDate));
+        String years =  TimeUtil.getAgeFormatted(this, birthDate);
 
         TextView userName = (TextView) findViewById(R.id.userName);
         userName.setTypeface(typeface);

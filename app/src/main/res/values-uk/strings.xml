@@ -520,4 +520,12 @@
     <string name="x_meters">%s метрів</string>
     <string name="task_summary_is_empty">Завдання не може бути порожнім!</string>
     <string name="exclusion_added">Вийняток додано</string>
+    <string name="x_day">%s день</string>
+    <string name="x_hour">%s година</string>
+    <string name="x_dayzz">%s дні</string>
+    <string name="x_hourzz">%s години</string>
+    <string name="x_minute">%s хвилина</string>
+    <string name="x_minutezz">%s хвилини</string>
+    <string name="x_year">%s рік</string>
+    <string name="x_yearzz">%s роки</string>
 </resources>

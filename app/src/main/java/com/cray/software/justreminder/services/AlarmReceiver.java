@@ -13,17 +13,13 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-
-import java.util.ArrayList;
 
 public class AlarmReceiver extends WakefulBroadcastReceiver {
 
@@ -47,15 +43,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                     new UpdatesHelper(context).updateWidget();
                 }
             } else start(context, id);
-        } else if (code == 1) {
-            JRecurrence reminder = new Type(context).getItem(id).getRecurrence();
-            ArrayList<Integer> weekdays = reminder.getWeekdays();
-            if (weekdays != null && weekdays.size() > 0) {
-                if (TimeCount.isDay(weekdays)) start(context, id);
-            } else {
-                int day = reminder.getMonthday();
-                if (TimeCount.isDay(day)) start(context, id);
-            }
         } else start(context, id);
     }
 
@@ -80,13 +67,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         if (c != null && c.moveToNext()) {
             due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
             repeat = new JParser(json).getRecurrence().getRepeat();
-            if (type.matches(Constants.TYPE_TIME))
-                code = 2;
-
-            if (type.contains(Constants.TYPE_WEEKDAY) || type.contains(Constants.TYPE_MONTHDAY))
-                code = 1;
         }
         if (c != null) c.close();
         db.close();
@@ -97,25 +78,17 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (code == 1) {
+        if (repeat > 0) {
             if (Module.isMarshmallow()) {
-                alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, due, AlarmManager.INTERVAL_DAY, alarmIntent);
+                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
             } else {
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, AlarmManager.INTERVAL_DAY, alarmIntent);
+                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
             }
         } else {
-            if (repeat > 0) {
-                if (Module.isMarshmallow()) {
-                    alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
-                } else {
-                    alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
-                }
+            if (Module.isMarshmallow()) {
+                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
             } else {
-                if (Module.isMarshmallow()) {
-                    alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
-                } else {
-                    alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
-                }
+                alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
             }
         }
     }

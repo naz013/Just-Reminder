@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
 
@@ -95,7 +96,7 @@ public class BirthdaysVoiceList extends Activity{
 
             userText.setText(names.get(position));
             dateText.setText(dates.get(position));
-            yearsText.setText(String.format(getString(R.string.x_years), years.get(position)));
+            yearsText.setText(TimeUtil.getAgeFormatted(mContext, years.get(position)));
 
             return convertView;
         }

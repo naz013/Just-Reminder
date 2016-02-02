@@ -1,5 +1,9 @@
 package com.cray.software.justreminder.utils;
 
+import android.content.Context;
+
+import com.cray.software.justreminder.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -171,5 +175,55 @@ public class TimeUtil {
         if (seconds < 10) secondStr = "0" + seconds;
         else secondStr = String.valueOf(seconds);
         return hourStr + minuteStr + secondStr;
+    }
+
+    public static String getAgeFormatted(Context mContext, String date) {
+        int years = getYears(date);
+        StringBuilder result = new StringBuilder();
+        String lang = Locale.getDefault().getLanguage().toLowerCase();
+        if (lang.startsWith("uk") || lang.startsWith("ru")) {
+            long last = years;
+            while (last > 10) {
+                last -= 10;
+            }
+            if (last == 1 && years != 11) {
+                result.append(String.format(mContext.getString(R.string.x_year), years));
+            } else if (last < 5 && (years < 12 || years > 14)) {
+                result.append(String.format(mContext.getString(R.string.x_yearzz), years));
+            } else {
+                result.append(String.format(mContext.getString(R.string.x_years), years));
+            }
+        } else {
+            if (years < 2)
+                result.append(String.format(mContext.getString(R.string.x_year), years));
+            else
+                result.append(String.format(mContext.getString(R.string.x_years), years));
+        }
+        return result.toString();
+    }
+
+    public static String getAgeFormatted(Context mContext, int date) {
+        int years = getAge(date);
+        StringBuilder result = new StringBuilder();
+        String lang = Locale.getDefault().toString().toLowerCase();
+        if (lang.startsWith("uk") || lang.startsWith("ru")) {
+            long last = years;
+            while (last > 10) {
+                last -= 10;
+            }
+            if (last == 1 && years != 11) {
+                result.append(String.format(mContext.getString(R.string.x_year), years));
+            } else if (last < 5 && (years < 12 || years > 14)) {
+                result.append(String.format(mContext.getString(R.string.x_yearzz), years));
+            } else {
+                result.append(String.format(mContext.getString(R.string.x_years), years));
+            }
+        } else {
+            if (years < 2)
+                result.append(String.format(mContext.getString(R.string.x_year), years));
+            else
+                result.append(String.format(mContext.getString(R.string.x_years), years));
+        }
+        return result.toString();
     }
 }

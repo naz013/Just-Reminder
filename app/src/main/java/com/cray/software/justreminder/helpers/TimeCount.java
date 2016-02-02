@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -11,6 +10,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Helper class for working with date and time.
@@ -120,20 +120,66 @@ public class TimeCount {
         long minutes = (difference - (DAY * days) - (HOUR * hours)) / (MINUTE);
         hours = (hours < 0 ? -hours : hours);
         StringBuilder result = new StringBuilder();
+        String lang = Locale.getDefault().toString().toLowerCase();
         if (difference > DAY){
-            result.append(String.format(mContext.getString(R.string.x_days), days));
-            /*if (hours > 1) {
-                result.append(mContext.getString(R.string.and));
-                result.append(String.format(mContext.getString(R.string.x_hours), hours));
-            }*/
+            if (lang.startsWith("uk") || lang.startsWith("ru")) {
+                long last = days;
+                while (last > 10) {
+                    last -= 10;
+                }
+                if (last == 1 && days != 11) {
+                    result.append(String.format(mContext.getString(R.string.x_day), days));
+                } else if (last < 5 && (days < 12 || days > 14)) {
+                    result.append(String.format(mContext.getString(R.string.x_dayzz), days));
+                } else {
+                    result.append(String.format(mContext.getString(R.string.x_days), days));
+                }
+            } else {
+                if (days < 2)
+                    result.append(String.format(mContext.getString(R.string.x_day), days));
+                else
+                    result.append(String.format(mContext.getString(R.string.x_days), days));
+            }
         } else if (difference > HOUR){
-            result.append(String.format(mContext.getString(R.string.x_hours), (days * 24) + hours));
-            /*if (minutes > 1) {
-                result.append(mContext.getString(R.string.and));
-                result.append(String.format(mContext.getString(R.string.x_minutes), minutes));
-            }*/
+            hours = (days * 24) + hours;
+            if (lang.startsWith("uk") || lang.startsWith("ru")) {
+                long last = hours;
+                while (last > 10) {
+                    last -= 10;
+                }
+                if (last == 1 && hours != 11) {
+                    result.append(String.format(mContext.getString(R.string.x_hour), hours));
+                } else if (last < 5 && (hours < 12 || hours > 14)) {
+                    result.append(String.format(mContext.getString(R.string.x_hourzz), hours));
+                } else {
+                    result.append(String.format(mContext.getString(R.string.x_hours), hours));
+                }
+            } else {
+                if (hours < 2)
+                    result.append(String.format(mContext.getString(R.string.x_hour), hours));
+                else
+                    result.append(String.format(mContext.getString(R.string.x_hours), hours));
+            }
         } else if (difference > MINUTE){
-            result.append(String.format(mContext.getString(R.string.x_minutes), (hours * 60) + minutes));
+            minutes = (hours * 60) + minutes;
+            if (lang.startsWith("uk") || lang.startsWith("ru")) {
+                long last = minutes;
+                while (last > 10) {
+                    last -= 10;
+                }
+                if (last == 1 && minutes != 11) {
+                    result.append(String.format(mContext.getString(R.string.x_minute), minutes));
+                } else if (last < 5 && (minutes < 12 || minutes > 14)) {
+                    result.append(String.format(mContext.getString(R.string.x_minutezz), minutes));
+                } else {
+                    result.append(String.format(mContext.getString(R.string.x_minutes), minutes));
+                }
+            } else {
+                if (hours < 2)
+                    result.append(String.format(mContext.getString(R.string.x_minute), minutes));
+                else
+                    result.append(String.format(mContext.getString(R.string.x_minutes), minutes));
+            }
         } else if (difference > 0){
             result.append(mContext.getString(R.string.less_than_minute));
         } else {
@@ -175,8 +221,6 @@ public class TimeCount {
             while (true) {
                 int mDay = cc.get(Calendar.DAY_OF_WEEK);
                 if (weekdays.get(mDay - 1) == 1) {
-                    Log.d(Constants.LOG_TAG, "Day " + mDay);
-                    Log.d(Constants.LOG_TAG, "Date " + TimeUtil.getFullDateTime(cc.getTimeInMillis(), true));
                     if (cc.getTimeInMillis() > System.currentTimeMillis()) {
                         break;
                     }
@@ -196,40 +240,6 @@ public class TimeCount {
     }
 
     /**
-     * Check if current days of week is selected for weekday reminder.
-     * @param repeat weekdays string.
-     * @return boolean
-     */
-    public static boolean isDay(ArrayList<Integer> repeat){
-        boolean res = false;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
-        if (weekDay == Calendar.SUNDAY){
-            res = repeat.get(0) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.MONDAY) {
-            res = repeat.get(1) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.TUESDAY){
-            res = repeat.get(2) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.WEDNESDAY){
-            res = repeat.get(3) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.THURSDAY){
-            res = repeat.get(4) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.FRIDAY){
-            res = repeat.get(5) == Constants.DAY_CHECKED;
-        }
-        if (weekDay == Calendar.SATURDAY){
-            res = repeat.get(6) == Constants.DAY_CHECKED;
-        }
-        return res;
-    }
-
-    /**
      * Get next due time for MonthDay reminder type starts from selected date and time.
      * @param dayOfMonth day.
      * @param fromTime start time.
@@ -241,12 +251,16 @@ public class TimeCount {
         }
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
-        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        if (fromTime < System.currentTimeMillis())
-            cc.setTimeInMillis(cc.getTimeInMillis() + (30 * DAY));
-
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
+
+        if (cc.getTimeInMillis() > System.currentTimeMillis())
+            return cc.getTimeInMillis();
+
+        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth + 1);
+        while (cc.get(Calendar.DAY_OF_MONTH) != dayOfMonth)
+            cc.setTimeInMillis(cc.getTimeInMillis() + DAY);
+
         return cc.getTimeInMillis();
     }
 
@@ -270,29 +284,5 @@ public class TimeCount {
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();
-    }
-
-    /**
-     * Check if current day is same as is in reminder.
-     * @param dayOfMonth day.
-     * @return boolean
-     */
-    public static boolean isDay(int dayOfMonth){
-        if (dayOfMonth == 0){
-            return isLastDay();
-        }
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        return cc.get(Calendar.DAY_OF_MONTH) == dayOfMonth;
-    }
-
-    /**
-     * Check if current day is the last day in this month.
-     * @return boolean
-     */
-    public static boolean isLastDay(){
-        Calendar cc = Calendar.getInstance();
-        cc.setTimeInMillis(System.currentTimeMillis());
-        return cc.get(Calendar.DAY_OF_MONTH) == cc.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 }

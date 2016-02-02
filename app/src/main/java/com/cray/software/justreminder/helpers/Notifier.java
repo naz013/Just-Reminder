@@ -408,7 +408,7 @@ public class Notifier {
         }
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
-        builder.setContentText(String.format(mContext.getString(R.string.x_years), years));
+        builder.setContentText(TimeUtil.getAgeFormatted(mContext, years));
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -496,7 +496,7 @@ public class Notifier {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
                 wearableNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
                 wearableNotificationBuilder.setContentTitle(name);
-                wearableNotificationBuilder.setContentText(String.format(mContext.getString(R.string.x_years), years));
+                wearableNotificationBuilder.setContentText(TimeUtil.getAgeFormatted(mContext, years));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     wearableNotificationBuilder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
                 }
@@ -742,7 +742,7 @@ public class Notifier {
             do {
                 String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                 String birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String years = String.format(mContext.getString(R.string.x_years), TimeUtil.getYears(birthDate));
+                String years = TimeUtil.getAgeFormatted(mContext, birthDate);
                 list.add(new BirthdayModel(name, years, birthDate));
             } while (c.moveToNext());
         }

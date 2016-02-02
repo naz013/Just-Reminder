@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.enums.EventType;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.EventsItem;
+import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -165,8 +165,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             cl.setTimeInMillis(item.getDate());
             Date time = cl.getTime();
             holder.eventDate.setText(SuperUtil.appendString(TimeUtil.getDateTime(time, is24),
-                    "\n", String.format(mContext.getString(R.string.x_years),
-                            String.valueOf(TimeUtil.getAge(item.getYear())))));
+                    "\n", TimeUtil.getAgeFormatted(mContext, item.getYear())));
         } else {
             holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext,
                     cs.getCategoryColor(item.getColor())));

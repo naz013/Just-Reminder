@@ -569,7 +569,7 @@ public class ScreenManager extends AppCompatActivity
 
     private void restoreUi(){
         int colorPrimary = cSetter.getColor(cSetter.colorPrimary());
-        int colorAccent = cSetter.getColor(cSetter.colorPrimary());
+        int colorAccent = cSetter.getColor(cSetter.colorAccent());
         int colorDark = cSetter.getColor(cSetter.colorPrimaryDark());
         toolbar.setBackgroundColor(colorPrimary);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

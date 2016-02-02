@@ -520,4 +520,12 @@
     <string name="x_meters">"%s метров"</string>
     <string name="task_summary_is_empty">"Задание пустое!"</string>
     <string name="exclusion_added">"Исключение добавлено"</string>
+    <string name="x_day">%s день</string>
+    <string name="x_hour">%s час</string>
+    <string name="x_dayzz">%s дня</string>
+    <string name="x_hourzz">%s часа</string>
+    <string name="x_minute">%s минута</string>
+    <string name="x_minutezz">%s минут</string>
+    <string name="x_year">%s год</string>
+    <string name="x_yearzz">%s года</string>
 </resources>

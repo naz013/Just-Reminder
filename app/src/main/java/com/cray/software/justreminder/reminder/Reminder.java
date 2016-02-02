@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
@@ -26,6 +27,7 @@ import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -33,6 +35,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
@@ -46,21 +49,12 @@ public class Reminder {
     public Reminder(){
     }
 
-    public static ArrayList<String> getUuIds(Context context) {
-        NextBase db = new NextBase(context);
-        db.open();
-        ArrayList<String> list = new ArrayList<>();
-        Cursor c = db.queryAllReminders();
-        if (c != null && c.moveToFirst()) {
-            do {
-                list.add(c.getString(c.getColumnIndex(NextBase.UUID)));
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
-        return list;
-    }
-
+    /**
+     * Check if reminder unique identifier already present in database.
+     * @param context application context.
+     * @param uuId unique identifier.
+     * @return Boolean
+     */
     public static boolean isUuId(Context context, String uuId) {
         NextBase db = new NextBase(context);
         db.open();
@@ -117,6 +111,12 @@ public class Reminder {
                 db.updateReminderTime(id, eventTime);
                 db.setJson(id, parser.toJsonString());
                 int exp = parser.getExport().getCalendar();
+
+                if (Module.isMarshmallow()) {
+                    Log.d("----CALCULATED-----", TimeUtil.getFullDateTime(eventTime, true));
+                    new AlarmReceiver().enableReminder(context, id);
+                }
+
                 SharedPrefs sPrefs = new SharedPrefs(context);
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
                 boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
