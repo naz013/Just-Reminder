@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.fragments;
 
+import android.content.res.Resources;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,10 +18,13 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
 import com.cray.software.justreminder.datas.models.Task;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -66,6 +71,17 @@ public class TaskListFragment extends Fragment implements SyncListener {
             emptyImage.setImageResource(R.drawable.clear_white);
         } else {
             emptyImage.setImageResource(R.drawable.clear);
+        }
+
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_assignment_turned_in_black_24dp);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
+                        new ColorSetter(getActivity()).colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
         }
 
         currentList = (RecyclerView) view.findViewById(R.id.currentList);

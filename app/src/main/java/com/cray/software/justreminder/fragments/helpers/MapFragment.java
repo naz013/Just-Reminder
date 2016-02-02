@@ -18,7 +18,9 @@ package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -601,6 +603,17 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             emptyImage.setImageResource(R.drawable.ic_directions_white_24dp);
         } else {
             emptyImage.setImageResource(R.drawable.ic_directions_black_24dp);
+        }
+
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_directions_black_24dp1);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
+                        new ColorSetter(getActivity()).colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
         }
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);

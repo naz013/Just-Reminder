@@ -2,6 +2,8 @@ package com.cray.software.justreminder.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +33,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -74,6 +77,16 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             emptyImage.setImageResource(R.drawable.place_white);
         } else {
             emptyImage.setImageResource(R.drawable.place);
+        }
+
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_place_black_24dp1);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(cs.getColor(cs.colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
         }
 
         listView = (RecyclerView) findViewById(R.id.currentList);

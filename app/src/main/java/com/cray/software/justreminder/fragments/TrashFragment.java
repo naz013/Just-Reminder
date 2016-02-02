@@ -1,7 +1,9 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,13 +25,16 @@ import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
@@ -94,6 +99,16 @@ public class TrashFragment extends Fragment implements RecyclerListener{
             emptyImage.setImageResource(R.drawable.delete_white);
         } else {
             emptyImage.setImageResource(R.drawable.delete);
+        }
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_delete_black_24dp1);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
+                        new ColorSetter(getActivity()).colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

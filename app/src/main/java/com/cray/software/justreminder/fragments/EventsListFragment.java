@@ -1,6 +1,8 @@
 package com.cray.software.justreminder.fragments;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,11 +21,14 @@ import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -68,6 +73,17 @@ public class EventsListFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.today_white);
         else
             emptyImage.setImageResource(R.drawable.today);
+
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_today_black_24dp1);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
+                        new ColorSetter(getActivity()).colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
+        }
 
         listView = (RecyclerView) view.findViewById(R.id.currentList);
 

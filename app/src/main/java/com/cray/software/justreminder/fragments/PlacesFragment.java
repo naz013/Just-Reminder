@@ -2,6 +2,8 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,11 +24,14 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class PlacesFragment extends Fragment implements SimpleListener {
 
@@ -65,6 +70,17 @@ public class PlacesFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.place_white);
         } else {
             emptyImage.setImageResource(R.drawable.place);
+        }
+
+        if (Module.isLollipop()) {
+            Resources res = getResources();
+            VectorDrawable vectorDrawable =
+                    (VectorDrawable) res.getDrawable(R.drawable.ic_place_black_24dp1);
+            if (vectorDrawable != null) {
+                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
+                        new ColorSetter(getActivity()).colorAccent()));
+                emptyImage.setImageDrawable(vectorDrawable);
+            }
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
