@@ -70,17 +70,17 @@ public class MailFragment extends BaseFragment implements
     }
 
     public void setMail(String email){
-        this.number = email;
+        super.number = email;
         mail.setText(email);
     }
 
     public void setMessage(String message){
-        this.message = message;
+        super.message = message;
         subject.setText(message);
     }
 
     public void setFileName(String file) {
-        filePath = file;
+        super.filePath = file;
         showAttachment();
     }
 

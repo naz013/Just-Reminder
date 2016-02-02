@@ -75,7 +75,7 @@ public class ColorSetter {
 
     /**
      * Get current theme primary color.
-     * @return Color
+     * @return Color resource
      */
     @ColorRes
     public int colorPrimary(){
@@ -84,7 +84,7 @@ public class ColorSetter {
 
     /**
      * Get current theme accent color.
-     * @return Color
+     * @return Color resource
      */
     @ColorRes
     public int colorAccent(){
@@ -93,7 +93,7 @@ public class ColorSetter {
 
     /**
      * Get accent color by code.
-     * @return Color
+     * @return Color resource
      */
     @ColorRes
     public int colorAccent(int code){
@@ -448,76 +448,6 @@ public class ColorSetter {
     }
 
     /**
-     * Get RGB color from color resource.
-     * @return Color Resource
-     */
-    public String getRGB(int color){
-        String rgb;
-        switch (color) {
-            case R.color.redPrimary:
-                rgb = "F44336";
-                break;
-            case R.color.purplePrimary:
-                rgb = "9C27B0";
-                break;
-            case R.color.greenLightPrimary:
-                rgb = "8BC34A";
-                break;
-            case R.color.greenPrimary:
-                rgb = "4CAF50";
-                break;
-            case R.color.blueLightPrimary:
-                rgb = "03A9F4";
-                break;
-            case R.color.bluePrimary:
-                rgb = "2196F3";
-                break;
-            case R.color.yellowPrimary:
-                rgb = "FFEB3B";
-                break;
-            case R.color.orangePrimary:
-                rgb = "FF9800";
-                break;
-            case R.color.cyanPrimary:
-                rgb = "00BCD4";
-                break;
-            case R.color.pinkPrimary:
-                rgb = "E91E63";
-                break;
-            case R.color.tealPrimary:
-                rgb = "009688";
-                break;
-            case R.color.amberPrimary:
-                rgb = "FFC107";
-                break;
-            default:
-                if (Module.isPro()){
-                    switch (color) {
-                        case R.color.purpleDeepPrimary:
-                            rgb = "673AB7";
-                            break;
-                        case R.color.orangeDeepPrimary:
-                            rgb = "FF5722";
-                            break;
-                        case R.color.limePrimary:
-                            rgb = "CDDC39";
-                            break;
-                        case R.color.indigoPrimary:
-                            rgb = "3F51B5";
-                            break;
-                        default:
-                            rgb = "4CAF50";
-                            break;
-                    }
-                } else {
-                    rgb = "4CAF50";
-                }
-                break;
-        }
-        return rgb;
-    }
-
-    /**
      * Get current day color for calendar.
      * @return Color Resource
      */
@@ -529,7 +459,7 @@ public class ColorSetter {
     /**
      * Get color indicator by identifier.
      * @param color color identifier.
-     * @return Drawable identifier
+     * @return Drawable resource
      */
     @DrawableRes
     public int getIndicator(int color){
@@ -668,6 +598,11 @@ public class ColorSetter {
         return getDrawable(color);
     }
 
+    /**
+     * Get color primary dark by code.
+     * @param code code
+     * @return Color resource
+     */
     @ColorRes
     public int colorPrimaryDark(int code) {
         int color;
@@ -735,7 +670,7 @@ public class ColorSetter {
 
     /**
      * Get status bar color based on current application theme.
-     * @return Color
+     * @return Color resource
      */
     @ColorRes
     public int colorPrimaryDark(){
@@ -747,6 +682,7 @@ public class ColorSetter {
      * Get style for spinner based on current theme.
      * @return Color
      */
+    @ColorInt
     public int getSpinnerStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);

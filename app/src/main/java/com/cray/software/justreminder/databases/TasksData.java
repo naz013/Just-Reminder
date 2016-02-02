@@ -9,21 +9,16 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.ExchangeConstants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
 public class TasksData {
     private static final String DB_NAME = "tasks_base";
     private static final int DB_VERSION = 1;
     private static final String GOOGLE_TASKS_LISTS_TABLE_NAME = "google_task_lists";
     private static final String GOOGLE_TASKS_TABLE_NAME = "google_tasks";
-    private static final String MS_TASKS_TABLE_NAME = "exchange_tasks";
-    private static final String ACCOUNTS_TABlE_NAME = "accounts";
-    private static final String MS_CONTACTS_TABLE_NAME = "exchange_contacts";
-    private static final String MS_COMPANIES_TABLE_NAME = "exchange_companies";
     private static final String GOOGLE_DELAYED_TABLE_NAME = "delayed_tasks";
     private DBHelper dbHelper;
     private static Context mContext;
@@ -90,60 +85,6 @@ public class TasksData {
                     TasksConstants.COLUMN_STATUS + "  VARCHAR(255) " +
                     ");";
 
-    private static final String ACCOUNTS_TABLE_CREATE =
-            "create table " + ACCOUNTS_TABlE_NAME + "(" +
-                    ExchangeConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    ExchangeConstants.COLUMN_USER + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_PASSWORD + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_DOMAIN + "  VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_VERSION + "  VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TECH + "  VARCHAR(255) " +
-                    ");";
-
-    private static final String MS_CONTACTS_TABLE_CREATE =
-            "create table " + MS_CONTACTS_TABLE_NAME + "(" +
-                    ExchangeConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    ExchangeConstants.COLUMN_TASK_ID + " INTEGER, " +
-                    ExchangeConstants.COLUMN_VALUE + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TECH + "  VARCHAR(255) " +
-                    ");";
-
-    private static final String MS_COMPANIES_TABLE_CREATE =
-            "create table " + MS_COMPANIES_TABLE_NAME + "(" +
-                    ExchangeConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    ExchangeConstants.COLUMN_TASK_ID + " INTEGER, " +
-                    ExchangeConstants.COLUMN_VALUE + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TECH + "  VARCHAR(255) " +
-                    ");";
-
-    private static final String MS_TASKS_TABLE_CREATE =
-            "create table " + MS_TASKS_TABLE_NAME + "(" +
-                    ExchangeConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    ExchangeConstants.COLUMN_ACTUAL_WORK + " INTEGER, " +
-                    ExchangeConstants.COLUMN_ASSIGNED_TIME + " INTEGER, " +
-                    ExchangeConstants.COLUMN_CHANGES_COUNT + " INTEGER, " +
-                    ExchangeConstants.COLUMN_COMPLETE_DATE + " INTEGER, " +
-                    ExchangeConstants.COLUMN_DUE + " INTEGER, " +
-                    ExchangeConstants.COLUMN_IS_COMPLETED + " INTEGER, " +
-                    ExchangeConstants.COLUMN_IS_RECURRING + " INTEGER, " +
-                    ExchangeConstants.COLUMN_IS_TEAM_TASK + " INTEGER, " +
-                    ExchangeConstants.COLUMN_PERCENT_COMPLETE + " REAL, " +
-                    ExchangeConstants.COLUMN_START_DATE + " INTEGER, " +
-                    ExchangeConstants.COLUMN_TOTAL_WORK + " INTEGER, " +
-                    ExchangeConstants.COLUMN_MESSAGE_BODY + " TEXT, " +
-                    ExchangeConstants.COLUMN_MILEAGE + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_RECURRENCE + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_STATUS + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_STATUS_DESCRIPTION + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_OWNER + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TASK_ID + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TECH_3 + " VARCHAR(255), " +
-                    ExchangeConstants.COLUMN_TECH_4 + " INTEGER, " +
-                    ExchangeConstants.COLUMN_TECH_5 + " INTEGER, " +
-                    ExchangeConstants.COLUMN_TECH_6 + " INTEGER, " +
-                    ExchangeConstants.COLUMN_TECH + "  VARCHAR(255) " +
-                    ");";
-
     public class DBHelper extends SQLiteOpenHelper {
         public DBHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
@@ -154,10 +95,6 @@ public class TasksData {
             sqLiteDatabase.execSQL(GOOGLE_TASKS_LISTS_TABLE_CREATE);
             sqLiteDatabase.execSQL(GOOGLE_TASKS_TABLE_CREATE);
             sqLiteDatabase.execSQL(DELAYED_TASKS_TABLE_CREATE);
-            sqLiteDatabase.execSQL(ACCOUNTS_TABLE_CREATE);
-            sqLiteDatabase.execSQL(MS_CONTACTS_TABLE_CREATE);
-            sqLiteDatabase.execSQL(MS_COMPANIES_TABLE_CREATE);
-            sqLiteDatabase.execSQL(MS_TASKS_TABLE_CREATE);
         }
 
         @Override
@@ -354,7 +291,7 @@ public class TasksData {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
         String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
-        String order = null;
+        String order;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";
         } else if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
@@ -415,7 +352,7 @@ public class TasksData {
         openGuard();
         SharedPrefs prefs = new SharedPrefs(mContext);
         String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
-        String order = null;
+        String order;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";
         } else if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
@@ -485,139 +422,6 @@ public class TasksData {
         cv.put(TasksConstants.COLUMN_NOTES, note);
         cv.put(TasksConstants.COLUMN_STATUS, status);
         return db.insert(GOOGLE_DELAYED_TABLE_NAME, null, cv);
-    }
-
-    //MS Exchange accounts
-
-    public long addAccount(String login, String password, String domain) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(ExchangeConstants.COLUMN_USER, login);
-        cv.put(ExchangeConstants.COLUMN_PASSWORD, password);
-        cv.put(ExchangeConstants.COLUMN_DOMAIN, domain);
-        return db.insert(ACCOUNTS_TABlE_NAME, null, cv);
-    }
-
-    public Cursor getAccount() throws SQLException {
-        openGuard();
-        return db.query(ACCOUNTS_TABlE_NAME, null, null, null, null, null, null);
-    }
-
-    public boolean deleteAccount(long rowId) {
-        openGuard();
-        return db.delete(ACCOUNTS_TABlE_NAME, ExchangeConstants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    // MS Exchange tasks
-
-    public long addExchangeTask(String message, int actualWork, long assignedTime, int count,
-                                long complete, long due, int completed, int recurring, int team,
-                                String mileage, double percent, String recurrence, long start,
-                                String status, int total, String description, String owner,
-                                String mode, String taskId) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(ExchangeConstants.COLUMN_MESSAGE_BODY, message);
-        cv.put(ExchangeConstants.COLUMN_ACTUAL_WORK, actualWork);
-        cv.put(ExchangeConstants.COLUMN_ASSIGNED_TIME, assignedTime);
-        cv.put(ExchangeConstants.COLUMN_CHANGES_COUNT, count);
-        cv.put(ExchangeConstants.COLUMN_COMPLETE_DATE, complete);
-        cv.put(ExchangeConstants.COLUMN_DUE, due);
-        cv.put(ExchangeConstants.COLUMN_IS_COMPLETED, completed);
-        cv.put(ExchangeConstants.COLUMN_IS_RECURRING, recurring);
-        cv.put(ExchangeConstants.COLUMN_IS_TEAM_TASK, team);
-        cv.put(ExchangeConstants.COLUMN_MILEAGE, mileage);
-        cv.put(ExchangeConstants.COLUMN_PERCENT_COMPLETE, percent);
-        cv.put(ExchangeConstants.COLUMN_RECURRENCE, recurrence);
-        cv.put(ExchangeConstants.COLUMN_START_DATE, start);
-        cv.put(ExchangeConstants.COLUMN_STATUS, status);
-        cv.put(ExchangeConstants.COLUMN_TOTAL_WORK, total);
-        cv.put(ExchangeConstants.COLUMN_STATUS_DESCRIPTION, description);
-        cv.put(ExchangeConstants.COLUMN_OWNER, owner);
-        cv.put(ExchangeConstants.COLUMN_MODE, mode);
-        cv.put(ExchangeConstants.COLUMN_TASK_ID, taskId);
-        return db.insert(MS_TASKS_TABLE_NAME, null, cv);
-    }
-
-    public boolean updateExchangeTask(long rowId, String message, int actualWork, long assignedTime, int count,
-                                      long complete, long due, int completed, int recurring, int team,
-                                      String mileage, double percent, String recurrence, long start,
-                                      String status, int total, String description, String owner, String mode) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(ExchangeConstants.COLUMN_MESSAGE_BODY, message);
-        args.put(ExchangeConstants.COLUMN_ACTUAL_WORK, actualWork);
-        args.put(ExchangeConstants.COLUMN_ASSIGNED_TIME, assignedTime);
-        args.put(ExchangeConstants.COLUMN_CHANGES_COUNT, count);
-        args.put(ExchangeConstants.COLUMN_COMPLETE_DATE, complete);
-        args.put(ExchangeConstants.COLUMN_DUE, due);
-        args.put(ExchangeConstants.COLUMN_IS_COMPLETED, completed);
-        args.put(ExchangeConstants.COLUMN_IS_RECURRING, recurring);
-        args.put(ExchangeConstants.COLUMN_IS_TEAM_TASK, team);
-        args.put(ExchangeConstants.COLUMN_MILEAGE, mileage);
-        args.put(ExchangeConstants.COLUMN_PERCENT_COMPLETE, percent);
-        args.put(ExchangeConstants.COLUMN_RECURRENCE, recurrence);
-        args.put(ExchangeConstants.COLUMN_START_DATE, start);
-        args.put(ExchangeConstants.COLUMN_STATUS, status);
-        args.put(ExchangeConstants.COLUMN_TOTAL_WORK, total);
-        args.put(ExchangeConstants.COLUMN_STATUS_DESCRIPTION, description);
-        args.put(ExchangeConstants.COLUMN_OWNER, owner);
-        args.put(ExchangeConstants.COLUMN_MODE, mode);
-        return db.update(MS_TASKS_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    public Cursor getExchangeTasks() throws SQLException {
-        openGuard();
-        return db.query(MS_TASKS_TABLE_NAME, null, null, null, null, null, null);
-    }
-
-    public boolean deleteExchangeTask(long rowId) {
-        openGuard();
-        return db.delete(MS_TASKS_TABLE_NAME, ExchangeConstants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    // MS Contacts
-
-    public long addContact(long taskId, String value) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(ExchangeConstants.COLUMN_TASK_ID, taskId);
-        cv.put(ExchangeConstants.COLUMN_VALUE, value);
-        return db.insert(MS_CONTACTS_TABLE_NAME, null, cv);
-    }
-
-    public Cursor getContacts(long id) throws SQLException {
-        openGuard();
-        return db.query(MS_CONTACTS_TABLE_NAME, null,
-                ExchangeConstants.COLUMN_TASK_ID  +
-                        "='" + id + "'", null, null, null, null, null);
-    }
-
-    public boolean deleteContact(long rowId) {
-        openGuard();
-        return db.delete(MS_CONTACTS_TABLE_NAME, ExchangeConstants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    //MS Companies
-
-    public long addCompany(long taskId, String value) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(ExchangeConstants.COLUMN_TASK_ID, taskId);
-        cv.put(ExchangeConstants.COLUMN_VALUE, value);
-        return db.insert(MS_COMPANIES_TABLE_NAME, null, cv);
-    }
-
-    public Cursor getCompanies(long id) throws SQLException {
-        openGuard();
-        return db.query(MS_COMPANIES_TABLE_NAME, null,
-                ExchangeConstants.COLUMN_TASK_ID  +
-                        "='" + id + "'", null, null, null, null, null);
-    }
-
-    public boolean deleteCompany(long rowId) {
-        openGuard();
-        return db.delete(MS_COMPANIES_TABLE_NAME, ExchangeConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public void openGuard() throws SQLiteException {

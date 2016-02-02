@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.activities;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -75,13 +73,8 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         }
 
         if (Module.isLollipop()) {
-            Resources res = getResources();
-            VectorDrawable vectorDrawable =
-                    (VectorDrawable) res.getDrawable(R.drawable.ic_textsms_black_24dp1);
-            if (vectorDrawable != null) {
-                vectorDrawable.setTint(cs.getColor(cs.colorAccent()));
-                emptyImage.setImageDrawable(vectorDrawable);
-            }
+            emptyImage.setImageDrawable(ViewUtils.getVector(this, cs.colorAccent(),
+                    R.drawable.ic_textsms_black_24dp1));
         }
 
         listView = (RecyclerView) findViewById(R.id.currentList);

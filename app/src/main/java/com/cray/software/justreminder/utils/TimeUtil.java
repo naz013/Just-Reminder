@@ -177,6 +177,12 @@ public class TimeUtil {
         return hourStr + minuteStr + secondStr;
     }
 
+    /**
+     * Get formatted ages.
+     * @param mContext application context.
+     * @param date date
+     * @return String
+     */
     public static String getAgeFormatted(Context mContext, String date) {
         int years = getYears(date);
         StringBuilder result = new StringBuilder();
@@ -202,6 +208,12 @@ public class TimeUtil {
         return result.toString();
     }
 
+    /**
+     * Get formatted ages.
+     * @param mContext application context.
+     * @param date date
+     * @return String
+     */
     public static String getAgeFormatted(Context mContext, int date) {
         int years = getAge(date);
         StringBuilder result = new StringBuilder();

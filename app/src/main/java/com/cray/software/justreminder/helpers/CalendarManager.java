@@ -10,9 +10,9 @@ import android.provider.CalendarContract;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
 
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -181,36 +181,6 @@ public class CalendarManager {
 
         if (ids.size() == 0) return null;
         else return ids;
-    }
-
-    /**
-     * Get name for calendar.
-     * @param id Calendar identifier.
-     * @return
-     */
-    public String getCalendarName(String id) {
-        String mName = null;
-        Uri uri = CalendarContract.Calendars.CONTENT_URI;
-        String[] mProjection = new String[] {
-                CalendarContract.Calendars._ID,                           // 0
-                CalendarContract.Calendars.ACCOUNT_NAME,                  // 1
-                CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,         // 2
-                CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
-        };
-        Cursor c = null;
-        try {
-            c = ctx.getContentResolver().query(uri, mProjection, CalendarContract.Calendars._ID + "=" + id, null, null);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        if (c != null && c.moveToFirst()) {
-            do {
-                mName = c.getString(c.getColumnIndex(mProjection[2]));
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-
-        return mName;
     }
 
     /**

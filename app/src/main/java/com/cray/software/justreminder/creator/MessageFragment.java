@@ -63,6 +63,7 @@ public class MessageFragment extends BaseFragment implements
     }
 
     public void setNumber(String number){
+        super.number = number;
         phoneNumber.setText(number);
     }
 

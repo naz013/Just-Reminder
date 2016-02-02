@@ -67,6 +67,7 @@ public class WeekFragment extends BaseFragment implements
     }
 
     public void setNumber(String number){
+        super.number = number;
         actionView.setNumber(number);
     }
     /**

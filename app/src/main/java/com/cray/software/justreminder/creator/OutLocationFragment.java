@@ -81,6 +81,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     private LocationListener mLocList;
 
     public void setNumber(String number){
+        super.number = number;
         actionViewLocationOut.setNumber(number);
     }
 

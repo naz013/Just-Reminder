@@ -53,6 +53,7 @@ public class SkypeFragment extends BaseFragment implements
     }
 
     public void setNumber(String number){
+        super.number = number;
         phoneNumber.setText(number);
     }
 

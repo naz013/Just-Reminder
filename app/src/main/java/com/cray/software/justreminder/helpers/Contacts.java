@@ -27,7 +27,7 @@ public class Contacts {
      * Get photo of contact.
      * @param context application context.
      * @param contactId contact identifier.
-     * @return Photo in bitmap format
+     * @return Contact photo
      */
     public static Bitmap getPhoto(Context context, long contactId) {
         Bitmap bmp = null;
@@ -102,7 +102,7 @@ public class Contacts {
      * Get contact name by contact e_mail.
      * @param e_mail contact e-mail.
      * @param context application context.
-     * @return Contact identifier
+     * @return Contact name
      */
     public static String getNameFromMail(String e_mail, Context context) {
         Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Email.CONTENT_FILTER_URI, Uri.encode(e_mail));
@@ -156,7 +156,7 @@ public class Contacts {
     /**
      * Get e=mail for contact.
      * @param id contact identifier.
-     * @return
+     * @return e-mail
      */
     public String getMail(int id){
         String mail = null;
@@ -180,7 +180,7 @@ public class Contacts {
      * Get contact number bu contact name.
      * @param name contact name.
      * @param context application context.
-     * @return
+     * @return Phone number
      */
     public static String getNumber(String name, Context context) {
         String number="";

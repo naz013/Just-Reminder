@@ -79,6 +79,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
     private GeocoderTask task;
 
     public void setNumber(String number){
+        super.number = number;
         actionViewLocation.setNumber(number);
     }
 

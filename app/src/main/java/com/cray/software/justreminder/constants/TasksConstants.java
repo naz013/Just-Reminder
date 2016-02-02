@@ -41,7 +41,6 @@ public class TasksConstants {
     public static final String CLEAR_TASK_LIST = "clear_task_list";
     public static final String DELETE_TASK = "delete_task";
     public static final String MOVE_TASK = "move_task";
-    public static final String UPDATE_TASK_STATUS = "update_task_status";
 
     //task constants code
     public static final int UPDATE_LIST = 102;

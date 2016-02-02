@@ -1,8 +1,6 @@
 package com.cray.software.justreminder.fragments;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,14 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
-import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -75,14 +73,9 @@ public class EventsListFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.today);
 
         if (Module.isLollipop()) {
-            Resources res = getResources();
-            VectorDrawable vectorDrawable =
-                    (VectorDrawable) res.getDrawable(R.drawable.ic_today_black_24dp1);
-            if (vectorDrawable != null) {
-                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
-                        new ColorSetter(getActivity()).colorAccent()));
-                emptyImage.setImageDrawable(vectorDrawable);
-            }
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    new ColorSetter(getActivity()).colorAccent(),
+                    R.drawable.ic_today_black_24dp1));
         }
 
         listView = (RecyclerView) view.findViewById(R.id.currentList);

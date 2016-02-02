@@ -63,6 +63,12 @@ public class SyncHelper {
     public SyncHelper(){
     }
 
+    /**
+     * Write data to selected file.
+     * @param file file to write.
+     * @param data data for writing.
+     * @throws IOException
+     */
     private void writeFile(File file, String data) throws IOException {
         if (file.exists()) {
             file.delete();
@@ -408,6 +414,13 @@ public class SyncHelper {
         db.close();
     }
 
+    /**
+     * Get note object from json.
+     * @param filePath path to file.
+     * @param json json object.
+     * @return note object
+     * @throws JSONException
+     */
     public static NoteModel getNote(String filePath, String json) throws JSONException {
         if (filePath != null) {
             if (MemoryUtil.isSdPresent()){
@@ -671,6 +684,12 @@ public class SyncHelper {
         db.close();
     }
 
+    /**
+     * Get group object from file.
+     * @param filePath path to file.
+     * @return group object
+     * @throws JSONException
+     */
     public static CategoryModel getGroup(String filePath) throws JSONException {
         if (filePath != null) {
             if (MemoryUtil.isSdPresent()) {
@@ -817,6 +836,12 @@ public class SyncHelper {
         db.close();
     }
 
+    /**
+     * Get birthday object from file.
+     * @param file path to file.
+     * @return birthday object
+     * @throws JSONException
+     */
     public static BirthdayModel getBirthday(String file) throws JSONException {
         if (MemoryUtil.isSdPresent()){
             if (file != null) {

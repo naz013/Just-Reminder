@@ -54,6 +54,19 @@ public class TimeCount {
         return new String[]{date, time};
     }
 
+    /**
+     * Generate start date time for new event.
+     * @param type event type.
+     * @param dayOfMonth day of month.
+     * @param month month.
+     * @param year year.
+     * @param hour hour.
+     * @param minute minute.
+     * @param seconds seconds.
+     * @param weekdays list of selected days.
+     * @param after timer countdown time.
+     * @return Date and time milliseconds.
+     */
     public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
                                   int minute, int seconds, ArrayList<Integer> weekdays, long after) {
         Calendar calendar = Calendar.getInstance();
@@ -232,6 +245,11 @@ public class TimeCount {
         }
     }
 
+    /**
+     * Check if date and time is actual.
+     * @param startTime date and time in mills.
+     * @return Boolean
+     */
     public boolean isCurrent(long startTime) {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(System.currentTimeMillis());

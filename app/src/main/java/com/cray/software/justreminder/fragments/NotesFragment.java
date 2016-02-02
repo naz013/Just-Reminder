@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -146,14 +144,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         }
 
         if (Module.isLollipop()) {
-            Resources res = getResources();
-            VectorDrawable vectorDrawable =
-                    (VectorDrawable) res.getDrawable(R.drawable.ic_event_note_black_24dp1);
-            if (vectorDrawable != null) {
-                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
-                        new ColorSetter(getActivity()).colorAccent()));
-                emptyImage.setImageDrawable(vectorDrawable);
-            }
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    new ColorSetter(getActivity()).colorAccent(),
+                    R.drawable.ic_event_note_black_24dp1));
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

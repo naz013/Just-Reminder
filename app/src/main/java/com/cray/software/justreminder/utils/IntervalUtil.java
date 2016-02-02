@@ -56,6 +56,11 @@ public class IntervalUtil {
         return sb;
     }
 
+    /**
+     * Check if one of weekdays is selected.
+     * @param weekday list of weekdays.
+     * @return Boolean
+     */
     public static boolean isWeekday(ArrayList<Integer> weekday) {
         for (int day : weekday) {
             if (day == Constants.DAY_CHECKED) {

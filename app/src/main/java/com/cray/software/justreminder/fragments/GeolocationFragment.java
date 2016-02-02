@@ -16,7 +16,6 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -24,8 +23,6 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
 
     private PlaceDataProvider provider;
     private MapFragment fragment;
-
-    private NavigationCallbacks mCallbacks;
 
     public static GeolocationFragment newInstance() {
         return new GeolocationFragment();
@@ -75,18 +72,12 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
-        }
         ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
     }
 
     @Override

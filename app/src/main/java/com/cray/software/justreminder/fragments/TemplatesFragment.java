@@ -2,8 +2,6 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -73,14 +71,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         }
 
         if (Module.isLollipop()) {
-            Resources res = getResources();
-            VectorDrawable vectorDrawable =
-                    (VectorDrawable) res.getDrawable(R.drawable.ic_textsms_black_24dp1);
-            if (vectorDrawable != null) {
-                vectorDrawable.setTint(ViewUtils.getColor(getActivity(),
-                        new ColorSetter(getActivity()).colorAccent()));
-                emptyImage.setImageDrawable(vectorDrawable);
-            }
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    new ColorSetter(getActivity()).colorAccent(),
+                    R.drawable.ic_textsms_black_24dp1));
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);

@@ -49,6 +49,12 @@ import java.util.Locale;
  */
 public class Dialogues {
 
+    /**
+     * Show long click action dialogue for lists.
+     * @param context application context.
+     * @param listener listener.
+     * @param actions list of actions.
+     */
     public static void showLCAM(Context context, final LCAMListener listener, String... actions) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setItems(actions, new DialogInterface.OnClickListener() {
@@ -61,6 +67,10 @@ public class Dialogues {
         alert.show();
     }
 
+    /**
+     * Sound stream selecting dialogue.
+     * @param context application context.
+     */
     public static void streamDialog(final Activity context){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
