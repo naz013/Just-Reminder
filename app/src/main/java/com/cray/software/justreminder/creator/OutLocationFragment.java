@@ -113,6 +113,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         args.putBoolean(STOCK, hasStock);
         args.putBoolean(TASKS, hasTasks);
         fragment.setItem(item);
+        fragment.setArguments(args);
         return fragment;
     }
 

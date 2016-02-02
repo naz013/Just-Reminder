@@ -2,7 +2,9 @@ package com.cray.software.justreminder.settings.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import com.cray.software.justreminder.activities.CloudDrives;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.Dialogues;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.views.PrefsView;
@@ -143,19 +146,27 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
             selectCalendar.setEnabled(false);
             checkEnabling();
         } else {
-            ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
-            if (i != null && i.size() > 0) {
-                sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
-                exportToCalendarPrefs.setChecked(true);
-                eventDuration.setEnabled(true);
-                selectCalendar.setEnabled(true);
-                checkEnabling();
-                ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
-                Dialogues.selectCalendar(getActivity(), list);
+            if (Permissions.checkPermission(getActivity(), Permissions.READ_CALENDAR)) {
+                loadCalendars();
             } else {
-                Toast.makeText(getActivity(),
-                        getActivity().getString(R.string.no_calendars_found), Toast.LENGTH_LONG).show();
+                Permissions.requestPermission(getActivity(), 101, Permissions.READ_CALENDAR);
             }
+        }
+    }
+
+    private void loadCalendars() {
+        ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
+        if (i != null && i.size() > 0) {
+            sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
+            exportToCalendarPrefs.setChecked(true);
+            eventDuration.setEnabled(true);
+            selectCalendar.setEnabled(true);
+            checkEnabling();
+            ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
+            Dialogues.selectCalendar(getActivity(), list);
+        } else {
+            Toast.makeText(getActivity(),
+                    getActivity().getString(R.string.no_calendars_found), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -200,6 +211,17 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 break;
             case R.id.syncInterval:
                 Dialogues.selectInterval(getActivity(), Prefs.AUTO_BACKUP_INTERVAL, R.string.interval);
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 101:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    loadCalendars();
+                }
                 break;
         }
     }

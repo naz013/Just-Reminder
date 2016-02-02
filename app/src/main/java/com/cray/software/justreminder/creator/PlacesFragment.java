@@ -57,6 +57,7 @@ public class PlacesFragment extends BaseFragment  {
         args.putBoolean(STOCK, hasStock);
         args.putBoolean(TASKS, hasTasks);
         fragment.setItem(item);
+        fragment.setArguments(args);
         return fragment;
     }
 

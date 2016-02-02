@@ -105,6 +105,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
         args.putBoolean(STOCK, hasStock);
         args.putBoolean(TASKS, hasTasks);
         fragment.setItem(item);
+        fragment.setArguments(args);
         return fragment;
     }
 

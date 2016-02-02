@@ -55,6 +55,7 @@ public class MessageFragment extends BaseFragment implements
         args.putBoolean(STOCK, hasStock);
         args.putBoolean(TASKS, hasTasks);
         fragment.setItem(item);
+        fragment.setArguments(args);
         return fragment;
     }
 

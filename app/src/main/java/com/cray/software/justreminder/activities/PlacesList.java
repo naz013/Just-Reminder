@@ -97,12 +97,10 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             public void onClick(View v) {
                 if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
                     if (Permissions.checkPermission(PlacesList.this,
-                            Permissions.ACCESS_COARSE_LOCATION,
                             Permissions.ACCESS_FINE_LOCATION)) {
                         startActivity(new Intent(PlacesList.this, NewPlace.class));
                     } else {
                         Permissions.requestPermission(PlacesList.this, 101,
-                                Permissions.ACCESS_COARSE_LOCATION,
                                 Permissions.ACCESS_FINE_LOCATION);
                     }
                 }
@@ -199,8 +197,6 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     startActivity(new Intent(PlacesList.this, NewPlace.class));
-                } else {
-                    Permissions.showInfo(PlacesList.this, Permissions.READ_CALENDAR);
                 }
                 break;
         }

@@ -21,7 +21,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -48,7 +47,6 @@ public class BaseFragment extends Fragment {
     protected String message;
     protected String filePath;
     protected String eventTask;
-    protected ShoppingListDataProvider shoppingListDataProvider;
 
     protected boolean hasCalendar;
     protected boolean hasStock;
@@ -90,10 +88,6 @@ public class BaseFragment extends Fragment {
 
     public JModel getItem() {
         return item;
-    }
-
-    public ShoppingListDataProvider getShoppingListDataProvider() {
-        return shoppingListDataProvider;
     }
 
     public String getMessage() {

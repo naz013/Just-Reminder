@@ -194,7 +194,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-
         hasTasks = new GTasksHelper(this).isLinked();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
